@@ -1,0 +1,2 @@
+rabbit_mq = 'com.rabbitmq:amqp-client:3.5.3'
+apache_commons_configuration = 'commons-configuration:commons-configuration:1.9'

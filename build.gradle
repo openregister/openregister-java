@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+apply from: "external-dependencies.gradle"
+
+group 'mint'
+version '1.0-SNAPSHOT'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+repositories {
+    mavenCentral()
+}
+
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    compile rabbit_mq, apache_commons_configuration
+}
