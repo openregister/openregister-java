@@ -25,3 +25,17 @@ dependencies {
 
     testCompile junit
 }
+
+jar {
+    doFirst {
+        from {
+            configurations.runtime.files.collect{ it }
+        }
+        manifest {
+            attributes(
+                    "Main-Class": "uk.gov.Application",
+                    "Class-Path": configurations.compile.findAll { !it.directory }.collect { it.name }.join(' ')
+            )
+        }
+    }
+}
