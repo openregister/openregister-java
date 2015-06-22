@@ -12,7 +12,7 @@ A repository for mint project
 - Install and run Rabbit MQ
 - Install and run postgres db
 - Create database mint `createdb mint` to use application locally
-- Create database mint `createdb test_mint` to run unit tests
+- Create database test_mint `createdb test_mint` to run unit tests
 - Checkout project 
 - Use command `./gradlew cleanIdea idea` to generate the idea project files
 - Build project using command `./gradlew clean build` 
