@@ -1,4 +1,4 @@
-package uk.co;
+package uk.gov.store;
 
 import java.util.Arrays;
 

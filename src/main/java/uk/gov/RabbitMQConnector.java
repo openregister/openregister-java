@@ -1,6 +1,7 @@
-package uk.co;
+package uk.gov;
 
 import com.rabbitmq.client.*;
+import uk.gov.store.DataStoreImpl;
 
 import java.util.Collections;
 
