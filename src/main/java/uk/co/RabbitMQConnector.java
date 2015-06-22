@@ -13,14 +13,10 @@ public class RabbitMQConnector {
             Connection conn = factory.newConnection();
             Channel channel = conn.createChannel();
 
-            String routingKey = "register-queue-routing-key";
-
             AMQP.Exchange.DeclareOk declareExchange = channel.exchangeDeclare(exchange, "direct");
+            AMQP.Queue.DeclareOk declareQueue = channel.queueDeclare(queue, true, false, false, Collections.<String, Object>emptyMap());
 
-            AMQP.Queue.DeclareOk declareOk = channel.queueDeclare(queue, true, true, false, Collections.<String, Object>emptyMap());
-
-
-            AMQP.Queue.BindOk bindOk = channel.queueBind(queue, exchange, routingKey);
+            AMQP.Queue.BindOk bindOk = channel.queueBind(queue, exchange, "register-queue-routing-key");
 
 
             Consumer consumer = new MessageHandler(channel, new DataStoreImpl());
