@@ -1,0 +1,8 @@
+
+idea.project.ipr.withXml { provider ->
+    def vcsConfig = provider.asNode().component.find { it.'@name' == 'VcsDirectoryMappings' }
+    vcsConfig.mapping[0].'@vcs' = 'Git'
+
+    def jdkConfig = provider.asNode().component.find { it.'@name' == 'ProjectRootManager' }
+    jdkConfig.'@languageLevel' = 'JDK_1_8'
+}

@@ -2,6 +2,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 
 apply from: "external-dependencies.gradle"
+apply from: "idea-config.gradle"
 
 group 'mint'
 version '1.0-SNAPSHOT'
