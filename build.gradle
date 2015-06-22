@@ -29,12 +29,15 @@ dependencies {
 jar {
     doFirst {
         from {
-            configurations.runtime.files.collect{ it }
+            configurations.compile.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
         }
+
         manifest {
             attributes(
                     "Main-Class": "uk.gov.Application",
-                    "Class-Path": configurations.compile.findAll { !it.directory }.collect { it.name }.join(' ')
+                    "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
             )
         }
     }
