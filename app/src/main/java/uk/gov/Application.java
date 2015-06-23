@@ -1,37 +1,48 @@
 package uk.gov;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 import uk.gov.store.PostgresDataStore;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class Application {
 
     @SuppressWarnings("FieldCanBeLocal")
-    private static RabbitMQConnector rabbitMQConnector;
+    private static RabbitMQConnector notToBeGcedMQConnector;
 
-    public static void main(String[] args) throws ConfigurationException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         Map<String, String> propertiesMap = createConfigurationMap(args);
 
-        String fileName = propertiesMap.get("config.file");
+        Properties properties = new Properties();
+        properties.load(configurationPropertiesStream(propertiesMap.get("config.file")));
+        properties.putAll(propertiesMap);
 
-        if (StringUtils.isEmpty(fileName)) {
-            System.out.println("Properties file name not provided, using default application.properties file");
-            fileName = "application.properties";
-        }
+        String pgConnectionString = properties.getProperty("postgres.connection.string");
+        consoleLog("Connecting to Postgres database: " + pgConnectionString);
 
-        PropertiesConfiguration configuration = new PropertiesConfiguration(fileName);
+        notToBeGcedMQConnector = new RabbitMQConnector(new PostgresDataStore(pgConnectionString));
+        notToBeGcedMQConnector.connect(properties);
 
-        rabbitMQConnector = new RabbitMQConnector(new PostgresDataStore(configuration.getString("postgres.connection.string")));
-        rabbitMQConnector.connect(configuration);
-
-        System.out.println("Application started...");
+        consoleLog("Application started...");
 
         Thread.currentThread().join();
+    }
+
+    private static InputStream configurationPropertiesStream(String fileName) throws IOException {
+        if (Strings.isNullOrEmpty(fileName)) {
+            consoleLog("Configuration properties file not provided, using default application.properties file");
+            return Application.class.getResource("application.properties").openStream();
+        } else {
+            consoleLog("Loading properties file: " + fileName);
+            return new FileInputStream(new File(fileName));
+        }
     }
 
     private static Map<String, String> createConfigurationMap(String[] args) {
@@ -43,6 +54,10 @@ public class Application {
             }
         }
         return appParams;
+    }
+
+    private static void consoleLog(String logMessage) {
+        System.out.println(logMessage);
     }
 
 }

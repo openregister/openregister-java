@@ -4,20 +4,15 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.TimeoutException;
+import java.util.Properties;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -30,20 +25,21 @@ public class FunctionalTest {
     private java.sql.Connection pgConnection;
 
     @Before
-    public void setup() throws SQLException, ConfigurationException {
-        PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration("test-application.properties");
+    public void setup() throws SQLException, IOException {
+        Properties properties = new Properties();
+        properties.load(FunctionalTest.class.getResourceAsStream("/test-application.properties"));
 
-        exchange = propertiesConfiguration.getString("rabbitmq.exchange");
-        routingKey = propertiesConfiguration.getString("rabbitmq.exchange.routing.key");
-        queue = propertiesConfiguration.getString("rabbitmq.queue");
-        rabbitMQConnectionString = propertiesConfiguration.getString("rabbitmq.connection.string");
+        exchange = properties.getProperty("rabbitmq.exchange");
+        routingKey = properties.getProperty("rabbitmq.exchange.routing.key");
+        queue = properties.getProperty("rabbitmq.queue");
+        rabbitMQConnectionString = properties.getProperty("rabbitmq.connection.string");
 
-        pgConnection = DriverManager.getConnection(propertiesConfiguration.getString("postgres.connection.string"));
+        pgConnection = DriverManager.getConnection(properties.getProperty("postgres.connection.string"));
         cleanDatabase();
     }
 
     @Test
-    public void checkMessageIsConsumedAndStoredInDatabase() throws IOException, TimeoutException, NoSuchAlgorithmException, KeyManagementException, URISyntaxException, SQLException, ConfigurationException, InterruptedException {
+    public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUri(rabbitMQConnectionString);

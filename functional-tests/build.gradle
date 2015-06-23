@@ -1,5 +1,5 @@
 dependencies {
-    testCompile rabbitMQ, postgresClient, junit, apacheCommonsConfiguration
+    testCompile rabbitMQ, postgresClient, junit
 }
 
 test {
@@ -9,11 +9,15 @@ test {
                 'java',
                 '-jar',
                 mintJar.absolutePath,
-                "config.file=${new File(projectDir, "src/test/resources/test-application.properties").toURI()}"
+                "config.file=${new File(projectDir, "src/test/resources/test-application.properties").absolutePath}"
         ).directory(buildDir.absoluteFile)
 
         println(builder.command())
 
-        project.ext.runningUiApp = builder.start()
+        project.ext.runningApp = builder.start()
+    }
+
+    doLast {
+        project.ext.runningApp?.destroyForcibly()?.waitFor()
     }
 }

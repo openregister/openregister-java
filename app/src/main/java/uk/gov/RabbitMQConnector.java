@@ -1,10 +1,10 @@
 package uk.gov;
 
 import com.rabbitmq.client.*;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import uk.gov.store.DataStore;
 
 import java.util.Collections;
+import java.util.Properties;
 
 public class RabbitMQConnector {
     private final DataStore dataStore;
@@ -13,12 +13,12 @@ public class RabbitMQConnector {
         this.dataStore = dataStore;
     }
 
-    public void connect(PropertiesConfiguration configuration) {
+    public void connect(Properties configuration) {
         try {
-            String connectionString = configuration.getString("rabbitmq.connection.string");
-            String queue = configuration.getString("rabbitmq.queue");
-            String exchange = configuration.getString("rabbitmq.exchange");
-            String routingKey = configuration.getString("rabbitmq.exchange.routing.key");
+            String connectionString = configuration.getProperty("rabbitmq.connection.string");
+            String queue = configuration.getProperty("rabbitmq.queue");
+            String exchange = configuration.getProperty("rabbitmq.exchange");
+            String routingKey = configuration.getProperty("rabbitmq.exchange.routing.key");
 
             ConnectionFactory factory = new ConnectionFactory();
             factory.setUri(connectionString);
