@@ -1,0 +1,19 @@
+dependencies {
+    testCompile rabbitMQ, postgresClient, junit, apacheCommonsConfiguration
+}
+
+test {
+    doFirst {
+        File mintJar = new File(project(':app').buildDir, 'libs/mint.jar')
+        ProcessBuilder builder = new ProcessBuilder(
+                'java',
+                '-jar',
+                mintJar.absolutePath,
+                "config.file=${new File(projectDir, "src/test/resources/test-application.properties").toURI()}"
+        ).directory(buildDir.absoluteFile)
+
+        println(builder.command())
+
+        project.ext.runningUiApp = builder.start()
+    }
+}

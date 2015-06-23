@@ -1,0 +1,28 @@
+group 'mint'
+
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    compile rabbitMQ, apacheCommonsConfiguration, postgresClient
+
+    testCompile junit
+}
+
+
+jar.baseName = "mint"
+
+jar {
+    doFirst {
+        from {
+            configurations.compile.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        }
+
+        manifest {
+            attributes(
+                    "Main-Class": "uk.gov.Application",
+                    "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
+            )
+        }
+    }
+}

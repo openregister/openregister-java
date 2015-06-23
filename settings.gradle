@@ -1,1 +1,4 @@
 rootProject.name = 'mint'
+
+include 'app'
+include 'functional-tests'

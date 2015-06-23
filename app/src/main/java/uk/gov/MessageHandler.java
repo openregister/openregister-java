@@ -1,6 +1,9 @@
 package uk.gov;
 
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 import uk.gov.store.DataStore;
 
 import java.io.IOException;

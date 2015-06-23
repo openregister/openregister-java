@@ -3,6 +3,9 @@
 
 .gradle
 
+*/out
+*/build
+
 out/*
 build/*
 
