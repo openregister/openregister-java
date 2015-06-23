@@ -38,7 +38,7 @@ public class Application {
     private static InputStream configurationPropertiesStream(String fileName) throws IOException {
         if (Strings.isNullOrEmpty(fileName)) {
             consoleLog("Configuration properties file not provided, using default application.properties file");
-            return Application.class.getResource("application.properties").openStream();
+            return Application.class.getResourceAsStream("/application.properties");
         } else {
             consoleLog("Loading properties file: " + fileName);
             return new FileInputStream(new File(fileName));
