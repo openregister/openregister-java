@@ -7,12 +7,12 @@ import org.junit.Test;
 import java.sql.*;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class PostgresDataStoreTest {
 
     private String testPostgresConnectionUri = "jdbc:postgresql://localhost:5432/test_mint";
+    private String tableName = "TEST_STORE";
     private Connection connection;
 
     @Before
@@ -22,25 +22,33 @@ public class PostgresDataStoreTest {
 
     @After
     public void cleanup() throws SQLException {
-        connection.createStatement().execute("DELETE FROM STORE");
+        connection.createStatement().execute("DROP TABLE " + tableName);
         connection.close();
     }
 
     @Test
-    public void add_savesTheMessageToTheStore() throws SQLException {
-        PostgresDataStore postgresDataStore = new PostgresDataStore(testPostgresConnectionUri);
-        assertNull(tableRecord());
+    public void add_savesTheMessageToTheStoreWithSequenceNumber() throws SQLException {
+        PostgresDataStore postgresDataStore = new PostgresDataStore(testPostgresConnectionUri, "TEST");
+        assertFalse(records().next());
 
-        postgresDataStore.add(new byte[]{1, 2, 3});
+        byte[] message1 = {1, 2, 3};
+        byte[] message2 = {4, 5, 6};
+        postgresDataStore.add(message1);
+        postgresDataStore.add(message2);
 
-        assertThat(tableRecord(), is(new byte[]{1, 2, 3}));
+        ResultSet result = records();
+
+        assertTrue(result.next());
+        assertThat(result.getInt("id"), is(1));
+        assertThat(result.getBytes("entry"), is(message1));
+        assertTrue(result.next());
+        assertThat(result.getInt("id"), is(2));
+        assertThat(result.getBytes("entry"), is(message2));
     }
 
-    private byte[] tableRecord() throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute("SELECT * FROM STORE");
-            ResultSet resultSet = statement.getResultSet();
-            return resultSet.next() ? resultSet.getBytes(1) : null;
-        }
+    private ResultSet records() throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.execute("SELECT * FROM " + tableName);
+        return statement.getResultSet();
     }
 }

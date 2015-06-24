@@ -57,7 +57,7 @@ public class FunctionalTest {
 
     private byte[] tableRecord() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("SELECT * FROM STORE");
+            statement.execute("SELECT ENTRY FROM FUNCTIONAL_TESTS_STORE");
             ResultSet resultSet = statement.getResultSet();
             return resultSet.next() ? resultSet.getBytes(1) : null;
         }
@@ -69,7 +69,7 @@ public class FunctionalTest {
 
     private void cleanDatabase() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("DELETE FROM STORE");
+            statement.execute("DELETE FROM FUNCTIONAL_TESTS_STORE");
         }
     }
 }

@@ -5,13 +5,14 @@ import java.sql.*;
 public class PostgresDataStore implements DataStore {
 
     private final Connection connection;
-    private final String table = " STORE ";
+    private final String table;
 
-    public PostgresDataStore(String pgConnectionString) {
+    public PostgresDataStore(String connectionString, String storeName) {
         try {
-            connection = DriverManager.getConnection(pgConnectionString);
-            try(Statement statement = connection.createStatement()){
-                statement.execute("CREATE TABLE IF NOT EXISTS " + table+ "(content bytea)");
+            table = storeName + "_STORE";
+            connection = DriverManager.getConnection(connectionString);
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("CREATE TABLE IF NOT EXISTS " + table + " (ID SERIAL PRIMARY KEY, ENTRY BYTEA)");
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);
@@ -21,7 +22,7 @@ public class PostgresDataStore implements DataStore {
     @Override
     public void add(byte[] message) {
         try {
-            try(PreparedStatement statement = connection.prepareStatement("INSERT INTO"  +table + " values(?)")){
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + table + "(ENTRY) values(?)")) {
                 statement.setBytes(1, message);
                 statement.execute();
             }

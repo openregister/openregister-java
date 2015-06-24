@@ -25,9 +25,10 @@ public class Application {
         properties.putAll(propertiesMap);
 
         String pgConnectionString = properties.getProperty("postgres.connection.string");
+        String storeName = properties.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
 
-        notToBeGcedMQConnector = new RabbitMQConnector(new PostgresDataStore(pgConnectionString));
+        notToBeGcedMQConnector = new RabbitMQConnector(new PostgresDataStore(pgConnectionString, storeName));
         notToBeGcedMQConnector.connect(properties);
 
         consoleLog("Application started...");
