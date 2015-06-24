@@ -1,6 +1,7 @@
-package uk.gov;
+package uk.gov.mint;
 
 import com.rabbitmq.client.*;
+import uk.gov.mint.MessageHandler;
 import uk.gov.store.DataStore;
 
 import java.util.Collections;

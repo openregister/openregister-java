@@ -1,4 +1,4 @@
-package uk.gov;
+package uk.gov.mint;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;

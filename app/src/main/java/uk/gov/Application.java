@@ -1,6 +1,7 @@
 package uk.gov;
 
 import com.google.common.base.Strings;
+import uk.gov.mint.RabbitMQConnector;
 import uk.gov.store.PostgresDataStore;
 
 import java.io.File;
