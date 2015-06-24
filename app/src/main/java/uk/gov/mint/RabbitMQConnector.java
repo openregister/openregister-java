@@ -1,17 +1,16 @@
 package uk.gov.mint;
 
 import com.rabbitmq.client.*;
-import uk.gov.mint.MessageHandler;
-import uk.gov.store.DataStore;
+import uk.gov.integration.DataStoreApplication;
 
 import java.util.Collections;
 import java.util.Properties;
 
 public class RabbitMQConnector {
-    private final DataStore dataStore;
+    private final DataStoreApplication dataStoreApplication;
 
-    public RabbitMQConnector(DataStore dataStore) {
-        this.dataStore = dataStore;
+    public RabbitMQConnector(DataStoreApplication dataStoreApplication) {
+        this.dataStoreApplication = dataStoreApplication;
     }
 
     public void connect(Properties configuration) {
@@ -30,7 +29,7 @@ public class RabbitMQConnector {
             AMQP.Queue.DeclareOk declareQueue = channel.queueDeclare(queue, true, false, false, Collections.<String, Object>emptyMap());
             AMQP.Queue.BindOk bindOk = channel.queueBind(queue, exchange, routingKey);
 
-            Consumer consumer = new MessageHandler(channel, dataStore);
+            Consumer consumer = new MessageHandler(channel, dataStoreApplication);
             channel.basicConsume(queue, consumer);
         } catch (Throwable t) {
             throw new RuntimeException(t);

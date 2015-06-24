@@ -2,6 +2,7 @@ package uk.gov;
 
 import com.google.common.base.Strings;
 import uk.gov.mint.RabbitMQConnector;
+import uk.gov.store.LocalDataStoreApplication;
 import uk.gov.store.PostgresDataStore;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class Application {
         String storeName = properties.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
 
-        notToBeGcedMQConnector = new RabbitMQConnector(new PostgresDataStore(pgConnectionString, storeName));
+        notToBeGcedMQConnector = new RabbitMQConnector(new LocalDataStoreApplication(new PostgresDataStore(pgConnectionString, storeName)));
         notToBeGcedMQConnector.connect(properties);
 
         consoleLog("Application started...");
