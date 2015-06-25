@@ -2,6 +2,8 @@ sudo: false
 language: java
 jdk:
   - oraclejdk8
+services:
+  - rabbitmq
 addons:
   postgresql: "9.4"
 cache:
