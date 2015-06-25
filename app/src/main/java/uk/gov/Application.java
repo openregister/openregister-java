@@ -12,33 +12,38 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 
 public class Application {
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private static RabbitMQConnector notToBeGcedMQConnector;
+    private RabbitMQConnector mqConnector;
+    private final Properties configuration;
 
-    public static void main(String[] args) throws InterruptedException, IOException {
-
+    public Application(String... args) throws IOException {
         Map<String, String> propertiesMap = createConfigurationMap(args);
 
         Properties properties = new Properties();
         properties.load(configurationPropertiesStream(propertiesMap.get("config.file")));
         properties.putAll(propertiesMap);
-
-        String pgConnectionString = properties.getProperty("postgres.connection.string");
-        String storeName = properties.getProperty("store.name");
-        consoleLog("Connecting to Postgres database: " + pgConnectionString);
-
-        notToBeGcedMQConnector = new RabbitMQConnector(new LocalDataStoreApplication(new PostgresDataStore(pgConnectionString, storeName)));
-        notToBeGcedMQConnector.connect(properties);
-
-        consoleLog("Application started...");
-
-        Thread.currentThread().join();
+        configuration = properties;
     }
 
-    private static InputStream configurationPropertiesStream(String fileName) throws IOException {
+    public void startup() {
+        String pgConnectionString = configuration.getProperty("postgres.connection.string");
+        String storeName = configuration.getProperty("store.name");
+        consoleLog("Connecting to Postgres database: " + pgConnectionString);
+
+        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(new PostgresDataStore(pgConnectionString, storeName)));
+        mqConnector.connect(configuration);
+
+        consoleLog("Application started...");
+    }
+
+    public void shutdown() throws IOException, TimeoutException {
+        mqConnector.close();
+    }
+
+    private InputStream configurationPropertiesStream(String fileName) throws IOException {
         if (Strings.isNullOrEmpty(fileName)) {
             consoleLog("Configuration properties file not provided, using default application.properties file");
             return Application.class.getResourceAsStream("/application.properties");
@@ -48,7 +53,7 @@ public class Application {
         }
     }
 
-    private static Map<String, String> createConfigurationMap(String[] args) {
+    private Map<String, String> createConfigurationMap(String[] args) {
         Map<String, String> appParams = new HashMap<>();
         for (int i = 0; args != null && i < args.length; i++) {
             if (args[i].contains("=")) {
@@ -59,9 +64,20 @@ public class Application {
         return appParams;
     }
 
-    private static void consoleLog(String logMessage) {
+    private void consoleLog(String logMessage) {
         System.out.println(logMessage);
     }
 
+
+
+    @SuppressWarnings("FieldCanBeLocal")
+    private static Application notToBeGCed;
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+        notToBeGCed = new Application(args);
+        notToBeGCed.startup();
+
+        Thread.currentThread().join();
+    }
 }
 
