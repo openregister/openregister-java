@@ -27,4 +27,10 @@ jar {
     }
 }
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 task stage(dependsOn: ['assemble'])
