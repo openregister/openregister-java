@@ -3,11 +3,14 @@ package uk.gov.mint;
 import com.rabbitmq.client.*;
 import uk.gov.integration.DataStoreApplication;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 
 public class RabbitMQConnector {
     private final DataStoreApplication dataStoreApplication;
+    private Channel channel;
 
     public RabbitMQConnector(DataStoreApplication dataStoreApplication) {
         this.dataStoreApplication = dataStoreApplication;
@@ -23,7 +26,7 @@ public class RabbitMQConnector {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setUri(connectionString);
             Connection conn = factory.newConnection();
-            Channel channel = conn.createChannel();
+            channel = conn.createChannel();
 
             AMQP.Exchange.DeclareOk declareExchange = channel.exchangeDeclare(exchange, "direct");
             AMQP.Queue.DeclareOk declareQueue = channel.queueDeclare(queue, true, false, false, Collections.<String, Object>emptyMap());
@@ -34,5 +37,9 @@ public class RabbitMQConnector {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    public void close() throws IOException, TimeoutException {
+        channel.close();
     }
 }

@@ -1,13 +1,16 @@
-package uk.gov;
+package uk.gov.functional;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.gov.Application;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,11 +26,14 @@ public class FunctionalTest {
     private String routingKey;
     private String queue;
     private java.sql.Connection pgConnection;
+    private Application application;
 
     @Before
     public void setup() throws SQLException, IOException {
         Properties properties = new Properties();
-        properties.load(FunctionalTest.class.getResourceAsStream("/test-application.properties"));
+        String configFilename = FunctionalTest.class.getResource("/test-application.properties").getFile();
+        InputStream resourceAsStream = FunctionalTest.class.getResourceAsStream("/test-application.properties");
+        properties.load(resourceAsStream);
 
         exchange = properties.getProperty("rabbitmq.exchange");
         routingKey = properties.getProperty("rabbitmq.exchange.routing.key");
@@ -36,6 +42,14 @@ public class FunctionalTest {
 
         pgConnection = DriverManager.getConnection(properties.getProperty("postgres.connection.string"));
         cleanDatabase();
+
+        application = new Application("config.file=" + configFilename);
+        application.startup();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        application.shutdown();
     }
 
     @Test
@@ -69,7 +83,7 @@ public class FunctionalTest {
 
     private void cleanDatabase() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("DELETE FROM FUNCTIONAL_TESTS_STORE");
+            statement.execute("DROP TABLE IF EXISTS FUNCTIONAL_TESTS_STORE");
         }
     }
 }
