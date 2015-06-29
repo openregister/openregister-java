@@ -2,6 +2,7 @@ package uk.gov;
 
 import com.google.common.base.Strings;
 import uk.gov.mint.RabbitMQConnector;
+import uk.gov.store.DataStore;
 import uk.gov.store.LocalDataStoreApplication;
 import uk.gov.store.PostgresDataStore;
 
@@ -12,12 +13,12 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeoutException;
 
 public class Application {
 
     private RabbitMQConnector mqConnector;
     private final Properties configuration;
+    private DataStore dataStore;
 
     public Application(String... args) throws IOException {
         Map<String, String> propertiesMap = createConfigurationMap(args);
@@ -33,13 +34,15 @@ public class Application {
         String storeName = configuration.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
 
-        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(new PostgresDataStore(pgConnectionString, storeName)));
+        dataStore = new PostgresDataStore(pgConnectionString, storeName);
+        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore));
         mqConnector.connect(configuration);
 
         consoleLog("Application started...");
     }
 
-    public void shutdown() throws IOException, TimeoutException {
+    public void shutdown() throws Exception {
+        dataStore.close();
         mqConnector.close();
     }
 
