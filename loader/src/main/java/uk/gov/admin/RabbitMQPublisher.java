@@ -33,6 +33,16 @@ public class RabbitMQPublisher implements AutoCloseable {
         }
     }
 
+    public void publish(String data) {
+        try {
+            channel.basicPublish(exchange, routingKey, null, data.getBytes());
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Did you call prepareConnection?", e);
+        } catch (Throwable t) {
+            throw new RuntimeException("Error occurred publishing datafile to queue", t);
+        }
+    }
+
     public void publish(List<String> listOfData) {
         try {
             final String batchData = listOfData.stream().collect(Collectors.joining(","));
