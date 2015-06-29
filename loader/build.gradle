@@ -1,0 +1,48 @@
+group 'mint'
+
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    compile rabbitMQ, jOptSimple, javaslang
+
+    testCompile junit, mockito
+}
+
+
+jar.baseName = "loader"
+
+jar {
+    doFirst {
+        from {
+            configurations.compile.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        }
+
+        manifest {
+            attributes(
+                    "Main-Class": "uk.gov.admin.Loader",
+                    "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
+            )
+        }
+    }
+}
+
+task bulkLoad(type: JavaExec)  {
+    def properties = project.getProperties()
+    def datafile = properties.get("datafile")
+    def schemafile = properties.get("schemafile")
+    def configfile = properties.get("configfile")
+    def overwrite = properties.containsKey("overwrite")
+
+    main = 'uk.gov.admin.Loader'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ["--schemafile=$schemafile", "--datafile=$datafile", "--configfile=$configfile", "${overwrite ? '--overwrite' : ''}"]
+
+    doFirst {
+        if (datafile == null || configfile == null) {
+            throw new AssertionError("Missing required parameters --datafile and --configfile.\n\nUsage: gradle bulkLoad --configfile=<config.properties> --datafile=<loadfile.json>")
+        }
+    }
+}
+
+task stage(dependsOn: ['assemble'])
