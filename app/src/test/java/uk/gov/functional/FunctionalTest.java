@@ -83,7 +83,7 @@ public class FunctionalTest {
 
     private void cleanDatabase() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("DELETE FROM FUNCTIONAL_TESTS_STORE");
+            statement.execute("DROP TABLE IF EXISTS FUNCTIONAL_TESTS_STORE");
         }
     }
 }
