@@ -1,7 +1,6 @@
 package uk.gov.functional;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.junit.After;
@@ -9,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.Application;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.sql.DriverManager;
@@ -29,7 +29,7 @@ public class FunctionalTest {
     private java.sql.Connection pgConnection;
     private Application application;
     private TestKafkaCluster testKafkaCluster;
-    private Channel channel;
+    private Connection connection;
 
     @Before
     public void setup() throws Exception {
@@ -47,8 +47,7 @@ public class FunctionalTest {
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUri(rabbitMQConnectionString);
-        Connection conn = factory.newConnection();
-        channel = conn.createChannel();
+        connection = factory.newConnection();
 
         cleanDatabase();
         cleanQueue();
@@ -69,7 +68,7 @@ public class FunctionalTest {
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
 
         byte[] message = String.valueOf(System.currentTimeMillis()).getBytes();
-        channel.basicPublish(exchange, routingKey, new AMQP.BasicProperties(), message);
+        connection.createChannel().basicPublish(exchange, routingKey, new AMQP.BasicProperties(), message);
 
         waitForMessageToBeConsumed();
         assertThat(tableRecord(), is(message));
@@ -92,7 +91,12 @@ public class FunctionalTest {
     }
 
     private void cleanQueue() throws Exception {
-        channel.queuePurge(queue);
+        try {
+            // purge the queue if it exists; throws IOException if not
+            connection.createChannel().queuePurge(queue);
+        } catch (IOException e) {
+            // don't care, continue
+        }
     }
 
     private void cleanDatabase() throws SQLException {
