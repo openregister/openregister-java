@@ -9,27 +9,30 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.Application;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class FunctionalTest {
-    private String rabbitMQConnectionString;
     private String exchange;
     private String routingKey;
     private String queue;
     private java.sql.Connection pgConnection;
     private Application application;
+    private TestKafkaCluster testKafkaCluster;
+    private Channel channel;
 
     @Before
-    public void setup() throws SQLException, IOException {
+    public void setup() throws Exception {
         Properties properties = new Properties();
         String configFilename = FunctionalTest.class.getResource("/test-application.properties").getFile();
         InputStream resourceAsStream = FunctionalTest.class.getResourceAsStream("/test-application.properties");
@@ -38,10 +41,19 @@ public class FunctionalTest {
         exchange = properties.getProperty("rabbitmq.exchange");
         routingKey = properties.getProperty("rabbitmq.exchange.routing.key");
         queue = properties.getProperty("rabbitmq.queue");
-        rabbitMQConnectionString = properties.getProperty("rabbitmq.connection.string");
+        String rabbitMQConnectionString = properties.getProperty("rabbitmq.connection.string");
 
         pgConnection = DriverManager.getConnection(properties.getProperty("postgres.connection.string"));
+
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setUri(rabbitMQConnectionString);
+        Connection conn = factory.newConnection();
+        channel = conn.createChannel();
+
         cleanDatabase();
+        cleanQueue();
+
+        testKafkaCluster = new TestKafkaCluster(6000); // must match test-application.properties
 
         application = new Application("config.file=" + configFilename);
         application.startup();
@@ -50,23 +62,21 @@ public class FunctionalTest {
     @After
     public void tearDown() throws Exception {
         application.shutdown();
+        testKafkaCluster.stop();
     }
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
-
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setUri(rabbitMQConnectionString);
-        Connection conn = factory.newConnection();
-        Channel channel = conn.createChannel();
-
-        AMQP.Queue.BindOk bindOk = channel.queueBind(queue, exchange, routingKey);
 
         byte[] message = String.valueOf(System.currentTimeMillis()).getBytes();
         channel.basicPublish(exchange, routingKey, new AMQP.BasicProperties(), message);
 
         waitForMessageToBeConsumed();
         assertThat(tableRecord(), is(message));
+
+        List<String> messages = testKafkaCluster.readMessages("register", 1);
+        String messageString = new String(message, Charset.forName("UTF-8"));
+        assertThat(messages, is(Collections.singletonList(messageString)));
     }
 
     private byte[] tableRecord() throws SQLException {
@@ -79,6 +89,10 @@ public class FunctionalTest {
 
     private void waitForMessageToBeConsumed() throws InterruptedException {
         Thread.sleep(100);
+    }
+
+    private void cleanQueue() throws Exception {
+        channel.queuePurge(queue);
     }
 
     private void cleanDatabase() throws SQLException {

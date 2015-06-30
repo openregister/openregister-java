@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import uk.gov.mint.RabbitMQConnector;
 import uk.gov.store.DataStore;
 import uk.gov.store.LocalDataStoreApplication;
+import uk.gov.store.LogStream;
 import uk.gov.store.PostgresDataStore;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class Application {
 
     private RabbitMQConnector mqConnector;
     private final Properties configuration;
+    private LogStream logStream;
     private DataStore dataStore;
 
     public Application(String... args) throws IOException {
@@ -33,17 +35,24 @@ public class Application {
         String pgConnectionString = configuration.getProperty("postgres.connection.string");
         String storeName = configuration.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
-
         dataStore = new PostgresDataStore(pgConnectionString, storeName);
-        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore));
+
+        String kafkaString = configuration.getProperty("kafka.bootstrap.servers");
+        consoleLog("Connecting to Kafka: " + kafkaString);
+        logStream = new LogStream(kafkaString);
+
+        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
         mqConnector.connect(configuration);
 
         consoleLog("Application started...");
     }
 
     public void shutdown() throws Exception {
-        dataStore.close();
+        consoleLog("Shutting application down...");
+
         mqConnector.close();
+        dataStore.close();
+        logStream.close();
     }
 
     private InputStream configurationPropertiesStream(String fileName) throws IOException {
@@ -70,7 +79,6 @@ public class Application {
     private void consoleLog(String logMessage) {
         System.out.println(logMessage);
     }
-
 
 
     @SuppressWarnings("FieldCanBeLocal")
