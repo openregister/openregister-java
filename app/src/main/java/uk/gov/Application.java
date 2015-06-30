@@ -2,7 +2,9 @@ package uk.gov;
 
 import com.google.common.base.Strings;
 import uk.gov.mint.RabbitMQConnector;
+import uk.gov.store.DataStore;
 import uk.gov.store.LocalDataStoreApplication;
+import uk.gov.store.LogStream;
 import uk.gov.store.PostgresDataStore;
 
 import java.io.File;
@@ -12,12 +14,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeoutException;
 
 public class Application {
 
     private RabbitMQConnector mqConnector;
     private final Properties configuration;
+    private LogStream logStream;
+    private DataStore dataStore;
 
     public Application(String... args) throws IOException {
         Map<String, String> propertiesMap = createConfigurationMap(args);
@@ -32,15 +35,24 @@ public class Application {
         String pgConnectionString = configuration.getProperty("postgres.connection.string");
         String storeName = configuration.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
+        dataStore = new PostgresDataStore(pgConnectionString, storeName);
 
-        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(new PostgresDataStore(pgConnectionString, storeName)));
+        String kafkaString = configuration.getProperty("kafka.bootstrap.servers");
+        consoleLog("Connecting to Kafka: " + kafkaString);
+        logStream = new LogStream(kafkaString);
+
+        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
         mqConnector.connect(configuration);
 
         consoleLog("Application started...");
     }
 
-    public void shutdown() throws IOException, TimeoutException {
+    public void shutdown() throws Exception {
+        consoleLog("Shutting application down...");
+
         mqConnector.close();
+        dataStore.close();
+        logStream.close();
     }
 
     private InputStream configurationPropertiesStream(String fileName) throws IOException {
@@ -67,7 +79,6 @@ public class Application {
     private void consoleLog(String logMessage) {
         System.out.println(logMessage);
     }
-
 
 
     @SuppressWarnings("FieldCanBeLocal")

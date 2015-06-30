@@ -32,4 +32,9 @@ public class PostgresDataStore implements DataStore {
         }
 
     }
+
+    @Override
+    public void close() throws SQLException {
+        connection.close();
+    }
 }
