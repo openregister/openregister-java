@@ -1,6 +1,6 @@
 package uk.gov.admin;
 
-import uk.gov.admin.ToJSONLConverter.ConvertableType;
+import uk.gov.admin.ToJSONLConverter.ConvertibleType;
 
 import java.util.Properties;
 
@@ -21,7 +21,7 @@ public class Loader {
         Properties props = new Properties();
         props.putAll(loaderArgs.config);
         try (RabbitMQPublisher connector = new RabbitMQPublisher(props)) {
-            final ToJSONLConverter converter = ToJSONLConverter.converterFor(ConvertableType.valueOf(loaderArgs.type));
+            final ToJSONLConverter converter = ToJSONLConverter.converterFor(ConvertibleType.valueOf(loaderArgs.type));
             converter.convert(loaderArgs.dataReader)
                     .stream()
                     .forEach(connector::publish);

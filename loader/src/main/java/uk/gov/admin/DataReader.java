@@ -6,45 +6,45 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Do not use in multi-threaded environment without external guards
+ * Do not reuse
+ */
 public class DataReader {
     public final String datafile;
+    private BufferedReader in;
 
     public DataReader(String datafile) {
         this.datafile = datafile;
     }
 
-    public List<String> data() throws IOException {
-        try (Stream<String> data = streamData()) {
-            return data.collect(Collectors.toList());
-        }
+    public Stream<String> streamData() {
+        return reader().lines();
     }
 
-    public Stream<String> streamData() throws IOException {
-        final URI datafileURI;
+    public BufferedReader reader() {
         try {
-            datafileURI = datafileToURI();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Could not read the datafile: " + datafile, e);
+            URI uri = getUri();
+            InputStreamReader inputStreamReader = new InputStreamReader(uri.toURL().openStream());
+            in = new BufferedReader(inputStreamReader);
+
+            return in;
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException("Error creating stream to read data to load", e);
         }
-
-        final URLConnection urlConnection = datafileURI.toURL().openConnection();
-
-        final BufferedReader inr = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-        return inr.lines();
     }
 
-    public URI datafileToURI() throws URISyntaxException {
+    private URI getUri() throws URISyntaxException {
+        URI uri;
         if (datafile.startsWith("/")) { // Absolute file path
-            return new File(datafile).toURI();
+            uri = new File(datafile).toURI();
         } else if (datafile.startsWith("http://") || datafile.startsWith("https://")) { // URL
-            return new URI(datafile);
+            uri = new URI(datafile);
         } else { // File in current dir
-            return new File(datafile).toURI();
+            uri = new File(datafile).toURI();
         }
+        return uri;
     }
 }

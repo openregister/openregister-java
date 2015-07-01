@@ -6,36 +6,33 @@ import com.univocity.parsers.csv.CsvParserSettings;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ToJSONLConverter {
     private final static ToJSONLConverter identity =
-            new ToJSONLConverter(ConvertableType.jsonl) {
+            new ToJSONLConverter(ConvertibleType.jsonl) {
                 @Override
-                public List<String> convert(DataReader reader) throws URISyntaxException, IOException {
+                public List<String> convert(DataReader reader) {
                     return reader.streamData().collect(Collectors.toList());
                 }
             };
-    private final ConvertableType convertableType;
+    private final ConvertibleType convertibleType;
 
-    private ToJSONLConverter(ConvertableType theConvertableType) {
-        this.convertableType = theConvertableType;
+    private ToJSONLConverter(ConvertibleType theConvertibleType) {
+        this.convertibleType = theConvertibleType;
     }
 
-    public static ToJSONLConverter converterFor(ConvertableType convertableType) {
-        if (convertableType == ConvertableType.jsonl) return identity;
+    public static ToJSONLConverter converterFor(ConvertibleType convertibleType) {
+        if (convertibleType == ConvertibleType.jsonl) return identity;
 
-        return new ToJSONLConverter(convertableType);
+        return new ToJSONLConverter(convertibleType);
     }
 
-    public List<String> convert(DataReader reader) throws URISyntaxException, IOException {
+    public List<String> convert(DataReader reader) {
         RowListProcessor rowProcessor;
-        if (convertableType == ConvertableType.tsv)
+        if (convertibleType == ConvertibleType.tsv)
             rowProcessor = getTsvParser(reader);
         else
             rowProcessor = getCsvParser(reader);
@@ -46,37 +43,38 @@ public class ToJSONLConverter {
         return convertRecordsToJsonl(headers, rows);
     }
 
-    private RowListProcessor getCsvParser(DataReader reader) throws IOException, URISyntaxException {
+    private RowListProcessor getCsvParser(DataReader reader) {
         CsvParserSettings parserSettings = new CsvParserSettings();
         parserSettings.setLineSeparatorDetectionEnabled(true);
         RowListProcessor rowProcessor = new RowListProcessor();
         parserSettings.setRowProcessor(rowProcessor);
         parserSettings.setHeaderExtractionEnabled(true);
         CsvParser parser = new CsvParser(parserSettings);
-        parser.parse(new InputStreamReader(reader.datafileToURI().toURL().openStream()));
+        parser.parse(reader.reader());
 
         return rowProcessor;
     }
 
-    private RowListProcessor getTsvParser(DataReader reader) throws IOException, URISyntaxException {
+    private RowListProcessor getTsvParser(DataReader reader) {
         TsvParserSettings parserSettings = new TsvParserSettings();
         parserSettings.setLineSeparatorDetectionEnabled(true);
         RowListProcessor rowProcessor = new RowListProcessor();
         parserSettings.setRowProcessor(rowProcessor);
         parserSettings.setHeaderExtractionEnabled(true);
         TsvParser parser = new TsvParser(parserSettings);
-        parser.parse(new InputStreamReader(reader.datafileToURI().toURL().openStream()));
+        parser.parse(reader.reader());
 
         return rowProcessor;
     }
 
+    // Build string representation of json - faster than using Json parser.
     private List<String> convertRecordsToJsonl(String[] headers, List<String[]> rows) {
         List<String> jsonlDocs = new ArrayList<>();
         for (String[] fields : rows) {
             String jsonl = "{";
             for (int i = 0; i < headers.length; i++) {
-                if (i > 0) jsonl += ",";
-                String value = fields[i] == null ? "null" : "\"" + fields[i] + "\"";
+                if (i > 0) jsonl += ", ";
+                String value = fields[i] == null ? "\"\"" : "\"" + fields[i] + "\"";
                 jsonl += "\"" + headers[i] + "\": " + value;
             }
             jsonl += "}";
@@ -86,14 +84,14 @@ public class ToJSONLConverter {
         return jsonlDocs;
     }
 
-    public enum ConvertableType {
+    public enum ConvertibleType {
         jsonl(""),
         tsv("\t"),
         csv(",");
 
         private final String separator;
 
-        ConvertableType(String theSeparator) {
+        ConvertibleType(String theSeparator) {
             separator = theSeparator;
         }
     }
