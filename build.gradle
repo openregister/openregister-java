@@ -1,0 +1,51 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply from: 'external-dependencies.gradle'
+apply from: 'idea-config.gradle'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+group 'presentation'
+
+repositories {
+    mavenCentral()
+}
+
+//noinspection GroovyAssignabilityCheck
+configurations {
+    compile.exclude module: 'slf4j-log4j12'
+}
+dependencies {
+    compile dropwizard, kafka
+
+    testCompile dropwizardTest, junit, kafkaTest, zkTest
+}
+
+jar.baseName = 'presentation'
+
+jar {
+    doFirst {
+        from {
+            configurations.compile.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        }
+
+        manifest {
+            attributes(
+                    "Main-Class": "uk.gov.register.presentation.PresentationApplication",
+                    "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
+            )
+        }
+    }
+}
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+task stage(dependsOn: ['assemble'])

@@ -1,0 +1,2 @@
+zookeeperServer: localhost:2181
+topicName: register
