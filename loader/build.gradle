@@ -2,7 +2,7 @@ group 'mint'
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
-    compile rabbitMQ, jOptSimple, javaslang
+    compile rabbitMQ, jOptSimple, javaslang, univocity
 
     testCompile junit, mockito
 }
@@ -30,17 +30,16 @@ jar {
 task bulkLoad(type: JavaExec)  {
     def properties = project.getProperties()
     def datafile = properties.get("datafile")
-    def schemafile = properties.get("schemafile")
     def configfile = properties.get("configfile")
-    def overwrite = properties.containsKey("overwrite")
+    def type = properties.get("type") == null ? "jsonl" : properties.get("type")
 
     main = 'uk.gov.admin.Loader'
     classpath = sourceSets.main.runtimeClasspath
-    args = ["--schemafile=$schemafile", "--datafile=$datafile", "--configfile=$configfile", "${overwrite ? '--overwrite' : ''}"]
+    args = ["--datafile=$datafile", "--configfile=$configfile", "--type=$type"]
 
     doFirst {
         if (datafile == null || configfile == null) {
-            throw new AssertionError("Missing required parameters --datafile and --configfile.\n\nUsage: gradle bulkLoad --configfile=<config.properties> --datafile=<loadfile.json>")
+            throw new AssertionError("Missing required parameters -Pdatafile and -Pconfigfile.\n\nUsage: gradle bulkLoad -Pconfigfile=<config.properties> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]")
         }
     }
 }
