@@ -17,3 +17,13 @@ A repository for mint project
 - Checkout project 
 - Use command `./gradlew cleanIdea idea` to generate the idea project files
 - Build project using command `./gradlew clean build` 
+
+# Bulk load data from CLI
+
+There are 2 options:
+
+1. Run via gradle:
+-     gradle bulkLoad -Pconfigfile=<config.properties> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]
+2. Run using the built jar
+-     java -jar <path_to_jar> Loader --configfile=<config.properties> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>
+

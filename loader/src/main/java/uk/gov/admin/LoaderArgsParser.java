@@ -8,11 +8,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class LoaderArgsParser {
     private static final String usageMessage =
-            "Usage: java Loader [--overwrite] --configfile=<config.properties> [--schemafile=<dataschema.json>] --datafile=<loadfile.json>";
+            "Usage: java Loader --configfile=<config.properties> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>";
     private DataReader reader;
 
     LoaderArgs parseArgs(String[] args) {
@@ -29,10 +28,9 @@ public class LoaderArgsParser {
 
     private OptionParser optionParser() {
         OptionParser parser = new OptionParser();
-        parser.accepts("schemafile", "File containing the schema that describes the data format.").withRequiredArg();
         parser.accepts("datafile", "File containing data to load. Currently only JSON is accepted.").withRequiredArg().required();
         parser.accepts("configfile", "File containing configuration in regular java.util.Properties format.").withRequiredArg().required();
-        parser.accepts("overwrite", "Overwrite existing data.").withOptionalArg();
+        parser.accepts("type", "Type of data file: JSONL, tsv or csv. Defaults to JSONL").withRequiredArg();
 
         return parser;
     }
@@ -40,7 +38,7 @@ public class LoaderArgsParser {
     private LoaderArgs optionsToLoaderArgs(OptionSet options) {
         final String datafile = (String) options.valueOf("datafile");
         final String configfile = (String) options.valueOf("configfile");
-        final Boolean overwrite = options.has("overwrite");
+        final String type = options.valueOf("type") == null ? "jsonl" : (String) options.valueOf("type");
 
         reader = new DataReader(datafile);
 
@@ -52,21 +50,21 @@ public class LoaderArgsParser {
             config = configProps.entrySet().stream()
                     .collect(Collectors.toMap(e -> (String) e.getKey(), Map.Entry::getValue));
 
-            return new LoaderArgs(reader.streamData(), config, overwrite);
+            return new LoaderArgs(reader, config, type);
         } catch (IOException e) {
             throw new RuntimeException("Error occurred loading configfile: " + configfile, e);
         }
     }
 
     public class LoaderArgs {
-        public final Stream<String> data;
+        public final DataReader dataReader;
         public final Map<String, Object> config;
-        public final boolean overwrite;
+        public final String type;
 
-        public LoaderArgs(Stream<String> data, Map<String, Object> config, boolean overwrite) {
-            this.data = data;
+        public LoaderArgs(DataReader dataReader, Map<String, Object> config, String type) {
+            this.dataReader = dataReader;
             this.config = config;
-            this.overwrite = overwrite;
+            this.type = type;
         }
     }
 }
