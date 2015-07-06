@@ -26,3 +26,20 @@ rabbitmq:
   environment:
     RABBITMQ_NODENAME: localhost
     HOSTNAME: localhost
+
+zookeeper:
+  image: wurstmeister/zookeeper
+  ports:
+    - "2181"
+
+kafka:
+  restart: always
+  image: wurstmeister/kafka
+  ports:
+    - "9092"
+  links:
+    - zookeeper
+  environment:
+    KAFKA_ZOOKEEPER_CONNECT: zookeeper
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
