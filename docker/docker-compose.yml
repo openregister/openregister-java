@@ -1,14 +1,11 @@
 mint:
   restart: always
   build: .
-  expose:
-    - "5672"
-    - "9092"
-    - "2181"
-    - "2888:3888"
   links:
     - rabbitmq
     - postgres
+    - zookeeper
+    - kafka
 postgres:
   restart: always
   image: postgres:latest
@@ -22,7 +19,31 @@ rabbitmq:
   restart: always
   image: rabbitmq:3-management
   ports:
-    - "8080:15672"
+    - "15672:15672"
+    - "5672:5672"
   environment:
     RABBITMQ_NODENAME: localhost
     HOSTNAME: localhost
+
+zookeeper:
+  image: wurstmeister/zookeeper
+  ports:
+    - "2181:2181"
+    - "2888:2888"
+    - "3888:3888"
+
+kafka:
+  restart: always
+  image: wurstmeister/kafka
+  ports:
+    - "9092:9092"
+  links:
+    - zookeeper
+  environment:
+    BROKER_ID: 1
+    PORT: 9092   
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103 
+    KAFKA_ZOOKEEPER_CONNECT: zookeeper
+    KAFKA_CREATE_TOPICS: "register:1:1"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock

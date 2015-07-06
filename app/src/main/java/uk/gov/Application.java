@@ -31,14 +31,14 @@ public class Application {
         configuration = properties;
     }
 
-    public void startup() {
+    public void startup() {        
         String pgConnectionString = configuration.getProperty("postgres.connection.string");
         String storeName = configuration.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
         dataStore = new PostgresDataStore(resolveConnectionString(pgConnectionString), storeName);
 
-        String kafkaString = configuration.getProperty("kafka.bootstrap.servers");
-        consoleLog("Connecting to Kafka: " + resolveKafkaConnectionString(kafkaString));
+        String kafkaString = resolveKafkaConnectionString(configuration.getProperty("kafka.bootstrap.servers"));
+        consoleLog("Connecting to Kafka: " + kafkaString);
         logStream = new LogStream(kafkaString);
 
         mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
@@ -49,14 +49,15 @@ public class Application {
 
     private String resolveKafkaConnectionString(final String kafkaString) {
         final Map<String, String> env = System.getenv();
-        if(!env.containsKey("POSTGRES_PORT_5432_TCP_ADDR")) {
-            System.out.println("POSTGRES_PORT_5432_TCP_ADDR _NOT_ defined - using default kafka: " + kafkaString);
+        if(!env.containsKey("KAFKA_1_PORT_9092_TCP_ADDR")) {
+            System.out.println("KAFKA_1_PORT_9092_TCP_ADDR _NOT_ defined - using default: " + kafkaString);
             return kafkaString;
         }
 
-        final String kafkaConnectionString = env.get("POSTGRES_PORT_5432_TCP_ADDR") + ":9092";
+        final String kafkaConnectionString = env.get("KAFKA_1_PORT_9092_TCP_ADDR") + ":"
+            + env.get("KAFKA_1_PORT_9092_TCP_PORT");
 
-        System.out.println("POSTGRES_PORT_5432_TCP_ADDR defined - using kafka: " + kafkaConnectionString);
+        System.out.println("KAFKA_1_PORT_9092_TCP_ADDR defined - using: " + kafkaConnectionString);
 
         return kafkaConnectionString;
     }
@@ -112,11 +113,25 @@ public class Application {
         System.out.println(logMessage);
     }
 
+    private static void dumpEnv() {
+        final Map<String, String> env = System.getenv();
+        for(final String key : env.keySet()) {
+            final String val = env.get(key);
+
+            System.out.println(key + ": " + val);
+        }
+    }
+
 
     @SuppressWarnings("FieldCanBeLocal")
     private static Application notToBeGCed;
 
     public static void main(String[] args) throws InterruptedException, IOException {
+        // Wait for all the containers to start
+        Thread.sleep(5000);
+
+        dumpEnv();
+
         notToBeGCed = new Application(args);
         notToBeGCed.startup();
 

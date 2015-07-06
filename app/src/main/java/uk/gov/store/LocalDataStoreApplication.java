@@ -15,6 +15,6 @@ public class LocalDataStoreApplication implements DataStoreApplication {
     public void add(byte[] message) {
         // TODO: this could be bad if postgres succeeds and kafka fails. we need to think about this at some point.
         dataStore.add(message);
-//        logStream.send(message);
+        logStream.send(message);
     }
 }
