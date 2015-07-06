@@ -1,0 +1,28 @@
+mint:
+  restart: always
+  build: .
+  expose:
+    - "5672"
+    - "9092"
+    - "2181"
+    - "2888:3888"
+  links:
+    - rabbitmq
+    - postgres
+postgres:
+  restart: always
+  image: postgres:latest
+  ports:
+    - "5432:5432"
+  environment:
+    POSTGRES_USER: mint
+    POSTGRES_PASSWORD: mint
+
+rabbitmq:
+  restart: always
+  image: rabbitmq:3-management
+  ports:
+    - "8080:15672"
+  environment:
+    RABBITMQ_NODENAME: localhost
+    HOSTNAME: localhost

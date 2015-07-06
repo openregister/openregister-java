@@ -35,16 +35,48 @@ public class Application {
         String pgConnectionString = configuration.getProperty("postgres.connection.string");
         String storeName = configuration.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
-        dataStore = new PostgresDataStore(pgConnectionString, storeName);
+        dataStore = new PostgresDataStore(resolveConnectionString(pgConnectionString), storeName);
 
         String kafkaString = configuration.getProperty("kafka.bootstrap.servers");
-        consoleLog("Connecting to Kafka: " + kafkaString);
+        consoleLog("Connecting to Kafka: " + resolveKafkaConnectionString(kafkaString));
         logStream = new LogStream(kafkaString);
 
         mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
         mqConnector.connect(configuration);
 
         consoleLog("Application started...");
+}
+
+    private String resolveKafkaConnectionString(final String kafkaString) {
+        final Map<String, String> env = System.getenv();
+        if(!env.containsKey("POSTGRES_PORT_5432_TCP_ADDR")) {
+            System.out.println("POSTGRES_PORT_5432_TCP_ADDR _NOT_ defined - using default kafka: " + kafkaString);
+            return kafkaString;
+        }
+
+        final String kafkaConnectionString = env.get("POSTGRES_PORT_5432_TCP_ADDR") + ":9092";
+
+        System.out.println("POSTGRES_PORT_5432_TCP_ADDR defined - using kafka: " + kafkaConnectionString);
+
+        return kafkaConnectionString;
+    }
+
+    private String resolveConnectionString(String pgConnectionString) {
+        final Map<String, String> env = System.getenv();
+        if(!env.containsKey("POSTGRES_PORT_5432_TCP_ADDR")) {
+            System.out.println("POSTGRES_PORT_5432_TCP_ADDR _NOT_ defined - using default: " + pgConnectionString);
+            return pgConnectionString;
+        }
+
+        final String dockerConnectionString = "jdbc:postgresql://"
+                + env.get("POSTGRES_PORT_5432_TCP_ADDR") + ":"
+                + env.get("POSTGRES_PORT_5432_TCP_PORT") + "/"
+                + "postgres"
+                + "?user=" + env.get("POSTGRES_ENV_POSTGRES_USER")
+                + "&password=" + env.get("POSTGRES_ENV_POSTGRES_PASSWORD");
+        System.out.println("POSTGRES_PORT_5432_TCP_ADDR defined - using: " + dockerConnectionString);
+
+        return dockerConnectionString;
     }
 
     public void shutdown() throws Exception {
