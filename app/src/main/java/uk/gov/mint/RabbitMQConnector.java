@@ -5,6 +5,7 @@ import uk.gov.integration.DataStoreApplication;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
@@ -24,7 +25,7 @@ public class RabbitMQConnector {
             String routingKey = configuration.getProperty("rabbitmq.exchange.routing.key");
 
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setUri(connectionString);
+            factory.setUri(resolveConnectionString(connectionString));
             Connection conn = factory.newConnection();
             channel = conn.createChannel();
 
@@ -37,6 +38,26 @@ public class RabbitMQConnector {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    private String resolveConnectionString(final String connectionString) {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        final Map<String, String> env = System.getenv();
+        if(!env.containsKey("RABBITMQ_PORT_5672_TCP_ADDR")) {
+            System.out.println("RABBITMQ_PORT_5672_TCP_ADDR _NOT_ defined - using default: " + connectionString);
+            return connectionString;
+        }
+
+        final String dockerConnectionString = "amqp://"
+                + env.get("RABBITMQ_PORT_5672_TCP_ADDR") + ":"
+                + env.get("RABBITMQ_PORT_5672_TCP_PORT");
+        System.out.println("RABBITMQ_PORT_5672_TCP_ADDR defined - using: " + dockerConnectionString);
+
+        return dockerConnectionString;
     }
 
     public void close() throws IOException, TimeoutException {
