@@ -49,6 +49,7 @@ class MessageHandler extends DefaultConsumer {
         // Method from http://stackoverflow.com/questions/18952571/jackson-jsonnode-to-string-with-sorted-keys
         Object obj = objectMapper.treeToValue(jsonNode, Object.class);
         // for some reason, writeValueAsString(obj).getBytes() doesn't re-escape unicode, but writeValueAsBytes does
+        // our canonical form requires raw unescaped unicode, so we need this version
         return objectMapper.writeValueAsString(obj).getBytes();
     }
 }
