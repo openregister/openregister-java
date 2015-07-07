@@ -67,14 +67,14 @@ public class FunctionalTest {
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
 
-        byte[] message = String.valueOf(System.currentTimeMillis()).getBytes();
+        String messageString = String.format("{\"time\":%s}", String.valueOf(System.currentTimeMillis()));
+        byte[] message = messageString.getBytes();
         connection.createChannel().basicPublish(exchange, routingKey, new AMQP.BasicProperties(), message);
 
         waitForMessageToBeConsumed();
         assertThat(tableRecord(), is(message));
 
         List<String> messages = testKafkaCluster.readMessages("register", 1);
-        String messageString = new String(message, Charset.forName("UTF-8"));
         assertThat(messages, is(Collections.singletonList(messageString)));
     }
 
@@ -87,7 +87,7 @@ public class FunctionalTest {
     }
 
     private void waitForMessageToBeConsumed() throws InterruptedException {
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
     private void cleanQueue() throws Exception {
