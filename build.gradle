@@ -16,9 +16,10 @@ repositories {
 //noinspection GroovyAssignabilityCheck
 configurations {
     compile.exclude module: 'slf4j-log4j12'
+    compile.exclude module: 'slf4j-simple' // dropwizard uses logback, not slf4j-simple
 }
 dependencies {
-    compile dropwizard, kafka
+    compile dropwizard, kafka, postgresClient
 
     testCompile dropwizardTest, junit, kafkaTest, zkTest
 }

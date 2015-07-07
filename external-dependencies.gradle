@@ -1,6 +1,7 @@
 ext{
-    dropwizard = 'io.dropwizard:dropwizard-core:0.8.1'
+    dropwizard = ['io.dropwizard:dropwizard-core:0.8.1','io.dropwizard:dropwizard-jdbi:0.8.1']
     kafka = 'org.apache.kafka:kafka_2.10:0.8.2.1'
+    postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
 
     //test-dependencies
     dropwizardTest = ['io.dropwizard:dropwizard-client:0.8.1','io.dropwizard:dropwizard-testing:0.8.1']

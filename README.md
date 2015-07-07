@@ -7,9 +7,10 @@ present a web interface on top.
 
 - Java 1.8+
 - Kafka 0.8.2+ to run standalone
+- Postgres DB 9.4
 
 # Build and Run project
 
 - Checkout project 
-- Use command `./gradlew cleanIdea idea` to generate the idea project files
+- Run the `./go` script to set everything up
 - Build project using command `./gradlew clean build` 
