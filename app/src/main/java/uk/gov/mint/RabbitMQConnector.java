@@ -32,7 +32,7 @@ public class RabbitMQConnector {
             AMQP.Queue.DeclareOk declareQueue = channel.queueDeclare(queue, true, false, false, Collections.<String, Object>emptyMap());
             AMQP.Queue.BindOk bindOk = channel.queueBind(queue, exchange, routingKey);
 
-            Consumer consumer = new MessageHandler(channel, dataStoreApplication);
+            Consumer consumer = new MessageHandler(channel, dataStoreApplication, new CanonicalJsonMapper());
             channel.basicConsume(queue, consumer);
         } catch (Throwable t) {
             throw new RuntimeException(t);
