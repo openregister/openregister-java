@@ -12,7 +12,6 @@ import uk.gov.register.presentation.PresentationConfiguration;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,13 +30,13 @@ public class FunctionalTest {
 
     @Test
     public void shouldConsumeMessageFromKafkaAndShowAsLatest() throws Exception {
-        String message = "foo";
+        String message = "{\"foo\":\"bar\"}";
         testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
         waitForAppToConsumeMessage();
 
         Response response = client.target(String.format("http://localhost:%d/latest.json", RULE.getLocalPort())).request().get();
 
-        assertThat(response.readEntity(String.class), equalTo("[\"foo\"]"));
+        assertThat(response.readEntity(String.class), equalTo("[{\"foo\":\"bar\"}]"));
 
     }
 

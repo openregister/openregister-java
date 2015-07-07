@@ -1,1 +1,16 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 9000
+  adminConnectors:
+    - type: http
+      port: 9001
+
+database:
+  driverClass: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/ft_presentation
+  user: ft_presentation
+  properties:
+    charSet: UTF-8
+
 zookeeperServer: PLACEHOLDER

@@ -1,1 +1,8 @@
+database:
+  driverClass: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/presentation
+  user: presentation
+  properties:
+    charSet: UTF-8
+
 zookeeperServer: localhost:2181
