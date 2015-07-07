@@ -13,8 +13,6 @@ import com.rabbitmq.client.Envelope;
 import uk.gov.integration.DataStoreApplication;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 
 class MessageHandler extends DefaultConsumer {
 
@@ -50,7 +48,6 @@ class MessageHandler extends DefaultConsumer {
     private byte[] canonicalize(JsonNode jsonNode) throws JsonProcessingException {
         // Method from http://stackoverflow.com/questions/18952571/jackson-jsonnode-to-string-with-sorted-keys
         Object obj = objectMapper.treeToValue(jsonNode, Object.class);
-        Writer w = new StringWriter();
         // for some reason, writeValueAsString(obj).getBytes() doesn't re-escape unicode, but writeValueAsBytes does
         return objectMapper.writeValueAsString(obj).getBytes();
     }
