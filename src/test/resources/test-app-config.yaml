@@ -8,7 +8,7 @@ server:
 
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/ft_presentation
+  url: PLACEHOLDER
   user: ft_presentation
   properties:
     charSet: UTF-8

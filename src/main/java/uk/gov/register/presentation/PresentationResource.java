@@ -11,6 +11,7 @@ import java.util.List;
 @Path("/latest")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class PresentationResource {
+    public static final int ENTRY_LIMIT = 100;
     private final RecentEntryIndexQueryDAO queryDAO;
 
     public PresentationResource(RecentEntryIndexQueryDAO queryDAO) {
@@ -19,6 +20,6 @@ public class PresentationResource {
 
     @GET
     public List<JsonNode> get() {
-        return queryDAO.getLatestEntries(1);
+        return queryDAO.getLatestEntries(ENTRY_LIMIT);
     }
 }
