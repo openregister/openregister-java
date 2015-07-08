@@ -10,11 +10,11 @@ import java.util.List;
 
 @Path("/latest")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class PresentationResource {
+public class LatestResource {
     public static final int ENTRY_LIMIT = 100;
     private final RecentEntryIndexQueryDAO queryDAO;
 
-    public PresentationResource(RecentEntryIndexQueryDAO queryDAO) {
+    public LatestResource(RecentEntryIndexQueryDAO queryDAO) {
         this.queryDAO = queryDAO;
     }
 

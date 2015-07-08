@@ -55,7 +55,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "xml", MediaType.APPLICATION_XML_TYPE));
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new PresentationResource(queryDAO));
+        jersey.register(new LatestResource(queryDAO));
         jersey.register(new HomePageResource());
         setCorsPreflight(environment);
     }
