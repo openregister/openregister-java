@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.dao;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;

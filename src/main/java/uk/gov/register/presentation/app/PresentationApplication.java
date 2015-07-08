@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.app;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -15,6 +15,11 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.presentation.config.PresentationConfiguration;
+import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
+import uk.gov.register.presentation.resource.HomePageResource;
+import uk.gov.register.presentation.resource.LatestResource;
 
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;

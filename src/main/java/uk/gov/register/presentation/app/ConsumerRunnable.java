@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.app;
 
 import com.google.common.collect.ImmutableMap;
 import kafka.consumer.Consumer;
@@ -8,6 +8,8 @@ import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 import kafka.serializer.StringDecoder;
 import kafka.utils.VerifiableProperties;
+import uk.gov.register.presentation.config.ZookeeperConfiguration;
+import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 
 import java.util.List;
 import java.util.Map;

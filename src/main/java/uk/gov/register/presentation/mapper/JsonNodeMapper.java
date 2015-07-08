@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

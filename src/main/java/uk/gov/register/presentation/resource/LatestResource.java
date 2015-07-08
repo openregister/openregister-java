@@ -1,6 +1,7 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.resource;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

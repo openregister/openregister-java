@@ -9,8 +9,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import uk.gov.register.presentation.PresentationApplication;
-import uk.gov.register.presentation.PresentationConfiguration;
+import uk.gov.register.presentation.app.PresentationApplication;
+import uk.gov.register.presentation.config.PresentationConfiguration;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
