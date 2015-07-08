@@ -1,11 +1,29 @@
-ext{
-    dropwizard = ['io.dropwizard:dropwizard-core:0.8.1','io.dropwizard:dropwizard-jdbi:0.8.1']
+ext {
+    dropwizard_version = '0.8.2'
+
+    dropwizard = [
+            "io.dropwizard:dropwizard-core:${dropwizard_version}",
+            "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
+            "io.dropwizard:dropwizard-views-mustache:${dropwizard_version}",
+            "io.dropwizard:dropwizard-assets:${dropwizard_version}"
+    ]
+
     kafka = 'org.apache.kafka:kafka_2.10:0.8.2.1'
+
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
 
     //test-dependencies
-    dropwizardTest = ['io.dropwizard:dropwizard-client:0.8.1','io.dropwizard:dropwizard-testing:0.8.1']
+    dropwizardTest = [
+            "io.dropwizard:dropwizard-client:${dropwizard_version}",
+            "io.dropwizard:dropwizard-testing:${dropwizard_version}"
+    ]
+
     junit = 'junit:junit:4.12'
-    kafkaTest = ['org.apache.kafka:kafka-clients:0.8.2.1','org.apache.kafka:kafka_2.10:0.8.2.1:test']
+
+    kafkaTest = [
+            'org.apache.kafka:kafka-clients:0.8.2.1',
+            'org.apache.kafka:kafka_2.10:0.8.2.1:test'
+    ]
+
     zkTest = 'org.apache.curator:curator-test:2.8.0'
 }
