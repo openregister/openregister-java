@@ -1,11 +1,15 @@
 package uk.gov.register.presentation;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
+import io.dropwizard.views.mustache.MustacheViewRenderer;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
@@ -30,6 +34,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
 
     @Override
     public void initialize(Bootstrap<PresentationConfiguration> bootstrap) {
+        bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new MustacheViewRenderer())));
+        bootstrap.addBundle(new AssetsBundle("/assets"));
     }
 
     @Override
