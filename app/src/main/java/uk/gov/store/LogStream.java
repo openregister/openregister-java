@@ -1,7 +1,6 @@
 package uk.gov.store;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -16,14 +15,10 @@ public class LogStream {
     private final HighWaterMarkDAO highWaterMarkDAO;
     private final EntriesQueryDAO entriesQueryDAO;
 
-    public LogStream(String kafkaBootstrapServers, HighWaterMarkDAO highWaterMarkDAO, EntriesQueryDAO entriesQueryDAO) {
+    public LogStream(HighWaterMarkDAO highWaterMarkDAO, EntriesQueryDAO entriesQueryDAO, KafkaProducer<String, byte[]> kafkaProducer) {
         this.highWaterMarkDAO = highWaterMarkDAO;
         this.entriesQueryDAO = entriesQueryDAO;
-        this.producer = new KafkaProducer<>(ImmutableMap.of(
-                "bootstrap.servers", kafkaBootstrapServers,
-                "key.serializer", "org.apache.kafka.common.serialization.StringSerializer",
-                "value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer"
-        ));
+        this.producer = kafkaProducer;
 
         highWaterMarkDAO.ensureTableExists();
     }

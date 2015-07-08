@@ -1,6 +1,8 @@
 package uk.gov;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.RabbitMQConnector;
@@ -47,12 +49,20 @@ public class Application {
 
         String kafkaString = configuration.getProperty("kafka.bootstrap.servers");
         consoleLog("Connecting to Kafka: " + kafkaString);
-        logStream = new LogStream(kafkaString, highWaterMarkDAO, entriesQueryDAO);
+        logStream = new LogStream(highWaterMarkDAO, entriesQueryDAO, createKafkaProducer(kafkaString));
 
         mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
         mqConnector.connect(configuration);
 
         consoleLog("Application started...");
+    }
+
+    private KafkaProducer<String, byte[]> createKafkaProducer(String kafkaString) {
+        return new KafkaProducer<>(ImmutableMap.of(
+                "bootstrap.servers", kafkaString,
+                "key.serializer", "org.apache.kafka.common.serialization.StringSerializer",
+                "value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer"
+        ));
     }
 
     private DataSource createDataSource(String databaseName) {
