@@ -10,7 +10,6 @@ import uk.gov.Application;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -102,6 +101,7 @@ public class FunctionalTest {
     private void cleanDatabase() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
             statement.execute("DROP TABLE IF EXISTS FUNCTIONAL_TESTS_STORE");
+            statement.execute("DROP TABLE IF EXISTS STREAMED_ENTRIES");
         }
     }
 }

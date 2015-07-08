@@ -39,7 +39,7 @@ public class Application {
 
         String kafkaString = configuration.getProperty("kafka.bootstrap.servers");
         consoleLog("Connecting to Kafka: " + kafkaString);
-        logStream = new LogStream(kafkaString);
+        logStream = new LogStream(pgConnectionString, storeName, kafkaString);
 
         mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
         mqConnector.connect(configuration);
