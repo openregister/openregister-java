@@ -7,6 +7,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.Application;
+import uk.gov.store.EntriesQueryDAO;
+import uk.gov.store.HighWaterMarkDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +81,7 @@ public class FunctionalTest {
 
     private byte[] tableRecord() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("SELECT ENTRY FROM FUNCTIONAL_TESTS_STORE");
+            statement.execute("SELECT ENTRY FROM " + EntriesQueryDAO.tableName);
             ResultSet resultSet = statement.getResultSet();
             return resultSet.next() ? resultSet.getBytes(1) : null;
         }
@@ -100,8 +102,8 @@ public class FunctionalTest {
 
     private void cleanDatabase() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("DROP TABLE IF EXISTS FUNCTIONAL_TESTS_STORE");
-            statement.execute("DROP TABLE IF EXISTS STREAMED_ENTRIES");
+            statement.execute("DROP TABLE IF EXISTS " + EntriesQueryDAO.tableName);
+            statement.execute("DROP TABLE IF EXISTS " + HighWaterMarkDAO.tableName);
         }
     }
 }
