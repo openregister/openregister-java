@@ -6,6 +6,7 @@ import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -53,7 +54,9 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "json", MediaType.APPLICATION_JSON_TYPE,
                 "xml", MediaType.APPLICATION_XML_TYPE));
 
-        environment.jersey().register(new PresentationResource(queryDAO));
+        JerseyEnvironment jersey = environment.jersey();
+        jersey.register(new PresentationResource(queryDAO));
+        jersey.register(new HomePageResource());
         setCorsPreflight(environment);
     }
 
