@@ -1,6 +1,8 @@
 package uk.gov;
 
 import com.google.common.base.Strings;
+import uk.gov.mint.LoadHandler;
+import uk.gov.mint.MintService;
 import uk.gov.mint.RabbitMQConnector;
 import uk.gov.store.DataStore;
 import uk.gov.store.LocalDataStoreApplication;
@@ -17,10 +19,13 @@ import java.util.Properties;
 
 public class Application {
 
-    private RabbitMQConnector mqConnector;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static Application notToBeGCed;
     private final Properties configuration;
+    private RabbitMQConnector mqConnector;
     private LogStream logStream;
     private DataStore dataStore;
+    private MintService mintService;
 
     public Application(String... args) throws IOException {
         Map<String, String> propertiesMap = createConfigurationMap(args);
@@ -29,6 +34,13 @@ public class Application {
         properties.load(configurationPropertiesStream(propertiesMap.get("config.file")));
         properties.putAll(propertiesMap);
         configuration = properties;
+    }
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+        notToBeGCed = new Application(args);
+        notToBeGCed.startup();
+
+        Thread.currentThread().join();
     }
 
     public void startup() {
@@ -43,6 +55,10 @@ public class Application {
 
         mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
         mqConnector.connect(configuration);
+
+        LoadHandler loadHandler = new LoadHandler(dataStore, logStream);
+        mintService = new MintService(loadHandler);
+        mintService.init();
 
         consoleLog("Application started...");
     }
@@ -78,17 +94,6 @@ public class Application {
 
     private void consoleLog(String logMessage) {
         System.out.println(logMessage);
-    }
-
-
-    @SuppressWarnings("FieldCanBeLocal")
-    private static Application notToBeGCed;
-
-    public static void main(String[] args) throws InterruptedException, IOException {
-        notToBeGCed = new Application(args);
-        notToBeGCed.startup();
-
-        Thread.currentThread().join();
     }
 }
 
