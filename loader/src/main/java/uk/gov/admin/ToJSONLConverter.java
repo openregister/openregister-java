@@ -6,16 +6,17 @@ import com.univocity.parsers.csv.CsvParserSettings;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ToJSONLConverter {
     private final static ToJSONLConverter identity =
             new ToJSONLConverter(ConvertibleType.jsonl) {
                 @Override
-                public List<String> convert(DataReader reader) {
-                    return reader.streamData().collect(Collectors.toList());
+                public javaslang.collection.List<String> convert(DataReader reader) {
+                    javaslang.collection.List<String> jsonl = javaslang.collection.List.nil();
+                    reader.reader().lines().forEach(jsonl::append);
+
+                    return jsonl;
                 }
             };
     private final ConvertibleType convertibleType;
@@ -30,7 +31,7 @@ public class ToJSONLConverter {
         return new ToJSONLConverter(convertibleType);
     }
 
-    public List<String> convert(DataReader reader) {
+    public javaslang.collection.List<String> convert(DataReader reader) {
         RowListProcessor rowProcessor;
         if (convertibleType == ConvertibleType.tsv)
             rowProcessor = getTsvParser(reader);
@@ -68,8 +69,8 @@ public class ToJSONLConverter {
     }
 
     // Build string representation of json - faster than using Json parser.
-    private List<String> convertRecordsToJsonl(String[] headers, List<String[]> rows) {
-        List<String> jsonlDocs = new ArrayList<>();
+    private javaslang.collection.List<String> convertRecordsToJsonl(String[] headers, List<String[]> rows) {
+        javaslang.collection.List<String> jsonlDocs = javaslang.collection.List.nil();
         for (String[] fields : rows) {
             String jsonl = "{";
             for (int i = 0; i < headers.length; i++) {
@@ -78,7 +79,7 @@ public class ToJSONLConverter {
                 jsonl += "\"" + headers[i] + "\": " + value;
             }
             jsonl += "}";
-            jsonlDocs.add(jsonl);
+            jsonlDocs = jsonlDocs.append(jsonl);
         }
 
         return jsonlDocs;
