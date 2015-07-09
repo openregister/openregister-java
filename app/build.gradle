@@ -2,7 +2,7 @@ group 'mint'
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
-    compile javaslang, jOptSimple, json, kafka, rabbitMQ, postgresClient
+    compile javaslang, jdbi, jOptSimple, json, kafka, rabbitMQ, postgresClient
 
     testCompile junit, kafkaTest, mockito, zkTest
 }
