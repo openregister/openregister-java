@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class PostgresDataStoreTest {
 
     private String testPostgresConnectionUri = "jdbc:postgresql://localhost:5432/test_mint";
-    private String tableName = "TEST_STORE";
+    private String tableName = EntriesQueryDAO.tableName;
     private Connection connection;
 
     @Before
@@ -28,7 +28,7 @@ public class PostgresDataStoreTest {
 
     @Test
     public void add_savesTheMessageToTheStoreWithSequenceNumber() throws SQLException {
-        PostgresDataStore postgresDataStore = new PostgresDataStore(testPostgresConnectionUri, "TEST");
+        PostgresDataStore postgresDataStore = new PostgresDataStore(testPostgresConnectionUri);
         assertFalse(records().next());
 
         byte[] message1 = {1, 2, 3};
