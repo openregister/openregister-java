@@ -1,12 +1,19 @@
 package uk.gov;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.postgresql.ds.PGSimpleDataSource;
+import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.RabbitMQConnector;
 import uk.gov.store.DataStore;
+import uk.gov.store.EntriesQueryDAO;
+import uk.gov.store.HighWaterMarkDAO;
 import uk.gov.store.LocalDataStoreApplication;
 import uk.gov.store.LogStream;
 import uk.gov.store.PostgresDataStore;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,21 +38,24 @@ public class Application {
         configuration = properties;
     }
 
-    public void startup() {        
+    public void startup() {
         String pgConnectionString = configuration.getProperty("postgres.connection.string");
-        String storeName = configuration.getProperty("store.name");
         consoleLog("Connecting to Postgres database: " + pgConnectionString);
-        dataStore = new PostgresDataStore(resolveConnectionString(pgConnectionString), storeName);
+        DataSource ds = createDataSource(configuration.getProperty("postgres.database"));
+        DBI dbi = new DBI(ds);
+        HighWaterMarkDAO highWaterMarkDAO = dbi.onDemand(HighWaterMarkDAO.class);
+        EntriesQueryDAO entriesQueryDAO = dbi.onDemand(EntriesQueryDAO.class);
+        dataStore = new PostgresDataStore(resolveConnectionString(pgConnectionString));
 
         String kafkaString = resolveKafkaConnectionString(configuration.getProperty("kafka.bootstrap.servers"));
         consoleLog("Connecting to Kafka: " + kafkaString);
-        logStream = new LogStream(kafkaString);
+        logStream = new LogStream(highWaterMarkDAO, entriesQueryDAO, createKafkaProducer(kafkaString));
 
         mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
         mqConnector.connect(configuration);
 
         consoleLog("Application started...");
-}
+    }
 
     private String resolveKafkaConnectionString(final String kafkaString) {
         final Map<String, String> env = System.getenv();
@@ -55,7 +65,7 @@ public class Application {
         }
 
         final String kafkaConnectionString = env.get("KAFKA_1_PORT_9092_TCP_ADDR") + ":"
-            + env.get("KAFKA_1_PORT_9092_TCP_PORT");
+                + env.get("KAFKA_1_PORT_9092_TCP_PORT");
 
         System.out.println("KAFKA_1_PORT_9092_TCP_ADDR defined - using: " + kafkaConnectionString);
 
@@ -78,6 +88,20 @@ public class Application {
         System.out.println("POSTGRES_PORT_5432_TCP_ADDR defined - using: " + dockerConnectionString);
 
         return dockerConnectionString;
+    }
+
+    private KafkaProducer<String, byte[]> createKafkaProducer(String kafkaString) {
+        return new KafkaProducer<>(ImmutableMap.of(
+                "bootstrap.servers", kafkaString,
+                "key.serializer", "org.apache.kafka.common.serialization.StringSerializer",
+                "value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer"
+        ));
+    }
+
+    private DataSource createDataSource(String databaseName) {
+        PGSimpleDataSource source = new PGSimpleDataSource();
+        source.setDatabaseName(databaseName);
+        return source;
     }
 
     public void shutdown() throws Exception {

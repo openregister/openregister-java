@@ -2,6 +2,7 @@ ext{
 	commonsConfig = 'commons-configuration:commons-configuration:1.10'
 	jOptSimple = 'net.sf.jopt-simple:jopt-simple:4.8'
 	javaslang = 'com.javaslang:javaslang:1.2.2'
+	jdbi = 'org.jdbi:jdbi:2.59'
 	json = [
 		'com.fasterxml.jackson.core:jackson-core:2.5.4',
 		'com.fasterxml.jackson.core:jackson-databind:2.5.4',
