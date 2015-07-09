@@ -39,15 +39,14 @@ public class FunctionalTest {
     private static Client client;
 
     @BeforeClass
-   public  static void beforeClass(){
+   public  static void beforeClass() throws InterruptedException {
         client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+        publishTestMessages();
     }
 
 
     @Test
     public void shouldConsumeMessageFromKafkaAndShowAsLatest() throws Exception {
-        publishTestMessages();
-
         Response response = client.target(String.format("http://localhost:%d/latest.json", RULE.getLocalPort())).request().get();
 
         assertThat(response.readEntity(String.class), equalTo("[{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"},{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}]"));
@@ -56,14 +55,13 @@ public class FunctionalTest {
 
     @Test
     public void findByKeyValue_shouldReturnEntryWithThPrimaryKey() throws InterruptedException {
-        publishTestMessages();
 
         Response response = client.target(String.format("http://localhost:%d/ft_test_pkey/ft_test_pkey_value_1", RULE.getLocalPort())).request().get();
 
         assertThat(response.readEntity(String.class), equalTo("{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}"));
     }
 
-    private void publishTestMessages() throws InterruptedException {
+    private static void publishTestMessages() throws InterruptedException {
         List<String> messages = ImmutableList.of(
                 "{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}",
                 "{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}"
@@ -74,7 +72,7 @@ public class FunctionalTest {
         waitForAppToConsumeMessage();
     }
 
-    private void waitForAppToConsumeMessage() throws InterruptedException {
+    private static void waitForAppToConsumeMessage() throws InterruptedException {
         Thread.sleep(3000);
     }
 

@@ -8,11 +8,10 @@ import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 import kafka.serializer.StringDecoder;
 import kafka.utils.VerifiableProperties;
-import org.postgresql.util.PGobject;
 import uk.gov.register.presentation.config.ZookeeperConfiguration;
+import uk.gov.register.presentation.dao.PGObjectFactory;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -46,19 +45,9 @@ public class ConsumerRunnable implements Runnable {
         KafkaStream<String, byte[]> kafkaStream = messageStreams.get(TOPIC_NAME).get(0);
         for (MessageAndMetadata<String, byte[]> messageAndMetadata : kafkaStream) {
             byte[] message = messageAndMetadata.message();
-            PGobject pGobject = createPGObject(message);
-            updateDAO.append(pGobject);
+            //TODO: check can we directly get getBytes into string
+            updateDAO.append(PGObjectFactory.jsonbObject(new String(message)));
         }
     }
 
-    private PGobject createPGObject(byte[] message) {
-        try {
-            PGobject pGobject = new PGobject();
-            pGobject.setType("jsonb");
-            pGobject.setValue(new String(message));
-            return pGobject;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
