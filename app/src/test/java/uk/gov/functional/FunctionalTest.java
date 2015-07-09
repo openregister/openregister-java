@@ -7,10 +7,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.Application;
+import uk.gov.store.EntriesQueryDAO;
+import uk.gov.store.HighWaterMarkDAO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,27 +68,27 @@ public class FunctionalTest {
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
 
-        byte[] message = String.valueOf(System.currentTimeMillis()).getBytes();
+        String messageString = String.format("{\"time\":%s}", String.valueOf(System.currentTimeMillis()));
+        byte[] message = messageString.getBytes();
         connection.createChannel().basicPublish(exchange, routingKey, new AMQP.BasicProperties(), message);
 
         waitForMessageToBeConsumed();
         assertThat(tableRecord(), is(message));
 
         List<String> messages = testKafkaCluster.readMessages("register", 1);
-        String messageString = new String(message, Charset.forName("UTF-8"));
         assertThat(messages, is(Collections.singletonList(messageString)));
     }
 
     private byte[] tableRecord() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("SELECT ENTRY FROM FUNCTIONAL_TESTS_STORE");
+            statement.execute("SELECT ENTRY FROM " + EntriesQueryDAO.tableName);
             ResultSet resultSet = statement.getResultSet();
             return resultSet.next() ? resultSet.getBytes(1) : null;
         }
     }
 
     private void waitForMessageToBeConsumed() throws InterruptedException {
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
     private void cleanQueue() throws Exception {
@@ -101,7 +102,8 @@ public class FunctionalTest {
 
     private void cleanDatabase() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("DROP TABLE IF EXISTS FUNCTIONAL_TESTS_STORE");
+            statement.execute("DROP TABLE IF EXISTS " + EntriesQueryDAO.tableName);
+            statement.execute("DROP TABLE IF EXISTS " + HighWaterMarkDAO.tableName);
         }
     }
 }

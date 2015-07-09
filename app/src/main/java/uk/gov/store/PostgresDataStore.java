@@ -7,9 +7,9 @@ public class PostgresDataStore implements DataStore {
     private final Connection connection;
     private final String table;
 
-    public PostgresDataStore(String connectionString, String storeName) {
+    public PostgresDataStore(String connectionString) {
         try {
-            table = storeName + "_STORE";
+            table = EntriesQueryDAO.tableName;
             connection = DriverManager.getConnection(connectionString);
             try (Statement statement = connection.createStatement()) {
                 statement.execute("CREATE TABLE IF NOT EXISTS " + table + " (ID SERIAL PRIMARY KEY, ENTRY BYTEA)");
