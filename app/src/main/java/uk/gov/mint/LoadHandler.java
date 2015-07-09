@@ -18,13 +18,24 @@ public class LoadHandler {
     }
 
     public void handle(String payload) throws Exception {
-        byte[] payloadBytes = payload.getBytes();
+        for (String entry : payload.split("\n"))
+            processEntry(entry);
+    }
+
+    private void processEntry(String entry) throws Exception {
+        byte[] payloadBytes = entry.getBytes();
         JsonNode jsonNode;
         try {
             jsonNode = canonicalJsonMapper.readFromBytes(payloadBytes);
             dataStore.add(canonicalJsonMapper.writeToBytes(jsonNode));
+            logStream.notifyOfNewEntries();
         } catch (JsonProcessingException e) {
-            throw new Exception("Error parsing JSON payload.", e);
+            throw new Exception("Error parsing JSON entry [" + entry + "]", e);
         }
+    }
+
+    public void shutdown() throws Exception {
+        dataStore.close();
+        logStream.close();
     }
 }

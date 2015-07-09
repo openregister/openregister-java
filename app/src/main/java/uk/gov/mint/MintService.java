@@ -22,4 +22,8 @@ public class MintService {
             }
         });
     }
+
+    public void shutdown() throws Exception {
+        loadHandler.shutdown();
+    }
 }

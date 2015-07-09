@@ -1,19 +1,13 @@
 package uk.gov;
 
 import com.google.common.base.Strings;
-import uk.gov.mint.LoadHandler;
-import uk.gov.mint.MintService;
 import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.mint.RabbitMQConnector;
-import uk.gov.store.DataStore;
-import uk.gov.store.EntriesQueryDAO;
-import uk.gov.store.HighWaterMarkDAO;
-import uk.gov.store.LocalDataStoreApplication;
-import uk.gov.store.LogStream;
-import uk.gov.store.PostgresDataStore;
+import uk.gov.mint.LoadHandler;
+import uk.gov.mint.MintService;
+import uk.gov.store.*;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -29,9 +23,6 @@ public class Application {
     @SuppressWarnings("FieldCanBeLocal")
     private static Application notToBeGCed;
     private final Properties configuration;
-    private RabbitMQConnector mqConnector;
-    private LogStream logStream;
-    private DataStore dataStore;
     private MintService mintService;
 
     public Application(String... args) throws IOException {
@@ -57,14 +48,11 @@ public class Application {
         DBI dbi = new DBI(ds);
         HighWaterMarkDAO highWaterMarkDAO = dbi.onDemand(HighWaterMarkDAO.class);
         EntriesQueryDAO entriesQueryDAO = dbi.onDemand(EntriesQueryDAO.class);
-        dataStore = new PostgresDataStore(pgConnectionString);
+        DataStore dataStore = new PostgresDataStore(pgConnectionString);
 
         String kafkaString = configuration.getProperty("kafka.bootstrap.servers");
         consoleLog("Connecting to Kafka: " + kafkaString);
-        logStream = new LogStream(highWaterMarkDAO, entriesQueryDAO, createKafkaProducer(kafkaString));
-
-        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
-        mqConnector.connect(configuration);
+        LogStream logStream = new LogStream(highWaterMarkDAO, entriesQueryDAO, createKafkaProducer(kafkaString));
 
         LoadHandler loadHandler = new LoadHandler(dataStore, logStream);
         mintService = new MintService(loadHandler);
@@ -89,10 +77,7 @@ public class Application {
 
     public void shutdown() throws Exception {
         consoleLog("Shutting application down...");
-
-        mqConnector.close();
-        dataStore.close();
-        logStream.close();
+        mintService.shutdown();
     }
 
     private InputStream configurationPropertiesStream(String fileName) throws IOException {
