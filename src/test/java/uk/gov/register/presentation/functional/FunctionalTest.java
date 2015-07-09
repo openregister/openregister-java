@@ -6,6 +6,7 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -34,20 +35,43 @@ public class FunctionalTest {
                     ResourceHelpers.resourceFilePath("test-app-config.yaml"),
                     ConfigOverride.config("zookeeperServer", "localhost:" + testKafkaCluster.getZkPort()),
                     ConfigOverride.config("database.url", DATABASE_URL));
-    private final Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+
+    private static Client client;
+
+    @BeforeClass
+   public  static void beforeClass(){
+        client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+    }
+
 
     @Test
     public void shouldConsumeMessageFromKafkaAndShowAsLatest() throws Exception {
-        List<String> messages = ImmutableList.of("{\"foo\":\"version1\"}", "{\"fred\":\"jim\"}", "{\"foo\":\"version2\"}");
+        publishTestMessages();
+
+        Response response = client.target(String.format("http://localhost:%d/latest.json", RULE.getLocalPort())).request().get();
+
+        assertThat(response.readEntity(String.class), equalTo("[{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"},{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}]"));
+
+    }
+
+    @Test
+    public void findByKeyValue_shouldReturnEntryWithThPrimaryKey() throws InterruptedException {
+        publishTestMessages();
+
+        Response response = client.target(String.format("http://localhost:%d/ft_test_pkey/ft_test_pkey_value_1", RULE.getLocalPort())).request().get();
+
+        assertThat(response.readEntity(String.class), equalTo("{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}"));
+    }
+
+    private void publishTestMessages() throws InterruptedException {
+        List<String> messages = ImmutableList.of(
+                "{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}",
+                "{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}"
+        );
         for (String message : messages) {
             testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
         }
         waitForAppToConsumeMessage();
-
-        Response response = client.target(String.format("http://localhost:%d/latest.json", RULE.getLocalPort())).request().get();
-
-        assertThat(response.readEntity(String.class), equalTo("[{\"foo\":\"version2\"},{\"fred\":\"jim\"},{\"foo\":\"version1\"}]"));
-
     }
 
     private void waitForAppToConsumeMessage() throws InterruptedException {

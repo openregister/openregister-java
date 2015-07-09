@@ -36,7 +36,7 @@ jar {
 
         manifest {
             attributes(
-                    "Main-Class": "uk.gov.register.presentation.PresentationApplication",
+                    "Main-Class": "uk.gov.register.presentation.app.PresentationApplication",
                     "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
             )
         }
