@@ -5,13 +5,9 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.mint.RabbitMQConnector;
-import uk.gov.store.DataStore;
-import uk.gov.store.EntriesQueryDAO;
-import uk.gov.store.HighWaterMarkDAO;
-import uk.gov.store.LocalDataStoreApplication;
-import uk.gov.store.LogStream;
-import uk.gov.store.PostgresDataStore;
+import uk.gov.mint.LoadHandler;
+import uk.gov.mint.MintService;
+import uk.gov.store.*;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -24,10 +20,10 @@ import java.util.Properties;
 
 public class Application {
 
-    private RabbitMQConnector mqConnector;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static Application notToBeGCed;
     private final Properties configuration;
-    private LogStream logStream;
-    private DataStore dataStore;
+    private MintService mintService;
 
     public Application(String... args) throws IOException {
         Map<String, String> propertiesMap = createConfigurationMap(args);
@@ -36,6 +32,13 @@ public class Application {
         properties.load(configurationPropertiesStream(propertiesMap.get("config.file")));
         properties.putAll(propertiesMap);
         configuration = properties;
+    }
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+        notToBeGCed = new Application(args);
+        notToBeGCed.startup();
+
+        Thread.currentThread().join();
     }
 
     public void startup() {
@@ -49,10 +52,11 @@ public class Application {
 
         String kafkaString = resolveKafkaConnectionString(configuration.getProperty("kafka.bootstrap.servers"));
         consoleLog("Connecting to Kafka: " + kafkaString);
-        logStream = new LogStream(highWaterMarkDAO, entriesQueryDAO, createKafkaProducer(kafkaString));
+        LogStream logStream = new LogStream(highWaterMarkDAO, entriesQueryDAO, createKafkaProducer(kafkaString));
 
-        mqConnector = new RabbitMQConnector(new LocalDataStoreApplication(dataStore, logStream));
-        mqConnector.connect(configuration);
+        LoadHandler loadHandler = new LoadHandler(dataStore, logStream);
+        mintService = new MintService(loadHandler);
+        mintService.init();
 
         consoleLog("Application started...");
     }
@@ -106,10 +110,7 @@ public class Application {
 
     public void shutdown() throws Exception {
         consoleLog("Shutting application down...");
-
-        mqConnector.close();
-        dataStore.close();
-        logStream.close();
+        mintService.shutdown();
     }
 
     private InputStream configurationPropertiesStream(String fileName) throws IOException {

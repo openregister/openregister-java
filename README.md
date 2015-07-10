@@ -4,8 +4,9 @@ A repository for mint project
 # Requirements
 
 - Java 1.8+
-- Rabbit MQ 3.5.1
 - Postgres DB 9.4
+- Apache Kafka
+- Zookeeper
 
 # Build and Run project
 

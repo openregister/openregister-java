@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,8 +23,8 @@ public class ToJSONLConverterTest {
         DataReader reader = mock(DataReader.class);
         when(reader.reader()).thenReturn(new BufferedReader(new StringReader(sampleTsv)));
 
-        final List<String> converted = toJSONLConverter.convert(reader);
-        assertThat(converted.size(), equalTo(0));
+        final javaslang.collection.List<String> converted = toJSONLConverter.convert(reader);
+        assertThat(converted.length(), equalTo(0));
     }
 
     @Test
@@ -37,8 +36,8 @@ public class ToJSONLConverterTest {
         when(reader.reader()).thenReturn(new BufferedReader(new StringReader(sampleTsv)));
 
         final ToJSONLConverter toJSONLConverter = ToJSONLConverter.converterFor(ToJSONLConverter.ConvertibleType.csv);
-        final List<String> converted = toJSONLConverter.convert(reader);
-        assertThat(converted.get(0), equalTo(expectedJsonl));
+        final javaslang.collection.List<String> converted = toJSONLConverter.convert(reader);
+        assertThat(converted.head(), equalTo(expectedJsonl));
     }
 
     @Test
@@ -50,7 +49,7 @@ public class ToJSONLConverterTest {
         when(reader.reader()).thenReturn(new BufferedReader(new StringReader(sampleTsv)));
 
         final ToJSONLConverter toJSONLConverter = ToJSONLConverter.converterFor(ToJSONLConverter.ConvertibleType.tsv);
-        final List<String> converted = toJSONLConverter.convert(reader);
+        final javaslang.collection.List<String> converted = toJSONLConverter.convert(reader);
         assertThat(converted.get(0), equalTo(expectedJsonl));
     }
 
@@ -63,7 +62,7 @@ public class ToJSONLConverterTest {
         when(reader.reader()).thenReturn(new BufferedReader(new StringReader(sampleTsv)));
 
         final ToJSONLConverter toJSONLConverter = ToJSONLConverter.converterFor(ToJSONLConverter.ConvertibleType.tsv);
-        final List<String> converted = toJSONLConverter.convert(reader);
+        final javaslang.collection.List<String> converted = toJSONLConverter.convert(reader);
         assertThat(converted.get(0), equalTo(expectedJsonl));
     }
 
@@ -76,7 +75,7 @@ public class ToJSONLConverterTest {
         when(reader.reader()).thenReturn(new BufferedReader(new StringReader(sampleTsv)));
 
         final ToJSONLConverter toJSONLConverter = ToJSONLConverter.converterFor(ToJSONLConverter.ConvertibleType.tsv);
-        final List<String> converted = toJSONLConverter.convert(reader);
+        final javaslang.collection.List<String> converted = toJSONLConverter.convert(reader);
         assertThat(converted.get(0), equalTo(expectedJsonl));
     }
 
@@ -89,7 +88,7 @@ public class ToJSONLConverterTest {
         when(reader.reader()).thenReturn(new BufferedReader(new StringReader(sampleTsv)));
 
         final ToJSONLConverter toJSONLConverter = ToJSONLConverter.converterFor(ToJSONLConverter.ConvertibleType.tsv);
-        final List<String> converted = toJSONLConverter.convert(reader);
+        final javaslang.collection.List<String> converted = toJSONLConverter.convert(reader);
         assertThat(converted.get(0), equalTo(expectedJsonl));
     }
 }
