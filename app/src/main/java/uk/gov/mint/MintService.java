@@ -13,8 +13,6 @@ public class MintService {
         post("/load", (req, res) -> {
             try {
                 final String payload = req.body();
-                System.out.println("received payload = " + payload);
-                // Do something with this ...
                 loadHandler.handle(payload);
                 return "OK";
             } catch (Exception e) {
