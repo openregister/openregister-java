@@ -7,6 +7,7 @@ import javaslang.collection.List;
 import uk.gov.admin.ToJSONLConverter.ConvertibleType;
 
 public class Loader {
+    private static final int BATCH_SIZE = 2000;
     private LoaderArgsParser.LoaderArgs loaderArgs;
 
     Loader(LoaderArgsParser.LoaderArgs loaderArgs) {
@@ -23,7 +24,7 @@ public class Loader {
         try {
             final ToJSONLConverter converter = ToJSONLConverter.converterFor(ConvertibleType.valueOf(loaderArgs.type));
             converter.convert(loaderArgs.dataReader)
-                    .grouped(1000)
+                    .grouped(BATCH_SIZE)
                     .forEach(this::send);
         } catch (Throwable t) {
             throw new RuntimeException("Error occurred publishing datafile to queue", t);
@@ -41,6 +42,8 @@ public class Loader {
                     .fetch();
             if (r.status() != 200)
                 System.err.println("Unexpected result: " + r.body());
+            else
+                System.out.println("Loaded " + BATCH_SIZE + " entries...");
         } catch (Exception e) {
             System.err.println("Error occurred sending data to mint: " + e);
         }
