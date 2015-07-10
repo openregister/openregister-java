@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
 

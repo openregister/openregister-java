@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.app;
 
 import com.google.common.collect.ImmutableMap;
 import kafka.consumer.Consumer;
@@ -8,6 +8,9 @@ import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 import kafka.serializer.StringDecoder;
 import kafka.utils.VerifiableProperties;
+import uk.gov.register.presentation.config.ZookeeperConfiguration;
+import uk.gov.register.presentation.dao.PGObjectFactory;
+import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +45,9 @@ public class ConsumerRunnable implements Runnable {
         KafkaStream<String, byte[]> kafkaStream = messageStreams.get(TOPIC_NAME).get(0);
         for (MessageAndMetadata<String, byte[]> messageAndMetadata : kafkaStream) {
             byte[] message = messageAndMetadata.message();
-            updateDAO.append(message);
+            //TODO: check can we directly get getBytes into string
+            updateDAO.append(PGObjectFactory.jsonbObject(new String(message)));
         }
     }
+
 }
