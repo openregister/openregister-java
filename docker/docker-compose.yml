@@ -1,0 +1,40 @@
+mint:
+  restart: always
+  build: .
+  ports:
+    - "4567:4567"
+  links:
+    - postgres
+    - zookeeper
+    - kafka
+postgres:
+  restart: always
+  image: postgres:latest
+  ports:
+    - "5432:5432"
+  environment:
+    POSTGRES_USER: mint
+    POSTGRES_PASSWORD: mint
+
+zookeeper:
+  image: wurstmeister/zookeeper:latest
+  ports:
+    - "2181:2181"
+    - "2888:2888"
+    - "3888:3888"
+
+kafka:
+  restart: always
+  image: wurstmeister/kafka
+  ports:
+    - "9092:9092"
+  links:
+    - zookeeper
+  environment:
+    BROKER_ID: 1
+    PORT: 9092   
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103 
+    KAFKA_ZOOKEEPER_CONNECT: zookeeper
+    KAFKA_CREATE_TOPICS: "register:1:1"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock

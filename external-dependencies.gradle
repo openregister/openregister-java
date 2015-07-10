@@ -1,5 +1,6 @@
 ext {
-    jOptSimple = 'net.sf.jopt-simple:jopt-simple:4.8'
+	commonsConfig = 'commons-configuration:commons-configuration:1.10'
+	jOptSimple = 'net.sf.jopt-simple:jopt-simple:4.8'
     javaslang = 'com.javaslang:javaslang:1.2.2'
     jcabi = [
             'com.sun.jersey:jersey-core:1.19',
