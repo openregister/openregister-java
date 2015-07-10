@@ -1,8 +1,9 @@
 mint:
   restart: always
   build: .
+  ports:
+    - "4567:4567"
   links:
-    - rabbitmq
     - postgres
     - zookeeper
     - kafka
@@ -15,18 +16,8 @@ postgres:
     POSTGRES_USER: mint
     POSTGRES_PASSWORD: mint
 
-rabbitmq:
-  restart: always
-  image: rabbitmq:3-management
-  ports:
-    - "15672:15672"
-    - "5672:5672"
-  environment:
-    RABBITMQ_NODENAME: localhost
-    HOSTNAME: localhost
-
 zookeeper:
-  image: wurstmeister/zookeeper
+  image: wurstmeister/zookeeper:latest
   ports:
     - "2181:2181"
     - "2888:2888"
