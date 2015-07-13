@@ -17,6 +17,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.PresentationConfiguration;
+import uk.gov.register.presentation.dao.DB;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 import uk.gov.register.presentation.resource.HomePageResource;
@@ -56,7 +57,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         dataSource.setDriverClassName(configuration.getDatabase().getDriverClass());
         dataSource.setUrl(configuration.getDatabase().getUrl());
 
-        RecentEntryIndexQueryDAO queryDAO = new RecentEntryIndexQueryDAO(dataSource);
+        RecentEntryIndexQueryDAO queryDAO = new RecentEntryIndexQueryDAO(new DB(dataSource));
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new ConsumerRunnable(configuration, updateDAO));
