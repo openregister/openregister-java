@@ -11,6 +11,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import io.dropwizard.views.mustache.MustacheViewRenderer;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
@@ -50,7 +51,12 @@ public class PresentationApplication extends Application<PresentationConfigurati
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
         RecentEntryIndexUpdateDAO updateDAO = jdbi.onDemand(RecentEntryIndexUpdateDAO.class);
-        RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
+
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName(configuration.getDatabase().getDriverClass());
+        dataSource.setUrl(configuration.getDatabase().getUrl());
+
+        RecentEntryIndexQueryDAO queryDAO = new RecentEntryIndexQueryDAO(dataSource);
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new ConsumerRunnable(configuration, updateDAO));

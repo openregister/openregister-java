@@ -19,7 +19,7 @@ configurations {
     compile.exclude module: 'slf4j-simple' // dropwizard uses logback, not slf4j-simple
 }
 dependencies {
-    compile dropwizard, kafka, postgresClient
+    compile dropwizard, kafka, postgresClient, apachedbcp
 
     testCompile dropwizardTest, junit, kafkaTest, zkTest
 }
