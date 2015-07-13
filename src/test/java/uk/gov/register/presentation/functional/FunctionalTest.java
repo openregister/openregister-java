@@ -27,11 +27,9 @@ public class FunctionalTest {
     public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_presentation";
 
     public static final String TOPIC = "register";
-    private static final TestKafkaCluster testKafkaCluster = new TestKafkaCluster(TOPIC);
-
     @ClassRule
     public static final TestRule cleanDb = new CleanDatabaseRule(DATABASE_URL, "ordered_entry_index");
-
+    private static final TestKafkaCluster testKafkaCluster = new TestKafkaCluster(TOPIC);
     @ClassRule
     public static final DropwizardAppRule<PresentationConfiguration> RULE =
             new DropwizardAppRule<>(PresentationApplication.class,
@@ -47,13 +45,19 @@ public class FunctionalTest {
         publishTestMessages();
     }
 
+    private static void publishTestMessages() throws InterruptedException {
+        List<String> messages = ImmutableList.of(
+                "{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}",
+                "{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}"
+        );
+        for (String message : messages) {
+            testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
+        }
+        waitForAppToConsumeMessage();
+    }
 
-    @Test
-    public void shouldConsumeMessageFromKafkaAndShowAsLatest() throws Exception {
-        Response response = client.target(String.format("http://localhost:%d/latest.json", RULE.getLocalPort())).request().get();
-
-        assertThat(response.readEntity(String.class), equalTo("[{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"},{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}]"));
-
+    private static void waitForAppToConsumeMessage() throws InterruptedException {
+        Thread.sleep(3000);
     }
 
     @Test
@@ -77,6 +81,22 @@ public class FunctionalTest {
     }
 
     @Test
+    public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException {
+        List<String> messages = ImmutableList.of(
+                "{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_2\"}"
+        );
+        for (String message : messages) {
+            testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
+        }
+        waitForAppToConsumeMessage();
+
+        Response response = client.target(String.format("http://localhost:%d/all", RULE.getLocalPort())).request().get();
+
+        assertThat(response.readEntity(String.class),
+                equalTo("[{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"},{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}]"));
+    }
+
+    @Test
     public void findByKeyValue_shouldReturnEntryWithThPrimaryKey() throws InterruptedException {
 
         Response response = client.target(String.format("http://localhost:%d/ft_test_pkey/ft_test_pkey_value_1", RULE.getLocalPort())).request().get();
@@ -84,19 +104,11 @@ public class FunctionalTest {
         assertThat(response.readEntity(String.class), equalTo("{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}"));
     }
 
-    private static void publishTestMessages() throws InterruptedException {
-        List<String> messages = ImmutableList.of(
-                "{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}",
-                "{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}"
-        );
-        for (String message : messages) {
-            testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
-        }
-        waitForAppToConsumeMessage();
-    }
+    @Test
+    public void shouldConsumeMessageFromKafkaAndShowAsLatest() throws Exception {
+        Response response = client.target(String.format("http://localhost:%d/latest.json", RULE.getLocalPort())).request().get();
 
-    private static void waitForAppToConsumeMessage() throws InterruptedException {
-        Thread.sleep(3000);
-    }
+        assertThat(response.readEntity(String.class), equalTo("[{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"},{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"},{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}]"));
 
+    }
 }
