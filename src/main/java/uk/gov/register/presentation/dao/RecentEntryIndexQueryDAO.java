@@ -18,7 +18,7 @@ public class RecentEntryIndexQueryDAO {
         this.db = db;
     }
 
-    public List<JsonNode> getLatestEntries(@Bind("limit") int maxNumberToFetch) {
+    public List<JsonNode> getFeeds(@Bind("limit") int maxNumberToFetch) {
         return db.select(
                 "SELECT entry FROM ordered_entry_index ORDER BY id DESC LIMIT ?",
                 resultSet -> {

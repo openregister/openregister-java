@@ -13,13 +13,13 @@ import static org.junit.Assert.assertNotNull;
 
 public class ApplicationTest extends FunctionalTestBase {
     @Test
-    public void shouldConsumeMessageFromKafkaAndShowAsLatest() throws Exception {
+    public void shouldConsumeMessageFromKafkaAndShowAsFeeds() throws Exception {
         publishMessages(ImmutableList.of(
                 "{\"hash\":\"entryHash1\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}}",
                 "{\"hash\":\"entryHash2\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}}"
         ));
 
-        Response response = client.target(String.format("http://localhost:%d/latest.json", RULE.getLocalPort())).request().get();
+        Response response = client.target(String.format("http://localhost:%d/feed.json", RULE.getLocalPort())).request().get();
 
         assertThat(response.readEntity(String.class), equalTo("[{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}},{\"hash\":\"entryHash1\",\"entry\":{\"key1\":\"key1Value_1\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}]"));
 
@@ -28,7 +28,7 @@ public class ApplicationTest extends FunctionalTestBase {
     @Test
     public void appSupportsCORS() {
         String origin = "http://originfortest.com";
-        Response response = client.target(String.format("http://localhost:%d/latest", RULE.getLocalPort()))
+        Response response = client.target(String.format("http://localhost:%d/feed", RULE.getLocalPort()))
                 .request()
                 .header(HttpHeaders.ORIGIN, origin)
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
