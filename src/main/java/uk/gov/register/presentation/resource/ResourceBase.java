@@ -1,18 +1,17 @@
 package uk.gov.register.presentation.resource;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import java.net.URI;
+import javax.ws.rs.core.UriInfo;
 
 public abstract class ResourceBase {
     @Context
-    protected HttpServletRequest httpServletRequest;
+    protected UriInfo uriInfo;
 
     //Note: copied the logic to fetch primary key from alpha register.
     //Note: We might need to change the logic of extracting register primary key for beta registers
     String getRegisterPrimaryKey() {
         try {
-            String host = new URI(httpServletRequest.getRequestURL().toString()).getHost();
+            String host = uriInfo.getAbsolutePath().getHost();
 
             //hack for functional tests
             if (host.startsWith("localhost")) return "ft_test_pkey";
