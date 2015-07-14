@@ -43,4 +43,12 @@ public class FindEntityTest extends FunctionalTestBase {
         assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}}"));
     }
 
+    @Test
+    public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException {
+        Response response = client.target(String.format("http://localhost:%d/all", RULE.getLocalPort())).request().get();
+
+        assertThat(response.readEntity(String.class),
+                equalTo("[{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}},{\"hash\":\"entryHash3\",\"entry\":{\"key1\":\"key1Value_3\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}]"));
+    }
+
 }
