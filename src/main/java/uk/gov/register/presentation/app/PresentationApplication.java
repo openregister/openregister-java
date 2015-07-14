@@ -60,8 +60,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "xml", MediaType.APPLICATION_XML_TYPE));
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new LatestFeedResource(queryDAO));
-        jersey.register(new AllResource(queryDAO));
+        jersey.register(new DataResource(queryDAO));
         jersey.register(new HomePageResource());
         jersey.register(new SearchResource(queryDAO));
 
