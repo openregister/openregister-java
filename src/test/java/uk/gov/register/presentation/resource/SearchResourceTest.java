@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.resource;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -9,29 +8,28 @@ import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.UriInfo;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-//@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class SearchResourceTest {
     @Mock
     RecentEntryIndexQueryDAO queryDAO;
 
     @Mock
-    UriInfo uriInfo;
+    HttpServletRequest httpServletRequest;
 
-    @Ignore
+    @Test
     public void findByPrimaryKey_throwsBadRequestException_whenSearchedKeyIsNotPrimaryKeyOfRegister() {
         SearchResource resource = new SearchResource(queryDAO);
-        resource.uriInfo = uriInfo;
+        resource.httpServletRequest = httpServletRequest;
 
-        when(uriInfo.getAbsolutePath().getHost()).thenReturn("localhost");
-        try{
+        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:9999/someOtherKey/value"));
+        try {
             resource.findByPrimaryKey("someOtherKey", "value");
             fail("Must fail");
-        }catch(BadRequestException e){
+        } catch (BadRequestException e) {
             //success
         }
     }

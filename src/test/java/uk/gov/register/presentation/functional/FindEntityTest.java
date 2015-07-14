@@ -17,7 +17,7 @@ public class FindEntityTest extends FunctionalTestBase {
                 "{\"hash\":\"entryHash3\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_3\"}}"
         ));
 
-        Response response = getRequest("/ft_test_pkey/ft_test_pkey_value_1");
+        Response response = getRequest("/ft_test_pkey/ft_test_pkey_value_1.json");
 
         assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"entryHash3\",\"entry\":{\"key1\":\"key1Value_3\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}"));
     }
@@ -25,7 +25,7 @@ public class FindEntityTest extends FunctionalTestBase {
     @Test
     public void findByPrimaryKey_returns400ForNonPrimaryKeySearch() {
         publishMessages(ImmutableList.of("{\"hash\":\"entryHash1\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}}"));
-        Response response = getRequest("/key1/key1Value_1");
+        Response response = getRequest("/key1/key1Value_1.json");
 
         assertThat(response.getStatus(), equalTo(400));
 
@@ -38,14 +38,14 @@ public class FindEntityTest extends FunctionalTestBase {
                 "{\"hash\":\"entryHash2\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}}"
         ));
 
-        Response response = getRequest("/hash/entryHash2");
+        Response response = getRequest("/hash/entryHash2.json");
 
         assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}}"));
     }
 
     @Test
     public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException {
-        Response response = client.target(String.format("http://localhost:%d/all", RULE.getLocalPort())).request().get();
+        Response response = client.target(String.format("http://localhost:%d/all.json", RULE.getLocalPort())).request().get();
 
         assertThat(response.readEntity(String.class),
                 equalTo("[{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}},{\"hash\":\"entryHash3\",\"entry\":{\"key1\":\"key1Value_3\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}]"));

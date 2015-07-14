@@ -1,0 +1,64 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/assets/images/icon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/assets/images/icon.png"/>
+
+    <title> Register </title>
+    <link rel="stylesheet" href="/assets/vendor/foundation/css/foundation.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+
+</head>
+<body>
+{{>header}}
+
+<div class="row">
+    <div class="small-12 large-8 columns">
+        <h1 class="entry-header">Entry Name Header</h1>
+
+        <p class="entry-source">An entry in the <a href="/">RegisterName register</a></p>
+
+        <p class="entry-hash">hash: {{object.hash}} <a href="#" class="tooltips"><span
+                class="tooltips-icon">?</span><span class="tooltips-text">The hash is a unique identifier for each version of a record</span></a>
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 large-12 columns">
+        <table id="entry-table">
+            <tbody>
+            <tr>
+                <td class="@field.getName()">{{key}}</td>
+                <td class="@field.getName()">{{value}}</td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <!-- /.columns -->
+</div>
+<!-- /.row -->
+
+<div class="row">
+    <div class="small-12 large-6 columns">
+        All Data formats here<br/>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 large-12 columns">
+        <div class="history">
+            history<br/>
+        </div>
+
+        Copyright text
+    </div>
+</div>
+
+
+{{>footer}}
+</body>
+</html>
