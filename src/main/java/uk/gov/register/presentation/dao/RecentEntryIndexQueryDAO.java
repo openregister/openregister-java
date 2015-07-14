@@ -23,4 +23,13 @@ public interface RecentEntryIndexQueryDAO {
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
     @SingleValueResult(JsonNode.class)
     Optional<JsonNode> findByHash(@Bind("hash") String hash);
+
+    @SqlQuery("SELECT i.id, i.entry FROM ordered_entry_index i, ( " +
+            "SELECT MAX(id) AS id " +
+            "FROM ordered_entry_index " +
+            "GROUP BY (entry #>> ARRAY['entry',:key])) AS ii " +
+            "WHERE i.id = ii.id " +
+            "ORDER BY (entry #>> ARRAY['entry',:key]) DESC LIMIT :limit")
+    List<JsonNode> getAllEntries(@Bind("key") String name,
+                                 @Bind("limit") int maxNumberToFetch);
 }

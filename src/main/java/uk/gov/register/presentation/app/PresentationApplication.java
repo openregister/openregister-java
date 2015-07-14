@@ -18,6 +18,7 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
+import uk.gov.register.presentation.resource.AllResource;
 import uk.gov.register.presentation.resource.HomePageResource;
 import uk.gov.register.presentation.resource.LatestFeedResource;
 import uk.gov.register.presentation.resource.SearchResource;
@@ -62,6 +63,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new LatestFeedResource(queryDAO));
+        jersey.register(new AllResource(queryDAO));
         jersey.register(new HomePageResource());
         jersey.register(new SearchResource(queryDAO));
         setCorsPreflight(environment);
