@@ -20,7 +20,7 @@ import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 import uk.gov.register.presentation.resource.AllResource;
 import uk.gov.register.presentation.resource.HomePageResource;
-import uk.gov.register.presentation.resource.LatestResource;
+import uk.gov.register.presentation.resource.LatestFeedResource;
 import uk.gov.register.presentation.resource.SearchResource;
 
 import javax.servlet.DispatcherType;
@@ -62,8 +62,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "xml", MediaType.APPLICATION_XML_TYPE));
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new LatestResource(queryDAO));
-        jersey.register(new AllResource(configuration.getName(), queryDAO));
+        jersey.register(new LatestFeedResource(queryDAO));
+        jersey.register(new AllResource(queryDAO));
         jersey.register(new HomePageResource());
         jersey.register(new SearchResource(queryDAO));
         setCorsPreflight(environment);

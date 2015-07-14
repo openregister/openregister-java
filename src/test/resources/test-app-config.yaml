@@ -1,5 +1,3 @@
-name: ft_test_pkey
-
 server:
   applicationConnectors:
     - type: http
