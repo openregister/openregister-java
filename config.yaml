@@ -6,3 +6,12 @@ database:
     charSet: UTF-8
 
 zookeeperServer: localhost:2181
+
+logging:
+  level: INFO
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+

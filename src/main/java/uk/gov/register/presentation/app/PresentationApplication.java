@@ -7,6 +7,7 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -18,9 +19,7 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
-import uk.gov.register.presentation.resource.HomePageResource;
-import uk.gov.register.presentation.resource.LatestFeedResource;
-import uk.gov.register.presentation.resource.SearchResource;
+import uk.gov.register.presentation.resource.*;
 
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
@@ -61,14 +60,18 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "xml", MediaType.APPLICATION_XML_TYPE));
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new LatestFeedResource(queryDAO));
+        jersey.register(new DataResource(queryDAO));
         jersey.register(new HomePageResource());
         jersey.register(new SearchResource(queryDAO));
-        setCorsPreflight(environment);
+
+        MutableServletContextHandler applicationContext = environment.getApplicationContext();
+        applicationContext.addFilter(RepresentationFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
+
+        setCorsPreflight(applicationContext);
     }
 
-    private void setCorsPreflight(Environment environment) {
-        FilterHolder filterHolder = environment.getApplicationContext()
+    private void setCorsPreflight(MutableServletContextHandler applicationContext) {
+        FilterHolder filterHolder = applicationContext
                 .addFilter(CrossOriginFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
         filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
         filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");

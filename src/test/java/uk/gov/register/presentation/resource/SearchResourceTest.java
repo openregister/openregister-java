@@ -25,11 +25,11 @@ public class SearchResourceTest {
         SearchResource resource = new SearchResource(queryDAO);
         resource.httpServletRequest = httpServletRequest;
 
-        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost/someOtherKey/value"));
-        try{
+        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:9999/someOtherKey/value"));
+        try {
             resource.findByPrimaryKey("someOtherKey", "value");
             fail("Must fail");
-        }catch(BadRequestException e){
+        } catch (BadRequestException e) {
             //success
         }
     }
