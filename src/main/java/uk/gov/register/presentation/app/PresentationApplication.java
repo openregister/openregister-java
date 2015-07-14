@@ -63,7 +63,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new LatestFeedResource(queryDAO));
-        jersey.register(new AllResource(configuration.getName(), queryDAO));
+        jersey.register(new AllResource(queryDAO));
         jersey.register(new HomePageResource());
         jersey.register(new SearchResource(queryDAO));
         setCorsPreflight(environment);

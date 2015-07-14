@@ -15,13 +15,11 @@ import java.util.List;
  */
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class AllResource {
+public class AllResource extends ResourceBase {
     public static final int ENTRY_LIMIT = 100;
-    private final String name;
     private final RecentEntryIndexQueryDAO queryDAO;
 
-    public AllResource(String name, RecentEntryIndexQueryDAO queryDAO) {
-        this.name = name;
+    public AllResource(RecentEntryIndexQueryDAO queryDAO) {
         this.queryDAO = queryDAO;
     }
 
@@ -29,6 +27,6 @@ public class AllResource {
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     public List<JsonNode> get() {
-        return queryDAO.getAllEntries(name, ENTRY_LIMIT);
+        return queryDAO.getAllEntries(getRegisterPrimaryKey(), ENTRY_LIMIT);
     }
 }
