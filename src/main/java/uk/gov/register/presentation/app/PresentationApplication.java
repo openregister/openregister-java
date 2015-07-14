@@ -11,13 +11,11 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import io.dropwizard.views.mustache.MustacheViewRenderer;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.PresentationConfiguration;
-import uk.gov.register.presentation.dao.DB;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 import uk.gov.register.presentation.resource.HomePageResource;
@@ -52,12 +50,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
         RecentEntryIndexUpdateDAO updateDAO = jdbi.onDemand(RecentEntryIndexUpdateDAO.class);
-
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(configuration.getDatabase().getDriverClass());
-        dataSource.setUrl(configuration.getDatabase().getUrl());
-
-        RecentEntryIndexQueryDAO queryDAO = new RecentEntryIndexQueryDAO(new DB(dataSource));
+        RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new ConsumerRunnable(configuration, updateDAO));

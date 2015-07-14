@@ -12,8 +12,6 @@ ext {
 
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
 
-    apachedbcp= 'org.apache.commons:commons-dbcp2:2.1'
-
     //test-dependencies
     dropwizardTest = [
             "io.dropwizard:dropwizard-client:${dropwizard_version}",

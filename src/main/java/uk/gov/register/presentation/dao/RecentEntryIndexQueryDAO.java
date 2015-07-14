@@ -1,58 +1,26 @@
 package uk.gov.register.presentation.dao;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
+import uk.gov.register.presentation.mapper.JsonNodeMapper;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+@RegisterMapper(JsonNodeMapper.class)
+public interface RecentEntryIndexQueryDAO {
 
-public class RecentEntryIndexQueryDAO {
+    @SqlQuery("SELECT entry FROM ordered_entry_index ORDER BY id DESC LIMIT :limit")
+    List<JsonNode> getFeeds(@Bind("limit") int maxNumberToFetch);
 
-    private final DB db;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC limit 1")
+    @SingleValueResult(JsonNode.class)
+    Optional<JsonNode> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
-    public RecentEntryIndexQueryDAO(DB db) {
-        this.db = db;
-    }
-
-    public List<JsonNode> getFeeds(@Bind("limit") int maxNumberToFetch) {
-        return db.select(
-                "SELECT entry FROM ordered_entry_index ORDER BY id DESC LIMIT ?",
-                resultSet -> {
-                    List<JsonNode> jsonNodes = new ArrayList<>();
-                    while (resultSet.next()) {
-                        jsonNodes.add(convertToJsonNode(resultSet.getBytes(1)));
-                    }
-                    return jsonNodes;
-                },
-                maxNumberToFetch
-        );
-    }
-
-    public JsonNode findByKeyValue(String key, String value) {
-        return db.select(
-                "SELECT entry FROM ordered_entry_index WHERE entry @> ? ORDER BY id DESC limit 1",
-                resultSet -> resultSet.next() ? convertToJsonNode(resultSet.getBytes(1)) : null,
-                PGObjectFactory.jsonbObject(String.format("{\"entry\":{\"%s\": \"%s\"}}", key, value))
-        );
-    }
-
-    public JsonNode findByHash(String hash) {
-        return db.select(
-                "SELECT entry FROM ordered_entry_index WHERE entry @> ? ORDER BY id DESC limit 1",
-                resultSet -> resultSet.next() ? convertToJsonNode(resultSet.getBytes(1)) : null,
-                PGObjectFactory.jsonbObject(String.format("{\"hash\":\"%s\"}", hash))
-        );
-    }
-
-    private JsonNode convertToJsonNode(byte[] entry) {
-        try {
-            return objectMapper.readValue(entry, JsonNode.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
+    @SingleValueResult(JsonNode.class)
+    Optional<JsonNode> findByHash(@Bind("hash") String hash);
 }
