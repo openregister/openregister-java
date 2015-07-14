@@ -47,8 +47,9 @@ public class FunctionalTest {
 
     private static void publishTestMessages() throws InterruptedException {
         List<String> messages = ImmutableList.of(
-                "{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}",
-                "{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}"
+                "{\"hash\": \"hash1\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}}",
+                "{\"hash\": \"hash2\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}}",
+                "{\"hash\": \"hash3\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_2\"}}"
         );
         for (String message : messages) {
             testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
@@ -82,18 +83,10 @@ public class FunctionalTest {
 
     @Test
     public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException {
-        List<String> messages = ImmutableList.of(
-                "{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_2\"}"
-        );
-        for (String message : messages) {
-            testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
-        }
-        waitForAppToConsumeMessage();
-
         Response response = client.target(String.format("http://localhost:%d/all", RULE.getLocalPort())).request().get();
 
         assertThat(response.readEntity(String.class),
-                equalTo("[{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"},{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}]"));
+                equalTo("[{\"hash\":\"hash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}},{\"hash\":\"hash3\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}]"));
     }
 
     @Test
