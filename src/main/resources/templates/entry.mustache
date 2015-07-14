@@ -30,11 +30,12 @@
     <div class="small-12 large-12 columns">
         <table id="entry-table">
             <tbody>
+            {{#object}}
             <tr>
                 <td class="@field.getName()">{{key}}</td>
                 <td class="@field.getName()">{{value}}</td>
             </tr>
-
+            {{/object}}
             </tbody>
         </table>
     </div>
