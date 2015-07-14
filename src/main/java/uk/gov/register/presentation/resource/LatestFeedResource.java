@@ -9,18 +9,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Path("/latest")
+@Path("/feed")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class LatestResource {
+public class LatestFeedResource {
     public static final int ENTRY_LIMIT = 100;
     private final RecentEntryIndexQueryDAO queryDAO;
 
-    public LatestResource(RecentEntryIndexQueryDAO queryDAO) {
+    public LatestFeedResource(RecentEntryIndexQueryDAO queryDAO) {
         this.queryDAO = queryDAO;
     }
 
     @GET
     public List<JsonNode> get() {
-        return queryDAO.getLatestEntries(ENTRY_LIMIT);
+        return queryDAO.getFeeds(ENTRY_LIMIT);
     }
 }
