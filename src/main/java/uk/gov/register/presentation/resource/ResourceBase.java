@@ -31,7 +31,7 @@ public abstract class ResourceBase {
         String representation = httpServletRequest.getAttribute("representation").toString();
 
         if (representation.equals("html")) {
-            return Response.ok().entity(abstractView.flatten()).header("Content-Type", MediaType.TEXT_HTML).build();
+            return Response.ok().entity(abstractView).header("Content-Type", MediaType.TEXT_HTML).build();
         } else {
             return Response.ok().entity(abstractView.getJsonNode()).header("Content-Type", MediaType.APPLICATION_JSON).build();
         }
