@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 
 public abstract class ResourceBase {
+    public static final int ENTRY_LIMIT = 100;
     @Context
     protected HttpServletRequest httpServletRequest;
 

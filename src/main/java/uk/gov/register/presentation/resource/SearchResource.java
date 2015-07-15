@@ -29,7 +29,7 @@ public class SearchResource extends ResourceBase {
                                 .stream()
                                 .findFirst()
                                 .map(e -> queryDAO.findAllByKeyValue(e.getKey(), e.getValue().get(0)))
-                                .orElseGet(() -> queryDAO.getAllEntries(getRegisterPrimaryKey(), 100)))
+                                .orElseGet(() -> queryDAO.getAllEntries(getRegisterPrimaryKey(), ENTRY_LIMIT)))
         );
     }
 
