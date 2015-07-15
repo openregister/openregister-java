@@ -2,11 +2,13 @@ package uk.gov.register.presentation.resource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.view.ListResultView;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/")
@@ -28,8 +30,8 @@ public class DataResource extends ResourceBase {
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<JsonNode> all() {
-        return queryDAO.getAllEntries(getRegisterPrimaryKey(), ENTRY_LIMIT);
+    public Response all() {
+        return buildResponse(new ListResultView("/templates/entries.mustache", queryDAO.getAllEntries(getRegisterPrimaryKey(), ENTRY_LIMIT)));
     }
 
 }
