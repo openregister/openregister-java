@@ -1,0 +1,35 @@
+<html>
+{{>head}}
+<body>
+{{>header}}
+
+<div class="row entry-row">
+<div class="large-12 columns">
+
+    <table id="entries" class="responsive">
+        <tbody>
+
+        {{#entries}}
+            <tr>
+                {{#.}}
+
+                    <td>{{value}}</td>
+
+                {{/.}}
+            </tr>
+        {{/entries}}
+        </tbody>
+    </table>
+</div>
+</div>
+
+<div class="row">
+    <div class="small-12 columns">
+        Data Formats
+    </div>
+</div>
+
+
+{{>footer}}
+</body>
+</html>
