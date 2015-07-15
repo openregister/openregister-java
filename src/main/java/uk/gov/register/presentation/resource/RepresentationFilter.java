@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RepresentationFilter implements Filter {
-    Pattern pattern = Pattern.compile("(.+?)\\.?([a-zA-Z]+)?");
+    Pattern pattern = Pattern.compile("(.+?)(\\.([a-zA-Z]+))?");
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -34,7 +34,7 @@ public class RepresentationFilter implements Filter {
                 Matcher matcher = pattern.matcher(requestURL);
                 if(matcher.matches()){
                     String requestUrlWithoutRepresentation = matcher.group(1);
-                    String representation = matcher.group(2);
+                    String representation = matcher.group(3);
                     if(StringUtils.isEmpty(representation)){
                         representation = "html";
                     }
