@@ -1,19 +1,27 @@
 package uk.gov.register.presentation.view;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
 
 import java.util.Map;
+import java.util.Set;
 
 public class ResultView extends AbstractView {
-    private final Object object;
+    public final Set entry;
+    private final JsonNode jsonNode;
 
-    public ResultView(String templateName, Object object) {
+    public ResultView(String templateName, JsonNode jsonNode) {
         super(templateName);
-        this.object = object;
+        this.jsonNode = jsonNode;
+        this.entry = ((Map) JsonObjectMapper.convert(jsonNode, Map.class).get("entry")).entrySet();
     }
 
     @Override
-    public Object getObject() {
-        return JsonObjectMapper.convert(object, Map.class);
+    public JsonNode getJsonNode() {
+        return jsonNode;
+    }
+
+    public String getHash() {
+        return jsonNode.get("hash").textValue();
     }
 }

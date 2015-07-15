@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.view;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.views.View;
 
 public abstract class AbstractView extends View {
@@ -7,7 +8,7 @@ public abstract class AbstractView extends View {
         super(templateName);
     }
 
-    public abstract Object getObject();
+    public abstract JsonNode getJsonNode();
 }
 
 
