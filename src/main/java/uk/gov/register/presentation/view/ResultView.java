@@ -32,7 +32,7 @@ public class ResultView extends AbstractView {
     }
 
 
-    private void toSets(Map m, Set<HashMap.Entry> sets) {
+    private void toSets(Map<String, ?> m, Set<HashMap.Entry> sets) {
         m.entrySet().stream()
                 .forEachOrdered(e -> {
                     final HashMap.Entry entry = (HashMap.Entry) e;
