@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ListResultView extends AbstractView {
+public class ListResultView extends AbstractView<List<JsonNode>> {
     private final List<JsonNode> jsonNodes;
 
     public ListResultView(String templateName, List<JsonNode> jsonNodes) {

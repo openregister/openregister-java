@@ -6,7 +6,7 @@ import uk.gov.register.presentation.mapper.JsonObjectMapper;
 import java.util.Map;
 import java.util.Set;
 
-public class SingleResultView extends AbstractView {
+public class SingleResultView extends AbstractView<JsonNode> {
     public final Set entry;
     private final JsonNode jsonNode;
 

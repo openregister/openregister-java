@@ -1,10 +1,11 @@
 package uk.gov.register.presentation.resource;
 
+import uk.gov.register.presentation.entity.Entity;
+import uk.gov.register.presentation.entity.Representation;
 import uk.gov.register.presentation.view.AbstractView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
@@ -31,11 +32,8 @@ public abstract class ResourceBase {
     protected Response buildResponse(AbstractView abstractView) {
         String representation = httpServletRequest.getAttribute("representation").toString();
 
-        if (representation.equals("html")) {
-            return Response.ok().entity(abstractView).header("Content-Type", MediaType.TEXT_HTML).build();
-        } else {
-            return Response.ok().entity(abstractView.get()).header("Content-Type", MediaType.APPLICATION_JSON).build();
-        }
+        Entity entity = Representation.valueOf(representation).entity;
+        return Response.ok().entity(entity.convert(abstractView)).header("Content-Type", entity.contentType()).build();
     }
-
 }
+
