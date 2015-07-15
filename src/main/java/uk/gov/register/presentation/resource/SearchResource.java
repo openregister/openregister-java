@@ -24,11 +24,13 @@ public class SearchResource extends ResourceBase {
     public Response search(@Context UriInfo uriInfo) {
         final MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters();
 
-        return queryParameters.entrySet()
-                .stream()
-                .findFirst()
-                .map(e -> buildResponse(new ListResultView("/templates/entries.mustache", queryDAO.findAllByKeyValue(e.getKey(), e.getValue().get(0)))))
-                .orElseGet(/*handle it later*/null);
+        return buildResponse(new ListResultView("/templates/entries.mustache",
+                        queryParameters.entrySet()
+                                .stream()
+                                .findFirst()
+                                .map(e -> queryDAO.findAllByKeyValue(e.getKey(), e.getValue().get(0)))
+                                .orElseGet(() -> queryDAO.getAllEntries(getRegisterPrimaryKey(), 100)))
+        );
     }
 
     @GET

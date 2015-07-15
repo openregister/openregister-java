@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
@@ -9,22 +10,25 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FindEntityTest extends FunctionalTestBase {
+
+    @BeforeClass
+    public static void publishTestMessages() {
+        publishMessages(ImmutableList.of(
+                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}",
+                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}}",
+                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}}"
+        ));
+    }
+
     @Test
     public void findByPrimaryKey_shouldReturnEntryWithThPrimaryKey() {
-        publishMessages(ImmutableList.of(
-                "{\"hash\":\"entryHash1\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}}",
-                "{\"hash\":\"entryHash2\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}}",
-                "{\"hash\":\"entryHash3\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_3\"}}"
-        ));
+        Response response = getRequest("/ft_test_pkey/12345.json");
 
-        Response response = getRequest("/ft_test_pkey/ft_test_pkey_value_1.json");
-
-        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"entryHash3\",\"entry\":{\"key1\":\"key1Value_3\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}"));
     }
 
     @Test
     public void findByPrimaryKey_returns400ForNonPrimaryKeySearch() {
-        publishMessages(ImmutableList.of("{\"hash\":\"entryHash1\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}}"));
         Response response = getRequest("/key1/key1Value_1.json");
 
         assertThat(response.getStatus(), equalTo(400));
@@ -33,36 +37,34 @@ public class FindEntityTest extends FunctionalTestBase {
 
     @Test
     public void findByHash_shouldReturnEntryForTheGivenHash() {
-        publishMessages(ImmutableList.of(
-                "{\"hash\":\"entryHash1\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_1\", \"key1\":\"key1Value_1\"}}",
-                "{\"hash\":\"entryHash2\", \"entry\":{\"ft_test_pkey\":\"ft_test_pkey_value_2\", \"key1\":\"key1Value_2\"}}"
-        ));
+        Response response = getRequest("/hash/hash2.json");
 
-        Response response = getRequest("/hash/entryHash2.json");
-
-        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}}"));
     }
 
     @Test
     public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException {
-        Response response = client.target(String.format("http://localhost:%d/all.json", RULE.getLocalPort())).request().get();
+        Response response = getRequest("/all.json");
 
         assertThat(response.readEntity(String.class),
-                equalTo("[{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}},{\"hash\":\"entryHash3\",\"entry\":{\"key1\":\"key1Value_3\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}]"));
+                equalTo("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}]"));
     }
 
     @Test
     public void search_returnsAllMatchingEntries() {
-        publishMessages(ImmutableList.of(
-                "{\"hash\":\"hash1\", \"entry\":{\"ft_test_pkey\":\"12345\", \"name\":\"ellis\"}}",
-                "{\"hash\":\"hash2\", \"entry\":{\"ft_test_pkey\":\"6789\", \"name\":\"presley\"}}",
-                "{\"hash\":\"hash3\", \"entry\":{\"ft_test_pkey\":\"145678\", \"name\":\"ellis\"}}"
-        ));
-
         Response response = getRequest("/search.json?name=ellis");
 
         assertThat(response.readEntity(String.class), equalTo(
                 "[{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}]"
+        ));
+    }
+
+    @Test
+    public void search_returnsAllEntriesWhenNoSearchQueryIsGiven() {
+        Response response = getRequest("/search.json");
+
+        assertThat(response.readEntity(String.class), equalTo(
+                "[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}]"
         ));
     }
 
