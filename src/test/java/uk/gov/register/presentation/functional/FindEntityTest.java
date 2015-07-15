@@ -51,4 +51,19 @@ public class FindEntityTest extends FunctionalTestBase {
                 equalTo("[{\"hash\":\"entryHash2\",\"entry\":{\"key1\":\"key1Value_2\",\"ft_test_pkey\":\"ft_test_pkey_value_2\"}},{\"hash\":\"entryHash3\",\"entry\":{\"key1\":\"key1Value_3\",\"ft_test_pkey\":\"ft_test_pkey_value_1\"}}]"));
     }
 
+    @Test
+    public void search_returnsAllMatchingEntries() {
+        publishMessages(ImmutableList.of(
+                "{\"hash\":\"hash1\", \"entry\":{\"ft_test_pkey\":\"12345\", \"name\":\"ellis\"}}",
+                "{\"hash\":\"hash2\", \"entry\":{\"ft_test_pkey\":\"6789\", \"name\":\"presley\"}}",
+                "{\"hash\":\"hash3\", \"entry\":{\"ft_test_pkey\":\"145678\", \"name\":\"ellis\"}}"
+        ));
+
+        Response response = getRequest("/search.json?name=ellis");
+
+        assertThat(response.readEntity(String.class), equalTo(
+                "[{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}]"
+        ));
+    }
+
 }

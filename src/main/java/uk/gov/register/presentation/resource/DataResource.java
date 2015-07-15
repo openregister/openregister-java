@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Path("/")
-public class DataResource extends ResourceBase{
+public class DataResource extends ResourceBase {
     public static final int ENTRY_LIMIT = 100;
     private final RecentEntryIndexQueryDAO queryDAO;
 

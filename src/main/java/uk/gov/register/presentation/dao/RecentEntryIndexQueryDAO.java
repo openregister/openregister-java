@@ -20,6 +20,9 @@ public interface RecentEntryIndexQueryDAO {
     @SingleValueResult(JsonNode.class)
     Optional<JsonNode> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
+    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC")
+    List<JsonNode> findAllByKeyValue(@Bind("key") String key, @Bind("value") String value);
+
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
     @SingleValueResult(JsonNode.class)
     Optional<JsonNode> findByHash(@Bind("hash") String hash);
