@@ -17,8 +17,8 @@ public class CleanDatabaseRule extends ExternalResource {
 
     @Override
     protected void before() throws Throwable {
-        Connection connection = DriverManager.getConnection(pgUrl);
-        try (Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(pgUrl);
+             Statement statement = connection.createStatement()) {
             statement.execute("DELETE FROM " + tableName);
         }
     }

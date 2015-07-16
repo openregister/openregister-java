@@ -13,13 +13,12 @@ import java.util.List;
 
 public class FunctionalTestBase {
     public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_presentation";
+    private static final String TABLE_NAME = "ordered_entry_index";
 
     protected static Client client;
 
-    private static final String tableName = "ordered_entry_index";
-
     @ClassRule
-    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, tableName);
+    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, TABLE_NAME);
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
