@@ -45,9 +45,9 @@ jar {
 
 
 task startPresentationApp {
-    ProcessBuilder builder = new ProcessBuilder("java", "-cp", sourceSets.test.runtimeClasspath.join(":"), "uk.gov.register.presentation.functional.testSupport.PresentationApplicationRunner", "server", "src/test/resources/test-app-config.yaml").directory(projectDir.absoluteFile)
-    builder.redirectError(ProcessBuilder.Redirect.to(new File(buildDir, 'stderr.txt')))
-    builder.redirectOutput(ProcessBuilder.Redirect.to(new File(buildDir, 'stdout.txt')))
+    ProcessBuilder builder = new ProcessBuilder("java", "-cp", sourceSets.test.runtimeClasspath.join(":"), "uk.gov.register.presentation.functional.testSupport.PresentationApplicationRunner", "server", "src/test/resources/test-app-config.yaml")
+//    builder.redirectError(ProcessBuilder.Redirect.to(new File(buildDir, 'stderr.txt')))
+//    builder.redirectOutput(ProcessBuilder.Redirect.to(new File(buildDir, 'stdout.txt')))
     project.ext.runningPresentationApp = builder.start()
 }
 
