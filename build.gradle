@@ -44,9 +44,23 @@ jar {
 }
 
 test {
-    testLogging {
-        exceptionFormat = 'full'
+    doFirst{
+        tasks.startPresentationApp.execute()
     }
+}
+
+test.finalizedBy 'stopPresentationApp'
+
+task startPresentationApp(){
+    ProcessBuilder builder = new ProcessBuilder( "java", "-cp", sourceSets.test.runtimeClasspath.join(":"), "uk.gov.register.presentation.functional.testSupport.PresentationApplicationRunner", "server",  "src/test/resources/test-app-config.yaml" ).directory(projectDir.absoluteFile)
+    builder.redirectError(ProcessBuilder.Redirect.to(new File(projectDir, 'stderr.txt')))
+    builder.redirectOutput(ProcessBuilder.Redirect.to(new File(projectDir, 'stdout.txt')))
+    project.ext.runningPresentationApp = builder.start()
+    println project.ext.runningPresentationApp
+}
+
+task stopPresentationApp{
+    project.ext.runningPresentationApp?.destroyForcibly()?.waitFor()
 }
 
 task stage(dependsOn: ['assemble'])

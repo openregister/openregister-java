@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.functional;
+package uk.gov.register.presentation.functional.testSupport;
 
 import org.junit.rules.ExternalResource;
 
@@ -19,7 +19,7 @@ public class CleanDatabaseRule extends ExternalResource {
     protected void before() throws Throwable {
         Connection connection = DriverManager.getConnection(pgUrl);
         try (Statement statement = connection.createStatement()) {
-            statement.execute("DROP TABLE IF EXISTS " + tableName);
+            statement.execute("DELETE FROM " + tableName);
         }
     }
 }

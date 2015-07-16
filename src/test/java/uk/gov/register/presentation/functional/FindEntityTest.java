@@ -13,7 +13,7 @@ public class FindEntityTest extends FunctionalTestBase {
 
     @BeforeClass
     public static void publishTestMessages() {
-        publishMessages(ImmutableList.of(
+        publishMessagesToDB(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}}"

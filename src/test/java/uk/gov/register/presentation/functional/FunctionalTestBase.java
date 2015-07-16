@@ -1,62 +1,54 @@
 package uk.gov.register.presentation.functional;
 
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.rules.TestRule;
-import uk.gov.register.presentation.app.PresentationApplication;
-import uk.gov.register.presentation.config.PresentationConfiguration;
+import uk.gov.register.presentation.dao.PGObjectFactory;
+import uk.gov.register.presentation.functional.testSupport.CleanDatabaseRule;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
+import java.sql.*;
 import java.util.List;
 
 public class FunctionalTestBase {
     public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_presentation";
 
-    public static final String TOPIC = "register";
-    private static final TestKafkaCluster testKafkaCluster = new TestKafkaCluster(TOPIC);
-
-    @ClassRule
-    public static final TestRule cleanDb = new CleanDatabaseRule(DATABASE_URL, "ordered_entry_index");
-
-    @ClassRule
-    public static final DropwizardAppRule<PresentationConfiguration> RULE =
-            new DropwizardAppRule<>(PresentationApplication.class,
-                    ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-                    ConfigOverride.config("zookeeperServer", "localhost:" + testKafkaCluster.getZkPort()),
-                    ConfigOverride.config("database.url", DATABASE_URL));
-
     protected static Client client;
+
+    private static final String tableName = "ordered_entry_index";
+
+    @ClassRule
+    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, tableName);
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
-        client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
+        client = new JerseyClientBuilder().build();
     }
 
     Response getRequest(String path) {
-        return client.target(String.format("http://localhost:%d%s", RULE.getLocalPort(), path))
-                .request()
-                .get();
+        return client.target(String.format("http://localhost:9000%s", path)).request().get();
     }
 
-    static void publishMessages(List<String> messages) {
-        for (String message : messages) {
-            testKafkaCluster.getProducer().send(new ProducerRecord<>(TOPIC, message.getBytes()));
-        }
-        waitForAppToConsumeMessage();
-    }
 
-    private static void waitForAppToConsumeMessage() {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
+
+    static void publishMessagesToDB(List<String> messages) {
+        org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl(DATABASE_URL);
+        try (Connection connection = dataSource.getConnection()) {
+            for (String message : messages) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("Insert into ordered_entry_index(entry) values(?)")) {
+                    preparedStatement.setObject(1, PGObjectFactory.jsonbObject(message));
+                    preparedStatement.execute();
+                }
+            }
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
 }

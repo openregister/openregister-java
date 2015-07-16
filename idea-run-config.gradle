@@ -1,0 +1,53 @@
+idea {
+    project {
+        ipr {
+            withXml {
+
+                Node projectNode = it.asNode()
+                Node projectRunConfigurationManagerNode = projectNode.appendNode('component', [name: 'ProjectRunConfigurationManager'])
+
+                appendApplication(
+                    projectRunConfigurationManagerNode,
+                    'PresentationApplicationRunner',
+                    "uk.gov.register.presentation.functional.testSupport.PresentationApplicationRunner",
+                    '',
+                    'file://$PROJECT_DIR$',
+                    'presentation'
+                )
+            }
+        }
+    }
+}
+
+private void appendApplication(
+    Node projectRunConfigurationManagerNode,
+    String configurationName,
+    String mainClassName,
+    String programArguments,
+    String workingDir,
+    String moduleName) {
+
+    Node configurationNode = projectRunConfigurationManagerNode.appendNode('configuration')
+    configurationNode.attributes().default = 'false'
+    configurationNode.attributes().name = configurationName
+    configurationNode.attributes().type = 'Application'
+    configurationNode.attributes().factoryName = 'Application'
+    configurationNode.attributes().singleton = 'true'
+
+    configurationNode.appendNode('option', [name: 'MAIN_CLASS_NAME', value: mainClassName])
+    configurationNode.appendNode('option', [name: 'PROGRAM_PARAMETERS', value: programArguments])
+    configurationNode.appendNode('option', [name: 'WORKING_DIRECTORY', value: workingDir])
+
+    configurationNode.appendNode('module', [name: moduleName])
+
+    Node runnerSettingsNode1 = configurationNode.appendNode('RunnerSettings', [RunnerId: 'Debug'])
+    runnerSettingsNode1.appendNode('option', [name: 'DEBUG_PORT', value: ''])
+    runnerSettingsNode1.appendNode('option', [name: 'TRANSPORT', value: '0'])
+    runnerSettingsNode1.appendNode('option', [name: 'LOCAL', value: 'true'])
+
+    configurationNode.appendNode('RunnerSettings', [RunnerId: 'Run'])
+
+    configurationNode.appendNode('ConfigurationWrapper', [RunnerId: 'Debug'])
+    configurationNode.appendNode('ConfigurationWrapper', [RunnerId: 'Run'])
+
+}

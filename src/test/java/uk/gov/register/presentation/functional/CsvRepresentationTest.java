@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 public class CsvRepresentationTest extends FunctionalTestBase{
     @BeforeClass
     public static void publishTestMessages() {
-        publishMessages(ImmutableList.of(
+        publishMessagesToDB(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}}"
@@ -34,7 +34,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv"));
         assertThat(response.readEntity(String.class), equalTo("hash,name,ft_test_pkey\nhash2,presley,6789\nhash3,ellis,145678\nhash1,ellis,12345"));
     }
-    
+
     @Test
     public void tsvRepresentationIsSupportedForAnEntry() {
         Response response = getRequest("/hash/hash1.tsv");

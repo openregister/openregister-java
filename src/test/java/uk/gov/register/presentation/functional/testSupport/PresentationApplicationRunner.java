@@ -1,0 +1,23 @@
+package uk.gov.register.presentation.functional.testSupport;
+
+import io.dropwizard.testing.ResourceHelpers;
+import uk.gov.register.presentation.app.PresentationApplication;
+
+public class PresentationApplicationRunner {
+    public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_presentation";
+
+    public static final String TOPIC = "register";
+    private static final TestKafkaCluster testKafkaCluster = new TestKafkaCluster(TOPIC);
+
+    public static void main(String[] args) throws Throwable {
+        System.setProperty("dw.zookeeperServer", "localhost:" + testKafkaCluster.getZkPort());
+        System.setProperty("dw.database.url", DATABASE_URL);
+
+        String arg1= ResourceHelpers.resourceFilePath("test-app-config.yaml");
+        String[] a = {"server", arg1};
+
+        PresentationApplication.main(a);
+        Thread.currentThread().join();
+
+    }
+}

@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.functional;
+package uk.gov.register.presentation.functional.testSupport;
 
 import com.google.common.base.Throwables;
 import kafka.admin.AdminUtils;
@@ -16,27 +16,25 @@ import java.util.Properties;
 public class TestKafkaCluster {
 
     private final TestingServer zkServer;
+    @SuppressWarnings("FieldCanBeLocal")
     private final KafkaServerStartable kafkaServer;
-    private final KafkaProducer<String, byte[]> producer;
+
+    private static final int zkServerPort = 2189;
+    private static final int kafkaPort = 61111;
 
     public TestKafkaCluster(String topicToCreate) {
         try {
-            zkServer = new TestingServer();
+            zkServer = new TestingServer(getZkPort());
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
         kafkaServer = new KafkaServerStartable(makeKafkaConfig("localhost:" + getZkPort()));
         kafkaServer.startup();
-
-        Properties producerProps = new Properties();
-        producerProps.put("bootstrap.servers", "localhost:" + getKafkaPort());
-        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
-        producer = new KafkaProducer<>(producerProps);
-
         // ensure topic exists before application connects
         createTopic(topicToCreate);
     }
+
+
 
     private void createTopic(String name) {
         ZkClient zkClient = new ZkClient(zkServer.getConnectString(), 500, 500, ZKStringSerializer$.MODULE$);
@@ -47,20 +45,24 @@ public class TestKafkaCluster {
     private KafkaConfig makeKafkaConfig(Object zkConnectString) {
         Properties props = TestUtils.createBrokerConfigs(1, false).head();
         props.put("zookeeper.connect", zkConnectString);
+        props.put("port", String.valueOf(kafkaPort));
         return new KafkaConfig(props);
     }
 
-
-    public int getKafkaPort() {
-        return kafkaServer.serverConfig().port();
-    }
-
     public int getZkPort() {
-        return zkServer.getPort();
+        return zkServerPort;
     }
 
-    public Producer<String, byte[]> getProducer() {
-        return producer;
+    private static Properties kafkaProducerProperties() {
+        Properties producerProps = new Properties();
+        producerProps.put("bootstrap.servers", "localhost:" + kafkaPort);
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
+        return producerProps;
+    }
+
+    public static Producer<String, byte[]> getProducer() {
+        return new KafkaProducer<>(kafkaProducerProperties());
     }
 
 }
