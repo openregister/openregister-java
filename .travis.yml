@@ -10,6 +10,7 @@ cache:
     - '$HOME/.gradle/caches'
     - '$HOME/.gradle/wrapper'
 before_script:
+  - psql -c 'create role ft_presentation with login;' -U postgres
   - psql -c 'create database ft_presentation;' -U postgres
 script:
   - ./gradlew clean build
