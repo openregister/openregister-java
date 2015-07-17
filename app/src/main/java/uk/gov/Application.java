@@ -6,7 +6,10 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.LoadHandler;
 import uk.gov.mint.MintService;
-import uk.gov.store.*;
+import uk.gov.store.EntriesQueryDAO;
+import uk.gov.store.EntriesUpdateDAO;
+import uk.gov.store.HighWaterMarkDAO;
+import uk.gov.store.LogStream;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +25,6 @@ public class Application {
     private static Application notToBeGCed;
     private final Properties configuration;
     private MintService mintService;
-    private DataStore dataStore;
 
     public Application(String... args) throws IOException {
         Map<String, String> propertiesMap = createConfigurationMap(args);
@@ -60,13 +62,13 @@ public class Application {
         DBI dbi = new DBI(resolveConnectionString(pgConnectionString));
         HighWaterMarkDAO highWaterMarkDAO = dbi.onDemand(HighWaterMarkDAO.class);
         EntriesQueryDAO entriesQueryDAO = dbi.onDemand(EntriesQueryDAO.class);
-        dataStore = new PostgresDataStore(resolveConnectionString(pgConnectionString));
+        EntriesUpdateDAO entriesUpdateDAO = dbi.onDemand(EntriesUpdateDAO.class);
 
         String kafkaString = resolveKafkaConnectionString(configuration.getProperty("kafka.bootstrap.servers"));
         consoleLog("Connecting to Kafka: " + kafkaString);
         LogStream logStream = new LogStream(highWaterMarkDAO, entriesQueryDAO, createKafkaProducer(kafkaString));
 
-        LoadHandler loadHandler = new LoadHandler(dataStore, logStream);
+        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, logStream);
         mintService = new MintService(loadHandler);
         mintService.init();
 

@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 @RegisterMapper(IndexedEntryMapper.class)
 public interface EntriesQueryDAO {
-    String tableName = "entries";
+    String tableName = EntriesUpdateDAO.tableName;
 
     @SqlQuery("SELECT ID, ENTRY FROM " + tableName + " WHERE ID > :high_water_mark ORDER BY ID")
     Iterator<IndexedEntry> getEntriesSince(@Bind("high_water_mark") int highWaterMark);
