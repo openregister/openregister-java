@@ -19,8 +19,8 @@ public class TestKafkaCluster {
     @SuppressWarnings("FieldCanBeLocal")
     private final KafkaServerStartable kafkaServer;
 
-    private static final int zkServerPort = 2189;
-    private static final int kafkaPort = 61111;
+    private static final int zkServerPort = 7890;
+    private static final int kafkaPort = 61789;
 
     public TestKafkaCluster(String topicToCreate) {
         try {

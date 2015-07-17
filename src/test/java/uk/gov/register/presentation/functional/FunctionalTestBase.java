@@ -13,6 +13,8 @@ import java.util.List;
 
 public class FunctionalTestBase {
     public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_presentation";
+    public static final int APPLICATION_PORT = 9000;
+
     private static final String TABLE_NAME = "ordered_entry_index";
 
     protected static Client client;
@@ -28,7 +30,7 @@ public class FunctionalTestBase {
     }
 
     Response getRequest(String path) {
-        return client.target(String.format("http://localhost:9000%s", path)).request().get();
+        return client.target(String.format("http://localhost:%d%s", APPLICATION_PORT, path)).request().get();
     }
 
 

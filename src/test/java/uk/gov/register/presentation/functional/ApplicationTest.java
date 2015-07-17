@@ -11,11 +11,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-public class ApplicationTest extends FunctionalTestBase{
+public class ApplicationTest extends FunctionalTestBase {
     @Test
     public void appSupportsCORS() {
         String origin = "http://originfortest.com";
-        Response response = client.target("http://localhost:9000/feed")
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/feed")
                 .request()
                 .header(HttpHeaders.ORIGIN, origin)
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
