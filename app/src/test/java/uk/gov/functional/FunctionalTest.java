@@ -6,6 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import uk.gov.Application;
 import uk.gov.store.EntriesQueryDAO;
+import uk.gov.store.EntriesUpdateDAO;
 import uk.gov.store.HighWaterMarkDAO;
 
 import java.io.InputStream;
@@ -78,7 +79,7 @@ public class FunctionalTest {
 
     private void cleanDatabase() throws SQLException {
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("DROP TABLE IF EXISTS " + EntriesQueryDAO.tableName);
+            statement.execute("DROP TABLE IF EXISTS " + EntriesUpdateDAO.tableName);
             statement.execute("DROP TABLE IF EXISTS " + HighWaterMarkDAO.tableName);
         }
     }
