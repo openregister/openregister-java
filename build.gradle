@@ -63,16 +63,16 @@ void startApp(){
 }
 
 
-task stopApp << {
-    destroyApp()
+task stopPresentationApp << {
+    stopApp()
 }
 
-void destroyApp(){
+void stopApp(){
     runningPresentationApp?.destroy()?.waitFor()
 }
 
 test {
-    finalizedBy stopApp
+    finalizedBy stopPresentationApp
     dependsOn << compileTestJava
     dependsOn << startPresentationApp
     doFirst{
