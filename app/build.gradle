@@ -4,7 +4,7 @@ group 'mint'
 dependencies {
     compile javaslang, jdbi, jOptSimple, json, kafka, postgresClient, sparkjava, apacheCommonsCodec
 
-    testCompile junit, kafkaTest, mockito, zkTest
+    testCompile junit, kafkaTest, mockito, zkTest, jcabi
 }
 
 
