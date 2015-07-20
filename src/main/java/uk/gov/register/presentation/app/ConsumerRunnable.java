@@ -12,6 +12,7 @@ import uk.gov.register.presentation.config.ZookeeperConfiguration;
 import uk.gov.register.presentation.dao.PGObjectFactory;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -46,7 +47,7 @@ public class ConsumerRunnable implements Runnable {
         for (MessageAndMetadata<String, byte[]> messageAndMetadata : kafkaStream) {
             byte[] message = messageAndMetadata.message();
             //TODO: check can we directly get getBytes into string
-            updateDAO.append(PGObjectFactory.jsonbObject(new String(message)));
+            updateDAO.append(PGObjectFactory.jsonbObject(new String(message, Charset.forName("UTF-8"))));
         }
     }
 
