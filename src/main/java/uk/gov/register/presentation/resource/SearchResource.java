@@ -42,7 +42,7 @@ public class SearchResource extends ResourceBase {
             return buildResponse(new SingleResultView("/templates/entry.mustache", entry.isPresent() ? entry.get() : null));
         }
 
-        throw new BadRequestException("Key: " + key + " is not primary key of the register.");
+        throw new NotFoundException();
     }
 
     @GET
