@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 class CsvEntity implements Entity {
 
+    private static final String csvLineSeparator = "\r\n";
+
     @SuppressWarnings("unchecked")
     @Override
     public Object convert(AbstractView view) {
@@ -23,7 +25,7 @@ class CsvEntity implements Entity {
 
             headerElements = headerElements(list.get(0));
 
-            data = list.stream().map(e -> getCsvData(headerElements, e)).collect(Collectors.joining("\n"));
+            data = list.stream().map(e -> getCsvData(headerElements, e)).collect(Collectors.joining(csvLineSeparator));
         } else {
             Map map = JsonObjectMapper.convert(view.get(), Map.class);
 
@@ -33,7 +35,7 @@ class CsvEntity implements Entity {
         }
 
 
-        return String.join(entrySeparator(), headerElements) + "\n" + data;
+        return String.join(entrySeparator(), headerElements) + csvLineSeparator + data;
     }
 
     @SuppressWarnings("unchecked")

@@ -31,7 +31,7 @@ public class CsvEntityTest {
         AbstractView view = new SingleResultView("foo", node);
         Object result = csvEntity.convert(view);
 
-        assertThat(result.toString(), equalTo("hash,key1,key2,key3,key4\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\""));
+        assertThat(result.toString(), equalTo("hash,key1,key2,key3,key4\r\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\""));
     }
 
 }

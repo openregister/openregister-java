@@ -24,7 +24,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/hash/hash1.csv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv; charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash,name,ft_test_pkey\nhash1,ellis,\"123,45\""));
+        assertThat(response.readEntity(String.class), equalTo("hash,name,ft_test_pkey\r\nhash1,ellis,\"123,45\""));
     }
 
     @Test
@@ -32,7 +32,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/all.csv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv; charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash,name,ft_test_pkey\nhash2,presley,6789\nhash3,ellis,145678\nhash1,ellis,\"123,45\""));
+        assertThat(response.readEntity(String.class), equalTo("hash,name,ft_test_pkey\r\nhash2,presley,6789\r\nhash3,ellis,145678\r\nhash1,ellis,\"123,45\""));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/hash/hash1.tsv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/tab-separated-values; charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash\tname\tft_test_pkey\nhash1\tellis\t\"123,45\""));
+        assertThat(response.readEntity(String.class), equalTo("hash\tname\tft_test_pkey\r\nhash1\tellis\t\"123,45\""));
     }
 
     @Test
@@ -48,6 +48,6 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/all.tsv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/tab-separated-values; charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash\tname\tft_test_pkey\nhash2\tpresley\t6789\nhash3\tellis\t145678\nhash1\tellis\t\"123,45\""));
+        assertThat(response.readEntity(String.class), equalTo("hash\tname\tft_test_pkey\r\nhash2\tpresley\t6789\r\nhash3\tellis\t145678\r\nhash1\tellis\t\"123,45\""));
     }
 }
