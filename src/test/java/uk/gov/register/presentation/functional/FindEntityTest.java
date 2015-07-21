@@ -1,15 +1,22 @@
 package uk.gov.register.presentation.functional;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.jackson.Jackson;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 
+import java.io.IOException;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FindEntityTest extends FunctionalTestBase {
+
+    public static ObjectMapper OBJECT_MAPPER;
 
     @BeforeClass
     public static void publishTestMessages() {
@@ -18,6 +25,7 @@ public class FindEntityTest extends FunctionalTestBase {
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}}"
         ));
+        OBJECT_MAPPER = Jackson.newObjectMapper();
     }
 
     @Test
@@ -36,18 +44,20 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void findByHash_shouldReturnEntryForTheGivenHash() {
+    public void findByHash_shouldReturnEntryForTheGivenHash() throws IOException {
         Response response = getRequest("/hash/hash2.json");
 
-        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}}"));
+        assertThat(OBJECT_MAPPER.readValue(response.readEntity(String.class), JsonNode.class),
+                equalTo(OBJECT_MAPPER.readValue("{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}}", JsonNode.class)));
     }
 
     @Test
-    public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException {
+    public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException, IOException {
         Response response = getRequest("/all.json");
 
-        assertThat(response.readEntity(String.class),
-                equalTo("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}]"));
+        String jsonResponse = response.readEntity(String.class);
+        assertThat(OBJECT_MAPPER.readValue(jsonResponse, JsonNode.class),
+                equalTo(OBJECT_MAPPER.readValue("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft_test_pkey\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft_test_pkey\":\"12345\"}}]", JsonNode.class)));
     }
 
     @Test
