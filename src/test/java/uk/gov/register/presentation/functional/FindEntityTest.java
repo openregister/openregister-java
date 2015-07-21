@@ -31,7 +31,7 @@ public class FindEntityTest extends FunctionalTestBase {
     public void findByPrimaryKey_returns400ForNonPrimaryKeySearch() {
         Response response = getRequest("/key1/key1Value_1.json");
 
-        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.getStatus(), equalTo(404));
 
     }
 

@@ -7,7 +7,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
@@ -29,7 +29,7 @@ public class SearchResourceTest {
         try {
             resource.findByPrimaryKey("someOtherKey", "value");
             fail("Must fail");
-        } catch (BadRequestException e) {
+        } catch (NotFoundException e) {
             //success
         }
     }
