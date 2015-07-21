@@ -1,12 +1,7 @@
 package uk.gov.register.presentation.resource;
 
-import uk.gov.register.presentation.entity.Entity;
-import uk.gov.register.presentation.entity.Representation;
-import uk.gov.register.presentation.view.AbstractView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import java.net.URI;
 
 public abstract class ResourceBase {
@@ -27,13 +22,6 @@ public abstract class ResourceBase {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected Response buildResponse(AbstractView abstractView) {
-        String representation = httpServletRequest.getAttribute("representation").toString();
-
-        Entity entity = Representation.valueOf(representation).entity;
-        return Response.ok().entity(entity.convert(abstractView)).header("Content-Type", entity.contentType()).build();
     }
 }
 

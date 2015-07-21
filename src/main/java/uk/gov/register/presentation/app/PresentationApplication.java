@@ -19,6 +19,9 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
+import uk.gov.register.presentation.representations.CsvWriter;
+import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.presentation.representations.TsvWriter;
 import uk.gov.register.presentation.resource.*;
 
 import javax.servlet.DispatcherType;
@@ -56,8 +59,12 @@ public class PresentationApplication extends Application<PresentationConfigurati
 
         DropwizardResourceConfig resourceConfig = environment.jersey().getResourceConfig();
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, ImmutableMap.of(
+                "csv", ExtraMediaType.TEXT_CSV_TYPE,
+                "tsv", ExtraMediaType.TEXT_TSV_TYPE,
                 "json", MediaType.APPLICATION_JSON_TYPE,
                 "xml", MediaType.APPLICATION_XML_TYPE));
+        environment.jersey().register(new CsvWriter());
+        environment.jersey().register(new TsvWriter());
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new DataResource(queryDAO));
@@ -65,7 +72,6 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jersey.register(new SearchResource(queryDAO));
 
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
-        applicationContext.addFilter(RepresentationFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
 
         setCorsPreflight(applicationContext);
     }
