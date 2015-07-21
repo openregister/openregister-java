@@ -1,11 +1,14 @@
 package uk.gov.mint;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.gov.store.EntriesUpdateDAO;
 import uk.gov.store.LogStream;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class LoadHandler {
     private final LogStream logStream;
@@ -20,18 +23,22 @@ public class LoadHandler {
     }
 
     public void handle(String payload) throws Exception {
-        for (String entry : payload.split("\n"))
-            processEntry(entry);
+        processEntries(payload.split("\n"));
     }
 
-    private void processEntry(String entry) throws Exception {
-        try {
-            JsonNode entryJsonNode = canonicalJsonMapper.readFromBytes(entry.getBytes());
-            entriesUpdateDAO.add(canonicalJsonMapper.writeToBytes(hashedEntry(entryJsonNode)));
-            logStream.notifyOfNewEntries();
-        } catch (JsonProcessingException e) {
-            throw new Exception("Error parsing JSON entry [" + entry + "]", e);
-        }
+    private void processEntries(String[] entries) throws Exception {
+        final List<byte[]> entriesAsBytes = Arrays.stream(entries)
+                .map(e -> {
+                    try {
+                        final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes("UTF-8"));
+                        return canonicalJsonMapper.writeToBytes(hashedEntry(jsonNode));
+                    } catch (Exception e1) {
+                        throw new RuntimeException("Error parsing json entry: " + e, e1);
+                    }
+                })
+                .collect(Collectors.toList());
+        entriesUpdateDAO.add(entriesAsBytes);
+        logStream.notifyOfNewEntries();
     }
 
     private ObjectNode hashedEntry(JsonNode entryJsonNode) {

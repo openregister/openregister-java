@@ -1,7 +1,11 @@
 package uk.gov.store;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
+
+import java.util.List;
 
 public interface EntriesUpdateDAO {
     String tableName = "entries";
@@ -9,6 +13,7 @@ public interface EntriesUpdateDAO {
     @SqlUpdate("CREATE TABLE IF NOT EXISTS " + tableName + " (ID SERIAL PRIMARY KEY, ENTRY BYTEA)")
     void ensureTableExists();
 
-    @SqlUpdate("INSERT INTO " + tableName + "(ENTRY) values(:message)")
-    void add(@Bind("message") byte[] message);
+    @SqlBatch("INSERT INTO " + tableName + "(ENTRY) values(:messages)")
+    @BatchChunkSize(1000)
+    void add(@Bind("messages") List<byte[]> messages);
 }
