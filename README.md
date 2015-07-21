@@ -24,7 +24,6 @@ A repository for mint project
 There are 2 options:
 
 1. Run via gradle:
--     gradle bulkLoad -Pconfigfile=<config.properties> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]
+    `gradle bulkLoad -Pconfigfile=<config.properties> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]`
 2. Run using the built jar
--     java -jar <path_to_jar> Loader --configfile=<config.properties> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>
-
+    `java -jar <path_to_jar> Loader --configfile=<config.properties> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>`
