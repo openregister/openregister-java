@@ -48,7 +48,10 @@ public class SearchResource extends ResourceBase {
     public SingleResultView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         String registerPrimaryKey = getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
-            return new SingleResultView("/templates/entry.mustache", queryDAO.findByKeyValue(key, value).orNull());
+            Optional<Entry> entry = queryDAO.findByKeyValue(key, value);
+            if (entry.isPresent()) {
+                return new SingleResultView("/templates/entry.mustache", entry.get());
+            }
         }
 
         throw new NotFoundException();
@@ -57,8 +60,11 @@ public class SearchResource extends ResourceBase {
     @GET
     @Path("/hash/{hash}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
-    public SingleResultView findByHashHtml(@PathParam("hash") String hash) {
+    public SingleResultView findByHash(@PathParam("hash") String hash) {
         Optional<Entry> entry = queryDAO.findByHash(hash);
-        return new SingleResultView("/templates/entry.mustache", entry.orNull());
+        if (entry.isPresent()) {
+            return new SingleResultView("/templates/entry.mustache", entry.orNull());
+        }
+        throw new NotFoundException();
     }
 }
