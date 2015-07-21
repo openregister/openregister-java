@@ -2,13 +2,12 @@ package uk.gov.register.presentation.representations;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 import org.junit.Test;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
+import uk.gov.register.presentation.view.ListResultView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +33,7 @@ public class TsvWriterTest {
         JsonNode node = JsonObjectMapper.convert(jsonMap, JsonNode.class);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        Type listJsonNodeType = new TypeToken<List<JsonNode>>() {}.getType();
-        writer.writeTo(Collections.singletonList(node), List.class, listJsonNodeType, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
+        writer.writeTo(new ListResultView("don't care", Collections.singletonList(node)), List.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
         String result = stream.toString("utf-8");
 
         assertThat(result, equalTo("hash\tkey1\tkey2\tkey3\tkey4\nhash1\tvalue1\tvalue2\tval\"ue3\tvalue4\n"));

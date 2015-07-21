@@ -28,14 +28,14 @@ public class DataResource extends ResourceBase {
 
     @GET
     @Path("/all")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<JsonNode> all() {
         return queryDAO.getAllEntries(getRegisterPrimaryKey(), ENTRY_LIMIT);
     }
 
     @GET
     @Path("/all")
-    @Produces()
+    @Produces({MediaType.TEXT_HTML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
     public ListResultView allHtml() {
         return new ListResultView("/templates/entries.mustache", all());
     }

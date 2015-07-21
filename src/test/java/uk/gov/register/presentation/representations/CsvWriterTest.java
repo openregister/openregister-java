@@ -2,15 +2,13 @@ package uk.gov.register.presentation.representations;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
 import org.junit.Test;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
+import uk.gov.register.presentation.view.ListResultView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -33,8 +31,7 @@ public class CsvWriterTest {
         JsonNode node = JsonObjectMapper.convert(jsonMap, JsonNode.class);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        Type listJsonNodeType = new TypeToken<List<JsonNode>>() {}.getType();
-        writer.writeTo(Collections.singletonList(node), List.class, listJsonNodeType, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
+        writer.writeTo(new ListResultView("don't care", Collections.singletonList(node)), ListResultView.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
         String result = stream.toString("utf-8");
 
         assertThat(result, equalTo("hash,key1,key2,key3,key4\r\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
