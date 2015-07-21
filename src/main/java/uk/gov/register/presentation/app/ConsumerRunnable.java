@@ -27,7 +27,7 @@ public class ConsumerRunnable implements Runnable {
         this.updateDAO = updateDAO;
         properties = new Properties();
         properties.put("zookeeper.connect", zkConfig.getZookeeperServer());
-        properties.put("zookeeper.session.timeout.ms", "1000");
+        properties.put("zookeeper.session.timeout.ms", "3000");
         properties.put("zookeeper.sync.time.ms", "200");
         properties.put("group.id", "debug"); // should be unique to this presentation app
         properties.put("enable.auto.commit", "false");

@@ -76,8 +76,27 @@ test {
     dependsOn << compileTestJava
     dependsOn << startPresentationApp
     doFirst{
-        sleep(10000)
+        waitForApplicationToStart()
     }
 }
+
+def waitForApplicationToStart(){
+    URL target = new URL('http://localhost:9000/')
+
+    int counter = 0
+    boolean appRunning = false
+    while (!appRunning && counter++ < 10) {
+
+        try {
+            HttpURLConnection connection = (HttpURLConnection) target.openConnection()
+            appRunning = connection.getResponseCode() == 200
+        }
+        catch (IOException ignored) {
+            println "Waiting for application to start (10s max)..."
+            Thread.sleep(1000)
+        }
+    }
+}
+
 
 task stage(dependsOn: ['assemble'])
