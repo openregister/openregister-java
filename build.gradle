@@ -78,6 +78,9 @@ test {
     doFirst{
         waitForApplicationToStart()
     }
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
 
 def waitForApplicationToStart(){
