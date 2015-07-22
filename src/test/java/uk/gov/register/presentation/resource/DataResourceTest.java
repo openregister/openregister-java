@@ -20,7 +20,21 @@ public class DataResourceTest {
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
                 ExtraMediaType.TEXT_CSV,
-                ExtraMediaType.TEXT_TSV
+                ExtraMediaType.TEXT_TSV,
+                ExtraMediaType.TEXT_TTL
+        ));
+    }
+
+    @Test
+    public void allSupportsJsonCsvTsvHtmlAndTurtle() throws Exception {
+        Method allMethod = DataResource.class.getDeclaredMethod("all");
+        List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
+        assertThat(declaredMediaTypes, hasItems(
+                MediaType.APPLICATION_JSON,
+                MediaType.TEXT_HTML,
+                ExtraMediaType.TEXT_CSV,
+                ExtraMediaType.TEXT_TSV,
+                ExtraMediaType.TEXT_TTL
         ));
     }
 }

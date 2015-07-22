@@ -19,10 +19,13 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
+import uk.gov.register.presentation.representations.TurtleWriter;
 import uk.gov.register.presentation.representations.CsvWriter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.representations.TsvWriter;
-import uk.gov.register.presentation.resource.*;
+import uk.gov.register.presentation.resource.DataResource;
+import uk.gov.register.presentation.resource.HomePageResource;
+import uk.gov.register.presentation.resource.SearchResource;
 
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
@@ -61,10 +64,12 @@ public class PresentationApplication extends Application<PresentationConfigurati
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, ImmutableMap.of(
                 "csv", ExtraMediaType.TEXT_CSV_TYPE,
                 "tsv", ExtraMediaType.TEXT_TSV_TYPE,
+                "ttl", ExtraMediaType.TEXT_TTL_TYPE,
                 "json", MediaType.APPLICATION_JSON_TYPE,
                 "xml", MediaType.APPLICATION_XML_TYPE));
         environment.jersey().register(new CsvWriter());
         environment.jersey().register(new TsvWriter());
+        environment.jersey().register(new TurtleWriter());
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new DataResource(queryDAO));
