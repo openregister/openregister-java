@@ -1,8 +1,6 @@
 package uk.gov.register.presentation.resource;
 
 import com.google.common.base.Optional;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,13 +14,11 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-
 import java.lang.reflect.Method;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItemInArray;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
@@ -86,8 +82,18 @@ public class SearchResourceTest {
         List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(MediaType.TEXT_HTML,
+                        MediaType.APPLICATION_JSON,
+                        ExtraMediaType.TEXT_CSV,
+                        ExtraMediaType.TEXT_TSV));
+    }
+
+    @Test
+    public void findByHashSupportsTurtleHtmlAndJson() throws Exception {
+        Method searchMethod = SearchResource.class.getDeclaredMethod("findByHash", String.class);
+        List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
+        assertThat(declaredMediaTypes,
+                hasItems(MediaType.TEXT_HTML,
                          MediaType.APPLICATION_JSON,
-                         ExtraMediaType.TEXT_CSV,
-                         ExtraMediaType.TEXT_TSV));
+                         ExtraMediaType.TEXT_TTL));
     }
 }

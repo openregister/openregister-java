@@ -8,7 +8,10 @@ import uk.gov.register.presentation.view.ListResultView;
 import uk.gov.register.presentation.view.SingleResultView;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 
 @Path("/")
@@ -51,7 +54,7 @@ public class SearchResource extends ResourceBase {
 
     @GET
     @Path("/hash/{hash}")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByHash(@PathParam("hash") String hash) {
         Optional<Entry> entry = queryDAO.findByHash(hash);
         if (entry.isPresent()) {

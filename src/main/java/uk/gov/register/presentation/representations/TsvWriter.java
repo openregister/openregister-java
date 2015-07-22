@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
@@ -19,16 +18,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_TSV)
-public class TsvWriter implements MessageBodyWriter<ListResultView> {
+public class TsvWriter  extends RepresentationWriter<ListResultView>  {
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return ListResultView.class.isAssignableFrom(type);
-    }
-
-    @Override
-    public long getSize(ListResultView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        // deprecated and ignored by Jersey 2. Returning -1 as per javadoc in the interface
-        return -1;
     }
 
     @Override

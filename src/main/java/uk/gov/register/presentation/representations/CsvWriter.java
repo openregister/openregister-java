@@ -3,7 +3,6 @@ package uk.gov.register.presentation.representations;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterators;
-import com.google.common.reflect.TypeToken;
 import org.apache.commons.lang3.StringEscapeUtils;
 import uk.gov.register.presentation.view.ListResultView;
 
@@ -11,7 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
@@ -21,16 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_CSV)
-public class CsvWriter implements MessageBodyWriter<ListResultView> {
+public class CsvWriter extends RepresentationWriter<ListResultView> {
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return ListResultView.class.isAssignableFrom(type);
-    }
-
-    @Override
-    public long getSize(ListResultView listResultView, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        // deprecated and ignored by Jersey 2. Returning -1 as per javadoc in the interface
-        return -1;
     }
 
     @Override
