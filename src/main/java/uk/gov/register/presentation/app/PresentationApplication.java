@@ -65,8 +65,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "csv", ExtraMediaType.TEXT_CSV_TYPE,
                 "tsv", ExtraMediaType.TEXT_TSV_TYPE,
                 "ttl", ExtraMediaType.TEXT_TTL_TYPE,
-                "json", MediaType.APPLICATION_JSON_TYPE,
-                "xml", MediaType.APPLICATION_XML_TYPE));
+                "json", MediaType.APPLICATION_JSON_TYPE));
         environment.jersey().register(new CsvWriter());
         environment.jersey().register(new TsvWriter());
         environment.jersey().register(new TurtleWriter());
