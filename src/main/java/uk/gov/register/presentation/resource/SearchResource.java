@@ -3,6 +3,7 @@ package uk.gov.register.presentation.resource;
 import com.google.common.base.Optional;
 import uk.gov.register.presentation.Entry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ListResultView;
 import uk.gov.register.presentation.view.SingleResultView;
 
@@ -21,7 +22,7 @@ public class SearchResource extends ResourceBase {
 
     @GET
     @Path("search")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
     public ListResultView search(@Context UriInfo uriInfo) {
         final MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters();
 
