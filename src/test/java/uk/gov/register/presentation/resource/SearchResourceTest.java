@@ -1,16 +1,29 @@
 package uk.gov.register.presentation.resource;
 
 import com.google.common.base.Optional;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.Entry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.representations.ExtraMediaType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItemInArray;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
@@ -65,5 +78,16 @@ public class SearchResourceTest {
         } catch (NotFoundException e) {
             //success
         }
+    }
+
+    @Test
+    public void searchSupportsCsvTsvHtmlAndJson() throws Exception {
+        Method searchMethod = SearchResource.class.getDeclaredMethod("search", UriInfo.class);
+        List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
+        assertThat(declaredMediaTypes,
+                hasItems(MediaType.TEXT_HTML,
+                         MediaType.APPLICATION_JSON,
+                         ExtraMediaType.TEXT_CSV,
+                         ExtraMediaType.TEXT_TSV));
     }
 }
