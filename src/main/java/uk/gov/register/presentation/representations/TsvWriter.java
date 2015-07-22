@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.representations;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Iterators;
 import uk.gov.register.presentation.Entry;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
@@ -27,7 +28,7 @@ public class TsvWriter  extends RepresentationWriter<ListResultView>  {
 
     @Override
     public void writeTo(ListResultView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        List<Entry> entries = view.get();
+        List<Entry> entries = view.getObject();
         List<String> headers = getHeaders(entries.get(0));
         entityStream.write((String.join("\t", headers) + "\n").getBytes("utf-8"));
         for (Entry entry : entries) {
@@ -35,9 +36,8 @@ public class TsvWriter  extends RepresentationWriter<ListResultView>  {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void writeRow(OutputStream entityStream, List<String> headers, Entry node) throws IOException {
-        Map<String, Object> entry = JsonObjectMapper.convert(node.getContent(), Map.class);
+        Map<String, Object> entry = JsonObjectMapper.convert(node.getContent(), new TypeReference<Map<String, Object>>(){});
         entry.put("hash", node.getHash());
         String row = headers.stream().map(e -> entry.get(e).toString()).collect(Collectors.joining("\t", "", "\n"));
         entityStream.write(row.getBytes("utf-8"));

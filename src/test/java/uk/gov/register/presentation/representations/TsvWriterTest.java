@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.representations;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
@@ -28,7 +29,8 @@ public class TsvWriterTest {
                 "key3", "val\"ue3",
                 "key4", "value4"
         );
-        Entry entry = new Entry("hash1", JsonObjectMapper.convert(entryMap, JsonNode.class));
+        Entry entry = new Entry("hash1", JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>(){}));
+
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         writer.writeTo(new ListResultView("don't care", Collections.singletonList(entry)), List.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);

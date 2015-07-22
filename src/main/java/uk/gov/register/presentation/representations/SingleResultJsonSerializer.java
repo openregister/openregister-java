@@ -11,7 +11,7 @@ import java.io.IOException;
 public class SingleResultJsonSerializer extends JsonSerializer<SingleResultView> {
     @Override
     public void serialize(SingleResultView value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        Entry entry = value.get();
+        Entry entry = value.getObject();
         JsonSerializer<Object> listSerializer = serializers.findValueSerializer(Entry.class);
         listSerializer.serialize(entry, gen, serializers);
     }

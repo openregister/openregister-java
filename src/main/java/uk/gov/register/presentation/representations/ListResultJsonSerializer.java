@@ -12,7 +12,7 @@ import java.util.List;
 public class ListResultJsonSerializer extends JsonSerializer<ListResultView> {
     @Override
     public void serialize(ListResultView value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        List<Entry> entries = value.get();
+        List<Entry> entries = value.getObject();
         JsonSerializer<Object> listSerializer = serializers.findValueSerializer(List.class);
         listSerializer.serialize(entries, gen, serializers);
     }
