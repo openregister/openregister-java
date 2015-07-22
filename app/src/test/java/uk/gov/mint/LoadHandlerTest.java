@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.store.EntriesUpdateDAO;
@@ -26,6 +27,9 @@ public class LoadHandlerTest {
     @Mock
     LogStream logStream;
 
+    @Captor
+    ArgumentCaptor<List<byte[]>> entriesCaptor;
+
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
         LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, logStream);
@@ -42,9 +46,8 @@ public class LoadHandlerTest {
 
         loadHandler.handle(payload);
 
-        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-        verify(entriesUpdateDAO, times(1)).add(captor.capture());
-        final List<byte[]> payloadArray = captor.getValue();
+        verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
+        final List<byte[]> payloadArray = entriesCaptor.getValue();
         assertThat(payloadArray.size(), equalTo(2));
         assertThat(payloadArray.get(0), equalTo(entry1Bytes));
         assertThat(payloadArray.get(1), equalTo(entry2Bytes));
