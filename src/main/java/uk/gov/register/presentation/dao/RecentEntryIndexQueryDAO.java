@@ -6,6 +6,8 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
+import uk.gov.register.presentation.Entry;
+import uk.gov.register.presentation.mapper.EntryMapper;
 import uk.gov.register.presentation.mapper.JsonNodeMapper;
 
 import java.util.List;
@@ -17,15 +19,17 @@ public interface RecentEntryIndexQueryDAO {
     List<JsonNode> getFeeds(@Bind("limit") int maxNumberToFetch);
 
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC limit 1")
-    @SingleValueResult(JsonNode.class)
-    Optional<JsonNode> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
+    @SingleValueResult(Entry.class)
+    @RegisterMapper(EntryMapper.class)
+    Optional<Entry> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC")
     List<JsonNode> findAllByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
-    @SingleValueResult(JsonNode.class)
-    Optional<JsonNode> findByHash(@Bind("hash") String hash);
+    @SingleValueResult(Entry.class)
+    @RegisterMapper(EntryMapper.class)
+    Optional<Entry> findByHash(@Bind("hash") String hash);
 
     @SqlQuery("SELECT i.id, i.entry FROM ordered_entry_index i, ( " +
             "SELECT MAX(id) AS id " +
