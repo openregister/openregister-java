@@ -3,6 +3,7 @@ package uk.gov.register.presentation.representations;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
+import uk.gov.register.presentation.Entry;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
 import uk.gov.register.presentation.view.ListResultView;
 
@@ -21,19 +22,16 @@ public class TsvWriterTest {
         TsvWriter writer = new TsvWriter();
 
 
-        Map jsonMap = ImmutableMap.of(
-                "hash", "hash1",
-                "entry", ImmutableMap.of(
-                        "key1", "value1",
-                        "key2", "value2",
-                        "key3", "val\"ue3",
-                        "key4", "value4"
-                )
+        Map entryMap = ImmutableMap.of(
+                "key1", "value1",
+                "key2", "value2",
+                "key3", "val\"ue3",
+                "key4", "value4"
         );
-        JsonNode node = JsonObjectMapper.convert(jsonMap, JsonNode.class);
+        Entry entry = new Entry("hash1", JsonObjectMapper.convert(entryMap, JsonNode.class));
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        writer.writeTo(new ListResultView("don't care", Collections.singletonList(node)), List.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
+        writer.writeTo(new ListResultView("don't care", Collections.singletonList(entry)), List.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
         String result = stream.toString("utf-8");
 
         assertThat(result, equalTo("hash\tkey1\tkey2\tkey3\tkey4\nhash1\tvalue1\tvalue2\tval\"ue3\tvalue4\n"));

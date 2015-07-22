@@ -3,6 +3,8 @@ package uk.gov.register.presentation.representations;
 import com.google.common.base.Throwables;
 import uk.gov.register.presentation.Entry;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
+import uk.gov.register.presentation.view.AbstractView;
+import uk.gov.register.presentation.view.ListResultView;
 import uk.gov.register.presentation.view.SingleResultView;
 
 import javax.ws.rs.Produces;
@@ -21,22 +23,35 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_TTL)
-public class TurtleWriter extends RepresentationWriter<SingleResultView> {
+public class TurtleWriter extends RepresentationWriter<AbstractView> {
 
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return type.isAssignableFrom(SingleResultView.class);
+        return type.isAssignableFrom(SingleResultView.class) || type.isAssignableFrom(ListResultView.class);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void writeTo(SingleResultView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        Entry entry = view.getEntryObject();
-        List<String> fields = entryFields(JsonObjectMapper.convert(entry.getContent(), Map.class));
-        writeRow(entry, fields, entityStream);
+    public void writeTo(AbstractView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+        List<Entry> entries = getEntries(view.get());
+
+        List<String> fields = entryFields(JsonObjectMapper.convert(entries.get(0).getContent(), Map.class));
+        for (Entry entry : entries) {
+            writeRow(entry, fields, entityStream);
+        }
     }
 
+    @SuppressWarnings("unchecked")
+    private List<Entry> getEntries(Object o) {
+        if (o instanceof List) {
+            return (List<Entry>) o;
+        } else {
+            List<Entry> entries = new ArrayList<>();
+            entries.add((Entry) o);
+            return entries;
+        }
+    }
 
     //TODO: this should be retrieved from register call
     private static final String registerBaseUri = "http://localhost:9000";

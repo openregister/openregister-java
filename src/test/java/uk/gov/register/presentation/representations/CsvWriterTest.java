@@ -3,6 +3,7 @@ package uk.gov.register.presentation.representations;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
+import uk.gov.register.presentation.Entry;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
 import uk.gov.register.presentation.view.ListResultView;
 
@@ -19,19 +20,18 @@ public class CsvWriterTest {
     public void csv_entriesAreEscaped() throws IOException {
         CsvWriter writer = new CsvWriter();
 
-        Map jsonMap = ImmutableMap.of(
-                "hash", "hash1",
-                "entry", ImmutableMap.of(
+        Map entryMap =
+                ImmutableMap.of(
                         "key1", "valu\te1",
                         "key2", "val,ue2",
                         "key3", "val\"ue3",
                         "key4", "val\nue4"
-                )
-        );
-        JsonNode node = JsonObjectMapper.convert(jsonMap, JsonNode.class);
+                );
+
+        Entry entry = new Entry("hash1", JsonObjectMapper.convert(entryMap, JsonNode.class));
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        writer.writeTo(new ListResultView("don't care", Collections.singletonList(node)), ListResultView.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
+        writer.writeTo(new ListResultView("don't care", Collections.singletonList(entry)), ListResultView.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
         String result = stream.toString("utf-8");
 
         assertThat(result, equalTo("hash,key1,key2,key3,key4\r\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
