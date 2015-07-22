@@ -33,8 +33,7 @@ public class Loader {
 
     private void send(List<String> payload) {
         try {
-            final String mintUrl = (String) loaderArgs.config.get("mintUrl");
-            Response r = new JdkRequest(mintUrl)
+            Response r = new JdkRequest(loaderArgs.mintUrl)
                     .method(Request.POST)
                     .body()
                     .set(payload.join("\n"))
@@ -43,7 +42,7 @@ public class Loader {
             if (r.status() != 200)
                 System.err.println("Unexpected result: " + r.body());
             else
-                System.out.println("Loaded " + BATCH_SIZE + " entries...");
+                System.out.println("Loaded " + payload.length() + " entries...");
         } catch (Exception e) {
             System.err.println("Error occurred sending data to mint: " + e);
         }

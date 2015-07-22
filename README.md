@@ -24,6 +24,8 @@ A repository for mint project
 There are 2 options:
 
 1. Run via gradle:
-    `gradle bulkLoad -Pconfigfile=<config.properties> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]`
+-     `gradle bulkLoad -PmintUrl=<mint dataload url> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]`
+        e.g. gradle bulkLoad -PmintUrl=http://localhost:4567/load -Pdatafile=datafile.tsv -Ptype=tsv
 2. Run using the built jar
-    `java -jar <path_to_jar> Loader --configfile=<config.properties> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>`
+-     `java -jar <path_to_jar> Loader --mintUrl=<mint dataload url> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>`
+        e.g. java -jar loader.jar uk.gov.admin.Loader --mintUrl=http://localhost:4567/load --datafile=datafile.tsv --type=tsv

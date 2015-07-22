@@ -101,7 +101,7 @@ public class FunctionalTest {
             if (r.status() != 200)
                 System.err.println("Unexpected result: " + r.body());
             else
-                System.out.println("Loaded " + 1000 + " entries...");
+                System.out.println("Loaded " + payload.length() + " entries...");
         } catch (Exception e) {
             System.err.println("Error occurred sending data to mint: " + e);
         }
