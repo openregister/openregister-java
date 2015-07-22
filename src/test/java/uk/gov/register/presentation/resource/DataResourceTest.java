@@ -20,7 +20,8 @@ public class DataResourceTest {
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
                 ExtraMediaType.TEXT_CSV,
-                ExtraMediaType.TEXT_TSV
+                ExtraMediaType.TEXT_TSV,
+                ExtraMediaType.TEXT_TTL
         ));
     }
 
