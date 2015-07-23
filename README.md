@@ -3,6 +3,8 @@
 A presentation layer to consume the mint's kafka output, index it and
 present a web interface on top.
 
+[![Build Status](https://travis-ci.org/openregister/presentation.svg?branch=master)](https://travis-ci.org/openregister/presentation)
+
 # Requirements
 
 - Java 1.8+
