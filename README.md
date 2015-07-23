@@ -1,5 +1,7 @@
 # mint
-A repository for mint project
+Accepts updates to a register.
+
+[![Build Status](https://travis-ci.org/openregister/mint.svg?branch=master)](https://travis-ci.org/openregister/mint)
 
 # Requirements
 
