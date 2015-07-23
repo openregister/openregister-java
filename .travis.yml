@@ -14,15 +14,3 @@ before_script:
 - psql -c 'create database ft_mint;' -U postgres
 script:
 - "./gradlew clean build"
-deploy:
-  provider: codedeploy
-  access_key_id: AKIAJYIY6V526V6W2SYA
-  secret_access_key:
-    secure: x24rTHbLVww1unyQAeUVcS3+vQb9pqEq7EaWGJp5EeKN4kiPr0EEEcNbBtoxdAzrMIm3egtizqws45ujENyYVQnNTGBQ2loPYSFf2Z/dj5Tro912b11p58+Iwt2KvIlb+1QqqjgYdid+m1hX1hPvp6g/b1jjeI8CXqk56rsw68LRI7MrpnnfBCPxram3fdUGblz5wZqm1P51z5971Qk/Avvhtv+1AJXVj7LpCLfQdyGx3YBvg5Qlc/1Y2tSPY3Yc5bd8n1CU5GDMryTKuTp5nNXcSlb34vKFvUYlv46wYStkMh/XVrY7wdYJLVamlA7zia/TKpXjRRhL8daOR9YHiVIWU8F6eHe2y6jwKO+5MuaLulxclgKYlQ/ouOMbsu0a5QJ22QWlmxDku/HHG2xJWiTHWF5juFhaA+c9a2rpCPrlG3SkAYqenx9x26me20LZ0ZJyMIlwfKreoVwz74gB5yVZk0Ft4UYMtjTF3nB0bQg9dU8S2npq+PGOf0HR9TbjA55iXkMHXToEN43yw0UiMFGvtMBhTTTtyyumNND+PTb5ilyXxJ4kafrf0j6im3418f2TBqZTAWFJKkuwZ6gNHXcLRlS90i8iM4V1dDzSC4R6WeewTKuzUGxxWgjh3KBXNDAdYeYhOrNI479OdoqWnmYSrYmRLlXrgFT2J29YXxw=
-  bucket: mint01
-  key: mint01
-  region: eu-west-01
-  application: mint
-  deployment_group: mint-group
-  on:
-    repo: openregister/mint
