@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -19,10 +21,10 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
-import uk.gov.register.presentation.representations.TurtleWriter;
 import uk.gov.register.presentation.representations.CsvWriter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.representations.TsvWriter;
+import uk.gov.register.presentation.representations.TurtleWriter;
 import uk.gov.register.presentation.resource.DataResource;
 import uk.gov.register.presentation.resource.HomePageResource;
 import uk.gov.register.presentation.resource.SearchResource;
@@ -47,6 +49,10 @@ public class PresentationApplication extends Application<PresentationConfigurati
     @Override
     public void initialize(Bootstrap<PresentationConfiguration> bootstrap) {
         bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new MustacheViewRenderer())));
+        bootstrap.setConfigurationSourceProvider(
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)
+                ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
     }
 

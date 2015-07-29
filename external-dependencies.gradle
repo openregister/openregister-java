@@ -3,6 +3,7 @@ ext {
 
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
+            "io.dropwizard:dropwizard-configuration:${dropwizard_version}",
             "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
             "io.dropwizard:dropwizard-views-mustache:${dropwizard_version}",
             "io.dropwizard:dropwizard-assets:${dropwizard_version}"

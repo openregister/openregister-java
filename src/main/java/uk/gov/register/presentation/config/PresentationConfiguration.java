@@ -19,10 +19,12 @@ public class PresentationConfiguration extends Configuration implements Zookeepe
     private String zookeeperServer;
 
     public DataSourceFactory getDatabase() {
+        System.out.println(database.getUrl());
         return database;
     }
 
     public String getZookeeperServer() {
+        System.out.println(zookeeperServer);
         return zookeeperServer;
     }
 }
