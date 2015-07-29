@@ -77,15 +77,15 @@ public class Application {
 
     private String resolveKafkaConnectionString(final String kafkaString) {
         final Map<String, String> env = System.getenv();
-        if (!env.containsKey("KAFKA_1_PORT_9092_TCP_ADDR")) {
-            System.out.println("KAFKA_1_PORT_9092_TCP_ADDR _NOT_ defined - using default: " + kafkaString);
+        if (!env.containsKey("KAFKA_PORT_9092_TCP_ADDR")) {
+            System.out.println("KAFKA_PORT_9092_TCP_ADDR _NOT_ defined - using default: " + kafkaString);
             return kafkaString;
         }
 
-        final String kafkaConnectionString = env.get("KAFKA_1_PORT_9092_TCP_ADDR") + ":"
-                + env.get("KAFKA_1_PORT_9092_TCP_PORT");
+        final String kafkaConnectionString = env.get("KAFKA_PORT_9092_TCP_ADDR") + ":"
+                + env.get("KAFKA_PORT_9092_TCP_PORT");
 
-        System.out.println("KAFKA_1_PORT_9092_TCP_ADDR defined - using: " + kafkaConnectionString);
+        System.out.println("KAFKA_PORT_9092_TCP_ADDR defined - using: " + kafkaConnectionString);
 
         return kafkaConnectionString;
     }
