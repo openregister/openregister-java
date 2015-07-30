@@ -1,8 +1,9 @@
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/presentation
-  user: presentation
+  url: jdbc:postgresql://${POSTGRES_PORT_5432_TCP_ADDR:-localhost}:${POSTGRES_PORT_5432_TCP_PORT:-5432}/postgres
+  user: ${POSTGRES_ENV_POSTGRES_USER:-presentation}
+  password: ${POSTGRES_ENV_POSTGRES_PASSWORD:-}
   properties:
     charSet: UTF-8
 
-zookeeperServer: localhost:2181
+zookeeperServer: ${ZOOKEEPER_PORT_2181_TCP_ADDR:-localhost}:${ZOOKEEPER_PORT_2181_TCP_PORT:-2181}
