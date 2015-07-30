@@ -8,3 +8,5 @@
 .idea_modules/
 stdout.txt
 stderr.txt
+deploy/config.yaml
+deploy/*.jar

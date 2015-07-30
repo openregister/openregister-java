@@ -1,3 +1,4 @@
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply from: 'external-dependencies.gradle'
@@ -80,6 +81,13 @@ test {
     }
     testLogging {
         exceptionFormat = 'full'
+    }
+}
+
+assemble{
+    doLast{
+        new File("deploy/config.yaml") << new File("config.yaml");
+        new File("deploy/presentation.jar") << new File("build/libs/presentation.jar");
     }
 }
 
