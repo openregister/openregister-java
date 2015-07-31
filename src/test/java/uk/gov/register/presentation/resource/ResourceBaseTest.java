@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 public class ResourceBaseTest {
     @Test
     public void takesRegisterNameFromHttpHost() throws Exception {
-        ResourceBase resourceBase = new TestResourceBase("http://school.beta.openregister.org:8080/school/1234.json", "school.beta.openregister.org");
+        ResourceBase resourceBase = new TestResourceBase("school.beta.openregister.org");
 
         String registerPrimaryKey = resourceBase.getRegisterPrimaryKey();
 
@@ -21,7 +21,7 @@ public class ResourceBaseTest {
 
     @Test
     public void behavesGracefullyWhenGivenHostWithNoDots() throws Exception {
-        ResourceBase resourceBase = new TestResourceBase("http://school:8080/school/1234.json", "school");
+        ResourceBase resourceBase = new TestResourceBase("school");
 
         String registerPrimaryKey = resourceBase.getRegisterPrimaryKey();
 
@@ -29,9 +29,8 @@ public class ResourceBaseTest {
     }
 
     public class TestResourceBase extends ResourceBase {
-        public TestResourceBase(String requestUrl, String hostHeader) {
+        public TestResourceBase(String hostHeader) {
             this.httpServletRequest = mock(HttpServletRequest.class);
-            when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer(requestUrl));
             when(httpServletRequest.getHeader("Host")).thenReturn(hostHeader);
         }
     }
