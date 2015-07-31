@@ -30,7 +30,7 @@ public class FunctionalTestBase {
     }
 
     Response getRequest(String path) {
-        return client.target(String.format("http://localhost:%d%s", APPLICATION_PORT, path)).request().header("Host","ft-test-pkey.openregister.org").get();
+        return client.target(String.format("http://localhost:%d%s", APPLICATION_PORT, path)).request().header("Host","ft-test-pkey.beta.openregister.org").get();
     }
 
 

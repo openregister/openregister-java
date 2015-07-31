@@ -15,7 +15,11 @@ public abstract class ResourceBase {
         try {
             String host = new URI(httpServletRequest.getRequestURL().toString()).getHost();
 
-            return host.replaceAll("([^\\.]+)\\.(openregister)\\..*", "$1");
+            if (host.contains(".")) {
+                return host.substring(0, host.indexOf("."));
+            } else {
+                return host;
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
