@@ -36,7 +36,7 @@ public class SearchResourceTest {
         SearchResource resource = new SearchResource(queryDAO);
         resource.httpServletRequest = httpServletRequest;
 
-        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:9999/someOtherKey/value"));
+        when(httpServletRequest.getHeader("Host")).thenReturn("localhost");
         try {
             resource.findByPrimaryKey("someOtherKey", "value");
             fail("Must fail");
@@ -50,7 +50,7 @@ public class SearchResourceTest {
         SearchResource resource = new SearchResource(queryDAO);
         resource.httpServletRequest = httpServletRequest;
 
-        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://school.openregister.org/school/value"));
+        when(httpServletRequest.getHeader("Host")).thenReturn("school.openregister.org");
         when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<Entry>absent());
         try {
             resource.findByPrimaryKey("school", "value");
@@ -66,7 +66,7 @@ public class SearchResourceTest {
         SearchResource resource = new SearchResource(queryDAO);
         resource.httpServletRequest = httpServletRequest;
 
-        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://school.openregister.org/hash/123"));
+        when(httpServletRequest.getHeader("Host")).thenReturn("school.openregister.org");
         when(queryDAO.findByHash("123")).thenReturn(Optional.<Entry>absent());
         try {
             resource.findByHash("123");

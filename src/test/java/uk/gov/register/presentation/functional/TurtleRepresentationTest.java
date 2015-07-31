@@ -13,15 +13,15 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
-                "{\"hash\":\"someHash1\",\"entry\":{\"name\":\"The Entry 1\", \"key1\":\"value1\", \"ft_test_pkey\":\"12345\"}}",
-                "{\"hash\":\"someHash2\",\"entry\":{\"name\":\"The Entry 2\", \"key1\":\"value2\", \"ft_test_pkey\":\"67890\"}}"
+                "{\"hash\":\"someHash1\",\"entry\":{\"name\":\"The Entry 1\", \"key1\":\"value1\", \"ft-test-pkey\":\"12345\"}}",
+                "{\"hash\":\"someHash2\",\"entry\":{\"name\":\"The Entry 2\", \"key1\":\"value2\", \"ft-test-pkey\":\"67890\"}}"
         ));
     }
 
     public static final String EXPECTED_SINGLE_RECORD = "<http://localhost:9000/hash/someHash1>;\n" +
             " key1 \"value1\" ;\n" +
             " name \"The Entry 1\" ;\n" +
-            " ft_test_pkey \"12345\" .\n";
+            " ft-test-pkey \"12345\" .\n";
 
 
     public static final String TEXT_TURTLE = "text/turtle;charset=utf-8";
@@ -38,7 +38,7 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
             "<http://localhost:9000/hash/someHash2>;\n" +
                     " key1 \"value2\" ;\n" +
                     " name \"The Entry 2\" ;\n" +
-                    " ft_test_pkey \"67890\" .\n"
+                    " ft-test-pkey \"67890\" .\n"
                     + EXPECTED_SINGLE_RECORD;
 
     @Test
