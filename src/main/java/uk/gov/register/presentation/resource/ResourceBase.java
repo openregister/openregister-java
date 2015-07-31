@@ -15,10 +15,7 @@ public abstract class ResourceBase {
         try {
             String host = new URI(httpServletRequest.getRequestURL().toString()).getHost();
 
-            //hack for functional tests
-            if (host.startsWith("localhost")) return "ft_test_pkey";
-            else return host.replaceAll("([^\\.]+)\\.(openregister)\\..*", "$1");
-
+            return host.replaceAll("([^\\.]+)\\.(openregister)\\..*", "$1");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
