@@ -8,8 +8,6 @@ public abstract class ResourceBase {
     @Context
     protected HttpServletRequest httpServletRequest;
 
-    //Note: copied the logic to fetch primary key from alpha register.
-    //Note: We might need to change the logic of extracting register primary key for beta registers
     protected String getRegisterPrimaryKey() {
         String host = httpServletRequest.getHeader("Host");
 
