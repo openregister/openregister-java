@@ -1,4 +1,3 @@
-
 apply plugin: 'java'
 apply plugin: 'idea'
 apply from: 'external-dependencies.gradle'
@@ -86,9 +85,18 @@ test {
 
 assemble{
     doLast{
-        new File("deploy/config.yaml") << new File("config.yaml");
-        new File("deploy/presentation.jar") << new File("build/libs/presentation.jar");
+        new File("deploy/config.yaml").bytes = new File("config.yaml").bytes
+        new File("deploy/presentation.jar").bytes = new File("build/libs/presentation.jar").bytes
+        createPresentationZip.execute()
     }
+}
+
+task createPresentationZip(type:Zip)  {
+    baseName('presentation')
+    from ('deploy/')
+    include('*')
+    include('scripts/*')
+    destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
 
 def waitForApplicationToStart(){

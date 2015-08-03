@@ -1,16 +1,40 @@
-sudo: false
+sudo: required
 language: java
 jdk:
-  - oraclejdk8
-services:
+- oraclejdk8
+services: 
 addons:
-  postgresql: "9.4"
+  postgresql: '9.4'
 cache:
   directories:
-    - '$HOME/.gradle/caches'
-    - '$HOME/.gradle/wrapper'
+  - $HOME/.gradle/caches
+  - $HOME/.gradle/wrapper
 before_script:
-  - psql -c 'create role ft_presentation with login;' -U postgres
-  - psql -c 'create database ft_presentation;' -U postgres
+- psql -c 'create role ft_presentation with login;' -U postgres
+- psql -c 'create database ft_presentation;' -U postgres
 script:
-  - ./gradlew clean build
+- ./gradlew clean build
+deploy:
+- provider: s3
+  access_key_id: AKIAJPKWMZHQK6X57DJQ
+  secret_access_key: &1
+    secure: I/XzkboGUYDbsoL3MHwWDhpbDPlj37NXuUiILMWVXFkLefNPc54TBpKWMKVjKevrGhz6nvczv5bZ/ghn8j7fmqena53A0oa6ByE6G26bKcIYPAuI+75I7jOZ7lTI/XaAJHM8NP/3cIe5I0L0w1XiSTDQ+PHumm/eSDT+99a3B04ThFeWK530g8ngyE7nHvqH/4rFbVZClkkpsqKZ6+y13DGWONG6wJLHHmItoILbfwEkIN1IIHsVWU/N7a5ER8woKT3m3ocKn77X6FRdeYPzV1988IpoI2wapYWhYupgAh6V9mmfITJj99cU4Gvt4mbg/ed2t2YbBmotGF0UoRypkV3AAmbZPuQIMAdy1nIiv9K5PBO8Iqenv9aTG2DWa8Vop9U3b5ff978vWbHW7oSNjFV0DhuygdIyo8g745uKYuvHil2WdPyJk9C6qJsroCldLyGdknQK+WN3Ltf4MczHmKw+HGLOVxb+9nIIvbHWtv/fe5hVFPiYqKJNEU4X9EG79IF8lo/C+02OWtylJSaN3EM/YzL2xVVkETyA3LRLogFqJUDX6WTidpkBZ5LhS9aAyfKlb2xaGTmyZSxMZqb9SSDFUhyQaI1BOJg3wDYWAuWFEGGKpU+5GBnyQCPt6tVWWzLY0WHX08DHl1LqjgmMoOrJKn8uFGsVgTML2gt5l+U=
+  local_dir: deployable_bundle
+  bucket: presentationappbucket
+  region: eu-west-1
+  skip_cleanup: true
+  on:
+    branch: travis-integration-with-code-deploy
+    condition: $DEPLOY = true
+- provider: codedeploy
+  access_key_id: AKIAJPKWMZHQK6X57DJQ
+  secret_access_key: *1
+  bucket: presentationappbucket
+  key: presentation.zip
+  bundle_type: zip
+  application: presentation
+  deployment_group: presentation_DepGroup
+  region: eu-west-1
+  on:
+    branch: travis-integration-with-code-deploy
+    condition: $DEPLOY = true
