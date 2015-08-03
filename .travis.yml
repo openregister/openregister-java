@@ -24,7 +24,7 @@ deploy:
   region: eu-west-1
   skip_cleanup: true
   on: &2
-    branch: mint-code-deploy-integration
+    branch: master
     condition: $DEPLOY=true
 - provider: codedeploy
   access_key_id: AKIAI5JSOOUBYFGE7NEA
