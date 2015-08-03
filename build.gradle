@@ -87,12 +87,15 @@ assemble{
     doLast{
         new File("deploy/config.yaml").bytes = new File("config.yaml").bytes
         new File("deploy/presentation.jar").bytes = new File("build/libs/presentation.jar").bytes
-        createPresentationZip.execute()
+        createDeployableBundle.execute()
     }
 }
 
-task createPresentationZip(type:Zip)  {
-    baseName('presentation')
+task createDeployableBundle(type:Zip)  {
+    String TRAVIS_BRANCH = System.getenv('TRAVIS_BRANCH')
+    String TRAVIS_COMMIT = System.getenv('TRAVIS_COMMIT')
+    String TRAVIS_BUILD_NUMBER = System.getenv('TRAVIS_BUILD_NUMBER')
+    baseName("presentation~${TRAVIS_BRANCH}~${TRAVIS_COMMIT}~${TRAVIS_BUILD_NUMBER}")
     from ('deploy/')
     include('*')
     include('scripts/*')
