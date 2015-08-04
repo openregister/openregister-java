@@ -18,10 +18,13 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
         ));
     }
 
-    public static final String EXPECTED_SINGLE_RECORD = "<http://localhost:9000/hash/someHash1>;\n" +
-            " key1 \"value1\" ;\n" +
-            " name \"The Entry 1\" ;\n" +
-            " ft-test-pkey \"12345\" .\n";
+    public static final String EXPECTED_SINGLE_RECORD = "<http://localhost:9000/hash/someHash1>\n" +
+            " field:key1 \"value1\" ;\n" +
+            " field:name \"The Entry 1\" ;\n" +
+            " field:ft-test-pkey \"12345\" .\n";
+
+
+    public static final String PREFIX ="@prefix field: <http://field.openregister.org/field/>.\n\n";
 
 
     public static final String TEXT_TURTLE = "text/turtle;charset=utf-8";
@@ -31,14 +34,14 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
         Response response = getRequest("/hash/someHash1.ttl");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(TEXT_TURTLE));
-        assertThat(response.readEntity(String.class), equalTo(EXPECTED_SINGLE_RECORD));
+        assertThat(response.readEntity(String.class), equalTo(PREFIX + EXPECTED_SINGLE_RECORD));
     }
 
     public static final String EXPECTED_LIST_RECORDS =
-            "<http://localhost:9000/hash/someHash2>;\n" +
-                    " key1 \"value2\" ;\n" +
-                    " name \"The Entry 2\" ;\n" +
-                    " ft-test-pkey \"67890\" .\n"
+            "<http://localhost:9000/hash/someHash2>\n" +
+                    " field:key1 \"value2\" ;\n" +
+                    " field:name \"The Entry 2\" ;\n" +
+                    " field:ft-test-pkey \"67890\" .\n"
                     + EXPECTED_SINGLE_RECORD;
 
     @Test
@@ -46,6 +49,6 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
         Response response = getRequest("/all.ttl");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(TEXT_TURTLE));
-        assertThat(response.readEntity(String.class), equalTo(EXPECTED_LIST_RECORDS));
+        assertThat(response.readEntity(String.class), equalTo(PREFIX + EXPECTED_LIST_RECORDS));
     }
 }

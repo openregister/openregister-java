@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_TTL)
 public class TurtleWriter extends RepresentationWriter<View> {
+    private static final String PREFIX ="@prefix field: <http://field.openregister.org/field/>.\n\n";
+
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return SingleResultView.class.isAssignableFrom(type) || ListResultView.class.isAssignableFrom(type);
@@ -39,6 +41,7 @@ public class TurtleWriter extends RepresentationWriter<View> {
 
         List<String> fields = entryFields(JsonObjectMapper.convert(entries.get(0).getContent(), new TypeReference<Map<String, Object>>() {
         }));
+        entityStream.write(PREFIX.getBytes("utf-8"));
         for (Entry entry : entries) {
             entityStream.write((renderRecord(entry, fields) + "\n").getBytes("utf-8"));
         }
@@ -53,9 +56,9 @@ public class TurtleWriter extends RepresentationWriter<View> {
 
     private String renderRecord(Entry node, List<String> fields) {
         URI hashUri = uri(node.getHash());
-        String entity = String.format("<%s>;\n", hashUri);
+        String entity = String.format("<%s>\n", hashUri);
         return fields.stream()
-                .map(field -> String.format(" %s %s", field, node.getContent().get(field)))
+                .map(field -> String.format(" field:%s %s", field, node.getContent().get(field)))
                 .collect(Collectors.joining(" ;\n", entity, " ."));
     }
 
