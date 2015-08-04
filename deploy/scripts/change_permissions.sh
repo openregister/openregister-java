@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod -R 644 /srv/presentation/scripts/*
+chmod 755 /srv/presentation/scripts/*

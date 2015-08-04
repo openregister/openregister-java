@@ -1,4 +1,3 @@
-
 apply plugin: 'java'
 apply plugin: 'idea'
 apply from: 'external-dependencies.gradle'
@@ -86,9 +85,19 @@ test {
 
 assemble{
     doLast{
-        new File("deploy/config.yaml") << new File("config.yaml");
-        new File("deploy/presentation.jar") << new File("build/libs/presentation.jar");
+        new File("deploy/config.yaml").bytes = new File("config.yaml").bytes
+        new File("deploy/presentation.jar").bytes = new File("build/libs/presentation.jar").bytes
+        createDeployableBundle.execute()
     }
+}
+
+task createDeployableBundle(type:Zip)  {
+    Map env  = System.getenv()
+    baseName("presentation-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
+    from ('deploy/')
+    include('*')
+    include('scripts/*')
+    destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
 
 def waitForApplicationToStart(){

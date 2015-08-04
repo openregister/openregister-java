@@ -10,3 +10,4 @@ stdout.txt
 stderr.txt
 deploy/config.yaml
 deploy/*.jar
+deployable_bundle
