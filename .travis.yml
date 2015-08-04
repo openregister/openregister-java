@@ -30,7 +30,7 @@ deploy:
   access_key_id: AKIAI5JSOOUBYFGE7NEA
   secret_access_key: *1
   bucket: presentation.app.artifacts
-  key: presentation~$TRAVIS_BRANCH~$TRAVIS_COMMIT~$TRAVIS_BUILD_NUMBER.zip
+  key: $TRAVIS_BUILD_NUMBER~presentation~$TRAVIS_BRANCH~$TRAVIS_COMMIT.zip
   bundle_type: zip
   application: presentation
   deployment_group: PresentationAppDeploymentGroup
