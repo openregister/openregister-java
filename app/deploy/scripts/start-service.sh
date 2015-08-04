@@ -1,5 +1,5 @@
 #!/bin/bash
-docker run -p 4567:4567 \
+docker run -d -p 4567:4567 \
     --volume /srv/mint:/srv/mint \
     --link etc_postgres_1:postgres \
     --link etc_kafka_1:kafka \

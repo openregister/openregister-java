@@ -30,7 +30,7 @@ deploy:
   access_key_id: AKIAI5JSOOUBYFGE7NEA
   secret_access_key: *1
   bucket: mint.app.artifacts
-  key: $TRAVIS_BUILD_NUMBER~mint~$TRAVIS_BRANCH~$TRAVIS_COMMIT.zip
+  key: mint-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
   bundle_type: zip
   application: mint
   deployment_group: MintAppDeploymentGroup

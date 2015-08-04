@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod -R 644 /srv/mint/scripts/*
+chmod 755 /srv/mint/scripts/*
