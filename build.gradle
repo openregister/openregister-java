@@ -93,7 +93,7 @@ assemble{
 
 task createDeployableBundle(type:Zip)  {
     Map env  = System.getenv()
-    baseName("${env.'TRAVIS_BUILD_NUMBER'}~presentation~${env.'TRAVIS_BRANCH'}~${env.'TRAVIS_COMMIT'}")
+    baseName("presentation-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
     from ('deploy/')
     include('*')
     include('scripts/*')
