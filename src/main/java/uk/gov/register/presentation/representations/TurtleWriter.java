@@ -56,7 +56,7 @@ public class TurtleWriter extends RepresentationWriter<View> {
 
     private String renderRecord(Entry node, List<String> fields) {
         URI hashUri = uri(node.getHash());
-        String entity = String.format("<%s>;\n", hashUri);
+        String entity = String.format("<%s>\n", hashUri);
         return fields.stream()
                 .map(field -> String.format(" field:%s %s", field, node.getContent().get(field)))
                 .collect(Collectors.joining(" ;\n", entity, " ."));
