@@ -31,6 +31,22 @@ jar {
     }
 }
 
+assemble {
+    doLast {
+        new File("app/deploy/mint.jar").bytes = new File("app/build/libs/mint.jar").bytes
+        createDeployableBundle.execute()
+    }
+}
+
+task createDeployableBundle(type: Zip) {
+    Map env = System.getenv()
+    baseName("mint-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
+    from('deploy/')
+    include('*')
+    include('scripts/*')
+    destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
+}
+
 test {
     testLogging {
         exceptionFormat = 'full'

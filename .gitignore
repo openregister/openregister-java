@@ -14,3 +14,6 @@ build/*
 *.iws
 
 **/.gradletasknamecache
+
+app/deploy/mint.jar
+app/deployable_bundle
