@@ -32,7 +32,7 @@ deploy:
   bucket: mint.app.artifacts
   key: mint-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
   bundle_type: zip
-  application: mint
-  deployment_group: MintAppDeploymentGroup
+  application: mint-app
+  deployment_group: preview-mint
   region: eu-west-1
   on: *2
