@@ -43,5 +43,3 @@ task bulkLoad(type: JavaExec) {
         }
     }
 }
-
-task stage(dependsOn: ['assemble'])

@@ -2,9 +2,22 @@ group 'mint'
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
-    compile javaslang, jdbi, jOptSimple, json, kafka, postgresClient, sparkjava, apacheCommonsCodec
+    compile dropwizard, apacheCommonsCodec
 
-    testCompile junit, kafkaTest, mockito, zkTest, jcabi
+    compile(kafka) {
+        exclude group: 'org.slf4j'
+    }
+
+    compile(postgresClient) {
+        exclude group: 'org.slf4j'
+    }
+
+
+    testCompile junit, mockito, zkTest
+
+    testCompile(kafkaTest){
+        exclude group: 'org.slf4j'
+    }
 }
 
 
@@ -52,5 +65,3 @@ test {
         exceptionFormat = 'full'
     }
 }
-
-task stage(dependsOn: ['assemble'])

@@ -1,6 +1,14 @@
 ext {
-	commonsConfig = 'commons-configuration:commons-configuration:1.10'
-	jOptSimple = 'net.sf.jopt-simple:jopt-simple:4.8'
+
+    dropwizard_version = '0.8.2'
+
+    dropwizard = [
+            "io.dropwizard:dropwizard-core:${dropwizard_version}",
+            "io.dropwizard:dropwizard-configuration:${dropwizard_version}",
+            "io.dropwizard:dropwizard-jdbi:${dropwizard_version}"
+    ]
+
+    jOptSimple = 'net.sf.jopt-simple:jopt-simple:4.8'
     javaslang = 'com.javaslang:javaslang:1.2.2'
     jcabi = [
             'com.sun.jersey:jersey-core:1.19',
@@ -9,23 +17,21 @@ ext {
             'org.glassfish:javax.json:1.0.4',
             'com.jcabi:jcabi-http:1.11'
     ]
-    jdbi = 'org.jdbi:jdbi:2.59'
     json = [
             'com.fasterxml.jackson.core:jackson-core:2.5.4',
             'com.fasterxml.jackson.core:jackson-databind:2.5.4',
             'com.fasterxml.jackson.core:jackson-annotations:2.5.4'
     ]
-    kafka = 'org.apache.kafka:kafka-clients:0.8.2.1'
-    logback = 'ch.qos.logback:logback-core:1.1.3'
+
+    kafka = 'org.apache.kafka:kafka_2.10:0.8.2.1'
+
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
-    slf4j = 'org.slf4j:slf4j-api:1.7.12'
-    sparkjava = 'com.sparkjava:spark-core:2.2'
     univocity = 'com.univocity:univocity-parsers:1.5.6'
     apacheCommonsCodec = 'commons-codec:commons-codec:1.9'
 
     //test-dependencies
     junit = 'junit:junit:4.12'
-    kafkaTest = ['org.apache.kafka:kafka_2.10:0.8.2.1', 'org.apache.kafka:kafka_2.10:0.8.2.1:test']
+    kafkaTest = 'org.apache.kafka:kafka_2.10:0.8.2.1:test'
     mockito = 'org.mockito:mockito-core:1.9.5'
     zkTest = 'org.apache.curator:curator-test:2.8.0'
 }

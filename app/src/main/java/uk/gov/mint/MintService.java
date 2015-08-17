@@ -1,7 +1,10 @@
 package uk.gov.mint;
 
-import static spark.Spark.post;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
+@Path("/")
 public class MintService {
     private final LoadHandler loadHandler;
 
@@ -9,19 +12,15 @@ public class MintService {
         this.loadHandler = loadHandler;
     }
 
-    public void init() {
-        post("/load", (req, res) -> {
-            try {
-                final String payload = req.body();
-                loadHandler.handle(payload);
-                return "OK";
-            } catch (Exception e) {
-                return "Error: " + e.getMessage();
-            }
-        });
-    }
 
-    public void shutdown() throws Exception {
-        loadHandler.shutdown();
+    @POST
+    @Path("/load")
+    public Response load(String payload) {
+        try {
+            loadHandler.handle(payload);
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Response.serverError().entity(e).build();
+        }
     }
 }

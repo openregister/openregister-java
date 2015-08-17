@@ -1,0 +1,14 @@
+database:
+  driverClass: org.postgresql.Driver
+  url: jdbc:postgresql://${POSTGRES_5432_TCP_ADDR:-localhost}:${POSTGRES_5432_TCP_PORT:-5432}/mint
+  user: ${POSTGRES_ENV_POSTGRES_USER:-postgres}
+  password: ${POSTGRES_ENV_POSTGRES_PASSWORD:-}
+  properties:
+    charSet: UTF-8
+
+kafkaConnectionString: ${KAFKA_9092_TCP_ADDR:-localhost}:${KAFKA_9092_TCP_PORT:-9092}
+
+server:
+  applicationConnectors:
+  - type: http
+    port: 4567

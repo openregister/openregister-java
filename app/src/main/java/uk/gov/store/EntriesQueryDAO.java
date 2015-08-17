@@ -12,6 +12,4 @@ public interface EntriesQueryDAO {
 
     @SqlQuery("SELECT ID, ENTRY FROM " + tableName + " WHERE ID > :high_water_mark ORDER BY ID")
     Iterator<IndexedEntry> getEntriesSince(@Bind("high_water_mark") int highWaterMark);
-
-    void close();
 }
