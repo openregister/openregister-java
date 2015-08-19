@@ -70,7 +70,6 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "csv", ExtraMediaType.TEXT_CSV_TYPE,
                 "tsv", ExtraMediaType.TEXT_TSV_TYPE,
                 "ttl", ExtraMediaType.TEXT_TTL_TYPE,
-                "html", MediaType.TEXT_HTML_TYPE,
                 "json", MediaType.APPLICATION_JSON_TYPE
         );
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
