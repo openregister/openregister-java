@@ -1,4 +1,4 @@
-package thymeleaf;
+package uk.gov.register.thymeleaf;
 
 import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.resourceresolver.IResourceResolver;

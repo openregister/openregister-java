@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
-import thymeleaf.ThymeleafView;
+import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

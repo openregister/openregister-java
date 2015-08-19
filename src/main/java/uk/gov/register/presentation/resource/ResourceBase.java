@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import thymeleaf.ThymeleafView;
+import uk.gov.register.thymeleaf.ThymeleafView;
 import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.RegisterNameExtractor;
 import uk.gov.register.presentation.representations.ListResultJsonSerializer;

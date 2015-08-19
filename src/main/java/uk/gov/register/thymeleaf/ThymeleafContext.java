@@ -1,4 +1,4 @@
-package thymeleaf;
+package uk.gov.register.thymeleaf;
 
 import com.google.common.base.Throwables;
 import io.dropwizard.views.View;
