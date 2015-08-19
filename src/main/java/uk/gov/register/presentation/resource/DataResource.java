@@ -2,7 +2,6 @@ package uk.gov.register.presentation.resource;
 
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.ListResultView;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,14 +20,14 @@ public class DataResource extends ResourceBase {
     @Path("/feed")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView feed() {
-        return new ListResultView("/templates/entries.mustache", queryDAO.getFeeds(ENTRY_LIMIT));
+        return new ListResultView("entries.html", queryDAO.getFeeds(ENTRY_LIMIT));
     }
 
     @GET
     @Path("/all")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView all() {
-        return new ListResultView("/templates/entries.mustache", queryDAO.getAllRecords(getRegisterPrimaryKey(), ENTRY_LIMIT));
+        return new ListResultView("entries.html", queryDAO.getAllRecords(getRegisterPrimaryKey(), ENTRY_LIMIT));
     }
 
 }

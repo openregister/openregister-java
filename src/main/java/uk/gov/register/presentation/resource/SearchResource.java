@@ -4,8 +4,6 @@ import com.google.common.base.Optional;
 import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.ListResultView;
-import uk.gov.register.presentation.view.SingleResultView;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -29,7 +27,7 @@ public class SearchResource extends ResourceBase {
     public ListResultView search(@Context UriInfo uriInfo) {
         final MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters();
 
-        return new ListResultView("/templates/entries.mustache",
+        return new ListResultView("entries.html",
                 queryParameters.entrySet()
                         .stream()
                         .findFirst()
@@ -45,7 +43,7 @@ public class SearchResource extends ResourceBase {
         if (key.equals(registerPrimaryKey)) {
             Optional<Record> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {
-                return new SingleResultView("/templates/entry.mustache", record.get());
+                return new SingleResultView("entry.html", record.get());
             }
         }
 
@@ -58,7 +56,7 @@ public class SearchResource extends ResourceBase {
     public SingleResultView findByHash(@PathParam("hash") String hash) {
         Optional<Record> record = queryDAO.findByHash(hash);
         if (record.isPresent()) {
-            return new SingleResultView("/templates/entry.mustache", record.orNull());
+            return new SingleResultView("entry.html", record.orNull());
         }
         throw new NotFoundException();
     }

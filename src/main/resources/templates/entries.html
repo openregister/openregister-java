@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
+<body>
+<div th:include="main.html::header" id="header-wrapper"></div>
+
+<div class="row entry-row">
+    <div class="large-12 columns">
+
+        <table id="entries" class="responsive" th:if="${#lists.isEmpty(records) == false}">
+            <thead>
+            <tr>
+                <td>hash</td>
+                <th:block th:each="entrySet : ${records.get(0).entry}">
+                    <td th:text="${entrySet.key}"></td>
+                </th:block>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="record : ${records}">
+                <td>
+                    <a th:href="${'/hash/' + record.hash}" th:text="${record.hash}"></a>
+                </td>
+                <th:block th:each="entrySet : ${record.entry}">
+                    <td th:text="${entrySet.value}"></td>
+                </th:block>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 large-6 columns">
+        <div th:include="data-formats.html::data-formats"></div>
+    </div>
+</div>
+
+<div th:include="main.html::footer"></div>
+</body>
+</html>

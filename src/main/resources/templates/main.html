@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:fragment="head">
+    <meta charset="utf-8"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/assets/images/icon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="/assets/images/icon.png"/>
+
+    <title th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></title>
+    <link rel="stylesheet" href="/assets/vendor/foundation/css/foundation.css"/>
+    <link rel="stylesheet" href="/assets/css/main.css"/>
+
+</head>
+
+<div th:fragment="header" id="header-wrapper">
+
+    <div class="row">
+        <div class="header registry small-12 large-12 columns">
+            <nav class="top-bar" data-topbar="">
+
+                <h1><a href="/" th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a></h1>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="footer" class="footer-wrapper">
+    <div class="row footer">
+
+        <div class="large-10 columns">
+            <div class="open-government-licence">
+                <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+                                   rel="license">Open Government Licence</a></p>
+
+                <p>All content is available under the <a
+                        href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open
+                    Government Licence v3.0</a>, except where otherwise stated</p>
+            </div>
+        </div>
+
+        <div class="large-2 columns">
+            <div class="copyright">
+                <img src="/assets/images/govuk_crest_grey.png"/>
+
+                <p>© Crown copyright</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</html>

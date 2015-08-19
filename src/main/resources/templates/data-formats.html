@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<div class="row" th:fragment="data-formats">
+    <p class="data-representations">This data is available as:
+             <span>
+                <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'json')}">json</a>,
+                <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'html')}">html</a>,
+                <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}">csv</a>,
+                <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}">tsv </a> and
+                <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'ttl')}">ttl</a>
+            </span>
+    </p>
+</div>
+</html>
+
