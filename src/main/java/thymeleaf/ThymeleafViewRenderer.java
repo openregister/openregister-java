@@ -3,6 +3,7 @@ package thymeleaf;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.TemplateResolver;
 
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
@@ -25,7 +26,8 @@ public class ThymeleafViewRenderer implements ViewRenderer {
 
         this.suffix = suffix;
 
-        ThymeleafResourceTemplateResolver templateResolver = new ThymeleafResourceTemplateResolver();
+        TemplateResolver templateResolver = new TemplateResolver();
+        templateResolver.setResourceResolver(new ThymeleafResourceResolver());
         templateResolver.setTemplateMode(templateMode);
         templateResolver.setPrefix(prefix);
         templateResolver.setCacheable(cacheable);
