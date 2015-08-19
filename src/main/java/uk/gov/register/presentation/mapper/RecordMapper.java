@@ -5,23 +5,23 @@ import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import uk.gov.register.presentation.Entry;
+import uk.gov.register.presentation.Record;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class EntryMapper implements ResultSetMapper<Entry> {
+public class RecordMapper implements ResultSetMapper<Record> {
     private final ObjectMapper objectMapper;
 
-    public EntryMapper() {
+    public RecordMapper() {
         objectMapper = Jackson.newObjectMapper();
     }
 
     @Override
-    public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+    public Record map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         try {
-            return objectMapper.readValue(r.getBytes("entry"), Entry.class);
+            return objectMapper.readValue(r.getBytes("entry"), Record.class);
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }

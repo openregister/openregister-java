@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.Entry;
+import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 
@@ -51,7 +51,7 @@ public class SearchResourceTest {
         resource.httpServletRequest = httpServletRequest;
 
         when(httpServletRequest.getHeader("Host")).thenReturn("school.openregister.org");
-        when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<Entry>absent());
+        when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<Record>absent());
         try {
             resource.findByPrimaryKey("school", "value");
             fail("Must fail");
@@ -67,7 +67,7 @@ public class SearchResourceTest {
         resource.httpServletRequest = httpServletRequest;
 
         when(httpServletRequest.getHeader("Host")).thenReturn("school.openregister.org");
-        when(queryDAO.findByHash("123")).thenReturn(Optional.<Entry>absent());
+        when(queryDAO.findByHash("123")).thenReturn(Optional.<Record>absent());
         try {
             resource.findByHash("123");
             fail("Must fail");

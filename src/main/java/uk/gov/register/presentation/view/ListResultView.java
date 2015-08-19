@@ -3,7 +3,7 @@ package uk.gov.register.presentation.view;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.dropwizard.views.View;
-import uk.gov.register.presentation.Entry;
+import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
 import uk.gov.register.presentation.representations.ListResultJsonSerializer;
 
@@ -14,19 +14,19 @@ import java.util.stream.Collectors;
 
 @JsonSerialize(using = ListResultJsonSerializer.class)
 public class ListResultView extends View {
-    private final List<Entry> entries;
+    private final List<Record> records;
 
-    public ListResultView(String templateName, List<Entry> entries) {
+    public ListResultView(String templateName, List<Record> records) {
         super(templateName);
-        this.entries = entries;
+        this.records = records;
     }
 
-    public List<Entry> getObject() {
-        return entries;
+    public List<Record> getObject() {
+        return records;
     }
 
-    List<Set> getEntries() {
-        return entries.stream().map(e -> {
+    List<Set> getRecords() {
+        return records.stream().map(e -> {
             Map<String, Object> entry = JsonObjectMapper.convert(e.getContent(), new TypeReference<Map<String, Object>>(){});
             entry.put("hash", e.getHash());
             return entry.entrySet();
