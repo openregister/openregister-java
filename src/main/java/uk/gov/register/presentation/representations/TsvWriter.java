@@ -2,7 +2,7 @@ package uk.gov.register.presentation.representations;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Iterators;
-import uk.gov.register.presentation.Entry;
+import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
 import uk.gov.register.presentation.view.ListResultView;
 
@@ -28,25 +28,26 @@ public class TsvWriter  extends RepresentationWriter<ListResultView>  {
 
     @Override
     public void writeTo(ListResultView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        List<Entry> entries = view.getObject();
-        List<String> headers = getHeaders(entries.get(0));
+        List<Record> records = view.getObject();
+        List<String> headers = getHeaders(records.get(0));
         entityStream.write((String.join("\t", headers) + "\n").getBytes("utf-8"));
-        for (Entry entry : entries) {
-            writeRow(entityStream, headers, entry);
+        for (Record record : records) {
+            writeRow(entityStream, headers, record);
         }
     }
 
-    private void writeRow(OutputStream entityStream, List<String> headers, Entry node) throws IOException {
-        Map<String, Object> entry = JsonObjectMapper.convert(node.getContent(), new TypeReference<Map<String, Object>>(){});
+    private void writeRow(OutputStream entityStream, List<String> headers, Record node) throws IOException {
+        Map<String, Object> entry = JsonObjectMapper.convert(node.getContent(), new TypeReference<Map<String, Object>>() {
+        });
         entry.put("hash", node.getHash());
         String row = headers.stream().map(e -> entry.get(e).toString()).collect(Collectors.joining("\t", "", "\n"));
         entityStream.write(row.getBytes("utf-8"));
     }
 
-    private List<String> getHeaders(Entry entry) {
+    private List<String> getHeaders(Record record) {
         List<String> headers = new ArrayList<>();
         headers.add("hash");
-        Iterators.addAll(headers, entry.getContent().fieldNames());
+        Iterators.addAll(headers, record.getContent().fieldNames());
         return headers;
     }
 }

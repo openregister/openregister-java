@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import com.google.common.base.Optional;
-import uk.gov.register.presentation.Entry;
+import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ListResultView;
@@ -34,7 +34,7 @@ public class SearchResource extends ResourceBase {
                         .stream()
                         .findFirst()
                         .map(e -> queryDAO.findAllByKeyValue(e.getKey(), e.getValue().get(0)))
-                        .orElseGet(() -> queryDAO.getAllEntries(getRegisterPrimaryKey(), ENTRY_LIMIT)));
+                        .orElseGet(() -> queryDAO.getAllRecords(getRegisterPrimaryKey(), ENTRY_LIMIT)));
     }
 
     @GET
@@ -43,9 +43,9 @@ public class SearchResource extends ResourceBase {
     public SingleResultView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         String registerPrimaryKey = getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
-            Optional<Entry> entry = queryDAO.findByKeyValue(key, value);
-            if (entry.isPresent()) {
-                return new SingleResultView("/templates/entry.mustache", entry.get());
+            Optional<Record> record = queryDAO.findByKeyValue(key, value);
+            if (record.isPresent()) {
+                return new SingleResultView("/templates/entry.mustache", record.get());
             }
         }
 
@@ -56,9 +56,9 @@ public class SearchResource extends ResourceBase {
     @Path("/hash/{hash}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByHash(@PathParam("hash") String hash) {
-        Optional<Entry> entry = queryDAO.findByHash(hash);
-        if (entry.isPresent()) {
-            return new SingleResultView("/templates/entry.mustache", entry.orNull());
+        Optional<Record> record = queryDAO.findByHash(hash);
+        if (record.isPresent()) {
+            return new SingleResultView("/templates/entry.mustache", record.orNull());
         }
         throw new NotFoundException();
     }
