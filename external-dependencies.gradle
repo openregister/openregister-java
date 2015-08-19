@@ -5,13 +5,15 @@ ext {
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
             "io.dropwizard:dropwizard-configuration:${dropwizard_version}",
             "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
-            "io.dropwizard:dropwizard-views-mustache:${dropwizard_version}",
+            "io.dropwizard:dropwizard-views:${dropwizard_version}",
             "io.dropwizard:dropwizard-assets:${dropwizard_version}"
     ]
 
     kafka = 'org.apache.kafka:kafka_2.10:0.8.2.1'
 
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
+
+    thymeleaf = 'org.thymeleaf:thymeleaf:2.1.4.RELEASE'
 
     //test-dependencies
     dropwizardTest = [

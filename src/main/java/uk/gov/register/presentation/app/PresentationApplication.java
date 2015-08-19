@@ -13,11 +13,11 @@ import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import io.dropwizard.views.mustache.MustacheViewRenderer;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
+import thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
@@ -25,9 +25,7 @@ import uk.gov.register.presentation.representations.CsvWriter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.representations.TsvWriter;
 import uk.gov.register.presentation.representations.TurtleWriter;
-import uk.gov.register.presentation.resource.DataResource;
-import uk.gov.register.presentation.resource.HomePageResource;
-import uk.gov.register.presentation.resource.SearchResource;
+import uk.gov.register.presentation.resource.*;
 
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
@@ -48,7 +46,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
 
     @Override
     public void initialize(Bootstrap<PresentationConfiguration> bootstrap) {
-        bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new MustacheViewRenderer())));
+        bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new ThymeleafViewRenderer("HTML5", "/templates/", ".html", false))));
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
                         new EnvironmentVariableSubstitutor(false)
@@ -67,11 +65,15 @@ public class PresentationApplication extends Application<PresentationConfigurati
         executorService.execute(new ConsumerRunnable(configuration, updateDAO));
 
         DropwizardResourceConfig resourceConfig = environment.jersey().getResourceConfig();
-        resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, ImmutableMap.of(
+
+        ImmutableMap<String, MediaType> representations = ImmutableMap.of(
                 "csv", ExtraMediaType.TEXT_CSV_TYPE,
                 "tsv", ExtraMediaType.TEXT_TSV_TYPE,
                 "ttl", ExtraMediaType.TEXT_TTL_TYPE,
-                "json", MediaType.APPLICATION_JSON_TYPE));
+                "html", MediaType.TEXT_HTML_TYPE,
+                "json", MediaType.APPLICATION_JSON_TYPE
+        );
+        resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
         environment.jersey().register(new CsvWriter());
         environment.jersey().register(new TsvWriter());
         environment.jersey().register(new TurtleWriter());

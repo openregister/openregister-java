@@ -1,7 +1,9 @@
-<html>
-{{>head}}
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
 <body>
-{{>header}}
+<div th:include="main.html::header" id="header-wrapper"></div>
 <div class="row">
     <div class="small-12 large-8 columns">
         <div class="official-text">
@@ -16,21 +18,23 @@
         <div class="meta-entries">
 
             <p class="label-text">Total entries:</p>
+
             <p class="big-number">
-                <a href="count">Total entries </a>
+                <a href="/all">Total entries </a>
             </p>
 
             <p class="label-text">Last updated:</p>
+
             <p class="big-meta">
-                <a href="lastupdated">Last updated</a>
+                <a href="/feed">Last updated</a>
             </p>
 
             <p class="label-text">
-                Fields in this register:</p><p class="homepage-field-labels">Register Fields</p>
+                Fields in this register:</p>
+
+            <p class="homepage-field-labels">Register Fields</p>
         </div>
-
         Copyright Text
-
     </div>
 
     <div class="small-12 large-4 columns nav">
@@ -40,10 +44,10 @@
         <form action="/search">
             <div class="row collapse">
                 <div class="small-8 large-11 columns">
-                    <input name="_query" type="text" placeholder="Enter search term">
+                    <input name="_query" type="text" placeholder="Enter search term"/>
 
                     <!-- ./columns -->
-                    <input type="submit" value="Search" class="button postfix" />
+                    <input type="submit" value="Search" class="button postfix"/>
                 </div>
             </div>
         </form>
@@ -53,10 +57,10 @@
             <li><a href="http://www.openregister.org/developer">Developer documentation</a></li>
             <li><a href="/download">Download all entries</a></li>
         </ul>
-
-
     </div>
 </div>
-{{>footer}}
+
+<div th:include="main.html::footer-wrapper"></div>
+
 </body>
 </html>
