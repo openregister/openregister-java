@@ -18,7 +18,7 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
         ));
     }
 
-    public static final String EXPECTED_SINGLE_RECORD = "<http://localhost:9000/hash/someHash1>\n" +
+    public static final String EXPECTED_SINGLE_RECORD = "<http://ft-test-pkey.beta.openregister.org/hash/someHash1>\n" +
             " field:key1 \"value1\" ;\n" +
             " field:name \"The Entry 1\" ;\n" +
             " field:ft-test-pkey \"12345\" .\n";
@@ -38,7 +38,7 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
     }
 
     public static final String EXPECTED_LIST_RECORDS =
-            "<http://localhost:9000/hash/someHash2>\n" +
+            "<http://ft-test-pkey.beta.openregister.org/hash/someHash2>\n" +
                     " field:key1 \"value2\" ;\n" +
                     " field:name \"The Entry 2\" ;\n" +
                     " field:ft-test-pkey \"67890\" .\n"

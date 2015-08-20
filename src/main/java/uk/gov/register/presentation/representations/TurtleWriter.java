@@ -4,8 +4,10 @@ import io.dropwizard.views.View;
 import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.resource.ResourceBase;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
@@ -14,12 +16,17 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_TTL)
 public class TurtleWriter extends RepresentationWriter<View> {
-    private static final String PREFIX ="@prefix field: <http://field.openregister.org/field/>.\n\n";
+    private static final String PREFIX = "@prefix field: <http://field.openregister.org/field/>.\n\n";
+
+    @Context
+    private HttpServletRequest httpServletRequest;
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -40,9 +47,6 @@ public class TurtleWriter extends RepresentationWriter<View> {
         }
     }
 
-    //TODO: this should be retrieved from register call
-    private static final String registerBaseUri = "http://localhost:9000";
-
     private String renderRecord(Record record, Set<String> fields) {
         URI hashUri = uri(record.getHash());
         String entity = String.format("<%s>\n", hashUri);
@@ -52,6 +56,7 @@ public class TurtleWriter extends RepresentationWriter<View> {
     }
 
     private URI uri(String hash) {
-        return UriBuilder.fromPath(registerBaseUri + "/hash/" + hash).build();
+        return UriBuilder.fromUri(httpServletRequest.getRequestURL().toString()).replacePath(null).path("hash").path(hash).build();
+
     }
 }
