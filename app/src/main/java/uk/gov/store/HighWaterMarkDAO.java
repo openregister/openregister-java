@@ -15,6 +15,4 @@ public interface HighWaterMarkDAO {
 
     @SqlQuery("SELECT ID FROM " + tableName + " ORDER BY ID DESC LIMIT 1")
     int getCurrentHighWaterMark();
-
-    void close();
 }

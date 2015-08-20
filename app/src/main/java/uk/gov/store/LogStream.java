@@ -5,7 +5,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 
@@ -29,12 +28,6 @@ public class LogStream {
 
     private void send(IndexedEntry entry) {
         producer.send(new ProducerRecord<>(TOPIC_NAME, String.valueOf(entry.getSerial()), entry.getEntry()));
-    }
-
-    public void close() throws IOException {
-        producer.close();
-        entriesQueryDAO.close();
-        highWaterMarkDAO.close();
     }
 
     private void sendNewEntriesToKafka() {

@@ -48,7 +48,4 @@ public class LoadHandler {
         return jsonNode;
     }
 
-    public void shutdown() throws Exception {
-        logStream.close();
-    }
 }
