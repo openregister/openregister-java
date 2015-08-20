@@ -81,6 +81,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jersey.register(new DataResource(queryDAO));
         jersey.register(new HomePageResource());
         jersey.register(new SearchResource(queryDAO));
+        jersey.register(new NotFoundExceptionMapper());
+        jersey.register(new ThrowableExceptionMapper());
 
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 

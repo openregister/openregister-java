@@ -1,3 +1,6 @@
+server:
+  registerDefaultExceptionMappers: false
+
 database:
   driverClass: org.postgresql.Driver
   url: jdbc:postgresql://${POSTGRES_PORT_5432_TCP_ADDR:-localhost}:${POSTGRES_PORT_5432_TCP_PORT:-5432}/postgres
