@@ -1,24 +1,25 @@
 package uk.gov.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.dropwizard.testing.ConfigOverride;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 import uk.gov.MintApplication;
 import uk.gov.mint.CanonicalJsonMapper;
 import uk.gov.store.EntriesQueryDAO;
-import uk.gov.store.EntriesUpdateDAO;
-import uk.gov.store.HighWaterMarkDAO;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.sql.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,40 +30,37 @@ import static org.junit.Assert.assertThat;
 
 
 public class FunctionalTest {
-    private java.sql.Connection pgConnection;
-    private Thread application;
-    private TestKafkaCluster testKafkaCluster;
+    private static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
+    public static TestKafkaCluster testKafkaCluster;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private String applicationUrl = "http://localhost:4568/load";
-    @SuppressWarnings("FieldCanBeLocal")
-    private String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
+    @Rule
+    public TestRule ruleChain = RuleChain.
+            outerRule(
+                    new ExternalResource() {
+                        @Override
+                        protected void before() throws Throwable {
+                            testKafkaCluster = new TestKafkaCluster(6000);
+                        }
 
-    @Before
-    public void setup() throws Exception {
+                        @Override
+                        protected void after() {
+                            try {
+                                testKafkaCluster.stop();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+            ).
+            around(
+                    new CleanDatabaseRule(postgresConnectionString)
+            ).
+            around(
+                    new DropwizardAppRule<>(MintApplication.class,
+                            ResourceHelpers.resourceFilePath("test-config.yaml"),
+                            ConfigOverride.config("database.url", postgresConnectionString))
+            );
 
-        String configFile = FunctionalTest.class.getResource("/test-config.yaml").getFile();
-
-        pgConnection = DriverManager.getConnection(postgresConnectionString);
-
-        cleanDatabase();
-
-        testKafkaCluster = new TestKafkaCluster(6000);
-
-        application = new Thread() {
-            @Override
-            public void run() {
-                MintApplication.main(new String[]{"server", configFile});
-            }
-        };
-        application.start();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        application.interrupt();
-        testKafkaCluster.stop();
-    }
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
@@ -99,7 +97,7 @@ public class FunctionalTest {
     private void send(List<String> payload) {
         try {
             JerseyClient jerseyClient = JerseyClientBuilder.createClient();
-            Response response = jerseyClient.target(applicationUrl).request(MediaType.APPLICATION_JSON_TYPE).buildPost(Entity.json(String.join("\n", payload))).invoke();
+            Response response = jerseyClient.target("http://localhost:4568/load").request(MediaType.APPLICATION_JSON_TYPE).buildPost(Entity.json(String.join("\n", payload))).invoke();
             if (response.getStatus() != 200)
                 System.err.println("Unexpected result: " + response.readEntity(String.class));
             else
@@ -110,6 +108,7 @@ public class FunctionalTest {
     }
 
     private byte[] tableRecord() throws SQLException {
+        Connection pgConnection = DriverManager.getConnection(postgresConnectionString, "postgres", "");
         try (Statement statement = pgConnection.createStatement()) {
             statement.execute("SELECT ENTRY FROM " + EntriesQueryDAO.tableName);
             ResultSet resultSet = statement.getResultSet();
@@ -119,12 +118,5 @@ public class FunctionalTest {
 
     private void waitForMessageToBeConsumed() throws InterruptedException {
         Thread.sleep(3000);
-    }
-
-    private void cleanDatabase() throws SQLException {
-        try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("DROP TABLE IF EXISTS " + EntriesUpdateDAO.tableName);
-            statement.execute("DROP TABLE IF EXISTS " + HighWaterMarkDAO.tableName);
-        }
     }
 }

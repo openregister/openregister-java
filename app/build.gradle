@@ -13,7 +13,7 @@ dependencies {
     }
 
 
-    testCompile junit, mockito, zkTest
+    testCompile junit, mockito, zkTest, dropwizardTest
 
     testCompile(kafkaTest){
         exclude group: 'org.slf4j'
