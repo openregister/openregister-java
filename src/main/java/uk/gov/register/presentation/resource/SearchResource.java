@@ -37,7 +37,7 @@ public class SearchResource extends ResourceBase {
 
     @GET
     @Path("/{primaryKey}/{primaryKeyValue}")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_TTL})
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         String registerPrimaryKey = getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
@@ -52,7 +52,7 @@ public class SearchResource extends ResourceBase {
 
     @GET
     @Path("/hash/{hash}")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_TTL})
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByHash(@PathParam("hash") String hash) {
         Optional<Record> record = queryDAO.findByHash(hash);
         if (record.isPresent()) {
