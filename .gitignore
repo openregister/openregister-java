@@ -1,0 +1,8 @@
+/.gradle/
+/build/
+/out/
+/indexer.iml
+/indexer.ipr
+/indexer.iws
+.idea/
+.idea_modules/

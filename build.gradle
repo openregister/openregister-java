@@ -1,0 +1,39 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply from: 'external-dependencies.gradle'
+apply from: 'idea-config.gradle'
+
+group 'indexer'
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile junit
+}
+
+jar.baseName = "indexer"
+
+jar {
+    doFirst {
+        from {
+            configurations.compile.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        } 
+        manifest {
+            attributes(
+                    "Main-Class": "uk.gov.Application",
+                    "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
+            )
+        }
+    }
+}
