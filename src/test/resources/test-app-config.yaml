@@ -1,4 +1,5 @@
 server:
+  registerDefaultExceptionMappers: false
   applicationConnectors:
     - type: http
       port: 9000
