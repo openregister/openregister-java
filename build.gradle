@@ -35,3 +35,20 @@ jar {
         }
     }
 }
+
+assemble{
+    doLast{
+        new File("deploy/indexer.jar").bytes = new File("build/libs/indexer.jar").bytes
+        createDeployableBundle.execute()
+    }
+}
+
+task createDeployableBundle(type:Zip)  {
+    Map env  = System.getenv()
+    baseName("indexer-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
+    from ('deploy/')
+    include('*')
+    include('scripts/*')
+    destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
+}
+
