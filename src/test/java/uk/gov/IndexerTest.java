@@ -31,7 +31,6 @@ public class IndexerTest {
 
         indexer.update();
 
-        verify(sourceDB).read(currentWaterMark);
         verify(destinationDB).write(resultSet);
     }
 }
