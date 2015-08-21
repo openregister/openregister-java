@@ -23,7 +23,7 @@ deploy:
   region: eu-west-1
   skip_cleanup: true
   on: &2
-    branch: write-entries-to-destination-db
+    branch: master
     condition: $DEPLOY=true
 - provider: codedeploy
   access_key_id: AKIAI5JSOOUBYFGE7NEA
