@@ -1,45 +1,27 @@
 package uk.gov.register.presentation.representations;
 
-import io.dropwizard.views.View;
 import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.resource.ResourceBase;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_TTL)
-public class TurtleWriter extends RepresentationWriter<View> {
+public class TurtleWriter extends RepresentationWriter {
     private static final String PREFIX = "@prefix field: <http://field.openregister.org/field/>.\n\n";
 
     @Context
     private HttpServletRequest httpServletRequest;
 
     @Override
-    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return ResourceBase.SingleResultView.class.isAssignableFrom(type) || ResourceBase.ListResultView.class.isAssignableFrom(type);
-    }
-
-    @Override
-    public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        List<Record> records =
-                view instanceof ResourceBase.SingleResultView ?
-                        Collections.singletonList(((ResourceBase.SingleResultView) view).getRecord()) :
-                        ((ResourceBase.ListResultView) view).getRecords();
-
+    protected void writeRecordsTo(OutputStream entityStream, List<Record> records) throws IOException {
         Set<String> fields = records.get(0).getEntry().keySet();
         entityStream.write(PREFIX.getBytes("utf-8"));
         for (Record record : records) {
@@ -57,6 +39,5 @@ public class TurtleWriter extends RepresentationWriter<View> {
 
     private URI uri(String hash) {
         return UriBuilder.fromUri(httpServletRequest.getRequestURL().toString()).replacePath(null).path("hash").path(hash).build();
-
     }
 }
