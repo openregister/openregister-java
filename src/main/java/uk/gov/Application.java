@@ -10,9 +10,8 @@ public class Application {
         Properties  properties = new Properties();
         properties.load(Application.class.getResourceAsStream("/application.properties"));
 
-        String registerName = properties.getProperty("register.name");
-        SourcePostgresDB sourceDB = new SourcePostgresDB(registerName, properties.getProperty("source.postgres.db.connectionString"));
-        DestinationPostgresDB destinationDB = new DestinationPostgresDB(registerName, properties.getProperty("destination.postgres.db.connectionString"));
+        SourcePostgresDB sourceDB = new SourcePostgresDB(properties.getProperty("source.postgres.db.connectionString"));
+        DestinationPostgresDB destinationDB = new DestinationPostgresDB(properties.getProperty("destination.postgres.db.connectionString"));
 
         Indexer indexer = new Indexer(sourceDB, destinationDB);
         indexer.update();

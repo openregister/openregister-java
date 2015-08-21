@@ -7,13 +7,13 @@ class SourcePostgresDB extends PostgresDB {
 
     private final String tableName;
 
-    public SourcePostgresDB(String registerName, String connectionString) throws SQLException {
+    public SourcePostgresDB(String connectionString) throws SQLException {
         super(connectionString);
-        this.tableName = registerName + "_entries";
+        this.tableName = "entries";
     }
 
-    public ResultSet read() throws SQLException {
-        return connection.prepareStatement("SELECT ENTRY FROM " + tableName).executeQuery();
+    public ResultSet read(int currentWaterMark) throws SQLException {
+        return connection.prepareStatement("SELECT ENTRY FROM " + tableName + " WHERE ID > " + currentWaterMark).executeQuery();
     }
 
 }

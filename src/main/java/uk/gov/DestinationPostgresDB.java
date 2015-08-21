@@ -6,21 +6,31 @@ import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 class DestinationPostgresDB extends PostgresDB {
+    private final String indexedEntriesTableName;
+    private final String waterMarkTableName;
 
-    private final String tableName;
-
-    public DestinationPostgresDB(String registerName, String connectionString) throws SQLException {
+    public DestinationPostgresDB(String connectionString) throws SQLException {
         super(connectionString);
-        this.tableName = registerName + "_ordered_entry_index";
+        this.indexedEntriesTableName = "ordered_entry_index";
+        this.waterMarkTableName = "streamed_entries";
     }
 
     public void write(ResultSet resultSet) throws SQLException {
         while (resultSet.next()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + tableName + "(ENTRY) VALUES(?)")) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + indexedEntriesTableName + "(ENTRY) VALUES(?)")) {
                 statement.setObject(1, jsonbObject(resultSet.getBytes("ENTRY")));
                 statement.executeUpdate();
+            }
+        }
+    }
+
+    public int currentWaterMark() throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            try(ResultSet resultSet = statement.executeQuery("SELECT ID FROM " + waterMarkTableName)){
+                return resultSet.next() ? resultSet.getInt("ID") : 0;
             }
         }
     }

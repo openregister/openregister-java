@@ -1,5 +1,6 @@
 package uk.gov;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Indexer {
@@ -12,7 +13,9 @@ public class Indexer {
     }
 
     public void update() throws SQLException {
-        destinationDB.write(sourceDB.read());
+        int currentWaterMark = destinationDB.currentWaterMark();
+        ResultSet difference = sourceDB.read(currentWaterMark);
+        destinationDB.write(difference);
     }
 
 

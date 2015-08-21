@@ -20,16 +20,18 @@ public class IndexerTest {
     DestinationPostgresDB destinationDB;
 
     @Test
-    public void update_readsFromSourceDBAndWritesInDestinationDB() throws SQLException {
+    public void update_copiesAllEntriesFromSourceDBToDestinationDB_fetchedByWaterMark() throws SQLException {
 
         Indexer indexer = new Indexer(sourceDB, destinationDB);
 
         ResultSet resultSet = mock(ResultSet.class);
-        when(sourceDB.read()).thenReturn(resultSet);
+        int currentWaterMark = 0;
+        when(destinationDB.currentWaterMark()).thenReturn(currentWaterMark);
+        when(sourceDB.read(currentWaterMark)).thenReturn(resultSet);
 
         indexer.update();
 
-        verify(sourceDB).read();
+        verify(sourceDB).read(currentWaterMark);
         verify(destinationDB).write(resultSet);
     }
 }
