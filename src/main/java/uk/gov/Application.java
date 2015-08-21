@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public class Application {
 
-    public static void main(String[] args) throws IOException, SQLException {
+    public static void main(String[] args) throws IOException, SQLException, InterruptedException {
         Properties  properties = new Properties();
         properties.load(Application.class.getResourceAsStream("/application.properties"));
 
@@ -14,6 +14,14 @@ public class Application {
         DestinationPostgresDB destinationDB = new DestinationPostgresDB(properties.getProperty("destination.postgres.db.connectionString"));
 
         Indexer indexer = new Indexer(sourceDB, destinationDB);
-        indexer.update();
+
+        //noinspection InfiniteLoopStatement
+        while (true) {
+            ConsoleLogger.log("Starting index update...");
+            indexer.update();
+            ConsoleLogger.log("Index update completed.");
+            ConsoleLogger.log("Waiting 10 seconds......");
+            Thread.sleep(10000);
+        }
     }
 }
