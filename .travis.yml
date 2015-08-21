@@ -1,0 +1,37 @@
+sudo: false
+language: java
+jdk:
+- oraclejdk8
+services: 
+addons:
+  postgresql: '9.4'
+cache:
+  directories:
+  - $HOME/.gradle/caches
+  - $HOME/.gradle/wrapper
+before_script:
+- psql -c 'create database test_indexer;' -U postgres
+script:
+- ./gradlew clean build
+deploy:
+- provider: s3
+  access_key_id: AKIAI5JSOOUBYFGE7NEA
+  secret_access_key: &1
+    secure: kN2SOHvqNhXAhTHUfPh2lEpflBqTLWi7FiJ9gsYsz9cvrMhBM3wABQuE3VnWLTkq0bKhOksFwLbPTV8wuHrdaGnwqHztpoVBfNSURYnVcEyuHxnpDr7cNIM8zWv31ePbPgJApLsPb+FCrEC6ALG2AYlom7Eqh7PG5amLgblgqICw/ZhoXrE8Czbe/IYppHZEWjbVyME0thaqgWT142CfHdphRqq4wn3helSc2j6iU58YLpWwLHHA0hl3NKQGslXvc0qSRwzyHkIIRpMnXLnAlg/pxjKaVQ+mE1S8uQC63AndywayrzbXydCtJuNL8cArmzoWqQm1+GjsUwwWuAVVszBpuYjGRDPEhchk8KIYq7RducKYguTUP8u0m6PMkaoHdA+DSVb6Q5Qi92oljakiwD938LxsS110pbwt/24DyonoBixUMUXBfs4pJhj6wID6WmEnEE7nfu4CodZoEV+0/AicOkZcfkbzr/A4IS3rIBJgnztmptrSpu0VXb6PwqfH6uCBxlTZmTqTFEvKQeCjzfZ9sPrDz2lhtk2q3BIT4Abz72/Cpw/9U5uT9eco3CnTMn56WUg65r43bW78AWOhSvsw93Ir2dvtFi03QuDW64kUvc7PL1gXcmE48tuSirFDuEav3qlRkwn2zFdLCbH161bmLirOxsOk0dr3+z3sd0E=
+  local_dir: deployable_bundle
+  bucket: indexer.app.artifacts
+  region: eu-west-1
+  skip_cleanup: true
+  on: &2
+    branch: write-entries-to-destination-db
+    condition: $DEPLOY=true
+- provider: codedeploy
+  access_key_id: AKIAI5JSOOUBYFGE7NEA
+  secret_access_key: *1
+  bucket: indexer.app.artifacts
+  key: indexer-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
+  bundle_type: zip
+  application: indexer-app
+  deployment_group: preview-indexer
+  region: eu-west-1
+  on: *2

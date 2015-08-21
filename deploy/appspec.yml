@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /srv/indexer
+hooks:
+  ApplicationStop:
+    - location: scripts/stop-service.sh
+      timeout: 60
+      runas: root
+  AfterInstall:
+    - location: scripts/change_permissions.sh
+      timeout: 30
+      runas: root
+  ApplicationStart:
+    - location: scripts/start-service.sh
+      timeout: 60
+      runas: root

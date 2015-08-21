@@ -5,9 +5,6 @@ apply from: 'idea-config.gradle'
 
 group 'indexer'
 
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
@@ -17,7 +14,8 @@ repositories {
 }
 
 dependencies {
-    testCompile junit
+    compile postgresClient
+    testCompile junit, mockito
 }
 
 jar.baseName = "indexer"
@@ -37,3 +35,20 @@ jar {
         }
     }
 }
+
+assemble{
+    doLast{
+        new File("deploy/indexer.jar").bytes = new File("build/libs/indexer.jar").bytes
+        createDeployableBundle.execute()
+    }
+}
+
+task createDeployableBundle(type:Zip)  {
+    Map env  = System.getenv()
+    baseName("indexer-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
+    from ('deploy/')
+    include('*')
+    include('scripts/*')
+    destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
+}
+

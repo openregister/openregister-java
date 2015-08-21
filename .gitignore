@@ -6,3 +6,6 @@
 /indexer.iws
 .idea/
 .idea_modules/
+deploy/indexer.jar
+deployable_bundle
+
