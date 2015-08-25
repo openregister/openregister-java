@@ -8,5 +8,3 @@ database:
   password: ${POSTGRES_ENV_POSTGRES_PASSWORD:-}
   properties:
     charSet: UTF-8
-
-zookeeperServer: ${ZOOKEEPER_PORT_2181_TCP_ADDR:-localhost}:${ZOOKEEPER_PORT_2181_TCP_PORT:-2181}

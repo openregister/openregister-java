@@ -9,8 +9,6 @@ ext {
             "io.dropwizard:dropwizard-assets:${dropwizard_version}"
     ]
 
-    kafka = 'org.apache.kafka:kafka_2.10:0.8.2.1'
-
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
 
     thymeleaf = 'org.thymeleaf:thymeleaf:2.1.4.RELEASE'
@@ -22,11 +20,4 @@ ext {
     ]
 
     junit = ['junit:junit:4.12','org.hamcrest:hamcrest-library:1.3']
-
-    kafkaTest = [
-            'org.apache.kafka:kafka-clients:0.8.2.1',
-            'org.apache.kafka:kafka_2.10:0.8.2.1:test'
-    ]
-
-    zkTest = 'org.apache.curator:curator-test:2.8.0'
 }

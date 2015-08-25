@@ -17,21 +17,18 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.dao.RecentEntryIndexUpdateDAO;
 import uk.gov.register.presentation.representations.CsvWriter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.representations.TsvWriter;
 import uk.gov.register.presentation.representations.TurtleWriter;
 import uk.gov.register.presentation.resource.*;
+import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
 import java.util.EnumSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class PresentationApplication extends Application<PresentationConfiguration> {
 
@@ -58,11 +55,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
     public void run(PresentationConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
-        RecentEntryIndexUpdateDAO updateDAO = jdbi.onDemand(RecentEntryIndexUpdateDAO.class);
         RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(new ConsumerRunnable(configuration, updateDAO));
 
         DropwizardResourceConfig resourceConfig = environment.jersey().getResourceConfig();
 

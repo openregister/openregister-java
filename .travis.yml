@@ -24,7 +24,7 @@ deploy:
   region: eu-west-1
   skip_cleanup: true
   on: &2
-    branch: master
+    branch: country-instance-deployment-without-kafka
     condition: $DEPLOY=true
 - provider: codedeploy
   access_key_id: AKIAI5JSOOUBYFGE7NEA
@@ -32,7 +32,7 @@ deploy:
   bucket: presentation.app.artifacts
   key: presentation-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
   bundle_type: zip
-  application: presentation-app
-  deployment_group: preview-presentation
+  application: presentation-app-for-country-instance
+  deployment_group: presentation-app-group-for-country-instance
   region: eu-west-1
   on: *2
