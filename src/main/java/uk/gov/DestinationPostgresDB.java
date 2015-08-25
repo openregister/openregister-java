@@ -16,6 +16,13 @@ class DestinationPostgresDB extends PostgresDB {
         super(connectionString);
         this.indexedEntriesTableName = "ordered_entry_index";
         this.waterMarkTableName = "streamed_entries";
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + indexedEntriesTableName + " (ID SERIAL PRIMARY KEY, ENTRY JSONB)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + waterMarkTableName + " (ID INTEGER PRIMARY KEY, TIME TIMESTAMP)");
+            if (!statement.executeQuery("SELECT ID FROM " + waterMarkTableName).next()) {
+                statement.executeUpdate("INSERT INTO " + waterMarkTableName + "(ID, TIME) VALUES(0, NOW())");
+            }
+        }
     }
 
     public void write(ResultSet resultSet) throws SQLException {
@@ -25,7 +32,7 @@ class DestinationPostgresDB extends PostgresDB {
                 statement.setObject(1, jsonbObject(resultSet.getBytes("ENTRY")));
                 statement.executeUpdate();
             }
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE " + waterMarkTableName + " SET ID = ID + 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE " + waterMarkTableName + " SET ID = ID + 1, time=now()")) {
                 statement.executeUpdate();
             }
             connection.setAutoCommit(true);
@@ -34,7 +41,7 @@ class DestinationPostgresDB extends PostgresDB {
 
     public int currentWaterMark() throws SQLException {
         try (Statement statement = connection.createStatement()) {
-            try(ResultSet resultSet = statement.executeQuery("SELECT ID FROM " + waterMarkTableName)){
+            try (ResultSet resultSet = statement.executeQuery("SELECT ID FROM " + waterMarkTableName)) {
                 return resultSet.next() ? resultSet.getInt("ID") : 0;
             }
         }
