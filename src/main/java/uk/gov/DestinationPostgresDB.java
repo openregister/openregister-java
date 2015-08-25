@@ -20,10 +20,15 @@ class DestinationPostgresDB extends PostgresDB {
 
     public void write(ResultSet resultSet) throws SQLException {
         while (resultSet.next()) {
+            connection.setAutoCommit(false);
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + indexedEntriesTableName + "(ENTRY) VALUES(?)")) {
                 statement.setObject(1, jsonbObject(resultSet.getBytes("ENTRY")));
                 statement.executeUpdate();
             }
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE " + waterMarkTableName + " SET ID = ID + 1")) {
+                statement.executeUpdate();
+            }
+            connection.setAutoCommit(true);
         }
     }
 
