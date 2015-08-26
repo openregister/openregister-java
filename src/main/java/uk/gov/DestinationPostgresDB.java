@@ -35,7 +35,7 @@ class DestinationPostgresDB extends PostgresDB {
             try (PreparedStatement statement = connection.prepareStatement("UPDATE " + waterMarkTableName + " SET ID = ID + 1, time=now()")) {
                 statement.executeUpdate();
             }
-            connection.setAutoCommit(true);
+            connection.commit();
         }
     }
 
