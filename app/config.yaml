@@ -6,8 +6,6 @@ database:
   properties:
     charSet: UTF-8
 
-kafkaConnectionString: ${KAFKA_9092_TCP_ADDR:-localhost}:${KAFKA_9092_TCP_PORT:-9092}
-
 server:
   applicationConnectors:
   - type: http

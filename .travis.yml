@@ -24,7 +24,7 @@ deploy:
   region: eu-west-1
   skip_cleanup: true
   on: &2
-    branch: master
+    branch: country-instance-without-kafka
     condition: $DEPLOY=true
 - provider: codedeploy
   access_key_id: AKIAI5JSOOUBYFGE7NEA
@@ -32,7 +32,7 @@ deploy:
   bucket: mint.app.artifacts
   key: mint-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
   bundle_type: zip
-  application: mint-app
-  deployment_group: preview-mint
+  application: mint-country-instance-without-kafka
+  deployment_group: mint-country-instance-without-kafka-group
   region: eu-west-1
   on: *2

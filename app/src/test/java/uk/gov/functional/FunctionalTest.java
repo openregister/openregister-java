@@ -8,51 +8,30 @@ import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExternalResource;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import uk.gov.MintApplication;
 import uk.gov.mint.CanonicalJsonMapper;
-import uk.gov.store.EntriesQueryDAO;
+import uk.gov.store.EntriesUpdateDAO;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.sql.*;
 import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 
 public class FunctionalTest {
     private static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
-    public static TestKafkaCluster testKafkaCluster;
 
     @Rule
     public TestRule ruleChain = RuleChain.
             outerRule(
-                    new ExternalResource() {
-                        @Override
-                        protected void before() throws Throwable {
-                            testKafkaCluster = new TestKafkaCluster(6000);
-                        }
-
-                        @Override
-                        protected void after() {
-                            try {
-                                testKafkaCluster.stop();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }
-            ).
-            around(
                     new CleanDatabaseRule(postgresConnectionString)
             ).
             around(
@@ -62,6 +41,7 @@ public class FunctionalTest {
             );
 
 
+    //TODO: rewrite this test
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
@@ -78,7 +58,6 @@ public class FunctionalTest {
         waitForMessageToBeConsumed();
 
         byte[] actual = tableRecord();
-        String actualString = new String(actual);
         final JsonNode actualJson = canonicalJsonMapper.readFromBytes(actual);
 
         JsonNode entryNode = actualJson.get("entry");
@@ -89,9 +68,6 @@ public class FunctionalTest {
                 equalTo(messageJson.get("name").textValue()));
         assertThat(entryNode.get("test").textValue(),
                 equalTo(messageJson.get("test").textValue()));
-
-        List<String> messages = testKafkaCluster.readMessages("register", 1);
-        assertThat(messages, is(Collections.singletonList(actualString)));
     }
 
     private void send(List<String> payload) {
@@ -110,13 +86,13 @@ public class FunctionalTest {
     private byte[] tableRecord() throws SQLException {
         Connection pgConnection = DriverManager.getConnection(postgresConnectionString, "postgres", "");
         try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("SELECT ENTRY FROM " + EntriesQueryDAO.tableName);
+            statement.execute("SELECT ENTRY FROM " + EntriesUpdateDAO.tableName);
             ResultSet resultSet = statement.getResultSet();
             return resultSet.next() ? resultSet.getBytes(1) : null;
         }
     }
 
     private void waitForMessageToBeConsumed() throws InterruptedException {
-        Thread.sleep(3000);
+        Thread.sleep(1000);
     }
 }

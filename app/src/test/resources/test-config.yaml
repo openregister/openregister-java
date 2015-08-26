@@ -6,8 +6,6 @@ database:
   properties:
     charSet: UTF-8
 
-kafkaConnectionString: localhost:6001
-
 server:
   applicationConnectors:
   - type: http

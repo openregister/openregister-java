@@ -4,20 +4,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.gov.store.EntriesUpdateDAO;
-import uk.gov.store.LogStream;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class LoadHandler {
-    private final LogStream logStream;
     private final CanonicalJsonMapper canonicalJsonMapper;
     private final EntriesUpdateDAO entriesUpdateDAO;
 
-    public LoadHandler(EntriesUpdateDAO entriesUpdateDAO, LogStream logStream) {
+    public LoadHandler(EntriesUpdateDAO entriesUpdateDAO) {
         this.entriesUpdateDAO = entriesUpdateDAO;
-        this.logStream = logStream;
         this.canonicalJsonMapper = new CanonicalJsonMapper();
         entriesUpdateDAO.ensureTableExists();
     }
@@ -38,7 +35,6 @@ public class LoadHandler {
                 })
                 .collect(Collectors.toList());
         entriesUpdateDAO.add(entriesAsBytes);
-        logStream.notifyOfNewEntries();
     }
 
     private ObjectNode hashedEntry(JsonNode entryJsonNode) {

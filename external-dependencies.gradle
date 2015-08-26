@@ -23,8 +23,6 @@ ext {
             'com.fasterxml.jackson.core:jackson-annotations:2.5.4'
     ]
 
-    kafka = 'org.apache.kafka:kafka_2.10:0.8.2.1'
-
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
     univocity = 'com.univocity:univocity-parsers:1.5.6'
     apacheCommonsCodec = 'commons-codec:commons-codec:1.9'
@@ -33,7 +31,5 @@ ext {
     dropwizardTest = "io.dropwizard:dropwizard-testing:${dropwizard_version}"
 
     junit = 'junit:junit:4.12'
-    kafkaTest = 'org.apache.kafka:kafka_2.10:0.8.2.1:test'
     mockito = 'org.mockito:mockito-core:1.9.5'
-    zkTest = 'org.apache.curator:curator-test:2.8.0'
 }
