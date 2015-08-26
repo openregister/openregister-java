@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class Application {
 
@@ -17,18 +21,24 @@ public class Application {
         Properties properties = new Properties();
         properties.load(configurationPropertiesStream(propertiesMap.get("config.file")));
 
-        SourcePostgresDB sourceDB = new SourcePostgresDB(properties.getProperty("source.postgres.db.connectionString"));
-        DestinationPostgresDB destinationDB = new DestinationPostgresDB(properties.getProperty("destination.postgres.db.connectionString"));
+        Set<String> configuredRegisters = properties.keySet()
+                .stream()
+                .filter(e -> ((String) e).endsWith(".postgres.db.connectionString"))
+                .map(e -> ((String) e).split("\\.")[0])
+                .collect(Collectors.toSet());
 
-        Indexer indexer = new Indexer(sourceDB, destinationDB);
+        ExecutorService executorService = Executors.newFixedThreadPool(configuredRegisters.size());
+        try {
+            for (String configuredRegister : configuredRegisters) {
+                SourcePostgresDB sourceDB = new SourcePostgresDB(properties.getProperty(configuredRegister + ".source.postgres.db.connectionString"));
+                DestinationPostgresDB destinationDB = new DestinationPostgresDB(properties.getProperty(configuredRegister + ".destination.postgres.db.connectionString"));
+                IndexerTask indexer = new IndexerTask(configuredRegister, sourceDB, destinationDB);
+                executorService.submit(indexer);
+            }
 
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            ConsoleLogger.log("Starting index update...");
-            indexer.update();
-            ConsoleLogger.log("Index update completed.");
-            ConsoleLogger.log("Waiting 10 seconds......");
-            Thread.sleep(10000);
+            Thread.currentThread().join();
+        } finally {
+            executorService.shutdown();
         }
     }
 
@@ -52,5 +62,4 @@ public class Application {
         }
         return appParams;
     }
-
 }
