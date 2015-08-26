@@ -85,7 +85,6 @@ test {
 
 assemble{
     doLast{
-        new File("deploy/config.yaml").bytes = new File("config.yaml").bytes
         new File("deploy/presentation.jar").bytes = new File("build/libs/presentation.jar").bytes
         createDeployableBundle.execute()
     }
