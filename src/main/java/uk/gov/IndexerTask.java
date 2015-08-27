@@ -20,7 +20,7 @@ class IndexerTask implements Runnable {
                 ConsoleLogger.log("Waiting 10 seconds for register: " + register);
                 Thread.sleep(10000);
             } catch (Exception e) {
-                throw new RuntimeException("todo: define exception ");
+                throw new RuntimeException("todo: define exception ", e);
             }
         }
     }
