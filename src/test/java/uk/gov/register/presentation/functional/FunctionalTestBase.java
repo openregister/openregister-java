@@ -41,9 +41,10 @@ public class FunctionalTestBase {
         dataSource.setUrl(DATABASE_URL);
         try (Connection connection = dataSource.getConnection()) {
             for (String message : messages) {
-                try (PreparedStatement preparedStatement = connection.prepareStatement("Insert into ordered_entry_index(entry) values(?)")) {
-                    preparedStatement.setObject(1, PGObjectFactory.jsonbObject(message));
-                    preparedStatement.execute();
+                try(PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(entry) values(?)"))
+                {
+                    insertPreparedStatement.setObject(1, PGObjectFactory.jsonbObject(message));
+                    insertPreparedStatement.execute();
                 }
             }
         } catch (SQLException e) {

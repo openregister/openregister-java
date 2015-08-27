@@ -10,8 +10,6 @@ server:
 database:
   driverClass: org.postgresql.Driver
   url: PLACEHOLDER
-  user: ft_presentation
+  user: postgres
   properties:
     charSet: UTF-8
-
-zookeeperServer: PLACEHOLDER
