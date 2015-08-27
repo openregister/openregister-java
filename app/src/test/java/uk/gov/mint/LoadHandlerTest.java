@@ -8,7 +8,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.store.EntriesUpdateDAO;
-import uk.gov.store.LogStream;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,15 +23,12 @@ public class LoadHandlerTest {
     @Mock
     EntriesUpdateDAO entriesUpdateDAO;
 
-    @Mock
-    LogStream logStream;
-
     @Captor
     ArgumentCaptor<List<byte[]>> entriesCaptor;
 
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, logStream);
+        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO);
 
         String payload = "{\"key1\":\"value1\"}\n{\"key2\":\"value2\"}";
 
@@ -51,7 +47,6 @@ public class LoadHandlerTest {
         assertThat(payloadArray.size(), equalTo(2));
         assertThat(payloadArray.get(0), equalTo(entry1Bytes));
         assertThat(payloadArray.get(1), equalTo(entry2Bytes));
-        verify(logStream, times(1)).notifyOfNewEntries();
     }
 
     private byte[] canonicalise(String nonCanonical) throws IOException {

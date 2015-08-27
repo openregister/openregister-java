@@ -14,17 +14,8 @@ public class MintConfiguration extends Configuration {
     @JsonProperty
     private DataSourceFactory database;
 
-    @SuppressWarnings("unused")
-    @NotNull
-    @JsonProperty
-    private String kafkaConnectionString;
-
     public DataSourceFactory getDatabase() {
         System.out.println(database.getUrl());
         return database;
-    }
-
-    public String getKafkaConnectionString() {
-        return kafkaConnectionString;
     }
 }

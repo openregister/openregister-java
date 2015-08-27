@@ -4,20 +4,12 @@ group 'mint'
 dependencies {
     compile dropwizard, apacheCommonsCodec
 
-    compile(kafka) {
-        exclude group: 'org.slf4j'
-    }
-
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }
 
 
-    testCompile junit, mockito, zkTest, dropwizardTest
-
-    testCompile(kafkaTest){
-        exclude group: 'org.slf4j'
-    }
+    testCompile junit, mockito, dropwizardTest
 }
 
 
