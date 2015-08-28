@@ -5,21 +5,29 @@ import org.junit.rules.ExternalResource;
 import java.sql.*;
 
 public class CleanDatabaseRule extends ExternalResource {
-    private final String pgUser;
     private final String tableName;
     private final String pgUrl;
 
-    public CleanDatabaseRule(String pgUrl, String pgUser,  String tableName) {
-        this.pgUser = pgUser;
+    public CleanDatabaseRule(String pgUrl, String tableName) {
         this.tableName = tableName;
         this.pgUrl = pgUrl;
     }
 
     @Override
     protected void before() throws Throwable {
-        try (Connection connection = DriverManager.getConnection(pgUrl, pgUser, "")) {
-            connection.prepareStatement("DROP TABLE IF EXISTS " + tableName).execute();
-            connection.prepareStatement("CREATE TABLE " + tableName + " (ID SERIAL PRIMARY KEY, ENTRY JSONB)").execute();
+        try (Connection connection = DriverManager.getConnection(pgUrl);
+             PreparedStatement createTablePreparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS ordered_entry_index (ID SERIAL PRIMARY KEY, ENTRY JSONB)")) {
+            createTablePreparedStatement.execute();
+        }
+    }
+
+    @Override
+    protected void after() {
+        try (Connection connection = DriverManager.getConnection(pgUrl);
+             Statement statement = connection.createStatement()) {
+            statement.execute("DELETE FROM " + tableName);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

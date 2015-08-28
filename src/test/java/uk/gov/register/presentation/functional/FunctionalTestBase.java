@@ -13,7 +13,6 @@ import java.util.List;
 
 public class FunctionalTestBase {
     public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_presentation";
-    public static final String DATABASE_USER = "postgres";
     public static final int APPLICATION_PORT = 9000;
 
     private static final String TABLE_NAME = "ordered_entry_index";
@@ -21,7 +20,7 @@ public class FunctionalTestBase {
     protected static Client client;
 
     @ClassRule
-    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, DATABASE_USER, TABLE_NAME);
+    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, TABLE_NAME);
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
@@ -40,7 +39,6 @@ public class FunctionalTestBase {
         org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setUrl(DATABASE_URL);
-        dataSource.setUsername(DATABASE_USER);
         try (Connection connection = dataSource.getConnection()) {
             for (String message : messages) {
                 try(PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(entry) values(?)"))
