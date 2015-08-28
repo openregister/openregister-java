@@ -48,7 +48,7 @@ task startPresentationApp << {
     startApp()
 }
 
-void startApp(){
+void startApp() {
     ProcessBuilder builder = new ProcessBuilder(
             "java",
             "-cp",
@@ -62,12 +62,11 @@ void startApp(){
     project.ext.runningPresentationApp = builder.start()
 }
 
-
 task stopPresentationApp << {
     stopApp()
 }
 
-void stopApp(){
+void stopApp() {
     runningPresentationApp?.destroy()?.waitFor()
 }
 
@@ -75,7 +74,7 @@ test {
     finalizedBy stopPresentationApp
     dependsOn << compileTestJava
     dependsOn << startPresentationApp
-    doFirst{
+    doFirst {
         waitForApplicationToStart()
     }
     testLogging {
@@ -83,23 +82,23 @@ test {
     }
 }
 
-assemble{
-    doLast{
+assemble {
+    doLast {
         new File("deploy/presentation.jar").bytes = new File("build/libs/presentation.jar").bytes
         createDeployableBundle.execute()
     }
 }
 
-task createDeployableBundle(type:Zip)  {
-    Map env  = System.getenv()
+task createDeployableBundle(type: Zip) {
+    Map env = System.getenv()
     baseName("presentation-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
-    from ('deploy/')
+    from('deploy/')
     include('*')
     include('scripts/*')
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
 
-def waitForApplicationToStart(){
+def waitForApplicationToStart() {
     URL target = new URL('http://localhost:9000/')
 
     int counter = 0
@@ -115,4 +114,11 @@ def waitForApplicationToStart(){
             Thread.sleep(1000)
         }
     }
+}
+
+task(run, type: JavaExec) {
+    main = 'uk.gov.register.presentation.app.PresentationApplication'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ["server", "config.yaml"]
+    jvmArgs = ["-DbaseDirForTemplates=$projectDir/src/main/resources"]
 }
