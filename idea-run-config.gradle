@@ -8,9 +8,20 @@ idea {
 
                 appendApplication(
                     projectRunConfigurationManagerNode,
-                    'PresentationApplicationRunner',
+                    'FunctionalTestPresentationRunner',
                     "uk.gov.register.presentation.functional.testSupport.PresentationApplicationRunner",
+                    '-DbaseDirForTemplates=$PROJECT_DIR$/src/main/resources',
                     '',
+                    'file://$PROJECT_DIR$',
+                    'presentation'
+                )
+
+                appendApplication(
+                    projectRunConfigurationManagerNode,
+                    'PresentationRunner',
+                    "uk.gov.register.presentation.app.PresentationApplication",
+                    '-DbaseDirForTemplates=$PROJECT_DIR$/src/main/resources',
+                    'server $PROJECT_DIR$/config.yaml',
                     'file://$PROJECT_DIR$',
                     'presentation'
                 )
@@ -23,6 +34,7 @@ private void appendApplication(
     Node projectRunConfigurationManagerNode,
     String configurationName,
     String mainClassName,
+    String vmParameters,
     String programArguments,
     String workingDir,
     String moduleName) {
@@ -35,6 +47,7 @@ private void appendApplication(
     configurationNode.attributes().singleton = 'true'
 
     configurationNode.appendNode('option', [name: 'MAIN_CLASS_NAME', value: mainClassName])
+    configurationNode.appendNode('option', [name: 'VM_PARAMETERS', value: vmParameters])
     configurationNode.appendNode('option', [name: 'PROGRAM_PARAMETERS', value: programArguments])
     configurationNode.appendNode('option', [name: 'WORKING_DIRECTORY', value: workingDir])
 

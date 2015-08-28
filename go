@@ -13,8 +13,7 @@ function ensure_user_exists {
 # Set up postgres
 ensure_db_exists presentation
 ensure_db_exists ft_presentation
-ensure_user_exists presentation
-ensure_user_exists ft_presentation
+ensure_user_exists postgres
 
 # Set up IntelliJ
 if [ ! -f presentation.ipr ]; then
