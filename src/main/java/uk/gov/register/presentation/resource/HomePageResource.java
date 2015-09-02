@@ -15,4 +15,12 @@ public class HomePageResource extends ResourceBase{
     public View home() {
         return new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "home.html");
     }
+
+    @GET
+    @Path("/robots.txt")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String robots() {
+        return "User-agent: *\n" +
+                "Disallow: /\n";
+    }
 }
