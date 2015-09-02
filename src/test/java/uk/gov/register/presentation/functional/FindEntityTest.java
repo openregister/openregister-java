@@ -52,8 +52,8 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void all_shouldReturnAllCurrentVersionsOnly() throws InterruptedException, IOException {
-        Response response = getRequest("/all.json");
+    public void current_shouldReturnAllCurrentVersionsOnly() throws InterruptedException, IOException {
+        Response response = getRequest("/current.json");
 
         String jsonResponse = response.readEntity(String.class);
         assertThat(OBJECT_MAPPER.readValue(jsonResponse, JsonNode.class),

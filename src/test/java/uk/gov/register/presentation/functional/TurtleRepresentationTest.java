@@ -46,7 +46,7 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
 
     @Test
     public void turtleRepresentationIsSupportedForListEntryView() {
-        Response response = getRequest("/all.ttl");
+        Response response = getRequest("/current.ttl");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(TEXT_TURTLE));
         assertThat(response.readEntity(String.class), equalTo(PREFIX + EXPECTED_LIST_RECORDS));
