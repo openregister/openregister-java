@@ -7,14 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
 
-public abstract class ThymeleafView extends View {
+public class ThymeleafView extends View {
 
     private final HttpServletRequest httpServletRequest;
     private final HttpServletResponse httpServletResponse;
     private final ServletContext servletContext;
     private String thymeleafTemplateName;
 
-    protected ThymeleafView(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ServletContext servletContext, String templateName) {
+    public ThymeleafView(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ServletContext servletContext, String templateName) {
         super(templateName, Charset.forName("UTF-8"));
         this.httpServletRequest = httpServletRequest;
         this.httpServletResponse = httpServletResponse;

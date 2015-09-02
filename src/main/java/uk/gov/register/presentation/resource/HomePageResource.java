@@ -13,7 +13,6 @@ public class HomePageResource extends ResourceBase{
     @GET
     @Produces({MediaType.TEXT_HTML})
     public View home() {
-        return new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "home.html") {
-        };
+        return new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "home.html");
     }
 }
