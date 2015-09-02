@@ -1,12 +1,15 @@
 package uk.gov.register.presentation.resource;
 
+import io.dropwizard.views.View;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/")
 public class DataResource extends ResourceBase {
@@ -14,6 +17,23 @@ public class DataResource extends ResourceBase {
 
     public DataResource(RecentEntryIndexQueryDAO queryDAO) {
         this.queryDAO = queryDAO;
+    }
+
+    @GET
+    @Path("/download")
+    @Produces(MediaType.TEXT_HTML)
+    public View download() {
+        return new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "download.html");
+    }
+
+    @GET
+    @Path("/download.torrent")
+    @Produces(MediaType.TEXT_HTML)
+    public Response downloadTorrent() {
+        return Response
+                .status(Response.Status.NOT_IMPLEMENTED)
+                .entity(new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "not-implemented.html"))
+                .build();
     }
 
     @GET

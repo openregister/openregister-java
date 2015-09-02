@@ -12,8 +12,7 @@ public class NotFoundExceptionMapper extends ResourceBase implements ExceptionMa
     public Response toResponse(NotFoundException exception) {
         return Response.status(Response.Status.NOT_FOUND)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_HTML)
-                .entity(new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "404.html") {
-                })
+                .entity(new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "404.html"))
                 .build();
     }
 }

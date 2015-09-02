@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
+<body>
+<div th:include="main.html::header" id="header-wrapper"></div>
+
+<div class="row">
+    <div class="small-12 large-8 columns">
+        <main>
+            <h1>Bulk download</h1>
+            <p>Download the current contents of this register as:
+                <a href="/current.json" rel="alternate">json</a>, <a href="/current.ttl" rel="alternate">ttl</a>, <a href="/current" rel="alternate">html</a>, <a href="/current.tsv" rel="alternate">tsv</a> and <a href="/current.csv" rel="alternate">csv</a>.
+            </p>
+            <p><a href="/download.torrent">Download the whole history of this register</a> as a CSV by bittorrent.</p>
+            <p>Once you have downloaded your copy of the register, you can keep your local copy up to date with the <a href="/feed">latest changes.</a></p>
+        </main>
+    </div>
+</div>
+
+<div th:include="main.html::footer-wrapper"></div>
+
+</body>
+</html>
