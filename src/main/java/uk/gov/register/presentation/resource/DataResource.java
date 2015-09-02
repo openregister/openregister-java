@@ -38,7 +38,7 @@ public class DataResource extends ResourceBase {
 
     @GET
     @Path("/feed")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView feed() {
         return new ListResultView("entries.html", queryDAO.getFeeds(ENTRY_LIMIT));
     }
