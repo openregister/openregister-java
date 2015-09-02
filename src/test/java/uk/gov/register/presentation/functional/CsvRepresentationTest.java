@@ -21,7 +21,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
 
     @Test
     public void csvRepresentationIsSupportedForEntries() {
-        Response response = getRequest("/all.csv");
+        Response response = getRequest("/current.csv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv;charset=utf-8"));
         assertThat(response.readEntity(String.class), equalTo("hash,name,ft-test-pkey\r\nhash2,presley,6789\r\nhash3,ellis,145678\r\nhash1,ellis,\"123,45\"\r\n"));
@@ -37,7 +37,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
 
     @Test
     public void tsvRepresentationIsSupportedForEntries() {
-        Response response = getRequest("/all.tsv");
+        Response response = getRequest("/current.tsv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/tab-separated-values;charset=utf-8"));
         assertThat(response.readEntity(String.class), equalTo("hash\tname\tft-test-pkey\nhash2\tpresley\t6789\nhash3\tellis\t145678\nhash1\tellis\t123,45\n"));
