@@ -45,10 +45,13 @@ public class Loader {
     }
 
     protected static List<String> convertDataToJsonl(DataReader dataReader, String type) throws IOException {
-        if (type.equals("jsonl")) {
-            return dataReader.reader().lines().collect(Collectors.toList());
-        } else {
-            return ToJSONLConverter.convert(dataReader, type);
+        switch (type) {
+            case "jsonl":
+                return dataReader.reader().lines().collect(Collectors.toList());
+            case "csv":
+                return ToJSONLConverter.convertCsvToJsonl(dataReader);
+            default:
+                return ToJSONLConverter.convertTsvToJsonl(dataReader);
         }
     }
 
@@ -64,6 +67,7 @@ public class Loader {
             throw new RuntimeException("Exception while loading entries: statusCode -> " + response.status() + " \n entity -> " + response.body());
 
     }
+
     private static Map<String, String> createArgumentsMap(String[] args) throws Exception {
         try {
 

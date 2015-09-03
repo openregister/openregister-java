@@ -13,11 +13,16 @@ import java.util.Map;
 public class ToJSONLConverter {
     static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static List<String> convert(DataReader reader, String type) throws IOException {
-        boolean isCsv = type.equals("csv");
-        CsvSchema.Builder builder = CsvSchema.builder().setColumnSeparator(isCsv ? ',' : '\t').setUseHeader(true);
-        CsvSchema schema = builder.build();
 
+    public static List<String> convertCsvToJsonl(DataReader reader) throws IOException {
+        return convert(reader, CsvSchema.builder().setColumnSeparator(',').setUseHeader(true).build());
+    }
+
+    public static List<String> convertTsvToJsonl(DataReader reader) throws IOException {
+        return convert(reader, CsvSchema.builder().setColumnSeparator('\t').setUseHeader(true).build());
+    }
+
+    private static List<String> convert(DataReader reader, CsvSchema schema) throws IOException {
         MappingIterator<Map<?, ?>> mappingIterator = new CsvMapper().reader(Map.class).withSchema(schema).readValues(reader.reader());
         List<String> jsons = new ArrayList<>();
         while (mappingIterator.hasNext()) {
