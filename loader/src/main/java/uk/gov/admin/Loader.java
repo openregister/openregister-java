@@ -23,16 +23,47 @@ public class Loader {
 
         load(
                 new DataReader(datafile),
-                ToJSONLConverter.converterFor(type),
-                mintUrl
+                mintUrl,
+                type
         );
 
     }
 
-    private static Exception printUsageException() throws Exception {
-        return new RuntimeException("Usage: java Loader --mintUrl=<mint-load-url> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>");
+    //Note: this might fail when file has large dataset
+    public static void load(DataReader dataReader,
+                            String mintUrl,
+                            String type) throws IOException {
+
+        List<String> jsonlDataList = convertDataToJsonl(dataReader, type);
+
+        List<List<String>> batches = Lists.partition(jsonlDataList, BATCH_SIZE);
+        int totalEntriesLoaded = 0;
+        for (List<String> batch : batches) {
+            send(batch, mintUrl);
+            System.out.println("Loaded " + (totalEntriesLoaded += batch.size()) + " entries...");
+        }
     }
 
+    protected static List<String> convertDataToJsonl(DataReader dataReader, String type) throws IOException {
+        if (type.equals("jsonl")) {
+            return dataReader.reader().lines().collect(Collectors.toList());
+        } else {
+            return ToJSONLConverter.convert(dataReader, type);
+        }
+    }
+
+    private static void send(List<String> payload, String mintUrl) throws IOException {
+
+        Response response = new JdkRequest(mintUrl)
+                .method(Request.POST)
+                .body()
+                .set(String.join("\n", payload))
+                .back()
+                .fetch();
+        if (response.status() != 200)
+            throw new RuntimeException("Exception while loading entries: statusCode -> " + response.status() + " \n entity -> " + response.body());
+
+    }
     private static Map<String, String> createArgumentsMap(String[] args) throws Exception {
         try {
 
@@ -54,31 +85,8 @@ public class Loader {
         }
     }
 
-    //Note: this might fail when file has large dataset
-    public static void load(
-            DataReader dataReader,
-            ToJSONLConverter toJSONLConverter,
-            String mintUrl) throws IOException {
-
-        List<List<String>> batches = Lists.partition(toJSONLConverter.convert(dataReader), BATCH_SIZE);
-        int totalEntriesLoaded = 0;
-        for (List<String> batch : batches) {
-            send(batch, mintUrl);
-            System.out.println("Loaded " + (totalEntriesLoaded += batch.size()) + " entries...");
-        }
-
+    private static Exception printUsageException() throws Exception {
+        return new RuntimeException("Usage: java Loader --mintUrl=<mint-load-url> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>");
     }
 
-    private static void send(List<String> payload, String mintUrl) throws IOException {
-
-        Response response = new JdkRequest(mintUrl)
-                .method(Request.POST)
-                .body()
-                .set(String.join("\n", payload))
-                .back()
-                .fetch();
-        if (response.status() != 200)
-            throw new RuntimeException("Exception while loading entries: statusCode -> " + response.status() + " \n entity -> " + response.body());
-
-    }
 }

@@ -1,88 +1,30 @@
 package uk.gov.admin;
 
-import com.univocity.parsers.common.processor.RowListProcessor;
-import com.univocity.parsers.csv.CsvParser;
-import com.univocity.parsers.csv.CsvParserSettings;
-import com.univocity.parsers.tsv.TsvParser;
-import com.univocity.parsers.tsv.TsvParserSettings;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import org.codehaus.jackson.map.MappingIterator;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class ToJSONLConverter {
-    private final static ToJSONLConverter identity =
-            new ToJSONLConverter("jsonl") {
-                @Override
-                public List<String> convert(DataReader reader) {
-                    return reader.reader().lines().collect(Collectors.toList());
-                }
-            };
-    private final String type;
+    static ObjectMapper objectMapper = new ObjectMapper();
 
-    private ToJSONLConverter(String type) {
-        this.type = type;
-    }
+    public static List<String> convert(DataReader reader, String type) throws IOException {
+        boolean isCsv = type.equals("csv");
+        CsvSchema.Builder builder = CsvSchema.builder().setColumnSeparator(isCsv ? ',' : '\t').setUseHeader(true);
+        CsvSchema schema = builder.build();
 
-    public static ToJSONLConverter converterFor(String type) {
-        if ("jsonl".equals(type)) return identity;
+        MappingIterator<Map<?, ?>> mappingIterator = new CsvMapper().reader(Map.class).withSchema(schema).readValues(reader.reader());
+        List<String> jsons = new ArrayList<>();
+        while (mappingIterator.hasNext()) {
+            String entryJson = objectMapper.writeValueAsString(mappingIterator.next());
+            jsons.add(entryJson);
+        }
 
-        return new ToJSONLConverter(type);
-    }
-
-    public List<String> convert(DataReader reader) {
-        RowListProcessor rowProcessor;
-        if ("tsv".equals(type))
-            rowProcessor = getTsvParser(reader);
-        else
-            rowProcessor = getCsvParser(reader);
-
-        String[] headers = rowProcessor.getHeaders();
-        List<String[]> rows = rowProcessor.getRows();
-
-        return convertRecordsToJsonl(headers, rows);
-    }
-
-    private RowListProcessor getCsvParser(DataReader reader) {
-        CsvParserSettings parserSettings = new CsvParserSettings();
-        parserSettings.setLineSeparatorDetectionEnabled(true);
-        RowListProcessor rowProcessor = new RowListProcessor();
-        parserSettings.setRowProcessor(rowProcessor);
-        parserSettings.setHeaderExtractionEnabled(true);
-        CsvParser parser = new CsvParser(parserSettings);
-        parser.parse(reader.reader());
-
-        return rowProcessor;
-    }
-
-    private RowListProcessor getTsvParser(DataReader reader) {
-        TsvParserSettings parserSettings = new TsvParserSettings();
-        parserSettings.setLineSeparatorDetectionEnabled(true);
-        RowListProcessor rowProcessor = new RowListProcessor();
-        parserSettings.setRowProcessor(rowProcessor);
-        parserSettings.setHeaderExtractionEnabled(true);
-        TsvParser parser = new TsvParser(parserSettings);
-        parser.parse(reader.reader());
-
-        return rowProcessor;
-    }
-
-    // Build string representation of json - faster than using Json parser.
-    private List<String> convertRecordsToJsonl(String[] headers, List<String[]> rows) {
-        return rows.stream().map(fields -> {
-            String jsonl = "{";
-            for (int i = 0; i < headers.length; i++) {
-                if (i > 0) jsonl += ", ";
-                String value = fields[i] == null ? "\"\"" : "\"" + fields[i] + "\"";
-                jsonl += "\"" + headers[i] + "\": " + value;
-            }
-            jsonl += "}";
-            return jsonl;
-        }).collect(Collectors.toList());
-
-
-    }
-
-    public enum ConvertibleType {
-        jsonl, tsv, csv
+        return jsons;
     }
 }

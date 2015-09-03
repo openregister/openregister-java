@@ -2,7 +2,7 @@ group 'mint'
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
-    compile jcabi, univocity, guava
+    compile jackson_csv, jcabi, guava
 
     testCompile junit, mockito
 }
