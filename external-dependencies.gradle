@@ -8,8 +8,6 @@ ext {
             "io.dropwizard:dropwizard-jdbi:${dropwizard_version}"
     ]
 
-    jOptSimple = 'net.sf.jopt-simple:jopt-simple:4.8'
-    javaslang = 'com.javaslang:javaslang:1.2.2'
     jcabi = [
             'com.sun.jersey:jersey-core:1.19',
             'com.sun.jersey:jersey-client:1.19',
@@ -23,8 +21,10 @@ ext {
             'com.fasterxml.jackson.core:jackson-annotations:2.5.4'
     ]
 
+    jackson_csv = 'com.fasterxml.jackson:jackson-dataformat-csv:0.5.0'
+
+    guava = 'com.google.guava:guava:18.0'
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
-    univocity = 'com.univocity:univocity-parsers:1.5.6'
     apacheCommonsCodec = 'commons-codec:commons-codec:1.9'
 
     //test-dependencies
