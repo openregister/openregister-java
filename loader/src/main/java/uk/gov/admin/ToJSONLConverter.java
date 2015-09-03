@@ -11,27 +11,27 @@ import java.util.stream.Collectors;
 
 public class ToJSONLConverter {
     private final static ToJSONLConverter identity =
-            new ToJSONLConverter(ConvertibleType.jsonl) {
+            new ToJSONLConverter("jsonl") {
                 @Override
                 public List<String> convert(DataReader reader) {
                     return reader.reader().lines().collect(Collectors.toList());
                 }
             };
-    private final ConvertibleType convertibleType;
+    private final String type;
 
-    private ToJSONLConverter(ConvertibleType theConvertibleType) {
-        this.convertibleType = theConvertibleType;
+    private ToJSONLConverter(String type) {
+        this.type = type;
     }
 
-    public static ToJSONLConverter converterFor(ConvertibleType convertibleType) {
-        if (convertibleType == ConvertibleType.jsonl) return identity;
+    public static ToJSONLConverter converterFor(String type) {
+        if ("jsonl".equals(type)) return identity;
 
-        return new ToJSONLConverter(convertibleType);
+        return new ToJSONLConverter(type);
     }
 
     public List<String> convert(DataReader reader) {
         RowListProcessor rowProcessor;
-        if (convertibleType == ConvertibleType.tsv)
+        if ("tsv".equals(type))
             rowProcessor = getTsvParser(reader);
         else
             rowProcessor = getCsvParser(reader);
@@ -83,14 +83,6 @@ public class ToJSONLConverter {
     }
 
     public enum ConvertibleType {
-        jsonl(""),
-        tsv("\t"),
-        csv(",");
-
-        private final String separator;
-
-        ConvertibleType(String theSeparator) {
-            separator = theSeparator;
-        }
+        jsonl, tsv, csv
     }
 }

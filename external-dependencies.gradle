@@ -8,7 +8,6 @@ ext {
             "io.dropwizard:dropwizard-jdbi:${dropwizard_version}"
     ]
 
-    jOptSimple = 'net.sf.jopt-simple:jopt-simple:4.8'
     jcabi = [
             'com.sun.jersey:jersey-core:1.19',
             'com.sun.jersey:jersey-client:1.19',
