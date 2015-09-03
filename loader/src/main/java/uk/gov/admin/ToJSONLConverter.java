@@ -7,16 +7,14 @@ import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ToJSONLConverter {
     private final static ToJSONLConverter identity =
             new ToJSONLConverter(ConvertibleType.jsonl) {
                 @Override
-                public javaslang.collection.List<String> convert(DataReader reader) {
-                    javaslang.collection.List<String> jsonl = javaslang.collection.List.nil();
-                    reader.reader().lines().forEach(jsonl::append);
-
-                    return jsonl;
+                public List<String> convert(DataReader reader) {
+                    return reader.reader().lines().collect(Collectors.toList());
                 }
             };
     private final ConvertibleType convertibleType;
@@ -31,7 +29,7 @@ public class ToJSONLConverter {
         return new ToJSONLConverter(convertibleType);
     }
 
-    public javaslang.collection.List<String> convert(DataReader reader) {
+    public List<String> convert(DataReader reader) {
         RowListProcessor rowProcessor;
         if (convertibleType == ConvertibleType.tsv)
             rowProcessor = getTsvParser(reader);
@@ -69,9 +67,8 @@ public class ToJSONLConverter {
     }
 
     // Build string representation of json - faster than using Json parser.
-    private javaslang.collection.List<String> convertRecordsToJsonl(String[] headers, List<String[]> rows) {
-        javaslang.collection.List<String> jsonlDocs = javaslang.collection.List.nil();
-        for (String[] fields : rows) {
+    private List<String> convertRecordsToJsonl(String[] headers, List<String[]> rows) {
+        return rows.stream().map(fields -> {
             String jsonl = "{";
             for (int i = 0; i < headers.length; i++) {
                 if (i > 0) jsonl += ", ";
@@ -79,10 +76,10 @@ public class ToJSONLConverter {
                 jsonl += "\"" + headers[i] + "\": " + value;
             }
             jsonl += "}";
-            jsonlDocs = jsonlDocs.append(jsonl);
-        }
+            return jsonl;
+        }).collect(Collectors.toList());
 
-        return jsonlDocs;
+
     }
 
     public enum ConvertibleType {

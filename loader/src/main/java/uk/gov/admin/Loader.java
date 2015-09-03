@@ -1,10 +1,12 @@
 package uk.gov.admin;
 
+import com.google.common.collect.Lists;
 import com.jcabi.http.Request;
 import com.jcabi.http.Response;
 import com.jcabi.http.request.JdkRequest;
-import javaslang.collection.List;
 import uk.gov.admin.ToJSONLConverter.ConvertibleType;
+
+import java.util.List;
 
 public class Loader {
     private static final int BATCH_SIZE = 2000;
@@ -15,20 +17,15 @@ public class Loader {
     }
 
     public static void main(String[] args) {
+
         final LoaderArgsParser.LoaderArgs loaderArgs = new LoaderArgsParser().parseArgs(args);
 
         new Loader(loaderArgs).load();
     }
 
     public void load() {
-        try {
-            final ToJSONLConverter converter = ToJSONLConverter.converterFor(ConvertibleType.valueOf(loaderArgs.type));
-            converter.convert(loaderArgs.dataReader)
-                    .grouped(BATCH_SIZE)
-                    .forEach(this::send);
-        } catch (Throwable t) {
-            throw new RuntimeException("Error occurred publishing datafile to queue", t);
-        }
+        ToJSONLConverter converter = ToJSONLConverter.converterFor(ConvertibleType.valueOf(loaderArgs.type));
+        Lists.partition(converter.convert(loaderArgs.dataReader), BATCH_SIZE).forEach(this::send);
     }
 
     private void send(List<String> payload) {
@@ -36,13 +33,13 @@ public class Loader {
             Response r = new JdkRequest(loaderArgs.mintUrl)
                     .method(Request.POST)
                     .body()
-                    .set(payload.join("\n"))
+                    .set(String.join("\n", payload))
                     .back()
                     .fetch();
             if (r.status() != 200)
                 System.err.println("Unexpected result: " + r.body());
             else
-                System.out.println("Loaded " + payload.length() + " entries...");
+                System.out.println("Loaded " + payload.size() + " entries...");
         } catch (Exception e) {
             System.err.println("Error occurred sending data to mint: " + e);
         }
