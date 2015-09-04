@@ -1,4 +1,4 @@
-package uk.gov;
+package uk.gov.indexer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

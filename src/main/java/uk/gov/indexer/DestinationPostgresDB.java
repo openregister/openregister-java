@@ -1,4 +1,4 @@
-package uk.gov;
+package uk.gov.indexer;
 
 import org.postgresql.util.PGobject;
 

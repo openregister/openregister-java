@@ -1,8 +1,9 @@
-package uk.gov;
+package uk.gov.indexer;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.gov.indexer.SourcePostgresDB;
 
 import java.sql.*;
 

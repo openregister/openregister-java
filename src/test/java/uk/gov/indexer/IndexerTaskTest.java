@@ -1,9 +1,12 @@
-package uk.gov;
+package uk.gov.indexer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.indexer.DestinationPostgresDB;
+import uk.gov.indexer.IndexerTask;
+import uk.gov.indexer.SourcePostgresDB;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

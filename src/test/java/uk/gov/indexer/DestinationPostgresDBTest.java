@@ -1,4 +1,4 @@
-package uk.gov;
+package uk.gov.indexer;
 
 import org.junit.After;
 import org.junit.Before;
