@@ -7,8 +7,8 @@ class SourcePostgresDB extends PostgresDB {
 
     private final String tableName;
 
-    public SourcePostgresDB(String connectionString) throws SQLException {
-        super(connectionString);
+    public SourcePostgresDB(String register, String connectionString) throws SQLException {
+        super(register, connectionString);
         this.tableName = "entries";
     }
 

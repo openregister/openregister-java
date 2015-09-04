@@ -12,8 +12,8 @@ class DestinationPostgresDB extends PostgresDB {
     private final String indexedEntriesTableName;
     private final String waterMarkTableName;
 
-    public DestinationPostgresDB(String connectionString) throws SQLException {
-        super(connectionString);
+    public DestinationPostgresDB(String register, String connectionString) throws SQLException {
+        super(register, connectionString);
         this.indexedEntriesTableName = "ordered_entry_index";
         this.waterMarkTableName = "streamed_entries";
         try (Statement statement = connection.createStatement()) {

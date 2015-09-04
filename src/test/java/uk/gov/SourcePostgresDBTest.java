@@ -28,7 +28,7 @@ public class SourcePostgresDBTest {
             statement.execute("CREATE TABLE IF NOT EXISTS " + entriesTableName + " (ID SERIAL PRIMARY KEY, ENTRY BYTEA)");
             statement.execute("DELETE FROM " + entriesTableName);
         }
-        sourcePostgresDB = new SourcePostgresDB(connectionString);
+        sourcePostgresDB = new SourcePostgresDB("register", connectionString);
     }
 
     @After

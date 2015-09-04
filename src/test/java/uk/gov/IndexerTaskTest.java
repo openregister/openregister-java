@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class IndexerTest {
+public class IndexerTaskTest {
     @Mock
     SourcePostgresDB sourceDB;
 
@@ -22,14 +22,14 @@ public class IndexerTest {
     @Test
     public void update_copiesAllEntriesFromSourceDBToDestinationDB_fetchedByWaterMark() throws SQLException {
 
-        Indexer indexer = new Indexer(sourceDB, destinationDB);
+        IndexerTask indexerTask = new IndexerTask("register", sourceDB, destinationDB);
 
         ResultSet resultSet = mock(ResultSet.class);
         int currentWaterMark = 0;
         when(destinationDB.currentWaterMark()).thenReturn(currentWaterMark);
         when(sourceDB.read(currentWaterMark)).thenReturn(resultSet);
 
-        indexer.update();
+        indexerTask.update();
 
         verify(destinationDB).write(resultSet);
     }

@@ -1,27 +1,37 @@
 package uk.gov;
 
-class IndexerTask implements Runnable {
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class IndexerTask implements Runnable {
     private final String register;
-    private final Indexer indexer;
+    private final SourcePostgresDB sourceDB;
+    private final DestinationPostgresDB destinationDB;
 
     public IndexerTask(String register, SourcePostgresDB sourceDB, DestinationPostgresDB destinationDB) {
         this.register = register;
-        this.indexer = new Indexer(sourceDB, destinationDB);
+        this.sourceDB = sourceDB;
+        this.destinationDB = destinationDB;
     }
 
     @Override
     public void run() {
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            try {
-                ConsoleLogger.log("Starting index update for register : " + register);
-                indexer.update();
-                ConsoleLogger.log("Index update completed for register: " + register);
-                ConsoleLogger.log("Waiting 10 seconds for register: " + register);
-                Thread.sleep(10000);
-            } catch (Exception e) {
-                throw new RuntimeException("todo: define exception ", e);
-            }
+        try {
+            update();
+            ConsoleLogger.log("Index update completed for register: " + register);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    protected void update() {
+        try {
+            int currentWaterMark = destinationDB.currentWaterMark();
+            ResultSet difference = sourceDB.read(currentWaterMark);
+            destinationDB.write(difference);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
