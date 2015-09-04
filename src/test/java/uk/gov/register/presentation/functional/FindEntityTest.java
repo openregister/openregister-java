@@ -52,6 +52,24 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
+    public void all_movedPermanentlyToCurrentSoReturns301() throws InterruptedException, IOException {
+        Response response = getRequest("/all.json");
+
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getHeaderString("Location"), equalTo("http://ft-test-pkey.beta.openregister.org/current.json"));
+
+    }
+
+    @Test
+    public void latest_movedPermanentlyToCurrentSoReturns301() throws InterruptedException, IOException {
+        Response response = getRequest("/latest.json");
+
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getHeaderString("Location"), equalTo("http://ft-test-pkey.beta.openregister.org/feed.json"));
+
+    }
+
+    @Test
     public void current_shouldReturnAllCurrentVersionsOnly() throws InterruptedException, IOException {
         Response response = getRequest("/current.json");
 

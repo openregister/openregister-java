@@ -27,7 +27,7 @@ public class FunctionalTestBase {
     public static void beforeClass() throws InterruptedException {
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 
-        client = new JerseyClientBuilder().build();
+        client = new JerseyClientBuilder().property("jersey.config.client.followRedirects", false).build();
     }
 
     Response getRequest(String path) {
