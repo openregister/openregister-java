@@ -18,4 +18,8 @@ public class HtmlViewSupport {
 
         return uriBuilder.build().toString();
     }
+
+    public static String fieldLink(String fieldName) {
+        return UriBuilder.fromPath("http://field.openregister.org/field").path(fieldName).build().toString();
+    }
 }

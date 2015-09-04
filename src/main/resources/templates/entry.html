@@ -8,7 +8,9 @@
     <div class="small-12 large-8 columns">
         <h1 class="entry-header" th:text="${record.entry.get('school')}">Entry Name Header</h1>
 
-        <p class="entry-source">An entry in the <a href="/" th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a></p>
+        <p class="entry-source">An entry in the <a href="/"
+                                                   th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+        </p>
 
         <p class="entry-hash">
             <span class="entry-hash" th:text="${'hash: ' + record.hash}"></span>
@@ -25,8 +27,8 @@
         <table id="entry-table">
             <tbody>
             <tr th:each="entry : ${record.entry}">
-                <td class="@field.getName()" th:text="${entry.key}"></td>
-                <td class="@field.getName()" th:text="${entry.value}"></td>
+                <td ><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(entry.key)}" th:text="${entry.key}"></a></td>
+                <td th:text="${entry.value}"></td>
             </tr>
             </tbody>
         </table>
