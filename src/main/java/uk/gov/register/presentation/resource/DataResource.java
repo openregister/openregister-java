@@ -10,6 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
 
 @Path("/")
 public class DataResource extends ResourceBase {
@@ -48,6 +50,34 @@ public class DataResource extends ResourceBase {
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView current() {
         return new ListResultView("entries.html", queryDAO.getAllRecords(getRegisterPrimaryKey(), ENTRY_LIMIT));
+    }
+
+    @GET
+    @Path("/all")
+    public Response all() {
+        return create301Response("current");
+    }
+
+    @GET
+    @Path("/latest")
+    public Response latest() {
+        return create301Response("feed");
+    }
+
+    private Response create301Response(String locationMethod) {
+        String requestURI = httpServletRequest.getRequestURI();
+        String representation = requestURI.substring(requestURI.lastIndexOf("/")).replaceAll("[^\\.]+(.*)", "$1");
+
+        URI uri = UriBuilder
+                .fromUri(requestURI)
+                .replacePath(null)
+                .path(locationMethod + representation)
+                .build();
+
+        return Response
+                .status(Response.Status.MOVED_PERMANENTLY)
+                .location(uri)
+                .build();
     }
 
 }
