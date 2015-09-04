@@ -3,6 +3,12 @@ database:
   url: jdbc:postgresql://${POSTGRES_5432_TCP_ADDR:-localhost}:${POSTGRES_5432_TCP_PORT:-5432}/mint
   user: ${POSTGRES_ENV_POSTGRES_USER:-postgres}
   password: ${POSTGRES_ENV_POSTGRES_PASSWORD:-}
+
+  #db connection properties
+  initialSize: 1
+  minSize: 1
+  maxSize: 4
+
   properties:
     charSet: UTF-8
 

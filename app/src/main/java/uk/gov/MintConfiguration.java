@@ -15,7 +15,6 @@ public class MintConfiguration extends Configuration {
     private DataSourceFactory database;
 
     public DataSourceFactory getDatabase() {
-        System.out.println(database.getUrl());
         return database;
     }
 }
