@@ -46,7 +46,7 @@ public class DataResource extends ResourceBase {
     @GET
     @Path("/current")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public ListResultView all() {
+    public ListResultView current() {
         return new ListResultView("entries.html", queryDAO.getAllRecords(getRegisterPrimaryKey(), ENTRY_LIMIT));
     }
 
