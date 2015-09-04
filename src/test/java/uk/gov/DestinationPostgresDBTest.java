@@ -22,7 +22,7 @@ public class DestinationPostgresDBTest {
     @Before
     public void setup() throws SQLException {
         connection = DriverManager.getConnection(connectionString);
-        destinationPostgresDB = new DestinationPostgresDB(connectionString);
+        destinationPostgresDB = new DestinationPostgresDB("register", connectionString);
         statement = connection.createStatement();
     }
 
@@ -44,7 +44,7 @@ public class DestinationPostgresDBTest {
     public void constructor_doesNotSetWaterMarkValueZero_whenTableAlreadyContainsWaterMark() throws SQLException {
         statement.executeUpdate("UPDATE " + waterMarkTableName + " set ID=5");
 
-        new DestinationPostgresDB(connectionString);
+        new DestinationPostgresDB("register", connectionString);
 
         ResultSet resultSet = statement.executeQuery("SELECT ID FROM " + waterMarkTableName);
         assertThat(resultSet.next(), equalTo(true));

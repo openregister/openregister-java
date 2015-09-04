@@ -40,13 +40,13 @@ public class Application {
     }
 
     private static DestinationPostgresDB createDestinationDBObject(String register, Configuration configuration) throws SQLException {
-        DestinationPostgresDB destinationDB = new DestinationPostgresDB(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
+        DestinationPostgresDB destinationDB = new DestinationPostgresDB(register, configuration.getProperty(register + ".destination.postgres.db.connectionString"));
         databaseObjectRegistry.add(destinationDB);
         return destinationDB;
     }
 
     private static SourcePostgresDB createSourceDBObject(String register, Configuration configuration) throws SQLException {
-        SourcePostgresDB sourceDB = new SourcePostgresDB(configuration.getProperty(register + ".source.postgres.db.connectionString"));
+        SourcePostgresDB sourceDB = new SourcePostgresDB(register, configuration.getProperty(register + ".source.postgres.db.connectionString"));
         databaseObjectRegistry.add(sourceDB);
         return sourceDB;
     }

@@ -4,16 +4,16 @@ import java.sql.*;
 
 abstract class PostgresDB {
 
-    private final String connectionString;
+    private final String register;
     protected final Connection connection;
 
-    public PostgresDB(String connectionString) throws SQLException {
-        this.connectionString = connectionString;
+    public PostgresDB(String register, String connectionString) throws SQLException {
+        this.register = register;
         connection = DriverManager.getConnection(connectionString);
     }
 
     public void closeConnection() {
-        ConsoleLogger.log("Closing connection: " + connectionString);
+        ConsoleLogger.log("Closing " + this.getClass().getCanonicalName() + " connection for register " + register);
         try {
             connection.close();
         } catch (SQLException e) {
