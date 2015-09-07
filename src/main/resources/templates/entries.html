@@ -13,7 +13,7 @@
             <tr>
                 <td>hash</td>
                 <th:block th:each="entrySet : ${records.get(0).entry}">
-                    <td th:text="${entrySet.key}"></td>
+                    <td><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(entrySet.key)}" th:text="${entrySet.key}"></a></td>
                 </th:block>
             </tr>
             </thead>
