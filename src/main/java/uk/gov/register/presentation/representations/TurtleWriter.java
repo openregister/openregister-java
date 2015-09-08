@@ -4,6 +4,7 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
+import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;

@@ -1,6 +1,7 @@
 package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
+import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -9,16 +10,13 @@ import java.nio.charset.Charset;
 
 public class ThymeleafView extends View {
 
-    private final HttpServletRequest httpServletRequest;
-    private final HttpServletResponse httpServletResponse;
-    private final ServletContext servletContext;
+    private final RequestContext requestContext;
+
     private String thymeleafTemplateName;
 
-    public ThymeleafView(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, ServletContext servletContext, String templateName) {
+    public ThymeleafView(RequestContext requestContext, String templateName) {
         super(templateName, Charset.forName("UTF-8"));
-        this.httpServletRequest = httpServletRequest;
-        this.httpServletResponse = httpServletResponse;
-        this.servletContext = servletContext;
+        this.requestContext = requestContext;
     }
 
     @Override
@@ -38,15 +36,15 @@ public class ThymeleafView extends View {
     }
 
     public ServletContext getServletContext() {
-        return servletContext;
+        return requestContext.getServletContext();
     }
 
     public HttpServletResponse getHttpServletResponse() {
-        return httpServletResponse;
+        return requestContext.getHttpServletResponse();
     }
 
     public HttpServletRequest getHttpServletRequest() {
-        return httpServletRequest;
+        return requestContext.getHttpServletRequest();
     }
 
 

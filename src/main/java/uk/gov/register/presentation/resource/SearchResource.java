@@ -19,7 +19,8 @@ public class SearchResource extends ResourceBase {
     private final RecentEntryIndexQueryDAO queryDAO;
 
     @Inject
-    public SearchResource(RecentEntryIndexQueryDAO queryDAO) {
+    public SearchResource(RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+        super(requestContext);
         this.queryDAO = queryDAO;
     }
 
@@ -34,14 +35,14 @@ public class SearchResource extends ResourceBase {
                         .stream()
                         .findFirst()
                         .map(e -> queryDAO.findAllByKeyValue(e.getKey(), e.getValue().get(0)))
-                        .orElseGet(() -> queryDAO.getAllRecords(getRegisterPrimaryKey(), ENTRY_LIMIT)));
+                        .orElseGet(() -> queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)));
     }
 
     @GET
     @Path("/{primaryKey}/{primaryKeyValue}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
-        String registerPrimaryKey = getRegisterPrimaryKey();
+        String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
             Optional<Record> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {

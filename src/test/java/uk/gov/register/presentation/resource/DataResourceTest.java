@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -23,6 +24,17 @@ import static org.mockito.Mockito.when;
 public class DataResourceTest {
     @Mock
     HttpServletRequest mockHttpServletRequest;
+
+    @Mock
+    RequestContext requestContext;
+
+    DataResource dataResource;
+
+    @Before
+    public void setUp() throws Exception {
+        dataResource = new DataResource(requestContext, null);
+    }
+
     @Test
     public void feedSupportsJsonCsvTsv() throws Exception {
         Method feedMethod = DataResource.class.getDeclaredMethod("feed");
@@ -50,9 +62,8 @@ public class DataResourceTest {
 
     @Test
     public void allWithRepresentation_permanentlyRedirectsToCurrentWithSameRepresentation() {
-        DataResource dataResource = new DataResource(null);
-        dataResource.httpServletRequest = mockHttpServletRequest;
-        when(mockHttpServletRequest.getRequestURI()).thenReturn("http://abc/all.json");
+
+        when(requestContext.requestURI()).thenReturn("http://abc/all.json");
 
         Response response = dataResource.all();
 
@@ -62,9 +73,7 @@ public class DataResourceTest {
 
     @Test
     public void allWithoutRepresentation_permanentlyRedirectsToCurrentWithoputRepresentation() {
-        DataResource dataResource = new DataResource(null);
-        dataResource.httpServletRequest = mockHttpServletRequest;
-        when(mockHttpServletRequest.getRequestURI()).thenReturn("http://abc/all");
+        when(requestContext.requestURI()).thenReturn("http://abc/all");
 
         Response response = dataResource.all();
 
@@ -74,9 +83,7 @@ public class DataResourceTest {
 
     @Test
     public void latestWithRepresentation_permanentlyRedirectsToFeedWithSameRepresentation() {
-        DataResource dataResource = new DataResource(null);
-        dataResource.httpServletRequest = mockHttpServletRequest;
-        when(mockHttpServletRequest.getRequestURI()).thenReturn("http://abc/latest.json");
+        when(requestContext.requestURI()).thenReturn("http://abc/latest.json");
 
         Response response = dataResource.latest();
 
@@ -86,9 +93,7 @@ public class DataResourceTest {
 
     @Test
     public void latestWithoutRepresentation_permanentlyRedirectsToFeedWithoputRepresentation() {
-        DataResource dataResource = new DataResource(null);
-        dataResource.httpServletRequest = mockHttpServletRequest;
-        when(mockHttpServletRequest.getRequestURI()).thenReturn("http://abc/latest");
+        when(requestContext.requestURI()).thenReturn("http://abc/latest");
 
         Response response = dataResource.latest();
 

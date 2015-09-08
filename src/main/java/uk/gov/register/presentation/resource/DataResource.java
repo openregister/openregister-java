@@ -19,7 +19,8 @@ public class DataResource extends ResourceBase {
     private final RecentEntryIndexQueryDAO queryDAO;
 
     @Inject
-    public DataResource(RecentEntryIndexQueryDAO queryDAO) {
+    public DataResource(RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+        super(requestContext);
         this.queryDAO = queryDAO;
     }
 
@@ -27,7 +28,7 @@ public class DataResource extends ResourceBase {
     @Path("/download")
     @Produces(MediaType.TEXT_HTML)
     public View download() {
-        return new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "download.html");
+        return new ThymeleafView(requestContext, "download.html");
     }
 
     @GET
@@ -36,7 +37,7 @@ public class DataResource extends ResourceBase {
     public Response downloadTorrent() {
         return Response
                 .status(Response.Status.NOT_IMPLEMENTED)
-                .entity(new ThymeleafView(httpServletRequest, httpServletResponse, servletContext, "not-implemented.html"))
+                .entity(new ThymeleafView(requestContext, "not-implemented.html"))
                 .build();
     }
 
@@ -51,7 +52,7 @@ public class DataResource extends ResourceBase {
     @Path("/current")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView current() {
-        return new ListResultView("entries.html", queryDAO.getAllRecords(getRegisterPrimaryKey(), ENTRY_LIMIT));
+        return new ListResultView("entries.html", queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT));
     }
 
     @GET
@@ -67,7 +68,7 @@ public class DataResource extends ResourceBase {
     }
 
     private Response create301Response(String locationMethod) {
-        String requestURI = httpServletRequest.getRequestURI();
+        String requestURI = requestContext.requestURI();
         String representation = requestURI.substring(requestURI.lastIndexOf("/")).replaceAll("[^\\.]+(.*)", "$1");
 
         URI uri = UriBuilder
