@@ -21,10 +21,7 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.representations.CsvWriter;
-import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.representations.TsvWriter;
-import uk.gov.register.presentation.representations.TurtleWriter;
+import uk.gov.register.presentation.representations.*;
 import uk.gov.register.presentation.resource.*;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 
@@ -59,7 +56,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
         RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
 
-        DropwizardResourceConfig resourceConfig = environment.jersey().getResourceConfig();
+        JerseyEnvironment jerseyEnvironment = environment.jersey();
+        DropwizardResourceConfig resourceConfig = jerseyEnvironment.getResourceConfig();
 
         ImmutableMap<String, MediaType> representations = ImmutableMap.of(
                 "csv", ExtraMediaType.TEXT_CSV_TYPE,
@@ -69,22 +67,23 @@ public class PresentationApplication extends Application<PresentationConfigurati
         );
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
 
-        environment.jersey().register(new AbstractBinder() {
+        jerseyEnvironment.register(new AbstractBinder() {
             @Override
             protected void configure() {
+                bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
                 bind(FieldsConfiguration.class).to(FieldsConfiguration.class);
+                bind(RequestContext.class).to(RequestContext.class);
             }
         });
-        environment.jersey().register(new CsvWriter());
-        environment.jersey().register(new TsvWriter());
-        environment.jersey().register(TurtleWriter.class);
 
-        JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new DataResource(queryDAO));
-        jersey.register(new HomePageResource());
-        jersey.register(new SearchResource(queryDAO));
-        jersey.register(new NotFoundExceptionMapper());
-        jersey.register(new ThrowableExceptionMapper());
+        resourceConfig.packages("uk.gov.register.presentation.resource");
+
+        jerseyEnvironment.register(CsvWriter.class);
+        jerseyEnvironment.register(TsvWriter.class);
+        jerseyEnvironment.register(TurtleWriter.class);
+
+        jerseyEnvironment.register(NotFoundExceptionMapper.class);
+        jerseyEnvironment.register(ThrowableExceptionMapper.class);
 
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 

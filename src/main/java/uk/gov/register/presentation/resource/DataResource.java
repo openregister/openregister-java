@@ -5,6 +5,7 @@ import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,6 +18,7 @@ import java.net.URI;
 public class DataResource extends ResourceBase {
     private final RecentEntryIndexQueryDAO queryDAO;
 
+    @Inject
     public DataResource(RecentEntryIndexQueryDAO queryDAO) {
         this.queryDAO = queryDAO;
     }

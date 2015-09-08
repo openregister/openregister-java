@@ -6,9 +6,7 @@ import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,12 +20,13 @@ import java.util.stream.Collectors;
 public class TurtleWriter extends RepresentationWriter {
     private static final String PREFIX = "@prefix field: <http://field.openregister.org/field/>.\n\n";
 
-    private HttpServletRequest httpServletRequest;
-    private FieldsConfiguration fieldsConfig;
+    private final FieldsConfiguration fieldsConfig;
+
+    private final RequestContext requestContext;
 
     @Inject
-    public TurtleWriter(@Context HttpServletRequest httpServletRequest, FieldsConfiguration fieldsConfig) {
-        this.httpServletRequest = httpServletRequest;
+    public TurtleWriter(RequestContext  requestContext, FieldsConfiguration fieldsConfig) {
+        this.requestContext = requestContext;
         this.fieldsConfig = fieldsConfig;
     }
 
@@ -64,6 +63,6 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     private URI uri(String hash) {
-        return UriBuilder.fromUri(httpServletRequest.getRequestURL().toString()).replacePath(null).path("hash").path(hash).build();
+        return UriBuilder.fromUri(requestContext.requestUrl()).replacePath(null).path("hash").path(hash).build();
     }
 }

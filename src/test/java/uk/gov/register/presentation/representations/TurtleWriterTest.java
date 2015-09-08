@@ -6,15 +6,11 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.views.View;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
 import uk.gov.register.presentation.resource.ResourceBase;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ext.MessageBodyWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,31 +18,33 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class TurtleWriterTest {
-    @Mock
-    private HttpServletRequest httpServletRequest;
+
+    private RequestContext requestContext = new RequestContext() {
+        @Override
+        public String requestUrl() {
+            return "http://widget.openregister.org/widget/123";
+        }
+    };
 
     private TurtleWriter turtleWriter;
 
     @Before
     public void setUp() throws Exception {
-        turtleWriter = new TurtleWriter(httpServletRequest, new FieldsConfiguration());
-
-        when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://widget.openregister.org/widget/123"));
+        turtleWriter = new TurtleWriter(requestContext, new FieldsConfiguration());
     }
 
     @Test
     public void rendersLinksCorrectlyAsUrls() throws Exception {
-        Map<String,String> entryMap =
+        Map<String, String> entryMap =
                 ImmutableMap.of(
                         "address", "1111111",
-                        "name",    "foo"
+                        "name", "foo"
                 );
 
-        Record record = new Record("abcd", JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>() {}));
+        Record record = new Record("abcd", JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>() {
+        }));
         String result = writeRecord(turtleWriter, record);
         assertThat(result, containsString("field:address <http://address.openregister.org/address/1111111>"));
         assertThat(result, containsString("field:name \"foo\""));

@@ -5,6 +5,7 @@ import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -17,6 +18,7 @@ public class SearchResource extends ResourceBase {
 
     private final RecentEntryIndexQueryDAO queryDAO;
 
+    @Inject
     public SearchResource(RecentEntryIndexQueryDAO queryDAO) {
         this.queryDAO = queryDAO;
     }
