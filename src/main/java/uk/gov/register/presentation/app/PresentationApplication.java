@@ -18,6 +18,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.CsvWriter;
@@ -67,9 +68,11 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "json", MediaType.APPLICATION_JSON_TYPE
         );
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
+
         environment.jersey().register(new AbstractBinder() {
+            @Override
             protected void configure() {
-                bind(configuration);
+                bind(FieldsConfiguration.class).to(FieldsConfiguration.class);
             }
         });
         environment.jersey().register(new CsvWriter());

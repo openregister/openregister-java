@@ -2,7 +2,7 @@ package uk.gov.register.presentation.representations;
 
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.config.FieldConfiguration;
+import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 
 import javax.inject.Inject;
@@ -49,11 +49,18 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     private String renderField(Record record, String fieldName) {
-        FieldConfiguration fieldConfig = fieldsConfig.getFields().get(fieldName);
-        if (fieldConfig.getRegister().isPresent()) {
-            return String.format(" field:%1$s <http://%2$s.openregister.org/%2$s/%3$s>", fieldName, fieldConfig.getRegister().get(), record.getEntry().get(fieldName));
-        }
-        return String.format(" field:%s \"%s\"", fieldName, record.getEntry().get(fieldName));
+        Field field = fieldsConfig.getField(fieldName);
+        Object fieldValue = record.getEntry().get(fieldName);
+        return field.getLink(fieldValue).map(r -> formatLinkField(fieldName, r))
+                .orElse(formatOrdinaryField(fieldName, fieldValue));
+    }
+
+    private String formatOrdinaryField(String fieldName, Object fieldValue) {
+        return String.format(" field:%s \"%s\"", fieldName, fieldValue);
+    }
+
+    private String formatLinkField(String fieldName, String link) {
+        return String.format(" field:%s <%s>", fieldName, link);
     }
 
     private URI uri(String hash) {

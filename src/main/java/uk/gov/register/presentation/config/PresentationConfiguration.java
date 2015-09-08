@@ -6,25 +6,15 @@ import io.dropwizard.db.DataSourceFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Map;
 
-public class PresentationConfiguration extends Configuration implements FieldsConfiguration {
+public class PresentationConfiguration extends Configuration {
     @Valid
     @NotNull
     @JsonProperty
     private DataSourceFactory database;
 
-    @Valid
-    @NotNull
-    @JsonProperty
-    private Map<String, FieldConfiguration> fields;
-
     public DataSourceFactory getDatabase() {
         return database;
     }
 
-    @Override
-    public Map<String, FieldConfiguration> getFields() {
-        return fields;
-    }
 }

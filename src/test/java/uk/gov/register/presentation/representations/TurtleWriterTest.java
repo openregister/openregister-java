@@ -6,9 +6,10 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.views.View;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.config.FieldConfiguration;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
 import uk.gov.register.presentation.resource.ResourceBase;
@@ -22,29 +23,23 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TurtleWriterTest {
     @Mock
     private HttpServletRequest httpServletRequest;
-    @Mock
-    private FieldsConfiguration fieldsConfig;
+
     private TurtleWriter turtleWriter;
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
-        turtleWriter = new TurtleWriter(httpServletRequest, fieldsConfig);
+        turtleWriter = new TurtleWriter(httpServletRequest, new FieldsConfiguration());
 
         when(httpServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://widget.openregister.org/widget/123"));
     }
 
     @Test
     public void rendersLinksCorrectlyAsUrls() throws Exception {
-        when(fieldsConfig.getFields()).thenReturn(ImmutableMap.of(
-                "address", new FieldConfiguration("address", "string", "address", "1", ""),
-                "name", new FieldConfiguration("name", "string", null, "1", "")));
-
         Map<String,String> entryMap =
                 ImmutableMap.of(
                         "address", "1111111",
