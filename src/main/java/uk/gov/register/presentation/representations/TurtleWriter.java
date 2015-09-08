@@ -1,7 +1,11 @@
 package uk.gov.register.presentation.representations;
 
+import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.config.FieldConfiguration;
+import uk.gov.register.presentation.config.FieldsConfiguration;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -14,11 +18,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_TTL)
+@Service
 public class TurtleWriter extends RepresentationWriter {
     private static final String PREFIX = "@prefix field: <http://field.openregister.org/field/>.\n\n";
 
-    @Context
     private HttpServletRequest httpServletRequest;
+    private FieldsConfiguration fieldsConfig;
+
+    @Inject
+    public TurtleWriter(@Context HttpServletRequest httpServletRequest, FieldsConfiguration fieldsConfig) {
+        this.httpServletRequest = httpServletRequest;
+        this.fieldsConfig = fieldsConfig;
+    }
 
     @Override
     protected void writeRecordsTo(OutputStream entityStream, List<Record> records) throws IOException {
@@ -33,8 +44,16 @@ public class TurtleWriter extends RepresentationWriter {
         URI hashUri = uri(record.getHash());
         String entity = String.format("<%s>\n", hashUri);
         return fields.stream()
-                .map(field -> String.format(" field:%s \"%s\"", field, record.getEntry().get(field)))
+                .map(field -> renderField(record, field))
                 .collect(Collectors.joining(" ;\n", entity, " ."));
+    }
+
+    private String renderField(Record record, String fieldName) {
+        FieldConfiguration fieldConfig = fieldsConfig.getFields().get(fieldName);
+        if (fieldConfig.getRegister().isPresent()) {
+            return String.format(" field:%1$s <http://%2$s.openregister.org/%2$s/%3$s>", fieldName, fieldConfig.getRegister().get(), record.getEntry().get(fieldName));
+        }
+        return String.format(" field:%s \"%s\"", fieldName, record.getEntry().get(fieldName));
     }
 
     private URI uri(String hash) {

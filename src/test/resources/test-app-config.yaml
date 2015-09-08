@@ -13,3 +13,14 @@ database:
   user: postgres
   properties:
     charSet: UTF-8
+
+fields:
+  key1: {}
+  name: {
+            "text": "Name of field",
+            "field": "name",
+            "datatype": "string",
+            "register": "",
+            "cardinality": "1"
+        }
+  ft-test-pkey: {}

@@ -43,7 +43,7 @@ public class SearchResource extends ResourceBase {
         if (key.equals(registerPrimaryKey)) {
             Optional<Record> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {
-                return new SingleResultView("entry.html", record.get());
+                return new SingleResultView(record.get());
             }
         }
 
@@ -56,7 +56,7 @@ public class SearchResource extends ResourceBase {
     public SingleResultView findByHash(@PathParam("hash") String hash) {
         Optional<Record> record = queryDAO.findByHash(hash);
         if (record.isPresent()) {
-            return new SingleResultView("entry.html", record.orNull());
+            return new SingleResultView(record.orNull());
         }
         throw new NotFoundException();
     }

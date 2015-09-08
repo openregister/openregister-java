@@ -32,8 +32,8 @@ public abstract class ResourceBase {
     public class SingleResultView extends ThymeleafView {
         private final Record record;
 
-        public SingleResultView(String templateName, Record record) {
-            super(httpServletRequest, httpServletResponse, servletContext, templateName);
+        public SingleResultView(Record record) {
+            super(httpServletRequest, httpServletResponse, servletContext, "entry.html");
             this.record = record;
         }
 

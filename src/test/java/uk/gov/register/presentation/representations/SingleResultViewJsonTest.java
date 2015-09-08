@@ -27,7 +27,7 @@ public class SingleResultViewJsonTest {
         Record record = new Record("hash1", objectMapper.readValue(
                 "{\"school\":\"100000\",\"name\":\"My School\"}", JsonNode.class));
         StringWriter writer = new StringWriter();
-        objectMapper.writeValue(writer, new ResourceBase(){}.new SingleResultView("don't care", record));
+        objectMapper.writeValue(writer, new ResourceBase(){}.new SingleResultView(record));
         String result = writer.toString();
         assertThat(objectMapper.readValue(result, JsonNode.class),
                 equalTo(objectMapper.readValue("{\"entry\":{\"name\":\"My School\",\"school\":\"100000\"},\"hash\":\"hash1\"}",JsonNode.class)));
