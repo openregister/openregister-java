@@ -29,7 +29,7 @@ public class TurtleWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        turtleWriter = new TurtleWriter(requestContext, new FieldsConfiguration());
+        turtleWriter = new TurtleWriter(requestContext);
     }
 
     @Test
@@ -42,6 +42,7 @@ public class TurtleWriterTest {
 
         Record record = new Record("abcd", JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>() {
         }));
+        record.setFieldsConfiguration(new FieldsConfiguration());
 
         TestOutputStream entityStream = new TestOutputStream();
 

@@ -32,7 +32,7 @@ public class DataResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        dataResource = new DataResource(requestContext, null);
+        dataResource = new DataResource(null, requestContext, null);
     }
 
     @Test

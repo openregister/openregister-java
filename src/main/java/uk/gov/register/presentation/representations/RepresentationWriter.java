@@ -2,7 +2,8 @@ package uk.gov.register.presentation.representations;
 
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.resource.ResourceBase;
+import uk.gov.register.presentation.view.ListResultView;
+import uk.gov.register.presentation.view.SingleResultView;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -24,16 +25,16 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return ResourceBase.SingleResultView.class.isAssignableFrom(type) || ResourceBase.ListResultView.class.isAssignableFrom(type);
+        return SingleResultView.class.isAssignableFrom(type) || ListResultView.class.isAssignableFrom(type);
     }
 
     @Override
     public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        if (view instanceof ResourceBase.SingleResultView) {
-            writeRecordsTo(entityStream, Collections.singletonList(((ResourceBase.SingleResultView) view).getRecord()));
+        if (view instanceof SingleResultView) {
+            writeRecordsTo(entityStream, Collections.singletonList(((SingleResultView) view).getRecord()));
         }
         else {
-            writeRecordsTo(entityStream, ((ResourceBase.ListResultView) view).getRecords());
+            writeRecordsTo(entityStream, ((ListResultView) view).getRecords());
         }
     }
 

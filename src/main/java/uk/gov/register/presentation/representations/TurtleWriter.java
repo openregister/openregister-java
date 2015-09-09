@@ -2,8 +2,6 @@ package uk.gov.register.presentation.representations;
 
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.config.Field;
-import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
@@ -21,14 +19,11 @@ import java.util.stream.Collectors;
 public class TurtleWriter extends RepresentationWriter {
     private static final String PREFIX = "@prefix field: <http://field.openregister.org/field/>.\n\n";
 
-    private final FieldsConfiguration fieldsConfig;
-
     private final RequestContext requestContext;
 
     @Inject
-    public TurtleWriter(RequestContext  requestContext, FieldsConfiguration fieldsConfig) {
+    public TurtleWriter(RequestContext requestContext) {
         this.requestContext = requestContext;
-        this.fieldsConfig = fieldsConfig;
     }
 
     @Override
@@ -49,18 +44,11 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     private String renderField(Record record, String fieldName) {
-        Field field = fieldsConfig.getField(fieldName);
-        Object fieldValue = record.getEntry().get(fieldName);
-        return field.getLink(fieldValue).map(r -> formatLinkField(fieldName, r))
-                .orElse(formatOrdinaryField(fieldName, fieldValue));
-    }
-
-    private String formatOrdinaryField(String fieldName, Object fieldValue) {
-        return String.format(" field:%s \"%s\"", fieldName, fieldValue);
-    }
-
-    private String formatLinkField(String fieldName, String link) {
-        return String.format(" field:%s <%s>", fieldName, link);
+        if (record.hasRegister(fieldName)) {
+            return String.format(" field:%s <%s>", fieldName, record.registerEntryLink(fieldName));
+        } else {
+            return String.format(" field:%s \"%s\"", fieldName, record.getEntry().get(fieldName));
+        }
     }
 
     private URI uri(String hash) {

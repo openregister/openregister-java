@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
-import uk.gov.register.thymeleaf.ThymeleafView;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -10,16 +10,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/")
-public class HomePageResource extends ResourceBase{
+public class HomePageResource {
+    private final ViewFactory viewFactory;
+
     @Inject
-    public HomePageResource(RequestContext requestContext) {
-        super(requestContext);
+    public HomePageResource(ViewFactory viewFactory) {
+        this.viewFactory = viewFactory;
     }
 
     @GET
     @Produces({MediaType.TEXT_HTML})
     public View home() {
-        return new ThymeleafView(requestContext, "home.html");
+        return viewFactory.thymeleafView("home.html");
     }
 
     @GET

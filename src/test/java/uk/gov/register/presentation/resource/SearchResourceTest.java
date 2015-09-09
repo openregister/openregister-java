@@ -40,7 +40,7 @@ public class SearchResourceTest {
                 return "school";
             }
         };
-        resource = new SearchResource(requestContext, queryDAO);
+        resource = new SearchResource(null, requestContext, queryDAO);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class SearchResourceTest {
             }
         };
 
-        SearchResource resource = new SearchResource(requestContext, null);
+        SearchResource resource = new SearchResource(null, requestContext, null);
 
         try {
             resource.findByPrimaryKey("someOtherKey", "value");

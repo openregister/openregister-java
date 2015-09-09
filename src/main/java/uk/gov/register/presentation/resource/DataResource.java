@@ -3,7 +3,8 @@ package uk.gov.register.presentation.resource;
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.thymeleaf.ThymeleafView;
+import uk.gov.register.presentation.view.ListResultView;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -15,12 +16,17 @@ import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
 @Path("/")
-public class DataResource extends ResourceBase {
+public class DataResource {
+    public static final int ENTRY_LIMIT = 100;
+    protected final RequestContext requestContext;
     private final RecentEntryIndexQueryDAO queryDAO;
 
+    private final ViewFactory viewFactory;
+
     @Inject
-    public DataResource(RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
-        super(requestContext);
+    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+        this.viewFactory = viewFactory;
+        this.requestContext = requestContext;
         this.queryDAO = queryDAO;
     }
 
@@ -28,7 +34,7 @@ public class DataResource extends ResourceBase {
     @Path("/download")
     @Produces(MediaType.TEXT_HTML)
     public View download() {
-        return new ThymeleafView(requestContext, "download.html");
+        return viewFactory.thymeleafView("download.html");
     }
 
     @GET
@@ -37,7 +43,7 @@ public class DataResource extends ResourceBase {
     public Response downloadTorrent() {
         return Response
                 .status(Response.Status.NOT_IMPLEMENTED)
-                .entity(new ThymeleafView(requestContext, "not-implemented.html"))
+                .entity(viewFactory.thymeleafView("not-implemented.html"))
                 .build();
     }
 
@@ -45,14 +51,18 @@ public class DataResource extends ResourceBase {
     @Path("/feed")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView feed() {
-        return new ListResultView("entries.html", queryDAO.getFeeds(ENTRY_LIMIT));
+        return viewFactory.getListResultView(
+                queryDAO.getFeeds(ENTRY_LIMIT)
+        );
     }
 
     @GET
     @Path("/current")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView current() {
-        return new ListResultView("entries.html", queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT));
+        return viewFactory.getListResultView(
+                queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)
+        );
     }
 
     @GET

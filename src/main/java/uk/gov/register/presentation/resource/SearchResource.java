@@ -4,6 +4,9 @@ import com.google.common.base.Optional;
 import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.presentation.view.ListResultView;
+import uk.gov.register.presentation.view.SingleResultView;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -14,13 +17,17 @@ import javax.ws.rs.core.UriInfo;
 
 
 @Path("/")
-public class SearchResource extends ResourceBase {
+public class SearchResource {
 
+    public static final int ENTRY_LIMIT = 100;
+    protected final RequestContext requestContext;
+    private final ViewFactory viewFactory;
     private final RecentEntryIndexQueryDAO queryDAO;
 
     @Inject
-    public SearchResource(RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
-        super(requestContext);
+    public SearchResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+        this.requestContext = requestContext;
+        this.viewFactory = viewFactory;
         this.queryDAO = queryDAO;
     }
 
@@ -30,12 +37,13 @@ public class SearchResource extends ResourceBase {
     public ListResultView search(@Context UriInfo uriInfo) {
         final MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters();
 
-        return new ListResultView("entries.html",
+        return viewFactory.getListResultView(
                 queryParameters.entrySet()
                         .stream()
                         .findFirst()
                         .map(e -> queryDAO.findAllByKeyValue(e.getKey(), e.getValue().get(0)))
-                        .orElseGet(() -> queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)));
+                        .orElseGet(() -> queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT))
+        );
     }
 
     @GET
@@ -46,7 +54,7 @@ public class SearchResource extends ResourceBase {
         if (key.equals(registerPrimaryKey)) {
             Optional<Record> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {
-                return new SingleResultView(record.get());
+                return viewFactory.getSingleResultView(record.get());
             }
         }
 
@@ -59,7 +67,7 @@ public class SearchResource extends ResourceBase {
     public SingleResultView findByHash(@PathParam("hash") String hash) {
         Optional<Record> record = queryDAO.findByHash(hash);
         if (record.isPresent()) {
-            return new SingleResultView(record.orNull());
+            return viewFactory.getSingleResultView(record.orNull());
         }
         throw new NotFoundException();
     }

@@ -21,10 +21,17 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.representations.*;
-import uk.gov.register.presentation.resource.*;
+import uk.gov.register.presentation.representations.CsvWriter;
+import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.presentation.representations.TsvWriter;
+import uk.gov.register.presentation.representations.TurtleWriter;
+import uk.gov.register.presentation.resource.NotFoundExceptionMapper;
+import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.presentation.resource.ThrowableExceptionMapper;
+import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 
+import javax.inject.Singleton;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
 import java.util.EnumSet;
@@ -71,8 +78,9 @@ public class PresentationApplication extends Application<PresentationConfigurati
             @Override
             protected void configure() {
                 bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
-                bind(FieldsConfiguration.class).to(FieldsConfiguration.class);
+                bind(FieldsConfiguration.class).to(FieldsConfiguration.class).in(Singleton.class);
                 bind(RequestContext.class).to(RequestContext.class);
+                bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
             }
         });
 
