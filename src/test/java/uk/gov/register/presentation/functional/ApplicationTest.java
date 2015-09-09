@@ -26,10 +26,18 @@ public class ApplicationTest extends FunctionalTestBase {
         MultivaluedMap<String, Object> headers = response.getHeaders();
 
         assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN), equalTo(ImmutableList.of(origin)));
-        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS), equalTo((ImmutableList.of("true"))));
+        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS), equalTo(ImmutableList.of("true")));
         assertNotNull(headers.get(HttpHeaders.ACCESS_CONTROL_MAX_AGE));
-        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS), equalTo((ImmutableList.of("OPTIONS,GET,PUT,POST,DELETE,HEAD"))));
-        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS), equalTo((ImmutableList.of("X-Requested-With,Content-Type,Accept,Origin"))));
+        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS), equalTo(ImmutableList.of("OPTIONS,GET,PUT,POST,DELETE,HEAD")));
+        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS), equalTo(ImmutableList.of("X-Requested-With,Content-Type,Accept,Origin")));
     }
 
+    @Test
+    public void appSupportsContentSecurityPolicy() throws Exception {
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/feed")
+                .request()
+                .get();
+
+        assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self'")));
+    }
 }

@@ -18,6 +18,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.presentation.ContentSecurityPolicyFilter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
@@ -96,6 +97,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 
         setCorsPreflight(applicationContext);
+        jerseyEnvironment.register(ContentSecurityPolicyFilter.class);
     }
 
     private void setCorsPreflight(MutableServletContextHandler applicationContext) {
