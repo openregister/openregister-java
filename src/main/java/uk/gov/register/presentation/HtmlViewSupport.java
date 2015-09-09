@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 import java.util.Map;
 
+@SuppressWarnings("unused, methods of this class are used from html")
 public class HtmlViewSupport {
     public static String representationLink(HttpServletRequest httpServletRequest, String representation) {
         String representationUrlSuffix = representation.equals("html") ? "" : "." + representation;
@@ -22,4 +23,5 @@ public class HtmlViewSupport {
     public static String fieldLink(String fieldName) {
         return UriBuilder.fromPath("http://field.openregister.org/field").path(fieldName).build().toString();
     }
+
 }

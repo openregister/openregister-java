@@ -21,18 +21,18 @@ public class FindEntityTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
-                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"12345\"}}",
-                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft-test-pkey\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"145678\"}}"
+                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
+                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
+                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"
         ));
         OBJECT_MAPPER = Jackson.newObjectMapper();
     }
 
     @Test
     public void findByPrimaryKey_shouldReturnEntryWithThPrimaryKey() {
-        Response response = getRequest("/ft-test-pkey/12345.json");
+        Response response = getRequest("/address/12345.json");
 
-        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"12345\"}}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}"));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class FindEntityTest extends FunctionalTestBase {
         Response response = getRequest("/hash/hash2.json");
 
         assertThat(OBJECT_MAPPER.readValue(response.readEntity(String.class), JsonNode.class),
-                equalTo(OBJECT_MAPPER.readValue("{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft-test-pkey\":\"6789\"}}", JsonNode.class)));
+                equalTo(OBJECT_MAPPER.readValue("{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}", JsonNode.class)));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class FindEntityTest extends FunctionalTestBase {
         Response response = getRequest("/all.json");
 
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://ft-test-pkey.beta.openregister.org/current.json"));
+        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/current.json"));
 
     }
 
@@ -65,7 +65,7 @@ public class FindEntityTest extends FunctionalTestBase {
         Response response = getRequest("/latest.json");
 
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://ft-test-pkey.beta.openregister.org/feed.json"));
+        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/feed.json"));
 
     }
 
@@ -75,7 +75,7 @@ public class FindEntityTest extends FunctionalTestBase {
 
         String jsonResponse = response.readEntity(String.class);
         assertThat(OBJECT_MAPPER.readValue(jsonResponse, JsonNode.class),
-                equalTo(OBJECT_MAPPER.readValue("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft-test-pkey\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"12345\"}}]", JsonNode.class)));
+                equalTo(OBJECT_MAPPER.readValue("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]", JsonNode.class)));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class FindEntityTest extends FunctionalTestBase {
         Response response = getRequest("/search.json?name=ellis");
 
         assertThat(response.readEntity(String.class), equalTo(
-                "[{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"12345\"}}]"
+                "[{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]"
         ));
     }
 
@@ -92,7 +92,7 @@ public class FindEntityTest extends FunctionalTestBase {
         Response response = getRequest("/search.json");
 
         assertThat(response.readEntity(String.class), equalTo(
-                "[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft-test-pkey\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"12345\"}}]"
+                "[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]"
         ));
     }
 

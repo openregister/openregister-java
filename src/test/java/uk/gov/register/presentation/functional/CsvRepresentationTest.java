@@ -13,9 +13,9 @@ public class CsvRepresentationTest extends FunctionalTestBase{
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
-                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"123,45\"}}",
-                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"ft-test-pkey\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"ft-test-pkey\":\"145678\"}}"
+                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"123,45\"}}",
+                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
+                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"
         ));
     }
 
@@ -24,7 +24,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/current.csv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash,name,ft-test-pkey\r\nhash2,presley,6789\r\nhash3,ellis,145678\r\nhash1,ellis,\"123,45\"\r\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash,name,address\r\nhash2,presley,6789\r\nhash3,ellis,145678\r\nhash1,ellis,\"123,45\"\r\n"));
     }
 
     @Test
@@ -32,7 +32,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/hash/hash1.csv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash,name,ft-test-pkey\r\nhash1,ellis,\"123,45\"\r\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash,name,address\r\nhash1,ellis,\"123,45\"\r\n"));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/current.tsv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/tab-separated-values;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash\tname\tft-test-pkey\nhash2\tpresley\t6789\nhash3\tellis\t145678\nhash1\tellis\t123,45\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash\tname\taddress\nhash2\tpresley\t6789\nhash3\tellis\t145678\nhash1\tellis\t123,45\n"));
     }
 
     @Test
@@ -48,6 +48,6 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/hash/hash1.tsv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/tab-separated-values;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash\tname\tft-test-pkey\nhash1\tellis\t123,45\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash\tname\taddress\nhash1\tellis\t123,45\n"));
     }
 }

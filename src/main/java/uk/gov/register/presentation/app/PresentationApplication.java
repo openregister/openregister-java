@@ -15,17 +15,23 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.CsvWriter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.representations.TsvWriter;
 import uk.gov.register.presentation.representations.TurtleWriter;
-import uk.gov.register.presentation.resource.*;
+import uk.gov.register.presentation.resource.NotFoundExceptionMapper;
+import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.presentation.resource.ThrowableExceptionMapper;
+import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 
+import javax.inject.Singleton;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
 import java.util.EnumSet;
@@ -57,7 +63,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
         RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
 
-        DropwizardResourceConfig resourceConfig = environment.jersey().getResourceConfig();
+        JerseyEnvironment jerseyEnvironment = environment.jersey();
+        DropwizardResourceConfig resourceConfig = jerseyEnvironment.getResourceConfig();
 
         ImmutableMap<String, MediaType> representations = ImmutableMap.of(
                 "csv", ExtraMediaType.TEXT_CSV_TYPE,
@@ -66,16 +73,25 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "json", MediaType.APPLICATION_JSON_TYPE
         );
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
-        environment.jersey().register(new CsvWriter());
-        environment.jersey().register(new TsvWriter());
-        environment.jersey().register(new TurtleWriter());
 
-        JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new DataResource(queryDAO));
-        jersey.register(new HomePageResource());
-        jersey.register(new SearchResource(queryDAO));
-        jersey.register(new NotFoundExceptionMapper());
-        jersey.register(new ThrowableExceptionMapper());
+        jerseyEnvironment.register(new AbstractBinder() {
+            @Override
+            protected void configure() {
+                bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
+                bind(FieldsConfiguration.class).to(FieldsConfiguration.class).in(Singleton.class);
+                bind(RequestContext.class).to(RequestContext.class);
+                bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
+            }
+        });
+
+        resourceConfig.packages("uk.gov.register.presentation.resource");
+
+        jerseyEnvironment.register(CsvWriter.class);
+        jerseyEnvironment.register(TsvWriter.class);
+        jerseyEnvironment.register(TurtleWriter.class);
+
+        jerseyEnvironment.register(NotFoundExceptionMapper.class);
+        jerseyEnvironment.register(ThrowableExceptionMapper.class);
 
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 

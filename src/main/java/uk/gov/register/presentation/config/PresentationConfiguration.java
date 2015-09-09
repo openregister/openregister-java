@@ -16,4 +16,5 @@ public class PresentationConfiguration extends Configuration {
     public DataSourceFactory getDatabase() {
         return database;
     }
+
 }

@@ -1,10 +1,11 @@
 package uk.gov.register.presentation.representations;
 
+import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.resource.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Inject;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,11 +15,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Produces(ExtraMediaType.TEXT_TTL)
+@Service
 public class TurtleWriter extends RepresentationWriter {
     private static final String PREFIX = "@prefix field: <http://field.openregister.org/field/>.\n\n";
 
-    @Context
-    private HttpServletRequest httpServletRequest;
+    private final RequestContext requestContext;
+
+    @Inject
+    public TurtleWriter(RequestContext requestContext) {
+        this.requestContext = requestContext;
+    }
 
     @Override
     protected void writeRecordsTo(OutputStream entityStream, List<Record> records) throws IOException {
@@ -33,11 +39,19 @@ public class TurtleWriter extends RepresentationWriter {
         URI hashUri = uri(record.getHash());
         String entity = String.format("<%s>\n", hashUri);
         return fields.stream()
-                .map(field -> String.format(" field:%s \"%s\"", field, record.getEntry().get(field)))
+                .map(field -> renderField(record, field))
                 .collect(Collectors.joining(" ;\n", entity, " ."));
     }
 
+    private String renderField(Record record, String fieldName) {
+        if (record.hasRegister(fieldName)) {
+            return String.format(" field:%s <%s>", fieldName, record.registerEntryLink(fieldName));
+        } else {
+            return String.format(" field:%s \"%s\"", fieldName, record.getEntry().get(fieldName));
+        }
+    }
+
     private URI uri(String hash) {
-        return UriBuilder.fromUri(httpServletRequest.getRequestURL().toString()).replacePath(null).path("hash").path(hash).build();
+        return UriBuilder.fromUri(requestContext.requestUrl()).replacePath(null).path("hash").path(hash).build();
     }
 }

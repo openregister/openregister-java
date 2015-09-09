@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import com.google.common.base.Optional;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -9,7 +10,6 @@ import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -28,15 +28,32 @@ public class SearchResourceTest {
     @Mock
     RecentEntryIndexQueryDAO queryDAO;
 
-    @Mock
-    HttpServletRequest httpServletRequest;
+    RequestContext requestContext;
+
+    SearchResource resource;
+
+    @Before
+    public void setUp() throws Exception {
+        requestContext = new RequestContext(){
+            @Override
+            public String getRegisterPrimaryKey() {
+                return "school";
+            }
+        };
+        resource = new SearchResource(null, requestContext, queryDAO);
+    }
 
     @Test
     public void findByPrimaryKey_throwsNotFoundException_whenSearchedKeyIsNotPrimaryKeyOfRegister() {
-        SearchResource resource = new SearchResource(queryDAO);
-        resource.httpServletRequest = httpServletRequest;
+        RequestContext requestContext = new RequestContext() {
+            @Override
+            public String getRegisterPrimaryKey() {
+                return "localhost";
+            }
+        };
 
-        when(httpServletRequest.getHeader("Host")).thenReturn("localhost");
+        SearchResource resource = new SearchResource(null, requestContext, null);
+
         try {
             resource.findByPrimaryKey("someOtherKey", "value");
             fail("Must fail");
@@ -47,10 +64,6 @@ public class SearchResourceTest {
 
     @Test
     public void findByPrimaryKey_throwsNotFoundException_whenSearchedKeyIsNotFound() {
-        SearchResource resource = new SearchResource(queryDAO);
-        resource.httpServletRequest = httpServletRequest;
-
-        when(httpServletRequest.getHeader("Host")).thenReturn("school.openregister.org");
         when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<Record>absent());
         try {
             resource.findByPrimaryKey("school", "value");
@@ -63,10 +76,6 @@ public class SearchResourceTest {
 
     @Test
     public void findByHash_throwsNotFoundWhenHashIsNotFound() {
-        SearchResource resource = new SearchResource(queryDAO);
-        resource.httpServletRequest = httpServletRequest;
-
-        when(httpServletRequest.getHeader("Host")).thenReturn("school.openregister.org");
         when(queryDAO.findByHash("123")).thenReturn(Optional.<Record>absent());
         try {
             resource.findByHash("123");
@@ -94,8 +103,8 @@ public class SearchResourceTest {
         List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(MediaType.TEXT_HTML,
-                         MediaType.APPLICATION_JSON,
-                         ExtraMediaType.TEXT_TTL));
+                        MediaType.APPLICATION_JSON,
+                        ExtraMediaType.TEXT_TTL));
     }
 
     @Test
@@ -104,7 +113,7 @@ public class SearchResourceTest {
         List<String> declaredMediaTypes = asList(findByPrimaryKeyMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(MediaType.TEXT_HTML,
-                         MediaType.APPLICATION_JSON,
-                         ExtraMediaType.TEXT_TTL));
+                        MediaType.APPLICATION_JSON,
+                        ExtraMediaType.TEXT_TTL));
     }
 }

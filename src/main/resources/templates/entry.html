@@ -28,7 +28,11 @@
             <tbody>
             <tr th:each="entry : ${record.entry}">
                 <td ><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(entry.key)}" th:text="${entry.key}"></a></td>
-                <td th:text="${entry.value}"></td>
+                <td th:if="${record.hasRegister(entry.key)}">
+                    <a th:href="${record.registerEntryLink(entry.key)}" th:text="${entry.value}"></a>
+                </td>
+                <td th:unless="${record.hasRegister(entry.key)}" th:text="${entry.value}">
+                </td>
             </tr>
             </tbody>
         </table>

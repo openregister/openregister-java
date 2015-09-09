@@ -6,9 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.register.presentation.Record;
 import uk.gov.register.presentation.mapper.JsonObjectMapper;
-import uk.gov.register.presentation.resource.ResourceBase;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -18,9 +16,8 @@ import static org.junit.Assert.assertThat;
 
 public class CsvWriterTest {
     @Test
-    public void csv_entriesAreEscaped() throws IOException {
-        CsvWriter writer = new CsvWriter();
-
+    public void writeRecordsTo_writesCsvEscapedEntries() throws IOException {
+        CsvWriter csvWriter = new CsvWriter();
         Map entryMap =
                 ImmutableMap.of(
                         "key1", "valu\te1",
@@ -29,14 +26,14 @@ public class CsvWriterTest {
                         "key4", "val\nue4"
                 );
 
-        JsonNode convert = JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>(){});
-        Record record = new Record("hash1", convert);
+        JsonNode data = JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>() {
+        });
+        Record record = new Record("hash1", data);
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        writer.writeTo(new ResourceBase(){}.new ListResultView("don't care", Collections.singletonList(record)), ResourceBase.ListResultView.class, null, null, ExtraMediaType.TEXT_CSV_TYPE, null, stream);
-        String result = stream.toString("utf-8");
+        TestOutputStream entityStream = new TestOutputStream();
 
-        assertThat(result, equalTo("hash,key1,key2,key3,key4\r\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
+        csvWriter.writeRecordsTo(entityStream, Collections.singletonList(record));
+
+        assertThat(entityStream.contents, equalTo("hash,key1,key2,key3,key4\r\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
     }
-
 }

@@ -13,15 +13,15 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
-                "{\"hash\":\"someHash1\",\"entry\":{\"name\":\"The Entry 1\", \"key1\":\"value1\", \"ft-test-pkey\":\"12345\"}}",
-                "{\"hash\":\"someHash2\",\"entry\":{\"name\":\"The Entry 2\", \"key1\":\"value2\", \"ft-test-pkey\":\"67890\"}}"
+                "{\"hash\":\"someHash1\",\"entry\":{\"name\":\"The Entry 1\", \"area\":\"value1\", \"address\":\"12345\"}}",
+                "{\"hash\":\"someHash2\",\"entry\":{\"name\":\"The Entry 2\", \"area\":\"value2\", \"address\":\"67890\"}}"
         ));
     }
 
-    public static final String EXPECTED_SINGLE_RECORD = "<http://ft-test-pkey.beta.openregister.org/hash/someHash1>\n" +
-            " field:key1 \"value1\" ;\n" +
+    public static final String EXPECTED_SINGLE_RECORD = "<http://address.beta.openregister.org/hash/someHash1>\n" +
+            " field:area \"value1\" ;\n" +
             " field:name \"The Entry 1\" ;\n" +
-            " field:ft-test-pkey \"12345\" .\n";
+            " field:address <http://address.openregister.org/address/12345> .\n";
 
 
     public static final String PREFIX ="@prefix field: <http://field.openregister.org/field/>.\n\n";
@@ -38,10 +38,10 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
     }
 
     public static final String EXPECTED_LIST_RECORDS =
-            "<http://ft-test-pkey.beta.openregister.org/hash/someHash2>\n" +
-                    " field:key1 \"value2\" ;\n" +
+            "<http://address.beta.openregister.org/hash/someHash2>\n" +
+                    " field:area \"value2\" ;\n" +
                     " field:name \"The Entry 2\" ;\n" +
-                    " field:ft-test-pkey \"67890\" .\n"
+                    " field:address <http://address.openregister.org/address/67890> .\n"
                     + EXPECTED_SINGLE_RECORD;
 
     @Test
