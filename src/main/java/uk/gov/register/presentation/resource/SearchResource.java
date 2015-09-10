@@ -54,6 +54,7 @@ public class SearchResource {
         if (key.equals(registerPrimaryKey)) {
             Optional<DbRecord> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {
+                setResponseHeader(key, value);
                 return viewFactory.getSingleResultView(record.get());
             }
         }
@@ -65,10 +66,21 @@ public class SearchResource {
     @Path("/hash/{hash}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByHash(@PathParam("hash") String hash) {
-        Optional<DbRecord> record = queryDAO.findByHash(hash);
-        if (record.isPresent()) {
-            return viewFactory.getSingleResultView(record.orNull());
+        Optional<DbRecord> optionalRecord = queryDAO.findByHash(hash);
+        if (optionalRecord.isPresent()) {
+            DbRecord record = optionalRecord.get();
+
+            String primaryKey = requestContext.getRegisterPrimaryKey();
+            setResponseHeader(primaryKey, record.getEntry().get(primaryKey).textValue());
+
+            return viewFactory.getSingleResultView(record);
         }
         throw new NotFoundException();
+    }
+
+    private void setResponseHeader(String key, String value) {
+        requestContext.
+                getHttpServletResponse().
+                setHeader("Link", String.format("</%s/%s/history>;rel=version-history", key, value));
     }
 }
