@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import com.google.common.base.Optional;
-import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.DbRecord;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ListResultView;
@@ -52,7 +52,7 @@ public class SearchResource {
     public SingleResultView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
-            Optional<Record> record = queryDAO.findByKeyValue(key, value);
+            Optional<DbRecord> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {
                 return viewFactory.getSingleResultView(record.get());
             }
@@ -65,7 +65,7 @@ public class SearchResource {
     @Path("/hash/{hash}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByHash(@PathParam("hash") String hash) {
-        Optional<Record> record = queryDAO.findByHash(hash);
+        Optional<DbRecord> record = queryDAO.findByHash(hash);
         if (record.isPresent()) {
             return viewFactory.getSingleResultView(record.orNull());
         }

@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.DbRecord;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 
@@ -64,7 +64,7 @@ public class SearchResourceTest {
 
     @Test
     public void findByPrimaryKey_throwsNotFoundException_whenSearchedKeyIsNotFound() {
-        when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<Record>absent());
+        when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<DbRecord>absent());
         try {
             resource.findByPrimaryKey("school", "value");
             fail("Must fail");
@@ -76,7 +76,7 @@ public class SearchResourceTest {
 
     @Test
     public void findByHash_throwsNotFoundWhenHashIsNotFound() {
-        when(queryDAO.findByHash("123")).thenReturn(Optional.<Record>absent());
+        when(queryDAO.findByHash("123")).thenReturn(Optional.<DbRecord>absent());
         try {
             resource.findByHash("123");
             fail("Must fail");

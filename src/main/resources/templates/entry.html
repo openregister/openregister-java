@@ -6,7 +6,7 @@
 <div th:include="main.html::header" id="header-wrapper"></div>
 <div class="row">
     <div class="small-12 large-8 columns">
-        <h1 class="entry-header" th:text="${record.entry.get('school')}">Entry Name Header</h1>
+        <h1 class="entry-header" th:text="${record.primaryKey}">Entry Name Header</h1>
 
         <p class="entry-source">An entry in the <a href="/"
                                                    th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
@@ -28,10 +28,10 @@
             <tbody>
             <tr th:each="entry : ${record.entry}">
                 <td ><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(entry.key)}" th:text="${entry.key}"></a></td>
-                <td th:if="${record.hasRegister(entry.key)}">
-                    <a th:href="${record.registerEntryLink(entry.key)}" th:text="${entry.value}"></a>
+                <td th:if="${entry.value.isLink()}">
+                    <a th:href="${entry.value.link()}" th:text="${entry.value.value()}"></a>
                 </td>
-                <td th:unless="${record.hasRegister(entry.key)}" th:text="${entry.value}">
+                <td th:unless="${entry.value.isLink()}" th:text="${entry.value.value()}">
                 </td>
             </tr>
             </tbody>

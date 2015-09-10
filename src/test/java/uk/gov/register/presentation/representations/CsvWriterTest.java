@@ -1,11 +1,10 @@
 package uk.gov.register.presentation.representations;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.mapper.JsonObjectMapper;
+import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.StringValue;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,17 +17,16 @@ public class CsvWriterTest {
     @Test
     public void writeRecordsTo_writesCsvEscapedEntries() throws IOException {
         CsvWriter csvWriter = new CsvWriter();
-        Map entryMap =
+        Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
-                        "key1", "valu\te1",
-                        "key2", "val,ue2",
-                        "key3", "val\"ue3",
-                        "key4", "val\nue4"
+                        "key1", new StringValue("valu\te1"),
+                        "key2", new StringValue("val,ue2"),
+                        "key3", new StringValue("val\"ue3"),
+                        "key4", new StringValue("val\nue4")
                 );
 
-        JsonNode data = JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>() {
-        });
-        Record record = new Record("hash1", data);
+
+        RecordView record = new RecordView("hash1", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 

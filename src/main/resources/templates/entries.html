@@ -22,8 +22,8 @@
                 <td>
                     <a th:href="${'/hash/' + record.hash}" th:text="${record.hash}"></a>
                 </td>
-                <th:block th:each="entrySet : ${record.entry}">
-                    <td th:text="${entrySet.value}"></td>
+                <th:block th:each="entry : ${record.entry}">
+                    <td th:text="${entry.value.value()}"></td>
                 </th:block>
             </tr>
             </tbody>

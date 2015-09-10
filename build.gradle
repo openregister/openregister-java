@@ -21,7 +21,7 @@ configurations {
 dependencies {
     compile dropwizard, postgresClient, thymeleaf
 
-    testCompile dropwizardTest, junit
+    testCompile dropwizardTest, junit, jsonAssert
 }
 
 jar.baseName = 'presentation'

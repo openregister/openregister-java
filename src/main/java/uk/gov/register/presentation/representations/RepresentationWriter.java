@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.representations;
 
 import io.dropwizard.views.View;
-import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.RecordView;
 import uk.gov.register.presentation.view.ListResultView;
 import uk.gov.register.presentation.view.SingleResultView;
 
@@ -38,5 +38,5 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
         }
     }
 
-    protected abstract void writeRecordsTo(OutputStream entityStream, List<Record> records) throws IOException, WebApplicationException;
+    protected abstract void writeRecordsTo(OutputStream entityStream, List<RecordView> records) throws IOException, WebApplicationException;
 }

@@ -1,7 +1,9 @@
 package uk.gov.register.presentation.representations;
 
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.LinkValue;
+import uk.gov.register.presentation.RecordView;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
@@ -27,15 +29,15 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     @Override
-    protected void writeRecordsTo(OutputStream entityStream, List<Record> records) throws IOException {
-        Set<String> fields = records.get(0).getEntry().keySet();
+    protected void writeRecordsTo(OutputStream entityStream, List<RecordView> records) throws IOException {
+        Set<String> fields = records.get(0).allFields();
         entityStream.write(PREFIX.getBytes("utf-8"));
-        for (Record record : records) {
+        for (RecordView record : records) {
             entityStream.write((renderRecord(record, fields) + "\n").getBytes("utf-8"));
         }
     }
 
-    private String renderRecord(Record record, Set<String> fields) {
+    private String renderRecord(RecordView record, Set<String> fields) {
         URI hashUri = uri(record.getHash());
         String entity = String.format("<%s>\n", hashUri);
         return fields.stream()
@@ -43,11 +45,12 @@ public class TurtleWriter extends RepresentationWriter {
                 .collect(Collectors.joining(" ;\n", entity, " ."));
     }
 
-    private String renderField(Record record, String fieldName) {
-        if (record.hasRegister(fieldName)) {
-            return String.format(" field:%s <%s>", fieldName, record.registerEntryLink(fieldName));
+    private String renderField(RecordView record, String fieldName) {
+        FieldValue value = record.getField(fieldName);
+        if (value.isLink()) {
+            return String.format(" field:%s <%s>", fieldName, ((LinkValue)value).link());
         } else {
-            return String.format(" field:%s \"%s\"", fieldName, record.getEntry().get(fieldName));
+            return String.format(" field:%s \"%s\"", fieldName, value.value());
         }
     }
 

@@ -20,8 +20,8 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
 
     public static final String EXPECTED_SINGLE_RECORD = "<http://address.beta.openregister.org/hash/someHash1>\n" +
             " field:area \"value1\" ;\n" +
-            " field:name \"The Entry 1\" ;\n" +
-            " field:address <http://address.openregister.org/address/12345> .\n";
+            " field:address <http://address.openregister.org/address/12345> ;\n" +
+            " field:name \"The Entry 1\" .\n";
 
 
     public static final String PREFIX ="@prefix field: <http://field.openregister.org/field/>.\n\n";
@@ -40,8 +40,8 @@ public class TurtleRepresentationTest extends FunctionalTestBase {
     public static final String EXPECTED_LIST_RECORDS =
             "<http://address.beta.openregister.org/hash/someHash2>\n" +
                     " field:area \"value2\" ;\n" +
-                    " field:name \"The Entry 2\" ;\n" +
-                    " field:address <http://address.openregister.org/address/67890> .\n"
+                    " field:address <http://address.openregister.org/address/67890> ;\n" +
+                    " field:name \"The Entry 2\" .\n"
                     + EXPECTED_SINGLE_RECORD;
 
     @Test

@@ -1,38 +1,29 @@
 package uk.gov.register.presentation.representations;
 
-import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.RecordView;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 @Produces(ExtraMediaType.TEXT_TSV)
 public class TsvWriter extends RepresentationWriter {
     @Override
-    protected void writeRecordsTo(OutputStream entityStream, List<Record> records) throws IOException, WebApplicationException {
-        List<String> headers = getHeaders(records.get(0));
-        entityStream.write((String.join("\t", headers) + "\n").getBytes("utf-8"));
-        for (Record record : records) {
-            writeRow(entityStream, headers, record);
+    protected void writeRecordsTo(OutputStream entityStream, List<RecordView> records) throws IOException, WebApplicationException {
+        List<String> fields = newArrayList(records.get(0).allFields());
+        entityStream.write(("hash\t" + String.join("\t", fields) + "\n").getBytes("utf-8"));
+        for (RecordView record : records) {
+            writeRow(entityStream, fields, record);
         }
     }
 
-    private void writeRow(OutputStream entityStream, List<String> headers, Record record) throws IOException {
-        Map<String, Object> entry = record.getEntry();
-        entry.put("hash", record.getHash());
-        String row = headers.stream().map(e -> entry.get(e).toString()).collect(Collectors.joining("\t", "", "\n"));
+    private void writeRow(OutputStream entityStream, List<String> fields, RecordView record) throws IOException {
+        String row = fields.stream().map(field -> record.getField(field).value()).collect(Collectors.joining("\t", record.getHash() + "\t", "\n"));
         entityStream.write(row.getBytes("utf-8"));
-    }
-
-    private List<String> getHeaders(Record record) {
-        List<String> headers = new ArrayList<>();
-        headers.add("hash");
-        headers.addAll(record.getEntry().keySet());
-        return headers;
     }
 }
