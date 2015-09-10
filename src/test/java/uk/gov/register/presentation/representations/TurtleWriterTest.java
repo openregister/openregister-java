@@ -35,7 +35,7 @@ public class TurtleWriterTest {
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
-                        "address", new LinkValue("someRegister", "address","1111111"),
+                        "registered-address", new LinkValue("address", "1111111"),
                         "name", new StringValue("foo")
                 );
 
@@ -46,7 +46,7 @@ public class TurtleWriterTest {
         turtleWriter.writeRecordsTo(entityStream, Collections.singletonList(record));
 
 
-        assertThat(entityStream.contents, containsString("field:address <http://someRegister.openregister.org/address/1111111>"));
+        assertThat(entityStream.contents, containsString("field:registered-address <http://address.openregister.org/address/1111111>"));
         assertThat(entityStream.contents, containsString("field:name \"foo\""));
     }
 }

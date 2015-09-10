@@ -32,6 +32,6 @@ public class RecordConverter {
 
     private FieldValue convert(Map.Entry<String, JsonNode> entry) {
         Optional<String> register = fieldsConfiguration.getField(entry.getKey()).getRegister();
-        return register.isPresent() ? new LinkValue(register.get(), entry.getKey(), entry.getValue().textValue()) : new StringValue(entry.getValue().textValue());
+        return register.isPresent() ? new LinkValue(register.get(), entry.getValue().textValue()) : new StringValue(entry.getValue().textValue());
     }
 }
