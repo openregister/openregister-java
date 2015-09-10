@@ -35,7 +35,8 @@ public class RepresentationsTest extends FunctionalTestBase {
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"ttl", "text/turtle;charset=utf-8", fixture("fixtures/single.ttl"), fixture("fixtures/list.ttl")}
+                {"ttl", "text/turtle;charset=utf-8", fixture("fixtures/single.ttl"), fixture("fixtures/list.ttl")},
+                {"yaml", "text/yaml;charset=utf-8", fixture("fixtures/single.yaml"), fixture("fixtures/list.yaml")}
         });
     }
 
@@ -50,6 +51,7 @@ public class RepresentationsTest extends FunctionalTestBase {
     public void representationIsSupportedForSingleEntryView() {
         Response response = getRequest("/hash/someHash1." + extension);
 
+        assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
         assertThat(response.readEntity(String.class), equalTo(expectedSingleRecord));
     }
@@ -58,6 +60,7 @@ public class RepresentationsTest extends FunctionalTestBase {
     public void representationIsSupportedForListEntryView() {
         Response response = getRequest("/current." + extension);
 
+        assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
         assertThat(response.readEntity(String.class), equalTo(expectedListRecords));
     }

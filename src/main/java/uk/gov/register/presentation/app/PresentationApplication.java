@@ -27,6 +27,7 @@ import uk.gov.register.presentation.representations.CsvWriter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.representations.TsvWriter;
 import uk.gov.register.presentation.representations.TurtleWriter;
+import uk.gov.register.presentation.representations.YamlWriter;
 import uk.gov.register.presentation.resource.NotFoundExceptionMapper;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.resource.ThrowableExceptionMapper;
@@ -72,7 +73,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 "csv", ExtraMediaType.TEXT_CSV_TYPE,
                 "tsv", ExtraMediaType.TEXT_TSV_TYPE,
                 "ttl", ExtraMediaType.TEXT_TTL_TYPE,
-                "json", MediaType.APPLICATION_JSON_TYPE
+                "json", MediaType.APPLICATION_JSON_TYPE,
+                "yaml", ExtraMediaType.TEXT_YAML_TYPE
         );
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
 
@@ -92,6 +94,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jerseyEnvironment.register(CsvWriter.class);
         jerseyEnvironment.register(TsvWriter.class);
         jerseyEnvironment.register(TurtleWriter.class);
+        jerseyEnvironment.register(YamlWriter.class);
 
         jerseyEnvironment.register(NotFoundExceptionMapper.class);
         jerseyEnvironment.register(ThrowableExceptionMapper.class);

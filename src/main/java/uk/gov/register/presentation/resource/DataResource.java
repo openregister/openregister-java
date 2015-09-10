@@ -49,7 +49,7 @@ public class DataResource {
 
     @GET
     @Path("/feed")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView feed() {
         return viewFactory.getListResultView(
                 queryDAO.getFeeds(ENTRY_LIMIT)
@@ -58,7 +58,7 @@ public class DataResource {
 
     @GET
     @Path("/current")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView current() {
         return viewFactory.getListResultView(
                 queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)
