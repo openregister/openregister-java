@@ -19,6 +19,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.presentation.ContentSecurityPolicyFilter;
+import uk.gov.register.presentation.RecordConverter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
@@ -82,6 +83,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 bind(FieldsConfiguration.class).to(FieldsConfiguration.class).in(Singleton.class);
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
+                bind(RecordConverter.class).to(RecordConverter.class).in(Singleton.class);
             }
         });
 

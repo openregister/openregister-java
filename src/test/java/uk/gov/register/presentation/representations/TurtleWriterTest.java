@@ -1,13 +1,12 @@
 package uk.gov.register.presentation.representations;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.config.FieldsConfiguration;
-import uk.gov.register.presentation.mapper.JsonObjectMapper;
+import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.LinkValue;
+import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.StringValue;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Collections;
@@ -34,22 +33,20 @@ public class TurtleWriterTest {
 
     @Test
     public void rendersLinksCorrectlyAsUrls() throws Exception {
-        Map<String, String> entryMap =
+        Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
-                        "address", "1111111",
-                        "name", "foo"
+                        "registered-address", new LinkValue("address", "1111111"),
+                        "name", new StringValue("foo")
                 );
 
-        Record record = new Record("abcd", JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>() {
-        }));
-        record.setFieldsConfiguration(new FieldsConfiguration());
+        RecordView record = new RecordView("abcd", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 
         turtleWriter.writeRecordsTo(entityStream, Collections.singletonList(record));
 
 
-        assertThat(entityStream.contents, containsString("field:address <http://address.openregister.org/address/1111111>"));
+        assertThat(entityStream.contents, containsString("field:registered-address <http://address.openregister.org/address/1111111>"));
         assertThat(entityStream.contents, containsString("field:name \"foo\""));
     }
 }

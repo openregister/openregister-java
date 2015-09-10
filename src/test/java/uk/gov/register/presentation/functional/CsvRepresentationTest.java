@@ -24,7 +24,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/current.csv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash,name,address\r\nhash2,presley,6789\r\nhash3,ellis,145678\r\nhash1,ellis,\"123,45\"\r\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash,address,name\r\nhash2,6789,presley\r\nhash3,145678,ellis\r\nhash1,\"123,45\",ellis\r\n"));
     }
 
     @Test
@@ -32,7 +32,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/hash/hash1.csv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/csv;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash,name,address\r\nhash1,ellis,\"123,45\"\r\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash,address,name\r\nhash1,\"123,45\",ellis\r\n"));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/current.tsv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/tab-separated-values;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash\tname\taddress\nhash2\tpresley\t6789\nhash3\tellis\t145678\nhash1\tellis\t123,45\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash\taddress\tname\nhash2\t6789\tpresley\nhash3\t145678\tellis\nhash1\t123,45\tellis\n"));
     }
 
     @Test
@@ -48,6 +48,6 @@ public class CsvRepresentationTest extends FunctionalTestBase{
         Response response = getRequest("/hash/hash1.tsv");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo("text/tab-separated-values;charset=utf-8"));
-        assertThat(response.readEntity(String.class), equalTo("hash\tname\taddress\nhash1\tellis\t123,45\n"));
+        assertThat(response.readEntity(String.class), equalTo("hash\taddress\tname\nhash1\t123,45\tellis\n"));
     }
 }

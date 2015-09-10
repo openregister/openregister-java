@@ -1,11 +1,10 @@
 package uk.gov.register.presentation.representations;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.register.presentation.Record;
-import uk.gov.register.presentation.mapper.JsonObjectMapper;
+import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.StringValue;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -20,13 +19,13 @@ public class TsvWriterTest {
         TsvWriter writer = new TsvWriter();
 
 
-        Map entryMap = ImmutableMap.of(
-                "key1", "value1",
-                "key2", "value2",
-                "key3", "val\"ue3",
-                "key4", "value4"
+        Map<String, FieldValue> entryMap = ImmutableMap.of(
+                "key1", new StringValue("value1"),
+                "key2", new StringValue("value2"),
+                "key3", new StringValue("val\"ue3"),
+                "key4", new StringValue("value4")
         );
-        Record record = new Record("hash1", JsonObjectMapper.convert(entryMap, new TypeReference<JsonNode>(){}));
+        RecordView record = new RecordView("hash1", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 

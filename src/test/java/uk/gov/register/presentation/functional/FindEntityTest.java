@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
+import org.json.JSONException;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
 
@@ -29,10 +31,10 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void findByPrimaryKey_shouldReturnEntryWithThPrimaryKey() {
+    public void findByPrimaryKey_shouldReturnEntryWithThPrimaryKey() throws JSONException {
         Response response = getRequest("/address/12345.json");
 
-        assertThat(response.readEntity(String.class), equalTo("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}"));
+        JSONAssert.assertEquals("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}", response.readEntity(String.class), false);
     }
 
     @Test
@@ -79,21 +81,19 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void search_returnsAllMatchingEntries() {
+    public void search_returnsAllMatchingEntries() throws JSONException {
         Response response = getRequest("/search.json?name=ellis");
 
-        assertThat(response.readEntity(String.class), equalTo(
-                "[{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]"
-        ));
-    }
+        JSONAssert.assertEquals("[{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]",
+                response.readEntity(String.class), false);
+            }
 
     @Test
-    public void search_returnsAllEntriesWhenNoSearchQueryIsGiven() {
+    public void search_returnsAllEntriesWhenNoSearchQueryIsGiven() throws JSONException {
         Response response = getRequest("/search.json");
 
-        assertThat(response.readEntity(String.class), equalTo(
-                "[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]"
-        ));
+        JSONAssert.assertEquals("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]", response.readEntity(String.class), false);
+
     }
 
 }

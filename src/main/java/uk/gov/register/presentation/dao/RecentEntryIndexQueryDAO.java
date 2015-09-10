@@ -5,7 +5,7 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
-import uk.gov.register.presentation.Record;
+import uk.gov.register.presentation.DbRecord;
 import uk.gov.register.presentation.mapper.RecordMapper;
 
 import java.util.List;
@@ -14,18 +14,18 @@ import java.util.List;
 public interface RecentEntryIndexQueryDAO {
 
     @SqlQuery("SELECT entry FROM ordered_entry_index ORDER BY id DESC LIMIT :limit")
-    List<Record> getFeeds(@Bind("limit") int maxNumberToFetch);
+    List<DbRecord> getFeeds(@Bind("limit") int maxNumberToFetch);
 
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC limit 1")
-    @SingleValueResult(Record.class)
-    Optional<Record> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
+    @SingleValueResult(DbRecord.class)
+    Optional<DbRecord> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC")
-    List<Record> findAllByKeyValue(@Bind("key") String key, @Bind("value") String value);
+    List<DbRecord> findAllByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
-    @SingleValueResult(Record.class)
-    Optional<Record> findByHash(@Bind("hash") String hash);
+    @SingleValueResult(DbRecord.class)
+    Optional<DbRecord> findByHash(@Bind("hash") String hash);
 
     @SqlQuery("SELECT i.id, i.entry FROM ordered_entry_index i, ( " +
             "SELECT MAX(id) AS id " +
@@ -33,6 +33,6 @@ public interface RecentEntryIndexQueryDAO {
             "GROUP BY (entry #>> ARRAY['entry',:key])) AS ii " +
             "WHERE i.id = ii.id " +
             "ORDER BY (entry #>> ARRAY['entry',:key]) DESC LIMIT :limit")
-    List<Record> getAllRecords(@Bind("key") String name,
+    List<DbRecord> getAllRecords(@Bind("key") String name,
                                @Bind("limit") int maxNumberToFetch);
 }
