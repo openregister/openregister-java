@@ -7,6 +7,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -30,6 +31,7 @@ public class RecordConverter {
 
 
     private FieldValue convert(Map.Entry<String, JsonNode> entry) {
-        return fieldsConfiguration.getField(entry.getKey()).getRegister().isPresent() ? new LinkValue(entry.getKey(), entry.getValue().textValue()) : new StringValue(entry.getValue().textValue());
+        Optional<String> register = fieldsConfiguration.getField(entry.getKey()).getRegister();
+        return register.isPresent() ? new LinkValue(register.get(), entry.getKey(), entry.getValue().textValue()) : new StringValue(entry.getValue().textValue());
     }
 }

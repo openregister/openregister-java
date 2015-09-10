@@ -29,10 +29,4 @@ public class Field {
     public Optional<String> getRegister() {
         return register;
     }
-
-    public Optional<String> getLink(Object value) {
-        return register.map(r ->
-                        String.format("http://%1$s.openregister.org/%1$s/%2$s", r, value)
-        );
-    }
 }
