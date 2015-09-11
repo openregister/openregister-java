@@ -13,7 +13,6 @@ import uk.gov.register.presentation.representations.ExtraMediaType;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -83,18 +82,6 @@ public class SearchResourceTest {
         } catch (NotFoundException e) {
             //success
         }
-    }
-
-    @Test
-    public void searchSupportsCsvTsvHtmlTurtleAndJson() throws Exception {
-        Method searchMethod = SearchResource.class.getDeclaredMethod("search", UriInfo.class);
-        List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
-        assertThat(declaredMediaTypes,
-                hasItems(MediaType.TEXT_HTML,
-                        MediaType.APPLICATION_JSON,
-                        ExtraMediaType.TEXT_CSV,
-                        ExtraMediaType.TEXT_TTL,
-                        ExtraMediaType.TEXT_TSV));
     }
 
     @Test
