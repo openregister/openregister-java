@@ -34,5 +34,5 @@ public interface RecentEntryIndexQueryDAO {
             "WHERE i.id = ii.id " +
             "ORDER BY (entry #>> ARRAY['entry',:key]) DESC LIMIT :limit")
     List<DbRecord> getAllRecords(@Bind("key") String name,
-                               @Bind("limit") int maxNumberToFetch);
+                                 @Bind("limit") int maxNumberToFetch);
 }

@@ -1,6 +1,5 @@
 package uk.gov.register.presentation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
@@ -17,24 +16,29 @@ public class RecordView {
         this.entryMap = entryMap;
     }
 
-    @SuppressWarnings("unused, used from html templates")
-    @JsonIgnore
-    public String getPrimaryKey() {
-        return entryMap.get(registerName).value();
-    }
 
     @JsonProperty("entry")
     public Map<String, FieldValue> getEntry() {
         return entryMap;
     }
 
+    @JsonProperty("hash")
+    public String getHash() {
+        return hash;
+    }
+
     public FieldValue getField(String fieldName) {
         return entryMap.get(fieldName);
     }
 
-    @JsonProperty("hash")
-    public String getHash() {
-        return hash;
+    @SuppressWarnings("unused, used from html templates")
+    public String primaryKey() {
+        return entryMap.get(registerName).value();
+    }
+
+    @SuppressWarnings("unused, used from html templates")
+    public String registerName() {
+        return registerName;
     }
 
     public Set<String> allFields() {

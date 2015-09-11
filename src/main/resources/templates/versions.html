@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
+<body>
+<div th:include="main.html::header" id="header-wrapper"></div>
+
+<div class="row">
+    <div class="small-12 large-12 columns">
+        <table id="version-table">
+            <tbody  id="entry-table">
+            <tr>
+                <td th:text="hash">
+                </td>
+            </tr>
+            <tr th:each="version : ${versions}">
+                <td>
+                    <a th:href="${'/hash/' + version.hash}" th:text="${version.hash}"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.columns -->
+</div>
+<br/>
+<div class="row">
+    <div class="small-12 large-6 columns">
+        <div th:include="copyright.html::copyright"></div>
+    </div>
+</div>
+
+<div th:include="main.html::footer" id="footer-wrapper"></div>
+</body>
+</html>

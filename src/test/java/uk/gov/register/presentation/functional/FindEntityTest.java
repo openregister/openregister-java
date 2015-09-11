@@ -34,6 +34,7 @@ public class FindEntityTest extends FunctionalTestBase {
     public void findByPrimaryKey_shouldReturnEntryWithThPrimaryKey() throws JSONException {
         Response response = getRequest("/address/12345.json");
 
+        assertThat(response.getHeaderString("Link"), equalTo("</address/12345/history>;rel=\"version-history\""));
         JSONAssert.assertEquals("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}", response.readEntity(String.class), false);
     }
 
@@ -49,6 +50,7 @@ public class FindEntityTest extends FunctionalTestBase {
     public void findByHash_shouldReturnEntryForTheGivenHash() throws IOException {
         Response response = getRequest("/hash/hash2.json");
 
+        assertThat(response.getHeaderString("Link"), equalTo("</address/6789/history>;rel=\"version-history\""));
         assertThat(OBJECT_MAPPER.readValue(response.readEntity(String.class), JsonNode.class),
                 equalTo(OBJECT_MAPPER.readValue("{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}", JsonNode.class)));
     }
