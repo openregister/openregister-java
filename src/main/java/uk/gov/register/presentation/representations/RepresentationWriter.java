@@ -31,11 +31,15 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
     @Override
     public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         if (view instanceof SingleResultView) {
-            writeRecordsTo(entityStream, Collections.singletonList(((SingleResultView) view).getRecord()));
+            writeRecordTo(entityStream, ((SingleResultView) view).getRecord());
         }
         else {
             writeRecordsTo(entityStream, ((ListResultView) view).getRecords());
         }
+    }
+
+    protected void writeRecordTo(OutputStream entityStream, RecordView record) throws IOException {
+        writeRecordsTo(entityStream, Collections.singletonList(record));
     }
 
     protected abstract void writeRecordsTo(OutputStream entityStream, List<RecordView> records) throws IOException, WebApplicationException;
