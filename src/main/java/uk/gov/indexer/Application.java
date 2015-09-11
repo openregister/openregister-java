@@ -19,9 +19,14 @@ public class Application {
         addShutdownHook(executorService);
 
         for (String register : registers) {
-            SourcePostgresDB sourceDB = createSourceDBObject(register, configuration);
-            DestinationPostgresDB destinationDB = createDestinationDBObject(register, configuration);
-            executorService.scheduleAtFixedRate(new IndexerTask(register, sourceDB, destinationDB), 0, 10, TimeUnit.SECONDS);
+            try {
+                SourcePostgresDB sourceDB = createSourceDBObject(register, configuration);
+                DestinationPostgresDB destinationDB = createDestinationDBObject(register, configuration);
+                executorService.scheduleAtFixedRate(new IndexerTask(register, sourceDB, destinationDB), 0, 10, TimeUnit.SECONDS);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                ConsoleLogger.log("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
+            }
         }
 
         Thread.currentThread().join();
