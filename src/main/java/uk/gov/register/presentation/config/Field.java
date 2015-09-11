@@ -7,11 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 
 public class Field {
-    String fieldName;
-    String datatype;
-    Optional<String> register;
-    String cardinality;
-    String text;
+    final String fieldName;
+    final String datatype;
+    final Optional<String> register;
+    final String cardinality;
+    final String text;
 
     @JsonCreator
     public Field(@JsonProperty("field") String fieldName,

@@ -1,8 +1,6 @@
 package uk.gov.register.presentation.functional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,8 +11,6 @@ import javax.ws.rs.core.Response;
 
 public class HistoryTest extends FunctionalTestBase {
 
-    public static ObjectMapper OBJECT_MAPPER;
-
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
@@ -23,7 +19,6 @@ public class HistoryTest extends FunctionalTestBase {
                 "{\"hash\":\"hash3\",\"entry\":{\"address\":\"6789\", \"name\":\"presley\"}}",
                 "{\"hash\":\"hash4\",\"entry\":{\"address\":\"145678\", \"name\":\"updatedEllis\"}}"
         ));
-        OBJECT_MAPPER = Jackson.newObjectMapper();
     }
 
     @Test

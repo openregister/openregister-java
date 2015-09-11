@@ -81,21 +81,4 @@ public class FindEntityTest extends FunctionalTestBase {
         assertThat(OBJECT_MAPPER.readValue(jsonResponse, JsonNode.class),
                 equalTo(OBJECT_MAPPER.readValue("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]", JsonNode.class)));
     }
-
-    @Test
-    public void search_returnsAllMatchingEntries() throws JSONException {
-        Response response = getRequest("/search.json?name=ellis");
-
-        JSONAssert.assertEquals("[{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]",
-                response.readEntity(String.class), false);
-            }
-
-    @Test
-    public void search_returnsAllEntriesWhenNoSearchQueryIsGiven() throws JSONException {
-        Response response = getRequest("/search.json");
-
-        JSONAssert.assertEquals("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]", response.readEntity(String.class), false);
-
-    }
-
 }
