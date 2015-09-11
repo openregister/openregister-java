@@ -44,7 +44,7 @@ public class HtmlViewSupportTest {
 
     @Test
     public void extractLinkFromLinkHeader_extractsTheLinkFromHeader() {
-        String link = HtmlViewSupport.extractLinkFromLinkHeader("</school/12345/history>;rel=version-history");
+        String link = HtmlViewSupport.extractLinkFromLinkHeader("</school/12345/history>;rel=\"version-history\"");
         assertThat(link, equalTo("/school/12345/history"));
     }
 }

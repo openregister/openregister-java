@@ -54,7 +54,7 @@ public class SearchResource {
         if (key.equals(registerPrimaryKey)) {
             Optional<DbRecord> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {
-                setResponseHeader(key, value);
+                setVersionHistoryLinkHeader(key, value);
                 return viewFactory.getSingleResultView(record.get());
             }
         }
@@ -71,16 +71,16 @@ public class SearchResource {
             DbRecord record = optionalRecord.get();
 
             String primaryKey = requestContext.getRegisterPrimaryKey();
-            setResponseHeader(primaryKey, record.getEntry().get(primaryKey).textValue());
+            setVersionHistoryLinkHeader(primaryKey, record.getEntry().get(primaryKey).textValue());
 
             return viewFactory.getSingleResultView(record);
         }
         throw new NotFoundException();
     }
 
-    private void setResponseHeader(String key, String value) {
+    private void setVersionHistoryLinkHeader(String key, String value) {
         requestContext.
                 getHttpServletResponse().
-                setHeader("Link", String.format("</%s/%s/history>;rel=version-history", key, value));
+                setHeader("Link", String.format("</%s/%s/history>;rel=\"version-history\"", key, value));
     }
 }

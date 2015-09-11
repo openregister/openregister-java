@@ -37,7 +37,7 @@ public class HistoryResource {
         throw new NotFoundException();
     }
 
-    @JsonSerialize(using = VersionJsonSerializer.class)
+    @JsonSerialize(using = ListVersionViewJsonSerializer.class)
     public static class ListVersionView extends ThymeleafView {
         private final List<Version> versions;
 
@@ -51,7 +51,7 @@ public class HistoryResource {
         }
     }
 
-    private static class VersionJsonSerializer extends JsonSerializer<ListVersionView> {
+    private static class ListVersionViewJsonSerializer extends JsonSerializer<ListVersionView> {
         @Override
         public void serialize(ListVersionView listVersion, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             JsonSerializer<Object> listSerializer = serializers.findValueSerializer(List.class);
