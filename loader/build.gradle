@@ -20,7 +20,7 @@ jar {
 
         manifest {
             attributes(
-                    "Main-Class": "uk.gov.admin.Loader",
+                    "Main-Class": "uk.gov.admin.LoaderApplication",
                     "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
             )
         }
@@ -33,7 +33,7 @@ task bulkLoad(type: JavaExec) {
     def mintUrl = properties.get("mintUrl")
     def type = properties.get("type") == null ? "jsonl" : properties.get("type")
 
-    main = 'uk.gov.admin.Loader'
+    main = 'uk.gov.admin.LoaderApplication'
     classpath = sourceSets.main.runtimeClasspath
     args = ["--datafile=$datafile", "--mintUrl=$mintUrl", "--type=$type"]
 

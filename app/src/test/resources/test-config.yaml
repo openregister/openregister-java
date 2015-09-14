@@ -1,6 +1,6 @@
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/ft_mint
+  url: jdbc:postgresql://localhost:5432/postgres
   user: postgres
   password:
   properties:
