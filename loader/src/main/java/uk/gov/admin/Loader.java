@@ -1,11 +1,11 @@
 package uk.gov.admin;
 
+import com.google.common.collect.Iterables;
 import com.jcabi.http.Request;
 import com.jcabi.http.Response;
 import com.jcabi.http.request.JdkRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,21 +21,9 @@ class Loader {
     }
 
     public void load(Iterator<String> fileEntries) throws IOException {
+        Iterable<List<String>> entryBatches = Iterables.partition(() -> fileEntries, BATCH_SIZE);
 
-        List<String> entryBatch = new ArrayList<>();
-
-        while (fileEntries.hasNext()) {
-
-            entryBatch.add(fileEntries.next());
-
-            if (++entryCount % BATCH_SIZE == 0) {
-                send(entryBatch);
-                entryBatch = new ArrayList<>();
-            }
-
-        }
-
-        if (!entryBatch.isEmpty()) {
+        for (List<String> entryBatch : entryBatches) {
             send(entryBatch);
         }
     }
@@ -52,6 +40,7 @@ class Loader {
             throw new RuntimeException("Exception while loading entries: statusCode -> " + response.status() + "\n" +
                     " entity -> " + response.body());
         }
+        entryCount += batch.size();
 
         System.out.println("Loaded " + entryCount + " entries...");
     }
