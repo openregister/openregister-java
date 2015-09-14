@@ -49,7 +49,8 @@ class Loader {
                 .back()
                 .fetch();
         if (response.status() != 200) {
-            throw new RuntimeException("Exception while loading entries: statusCode -> " + response.status() + " \n entity -> " + response.body());
+            throw new RuntimeException("Exception while loading entries: statusCode -> " + response.status() + "\n" +
+                    " entity -> " + response.body());
         }
 
         System.out.println("Loaded " + entryCount + " entries...");

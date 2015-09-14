@@ -2,6 +2,7 @@ package uk.gov.admin;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LoaderApplication {
     public static void main(String[] args) throws Exception {
@@ -21,8 +22,7 @@ public class LoaderApplication {
     private static Map<String, String> createArgumentsMap(String[] args) throws Exception {
         try {
 
-            Map<String, String> argsMap = Arrays.asList(args)
-                    .stream()
+            Map<String, String> argsMap = Stream.of(args)
                     .map(a -> a.split("="))
                     .collect(Collectors.toMap(argEntry -> argEntry[0], argEntry -> argEntry[1]));
 
