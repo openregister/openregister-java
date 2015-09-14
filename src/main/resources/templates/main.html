@@ -9,22 +9,20 @@
     <link rel="apple-touch-icon-precomposed" href="/assets/images/icon.png"/>
 
     <title th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></title>
-    <link rel="stylesheet" href="/assets/vendor/foundation/css/foundation.css"/>
     <link rel="stylesheet" href="/assets/css/main.css"/>
 
 </head>
 
-<div th:fragment="header" id="header-wrapper">
-
-    <div class="row">
-        <div class="header registry small-12 large-12 columns">
-            <nav class="top-bar" data-topbar="">
-
-                <h1><a href="/" th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a></h1>
-            </nav>
+<header th:fragment="header" id="global-header">
+    <div class="header-wrapper">
+        <div class="header-global">
+            <div class="header-logo">
+                <a id="logo" class="content" href="/"
+               th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+            </div>
         </div>
     </div>
-</div>
+</header>
 
 <div th:fragment="footer" class="footer-wrapper">
     <div class="row footer">
