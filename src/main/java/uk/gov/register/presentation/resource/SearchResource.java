@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import com.google.common.primitives.Ints;
 import uk.gov.register.presentation.DbRecord;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 
 @Path("/")
@@ -48,13 +50,9 @@ public class SearchResource {
     @GET
     @Path("/entry/{serial}")
     public SingleResultView findBySerial(@PathParam("serial") String serialString) {
-        try {
-            Integer serial = Integer.valueOf(serialString);
-            Optional<DbRecord> recordO = queryDAO.findBySerial(serial);
-            return recordResponse(recordO);
-        } catch (NumberFormatException e) {
-            throw new NotFoundException(e);
-        }
+        Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
+        Optional<DbRecord> recordO = serial.flatMap(queryDAO::findBySerial);
+        return recordResponse(recordO);
     }
 
     private SingleResultView recordResponse(Optional<DbRecord> optionalRecord) {
