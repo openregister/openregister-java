@@ -101,7 +101,7 @@ public class SearchResourceTest {
 
     @Test
     public void findBySerial_findsEntryFromDb() throws Exception {
-        DbRecord abcd = new DbRecord("abcd", Jackson.newObjectMapper().readTree("{\"address\":\"1234\"}"));
+        DbRecord abcd = new DbRecord("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}"));
         when(queryDAO.findBySerial(52)).thenReturn(Optional.of(abcd));
         SingleResultView expected = mock(SingleResultView.class);
         when(viewFactory.getSingleResultView(abcd)).thenReturn(expected);
