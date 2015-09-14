@@ -29,7 +29,7 @@ jar {
         } 
         manifest {
             attributes(
-                    "Main-Class": "uk.gov.Application",
+                    "Main-Class": "uk.gov.indexer.Application",
                     "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
             )
         }
