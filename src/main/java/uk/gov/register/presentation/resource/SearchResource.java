@@ -47,9 +47,14 @@ public class SearchResource {
 
     @GET
     @Path("/entry/{serial}")
-    public SingleResultView findBySerial(@PathParam("serial") int serial) {
-        Optional<DbRecord> recordO = queryDAO.findBySerial(serial);
-        return recordResponse(recordO);
+    public SingleResultView findBySerial(@PathParam("serial") String serialString) {
+        try {
+            Integer serial = Integer.valueOf(serialString);
+            Optional<DbRecord> recordO = queryDAO.findBySerial(serial);
+            return recordResponse(recordO);
+        } catch (NumberFormatException e) {
+            throw new NotFoundException(e);
+        }
     }
 
     private SingleResultView recordResponse(Optional<DbRecord> optionalRecord) {

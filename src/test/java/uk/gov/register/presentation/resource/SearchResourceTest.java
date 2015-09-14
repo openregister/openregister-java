@@ -106,7 +106,7 @@ public class SearchResourceTest {
         SingleResultView expected = mock(SingleResultView.class);
         when(viewFactory.getSingleResultView(abcd)).thenReturn(expected);
 
-        SingleResultView result = resource.findBySerial(52);
+        SingleResultView result = resource.findBySerial("52");
 
         assertThat(result, equalTo(expected));
     }
@@ -117,7 +117,7 @@ public class SearchResourceTest {
         when(queryDAO.findBySerial(52)).thenReturn(Optional.of(abcd));
         when(viewFactory.getSingleResultView(abcd)).thenReturn(mock(SingleResultView.class));
 
-        resource.findBySerial(52);
+        resource.findBySerial("52");
 
         verify(servletResponse).setHeader("Link", "</school/9001/history>;rel=\"version-history\"");
     }
@@ -127,7 +127,17 @@ public class SearchResourceTest {
         when(queryDAO.findBySerial(52)).thenReturn(Optional.empty());
 
         try {
-            resource.findBySerial(52);
+            resource.findBySerial("52");
+            fail("expected NotFoundException");
+        } catch (NotFoundException e) {
+            // success
+        }
+    }
+
+    @Test
+    public void findBySerial_reportsBadSerialNumberAsNotFound() throws Exception {
+        try {
+            resource.findBySerial("abcd");
             fail("expected NotFoundException");
         } catch (NotFoundException e) {
             // success
