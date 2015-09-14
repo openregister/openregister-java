@@ -14,7 +14,17 @@ A presentation layer for registers.
 - Checkout project 
 - Run the `./go` script to set everything up
 - Build project using command `./gradlew clean build` 
-- Run shell script `run-application.sh` to run the application server.   
+- Run shell script `run-application.sh` to run the application server.
+
+# Recompile the scss templates
+
+Ensure you have sassc installed:
+
+    brew install sassc
+
+Run the recompile script:
+
+    ./build-styles.sh
 
 # Update the govuk_frontend_toolkit and govuk_template
 
