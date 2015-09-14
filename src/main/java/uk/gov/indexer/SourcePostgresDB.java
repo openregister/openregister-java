@@ -13,7 +13,7 @@ class SourcePostgresDB extends PostgresDB {
     }
 
     public ResultSet read(int currentWaterMark) throws SQLException {
-        return connection.prepareStatement("SELECT ENTRY FROM " + tableName + " WHERE ID > " + currentWaterMark).executeQuery();
+        return connection.prepareStatement("SELECT ENTRY FROM " + tableName + " WHERE ID > " + currentWaterMark + " ORDER BY ID LIMIT 5000" ).executeQuery();
     }
 
 }
