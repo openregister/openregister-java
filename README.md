@@ -30,4 +30,4 @@ There are 2 options:
         e.g. gradle bulkLoad -PmintUrl=http://localhost:4567/load -Pdatafile=datafile.tsv -Ptype=tsv
 2. Run using the built jar
 -     `java -jar <path_to_jar> LoaderApplication --mintUrl=<mint dataload url> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>`
-        e.g. java -jar loader.jar uk.gov.admin.Loader --mintUrl=http://localhost:4567/load --datafile=datafile.tsv --type=tsv
+        e.g. java -jar loader.jar uk.gov.admin.LoaderApplication --mintUrl=http://localhost:4567/load --datafile=datafile.tsv --type=tsv
