@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.dao;
 
-import com.google.common.base.Optional;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -9,6 +8,7 @@ import uk.gov.register.presentation.DbRecord;
 import uk.gov.register.presentation.mapper.RecordMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @RegisterMapper(RecordMapper.class)
 public interface RecentEntryIndexQueryDAO {
@@ -26,6 +26,10 @@ public interface RecentEntryIndexQueryDAO {
     @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
     @SingleValueResult(DbRecord.class)
     Optional<DbRecord> findByHash(@Bind("hash") String hash);
+
+    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE id = :serial")
+    @SingleValueResult(DbRecord.class)
+    Optional<DbRecord> findBySerial(@Bind("serial") int serial);
 
     @SqlQuery("SELECT i.id, i.entry FROM ordered_entry_index i, ( " +
             "SELECT MAX(id) AS id " +

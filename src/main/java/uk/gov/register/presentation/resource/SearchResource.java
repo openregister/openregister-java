@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.resource;
 
-import com.google.common.base.Optional;
 import uk.gov.register.presentation.DbRecord;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -10,6 +9,7 @@ import uk.gov.register.presentation.view.ViewFactory;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Optional;
 
 
 @Path("/")
@@ -30,11 +30,10 @@ public class SearchResource {
     @Path("/{primaryKey}/{primaryKeyValue}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
-        String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
-        if (key.equals(registerPrimaryKey)) {
+        if (key.equals(requestContext.getRegisterPrimaryKey())) {
             Optional<DbRecord> record = queryDAO.findByKeyValue(key, value);
             if (record.isPresent()) {
-                setVersionHistoryLinkHeader(key, value);
+                setVersionHistoryLinkHeader(record.get());
                 return viewFactory.getSingleResultView(record.get());
             }
         }
@@ -50,17 +49,28 @@ public class SearchResource {
         if (optionalRecord.isPresent()) {
             DbRecord record = optionalRecord.get();
 
-            String primaryKey = requestContext.getRegisterPrimaryKey();
-            setVersionHistoryLinkHeader(primaryKey, record.getEntry().get(primaryKey).textValue());
+            setVersionHistoryLinkHeader(record);
 
             return viewFactory.getSingleResultView(record);
         }
         throw new NotFoundException();
     }
 
-    private void setVersionHistoryLinkHeader(String key, String value) {
+    private void setVersionHistoryLinkHeader(DbRecord record) {
+        String primaryKey = requestContext.getRegisterPrimaryKey();
         requestContext.
                 getHttpServletResponse().
-                setHeader("Link", String.format("</%s/%s/history>;rel=\"version-history\"", key, value));
+                setHeader("Link", String.format("</%s/%s/history>;rel=\"version-history\"",
+                        primaryKey,
+                        record.getEntry().get(primaryKey).textValue()));
+    }
+
+    @GET
+    @Path("/entry/{serial}")
+    public SingleResultView findBySerial(@PathParam("serial") int serial) {
+        Optional<DbRecord> recordO = queryDAO.findBySerial(serial);
+        recordO.ifPresent(this::setVersionHistoryLinkHeader);
+        return recordO.map(viewFactory::getSingleResultView)
+                .orElseThrow(NotFoundException::new);
     }
 }
