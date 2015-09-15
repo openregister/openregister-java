@@ -18,13 +18,25 @@
         <div class="header-global">
             <div class="header-logo">
                 <a id="logo" class="content" href="/"
-               th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+                   th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
             </div>
         </div>
     </div>
 </header>
 
-<div th:fragment="footer" class="footer-wrapper">
+<footer th:fragment="footer">
+    <div class="footer-wrapper">
+        <div class="footer-meta">
+            <div class="copyright">
+                <img src="/assets/images/govuk_crest_grey.png"/>
+
+                <p>© Crown copyright</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="footer-wrapper">
     <div class="row footer">
 
         <div class="large-10 columns">
