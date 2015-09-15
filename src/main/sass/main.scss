@@ -32,3 +32,8 @@ $register: #2372b5;
     background-color: $register;
   }
 }
+
+main {
+  @extend %site-width-container;
+//  @include contain-floats;
+}
