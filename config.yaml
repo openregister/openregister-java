@@ -3,9 +3,9 @@ server:
 
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://${POSTGRES_PORT_5432_TCP_ADDR:-localhost}:${POSTGRES_PORT_5432_TCP_PORT:-5432}/postgres
-  user: ${POSTGRES_ENV_POSTGRES_USER:-postgres}
-  password: ${POSTGRES_ENV_POSTGRES_PASSWORD:-}
+  url: jdbc:postgresql://localhost:5432/postgres
+  user: postgres
+  password:
 
   #db connection properties
   initialSize: 1
