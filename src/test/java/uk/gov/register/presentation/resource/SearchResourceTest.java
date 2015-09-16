@@ -163,4 +163,14 @@ public class SearchResourceTest {
                         MediaType.APPLICATION_JSON,
                         ExtraMediaType.TEXT_TTL));
     }
+
+    @Test
+    public void findBySerialSupportsTurtleHtmlAndJson() throws Exception {
+        Method findByPrimaryKeyMethod = SearchResource.class.getDeclaredMethod("findBySerial", String.class);
+        List<String> declaredMediaTypes = asList(findByPrimaryKeyMethod.getDeclaredAnnotation(Produces.class).value());
+        assertThat(declaredMediaTypes,
+                hasItems(MediaType.TEXT_HTML,
+                        MediaType.APPLICATION_JSON,
+                        ExtraMediaType.TEXT_TTL));
+    }
 }

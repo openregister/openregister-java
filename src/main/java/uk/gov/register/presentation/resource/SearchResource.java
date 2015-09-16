@@ -49,6 +49,7 @@ public class SearchResource {
 
     @GET
     @Path("/entry/{serial}")
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findBySerial(@PathParam("serial") String serialString) {
         Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
         Optional<DbRecord> recordO = serial.flatMap(queryDAO::findBySerial);
