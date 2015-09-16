@@ -1,4 +1,5 @@
 ---
+serial-number: 1
 hash: "someHash1"
 entry:
   area: "value1"

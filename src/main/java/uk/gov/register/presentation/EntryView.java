@@ -33,7 +33,7 @@ public class EntryView {
         return entryMap.get(fieldName);
     }
 
-    @SuppressWarnings("unused, used from html templates")
+    @JsonProperty("serial-number")
     public int getSerialNumber() {
         return serialNumber;
     }
