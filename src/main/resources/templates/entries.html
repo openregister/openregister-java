@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head th:include="main.html::head"></head>
 <body>
-<header th:include="main.html::header" id="global-header"></header>
+<header th:replace="main.html::header"></header>
 
 <div class="row entry-row">
     <div class="large-12 columns">
@@ -31,12 +31,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="small-12 large-6 columns">
-        <div th:include="data-formats.html::data-formats"></div>
-    </div>
-</div>
+<div th:include="data-formats.html::data-formats"></div>
 
-<footer th:include="main.html::footer" id="footer" class="group" role="contentinfo"></footer>
+<footer th:replace="main.html::footer"></footer>
 </body>
 </html>

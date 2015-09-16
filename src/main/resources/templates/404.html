@@ -1,23 +1,20 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head th:include="main.html::head"></head>
 <body>
-<header th:include="main.html::header" id="global-header"></header>
+<header th:replace="main.html::header"></header>
 
 <label style="font-family: Helvetica, Arial; font-weight: bold; font-size: 2.50rem;">Page not found</label>
 <br/>
 <br/>
-<label style="font-family: Helvetica, Arial; font-size: 1.00rem;">If you entered a web address please check it was correct.</label>
+<label style="font-family: Helvetica, Arial; font-size: 1.00rem;">If you entered a web address please check it was
+    correct.</label>
 <br/>
 <br/>
 
-<div class="row">
-    <div class="small-12 large-6 columns">
-        <div th:include="copyright.html::copyright"></div>
-    </div>
-</div>
+<div th:include="copyright.html::copyright"></div>
 
-<footer th:include="main.html::footer" id="footer" class="group" role="contentinfo"></footer>
+<footer th:replace="main.html::footer"></footer>
 </body>
 </html>

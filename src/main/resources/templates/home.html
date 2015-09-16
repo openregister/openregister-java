@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head th:include="main.html::head"></head>
 <body>
-<header th:include="main.html::header" id="global-header"></header>
+<header th:replace="main.html::header"></header>
 <main id="main" role="main">
     <div th:include="main.html::phase" class="phase-banner"></div>
     <h1>The register of UK government registers.</h1>
@@ -35,7 +35,7 @@
 
 </main>
 
-<footer th:include="main.html::footer" id="footer" class="group" role="contentinfo"></footer>
+<footer th:replace="main.html::footer"></footer>
 
 </body>
 </html>

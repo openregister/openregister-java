@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head th:include="main.html::head"></head>
 <body>
-<header th:include="main.html::header" id="global-header"></header>
+<header th:replace="main.html::header"></header>
 <div class="row">
     <div class="small-12 large-8 columns">
         <h1 class="entry-header" th:text="${entry.primaryKey()}">Entry Name Header</h1>
@@ -41,25 +41,13 @@
 </div>
 <!-- /.row -->
 
-<div class="row">
-    <div class="small-12 large-6 columns">
-        <div th:include="data-formats.html::data-formats"></div>
-    </div>
-</div>
+<div th:include="data-formats.html::data-formats"></div>
 
-<div class="row">
-    <div class="small-12 large-6 columns">
-        <p>View all versions of this record <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@extractLinkFromLinkHeader(#ctx.httpServletResponse.getHeader('Link'))}">here</a></p>
-    </div>
-</div>
+<p>View all versions of this record <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@extractLinkFromLinkHeader(#ctx.httpServletResponse.getHeader('Link'))}">here</a></p>
 
 
-<div class="row">
-    <div class="small-12 large-6 columns">
-        <div th:include="copyright.html::copyright"></div>
-    </div>
-</div>
+<div th:include="copyright.html::copyright"></div>
 
-<footer th:include="main.html::footer" id="footer" class="group" role="contentinfo"></footer>
+<footer th:replace="main.html::footer"></footer>
 </body>
 </html>
