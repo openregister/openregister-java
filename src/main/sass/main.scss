@@ -45,7 +45,7 @@ main {
 }
 
 .phase-banner {
-  @include phase-banner($state: beta);
+  @include phase-banner($state: alpha);
   margin-bottom: $gutter;
 }
 
