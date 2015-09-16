@@ -21,8 +21,12 @@ public class ViewFactory {
         this.entryConverter = entryConverter;
     }
 
-    public SingleResultView getSingleResultView(DbEntry dbEntry) {
-        return new SingleResultView(requestContext, entryConverter.convert(dbEntry));
+    public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry));
+    }
+
+    public SingleEntryView getLatestEntryView(DbEntry dbEntry) {
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), "latest-entry-of-record.html");
     }
 
     public ListResultView getListResultView(List<DbEntry> allDbEntries) {

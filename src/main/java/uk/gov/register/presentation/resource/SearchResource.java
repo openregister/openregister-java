@@ -4,13 +4,14 @@ import com.google.common.primitives.Ints;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.SingleResultView;
+import uk.gov.register.presentation.view.SingleEntryView;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
+import java.util.function.Function;
 
 
 @Path("/")
@@ -30,34 +31,34 @@ public class SearchResource {
     @GET
     @Path("/{primaryKey}/{primaryKeyValue}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public SingleResultView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
+    public SingleEntryView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         if (!key.equals(requestContext.getRegisterPrimaryKey())) {
             throw new NotFoundException();
         }
         Optional<DbEntry> entryO = queryDAO.findByKeyValue(key, value);
-        return entryResponse(entryO);
+        return entryResponse(entryO, viewFactory::getLatestEntryView);
     }
 
     @GET
     @Path("/hash/{hash}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public SingleResultView findByHash(@PathParam("hash") String hash) {
+    public SingleEntryView findByHash(@PathParam("hash") String hash) {
         Optional<DbEntry> entryO = queryDAO.findByHash(hash);
-        return entryResponse(entryO);
+        return entryResponse(entryO, viewFactory::getSingleEntryView);
     }
 
     @GET
     @Path("/entry/{serial}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public SingleResultView findBySerial(@PathParam("serial") String serialString) {
+    public SingleEntryView findBySerial(@PathParam("serial") String serialString) {
         Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
         Optional<DbEntry> entryO = serial.flatMap(queryDAO::findBySerial);
-        return entryResponse(entryO);
+        return entryResponse(entryO, viewFactory::getSingleEntryView);
     }
 
-    private SingleResultView entryResponse(Optional<DbEntry> optionalEntry) {
+    private SingleEntryView entryResponse(Optional<DbEntry> optionalEntry, Function<DbEntry, SingleEntryView> convertToEntryView) {
         optionalEntry.ifPresent(this::setVersionHistoryLinkHeader);
-        return optionalEntry.map(viewFactory::getSingleResultView)
+        return optionalEntry.map(convertToEntryView)
                 .orElseThrow(NotFoundException::new);
     }
 

@@ -6,7 +6,7 @@
 <header th:replace="main.html::header"></header>
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
-    <h1 th:text="${entry.primaryKey()}">Entry Name Header</h1>
+    <h1 th:text="'Entry ' + ${entry.serialNumber}">Entry Name Header</h1>
     <p class="entry-source">
         An entry in the
         <a href="/" th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>

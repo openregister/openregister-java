@@ -6,14 +6,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class EntryView {
+    private final int serialNumber;
+    private final String hash;
     private final String registerName;
     private final Map<String, FieldValue> entryMap;
-    private String hash;
 
-    public EntryView(String hash, String registerName, Map<String, FieldValue> entryMap) {
+    public EntryView(int serialNumber, String hash, String registerName, Map<String, FieldValue> entryMap) {
         this.hash = hash;
         this.registerName = registerName;
         this.entryMap = entryMap;
+        this.serialNumber = serialNumber;
     }
 
 
@@ -29,6 +31,11 @@ public class EntryView {
 
     public FieldValue getField(String fieldName) {
         return entryMap.get(fieldName);
+    }
+
+    @SuppressWarnings("unused, used from html templates")
+    public int getSerialNumber() {
+        return serialNumber;
     }
 
     @SuppressWarnings("unused, used from html templates")

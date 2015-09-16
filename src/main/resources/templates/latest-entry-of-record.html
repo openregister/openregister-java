@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
+<body>
+<header th:include="main.html::header" id="global-header"></header>
+<div class="row">
+    <div class="small-12 large-8 columns">
+        <h1 class="entry-header" th:text="'Record ' + ${entry.primaryKey()}">Entry Name Header</h1>
+
+        <p class="entry-source">An entry in the <a href="/"
+                                                   th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+        </p>
+
+        <p class="entry-hash">
+            <span class="entry-hash" th:text="${'hash: ' + entry.hash}"></span>
+            <a href="#" class="tooltips">
+                <span class="tooltips-icon">?</span>
+                <span class="tooltips-text">The hash is a unique identifier for each version of an entry</span>
+            </a>
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 large-12 columns">
+        <table id="entry-table">
+            <tbody>
+            <tr th:each="keyValue : ${entry.content}">
+                <td ><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></td>
+                <td th:if="${keyValue.value.isLink()}">
+                    <a th:href="${keyValue.value.link()}" th:text="${keyValue.value.value()}"></a>
+                </td>
+                <td th:unless="${keyValue.value.isLink()}" th:text="${keyValue.value.value()}">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- /.columns -->
+</div>
+<!-- /.row -->
+
+<div class="row">
+    <div class="small-12 large-6 columns">
+        <div th:include="data-formats.html::data-formats"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 large-6 columns">
+        <p>View all versions of this record <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@extractLinkFromLinkHeader(#ctx.httpServletResponse.getHeader('Link'))}">here</a></p>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="small-12 large-6 columns">
+        <div th:include="copyright.html::copyright"></div>
+    </div>
+</div>
+
+<footer th:include="main.html::footer" id="footer" class="group" role="contentinfo"></footer>
+</body>
+</html>
