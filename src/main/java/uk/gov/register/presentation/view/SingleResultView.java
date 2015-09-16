@@ -1,22 +1,22 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.representations.SingleResultJsonSerializer;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 @JsonSerialize(using = SingleResultJsonSerializer.class)
 public class SingleResultView extends ThymeleafView {
-    private final RecordView recordView;
+    private final EntryView entryView;
 
-    SingleResultView(RequestContext requestContext, RecordView recordView) {
+    SingleResultView(RequestContext requestContext, EntryView entryView) {
         super(requestContext, "entry.html");
-        this.recordView = recordView;
+        this.entryView = entryView;
     }
 
-    public RecordView getRecord() {
-        return recordView;
+    public EntryView getEntry() {
+        return entryView;
     }
 }
 

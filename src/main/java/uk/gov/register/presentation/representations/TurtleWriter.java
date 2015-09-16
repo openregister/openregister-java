@@ -3,7 +3,7 @@ package uk.gov.register.presentation.representations;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
-import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
@@ -29,24 +29,24 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     @Override
-    protected void writeRecordsTo(OutputStream entityStream, List<RecordView> records) throws IOException {
-        Set<String> fields = records.get(0).allFields();
+    protected void writeEntriesTo(OutputStream entityStream, List<EntryView> entries) throws IOException {
+        Set<String> fields = entries.get(0).allFields();
         entityStream.write(PREFIX.getBytes("utf-8"));
-        for (RecordView record : records) {
-            entityStream.write((renderRecord(record, fields) + "\n").getBytes("utf-8"));
+        for (EntryView entry : entries) {
+            entityStream.write((renderEntry(entry, fields) + "\n").getBytes("utf-8"));
         }
     }
 
-    private String renderRecord(RecordView record, Set<String> fields) {
-        URI hashUri = uri(record.getHash());
+    private String renderEntry(EntryView entry, Set<String> fields) {
+        URI hashUri = uri(entry.getHash());
         String entity = String.format("<%s>\n", hashUri);
         return fields.stream()
-                .map(field -> renderField(record, field))
+                .map(field -> renderField(entry, field))
                 .collect(Collectors.joining(" ;\n", entity, " ."));
     }
 
-    private String renderField(RecordView record, String fieldName) {
-        FieldValue value = record.getField(fieldName);
+    private String renderField(EntryView entry, String fieldName) {
+        FieldValue value = entry.getField(fieldName);
         if (value.isLink()) {
             return String.format(" field:%s <%s>", fieldName, ((LinkValue)value).link());
         } else {

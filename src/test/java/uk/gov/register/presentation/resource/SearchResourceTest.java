@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.DbRecord;
+import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.SingleResultView;
@@ -78,7 +78,7 @@ public class SearchResourceTest {
 
     @Test
     public void findByPrimaryKey_throwsNotFoundException_whenSearchedKeyIsNotFound() {
-        when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<DbRecord>empty());
+        when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<DbEntry>empty());
         try {
             resource.findByPrimaryKey("school", "value");
             fail("Must fail");
@@ -90,7 +90,7 @@ public class SearchResourceTest {
 
     @Test
     public void findByHash_throwsNotFoundWhenHashIsNotFound() {
-        when(queryDAO.findByHash("123")).thenReturn(Optional.<DbRecord>empty());
+        when(queryDAO.findByHash("123")).thenReturn(Optional.<DbEntry>empty());
         try {
             resource.findByHash("123");
             fail("Must fail");
@@ -101,7 +101,7 @@ public class SearchResourceTest {
 
     @Test
     public void findBySerial_findsEntryFromDb() throws Exception {
-        DbRecord abcd = new DbRecord("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}"));
+        DbEntry abcd = new DbEntry("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}"));
         when(queryDAO.findBySerial(52)).thenReturn(Optional.of(abcd));
         SingleResultView expected = mock(SingleResultView.class);
         when(viewFactory.getSingleResultView(abcd)).thenReturn(expected);
@@ -113,7 +113,7 @@ public class SearchResourceTest {
 
     @Test
     public void findBySerial_setsHistoryLinkHeader() throws Exception {
-        DbRecord abcd = new DbRecord("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}"));
+        DbEntry abcd = new DbEntry("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}"));
         when(queryDAO.findBySerial(52)).thenReturn(Optional.of(abcd));
         when(viewFactory.getSingleResultView(abcd)).thenReturn(mock(SingleResultView.class));
 

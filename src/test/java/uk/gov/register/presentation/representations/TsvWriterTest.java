@@ -3,7 +3,7 @@ package uk.gov.register.presentation.representations;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.register.presentation.FieldValue;
-import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.StringValue;
 
 import java.io.IOException;
@@ -25,12 +25,12 @@ public class TsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        RecordView record = new RecordView("hash1", "registerName", entryMap);
+        EntryView entry = new EntryView("hash1", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 
 
-        writer.writeRecordsTo(entityStream, Collections.singletonList(record));
+        writer.writeEntriesTo(entityStream, Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("hash\tkey1\tkey2\tkey3\tkey4\nhash1\tvalue1\tvalue2\tval\"ue3\tvalue4\n"));
     }

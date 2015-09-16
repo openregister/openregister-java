@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import com.google.common.primitives.Ints;
-import uk.gov.register.presentation.DbRecord;
+import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.SingleResultView;
@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 
 @Path("/")
@@ -35,16 +34,16 @@ public class SearchResource {
         if (!key.equals(requestContext.getRegisterPrimaryKey())) {
             throw new NotFoundException();
         }
-        Optional<DbRecord> recordO = queryDAO.findByKeyValue(key, value);
-        return recordResponse(recordO);
+        Optional<DbEntry> entryO = queryDAO.findByKeyValue(key, value);
+        return entryResponse(entryO);
     }
 
     @GET
     @Path("/hash/{hash}")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findByHash(@PathParam("hash") String hash) {
-        Optional<DbRecord> recordO = queryDAO.findByHash(hash);
-        return recordResponse(recordO);
+        Optional<DbEntry> entryO = queryDAO.findByHash(hash);
+        return entryResponse(entryO);
     }
 
     @GET
@@ -52,22 +51,22 @@ public class SearchResource {
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleResultView findBySerial(@PathParam("serial") String serialString) {
         Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
-        Optional<DbRecord> recordO = serial.flatMap(queryDAO::findBySerial);
-        return recordResponse(recordO);
+        Optional<DbEntry> entryO = serial.flatMap(queryDAO::findBySerial);
+        return entryResponse(entryO);
     }
 
-    private SingleResultView recordResponse(Optional<DbRecord> optionalRecord) {
-        optionalRecord.ifPresent(this::setVersionHistoryLinkHeader);
-        return optionalRecord.map(viewFactory::getSingleResultView)
+    private SingleResultView entryResponse(Optional<DbEntry> optionalEntry) {
+        optionalEntry.ifPresent(this::setVersionHistoryLinkHeader);
+        return optionalEntry.map(viewFactory::getSingleResultView)
                 .orElseThrow(NotFoundException::new);
     }
 
-    private void setVersionHistoryLinkHeader(DbRecord record) {
+    private void setVersionHistoryLinkHeader(DbEntry entry) {
         String primaryKey = requestContext.getRegisterPrimaryKey();
         requestContext.
                 getHttpServletResponse().
                 setHeader("Link", String.format("</%s/%s/history>;rel=\"version-history\"",
                         primaryKey,
-                        record.getEntry().get(primaryKey).textValue()));
+                        entry.getContent().get(primaryKey).textValue()));
     }
 }

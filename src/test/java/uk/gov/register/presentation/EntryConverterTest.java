@@ -16,19 +16,19 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RecordConverterTest {
+public class EntryConverterTest {
     @Mock
     private RequestContext requestContext;
 
     @Test
-    public void convert_convertsTheDbRecordToRecordView() throws IOException {
-        RecordConverter recordConverter = new RecordConverter(new FieldsConfiguration(), requestContext);
+    public void convert_convertsTheDbEntryToEntryView() throws IOException {
+        EntryConverter entryConverter = new EntryConverter(new FieldsConfiguration(), requestContext);
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         JsonNode jsonNode = objectMapper.readValue("{\"registry\":\"somevalue\"}", JsonNode.class);
 
-        RecordView recordView = recordConverter.convert(new DbRecord("somehash", jsonNode));
+        EntryView entryView = entryConverter.convert(new DbEntry("somehash", jsonNode));
 
-        assertThat(((LinkValue) recordView.getField("registry")).link(), equalTo("http://public-body.openregister.org/public-body/somevalue"));
+        assertThat(((LinkValue) entryView.getField("registry")).link(), equalTo("http://public-body.openregister.org/public-body/somevalue"));
     }
 
 }
