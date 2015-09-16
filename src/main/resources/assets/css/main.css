@@ -794,7 +794,7 @@ button:focus,
     letter-spacing: 1px;
     text-decoration: none;
     color: #fff;
-    background-color: #f47738; }
+    background-color: #d53880; }
     @media (min-width: 641px) {
       .phase-banner .phase-tag {
         vertical-align: baseline; } }
@@ -845,3 +845,30 @@ button:focus,
       .primary-metadata dd .show-other-content {
         font-size: 24px;
         line-height: 1.25; } }
+
+table {
+  font-family: "nta", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 400;
+  text-transform: none;
+  border-collapse: collapse;
+  border: 1px solid #bfc1c3;
+  width: 100%; }
+  @media (min-width: 641px) {
+    table {
+      font-size: 14px;
+      line-height: 1.42857; } }
+  table td, table th {
+    vertical-align: top;
+    text-align: left;
+    font-family: monospace;
+    padding: 10px; }
+  table th {
+    background-color: #f5f5f5; }
+  table tr:nth-child(2n) {
+    background-color: #f9f9f9; }
+  table.entry tr {
+    background-color: #f5f5f5; }
+  table.entry th, table.entry td {
+    border-bottom: 1px solid #bfc1c3; }
