@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<div th:fragment="entry-table(content)">
+    <table class="entry">
+        <thead>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="keyValue : ${content}">
+            <td><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}"
+                   th:text="${keyValue.key}"></a></td>
+            <td th:if="${keyValue.value.isLink()}">
+                <a th:href="${keyValue.value.link()}" th:text="${keyValue.value.value()}"></a>
+            </td>
+            <td th:unless="${keyValue.value.isLink()}" th:text="${keyValue.value.value()}">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
