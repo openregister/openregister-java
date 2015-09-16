@@ -9,15 +9,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Map;
 
 public class DataFileReader {
-    private final String datafile;
+    private final URI datafileURI;
     private final String type;
 
-    public DataFileReader(String datafile, String type) {
-        this.datafile = datafile;
+    public DataFileReader(String datafile, String type) throws URISyntaxException {
+        this.datafileURI = createDataUri(datafile);
         this.type = type;
     }
 
@@ -47,12 +48,23 @@ public class DataFileReader {
 
     private BufferedReader reader() {
         try {
-            URI uri = datafile.startsWith("http://") || datafile.startsWith("https://") ? new URI(datafile) : new File(datafile).toURI();
-            InputStreamReader inputStreamReader = new InputStreamReader(uri.toURL().openStream());
+            InputStreamReader inputStreamReader = new InputStreamReader(datafileURI.toURL().openStream());
             return new BufferedReader(inputStreamReader);
         } catch (Exception e) {
             throw new RuntimeException("Error creating stream to read data to load", e);
         }
     }
 
+    private URI createDataUri(String datafile) throws URISyntaxException {
+
+        if ((datafile.startsWith("http://") || datafile.startsWith("https://"))) {
+            return new URI(datafile);
+        } else {
+            File inputFile = new File(datafile);
+            if (inputFile.isDirectory()) {
+                throw new RuntimeException("'" + inputFile + "' must be a file");
+            }
+            return inputFile.toURI();
+        }
+    }
 }
