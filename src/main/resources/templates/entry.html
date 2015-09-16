@@ -6,17 +6,17 @@
 <header th:include="main.html::header" id="global-header"></header>
 <div class="row">
     <div class="small-12 large-8 columns">
-        <h1 class="entry-header" th:text="${record.primaryKey()}">Entry Name Header</h1>
+        <h1 class="entry-header" th:text="${entry.primaryKey()}">Entry Name Header</h1>
 
         <p class="entry-source">An entry in the <a href="/"
                                                    th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
         </p>
 
         <p class="entry-hash">
-            <span class="entry-hash" th:text="${'hash: ' + record.hash}"></span>
+            <span class="entry-hash" th:text="${'hash: ' + entry.hash}"></span>
             <a href="#" class="tooltips">
                 <span class="tooltips-icon">?</span>
-                <span class="tooltips-text">The hash is a unique identifier for each version of a record</span>
+                <span class="tooltips-text">The hash is a unique identifier for each version of an entry</span>
             </a>
         </p>
     </div>
@@ -26,12 +26,12 @@
     <div class="small-12 large-12 columns">
         <table id="entry-table">
             <tbody>
-            <tr th:each="entry : ${record.entry}">
-                <td ><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(entry.key)}" th:text="${entry.key}"></a></td>
-                <td th:if="${entry.value.isLink()}">
-                    <a th:href="${entry.value.link()}" th:text="${entry.value.value()}"></a>
+            <tr th:each="keyValue : ${entry.content}">
+                <td ><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></td>
+                <td th:if="${keyValue.value.isLink()}">
+                    <a th:href="${keyValue.value.link()}" th:text="${keyValue.value.value()}"></a>
                 </td>
-                <td th:unless="${entry.value.isLink()}" th:text="${entry.value.value()}">
+                <td th:unless="${keyValue.value.isLink()}" th:text="${keyValue.value.value()}">
                 </td>
             </tr>
             </tbody>

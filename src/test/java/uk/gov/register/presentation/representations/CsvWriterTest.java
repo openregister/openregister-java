@@ -3,7 +3,7 @@ package uk.gov.register.presentation.representations;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.register.presentation.FieldValue;
-import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.StringValue;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 
 public class CsvWriterTest {
     @Test
-    public void writeRecordsTo_writesCsvEscapedEntries() throws IOException {
+    public void writeEntriesTo_writesCsvEscapedEntries() throws IOException {
         CsvWriter csvWriter = new CsvWriter();
         Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
@@ -26,11 +26,11 @@ public class CsvWriterTest {
                 );
 
 
-        RecordView record = new RecordView("hash1", "registerName", entryMap);
+        EntryView entry = new EntryView("hash1", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        csvWriter.writeRecordsTo(entityStream, Collections.singletonList(record));
+        csvWriter.writeEntriesTo(entityStream, Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("hash,key1,key2,key3,key4\r\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
     }

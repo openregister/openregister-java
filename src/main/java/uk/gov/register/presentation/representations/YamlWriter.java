@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.dropwizard.jackson.Jackson;
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.EntryView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
@@ -24,12 +24,12 @@ public class YamlWriter extends RepresentationWriter {
     }
 
     @Override
-    protected void writeRecordsTo(OutputStream entityStream, List<RecordView> records) throws IOException, WebApplicationException {
-        objectMapper.writeValue(entityStream, records);
+    protected void writeEntriesTo(OutputStream entityStream, List<EntryView> entries) throws IOException, WebApplicationException {
+        objectMapper.writeValue(entityStream, entries);
     }
 
     @Override
-    protected void writeRecordTo(OutputStream entityStream, RecordView record) throws IOException {
-        objectMapper.writeValue(entityStream, record);
+    protected void writeEntryTo(OutputStream entityStream, EntryView entry) throws IOException {
+        objectMapper.writeValue(entityStream, entry);
     }
 }

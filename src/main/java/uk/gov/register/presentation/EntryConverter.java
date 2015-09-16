@@ -13,20 +13,20 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Service
-public class RecordConverter {
+public class EntryConverter {
     private final FieldsConfiguration fieldsConfiguration;
     private final RequestContext requestContext;
 
     @Inject
-    public RecordConverter(FieldsConfiguration fieldsConfiguration, RequestContext requestContext) {
+    public EntryConverter(FieldsConfiguration fieldsConfiguration, RequestContext requestContext) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.requestContext = requestContext;
     }
 
-    public RecordView convert(DbRecord dbRecord) {
-        Iterable<Map.Entry<String, JsonNode>> fields = () -> dbRecord.getEntry().fields();
+    public EntryView convert(DbEntry dbEntry) {
+        Iterable<Map.Entry<String, JsonNode>> fields = () -> dbEntry.getContent().fields();
         Stream<Map.Entry<String, JsonNode>> fieldStream = StreamSupport.stream(fields.spliterator(), false);
-        return new RecordView(dbRecord.getHash(), requestContext.getRegisterPrimaryKey(), fieldStream.collect(Collectors.toMap(Map.Entry::getKey, this::convert)));
+        return new EntryView(dbEntry.getHash(), requestContext.getRegisterPrimaryKey(), fieldStream.collect(Collectors.toMap(Map.Entry::getKey, this::convert)));
     }
 
 

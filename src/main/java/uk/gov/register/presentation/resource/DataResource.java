@@ -52,7 +52,7 @@ public class DataResource {
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView feed() {
         return viewFactory.getListResultView(
-                queryDAO.getFeeds(ENTRY_LIMIT)
+                queryDAO.getAllEntries(ENTRY_LIMIT)
         );
     }
 
@@ -61,7 +61,7 @@ public class DataResource {
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ListResultView current() {
         return viewFactory.getListResultView(
-                queryDAO.getAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)
+                queryDAO.getLatestEntriesOfAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)
         );
     }
 

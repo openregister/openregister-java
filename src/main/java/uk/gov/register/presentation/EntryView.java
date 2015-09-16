@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.Set;
 
-public class RecordView {
+public class EntryView {
     private final String registerName;
     private final Map<String, FieldValue> entryMap;
     private String hash;
 
-    public RecordView(String hash, String registerName, Map<String, FieldValue> entryMap) {
+    public EntryView(String hash, String registerName, Map<String, FieldValue> entryMap) {
         this.hash = hash;
         this.registerName = registerName;
         this.entryMap = entryMap;
@@ -18,7 +18,7 @@ public class RecordView {
 
 
     @JsonProperty("entry")
-    public Map<String, FieldValue> getEntry() {
+    public Map<String, FieldValue> getContent() {
         return entryMap;
     }
 

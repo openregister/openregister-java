@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
-import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.StringValue;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -39,11 +39,11 @@ public class TurtleWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        RecordView record = new RecordView("abcd", "registerName", entryMap);
+        EntryView entry = new EntryView("abcd", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        turtleWriter.writeRecordsTo(entityStream, Collections.singletonList(record));
+        turtleWriter.writeEntriesTo(entityStream, Collections.singletonList(entry));
 
 
         assertThat(entityStream.contents, containsString("field:registered-address <http://address.openregister.org/address/1111111>"));

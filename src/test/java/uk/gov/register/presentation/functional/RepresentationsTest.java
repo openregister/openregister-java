@@ -21,8 +21,8 @@ import static org.junit.Assert.assertThat;
 public class RepresentationsTest extends FunctionalTestBase {
     private final String extension;
     private final String expectedContentType;
-    private final String expectedSingleRecord;
-    private final String expectedListRecords;
+    private final String expectedSingleEntry;
+    private final String expectedListOfEntries;
 
     @BeforeClass
     public static void publishTestMessages() {
@@ -40,11 +40,11 @@ public class RepresentationsTest extends FunctionalTestBase {
         });
     }
 
-    public RepresentationsTest(String extension, String expectedContentType, String expectedSingleRecord, String expectedListRecords) {
+    public RepresentationsTest(String extension, String expectedContentType, String expectedSingleEntry, String expectedListOfEntries) {
         this.extension = extension;
         this.expectedContentType = expectedContentType;
-        this.expectedSingleRecord = expectedSingleRecord;
-        this.expectedListRecords = expectedListRecords;
+        this.expectedSingleEntry = expectedSingleEntry;
+        this.expectedListOfEntries = expectedListOfEntries;
     }
 
     @Test
@@ -53,7 +53,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedSingleRecord));
+        assertThat(response.readEntity(String.class), equalTo(expectedSingleEntry));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedListRecords));
+        assertThat(response.readEntity(String.class), equalTo(expectedListOfEntries));
     }
 
     private static String fixture(String resourceName) {

@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.representations;
 
 import io.dropwizard.views.View;
-import uk.gov.register.presentation.RecordView;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.view.ListResultView;
 import uk.gov.register.presentation.view.SingleResultView;
 
@@ -31,16 +31,16 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
     @Override
     public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         if (view instanceof SingleResultView) {
-            writeRecordTo(entityStream, ((SingleResultView) view).getRecord());
+            writeEntryTo(entityStream, ((SingleResultView) view).getEntry());
         }
         else {
-            writeRecordsTo(entityStream, ((ListResultView) view).getRecords());
+            writeEntriesTo(entityStream, ((ListResultView) view).getEntries());
         }
     }
 
-    protected void writeRecordTo(OutputStream entityStream, RecordView record) throws IOException {
-        writeRecordsTo(entityStream, Collections.singletonList(record));
+    protected void writeEntryTo(OutputStream entityStream, EntryView entry) throws IOException {
+        writeEntriesTo(entityStream, Collections.singletonList(entry));
     }
 
-    protected abstract void writeRecordsTo(OutputStream entityStream, List<RecordView> records) throws IOException, WebApplicationException;
+    protected abstract void writeEntriesTo(OutputStream entityStream, List<EntryView> entries) throws IOException, WebApplicationException;
 }

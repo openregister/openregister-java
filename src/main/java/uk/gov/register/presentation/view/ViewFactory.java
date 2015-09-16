@@ -1,8 +1,8 @@
 package uk.gov.register.presentation.view;
 
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.presentation.DbRecord;
-import uk.gov.register.presentation.RecordConverter;
+import uk.gov.register.presentation.DbEntry;
+import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
@@ -13,20 +13,20 @@ import java.util.stream.Collectors;
 @Service
 public class ViewFactory {
     private final RequestContext requestContext;
-    private final RecordConverter recordConverter;
+    private final EntryConverter entryConverter;
 
     @Inject
-    public ViewFactory(RequestContext requestContext, RecordConverter recordConverter) {
+    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter) {
         this.requestContext = requestContext;
-        this.recordConverter = recordConverter;
+        this.entryConverter = entryConverter;
     }
 
-    public SingleResultView getSingleResultView(DbRecord dbRecord) {
-        return new SingleResultView(requestContext, recordConverter.convert(dbRecord));
+    public SingleResultView getSingleResultView(DbEntry dbEntry) {
+        return new SingleResultView(requestContext, entryConverter.convert(dbEntry));
     }
 
-    public ListResultView getListResultView(List<DbRecord> allDbRecords) {
-        return new ListResultView(requestContext, allDbRecords.stream().map(recordConverter::convert).collect(Collectors.toList()));
+    public ListResultView getListResultView(List<DbEntry> allDbEntries) {
+        return new ListResultView(requestContext, allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()));
     }
 
     public ThymeleafView thymeleafView(String templateName) {

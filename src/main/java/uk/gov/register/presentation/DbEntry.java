@@ -4,22 +4,22 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class DbRecord {
+public class DbEntry {
     private final String hash;
-    private final JsonNode jsonEntry;
+    private final JsonNode jsonContent;
 
     @JsonCreator
-    public DbRecord(@JsonProperty("hash") String hash, @JsonProperty("entry") JsonNode jsonEntry) {
+    public DbEntry(@JsonProperty("hash") String hash, @JsonProperty("entry") JsonNode jsonContent) {
         this.hash = hash;
-        this.jsonEntry = jsonEntry;
+        this.jsonContent = jsonContent;
     }
 
     public String getHash() {
         return hash;
     }
 
-    public JsonNode getEntry() {
-        return jsonEntry;
+    public JsonNode getContent() {
+        return jsonContent;
     }
 }
 
