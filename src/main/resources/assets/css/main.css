@@ -1,4 +1,5 @@
 @charset "UTF-8";
+/* libSass doesn’t implement image-url that govuk_template uses so polyfill that */
 /* Import from govuk_frontend_toolkit */
 @-ms-viewport {
   width: device-width; }
@@ -178,11 +179,11 @@ a:active {
   color: #2e8aca; }
 
 a[rel="external"]:after {
-  background-image: image-url("external-links/external-link.png");
+  background-image: url("/assets/external-links/external-link.png");
   background-repeat: no-repeat; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     a[rel="external"]:after {
-      background-image: image-url("external-links/external-link-24x24.png");
+      background-image: url("/assets/external-links/external-link-24x24.png");
       background-size: 12px 400px; } }
 
 a[rel="external"]:after {
@@ -207,11 +208,11 @@ a[rel="external"]:hover:after {
   background-position: right 0px; }
 
 .external-link:after {
-  background-image: image-url("external-links/external-link-black-12x12.png");
+  background-image: url("/assets/external-links/external-link-black-12x12.png");
   background-repeat: no-repeat; }
   @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .external-link:after {
-      background-image: image-url("external-links/external-link-black-24x24.png");
+      background-image: url("/assets/external-links/external-link-black-24x24.png");
       background-size: 12px 400px; } }
 
 /*
@@ -425,7 +426,7 @@ button:focus,
     margin-bottom: -3px;
     padding-top: 2px;
     border-bottom: 1px solid transparent;
-    background: image-url("images/gov.uk_logotype_crown.png") no-repeat;
+    background: url("/assets/images/gov.uk_logotype_crown.png") no-repeat;
     background-size: 35px 31px;
     background-position: 0 0; }
     #global-header #logo img {
@@ -697,10 +698,10 @@ button:focus,
             height: 17px;
             overflow: hidden;
             text-indent: -999em;
-            background: image-url("images/open-government-licence.png") 0 0 no-repeat; }
+            background: url("/assets/images/open-government-licence.png") 0 0 no-repeat; }
             @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
               #footer .footer-meta .footer-meta-inner .open-government-licence .logo a {
-                background-image: image-url("images/open-government-licence_2x.png");
+                background-image: url("/assets/images/open-government-licence_2x.png");
                 background-size: 41px 17px; } }
         #footer .footer-meta .footer-meta-inner .open-government-licence p {
           font-family: "nta", Arial, sans-serif;
@@ -736,7 +737,7 @@ button:focus,
           margin-top: 0; } }
       #footer .footer-meta .copyright a {
         display: block;
-        background-image: image-url("images/govuk-crest.png");
+        background-image: url("/assets/images/govuk-crest.png");
         background-repeat: no-repeat;
         background-position: 50% 0%;
         text-align: center;
@@ -747,7 +748,7 @@ button:focus,
             background-position: 100% 0%; } }
         @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
           #footer .footer-meta .copyright a {
-            background-image: image-url("images/govuk-crest-2x.png");
+            background-image: url("/assets/images/govuk-crest-2x.png");
             background-size: 125px 102px; } }
         @media (min-width: 641px) {
           #footer .footer-meta .copyright a {
@@ -758,3 +759,89 @@ button:focus,
   background-color: #2372b5; }
   #global-header .header-wrapper {
     background-color: #2372b5; }
+
+.phase-banner {
+  padding: 10px 0 8px 0;
+  border-bottom: 1px solid #bfc1c3;
+  margin-bottom: 30px; }
+  @media (min-width: 641px) {
+    .phase-banner {
+      padding-bottom: 10px; } }
+  .phase-banner p {
+    margin: 0;
+    color: #000;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 400;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      .phase-banner p {
+        font-size: 16px;
+        line-height: 1.25; } }
+  .phase-banner .phase-tag {
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 8px 0 0;
+    padding: 2px 5px 0;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 700;
+    text-transform: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #f47738; }
+    @media (min-width: 641px) {
+      .phase-banner .phase-tag {
+        vertical-align: baseline; } }
+    @media (min-width: 641px) {
+      .phase-banner .phase-tag {
+        font-size: 16px;
+        line-height: 1.25; } }
+  .phase-banner span {
+    vertical-align: top; }
+    @media (min-width: 641px) {
+      .phase-banner span {
+        vertical-align: baseline; } }
+
+.primary-metadata dt {
+  font-family: "nta", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.14286;
+  font-weight: 400;
+  text-transform: none;
+  padding: 20px 0 5px 0; }
+  @media (min-width: 641px) {
+    .primary-metadata dt {
+      font-size: 16px;
+      line-height: 1.25; } }
+  .primary-metadata dt:first-child {
+    padding-top: 5px; }
+
+.primary-metadata dd {
+  margin: 5px 0 0 0;
+  font-family: "nta", Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: none; }
+  @media (min-width: 641px) {
+    .primary-metadata dd {
+      font-size: 24px;
+      line-height: 1.25; } }
+  .primary-metadata dd p, .primary-metadata dd strong {
+    font-weight: bold; }
+  .primary-metadata dd .show-other-content {
+    font-family: "nta", Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      .primary-metadata dd .show-other-content {
+        font-size: 24px;
+        line-height: 1.25; } }
