@@ -3,17 +3,21 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head th:include="main.html::head"></head>
 <body>
-<header th:replace="main.html::header"></header>
+<header th:include="main.html::header"></header>
+<main id="main" role="main">
 
 <div class="row">
     <div class="small-12 large-12 columns">
         <table id="version-table">
-            <tbody  id="entry-table">
+            <tbody id="entry-table">
             <tr>
-                <td th:text="hash">
-                </td>
+                <th>serial number</th>
+                <th>hash</th>
             </tr>
             <tr th:each="version : ${versions}">
+                <td>
+                    <a th:href="${'/entry/' + version.serialNumber}" th:text="${version.serialNumber}"></a>
+                </td>
                 <td>
                     <a th:href="${'/hash/' + version.hash}" th:text="${version.hash}"></a>
                 </td>
@@ -25,7 +29,7 @@
 </div>
 <br/>
 <div th:include="copyright.html::copyright"></div>
-
+</main>
 <footer th:replace="main.html::footer"></footer>
 </body>
 </html>

@@ -42,7 +42,7 @@ public class HistoryResource {
         private final List<Version> versions;
 
         public ListVersionView(RequestContext requestContext, List<Version> versions) {
-            super(requestContext, "versions.html");
+            super(requestContext, "history.html");
             this.versions = versions;
         }
 
