@@ -5,38 +5,24 @@
 <body>
 <header th:include="main.html::header" id="global-header"></header>
 <main id="main" role="main">
-    <div class="row">
-        <div class="small-12 large-8 columns">
-            <div class="official-text">
-                The register of UK government registers.
-            </div>
+    <div th:include="main.html::phase" class="phase-banner"></div>
+    <h1>The register of UK government registers.</h1>
 
-            <div class="registry">
-                <p class="registry-label">Provided by:</p>
-                Cabinet Office
-            </div>
+    <div class="registry">
+        <p class="registry-label">Provided by:</p>
+        Cabinet Office
+    </div>
 
-            <div class="meta-entries">
+    <dl class="primary-metadata">
+        <dt>Total entries:</dt>
+        <dd><a href="/current">Total entries</a></dd>
+        <dt>Last updated:</dt>
+        <dd><a href="/feed">Last updated</a></dd>
+        <dt>Fields in this register:</dt>
+        <dd>Register Fields</dd>
+    </dl>
 
-                <p class="label-text">Total entries:</p>
-
-                <p class="big-number">
-                    <a href="/current">Total entries </a>
-                </p>
-
-                <p class="label-text">Last updated:</p>
-
-                <p class="big-meta">
-                    <a href="/feed">Last updated</a>
-                </p>
-
-                <p class="label-text">
-                    Fields in this register:</p>
-
-                <p class="homepage-field-labels">Register Fields</p>
-            </div>
-            Copyright Text
-        </div>
+    Copyright Text
 
         <div class="small-12 large-4 columns nav">
 
@@ -46,7 +32,7 @@
                 <li><a href="/download">Download all entries</a></li>
             </ul>
         </div>
-    </div>
+
 </main>
 
 <footer th:include="main.html::footer" id="footer" class="group" role="contentinfo"></footer>

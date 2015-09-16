@@ -43,3 +43,30 @@ $register: #2372b5;
 main {
   @extend %site-width-container;
 }
+
+.phase-banner {
+  @include phase-banner($state: beta);
+  margin-bottom: $gutter;
+}
+
+.primary-metadata {
+  dt {
+    @include core-16;
+    padding: ($gutter/6 + $gutter-half) 0 $gutter/6 0;
+    &:first-child {
+      padding-top: $gutter/6;
+    }
+  }
+  dd {
+    margin: 5px 0 0 0;
+    @include bold-24;
+    // some bits of metadata are included inside of other tags which have a 
+    // default style of font-weight: normal
+    p, strong {
+      font-weight: bold;
+    }
+    .show-other-content {
+      @include bold-24;
+    }
+  }
+}

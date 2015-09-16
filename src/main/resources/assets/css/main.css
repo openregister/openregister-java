@@ -759,3 +759,89 @@ button:focus,
   background-color: #2372b5; }
   #global-header .header-wrapper {
     background-color: #2372b5; }
+
+.phase-banner {
+  padding: 10px 0 8px 0;
+  border-bottom: 1px solid #bfc1c3;
+  margin-bottom: 30px; }
+  @media (min-width: 641px) {
+    .phase-banner {
+      padding-bottom: 10px; } }
+  .phase-banner p {
+    margin: 0;
+    color: #000;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 400;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      .phase-banner p {
+        font-size: 16px;
+        line-height: 1.25; } }
+  .phase-banner .phase-tag {
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 8px 0 0;
+    padding: 2px 5px 0;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 700;
+    text-transform: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #f47738; }
+    @media (min-width: 641px) {
+      .phase-banner .phase-tag {
+        vertical-align: baseline; } }
+    @media (min-width: 641px) {
+      .phase-banner .phase-tag {
+        font-size: 16px;
+        line-height: 1.25; } }
+  .phase-banner span {
+    vertical-align: top; }
+    @media (min-width: 641px) {
+      .phase-banner span {
+        vertical-align: baseline; } }
+
+.primary-metadata dt {
+  font-family: "nta", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.14286;
+  font-weight: 400;
+  text-transform: none;
+  padding: 20px 0 5px 0; }
+  @media (min-width: 641px) {
+    .primary-metadata dt {
+      font-size: 16px;
+      line-height: 1.25; } }
+  .primary-metadata dt:first-child {
+    padding-top: 5px; }
+
+.primary-metadata dd {
+  margin: 5px 0 0 0;
+  font-family: "nta", Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: none; }
+  @media (min-width: 641px) {
+    .primary-metadata dd {
+      font-size: 24px;
+      line-height: 1.25; } }
+  .primary-metadata dd p, .primary-metadata dd strong {
+    font-weight: bold; }
+  .primary-metadata dd .show-other-content {
+    font-family: "nta", Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      .primary-metadata dd .show-other-content {
+        font-size: 24px;
+        line-height: 1.25; } }
