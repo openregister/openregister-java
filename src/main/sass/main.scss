@@ -1,3 +1,10 @@
+/* libSass doesn’t implement image-url that govuk_template uses so polyfill that */
+
+$image-url-path: '/assets/' !default;
+@function image-url($url) {
+  @return url("#{$image-url-path}#{$url}");
+}
+
 /* Import from govuk_frontend_toolkit */
 
 @import "colours";
@@ -35,5 +42,4 @@ $register: #2372b5;
 
 main {
   @extend %site-width-container;
-//  @include contain-floats;
 }
