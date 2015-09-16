@@ -40,7 +40,7 @@ public class LoaderApplication {
     }
 
     private static Exception printUsageException() throws Exception {
-        return new RuntimeException("Usage: java Loader --mintUrl=<mint-load-url> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>");
+        return new RuntimeException("Usage: java LoaderApplication --mintUrl=<mint-load-url> --datafile=<loadfile.json> --type=<jsonl|tsv|csv>");
     }
 
 }
