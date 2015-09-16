@@ -67,6 +67,6 @@ public class SearchResource {
                 getHttpServletResponse().
                 setHeader("Link", String.format("</%s/%s/history>;rel=\"version-history\"",
                         primaryKey,
-                        entry.getContent().get(primaryKey).textValue()));
+                        entry.getContent().getContent().get(primaryKey).textValue()));
     }
 }

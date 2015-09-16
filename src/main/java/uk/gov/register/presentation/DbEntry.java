@@ -1,25 +1,20 @@
 package uk.gov.register.presentation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-
 public class DbEntry {
-    private final String hash;
-    private final JsonNode jsonContent;
+    private final int serialNumber;
+    private final DbContent dbContent;
 
-    @JsonCreator
-    public DbEntry(@JsonProperty("hash") String hash, @JsonProperty("entry") JsonNode jsonContent) {
-        this.hash = hash;
-        this.jsonContent = jsonContent;
+    public DbEntry(int serialNumber, DbContent dbContent) {
+        this.serialNumber = serialNumber;
+        this.dbContent = dbContent;
     }
 
-    public String getHash() {
-        return hash;
+    public DbContent getContent() {
+        return dbContent;
     }
 
-    public JsonNode getContent() {
-        return jsonContent;
+    public int getSerialNumber() {
+        return serialNumber;
     }
 }
 
