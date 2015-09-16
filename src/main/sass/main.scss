@@ -81,19 +81,29 @@ table {
   border-collapse: collapse;
   border: 1px solid $border-colour;
   width: 100%;
+
   td, th {
     vertical-align: top;
     text-align: left;
     font-family: monospace;
     padding: $gutter-one-third;
   }
-}
 
-th {
-  background-color: $table-header;
-}
+  th {
+    background-color: $table-header;
+  }
 
-tr:nth-child(2n) {
-  background-color: $table-row;
+  tr:nth-child(2n) {
+    background-color: $table-row;
+  }
+
+  &.entry {
+    tr {
+      background-color: $table-header;
+    }
+    th, td {
+      border-bottom: 1px solid $border-colour;
+    }
+  }
 }
 
