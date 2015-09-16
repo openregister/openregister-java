@@ -29,7 +29,7 @@ jar {
 
 task bulkLoad(type: JavaExec) {
     def properties = project.getProperties()
-    def datafile = properties.get("datafile") == null ? null : new File((String) properties.get("datafile")).absolutePath
+    def datafile = properties.get("datafile")
     def mintUrl = properties.get("mintUrl")
     def type = properties.get("type") == null ? "jsonl" : properties.get("type")
 
