@@ -3,7 +3,7 @@ package uk.gov.register.presentation.resource;
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.ListResultView;
+import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
@@ -50,8 +50,8 @@ public class DataResource {
     @GET
     @Path("/feed")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public ListResultView feed() {
-        return viewFactory.getListResultView(
+    public EntryListView feed() {
+        return viewFactory.getEntryFeedView(
                 queryDAO.getAllEntries(ENTRY_LIMIT)
         );
     }
@@ -59,8 +59,8 @@ public class DataResource {
     @GET
     @Path("/current")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public ListResultView current() {
-        return viewFactory.getListResultView(
+    public EntryListView current() {
+        return viewFactory.getRecordEntriesView(
                 queryDAO.getLatestEntriesOfAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)
         );
     }

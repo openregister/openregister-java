@@ -6,12 +6,12 @@
 <header th:replace="main.html::header"></header>
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
-    <h1 th:text="${entries.size()} + ' entries'"></h1>
+    <h1 th:text="${entries.size()} + ' records'"></h1>
     <table id="entries" th:if="${#lists.isEmpty(entries) == false}">
         <thead>
             <tr>
-                <th>Hash</th>
-                <th:block th:each="keyValue : ${entries.get(0).content}">
+                <th th:text="${registerId}">Primary key</th>
+                <th:block th:each="keyValue : ${entries.get(0).nonPrimaryFields}">
                     <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></th>
                 </th:block>
             </tr>
@@ -19,9 +19,9 @@
         <tbody>
         <tr th:each="entry : ${entries}">
             <td>
-                <a th:href="${'/hash/' + entry.hash}" th:text="${entry.hash}"></a>
+                <a th:href="${'/' + registerId + '/' + entry.primaryKey()}" th:text="${entry.primaryKey()}"></a>
             </td>
-            <th:block th:each="keyValue : ${entry.content}">
+            <th:block th:each="keyValue : ${entry.nonPrimaryFields}">
                 <td th:text="${keyValue.value.value()}"></td>
             </th:block>
         </tr>

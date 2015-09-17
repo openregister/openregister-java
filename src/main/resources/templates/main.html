@@ -8,7 +8,7 @@
     <link rel="icon" href="/assets/images/icon.png"/>
     <link rel="apple-touch-icon-precomposed" href="/assets/images/icon.png"/>
 
-    <title th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></title>
+    <title th:text="${friendlyRegisterName}"></title>
     <link rel="stylesheet" href="/assets/css/main.css"/>
 
 </head>
@@ -18,7 +18,7 @@
         <div class="header-global">
             <div class="header-logo">
                 <a id="logo" class="content" href="/"
-                   th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+                   th:text="${friendlyRegisterName}"></a>
             </div>
         </div>
     </div>

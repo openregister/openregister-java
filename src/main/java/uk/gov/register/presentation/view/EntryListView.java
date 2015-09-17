@@ -9,11 +9,11 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 import java.util.List;
 
 @JsonSerialize(using = ListResultJsonSerializer.class)
-public class ListResultView extends ThymeleafView {
+public class EntryListView extends ThymeleafView {
     private final List<EntryView> entries;
 
-    ListResultView(RequestContext requestContext, List<EntryView> entries) {
-        super(requestContext, "entries.html");
+    EntryListView(RequestContext requestContext, List<EntryView> entries, String templateName) {
+        super(requestContext, templateName);
         this.entries = entries;
     }
 

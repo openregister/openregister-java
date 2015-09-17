@@ -2,7 +2,7 @@ package uk.gov.register.presentation.representations;
 
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.EntryView;
-import uk.gov.register.presentation.view.ListResultView;
+import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.SingleEntryView;
 
 import javax.ws.rs.WebApplicationException;
@@ -25,7 +25,7 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return SingleEntryView.class.isAssignableFrom(type) || ListResultView.class.isAssignableFrom(type);
+        return SingleEntryView.class.isAssignableFrom(type) || EntryListView.class.isAssignableFrom(type);
     }
 
     @Override
@@ -34,7 +34,7 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
             writeEntryTo(entityStream, ((SingleEntryView) view).getEntry());
         }
         else {
-            writeEntriesTo(entityStream, ((ListResultView) view).getEntries());
+            writeEntriesTo(entityStream, ((EntryListView) view).getEntries());
         }
     }
 

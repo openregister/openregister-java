@@ -10,7 +10,7 @@
 
     <p class="entry-source">
         An entry in the
-        <a href="/" th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+        <a href="/" th:text="${friendlyRegisterName}"></a>
     </p>
 
     <div th:include="fragments/entry-table.html :: entry-table (content = ${entry.content})"></div>
