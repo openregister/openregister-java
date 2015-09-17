@@ -762,6 +762,9 @@ body {
   background-color: #2372b5; }
   #global-header .header-wrapper {
     background-color: #2372b5; }
+    #global-header .header-wrapper .header-global .header-logo {
+      width: auto;
+      float: none; }
 
 .phase-banner {
   padding: 10px 0 8px 0;

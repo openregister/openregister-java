@@ -41,6 +41,10 @@ body {
   background-color: $register;
   .header-wrapper {
     background-color: $register;
+    .header-global .header-logo {
+      width: auto;
+      float: none;
+    }
   }
 }
 
