@@ -39,7 +39,9 @@ public class ThymeleafView extends View {
 
     @SuppressWarnings("unused, used by templates")
     public String getFriendlyRegisterName() {
-        return StringUtils.capitalize(getRegisterId()) + " register";
+        String registerId = getRegisterId();
+        String registerName = registerId.replace('-',' ');
+        return StringUtils.capitalize(registerName) + " register";
     }
 
     public String getRegisterId() {
