@@ -3,7 +3,7 @@ package uk.gov.register.presentation.representations;
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.view.ListResultView;
-import uk.gov.register.presentation.view.SingleResultView;
+import uk.gov.register.presentation.view.SingleEntryView;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -25,13 +25,13 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return SingleResultView.class.isAssignableFrom(type) || ListResultView.class.isAssignableFrom(type);
+        return SingleEntryView.class.isAssignableFrom(type) || ListResultView.class.isAssignableFrom(type);
     }
 
     @Override
     public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        if (view instanceof SingleResultView) {
-            writeEntryTo(entityStream, ((SingleResultView) view).getEntry());
+        if (view instanceof SingleEntryView) {
+            writeEntryTo(entityStream, ((SingleEntryView) view).getEntry());
         }
         else {
             writeEntriesTo(entityStream, ((ListResultView) view).getEntries());

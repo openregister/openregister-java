@@ -25,7 +25,7 @@ public class TsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        EntryView entry = new EntryView("hash1", "registerName", entryMap);
+        EntryView entry = new EntryView(52, "hash1", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 

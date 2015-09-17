@@ -39,7 +39,7 @@ public class TurtleWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        EntryView entry = new EntryView("abcd", "registerName", entryMap);
+        EntryView entry = new EntryView(52, "abcd", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 

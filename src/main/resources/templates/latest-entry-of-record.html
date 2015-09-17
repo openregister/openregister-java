@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
+<body>
+<header th:replace="main.html::header"></header>
+<main id="main" role="main">
+    <h1 class="entry-header" th:text="'Record ' + ${entry.primaryKey()}">Entry Name Header</h1>
+
+    <p class="entry-source">A record in the <a href="/"
+                                               th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+    </p>
+    <p>The latest entry for this record is:</p>
+
+    <div th:include="fragments/entry-table.html :: entry-table (content = ${entry.content})"></div>
+
+    <div th:include="data-formats.html::data-formats"></div>
+
+    <p>View all versions of this record <a
+            th:href="${@uk.gov.register.presentation.HtmlViewSupport@extractLinkFromLinkHeader(#ctx.httpServletResponse.getHeader('Link'))}">here</a>
+    </p>
+
+    <div th:include="copyright.html::copyright"></div>
+</main>
+<footer th:replace="main.html::footer"></footer>
+</body>
+</html>

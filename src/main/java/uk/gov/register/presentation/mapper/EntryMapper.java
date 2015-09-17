@@ -5,6 +5,7 @@ import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import uk.gov.register.presentation.DbContent;
 import uk.gov.register.presentation.DbEntry;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class EntryMapper implements ResultSetMapper<DbEntry> {
     @Override
     public DbEntry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         try {
-            return objectMapper.readValue(r.getBytes("entry"), DbEntry.class);
+            return new DbEntry(r.getInt("id"), objectMapper.readValue(r.getBytes("entry"), DbContent.class));
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }

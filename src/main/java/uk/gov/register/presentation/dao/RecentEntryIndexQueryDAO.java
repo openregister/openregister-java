@@ -13,21 +13,21 @@ import java.util.Optional;
 @RegisterMapper(EntryMapper.class)
 public interface RecentEntryIndexQueryDAO {
 
-    @SqlQuery("SELECT entry FROM ordered_entry_index ORDER BY id DESC LIMIT :limit")
+    @SqlQuery("SELECT id,entry FROM ordered_entry_index ORDER BY id DESC LIMIT :limit")
     List<DbEntry> getAllEntries(@Bind("limit") int maxNumberToFetch);
 
-    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC limit 1")
+    @SqlQuery("SELECT id,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC limit 1")
     @SingleValueResult(DbEntry.class)
     Optional<DbEntry> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
-    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC")
+    @SqlQuery("SELECT id,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC")
     List<DbEntry> findAllByKeyValue(@Bind("key") String key, @Bind("value") String value);
 
-    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
+    @SqlQuery("SELECT id,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
     @SingleValueResult(DbEntry.class)
     Optional<DbEntry> findByHash(@Bind("hash") String hash);
 
-    @SqlQuery("SELECT entry FROM ordered_entry_index WHERE id = :serial")
+    @SqlQuery("SELECT id,entry FROM ordered_entry_index WHERE id = :serial")
     @SingleValueResult(DbEntry.class)
     Optional<DbEntry> findBySerial(@Bind("serial") int serial);
 

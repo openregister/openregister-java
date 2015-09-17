@@ -27,8 +27,8 @@ public class HistoryTest extends FunctionalTestBase {
 
         JSONAssert.assertEquals(
                 "[" +
-                        "{\"hash\":\"hash4\"}," +
-                        "{\"hash\":\"hash1\"}" +
+                        "{\"serial-number\":4,\"hash\":\"hash4\"}," +
+                        "{\"serial-number\":1,\"hash\":\"hash1\"}" +
                         "]",
                 response.readEntity(String.class),
                 JSONCompareMode.STRICT_ORDER

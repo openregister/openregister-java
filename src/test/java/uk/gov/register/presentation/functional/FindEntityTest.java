@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.functional;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
@@ -10,7 +9,6 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
-
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -47,12 +45,15 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void findByHash_shouldReturnEntryForTheGivenHash() throws IOException {
+    public void findByHash_shouldReturnEntryForTheGivenHash() throws Exception {
         Response response = getRequest("/hash/hash2.json");
 
         assertThat(response.getHeaderString("Link"), equalTo("</address/6789/history>;rel=\"version-history\""));
-        assertThat(OBJECT_MAPPER.readValue(response.readEntity(String.class), JsonNode.class),
-                equalTo(OBJECT_MAPPER.readValue("{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}", JsonNode.class)));
+        JSONAssert.assertEquals("{" +
+                "\"serial-number\":2," +
+                "\"hash\":\"hash2\"," +
+                "\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}"
+                , response.readEntity(String.class), false);
     }
 
     @Test
@@ -74,11 +75,16 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void current_shouldReturnAllCurrentVersionsOnly() throws InterruptedException, IOException {
+    public void current_shouldReturnAllCurrentVersionsOnly() throws Exception {
         Response response = getRequest("/current.json");
 
         String jsonResponse = response.readEntity(String.class);
-        assertThat(OBJECT_MAPPER.readValue(jsonResponse, JsonNode.class),
-                equalTo(OBJECT_MAPPER.readValue("[{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}},{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}},{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}]", JsonNode.class)));
+        JSONAssert.assertEquals(jsonResponse,
+                "[" +
+                        "{\"serial-number\":2,\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}," +
+                        "{\"serial-number\":3,\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}," +
+                        "{\"serial-number\":1,\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}" +
+                        "]"
+                , false);
     }
 }

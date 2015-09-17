@@ -26,7 +26,7 @@ public class EntryConverterTest {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         JsonNode jsonNode = objectMapper.readValue("{\"registry\":\"somevalue\"}", JsonNode.class);
 
-        EntryView entryView = entryConverter.convert(new DbEntry("somehash", jsonNode));
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
 
         assertThat(((LinkValue) entryView.getField("registry")).link(), equalTo("http://public-body.openregister.org/public-body/somevalue"));
     }

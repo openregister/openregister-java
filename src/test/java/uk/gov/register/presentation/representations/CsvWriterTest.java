@@ -26,7 +26,7 @@ public class CsvWriterTest {
                 );
 
 
-        EntryView entry = new EntryView("hash1", "registerName", entryMap);
+        EntryView entry = new EntryView(52, "hash1", "registerName", entryMap);
 
         TestOutputStream entityStream = new TestOutputStream();
 

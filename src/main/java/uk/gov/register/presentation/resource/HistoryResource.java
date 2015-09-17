@@ -32,7 +32,7 @@ public class HistoryResource {
     public ListVersionView history(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
-            return new ListVersionView(requestContext, queryDAO.findAllByKeyValue(key, value).stream().map(r -> new Version(r.getHash())).collect(Collectors.toList()));
+            return new ListVersionView(requestContext, queryDAO.findAllByKeyValue(key, value).stream().map(r -> new Version(r.getSerialNumber(), r.getContent().getHash())).collect(Collectors.toList()));
         }
         throw new NotFoundException();
     }
@@ -42,7 +42,7 @@ public class HistoryResource {
         private final List<Version> versions;
 
         public ListVersionView(RequestContext requestContext, List<Version> versions) {
-            super(requestContext, "versions.html");
+            super(requestContext, "history.html");
             this.versions = versions;
         }
 
