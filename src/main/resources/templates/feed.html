@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
+<body>
+<header th:replace="main.html::header"></header>
+<main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
+    <h1 th:text="${entries.size()} + ' entries'"></h1>
+    <table id="entries" th:if="${#lists.isEmpty(entries) == false}">
+        <thead>
+        <tr>
+            <th>hash</th>
+            <th:block th:each="keyValue : ${entries.get(0).content}">
+                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></th>
+            </th:block>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${entries}">
+            <td>
+                <a th:href="${'/hash/' + entry.hash}" th:text="${entry.hash}"></a>
+            </td>
+            <th:block th:each="keyValue : ${entry.content}">
+                <td th:text="${keyValue.value.value()}"></td>
+            </th:block>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:include="data-formats.html::data-formats"></div>
+</main>
+
+<footer th:replace="main.html::footer"></footer>
+</body>
+</html>

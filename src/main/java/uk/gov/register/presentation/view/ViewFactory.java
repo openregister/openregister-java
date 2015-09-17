@@ -29,8 +29,18 @@ public class ViewFactory {
         return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), "latest-entry-of-record.html");
     }
 
-    public ListResultView getListResultView(List<DbEntry> allDbEntries) {
-        return new ListResultView(requestContext, allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()));
+    public EntryListView getEntryFeedView(List<DbEntry> allDbEntries) {
+        return new EntryListView(requestContext,
+                allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
+                "feed.html"
+        );
+    }
+
+    public EntryListView getRecordEntriesView(List<DbEntry> allDbEntries) {
+        return new EntryListView(requestContext,
+                allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
+                "current.html"
+        );
     }
 
     public ThymeleafView thymeleafView(String templateName) {
