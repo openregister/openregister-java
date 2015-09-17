@@ -33,6 +33,10 @@ $image-url-path: '/assets/' !default;
 
 $register: #2372b5;
 
+body {
+  font-family: $Helvetica-Regular;
+}
+
 #global-header {
   background-color: $register;
   .header-wrapper {
