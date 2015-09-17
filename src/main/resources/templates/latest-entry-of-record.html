@@ -9,7 +9,7 @@
     <h1 class="entry-header" th:text="'Record ' + ${entry.primaryKey()}">Entry Name Header</h1>
 
     <p class="entry-source">A record in the <a href="/"
-                                               th:text="${@uk.gov.register.presentation.RegisterNameExtractor@capitalizedRegisterName(#httpServletRequest.getHeader('Host')) + ' register'}"></a>
+                                               th:text="${friendlyRegisterName}"></a>
     </p>
     <p>The latest entry for this record is:</p>
 

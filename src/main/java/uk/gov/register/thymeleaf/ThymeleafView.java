@@ -1,6 +1,8 @@
 package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
+import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.presentation.RegisterNameExtractor;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -33,6 +35,15 @@ public class ThymeleafView extends View {
         String[] names = templateName.split("/");
 
         return names[names.length - 1];
+    }
+
+    @SuppressWarnings("unused, used by templates")
+    public String getFriendlyRegisterName() {
+        return StringUtils.capitalize(getRegisterId()) + " register";
+    }
+
+    public String getRegisterId() {
+        return RegisterNameExtractor.extractRegisterName(requestContext.getHttpServletRequest().getHeader("Host"));
     }
 
     public ServletContext getServletContext() {
