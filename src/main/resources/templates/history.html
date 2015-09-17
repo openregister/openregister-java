@@ -5,15 +5,16 @@
 <body>
 <header th:replace="main.html::header"></header>
 <main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
 
-<div class="row">
-    <div class="small-12 large-12 columns">
-        <table id="version-table">
-            <tbody id="entry-table">
+    <table>
+        <thead>
             <tr>
-                <th>serial number</th>
-                <th>hash</th>
+                <th>Serial number</th>
+                <th>Hash</th>
             </tr>
+        </thead>
+        <tbody>
             <tr th:each="version : ${versions}">
                 <td>
                     <a th:href="${'/entry/' + version.serialNumber}" th:text="${version.serialNumber}"></a>
@@ -22,13 +23,10 @@
                     <a th:href="${'/hash/' + version.hash}" th:text="${version.hash}"></a>
                 </td>
             </tr>
-            </tbody>
-        </table>
-    </div>
-    <!-- /.columns -->
-</div>
-<br/>
-<div th:include="copyright.html::copyright"></div>
+        </tbody>
+    </table>
+
+    <div th:include="copyright.html::copyright"></div>
 </main>
 <footer th:replace="main.html::footer"></footer>
 </body>
