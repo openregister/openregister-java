@@ -10,7 +10,7 @@
     <table id="entries" th:if="${#lists.isEmpty(entries) == false}">
         <thead>
         <tr>
-            <th>hash</th>
+            <th>Entry</th>
             <th:block th:each="keyValue : ${entries.get(0).content}">
                 <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></th>
             </th:block>
@@ -19,7 +19,7 @@
         <tbody>
         <tr th:each="entry : ${entries}">
             <td>
-                <a th:href="${'/hash/' + entry.hash}" th:text="${entry.hash}"></a>
+                <a th:href="${'/entry/' + entry.serialNumber}" th:text="${entry.serialNumber}"></a>
             </td>
             <th:block th:each="keyValue : ${entry.content}">
                 <td th:text="${keyValue.value.value()}"></td>
