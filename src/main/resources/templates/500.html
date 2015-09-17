@@ -5,14 +5,12 @@
 <body>
 <header th:replace="main.html::header"></header>
 
-<label style="font-family: Helvetica, Arial; font-weight: bold; font-size: 2.50rem;">Oops, looks like something went wrong</label>
-<br/>
-<br/>
-<label style="font-family: Helvetica, Arial; font-size: 5.00rem;">500</label>
-<br/>
-<br/>
-
-<div th:include="copyright.html::copyright"></div>
+<main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
+    <h1>Oops, looks like something went wrong</h1>
+    <p>500</p>
+    <div th:include="copyright.html::copyright"></div>
+</main>
 
 <footer th:replace="main.html::footer"></footer>
 </body>

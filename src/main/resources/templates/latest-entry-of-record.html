@@ -5,6 +5,7 @@
 <body>
 <header th:replace="main.html::header"></header>
 <main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
     <h1 class="entry-header" th:text="'Record ' + ${entry.primaryKey()}">Entry Name Header</h1>
 
     <p class="entry-source">A record in the <a href="/"

@@ -9,12 +9,12 @@
     <h1 th:text="${entries.size()} + ' entries'"></h1>
     <table id="entries" th:if="${#lists.isEmpty(entries) == false}">
         <thead>
-        <tr>
-            <th>hash</th>
-            <th:block th:each="keyValue : ${entries.get(0).content}">
-                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></th>
-            </th:block>
-        </tr>
+            <tr>
+                <th>Hash</th>
+                <th:block th:each="keyValue : ${entries.get(0).content}">
+                    <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></th>
+                </th:block>
+            </tr>
         </thead>
         <tbody>
         <tr th:each="entry : ${entries}">

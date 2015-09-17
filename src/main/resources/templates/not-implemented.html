@@ -5,16 +5,12 @@
 <body>
 <header th:replace="main.html::header"></header>
 
-<div class="row">
-    <div class="small-12 large-8 columns">
-        <main>
-            <h1>This page has not been implemented</h1>
-
-            <p>We haven't prioritised this work yet. If you are interested in this feature, please let us know so we can
+<main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
+    <h1>This page has not been implemented</h1>
+    <p>We haven’t prioritised this work yet. If you are interested in this feature, please let us know so we can
                 adjust our priorities.</p>
-        </main>
-    </div>
-</div>
+</main>
 
 <footer th:replace="main.html::footer"></footer>
 
