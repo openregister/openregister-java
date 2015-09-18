@@ -35,17 +35,12 @@ task bulkLoad(type: JavaExec) {
 
     main = 'uk.gov.admin.LoaderApplication'
     classpath = sourceSets.main.runtimeClasspath
-    args = ["--datafile=${normalizeDataFilePath(datafile)}", "--mintUrl=$mintUrl", "--type=$type"]
+    args = ["--datafile=$datafile", "--mintUrl=$mintUrl", "--type=$type"]
+    workingDir = System.getProperty("user.dir") // run the task from the user's cwd
 
     doFirst{
         if (datafile == null || mintUrl == null) {
             throw new AssertionError("Missing required parameters -Pdatafile and -PmintUrl.\n\nUsage: gradle bulkLoad -PmintUrl=<mintUrl> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]")
         }
     }
-}
-
-String normalizeDataFilePath(String dataFile) {
-    dataFile?.startsWith("http://") || dataFile?.startsWith("https://") ?
-            dataFile :
-            new File(dataFile.toString()).absolutePath
 }
