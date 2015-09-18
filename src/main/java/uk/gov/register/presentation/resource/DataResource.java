@@ -52,7 +52,7 @@ public class DataResource {
     @Path("/feed")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView feed(@QueryParam("pageIndex") long pageIndex, @QueryParam("pageSize") long pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalEntriesCount());
+        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getEstimatedEntriesCount());
 
         List<DbEntry> entries = queryDAO.getAllEntries(pagination.pageSize(), pagination.offset());
 

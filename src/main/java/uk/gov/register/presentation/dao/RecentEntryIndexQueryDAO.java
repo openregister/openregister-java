@@ -41,5 +41,5 @@ public interface RecentEntryIndexQueryDAO {
                                             @Bind("limit") long maxNumberToFetch);
 
     @SqlQuery("SELECT reltuples\\:\\:bigint FROM pg_class where relname='ordered_entry_index'")
-    long getTotalEntriesCount();
+    long getEstimatedEntriesCount();
 }
