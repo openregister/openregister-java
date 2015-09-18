@@ -38,8 +38,8 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     private String renderEntry(EntryView entry, Set<String> fields) {
-        URI hashUri = uri(entry.getSerialNumber());
-        String entity = String.format("<%s>\n", hashUri);
+        URI entryUri = uri(entry.getSerialNumber());
+        String entity = String.format("<%s>\n", entryUri);
         return fields.stream()
                 .map(field -> renderField(entry, field))
                 .collect(Collectors.joining(" ;\n", entity, " ."));
