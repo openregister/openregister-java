@@ -41,10 +41,4 @@ public class HtmlViewSupportTest {
         String link = HtmlViewSupport.representationLink(servletRequest, "html");
         assertThat(link, equalTo("/hash/hashvalue?query=value"));
     }
-
-    @Test
-    public void extractLinkFromLinkHeader_extractsTheLinkFromHeader() {
-        String link = HtmlViewSupport.extractLinkFromLinkHeader("</school/12345/history>;rel=\"version-history\"");
-        assertThat(link, equalTo("/school/12345/history"));
-    }
 }

@@ -5,7 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.presentation.DbEntry;
+import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
@@ -18,8 +21,9 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
 public class DataResourceTest {
     @Mock
@@ -28,16 +32,22 @@ public class DataResourceTest {
     @Mock
     RequestContext requestContext;
 
+    @Mock
+    RecentEntryIndexQueryDAO queryDAO;
+
+    @Mock
+    ViewFactory viewFactory;
+
     DataResource dataResource;
 
     @Before
     public void setUp() throws Exception {
-        dataResource = new DataResource(null, requestContext, null);
+        dataResource = new DataResource(viewFactory, requestContext, queryDAO);
     }
 
     @Test
     public void feedSupportsJsonCsvTsv() throws Exception {
-        Method feedMethod = DataResource.class.getDeclaredMethod("feed");
+        Method feedMethod = DataResource.class.getDeclaredMethod("feed", long.class, long.class);
         List<String> declaredMediaTypes = asList(feedMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
@@ -49,7 +59,7 @@ public class DataResourceTest {
 
     @Test
     public void currentSupportsJsonCsvTsvHtmlAndTurtle() throws Exception {
-        Method allMethod = DataResource.class.getDeclaredMethod("current");
+        Method allMethod = DataResource.class.getDeclaredMethod("current", long.class, long.class);
         List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
@@ -58,6 +68,32 @@ public class DataResourceTest {
                 ExtraMediaType.TEXT_TSV,
                 ExtraMediaType.TEXT_TTL
         ));
+    }
+
+    @Test
+    public void current_defaultsTo100EntriesWhenPageSizeIsZero() {
+
+        List<DbEntry> dbEntries = mock(List.class);
+
+        when(requestContext.getRegisterPrimaryKey()).thenReturn("foo");
+
+        when(queryDAO.getLatestEntriesOfRecords("foo", 100, 0)).thenReturn(dbEntries);
+
+        dataResource.current(1l, 0l);
+
+        verify(viewFactory).getRecordEntriesView(dbEntries);
+    }
+
+    @Test
+    public void feed_defaultsTo100EntriesWhenPageSizeIsZero() {
+
+        List<DbEntry> dbEntries = mock(List.class);
+
+        when(queryDAO.getAllEntries(100, 0)).thenReturn(dbEntries);
+
+        dataResource.feed(1l, 0l);
+
+        verify(viewFactory).getEntryFeedView(dbEntries);
     }
 
     @Test

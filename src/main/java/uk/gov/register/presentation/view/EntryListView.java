@@ -20,4 +20,12 @@ public class EntryListView extends ThymeleafView {
     public List<EntryView> getEntries() {
         return entries;
     }
+
+    public String getPreviousPage() {
+        return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("previous");
+    }
+
+    public String getNextPage() {
+        return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("next");
+    }
 }

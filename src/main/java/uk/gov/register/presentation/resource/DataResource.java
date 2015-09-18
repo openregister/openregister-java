@@ -1,19 +1,20 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
+import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/")
 public class DataResource {
@@ -50,19 +51,31 @@ public class DataResource {
     @GET
     @Path("/feed")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView feed() {
-        return viewFactory.getEntryFeedView(
-                queryDAO.getAllEntries(ENTRY_LIMIT)
-        );
+    public EntryListView feed(@QueryParam("pageIndex") long pageIndex, @QueryParam("pageSize") long pageSize) {
+        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalEntriesCount());
+
+        List<DbEntry> entries = queryDAO.getAllEntries(pagination.pageSize(), pagination.offset());
+
+        setNextAndPreviousPageLinkHeader("feed", pagination);
+
+        return viewFactory.getEntryFeedView(entries);
     }
 
     @GET
     @Path("/current")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView current() {
-        return viewFactory.getRecordEntriesView(
-                queryDAO.getLatestEntriesOfAllRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT)
+    public EntryListView current(@QueryParam("pageIndex") long pageIndex, @QueryParam("pageSize") long pageSize) {
+        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalEntriesCount());
+
+        List<DbEntry> entries = queryDAO.getLatestEntriesOfRecords(
+                requestContext.getRegisterPrimaryKey(),
+                pagination.pageSize(),
+                pagination.offset()
         );
+
+        setNextAndPreviousPageLinkHeader("current", pagination);
+
+        return viewFactory.getRecordEntriesView(entries);
     }
 
     @GET
@@ -75,6 +88,25 @@ public class DataResource {
     @Path("/latest")
     public Response latest() {
         return create301Response("feed");
+    }
+
+    private void setNextAndPreviousPageLinkHeader(String resource, Pagination pagination) {
+        List<String> headerValues = new ArrayList<>();
+
+        if (pagination.hasNextPage()) {
+            headerValues.add("</" + resource +
+                    "?pageIndex=" + (pagination.nextPageNumber()) + "&pageSize=" + pagination.pageSize() + ">; rel=\"next\"");
+        }
+
+        if (pagination.hasPreviousPage()) {
+            headerValues.add("</" +
+                    resource +
+                    "?pageIndex=" + (pagination.previousPageNumber()) + "&pageSize=" + pagination.pageSize() + ">; rel=\"previous\"");
+        }
+
+        if (!headerValues.isEmpty()) {
+            requestContext.getHttpServletResponse().setHeader("Link", String.join(",", headerValues));
+        }
     }
 
     private Response create301Response(String locationMethod) {

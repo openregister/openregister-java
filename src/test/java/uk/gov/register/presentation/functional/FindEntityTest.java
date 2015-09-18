@@ -1,8 +1,6 @@
 package uk.gov.register.presentation.functional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,8 +14,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FindEntityTest extends FunctionalTestBase {
 
-    public static ObjectMapper OBJECT_MAPPER;
-
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
@@ -25,7 +21,6 @@ public class FindEntityTest extends FunctionalTestBase {
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"
         ));
-        OBJECT_MAPPER = Jackson.newObjectMapper();
     }
 
     @Test
@@ -57,16 +52,7 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void all_movedPermanentlyToCurrentSoReturns301() throws InterruptedException, IOException {
-        Response response = getRequest("/all.json");
-
-        assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/current.json"));
-
-    }
-
-    @Test
-    public void latest_movedPermanentlyToCurrentSoReturns301() throws InterruptedException, IOException {
+    public void latest_movedPermanentlyToFeedSoReturns301() throws InterruptedException, IOException {
         Response response = getRequest("/latest.json");
 
         assertThat(response.getStatus(), equalTo(301));
@@ -74,17 +60,5 @@ public class FindEntityTest extends FunctionalTestBase {
 
     }
 
-    @Test
-    public void current_shouldReturnAllCurrentVersionsOnly() throws Exception {
-        Response response = getRequest("/current.json");
 
-        String jsonResponse = response.readEntity(String.class);
-        JSONAssert.assertEquals(jsonResponse,
-                "[" +
-                        "{\"serial-number\":2,\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}," +
-                        "{\"serial-number\":3,\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}," +
-                        "{\"serial-number\":1,\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}" +
-                        "]"
-                , false);
-    }
 }
