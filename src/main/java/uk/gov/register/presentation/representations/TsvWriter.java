@@ -16,14 +16,14 @@ public class TsvWriter extends RepresentationWriter {
     @Override
     protected void writeEntriesTo(OutputStream entityStream, List<EntryView> entries) throws IOException, WebApplicationException {
         List<String> fields = newArrayList(entries.get(0).allFields());
-        entityStream.write(("hash\t" + String.join("\t", fields) + "\n").getBytes("utf-8"));
+        entityStream.write(("entry\t" + String.join("\t", fields) + "\n").getBytes("utf-8"));
         for (EntryView entry : entries) {
             writeRow(entityStream, fields, entry);
         }
     }
 
     private void writeRow(OutputStream entityStream, List<String> fields, EntryView entry) throws IOException {
-        String row = fields.stream().map(field -> entry.getField(field).value()).collect(Collectors.joining("\t", entry.getHash() + "\t", "\n"));
+        String row = fields.stream().map(field -> entry.getField(field).value()).collect(Collectors.joining("\t", entry.getSerialNumber() + "\t", "\n"));
         entityStream.write(row.getBytes("utf-8"));
     }
 }

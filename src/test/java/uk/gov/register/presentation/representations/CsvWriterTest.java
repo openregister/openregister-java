@@ -32,6 +32,6 @@ public class CsvWriterTest {
 
         csvWriter.writeEntriesTo(entityStream, Collections.singletonList(entry));
 
-        assertThat(entityStream.contents, equalTo("hash,key1,key2,key3,key4\r\nhash1,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
+        assertThat(entityStream.contents, equalTo("entry,key1,key2,key3,key4\r\n52,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
     }
 }

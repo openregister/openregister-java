@@ -35,6 +35,8 @@ public class RepresentationsTest extends FunctionalTestBase {
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
+                {"csv", "text/csv;charset=utf-8", fixture("fixtures/single.csv"), fixture("fixtures/list.csv")},
+                {"tsv", "text/tab-separated-values;charset=utf-8", fixture("fixtures/single.tsv"), fixture("fixtures/list.tsv")},
                 {"ttl", "text/turtle;charset=utf-8", fixture("fixtures/single.ttl"), fixture("fixtures/list.ttl")},
                 {"yaml", "text/yaml;charset=utf-8", fixture("fixtures/single.yaml"), fixture("fixtures/list.yaml")}
         });
@@ -49,7 +51,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @Test
     public void representationIsSupportedForSingleEntryView() {
-        Response response = getRequest("/hash/someHash1." + extension);
+        Response response = getRequest("/entry/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
