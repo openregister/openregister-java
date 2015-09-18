@@ -13,7 +13,7 @@ class Pagination {
     }
 
     long offset() {
-        return pageIndex - 1;
+        return (pageIndex - 1) * pageSize;
     }
 
     public boolean hasNextPage() {

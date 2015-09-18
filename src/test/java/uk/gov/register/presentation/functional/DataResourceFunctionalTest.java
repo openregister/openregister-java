@@ -16,9 +16,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class FeedResourceTest extends FunctionalTestBase {
-
-    //TODO: resolve data loading duplication in all tests
+public class DataResourceFunctionalTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
@@ -26,30 +24,6 @@ public class FeedResourceTest extends FunctionalTestBase {
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"
         ));
-    }
-
-    @Test
-    public void feed_returnsNextAndPreviousPageLinkHeadersWhenAvailable() {
-        Map<String, String> relToLinkMap = createRelToLinkMap(getRequest("/feed.json?pageIndex=1&pageSize=3"));
-        assertThat(relToLinkMap.size(), equalTo(0));
-
-        String requestUrl = "/feed.json?pageIndex=1&pageSize=1";
-        relToLinkMap = createRelToLinkMap(getRequest(requestUrl));
-        assertThat(relToLinkMap.size(), equalTo(1));
-        assertThat(relToLinkMap.get("next"), equalTo("/feed?pageIndex=2&pageSize=1"));
-
-        requestUrl = "/feed.json?pageIndex=2&pageSize=1";
-        relToLinkMap = createRelToLinkMap(getRequest(requestUrl));
-        assertThat(relToLinkMap.size(), equalTo(2));
-        assertThat(relToLinkMap.get("next"), equalTo("/feed?pageIndex=3&pageSize=1"));
-        assertThat(relToLinkMap.get("previous"), equalTo("/feed?pageIndex=1&pageSize=1"));
-
-
-        requestUrl = "/feed.json?pageIndex=3&pageSize=1";
-        relToLinkMap = createRelToLinkMap(getRequest(requestUrl));
-        assertThat(relToLinkMap.size(), equalTo(1));
-        assertThat(relToLinkMap.get("previous"), equalTo("/feed?pageIndex=2&pageSize=1"));
-
     }
 
     @Test
@@ -72,6 +46,15 @@ public class FeedResourceTest extends FunctionalTestBase {
 
         assertThat(response.getStatus(), equalTo(301));
         assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/current.json"));
+
+    }
+
+    @Test
+    public void latest_movedPermanentlyToFeedSoReturns301() throws InterruptedException, IOException {
+        Response response = getRequest("/latest.json");
+
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/feed.json"));
 
     }
 

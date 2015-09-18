@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,15 +49,4 @@ public class FindEntityTest extends FunctionalTestBase {
                 "\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}"
                 , response.readEntity(String.class), false);
     }
-
-    @Test
-    public void latest_movedPermanentlyToFeedSoReturns301() throws InterruptedException, IOException {
-        Response response = getRequest("/latest.json");
-
-        assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/feed.json"));
-
-    }
-
-
 }

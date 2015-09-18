@@ -40,7 +40,6 @@ public interface RecentEntryIndexQueryDAO {
     List<DbEntry> getLatestEntriesOfRecords(@Bind("key") String name,
                                             @Bind("limit") long maxNumberToFetch);
 
-    //TODO: change this query as it will die in large registers
-    @SqlQuery("SELECT COUNT(*) FROM ORDERED_ENTRY_INDEX")
+    @SqlQuery("SELECT reltuples\\:\\:bigint FROM pg_class where relname='ordered_entry_index'")
     long getTotalEntriesCount();
 }
