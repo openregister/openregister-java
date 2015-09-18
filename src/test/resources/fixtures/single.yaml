@@ -2,6 +2,6 @@
 serial-number: 1
 hash: "someHash1"
 entry:
-  area: "value1"
   address: "12345"
+  area: "value1"
   name: "The Entry 1"
