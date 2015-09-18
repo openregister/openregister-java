@@ -49,7 +49,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @Test
     public void representationIsSupportedForSingleEntryView() {
-        Response response = getRequest("/hash/someHash1." + extension);
+        Response response = getRequest("/entry/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));

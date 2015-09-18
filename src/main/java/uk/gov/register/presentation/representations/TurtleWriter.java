@@ -38,7 +38,7 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     private String renderEntry(EntryView entry, Set<String> fields) {
-        URI hashUri = uri(entry.getHash());
+        URI hashUri = uri(entry.getSerialNumber());
         String entity = String.format("<%s>\n", hashUri);
         return fields.stream()
                 .map(field -> renderField(entry, field))
@@ -54,7 +54,7 @@ public class TurtleWriter extends RepresentationWriter {
         }
     }
 
-    private URI uri(String hash) {
-        return UriBuilder.fromUri(requestContext.requestUrl()).replacePath(null).path("hash").path(hash).build();
+    private URI uri(int serialNumber) {
+        return UriBuilder.fromUri(requestContext.requestUrl()).replacePath(null).path("entry").path(Integer.toString(serialNumber)).build();
     }
 }
