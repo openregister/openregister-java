@@ -24,6 +24,7 @@ public class SingleEntryView extends ThymeleafView {
         return entryView;
     }
 
+    @SuppressWarnings("unused")
     public String versionHistoryLink(){
         return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("version-history");
     }

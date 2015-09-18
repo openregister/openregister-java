@@ -28,7 +28,8 @@
         </tbody>
     </table>
 
-    <div th:include="paging.html::paging"></div>
+    <a th:if="${previousPage}" th:href="${previousPage}"> previousPage</a>
+    <a th:if="${nextPage}" th:href="${nextPage}"> nextPage</a>
 
     <div th:include="data-formats.html::data-formats"></div>
 </main>

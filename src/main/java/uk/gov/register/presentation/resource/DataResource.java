@@ -64,18 +64,8 @@ public class DataResource {
     @GET
     @Path("/current")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView current(@QueryParam("pageIndex") long pageIndex, @QueryParam("pageSize") long pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalEntriesCount());
-
-        List<DbEntry> entries = queryDAO.getLatestEntriesOfRecords(
-                requestContext.getRegisterPrimaryKey(),
-                pagination.pageSize(),
-                pagination.offset()
-        );
-
-        setNextAndPreviousPageLinkHeader("current", pagination);
-
-        return viewFactory.getRecordEntriesView(entries);
+    public EntryListView current() {
+        return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(requestContext.getRegisterPrimaryKey(),ENTRY_LIMIT));
     }
 
     @GET

@@ -59,7 +59,7 @@ public class DataResourceTest {
 
     @Test
     public void currentSupportsJsonCsvTsvHtmlAndTurtle() throws Exception {
-        Method allMethod = DataResource.class.getDeclaredMethod("current", long.class, long.class);
+        Method allMethod = DataResource.class.getDeclaredMethod("current");
         List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
@@ -68,20 +68,6 @@ public class DataResourceTest {
                 ExtraMediaType.TEXT_TSV,
                 ExtraMediaType.TEXT_TTL
         ));
-    }
-
-    @Test
-    public void current_defaultsTo100EntriesWhenPageSizeIsZero() {
-
-        List<DbEntry> dbEntries = mock(List.class);
-
-        when(requestContext.getRegisterPrimaryKey()).thenReturn("foo");
-
-        when(queryDAO.getLatestEntriesOfRecords("foo", 100, 0)).thenReturn(dbEntries);
-
-        dataResource.current(1l, 0l);
-
-        verify(viewFactory).getRecordEntriesView(dbEntries);
     }
 
     @Test

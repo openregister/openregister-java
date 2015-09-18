@@ -21,10 +21,12 @@ public class EntryListView extends ThymeleafView {
         return entries;
     }
 
+    @SuppressWarnings("unused, used from templates")
     public String getPreviousPage() {
         return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("previous");
     }
 
+    @SuppressWarnings("unused, used from templates")
     public String getNextPage() {
         return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("next");
     }

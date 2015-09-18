@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class CurrentEntriesResourceTest extends FunctionalTestBase {
+public class FeedResourceTest extends FunctionalTestBase {
 
     //TODO: resolve data loading duplication in all tests
     @BeforeClass
@@ -49,30 +49,6 @@ public class CurrentEntriesResourceTest extends FunctionalTestBase {
         relToLinkMap = createRelToLinkMap(getRequest(requestUrl));
         assertThat(relToLinkMap.size(), equalTo(1));
         assertThat(relToLinkMap.get("previous"), equalTo("/feed?pageIndex=2&pageSize=1"));
-
-    }
-
-    @Test
-    public void current_returnsNextAndPreviousPageLinkHeadersWhenAvailable() {
-        Map<String, String> relToLinkMap = createRelToLinkMap(getRequest("/current.json?pageIndex=1&pageSize=3"));
-        assertThat(relToLinkMap.size(), equalTo(0));
-
-        String requestUrl = "/current.json?pageIndex=1&pageSize=1";
-        relToLinkMap = createRelToLinkMap(getRequest(requestUrl));
-        assertThat(relToLinkMap.size(), equalTo(1));
-        assertThat(relToLinkMap.get("next"), equalTo("/current?pageIndex=2&pageSize=1"));
-
-        requestUrl = "/current.json?pageIndex=2&pageSize=1";
-        relToLinkMap = createRelToLinkMap(getRequest(requestUrl));
-        assertThat(relToLinkMap.size(), equalTo(2));
-        assertThat(relToLinkMap.get("next"), equalTo("/current?pageIndex=3&pageSize=1"));
-        assertThat(relToLinkMap.get("previous"), equalTo("/current?pageIndex=1&pageSize=1"));
-
-
-        requestUrl = "/current.json?pageIndex=3&pageSize=1";
-        relToLinkMap = createRelToLinkMap(getRequest(requestUrl));
-        assertThat(relToLinkMap.size(), equalTo(1));
-        assertThat(relToLinkMap.get("previous"), equalTo("/current?pageIndex=2&pageSize=1"));
 
     }
 

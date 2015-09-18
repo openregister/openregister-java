@@ -36,10 +36,9 @@ public interface RecentEntryIndexQueryDAO {
             "FROM ordered_entry_index " +
             "GROUP BY (entry #>> ARRAY['entry',:key])) AS ii " +
             "WHERE i.id = ii.id " +
-            "ORDER BY (entry #>> ARRAY['entry',:key]) DESC LIMIT :limit OFFSET :offset")
+            "ORDER BY (entry #>> ARRAY['entry',:key]) DESC LIMIT :limit")
     List<DbEntry> getLatestEntriesOfRecords(@Bind("key") String name,
-                                            @Bind("limit") long maxNumberToFetch,
-                                            @Bind("offset") long offset);
+                                            @Bind("limit") long maxNumberToFetch);
 
     //TODO: change this query as it will die in large registers
     @SqlQuery("SELECT COUNT(*) FROM ORDERED_ENTRY_INDEX")
