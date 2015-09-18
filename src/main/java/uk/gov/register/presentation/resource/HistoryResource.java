@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -37,7 +38,6 @@ public class HistoryResource {
         throw new NotFoundException();
     }
 
-    @JsonSerialize(using = ListVersionViewJsonSerializer.class)
     public static class ListVersionView extends ThymeleafView {
         private final List<Version> versions;
 
@@ -46,16 +46,9 @@ public class HistoryResource {
             this.versions = versions;
         }
 
+        @JsonValue
         public List<Version> getVersions() {
             return versions;
-        }
-    }
-
-    private static class ListVersionViewJsonSerializer extends JsonSerializer<ListVersionView> {
-        @Override
-        public void serialize(ListVersionView listVersion, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            JsonSerializer<Object> listSerializer = serializers.findValueSerializer(List.class);
-            listSerializer.serialize(listVersion.getVersions(), gen, serializers);
         }
     }
 }
