@@ -17,14 +17,14 @@ public class CsvWriter extends RepresentationWriter {
     @Override
     protected void writeEntriesTo(OutputStream entityStream, List<EntryView> entries) throws IOException, WebApplicationException {
         List<String> fields = newArrayList(entries.get(0).allFields());
-        entityStream.write(("hash," + String.join(",", fields) + "\r\n").getBytes("utf-8"));
+        entityStream.write(("entry," + String.join(",", fields) + "\r\n").getBytes("utf-8"));
         for (EntryView entry : entries) {
             writeRow(entityStream, fields, entry);
         }
     }
 
     private void writeRow(OutputStream entityStream, List<String> fields, EntryView entry) throws IOException {
-        String row = fields.stream().map(field -> escape(entry.getField(field).value())).collect(Collectors.joining(",", entry.getHash() + ",", "\r\n"));
+        String row = fields.stream().map(field -> escape(entry.getField(field).value())).collect(Collectors.joining(",", entry.getSerialNumber() + ",", "\r\n"));
         entityStream.write(row.getBytes("utf-8"));
     }
 
