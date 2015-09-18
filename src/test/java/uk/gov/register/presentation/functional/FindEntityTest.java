@@ -46,7 +46,7 @@ public class FindEntityTest extends FunctionalTestBase {
 
     @Test
     public void findByHash_shouldReturnEntryForTheGivenHash() throws Exception {
-        Response response = getRequest("/hash/hash2.json");
+        Response response = getRequest("/entry/2.json");
 
         assertThat(response.getHeaderString("Link"), equalTo("</address/6789/history>;rel=\"version-history\""));
         JSONAssert.assertEquals("{" +
