@@ -8,6 +8,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class PaginationTest {
+
+    @Test
+    public void construct_setsThePageSizeTo100WhenPageSizeIsNotDefined() {
+        assertThat(new Pagination(1, 0, 10).pageSize(), equalTo(100l));
+        assertThat(new Pagination(1, -1, 10).pageSize(), equalTo(100l));
+    }
+
     @Test
     public void offset_returnsTheNumberWhichOffsetsTheTotalEntriesBasedOnPageSize() {
         assertThat(new Pagination(1, 10, 100).offset(), equalTo(0l));
@@ -31,5 +38,4 @@ public class PaginationTest {
 
         assertTrue(new Pagination(2, 10, 11).hasPreviousPage());
     }
-
 }
