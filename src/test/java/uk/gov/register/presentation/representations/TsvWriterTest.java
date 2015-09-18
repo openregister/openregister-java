@@ -32,7 +32,7 @@ public class TsvWriterTest {
 
         writer.writeEntriesTo(entityStream, Collections.singletonList(entry));
 
-        assertThat(entityStream.contents, equalTo("hash\tkey1\tkey2\tkey3\tkey4\nhash1\tvalue1\tvalue2\tval\"ue3\tvalue4\n"));
+        assertThat(entityStream.contents, equalTo("entry\tkey1\tkey2\tkey3\tkey4\n52\tvalue1\tvalue2\tval\"ue3\tvalue4\n"));
     }
 
 }

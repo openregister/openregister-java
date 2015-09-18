@@ -36,6 +36,7 @@ public class RepresentationsTest extends FunctionalTestBase {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {"csv", "text/csv;charset=utf-8", fixture("fixtures/single.csv"), fixture("fixtures/list.csv")},
+                {"tsv", "text/tab-separated-values;charset=utf-8", fixture("fixtures/single.tsv"), fixture("fixtures/list.tsv")},
                 {"ttl", "text/turtle;charset=utf-8", fixture("fixtures/single.ttl"), fixture("fixtures/list.ttl")},
                 {"yaml", "text/yaml;charset=utf-8", fixture("fixtures/single.yaml"), fixture("fixtures/list.yaml")}
         });
