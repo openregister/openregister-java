@@ -1,15 +1,24 @@
 package uk.gov.register.presentation.resource;
 
+
+import javax.ws.rs.BadRequestException;
+import java.util.Optional;
+
 class Pagination {
 
     private final long pageIndex;
     private final long totalEntries;
     private final long pageSize;
 
-    Pagination(long pageIndex, long pageSize, long totalEntries) {
+    Pagination(Optional<Long> pageIndex, Optional<Long> pageSize, long totalEntries) {
         this.totalEntries = totalEntries;
-        this.pageIndex = pageIndex < 1 ? 1 : pageIndex;
-        this.pageSize = pageSize < 1 ? DataResource.ENTRY_LIMIT : pageSize;
+
+        this.pageIndex = pageIndex.orElse(1L);
+        this.pageSize = pageSize.orElse(DataResource.ENTRY_LIMIT);
+
+        if (this.pageSize <= 0 || this.pageIndex <= 0) {
+            throw new BadRequestException();
+        }
     }
 
     long offset() {

@@ -11,8 +11,13 @@ import java.util.List;
 @JsonSerialize(using = ListResultJsonSerializer.class)
 public class EntryListView extends ThymeleafView {
     private final List<EntryView> entries;
+    private String nextPageLink;
+    private String previousPageLink;
 
-    EntryListView(RequestContext requestContext, List<EntryView> entries, String templateName) {
+    EntryListView(
+            RequestContext requestContext,
+                  List<EntryView> entries,
+                  String templateName) {
         super(requestContext, templateName);
         this.entries = entries;
     }
@@ -21,13 +26,19 @@ public class EntryListView extends ThymeleafView {
         return entries;
     }
 
-    @SuppressWarnings("unused, used from templates")
-    public String getPreviousPage() {
-        return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("previous");
+    public void setNextPageLink(String nextPageLink) {
+        this.nextPageLink = nextPageLink;
     }
 
-    @SuppressWarnings("unused, used from templates")
-    public String getNextPage() {
-        return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("next");
+    public void setPreviousPageLink(String previousPageLink) {
+        this.previousPageLink = previousPageLink;
+    }
+
+    public String getNextPageLink() {
+        return nextPageLink;
+    }
+
+    public String getPreviousPageLink() {
+        return previousPageLink;
     }
 }

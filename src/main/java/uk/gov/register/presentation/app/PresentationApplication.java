@@ -6,6 +6,7 @@ import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.java8.Java8Bundle;
 import io.dropwizard.java8.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -58,6 +59,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                         new EnvironmentVariableSubstitutor(false)
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
+        bootstrap.addBundle(new Java8Bundle());
     }
 
     @Override

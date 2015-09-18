@@ -29,8 +29,8 @@
         </tbody>
     </table>
 
-    <a th:if="${previousPage}" th:href="${previousPage}">previousPage</a>
-    <a th:if="${nextPage}" th:href="${nextPage}">nextPage</a>
+    <a th:if="${previousPageLink}" th:href="${previousPageLink}">previousPage</a>
+    <a th:if="${nextPageLink}" th:href="${nextPageLink}">nextPage</a>
 
     <div th:include="data-formats.html::data-formats"></div>
 </main>

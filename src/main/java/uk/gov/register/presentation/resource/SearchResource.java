@@ -57,17 +57,23 @@ public class SearchResource {
     }
 
     private SingleEntryView entryResponse(Optional<DbEntry> optionalEntry, Function<DbEntry, SingleEntryView> convertToEntryView) {
-        optionalEntry.ifPresent(this::setVersionHistoryLinkHeader);
-        return optionalEntry.map(convertToEntryView)
+        SingleEntryView singleEntryView = optionalEntry.map(convertToEntryView)
                 .orElseThrow(NotFoundException::new);
-    }
 
-    private void setVersionHistoryLinkHeader(DbEntry entry) {
+
         String primaryKey = requestContext.getRegisterPrimaryKey();
+
+        String versionHistoryLink = String.format("/%s/%s/history",
+                primaryKey,
+                optionalEntry.get().getContent().getContent().get(primaryKey).textValue());
+
         requestContext.
                 getHttpServletResponse().
-                setHeader("Link", String.format("</%s/%s/history>;rel=\"version-history\"",
-                        primaryKey,
-                        entry.getContent().getContent().get(primaryKey).textValue()));
+                setHeader("Link", String.format("<%s>;rel=\"version-history\"", versionHistoryLink));
+
+        singleEntryView.setVersionHistoryLink(versionHistoryLink);
+
+        return singleEntryView;
     }
+
 }

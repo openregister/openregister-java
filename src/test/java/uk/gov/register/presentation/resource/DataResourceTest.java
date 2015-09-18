@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ViewFactory;
@@ -16,12 +15,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
@@ -47,7 +47,7 @@ public class DataResourceTest {
 
     @Test
     public void feedSupportsJsonCsvTsv() throws Exception {
-        Method feedMethod = DataResource.class.getDeclaredMethod("feed", long.class, long.class);
+        Method feedMethod = DataResource.class.getDeclaredMethod("feed", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(feedMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
@@ -68,18 +68,6 @@ public class DataResourceTest {
                 ExtraMediaType.TEXT_TSV,
                 ExtraMediaType.TEXT_TTL
         ));
-    }
-
-    @Test
-    public void feed_defaultsTo100EntriesWhenPageSizeIsZero() {
-
-        List<DbEntry> dbEntries = mock(List.class);
-
-        when(queryDAO.getAllEntries(100, 0)).thenReturn(dbEntries);
-
-        dataResource.feed(1l, 0l);
-
-        verify(viewFactory).getEntryFeedView(dbEntries);
     }
 
     @Test

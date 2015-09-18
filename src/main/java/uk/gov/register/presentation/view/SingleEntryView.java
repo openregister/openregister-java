@@ -9,6 +9,7 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 @JsonSerialize(using = SingleEntryJsonSerializer.class)
 public class SingleEntryView extends ThymeleafView {
     private final EntryView entryView;
+    private String versionHistoryLink;
 
     SingleEntryView(RequestContext requestContext, EntryView entryView) {
         super(requestContext, "entry.html");
@@ -26,7 +27,11 @@ public class SingleEntryView extends ThymeleafView {
 
     @SuppressWarnings("unused")
     public String getVersionHistoryLink(){
-        return new LinkHeaderExtractor(getHttpServletResponse()).extractLink("version-history");
+        return versionHistoryLink;
+    }
+
+    public void setVersionHistoryLink(String versionHistoryLink){
+        this.versionHistoryLink =versionHistoryLink;
     }
 }
 
