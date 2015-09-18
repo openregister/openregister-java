@@ -29,15 +29,16 @@ jar {
 
 task bulkLoad(type: JavaExec) {
     def properties = project.getProperties()
-    def datafile = properties.get("datafile") == null ? null : new File((String) properties.get("datafile")).absolutePath
+    def datafile = properties.get("datafile")
     def mintUrl = properties.get("mintUrl")
     def type = properties.get("type") == null ? "jsonl" : properties.get("type")
 
     main = 'uk.gov.admin.LoaderApplication'
     classpath = sourceSets.main.runtimeClasspath
     args = ["--datafile=$datafile", "--mintUrl=$mintUrl", "--type=$type"]
+    workingDir = System.getProperty("user.dir") // run the task from the user's cwd
 
-    doFirst {
+    doFirst{
         if (datafile == null || mintUrl == null) {
             throw new AssertionError("Missing required parameters -Pdatafile and -PmintUrl.\n\nUsage: gradle bulkLoad -PmintUrl=<mintUrl> -Pdatafile=<loadfile.json> [-Ptype=jsonl|tsv|csv]")
         }

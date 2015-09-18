@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -31,31 +32,31 @@ public class DataFileReaderTest {
     }
 
     @Test
-    public void should_be_able_to_read_local_file_contains_json_entries() throws IOException {
+    public void should_be_able_to_read_local_file_contains_json_entries() throws IOException, URISyntaxException {
         Files.write(testFilePath, "{\"address\":\"0000001\",\"postcode\":\"01010101\"}".getBytes());
 
-        Iterator<String> entriesIterator = new DataFileReader(testFilePath.toAbsolutePath().toString(), "jsonl").getFileEntriesIterator();
+        Iterator<String> entriesIterator = new DataFileReader(testFilePath.toString(), "jsonl").getFileEntriesIterator();
 
         assertEquals(expectedData, listFrom(entriesIterator));
     }
 
     @Test
-    public void should_be_able_to_read_local_file_contains_csv_entries() throws IOException {
+    public void should_be_able_to_read_local_file_contains_csv_entries() throws IOException, URISyntaxException {
 
         Files.write(testFilePath, "address,postcode\n0000001,01010101".getBytes());
 
-        Iterator<String> entriesIterator = new DataFileReader(testFilePath.toAbsolutePath().toString(), "csv").getFileEntriesIterator();
+        Iterator<String> entriesIterator = new DataFileReader(testFilePath.toString(), "csv").getFileEntriesIterator();
 
         assertEquals(expectedData, listFrom(entriesIterator));
     }
 
     @Test
-    public void should_be_able_to_read_local_file_contains_tsv_entries() throws IOException {
+    public void should_be_able_to_read_local_file_contains_tsv_entries() throws IOException, URISyntaxException {
 
 
         Files.write(testFilePath, "address\tpostcode\n0000001\t01010101".getBytes());
 
-        Iterator<String> entriesIterator = new DataFileReader(testFilePath.toAbsolutePath().toString(), "tsv").getFileEntriesIterator();
+        Iterator<String> entriesIterator = new DataFileReader(testFilePath.toString(), "tsv").getFileEntriesIterator();
 
         assertEquals(expectedData, listFrom(entriesIterator));
     }
