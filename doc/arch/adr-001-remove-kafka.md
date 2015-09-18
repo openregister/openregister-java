@@ -21,11 +21,11 @@ However, as we used kafka more and more, we found certain pain points:
     operational complexity
   - kafka and zookeeper consume a lot of memory, requiring us to
     deploy larger machines and costing more
+  - one of kafka's main selling points is sheer throughput
+    performance, which isn't really a need we have
   - kafka is a new technology and our team did not understand it as
     well as older technologies.  In particular, we did not have a good
     understanding of its failure modes.
-  - one of kafka's main selling points is sheer throughput
-    performance, which isn't really a need we have
 
 This last point is key.  Because kafka is such a new technology, we
 did not have confidence to rely on it as a primary data source, so we
