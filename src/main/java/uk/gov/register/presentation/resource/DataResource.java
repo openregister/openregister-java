@@ -65,7 +65,7 @@ public class DataResource {
     @Path("/current")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView current() {
-        return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(requestContext.getRegisterPrimaryKey(),ENTRY_LIMIT));
+        return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT));
     }
 
     @GET
@@ -80,18 +80,29 @@ public class DataResource {
         return create301Response("feed");
     }
 
-    private void setNextAndPreviousPageLinkHeader(String resource, Pagination pagination) {
+    private void setNextAndPreviousPageLinkHeader(String resourceMethod, Pagination pagination) {
         List<String> headerValues = new ArrayList<>();
 
         if (pagination.hasNextPage()) {
-            headerValues.add("</" + resource +
-                    "?pageIndex=" + (pagination.nextPageNumber()) + "&pageSize=" + pagination.pageSize() + ">; rel=\"next\"");
+            headerValues.add(
+                    String.format(
+                            "</%s?pageIndex=%s&pageSize=%s>; rel=\"%s\"",
+                            resourceMethod,
+                            pagination.nextPageNumber(),
+                            pagination.pageSize(),
+                            "next"
+                    ));
         }
 
         if (pagination.hasPreviousPage()) {
-            headerValues.add("</" +
-                    resource +
-                    "?pageIndex=" + (pagination.previousPageNumber()) + "&pageSize=" + pagination.pageSize() + ">; rel=\"previous\"");
+            headerValues.add(
+                    String.format(
+                            "</%s?pageIndex=%s&pageSize=%s>; rel=\"%s\"",
+                            resourceMethod,
+                            pagination.previousPageNumber(),
+                            pagination.pageSize(),
+                            "previous"
+                    ));
         }
 
         if (!headerValues.isEmpty()) {
