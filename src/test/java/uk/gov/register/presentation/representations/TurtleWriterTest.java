@@ -1,12 +1,15 @@
 package uk.gov.register.presentation.representations;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
-import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.StringValue;
+import uk.gov.register.presentation.config.Register;
+import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Collections;
@@ -17,17 +20,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TurtleWriterTest {
 
-    private RequestContext requestContext = new RequestContext() {
-        @Override
-        public String requestUrl() {
-            return "http://widget.openregister.org/widget/123";
-        }
-    };
-
     private TurtleWriter turtleWriter;
 
     @Before
     public void setUp() throws Exception {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration()) {
+            @Override
+            public String requestUrl() {
+                return "http://widget.openregister.org/widget/123";
+            }
+        };
         turtleWriter = new TurtleWriter(requestContext);
     }
 
@@ -43,7 +45,7 @@ public class TurtleWriterTest {
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        turtleWriter.writeEntriesTo(entityStream, Collections.singletonList(entry));
+        turtleWriter.writeEntriesTo(entityStream, new Register("company", ImmutableSet.of("company", "registered-address", "name"), "", "companies-house", ""), Collections.singletonList(entry));
 
 
         assertThat(entityStream.contents, containsString("field:registered-address <http://address.openregister.org/address/1111111>"));

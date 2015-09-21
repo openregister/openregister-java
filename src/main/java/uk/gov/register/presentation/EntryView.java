@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -32,8 +33,8 @@ public class EntryView {
         return hash;
     }
 
-    public FieldValue getField(String fieldName) {
-        return entryMap.get(fieldName);
+    public Optional<FieldValue> getField(String fieldName) {
+        return Optional.ofNullable(entryMap.get(fieldName));
     }
 
     @JsonProperty("serial-number")

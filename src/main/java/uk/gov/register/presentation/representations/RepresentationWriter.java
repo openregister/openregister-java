@@ -2,10 +2,13 @@ package uk.gov.register.presentation.representations;
 
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.EntryView;
+import uk.gov.register.presentation.config.Register;
+import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.SingleEntryView;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
@@ -17,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class RepresentationWriter implements MessageBodyWriter<View> {
+    @Context
+    private RequestContext requestContext;
+
     @Override
     public final long getSize(View t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         // deprecated and ignored by Jersey 2. Returning -1 as per javadoc in the interface
@@ -31,16 +37,16 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
     @Override
     public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         if (view instanceof SingleEntryView) {
-            writeEntryTo(entityStream, ((SingleEntryView) view).getEntry());
+            writeEntryTo(entityStream, requestContext.getRegister(), ((SingleEntryView) view).getEntry());
         }
         else {
-            writeEntriesTo(entityStream, ((EntryListView) view).getEntries());
+            writeEntriesTo(entityStream, requestContext.getRegister(), ((EntryListView) view).getEntries());
         }
     }
 
-    protected void writeEntryTo(OutputStream entityStream, EntryView entry) throws IOException {
-        writeEntriesTo(entityStream, Collections.singletonList(entry));
+    protected void writeEntryTo(OutputStream entityStream, Register register, EntryView entry) throws IOException {
+        writeEntriesTo(entityStream, register, Collections.singletonList(entry));
     }
 
-    protected abstract void writeEntriesTo(OutputStream entityStream, List<EntryView> entries) throws IOException, WebApplicationException;
+    protected abstract void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException, WebApplicationException;
 }

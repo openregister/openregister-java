@@ -4,10 +4,10 @@
   entry:
     address: "67890"
     area: "value2"
-    name: "The Entry 2"
+    street: "The Entry 2"
 - serial-number: 1
   hash: "someHash1"
   entry:
     address: "12345"
     area: "value1"
-    name: "The Entry 1"
+    street: "The Entry 1"

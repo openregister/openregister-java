@@ -27,8 +27,8 @@ public class RepresentationsTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
         publishMessagesToDB(ImmutableList.of(
-                "{\"hash\":\"someHash1\",\"entry\":{\"name\":\"The Entry 1\", \"area\":\"value1\", \"address\":\"12345\"}}",
-                "{\"hash\":\"someHash2\",\"entry\":{\"name\":\"The Entry 2\", \"area\":\"value2\", \"address\":\"67890\"}}"
+                "{\"hash\":\"someHash1\",\"entry\":{\"street\":\"The Entry 1\", \"area\":\"value1\", \"address\":\"12345\"}}",
+                "{\"hash\":\"someHash2\",\"entry\":{\"street\":\"The Entry 2\", \"area\":\"value2\", \"address\":\"67890\"}}"
         ));
     }
 

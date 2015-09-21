@@ -4,4 +4,4 @@ hash: "someHash1"
 entry:
   address: "12345"
   area: "value1"
-  name: "The Entry 1"
+  street: "The Entry 1"

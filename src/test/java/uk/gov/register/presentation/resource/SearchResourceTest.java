@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.DbContent;
 import uk.gov.register.presentation.DbEntry;
+import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.SingleEntryView;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +46,7 @@ public class SearchResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        requestContext = new RequestContext(){
+        requestContext = new RequestContext(new RegistersConfiguration()){
             @Override
             public HttpServletResponse getHttpServletResponse() {
                 return servletResponse;
@@ -59,8 +61,8 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void findByPrimaryKey_throwsNotFoundException_whenSearchedKeyIsNotPrimaryKeyOfRegister() {
-        RequestContext requestContext = new RequestContext() {
+    public void findByPrimaryKey_throwsNotFoundException_whenSearchedKeyIsNotPrimaryKeyOfRegister() throws IOException {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration()) {
             @Override
             public String getRegisterPrimaryKey() {
                 return "localhost";
