@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Register {
     final String registerName;
@@ -21,7 +22,7 @@ public class Register {
                     @JsonProperty("registry") String registry,
                     @JsonProperty("text") String text) {
         this.registerName = registerName;
-        this.fields = fields;
+        this.fields = new TreeSet<>(fields); // ensure sorted order
         this.copyright = StringUtils.isNotEmpty(copyright) ? Optional.of(copyright) : Optional.empty();
         this.registry = registry;
         this.text = text;
@@ -31,7 +32,7 @@ public class Register {
         return copyright;
     }
 
-    public Set<String> getFields() {
+    public Iterable<String> getFields() {
         return fields;
     }
 }
