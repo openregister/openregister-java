@@ -2,12 +2,12 @@
 - serial-number: 2
   hash: "someHash2"
   entry:
-    area: "value2"
     address: "67890"
+    area: "value2"
     name: "The Entry 2"
 - serial-number: 1
   hash: "someHash1"
   entry:
-    area: "value1"
     address: "12345"
+    area: "value1"
     name: "The Entry 1"
