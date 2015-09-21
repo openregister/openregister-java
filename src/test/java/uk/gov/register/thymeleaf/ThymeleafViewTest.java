@@ -5,34 +5,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ThymeleafViewTest {
     @Mock
-    private HttpServletRequest httpServletRequest;
+    private RequestContext requestContext;
     private ThymeleafView thymeleafView;
 
     @Before
     public void setUp() throws Exception {
-        thymeleafView = new ThymeleafView(new RequestContext(new RegistersConfiguration()) {
-            @Override
-            public HttpServletRequest getHttpServletRequest() {
-                return httpServletRequest;
-            }
-        }, "don't care");
+        thymeleafView = new ThymeleafView(requestContext, "don't care");
     }
 
     @Test
     public void friendlyRegisterName_convertsHyphensToUnderscores() throws Exception {
-        when(httpServletRequest.getHeader("Host")).thenReturn("company-limited-by-guarantee.openregister.org");
+        when(requestContext.getRegisterPrimaryKey()).thenReturn("company-limited-by-guarantee");
 
         assertThat(thymeleafView.getFriendlyRegisterName(), equalTo("Company limited by guarantee register"));
     }
