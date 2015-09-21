@@ -18,7 +18,7 @@ public class FieldsConfiguration {
     private final List<Field> fields;
 
     public FieldsConfiguration() throws IOException {
-        InputStream fieldsStream = this.getClass().getClassLoader().getResourceAsStream("fields.yaml");
+        InputStream fieldsStream = this.getClass().getClassLoader().getResourceAsStream("config/fields.yaml");
         ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
         List<FieldData> rawFields = yamlObjectMapper.readValue(fieldsStream, new TypeReference<List<FieldData>>() {
         });
