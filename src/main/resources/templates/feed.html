@@ -28,17 +28,20 @@
         </tr>
         </tbody>
     </table>
+    <ul>
+        <li th:if="${pagination.hasPreviousPage()}" class="previous">
+            <a th:href="${pagination.previousPageLink}" th:text="Previous">
+            </a>
+            <span class="page-numbers"
+                  th:text="${pagination.previousPageNumber + ' of ' + pagination.totalPages}"></span>
+        </li>
+        <li th:if="${pagination.hasNextPage()}" class="next">
+            <a th:href="${pagination.nextPageLink}" th:text="Next">
+            </a>
+            <span class="page-numbers" th:text="${pagination.nextPageNumber + ' of ' + pagination.totalPages}"></span>
+        </li>
+    </ul>
 
-    <li th:if="${pagination.hasPreviousPage()}" class="previous">
-        <a th:href="${pagination.previousPageLink}" th:text="Previous">
-        </a>
-        <span class="page-numbers" th:text="${pagination.previousPageNumber + ' of ' + pagination.totalPages}"></span>
-    </li>
-    <li th:if="${pagination.hasNextPage()}" class="next">
-        <a th:href="${pagination.nextPageLink}" th:text="Next">
-        </a>
-        <span class="page-numbers" th:text="${pagination.nextPageNumber + ' of ' + pagination.totalPages}"></span>
-    </li>
 
     <div th:include="data-formats.html::data-formats"></div>
 </main>
