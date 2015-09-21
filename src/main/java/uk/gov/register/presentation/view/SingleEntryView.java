@@ -1,12 +1,10 @@
 package uk.gov.register.presentation.view;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.EntryView;
-import uk.gov.register.presentation.representations.SingleEntryJsonSerializer;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
-@JsonSerialize(using = SingleEntryJsonSerializer.class)
 public class SingleEntryView extends ThymeleafView {
     private final EntryView entryView;
     private String versionHistoryLink;
@@ -21,6 +19,7 @@ public class SingleEntryView extends ThymeleafView {
         this.entryView = entryView;
     }
 
+    @JsonValue
     public EntryView getEntry() {
         return entryView;
     }

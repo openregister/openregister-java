@@ -1,14 +1,12 @@
 package uk.gov.register.presentation.view;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.EntryView;
-import uk.gov.register.presentation.representations.ListResultJsonSerializer;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import java.util.List;
 
-@JsonSerialize(using = ListResultJsonSerializer.class)
 public class EntryListView extends ThymeleafView {
     private final List<EntryView> entries;
     private String nextPageLink;
@@ -22,6 +20,7 @@ public class EntryListView extends ThymeleafView {
         this.entries = entries;
     }
 
+    @JsonValue
     public List<EntryView> getEntries() {
         return entries;
     }
