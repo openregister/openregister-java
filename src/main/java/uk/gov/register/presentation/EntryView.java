@@ -6,7 +6,6 @@ import com.google.common.collect.Iterables;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 
 public class EntryView {
@@ -56,11 +55,6 @@ public class EntryView {
     @SuppressWarnings("unused, used from html templates")
     public String registerName() {
         return registerName;
-    }
-
-    public Set<String> allFields() {
-        // TODO: this should return all possible fields, not just all present fields
-        return entryMap.keySet();
     }
 }
 
