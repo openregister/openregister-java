@@ -3,6 +3,7 @@ package uk.gov.register.presentation.view;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
@@ -29,9 +30,10 @@ public class ViewFactory {
         return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), "latest-entry-of-record.html");
     }
 
-    public EntryListView getEntryFeedView(List<DbEntry> allDbEntries) {
+    public EntryListView getEntryFeedView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
+                pagination,
                 "feed.html"
         );
     }
@@ -39,6 +41,7 @@ public class ViewFactory {
     public EntryListView getRecordEntriesView(List<DbEntry> allDbEntries) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
+                null,
                 "current.html"
         );
     }
