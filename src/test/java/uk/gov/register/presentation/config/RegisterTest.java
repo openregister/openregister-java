@@ -15,4 +15,13 @@ public class RegisterTest {
 
         assertThat(fields, IsIterableContainingInOrder.contains("address", "area", "postcode", "property", "street"));
     }
+
+    @Test
+    public void getNonPrimaryFields_returnsFieldsOtherThanPrimaryInSortedOrder() throws Exception {
+        Register register = new Register("company", ImmutableSet.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "");
+
+        Iterable<String> fields = register.getNonPrimaryFields();
+
+        assertThat(fields, IsIterableContainingInOrder.contains("address", "company-accounts-category", "company-status", "secretary"));
+    }
 }
