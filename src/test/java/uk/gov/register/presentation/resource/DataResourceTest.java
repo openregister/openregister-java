@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
@@ -13,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("unchecked")
 @RunWith(MockitoJUnitRunner.class)
 public class DataResourceTest {
     @Mock
@@ -28,16 +32,22 @@ public class DataResourceTest {
     @Mock
     RequestContext requestContext;
 
+    @Mock
+    RecentEntryIndexQueryDAO queryDAO;
+
+    @Mock
+    ViewFactory viewFactory;
+
     DataResource dataResource;
 
     @Before
     public void setUp() throws Exception {
-        dataResource = new DataResource(null, requestContext, null);
+        dataResource = new DataResource(viewFactory, requestContext, queryDAO);
     }
 
     @Test
     public void feedSupportsJsonCsvTsv() throws Exception {
-        Method feedMethod = DataResource.class.getDeclaredMethod("feed");
+        Method feedMethod = DataResource.class.getDeclaredMethod("feed", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(feedMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,

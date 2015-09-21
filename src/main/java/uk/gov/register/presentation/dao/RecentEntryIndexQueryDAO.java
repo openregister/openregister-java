@@ -13,8 +13,8 @@ import java.util.Optional;
 @RegisterMapper(EntryMapper.class)
 public interface RecentEntryIndexQueryDAO {
 
-    @SqlQuery("SELECT id,entry FROM ordered_entry_index ORDER BY id DESC LIMIT :limit")
-    List<DbEntry> getAllEntries(@Bind("limit") int maxNumberToFetch);
+    @SqlQuery("SELECT id,entry FROM ordered_entry_index ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    List<DbEntry> getAllEntries(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
     @SqlQuery("SELECT id,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY id DESC limit 1")
     @SingleValueResult(DbEntry.class)
@@ -29,7 +29,7 @@ public interface RecentEntryIndexQueryDAO {
 
     @SqlQuery("SELECT id,entry FROM ordered_entry_index WHERE id = :serial")
     @SingleValueResult(DbEntry.class)
-    Optional<DbEntry> findBySerial(@Bind("serial") int serial);
+    Optional<DbEntry> findBySerial(@Bind("serial") long serial);
 
     @SqlQuery("SELECT i.id, i.entry FROM ordered_entry_index i, ( " +
             "SELECT MAX(id) AS id " +
@@ -37,6 +37,9 @@ public interface RecentEntryIndexQueryDAO {
             "GROUP BY (entry #>> ARRAY['entry',:key])) AS ii " +
             "WHERE i.id = ii.id " +
             "ORDER BY (entry #>> ARRAY['entry',:key]) DESC LIMIT :limit")
-    List<DbEntry> getLatestEntriesOfAllRecords(@Bind("key") String name,
-                                               @Bind("limit") int maxNumberToFetch);
+    List<DbEntry> getLatestEntriesOfRecords(@Bind("key") String name,
+                                            @Bind("limit") long maxNumberToFetch);
+
+    @SqlQuery("SELECT reltuples\\:\\:bigint FROM pg_class where relname='ordered_entry_index'")
+    long getEstimatedEntriesCount();
 }

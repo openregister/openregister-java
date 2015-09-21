@@ -23,9 +23,4 @@ public class HtmlViewSupport {
     public static String fieldLink(String fieldName) {
         return UriBuilder.fromPath("http://field.openregister.org/field").path(fieldName).build().toString();
     }
-
-    public static String extractLinkFromLinkHeader(String linkHeader){
-        return linkHeader.replaceAll("<([^>]+)>.*", "$1");
-    }
-
 }

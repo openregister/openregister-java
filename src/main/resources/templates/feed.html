@@ -12,7 +12,8 @@
         <tr>
             <th>Entry</th>
             <th:block th:each="keyValue : ${entries.get(0).content}">
-                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></th>
+                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}"
+                       th:text="${keyValue.key}"></a></th>
             </th:block>
         </tr>
         </thead>
@@ -27,6 +28,9 @@
         </tr>
         </tbody>
     </table>
+
+    <a th:if="${previousPageLink}" th:href="${previousPageLink}">previousPage</a>
+    <a th:if="${nextPageLink}" th:href="${nextPageLink}">nextPage</a>
 
     <div th:include="data-formats.html::data-formats"></div>
 </main>
