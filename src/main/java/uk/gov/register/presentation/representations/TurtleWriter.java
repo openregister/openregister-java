@@ -33,7 +33,7 @@ public class TurtleWriter extends RepresentationWriter {
 
     @Override
     protected void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException {
-        Iterable<String> fields = entries.get(0).allFields();
+        Iterable<String> fields = register.getFields();
         entityStream.write(PREFIX.getBytes("utf-8"));
         for (EntryView entry : entries) {
             entityStream.write((renderEntry(entry, fields) + "\n").getBytes("utf-8"));
