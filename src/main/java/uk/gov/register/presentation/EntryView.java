@@ -1,8 +1,6 @@
 package uk.gov.register.presentation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Iterables;
 
 import java.util.Map;
 import java.util.Optional;
@@ -39,12 +37,6 @@ public class EntryView {
     @JsonProperty("serial-number")
     public int getSerialNumber() {
         return serialNumber;
-    }
-
-    @SuppressWarnings("unused, used from html templates")
-    @JsonIgnore
-    public Iterable<Map.Entry<String, FieldValue>> getNonPrimaryFields() {
-        return Iterables.filter(entryMap.entrySet(), e -> !e.getKey().equals(registerName));
     }
 
     @SuppressWarnings("unused, used from html templates")
