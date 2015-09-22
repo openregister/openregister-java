@@ -12,8 +12,8 @@
         <tr>
             <th>Entry</th>
             <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(registerId)}" th:text="${registerId}"></a></th>
-            <th:block th:each="keyValue : ${entries.get(0).nonPrimaryFields}">
-                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}" th:text="${keyValue.key}"></a></th>
+            <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(fieldName)}" th:text="${fieldName}"></a></th>
             </th:block>
         </tr>
         </thead>
@@ -21,8 +21,9 @@
         <tr th:each="entry : ${entries}">
             <td><a th:href="${'/entry/' + entry.serialNumber}" th:text="${entry.serialNumber}"></a></td>
             <td><a th:href="${'/' + registerId + '/' + entry.primaryKey()}" th:text="${entry.primaryKey()}"></a></td>
-            <th:block th:each="keyValue : ${entry.nonPrimaryFields}">
-                <td th:text="${keyValue.value.value()}"></td>
+            <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+                <td th:if="${entry.getField(fieldName).present}" th:text="${entry.getField(fieldName).get().value()}"></td>
+                <td th:unless="${entry.getField(fieldName).present}"></td>
             </th:block>
         </tr>
         </tbody>

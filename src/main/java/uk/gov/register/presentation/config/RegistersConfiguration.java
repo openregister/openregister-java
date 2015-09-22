@@ -13,25 +13,25 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 
-public class FieldsConfiguration {
+public class RegistersConfiguration {
 
-    private final List<Field> fields;
+    private final List<Register> registers;
 
-    public FieldsConfiguration() throws IOException {
-        InputStream fieldsStream = this.getClass().getClassLoader().getResourceAsStream("config/fields.yaml");
+    public RegistersConfiguration() throws IOException {
+        InputStream registersStream = this.getClass().getClassLoader().getResourceAsStream("config/registers.yaml");
         ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
-        List<FieldData> rawFields = yamlObjectMapper.readValue(fieldsStream, new TypeReference<List<FieldData>>() {
+        List<RegisterData> rawRegisters = yamlObjectMapper.readValue(registersStream, new TypeReference<List<RegisterData>>() {
         });
-        fields = Lists.transform(rawFields, m -> m.entry);
+        registers = Lists.transform(rawRegisters, m -> m.entry);
     }
 
-    public Field getField(String fieldName) {
-        return fields.stream().filter(f -> Objects.equals(f.fieldName, fieldName)).findFirst().get();
+    public Register getRegister(String registerName) {
+        return registers.stream().filter(f -> Objects.equals(f.registerName, registerName)).findFirst().get();
     }
 
     @JsonIgnoreProperties({"hash", "last-updated"})
-    private static class FieldData{
+    private static class RegisterData{
         @JsonProperty
-        Field entry;
+        Register entry;
     }
 }

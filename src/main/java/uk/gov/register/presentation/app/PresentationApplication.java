@@ -23,6 +23,7 @@ import uk.gov.register.presentation.ContentSecurityPolicyFilter;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
+import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.CsvWriter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -85,6 +86,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
             protected void configure() {
                 bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
                 bind(FieldsConfiguration.class).to(FieldsConfiguration.class).in(Singleton.class);
+                bind(RegistersConfiguration.class).to(RegistersConfiguration.class).in(Singleton.class);
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(EntryConverter.class).to(EntryConverter.class).in(Singleton.class);

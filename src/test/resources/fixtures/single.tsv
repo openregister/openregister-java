@@ -1,2 +1,2 @@
-entry	address	area	name
-1	12345	value1	The Entry 1
+entry	address	area	country	latitude	locality	longitude	postcode	property	street	town
+1	12345	value1							The Entry 1	

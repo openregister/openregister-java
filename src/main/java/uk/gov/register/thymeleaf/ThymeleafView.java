@@ -2,7 +2,7 @@ package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.presentation.RegisterNameExtractor;
+import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -45,7 +45,11 @@ public class ThymeleafView extends View {
     }
 
     public String getRegisterId() {
-        return RegisterNameExtractor.extractRegisterName(requestContext.getHttpServletRequest().getHeader("Host"));
+        return requestContext.getRegisterPrimaryKey();
+    }
+
+    public Register getRegister() {
+        return requestContext.getRegister();
     }
 
     public ServletContext getServletContext() {

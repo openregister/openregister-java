@@ -1,11 +1,9 @@
 package uk.gov.register.presentation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Iterables;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class EntryView {
@@ -32,19 +30,13 @@ public class EntryView {
         return hash;
     }
 
-    public FieldValue getField(String fieldName) {
-        return entryMap.get(fieldName);
+    public Optional<FieldValue> getField(String fieldName) {
+        return Optional.ofNullable(entryMap.get(fieldName));
     }
 
     @JsonProperty("serial-number")
     public int getSerialNumber() {
         return serialNumber;
-    }
-
-    @SuppressWarnings("unused, used from html templates")
-    @JsonIgnore
-    public Iterable<Map.Entry<String, FieldValue>> getNonPrimaryFields() {
-        return Iterables.filter(entryMap.entrySet(), e -> !e.getKey().equals(registerName));
     }
 
     @SuppressWarnings("unused, used from html templates")
@@ -55,11 +47,6 @@ public class EntryView {
     @SuppressWarnings("unused, used from html templates")
     public String registerName() {
         return registerName;
-    }
-
-    public Set<String> allFields() {
-        // TODO: this should return all possible fields, not just all present fields
-        return entryMap.keySet();
     }
 }
 
