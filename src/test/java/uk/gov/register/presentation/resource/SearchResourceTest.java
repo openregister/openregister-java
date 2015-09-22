@@ -116,7 +116,9 @@ public class SearchResourceTest {
     public void findBySerial_setsHistoryLinkHeader() throws Exception {
         DbEntry abcd = new DbEntry(52, new DbContent("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}")));
         when(queryDAO.findBySerial(52)).thenReturn(Optional.of(abcd));
-        when(viewFactory.getSingleEntryView(abcd)).thenReturn(mock(SingleEntryView.class));
+        SingleEntryView singleEntryView = mock(SingleEntryView.class);
+        when(viewFactory.getSingleEntryView(abcd)).thenReturn(singleEntryView);
+        when(singleEntryView.getVersionHistoryLink()).thenReturn("/school/9001/history");
 
         resource.findBySerial("52");
 
