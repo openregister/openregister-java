@@ -18,7 +18,7 @@
     <div th:include="data-formats.html::data-formats"></div>
 
     <p>View all versions of this record <a
-            th:href="${@uk.gov.register.presentation.HtmlViewSupport@extractLinkFromLinkHeader(#ctx.httpServletResponse.getHeader('Link'))}">here</a>
+            th:href="${versionHistoryLink}">here</a>
     </p>
 
     <div th:include="copyright.html::copyright"></div>

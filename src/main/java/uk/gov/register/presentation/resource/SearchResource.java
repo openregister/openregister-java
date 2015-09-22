@@ -60,18 +60,9 @@ public class SearchResource {
         SingleEntryView singleEntryView = optionalEntry.map(convertToEntryView)
                 .orElseThrow(NotFoundException::new);
 
-
-        String primaryKey = requestContext.getRegisterPrimaryKey();
-
-        String versionHistoryLink = String.format("/%s/%s/history",
-                primaryKey,
-                optionalEntry.get().getContent().getContent().get(primaryKey).textValue());
-
         requestContext.
                 getHttpServletResponse().
-                setHeader("Link", String.format("<%s>;rel=\"version-history\"", versionHistoryLink));
-
-        singleEntryView.setVersionHistoryLink(versionHistoryLink);
+                setHeader("Link", String.format("<%s>;rel=\"version-history\"", singleEntryView.getVersionHistoryLink()));
 
         return singleEntryView;
     }

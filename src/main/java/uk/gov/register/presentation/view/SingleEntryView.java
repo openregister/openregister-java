@@ -7,16 +7,22 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 
 public class SingleEntryView extends ThymeleafView {
     private final EntryView entryView;
-    private String versionHistoryLink;
+    private final String versionHistoryLink;
 
     SingleEntryView(RequestContext requestContext, EntryView entryView) {
-        super(requestContext, "entry.html");
-        this.entryView = entryView;
+        this(requestContext, entryView, "entry.html");
     }
 
     SingleEntryView(RequestContext requestContext, EntryView entryView, String templateName) {
         super(requestContext, templateName);
         this.entryView = entryView;
+        versionHistoryLink = constructVersionHistoryLink(entryView, requestContext.getRegisterPrimaryKey());
+    }
+
+    private String constructVersionHistoryLink(EntryView entryView, String primaryKey) {
+        return String.format("/%s/%s/history",
+                primaryKey,
+                entryView.getContent().get(primaryKey).value());
     }
 
     @JsonValue
@@ -27,10 +33,6 @@ public class SingleEntryView extends ThymeleafView {
     @SuppressWarnings("unused")
     public String getVersionHistoryLink(){
         return versionHistoryLink;
-    }
-
-    public void setVersionHistoryLink(String versionHistoryLink){
-        this.versionHistoryLink =versionHistoryLink;
     }
 }
 
