@@ -37,14 +37,14 @@ public class DataResource {
 
     @GET
     @Path("/download")
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(ExtraMediaType.TEXT_HTML)
     public View download() {
         return viewFactory.thymeleafView("download.html");
     }
 
     @GET
     @Path("/download.torrent")
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(ExtraMediaType.TEXT_HTML)
     public Response downloadTorrent() {
         return Response
                 .status(Response.Status.NOT_IMPLEMENTED)
@@ -54,7 +54,7 @@ public class DataResource {
 
     @GET
     @Path("/feed")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView feed(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
         Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getEstimatedEntriesCount());
 
@@ -68,7 +68,7 @@ public class DataResource {
 
     @GET
     @Path("/current")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView current() {
         return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(requestContext.getRegisterPrimaryKey(), ENTRY_LIMIT));
     }
