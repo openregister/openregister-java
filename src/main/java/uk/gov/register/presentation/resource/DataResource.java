@@ -1,7 +1,6 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
-import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
@@ -56,14 +55,11 @@ public class DataResource {
     @Path("/feed")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView feed(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getEstimatedEntriesCount());
+        Pagination pagination = new Pagination("/feed", pageIndex, pageSize, queryDAO.getEstimatedEntriesCount());
 
-        List<DbEntry> entries = queryDAO.getAllEntries(pagination.pageSize(), pagination.offset());
+        setNextAndPreviousPageLinkHeader(pagination);
 
-        EntryListView entryFeedView = viewFactory.getEntryFeedView(entries);
-        setNextAndPreviousPageLinkHeader("feed", entryFeedView, pagination);
-
-        return entryFeedView;
+        return viewFactory.getEntryFeedView(queryDAO.getAllEntries(pagination.pageSize(), pagination.offset()), pagination);
     }
 
     @GET
@@ -85,39 +81,20 @@ public class DataResource {
         return create301Response("feed");
     }
 
-    private void setNextAndPreviousPageLinkHeader(String resourceMethod, EntryListView entryFeedView, Pagination pagination) {
+    private void setNextAndPreviousPageLinkHeader(Pagination pagination) {
         List<String> headerValues = new ArrayList<>();
 
         if (pagination.hasNextPage()) {
-            String nextPageLink = nextPageLink(resourceMethod, pagination);
-
-            headerValues.add(String.format("<%s>; rel=\"%s\"", nextPageLink, "next"));
-            entryFeedView.setNextPageLink(nextPageLink);
+            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getNextPageLink(), "next"));
         }
 
         if (pagination.hasPreviousPage()) {
-            String previousLink = String.format(
-                    "/%s?pageIndex=%s&pageSize=%s",
-                    resourceMethod,
-                    pagination.previousPageNumber(),
-                    pagination.pageSize()
-            );
-            headerValues.add(String.format("<%s>; rel=\"%s\"", previousLink, "previous"));
-            entryFeedView.setPreviousPageLink(previousLink);
+            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getPreviousPageLink(), "previous"));
         }
 
         if (!headerValues.isEmpty()) {
             requestContext.getHttpServletResponse().setHeader("Link", String.join(",", headerValues));
         }
-    }
-
-    private String nextPageLink(String resourceMethod, Pagination pagination) {
-        return String.format(
-                        "/%s?pageIndex=%s&pageSize=%s",
-                        resourceMethod,
-                        pagination.nextPageNumber(),
-                        pagination.pageSize()
-                );
     }
 
     private Response create301Response(String locationMethod) {
