@@ -154,7 +154,7 @@ public class SearchResourceTest {
         Method searchMethod = SearchResource.class.getDeclaredMethod("findByPrimaryKey", String.class, String.class);
         List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
-                hasItems(MediaType.TEXT_HTML,
+                hasItems(ExtraMediaType.TEXT_HTML,
                         MediaType.APPLICATION_JSON,
                         ExtraMediaType.TEXT_TTL));
     }
@@ -164,7 +164,7 @@ public class SearchResourceTest {
         Method findByPrimaryKeyMethod = SearchResource.class.getDeclaredMethod("findByHash", String.class);
         List<String> declaredMediaTypes = asList(findByPrimaryKeyMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
-                hasItems(MediaType.TEXT_HTML,
+                hasItems(ExtraMediaType.TEXT_HTML,
                         MediaType.APPLICATION_JSON,
                         ExtraMediaType.TEXT_TTL));
     }
@@ -174,7 +174,7 @@ public class SearchResourceTest {
         Method findByPrimaryKeyMethod = SearchResource.class.getDeclaredMethod("findBySerial", String.class);
         List<String> declaredMediaTypes = asList(findByPrimaryKeyMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
-                hasItems(MediaType.TEXT_HTML,
+                hasItems(ExtraMediaType.TEXT_HTML,
                         MediaType.APPLICATION_JSON,
                         ExtraMediaType.TEXT_TTL));
     }

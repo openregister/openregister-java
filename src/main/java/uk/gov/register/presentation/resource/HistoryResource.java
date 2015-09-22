@@ -1,18 +1,18 @@
 package uk.gov.register.presentation.resource;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +29,7 @@ public class HistoryResource {
 
     @GET
     @Path("/{primaryKey}/{primaryKeyValue}/history")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
     public ListVersionView history(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {

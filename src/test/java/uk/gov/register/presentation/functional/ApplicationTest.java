@@ -7,6 +7,7 @@ import org.junit.Test;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -39,5 +40,16 @@ public class ApplicationTest extends FunctionalTestBase {
                 .get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self'")));
+    }
+
+    @Test
+    public void appExplicitlySendsHtmlCharsetInHeader() throws Exception {
+        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/feed")
+                .request()
+                .get();
+
+        String contentType = (String) response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0);
+        assertThat(contentType, containsString("text/html"));
+        assertThat(contentType, containsString("charset=utf-8"));
     }
 }

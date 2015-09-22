@@ -30,7 +30,7 @@ public class SearchResource {
 
     @GET
     @Path("/{primaryKey}/{primaryKeyValue}")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleEntryView findByPrimaryKey(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
         if (!key.equals(requestContext.getRegisterPrimaryKey())) {
             throw new NotFoundException();
@@ -41,7 +41,7 @@ public class SearchResource {
 
     @GET
     @Path("/hash/{hash}")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleEntryView findByHash(@PathParam("hash") String hash) {
         Optional<DbEntry> entryO = queryDAO.findByHash(hash);
         return entryResponse(entryO, viewFactory::getSingleEntryView);
@@ -49,7 +49,7 @@ public class SearchResource {
 
     @GET
     @Path("/entry/{serial}")
-    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public SingleEntryView findBySerial(@PathParam("serial") String serialString) {
         Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
         Optional<DbEntry> entryO = serial.flatMap(queryDAO::findBySerial);

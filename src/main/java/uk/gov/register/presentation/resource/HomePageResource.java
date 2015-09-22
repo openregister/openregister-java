@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
+import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
@@ -19,7 +20,7 @@ public class HomePageResource {
     }
 
     @GET
-    @Produces({MediaType.TEXT_HTML})
+    @Produces({ExtraMediaType.TEXT_HTML})
     public View home() {
         return viewFactory.thymeleafView("home.html");
     }

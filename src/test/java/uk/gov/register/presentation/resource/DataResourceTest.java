@@ -51,6 +51,7 @@ public class DataResourceTest {
         List<String> declaredMediaTypes = asList(feedMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
+                ExtraMediaType.TEXT_HTML,
                 ExtraMediaType.TEXT_CSV,
                 ExtraMediaType.TEXT_TSV,
                 ExtraMediaType.TEXT_TTL
@@ -63,7 +64,7 @@ public class DataResourceTest {
         List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
-                MediaType.TEXT_HTML,
+                ExtraMediaType.TEXT_HTML,
                 ExtraMediaType.TEXT_CSV,
                 ExtraMediaType.TEXT_TSV,
                 ExtraMediaType.TEXT_TTL
