@@ -4,49 +4,45 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class DestinationDBUpdateDAO implements DBQueryDAO {
+public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkQueryDao, IndexedEntriesQueryDao, CurrentKeysQueryDao  {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    static final String INDEXED_ENTRIES_TABLE = "ORDERED_ENTRY_INDEX";
-    static final String WATERMARK_TABLE = "STREAMED_ENTRIES";
-
-    @SqlUpdate("CREATE TABLE IF NOT EXISTS " + INDEXED_ENTRIES_TABLE + " (ID SERIAL PRIMARY KEY, ENTRY JSONB)")
-    public abstract void ensureIndexedEntriesTableExists();
-
-    @SqlUpdate("CREATE TABLE IF NOT EXISTS " + WATERMARK_TABLE + " (ID INTEGER PRIMARY KEY, TIME TIMESTAMP)")
-    public abstract void ensureWaterMarkTableExists();
-
-    @SqlUpdate("INSERT INTO " + WATERMARK_TABLE + "(ID) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM " + WATERMARK_TABLE + ")")
-    public abstract void initialiseWaterMarkTableIfRequired();
-
-    @SqlQuery("SELECT ID FROM " + WATERMARK_TABLE)
-    public abstract int currentWaterMark();
-
-    @SqlUpdate("INSERT INTO " + INDEXED_ENTRIES_TABLE + "(ENTRY) VALUES(:entry)")
-    abstract int write(@Bind("entry") PGobject entry);
-
-    @SqlUpdate("UPDATE " + WATERMARK_TABLE + " SET ID=ID+1, TIME=NOW()")
-    abstract int increaseWaterMarkByOne();
-
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntries(List<byte[]> entryRows) {
+    public void writeEntries(String registerName, List<byte[]> entryRows) {
         for (byte[] entryRow : entryRows) {
-            String entry = new String(entryRow, StandardCharsets.UTF_8);
+            String entry = new String(entryRow,  StandardCharsets.UTF_8);
+
             int result = write(pgObject(entry));
+
             if (result > 0) {
                 increaseWaterMarkByOne();
+
+                String key = getKey(registerName, entry);
+
+                int entryID = getCurrentIdForKey(key);
+
+                if (entryID == -1) {
+                    writeCurrentKey(currentWaterMark(), key);
+                } else {
+                    updateCurrentKey(entryID, key);
+                }
+            } else {
+                throw new RuntimeException("Could not write entry: " + entry);
             }
         }
     }
+
+    private String getKey(String registerName, String entry) {
+        JsonNode jsonNode = getJsonNode(entry);
+        return jsonNode.get("entry").get(registerName).getTextValue();
+    }
+
 
     private PGobject pgObject(String entry) {
         try {
