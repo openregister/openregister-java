@@ -10,6 +10,7 @@ import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Map;
 
@@ -56,7 +57,7 @@ public class ThymeleafViewRenderer implements ViewRenderer {
             throws IOException, WebApplicationException {
 
         ThymeleafContext context = new ThymeleafContext((ThymeleafView) view);
-        OutputStreamWriter writer = new OutputStreamWriter(output);
+        OutputStreamWriter writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
         engine.process(view.getTemplateName(), context, writer);
         writer.flush();
     }
