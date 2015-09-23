@@ -21,6 +21,7 @@ public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkQue
             int result = write(pgObject(entry));
 
             if (result > 0) {
+                increaseTotalEntriesInRegisterCount();
                 increaseWaterMarkByOne();
 
                 String key = getKey(registerName, entry);

@@ -15,13 +15,19 @@ public class IndexerTask implements Runnable {
         this.sourceDBQueryDAO = sourceDBQueryDAO;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
 
-        ensureAllTablesExist();
+        ensureAllTableExists();
     }
 
-    private void ensureAllTablesExist() {
-        this.destinationDBUpdateDAO.ensureIndexedEntriesTableExists();
-        this.destinationDBUpdateDAO.ensureWaterMarkTableExists();
-        this.destinationDBUpdateDAO.initialiseWaterMarkTableIfRequired();
+    private void ensureAllTableExists() {
+        destinationDBQueryDAO.ensureIndexedEntriesTableExists();
+
+        destinationDBQueryDAO.ensureCurrentKeysTableExists();
+
+        destinationDBQueryDAO.ensureWaterMarkTableExists();
+        destinationDBQueryDAO.initialiseWaterMarkTableIfRequired();
+
+        destinationDBQueryDAO.ensureTotalEntriesInRegisterTableExists();
+        destinationDBQueryDAO.initialiseTotalEntriesInRegisterIfRequired();
     }
 
     @Override
