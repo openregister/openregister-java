@@ -1,17 +1,27 @@
 package uk.gov.indexer;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import uk.gov.indexer.dao.DestinationDBQueryDAO;
+import uk.gov.indexer.dao.SourceDBQueryDAO;
+
+import java.util.List;
 
 public class IndexerTask implements Runnable {
     private final String register;
-    private final SourcePostgresDB sourceDB;
-    private final DestinationPostgresDB destinationDB;
+    private final SourceDBQueryDAO sourceDBQueryDAO;
+    private final DestinationDBQueryDAO destinationDBQueryDAO;
 
-    public IndexerTask(String register, SourcePostgresDB sourceDB, DestinationPostgresDB destinationDB) {
+    public IndexerTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBQueryDAO destinationDBQueryDAO) {
         this.register = register;
-        this.sourceDB = sourceDB;
-        this.destinationDB = destinationDB;
+        this.sourceDBQueryDAO = sourceDBQueryDAO;
+        this.destinationDBQueryDAO = destinationDBQueryDAO;
+
+        ensureAllTablesExists();
+    }
+
+    private void ensureAllTablesExists() {
+        this.destinationDBQueryDAO.ensureIndexedEntriesTableExists();
+        this.destinationDBQueryDAO.ensureWaterMarkTableExists();
+        this.destinationDBQueryDAO.initialiseWaterMarkTableIfRequired();
     }
 
     @Override
@@ -26,12 +36,9 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        try {
-            int currentWaterMark = destinationDB.currentWaterMark();
-            ResultSet difference = sourceDB.read(currentWaterMark);
-            destinationDB.write(difference);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        int currentWaterMark = destinationDBQueryDAO.currentWaterMark();
+        //write while loop
+        List<byte[]> entries = sourceDBQueryDAO.read(currentWaterMark);
+        destinationDBQueryDAO.writeEntries(entries);
     }
 }
