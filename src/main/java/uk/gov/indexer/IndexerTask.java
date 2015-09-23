@@ -42,8 +42,13 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        int currentWaterMark = destinationDBUpdateDAO.currentWaterMark();
-        List<byte[]> entries = sourceDBQueryDAO.read(currentWaterMark);
-        destinationDBUpdateDAO.writeEntries(entries);
+        List<byte[]> entries;
+        while (!(entries = fetchNewEntries()).isEmpty()) {
+            destinationDBQueryDAO.writeEntries(register, entries);
+        }
+    }
+
+    private List<byte[]> fetchNewEntries() {
+        return sourceDBQueryDAO.read(destinationDBQueryDAO.currentWaterMark());
     }
 }
