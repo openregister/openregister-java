@@ -8,7 +8,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class ThymeleafView extends View {
 
@@ -17,7 +17,7 @@ public class ThymeleafView extends View {
     private String thymeleafTemplateName;
 
     public ThymeleafView(RequestContext requestContext, String templateName) {
-        super(templateName, Charset.forName("UTF-8"));
+        super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
     }
 

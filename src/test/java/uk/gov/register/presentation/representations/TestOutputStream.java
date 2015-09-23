@@ -2,7 +2,7 @@ package uk.gov.register.presentation.representations;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 class TestOutputStream extends OutputStream {
     String contents = "";
@@ -14,6 +14,6 @@ class TestOutputStream extends OutputStream {
 
     @Override
     public void write(byte[] b) throws IOException {
-        contents += new String(b, Charset.forName("UTF-8"));
+        contents += new String(b, StandardCharsets.UTF_8);
     }
 }
