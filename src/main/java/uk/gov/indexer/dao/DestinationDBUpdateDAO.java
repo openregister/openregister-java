@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkQueryDao, IndexedEntriesQueryDao, CurrentKeysQueryDao  {
+public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpdateDao, IndexedEntriesUpdateDao, CurrentKeysUpdateDao, TotalRegisterEntriesUpdateDao {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)

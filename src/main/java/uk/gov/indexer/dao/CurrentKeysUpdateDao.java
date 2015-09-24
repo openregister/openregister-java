@@ -4,7 +4,7 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
-interface CurrentKeysQueryDao{
+interface CurrentKeysUpdateDao {
     String CURRENT_KEYS_TABLE = "CURRENT_KEYS";
 
 

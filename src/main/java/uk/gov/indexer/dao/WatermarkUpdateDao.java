@@ -3,7 +3,7 @@ package uk.gov.indexer.dao;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
-interface WatermarkQueryDao {
+interface WatermarkUpdateDao {
     String WATERMARK_TABLE = "STREAMED_ENTRIES";
 
     @SqlUpdate("CREATE TABLE IF NOT EXISTS " + WATERMARK_TABLE + " (ID INTEGER PRIMARY KEY, TIME TIMESTAMP)")

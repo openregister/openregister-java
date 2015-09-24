@@ -2,7 +2,7 @@ package uk.gov.indexer.dao;
 
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
-interface TotalRegisterEntriesQueryDao {
+interface TotalRegisterEntriesUpdateDao {
     String TOTAL_REGISTER_ENTRIES_TABLE = "register_entries_count";
 
     @SqlUpdate("CREATE TABLE IF NOT EXISTS " + TOTAL_REGISTER_ENTRIES_TABLE + " (COUNT INTEGER)")
