@@ -79,6 +79,16 @@ main {
   }
 }
 
+#footer .footer-meta .footer-meta-inner {
+  .custom-government-licence {
+    @extend .open-government-licence;
+
+    @include media(tablet) {
+      padding-left: 0px;
+    }
+  }
+}
+
 .registry-copyright {
   white-space: pre; /* fallback for IE 6-7 */
   white-space: pre-line;

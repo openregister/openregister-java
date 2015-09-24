@@ -642,23 +642,23 @@ input:focus, textarea:focus, select:focus, button:focus, #global-header input:fo
         #footer .footer-meta .footer-meta-inner ul li {
           display: inline-block;
           margin: 0 15px 0 0; }
-      #footer .footer-meta .footer-meta-inner .open-government-licence {
+      #footer .footer-meta .footer-meta-inner .open-government-licence, #footer .footer-meta .footer-meta-inner .custom-government-licence {
         clear: left;
         position: relative; }
         @media (min-width: 641px) {
-          #footer .footer-meta .footer-meta-inner .open-government-licence {
+          #footer .footer-meta .footer-meta-inner .open-government-licence, #footer .footer-meta .footer-meta-inner .custom-government-licence {
             padding-left: 53px; } }
-        #footer .footer-meta .footer-meta-inner .open-government-licence .logo {
+        #footer .footer-meta .footer-meta-inner .open-government-licence .logo, #footer .footer-meta .footer-meta-inner .custom-government-licence .logo {
           margin-bottom: 1em;
           padding-top: 0; }
           @media (min-width: 641px) {
-            #footer .footer-meta .footer-meta-inner .open-government-licence .logo {
+            #footer .footer-meta .footer-meta-inner .open-government-licence .logo, #footer .footer-meta .footer-meta-inner .custom-government-licence .logo {
               position: absolute;
               left: 0;
               top: 0;
               width: 41px;
               height: 100%; } }
-          #footer .footer-meta .footer-meta-inner .open-government-licence .logo a {
+          #footer .footer-meta .footer-meta-inner .open-government-licence .logo a, #footer .footer-meta .footer-meta-inner .custom-government-licence .logo a {
             display: block;
             width: 41px;
             height: 17px;
@@ -666,10 +666,10 @@ input:focus, textarea:focus, select:focus, button:focus, #global-header input:fo
             text-indent: -999em;
             background: url("/assets/images/open-government-licence.png") 0 0 no-repeat; }
             @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
-              #footer .footer-meta .footer-meta-inner .open-government-licence .logo a {
+              #footer .footer-meta .footer-meta-inner .open-government-licence .logo a, #footer .footer-meta .footer-meta-inner .custom-government-licence .logo a {
                 background-image: url("/assets/images/open-government-licence_2x.png");
                 background-size: 41px 17px; } }
-        #footer .footer-meta .footer-meta-inner .open-government-licence p {
+        #footer .footer-meta .footer-meta-inner .open-government-licence p, #footer .footer-meta .footer-meta-inner .custom-government-licence p {
           font-family: "nta", Arial, sans-serif;
           font-size: 14px;
           line-height: 1.14286;
@@ -678,7 +678,7 @@ input:focus, textarea:focus, select:focus, button:focus, #global-header input:fo
           margin: 0;
           padding-top: 0.1em; }
           @media (min-width: 641px) {
-            #footer .footer-meta .footer-meta-inner .open-government-licence p {
+            #footer .footer-meta .footer-meta-inner .open-government-licence p, #footer .footer-meta .footer-meta-inner .custom-government-licence p {
               font-size: 16px;
               line-height: 1.25; } }
     #footer .footer-meta .copyright {
@@ -816,6 +816,12 @@ body {
       .primary-metadata dd .show-other-content {
         font-size: 24px;
         line-height: 1.25; } }
+
+#footer .footer-meta .footer-meta-inner .custom-government-licence {
+  padding-left: 0; }
+  @media (min-width: 641px) {
+    #footer .footer-meta .footer-meta-inner .custom-government-licence {
+      padding-left: 0px; } }
 
 .registry-copyright {
   white-space: pre;

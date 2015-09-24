@@ -36,7 +36,7 @@
         <div class="footer-meta">
             <div class="footer-meta-inner">
 
-                <div th:if="${register.copyright.present}" class="open-government-licence">
+                <div th:if="${register.copyright.present}" class="custom-government-licence">
                     <p class="registry-copyright" th:text="${register.copyright.get()}">Copyright text</p>
                 </div>
                 <div th:unless="${register.copyright.present}" class="open-government-licence">
@@ -49,9 +49,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <img src="/assets/images/govuk_crest_grey.png"/>
-
-                <p>© Crown copyright</p>
+                <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">© Crown copyright</a>
             </div>
         </div>
     </div>
