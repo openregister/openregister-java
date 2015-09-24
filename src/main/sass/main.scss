@@ -68,7 +68,7 @@ main {
   dd {
     margin: 5px 0 0 0;
     @include bold-24;
-    // some bits of metadata are included inside of other tags which have a 
+    // some bits of metadata are included inside of other tags which have a
     // default style of font-weight: normal
     p, strong {
       font-weight: bold;
@@ -77,6 +77,21 @@ main {
       @include bold-24;
     }
   }
+}
+
+#footer .footer-meta .footer-meta-inner {
+  .custom-government-licence {
+    @extend .open-government-licence;
+
+    @include media(tablet) {
+      padding-left: 0px;
+    }
+  }
+}
+
+.registry-copyright {
+  white-space: pre; /* fallback for IE 6-7 */
+  white-space: pre-line;
 }
 
 // tables
