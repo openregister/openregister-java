@@ -11,9 +11,10 @@ A presentation layer for registers.
 
 # Build and Run project
 
-- Checkout project 
+- Checkout project
+- Add `address.openregister.dev` as an alias for localhost to /etc/hosts
 - Run the `./go` script to set everything up
-- Build project using command `./gradlew clean build` 
+- Build project using command `./gradlew clean build`
 
 # Working on the frontend
 
