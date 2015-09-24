@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile postgresClient
+    compile postgresClient, jdbi, jackson_mapper
     testCompile junit, mockito
 }
 
