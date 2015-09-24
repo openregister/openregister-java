@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.indexer.dao.DestinationDBQueryDAO;
+import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ public class IndexerTaskTest {
     SourceDBQueryDAO sourceDBQueryDAO;
 
     @Mock
-    DestinationDBQueryDAO destinationDBQueryDAO;
+    DestinationDBUpdateDAO destinationDBUpdateDAO;
 
     @Mock
     List<byte[]> entries;
@@ -28,15 +28,15 @@ public class IndexerTaskTest {
     @Test
     public void update_copiesAllEntriesFromSourceDBToDestinationDB_fetchedByWaterMark() throws SQLException {
 
-        IndexerTask indexerTask = new IndexerTask("register", sourceDBQueryDAO, destinationDBQueryDAO);
+        IndexerTask indexerTask = new IndexerTask("register", sourceDBQueryDAO, destinationDBUpdateDAO);
 
 
         int currentWaterMark = 0;
-        when(destinationDBQueryDAO.currentWaterMark()).thenReturn(currentWaterMark);
+        when(destinationDBUpdateDAO.currentWaterMark()).thenReturn(currentWaterMark);
         when(sourceDBQueryDAO.read(currentWaterMark)).thenReturn(entries);
 
         indexerTask.update();
 
-        verify(destinationDBQueryDAO).writeEntries(entries);
+        verify(destinationDBUpdateDAO).writeEntries(entries);
     }
 }

@@ -1,6 +1,6 @@
 package uk.gov.indexer;
 
-import uk.gov.indexer.dao.DestinationDBQueryDAO;
+import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
 import java.util.List;
@@ -8,20 +8,20 @@ import java.util.List;
 public class IndexerTask implements Runnable {
     private final String register;
     private final SourceDBQueryDAO sourceDBQueryDAO;
-    private final DestinationDBQueryDAO destinationDBQueryDAO;
+    private final DestinationDBUpdateDAO destinationDBUpdateDAO;
 
-    public IndexerTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBQueryDAO destinationDBQueryDAO) {
+    public IndexerTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO) {
         this.register = register;
         this.sourceDBQueryDAO = sourceDBQueryDAO;
-        this.destinationDBQueryDAO = destinationDBQueryDAO;
+        this.destinationDBUpdateDAO = destinationDBUpdateDAO;
 
-        ensureAllTablesExists();
+        ensureAllTablesExist();
     }
 
-    private void ensureAllTablesExists() {
-        this.destinationDBQueryDAO.ensureIndexedEntriesTableExists();
-        this.destinationDBQueryDAO.ensureWaterMarkTableExists();
-        this.destinationDBQueryDAO.initialiseWaterMarkTableIfRequired();
+    private void ensureAllTablesExist() {
+        this.destinationDBUpdateDAO.ensureIndexedEntriesTableExists();
+        this.destinationDBUpdateDAO.ensureWaterMarkTableExists();
+        this.destinationDBUpdateDAO.initialiseWaterMarkTableIfRequired();
     }
 
     @Override
@@ -36,9 +36,8 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        int currentWaterMark = destinationDBQueryDAO.currentWaterMark();
-        //write while loop
+        int currentWaterMark = destinationDBUpdateDAO.currentWaterMark();
         List<byte[]> entries = sourceDBQueryDAO.read(currentWaterMark);
-        destinationDBQueryDAO.writeEntries(entries);
+        destinationDBUpdateDAO.writeEntries(entries);
     }
 }

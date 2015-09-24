@@ -9,11 +9,11 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class DestinationDBQueryDAO implements DBQueryDAO {
+public abstract class DestinationDBUpdateDAO implements DBQueryDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static final String INDEXED_ENTRIES_TABLE = "ORDERED_ENTRY_INDEX";
@@ -40,7 +40,7 @@ public abstract class DestinationDBQueryDAO implements DBQueryDAO {
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void writeEntries(List<byte[]> entryRows) {
         for (byte[] entryRow : entryRows) {
-            String entry = new String(entryRow, Charset.forName("UTF-8"));
+            String entry = new String(entryRow, StandardCharsets.UTF_8);
             int result = write(pgObject(entry));
             if (result > 0) {
                 increaseWaterMarkByOne();

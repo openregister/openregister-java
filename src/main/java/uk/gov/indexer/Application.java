@@ -2,7 +2,7 @@ package uk.gov.indexer;
 
 import org.skife.jdbi.v2.DBI;
 import uk.gov.indexer.dao.DBQueryDAO;
-import uk.gov.indexer.dao.DestinationDBQueryDAO;
+import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class Application {
 
         for (String register : registers) {
             try {
-                DestinationDBQueryDAO destinationQueryDAO = createDestinationDAO(register, configuration);
+                DestinationDBUpdateDAO destinationQueryDAO = createDestinationDAO(register, configuration);
                 SourceDBQueryDAO sourceQueryDAO = createSourceDAO(register, configuration);
 
                 executorService.scheduleAtFixedRate(new IndexerTask(register, sourceQueryDAO, destinationQueryDAO), 0, 10, TimeUnit.SECONDS);
@@ -47,11 +47,11 @@ public class Application {
         return sourceDBQueryDAO;
     }
 
-    private static DestinationDBQueryDAO createDestinationDAO(String register, Configuration configuration) {
+    private static DestinationDBUpdateDAO createDestinationDAO(String register, Configuration configuration) {
         DBI dbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
-        DestinationDBQueryDAO destinationDBQueryDAO = dbi.onDemand(DestinationDBQueryDAO.class);
-        databaseObjectRegistry.add(destinationDBQueryDAO);
-        return destinationDBQueryDAO;
+        DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.onDemand(DestinationDBUpdateDAO.class);
+        databaseObjectRegistry.add(destinationDBUpdateDAO);
+        return destinationDBUpdateDAO;
     }
 
 
