@@ -157,3 +157,16 @@
     text: "The register of primary, secondary and\_special needs schools in England\
       \ and Wales.\n"
   last-updated: "2015-06-02T17:42:58.910+01:00"
+- hash: "8fea83332e1888d32475493453dc355147aa3ee8"
+  entry:
+    text: "Trading addresses in the UK\n"
+    fields:
+    - "premises"
+    - "name"
+    - "address"
+    - "start-date"
+    - "end-date"
+    - "company"
+    register: "premises"
+    registry: "health-and-safety-executive"
+  last-updated: "2015-09-15T13:44:53.244Z"
