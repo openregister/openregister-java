@@ -31,15 +31,9 @@ public interface RecentEntryIndexQueryDAO {
     @SingleValueResult(DbEntry.class)
     Optional<DbEntry> findBySerial(@Bind("serial") long serial);
 
-    @SqlQuery("SELECT i.id, i.entry FROM ordered_entry_index i, ( " +
-            "SELECT MAX(id) AS id " +
-            "FROM ordered_entry_index " +
-            "GROUP BY (entry #>> ARRAY['entry',:key])) AS ii " +
-            "WHERE i.id = ii.id " +
-            "ORDER BY (entry #>> ARRAY['entry',:key]) DESC LIMIT :limit")
-    List<DbEntry> getLatestEntriesOfRecords(@Bind("key") String name,
-                                            @Bind("limit") long maxNumberToFetch);
+    @SqlQuery("SELECT ID,ENTRY FROM ORDERED_ENTRY_INDEX WHERE ID IN(SELECT ID FROM CURRENT_KEYS ORDER BY ID DESC LIMIT :limit)")
+    List<DbEntry> getLatestEntriesOfRecords(@Bind("limit") long maxNumberToFetch);
 
-    @SqlQuery("SELECT reltuples\\:\\:bigint FROM pg_class where relname='ordered_entry_index'")
-    long getEstimatedEntriesCount();
+    @SqlQuery("SELECT COUNT FROM REGISTER_ENTRIES_COUNT")
+    int getTotalEntriesCount();
 }
