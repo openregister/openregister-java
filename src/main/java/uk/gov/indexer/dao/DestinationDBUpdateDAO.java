@@ -39,6 +39,19 @@ public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpd
         }
     }
 
+    public void ensureAllTablesExist(){
+        ensureIndexedEntriesTableExists();
+
+        ensureCurrentKeysTableExists();
+
+        ensureWaterMarkTableExists();
+        initialiseWaterMarkTableIfRequired();
+
+        ensureTotalEntriesInRegisterTableExists();
+        initialiseTotalEntriesInRegisterIfRequired();
+    }
+
+
     private String getKey(String registerName, String entry) {
         JsonNode jsonNode = getJsonNode(entry);
         return jsonNode.get("entry").get(registerName).getTextValue();
