@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+import uk.gov.register.presentation.representations.DBSupport;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -19,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DataResourceFunctionalTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
-        publishMessagesToDB(ImmutableList.of(
+        DBSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"

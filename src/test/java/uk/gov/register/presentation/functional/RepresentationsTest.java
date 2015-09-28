@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import uk.gov.register.presentation.representations.DBSupport;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -26,9 +27,9 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @BeforeClass
     public static void publishTestMessages() {
-        publishMessagesToDB(ImmutableList.of(
-                "{\"hash\":\"someHash1\",\"entry\":{\"street\":\"The Entry 1\", \"area\":\"value1\", \"address\":\"12345\"}}",
-                "{\"hash\":\"someHash2\",\"entry\":{\"street\":\"The Entry 2\", \"area\":\"value2\", \"address\":\"67890\"}}"
+        DBSupport.publishMessages(ImmutableList.of(
+                "{\"hash\":\"someHash1\",\"entry\":{\"street\":\"The Entry 1\", \"area\":\"value1\", \"address\":\"12345\",\"town\":\"town1\"}}",
+                "{\"hash\":\"someHash2\",\"entry\":{\"street\":\"The Entry 2\", \"area\":\"value2\", \"address\":\"67890\",\"town\":\"town2\"}}"
         ));
     }
 

@@ -5,3 +5,4 @@ entry:
   address: "12345"
   area: "value1"
   street: "The Entry 1"
+  town: "town1"
