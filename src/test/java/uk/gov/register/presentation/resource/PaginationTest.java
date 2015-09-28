@@ -3,6 +3,7 @@ package uk.gov.register.presentation.resource;
 import org.junit.Test;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -48,7 +49,7 @@ public class PaginationTest {
     }
 
     @Test
-    public void hasPreviousPage_returnsTrueOnlyWhenPageIndexIsMopreThanOne() {
+    public void hasPreviousPage_returnsTrueOnlyWhenPageIndexIsMoreThanOne() {
         assertFalse(new Pagination("/feed", Optional.of(1l), Optional.of(10l), 10).hasPreviousPage());
         assertFalse(new Pagination("/feed", Optional.of(1l), Optional.of(10l), 11).hasPreviousPage());
 
@@ -84,5 +85,10 @@ public class PaginationTest {
     public void getPreviousPageLink_returnsTheLinkForPreviousPage() {
         Pagination pagination = new Pagination("/feed", Optional.of(2l), Optional.of(10l), 11);
         assertThat(pagination.getPreviousPageLink(), equalTo("/feed?pageIndex=1&pageSize=10"));
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void construct_throwsNotFoundException_whenNoMoreEntriesForGivenPageSizeAndPageIndexValues() {
+        new Pagination("/feed", Optional.of(2l), Optional.of(10l), 10);
     }
 }

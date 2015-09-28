@@ -2,6 +2,7 @@ package uk.gov.register.presentation.resource;
 
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 
 public class Pagination {
@@ -11,15 +12,19 @@ public class Pagination {
     private final long totalEntries;
     private final long pageSize;
 
-    Pagination(String resourcePath, Optional<Long> pageIndex, Optional<Long> pageSize, long totalEntries) {
+    Pagination(String resourcePath, Optional<Long> optionalPageIndex, Optional<Long> optionalPageSize, long totalEntries) {
         this.resourcePath = resourcePath;
         this.totalEntries = totalEntries;
 
-        this.pageIndex = pageIndex.orElse(1L);
-        this.pageSize = pageSize.orElse(DataResource.ENTRY_LIMIT);
+        this.pageIndex = optionalPageIndex.orElse(1L);
+        this.pageSize = optionalPageSize.orElse(DataResource.ENTRY_LIMIT);
 
         if (this.pageSize <= 0 || this.pageIndex <= 0) {
             throw new BadRequestException();
+        }
+
+        if ((this.pageIndex - 1) * this.pageSize >= totalEntries) {
+            throw new NotFoundException();
         }
     }
 
