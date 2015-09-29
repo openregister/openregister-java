@@ -26,7 +26,7 @@ public abstract class DestinationDBUpdateDAO implements DBQueryDAO, IndexedEntri
                 String key = getKey(registerName, contents);
 
                 if (doesRecordExistsWithKey(key)) {
-                    updateCurrentKey(entry.serial_number, key);
+                    updateSerialNumber(entry.serial_number, key);
                 } else {
                     writeCurrentKey(entry.serial_number, key);
                 }
