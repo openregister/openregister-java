@@ -3,13 +3,10 @@ package uk.gov.register.presentation.functional;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import uk.gov.register.presentation.dao.PGObjectFactory;
 import uk.gov.register.presentation.functional.testSupport.CleanDatabaseRule;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
-import java.sql.*;
-import java.util.List;
 
 public class FunctionalTestBase {
     public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_presentation";
@@ -31,28 +28,6 @@ public class FunctionalTestBase {
     }
 
     Response getRequest(String path) {
-        return client.target(String.format("http://localhost:%d%s", APPLICATION_PORT, path)).request().header("Host","address.beta.openregister.org").get();
+        return client.target(String.format("http://localhost:%d%s", APPLICATION_PORT, path)).request().header("Host", "address.beta.openregister.org").get();
     }
-
-
-
-    static void publishMessagesToDB(List<String> messages) {
-        org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl(DATABASE_URL);
-        dataSource.setUsername(DATABASE_USER);
-        try (Connection connection = dataSource.getConnection()) {
-            for (String message : messages) {
-                try(PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(entry) values(?)"))
-                {
-                    insertPreparedStatement.setObject(1, PGObjectFactory.jsonbObject(message));
-                    insertPreparedStatement.execute();
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
 }
