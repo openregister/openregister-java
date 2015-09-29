@@ -3,54 +3,64 @@ package uk.gov.indexer.dao;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.postgresql.util.PGobject;
+import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
+import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpdateDAO, IndexedEntriesUpdateDAO, CurrentKeysUpdateDAO, TotalRegisterEntriesUpdateDAO {
+
+public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final TotalRegisterEntriesUpdateDAO totalRegisterEntriesUpdateDAO;
+    private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
+    private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;
+
+    public DestinationDBUpdateDAO() {
+        Handle handle = getHandle();
+        totalRegisterEntriesUpdateDAO = handle.attach(TotalRegisterEntriesUpdateDAO.class);
+
+        currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
+
+        indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
+
+        indexedEntriesUpdateDAO.ensureIndexedEntriesTableExists();
+
+        currentKeysUpdateDAO.ensureCurrentKeysTableExists();
+
+        totalRegisterEntriesUpdateDAO.ensureTotalEntriesInRegisterTableExists();
+        totalRegisterEntriesUpdateDAO.initialiseTotalEntriesInRegisterIfRequired();
+    }
+
+    public int lastReadSerialNumber() {
+        return indexedEntriesUpdateDAO.lastReadSerialNumber();
+    }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntries(String registerName, List<byte[]> entryRows) {
-        for (byte[] entryRow : entryRows) {
-            String entry = new String(entryRow, StandardCharsets.UTF_8);
+    public void writeEntries(String registerName, List<Entry> entries) {
+        for (Entry entry : entries) {
+            String contents = new String(entry.contents, StandardCharsets.UTF_8);
 
-            int result = write(pgObject(entry));
+            int result = indexedEntriesUpdateDAO.write(entry.serial_number, pgObject(contents));
 
             if (result > 0) {
-                increaseTotalEntriesInRegisterCount();
-                increaseWaterMarkByOne();
+                totalRegisterEntriesUpdateDAO.increaseTotalEntriesInRegisterCount();
 
-                String key = getKey(registerName, entry);
+                String key = getKey(registerName, contents);
 
-                int entryID = getCurrentSerialNumberForKey(key);
-
-                if (entryID == -1) {
-                    writeCurrentKey(currentWaterMark(), key);
+                if (currentKeysUpdateDAO.doesRecordExistWithKey(key)) {
+                    currentKeysUpdateDAO.updateSerialNumber(entry.serial_number, key);
                 } else {
-                    updateCurrentKey(entryID, key);
+                    currentKeysUpdateDAO.writeCurrentKey(entry.serial_number, key);
                 }
             } else {
-                throw new RuntimeException("Could not write entry: " + entry);
+                throw new RuntimeException("Could not write entry: " + contents);
             }
         }
     }
-
-    public void ensureAllTablesExist() {
-        ensureIndexedEntriesTableExists();
-
-        ensureCurrentKeysTableExists();
-
-        ensureWaterMarkTableExists();
-        initialiseWaterMarkTableIfRequired();
-
-        ensureTotalEntriesInRegisterTableExists();
-        initialiseTotalEntriesInRegisterIfRequired();
-    }
-
 
     private String getKey(String registerName, String entry) {
         JsonNode jsonNode = getJsonNode(entry);
