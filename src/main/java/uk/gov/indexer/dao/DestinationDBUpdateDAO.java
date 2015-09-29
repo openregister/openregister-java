@@ -10,31 +10,28 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpdateDAO, IndexedEntriesUpdateDAO, CurrentKeysUpdateDAO, TotalRegisterEntriesUpdateDAO {
+public abstract class DestinationDBUpdateDAO implements DBQueryDAO, IndexedEntriesUpdateDAO, CurrentKeysUpdateDAO, TotalRegisterEntriesUpdateDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntries(String registerName, List<byte[]> entryRows) {
-        for (byte[] entryRow : entryRows) {
-            String entry = new String(entryRow, StandardCharsets.UTF_8);
+    public void writeEntries(String registerName, List<Entry> entries) {
+        for (Entry entry : entries) {
+            String contents = new String(entry.contents, StandardCharsets.UTF_8);
 
-            int result = write(pgObject(entry));
+            int result = write(entry.serial_number, pgObject(contents));
 
             if (result > 0) {
                 increaseTotalEntriesInRegisterCount();
-                increaseWaterMarkByOne();
 
-                String key = getKey(registerName, entry);
+                String key = getKey(registerName, contents);
 
-                int entryID = getCurrentSerialNumberForKey(key);
-
-                if (entryID == -1) {
-                    writeCurrentKey(currentWaterMark(), key);
+                if (doesRecordExistsWithKey(key)) {
+                    updateCurrentKey(entry.serial_number, key);
                 } else {
-                    updateCurrentKey(entryID, key);
+                    writeCurrentKey(entry.serial_number, key);
                 }
             } else {
-                throw new RuntimeException("Could not write entry: " + entry);
+                throw new RuntimeException("Could not write entry: " + contents);
             }
         }
     }
@@ -43,9 +40,6 @@ public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpd
         ensureIndexedEntriesTableExists();
 
         ensureCurrentKeysTableExists();
-
-        ensureWaterMarkTableExists();
-        initialiseWaterMarkTableIfRequired();
 
         ensureTotalEntriesInRegisterTableExists();
         initialiseTotalEntriesInRegisterIfRequired();

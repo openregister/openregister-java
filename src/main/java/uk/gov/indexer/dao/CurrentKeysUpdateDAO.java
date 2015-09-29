@@ -17,15 +17,7 @@ interface CurrentKeysUpdateDAO {
     @SqlUpdate("UPDATE " + CURRENT_KEYS_TABLE + " SET SERIAL_NUMBER=:serial_number WHERE KEY=:key")
     int updateCurrentKey(@Bind("serial_number") int serial_number, @Bind("key") String key);
 
-    @SqlQuery("SELECT CASE " +
-            "WHEN EXISTS(" +
-            "SELECT 1 FROM " + CURRENT_KEYS_TABLE + " WHERE KEY=:key" +
-            ") " +
-            "THEN(" +
-            "SELECT SERIAL_NUMBER FROM " + CURRENT_KEYS_TABLE + " WHERE KEY=:key" +
-            ") " +
-            "ELSE -1 " +
-            "END")
-    int getCurrentSerialNumberForKey(@Bind("key") String key);
+    @SqlQuery("SELECT 1 FROM " + CURRENT_KEYS_TABLE + " WHERE KEY=:key")
+    boolean doesRecordExistsWithKey(@Bind("key") String key);
 }
 

@@ -1,6 +1,7 @@
 package uk.gov.indexer;
 
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
+import uk.gov.indexer.dao.Entry;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
 import java.util.List;
@@ -29,13 +30,13 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        List<byte[]> entries;
+        List<Entry> entries;
         while (!(entries = fetchNewEntries()).isEmpty()) {
             destinationDBUpdateDAO.writeEntries(register, entries);
         }
     }
 
-    private List<byte[]> fetchNewEntries() {
-        return sourceDBQueryDAO.read(destinationDBUpdateDAO.currentWaterMark());
+    private List<Entry> fetchNewEntries() {
+        return sourceDBQueryDAO.read(destinationDBUpdateDAO.lastReadSerialNumber());
     }
 }
