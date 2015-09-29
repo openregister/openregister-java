@@ -10,13 +10,13 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpdateDao, IndexedEntriesUpdateDao, CurrentKeysUpdateDao, TotalRegisterEntriesUpdateDao {
+public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpdateDAO, IndexedEntriesUpdateDAO, CurrentKeysUpdateDAO, TotalRegisterEntriesUpdateDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void writeEntries(String registerName, List<byte[]> entryRows) {
         for (byte[] entryRow : entryRows) {
-            String entry = new String(entryRow,  StandardCharsets.UTF_8);
+            String entry = new String(entryRow, StandardCharsets.UTF_8);
 
             int result = write(pgObject(entry));
 
@@ -26,7 +26,7 @@ public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpd
 
                 String key = getKey(registerName, entry);
 
-                int entryID = getCurrentIdForKey(key);
+                int entryID = getCurrentSerialNumberForKey(key);
 
                 if (entryID == -1) {
                     writeCurrentKey(currentWaterMark(), key);
@@ -39,7 +39,7 @@ public abstract class DestinationDBUpdateDAO implements DBQueryDAO, WatermarkUpd
         }
     }
 
-    public void ensureAllTablesExist(){
+    public void ensureAllTablesExist() {
         ensureIndexedEntriesTableExists();
 
         ensureCurrentKeysTableExists();
