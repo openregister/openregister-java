@@ -50,6 +50,6 @@ public class ApplicationTest extends FunctionalTestBase {
 
         String contentType = (String) response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0);
         assertThat(contentType, containsString("text/html"));
-        assertThat(contentType, containsString("charset=utf-8"));
+        assertThat(contentType, containsString("charset=UTF-8"));
     }
 }
