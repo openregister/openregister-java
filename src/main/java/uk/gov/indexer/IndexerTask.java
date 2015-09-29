@@ -14,14 +14,7 @@ public class IndexerTask implements Runnable {
         this.register = register;
         this.sourceDBQueryDAO = sourceDBQueryDAO;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
-
-        ensureAllTablesExist();
-    }
-
-    private void ensureAllTablesExist() {
-        this.destinationDBUpdateDAO.ensureIndexedEntriesTableExists();
-        this.destinationDBUpdateDAO.ensureWaterMarkTableExists();
-        this.destinationDBUpdateDAO.initialiseWaterMarkTableIfRequired();
+        this.destinationDBUpdateDAO.ensureAllTablesExist();
     }
 
     @Override
@@ -36,8 +29,13 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        int currentWaterMark = destinationDBUpdateDAO.currentWaterMark();
-        List<byte[]> entries = sourceDBQueryDAO.read(currentWaterMark);
-        destinationDBUpdateDAO.writeEntries(entries);
+        List<byte[]> entries;
+        while (!(entries = fetchNewEntries()).isEmpty()) {
+            destinationDBUpdateDAO.writeEntries(register, entries);
+        }
+    }
+
+    private List<byte[]> fetchNewEntries() {
+        return sourceDBQueryDAO.read(destinationDBUpdateDAO.currentWaterMark());
     }
 }
