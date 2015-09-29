@@ -6,7 +6,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
 import java.util.List;
 
-public interface SourceDBQueryDAO extends CloseableDAO {
+public interface SourceDBQueryDAO extends DBConnectionDAO {
     String ENTRIES_TABLE = "entries";
 
     @RegisterMapper(EntryMapper.class)

@@ -5,7 +5,7 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
-interface IndexedEntriesUpdateDAO extends CloseableDAO {
+interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     String INDEXED_ENTRIES_TABLE = "ORDERED_ENTRY_INDEX";
 
     @SqlUpdate("CREATE TABLE IF NOT EXISTS " + INDEXED_ENTRIES_TABLE + " (SERIAL_NUMBER INTEGER PRIMARY KEY, ENTRY JSONB)")

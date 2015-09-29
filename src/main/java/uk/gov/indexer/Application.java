@@ -2,7 +2,7 @@ package uk.gov.indexer;
 
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
-import uk.gov.indexer.dao.CloseableDAO;
+import uk.gov.indexer.dao.DBConnectionDAO;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Application {
     private final static Runtime runtime = Runtime.getRuntime();
-    private final static List<CloseableDAO> databaseObjectRegistry = new ArrayList<>();
+    private final static List<DBConnectionDAO> databaseObjectRegistry = new ArrayList<>();
 
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
         Configuration configuration = new Configuration(args);
@@ -61,7 +61,7 @@ public class Application {
             @Override
             public void run() {
                 executorService.shutdown();
-                databaseObjectRegistry.forEach(CloseableDAO::close);
+                databaseObjectRegistry.forEach(DBConnectionDAO::close);
                 ConsoleLogger.log("Shutdown completed...");
             }
         });

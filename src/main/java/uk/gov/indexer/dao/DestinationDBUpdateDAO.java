@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-public abstract class DestinationDBUpdateDAO implements GetHandle, CloseableDAO {
+public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final TotalRegisterEntriesUpdateDAO totalRegisterEntriesUpdateDAO;
     private final CurrentKeysUpdateDAO currentKeysUpdateDAO;

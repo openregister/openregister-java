@@ -1,5 +1,5 @@
 package uk.gov.indexer.dao;
 
-public interface CloseableDAO {
+public interface DBConnectionDAO {
     void close();
 }
