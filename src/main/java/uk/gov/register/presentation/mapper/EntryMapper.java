@@ -22,7 +22,7 @@ public class EntryMapper implements ResultSetMapper<DbEntry> {
     @Override
     public DbEntry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         try {
-            return new DbEntry(r.getInt("id"), objectMapper.readValue(r.getBytes("entry"), DbContent.class));
+            return new DbEntry(r.getInt("serial_number"), objectMapper.readValue(r.getBytes("entry"), DbContent.class));
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }

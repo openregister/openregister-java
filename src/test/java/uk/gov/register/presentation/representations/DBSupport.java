@@ -32,9 +32,9 @@ public class DBSupport {
                 int id = getIdOfThisPublishedMessage(statement);
 
                 if (isSupersedingAnEntry(statement, primaryKeyValue)) {
-                    statement.executeUpdate(String.format("Update current_keys set id=%s where key='%s'", id, primaryKeyValue));
+                    statement.executeUpdate(String.format("Update current_keys set serial_number=%s where key='%s'", id, primaryKeyValue));
                 } else {
-                    statement.executeUpdate(String.format("Insert into current_keys(id,key) values(%s,%s)", id, primaryKeyValue));
+                    statement.executeUpdate(String.format("Insert into current_keys(serial_number,key) values(%s,%s)", id, primaryKeyValue));
                 }
 
                 statement.executeUpdate("Update register_entries_count set count=count+1");
@@ -47,7 +47,7 @@ public class DBSupport {
     }
 
     private static boolean isSupersedingAnEntry(Statement statement, String primaryKeyValue) throws SQLException {
-        statement.execute(String.format("select id from current_keys where key='%s'", primaryKeyValue));
+        statement.execute(String.format("select serial_number from current_keys where key='%s'", primaryKeyValue));
         return statement.getResultSet().next();
     }
 
@@ -56,10 +56,10 @@ public class DBSupport {
     }
 
     private static int getIdOfThisPublishedMessage(Statement statement) throws SQLException {
-        statement.execute("select id from ordered_entry_index order by id desc limit 1");
+        statement.execute("select serial_number from ordered_entry_index order by serial_number desc limit 1");
         ResultSet resultSet = statement.getResultSet();
         resultSet.next();
-        return resultSet.getInt("id");
+        return resultSet.getInt("serial_number");
     }
 
     public static PGobject jsonbObject(String value) {
