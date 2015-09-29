@@ -4,7 +4,7 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
-interface CurrentKeysUpdateDAO {
+interface CurrentKeysUpdateDAO extends CloseableDAO {
     String CURRENT_KEYS_TABLE = "CURRENT_KEYS";
 
     @SqlUpdate("CREATE TABLE IF NOT EXISTS " + CURRENT_KEYS_TABLE + " (KEY VARCHAR PRIMARY KEY, SERIAL_NUMBER INTEGER UNIQUE)")
@@ -17,6 +17,6 @@ interface CurrentKeysUpdateDAO {
     int updateSerialNumber(@Bind("serial_number") int serial_number, @Bind("key") String key);
 
     @SqlQuery("SELECT 1 FROM " + CURRENT_KEYS_TABLE + " WHERE KEY=:key")
-    boolean doesRecordExistsWithKey(@Bind("key") String key);
+    boolean doesRecordExistWithKey(@Bind("key") String key);
 }
 

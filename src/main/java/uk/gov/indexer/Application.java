@@ -1,7 +1,8 @@
 package uk.gov.indexer;
 
 import org.skife.jdbi.v2.DBI;
-import uk.gov.indexer.dao.DBQueryDAO;
+import org.skife.jdbi.v2.Handle;
+import uk.gov.indexer.dao.CloseableDAO;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Application {
     private final static Runtime runtime = Runtime.getRuntime();
-    private final static List<DBQueryDAO> databaseObjectRegistry = new ArrayList<>();
+    private final static List<CloseableDAO> databaseObjectRegistry = new ArrayList<>();
 
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
         Configuration configuration = new Configuration(args);
@@ -48,8 +49,8 @@ public class Application {
     }
 
     private static DestinationDBUpdateDAO createDestinationDAO(String register, Configuration configuration) {
-        DBI dbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
-        DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.onDemand(DestinationDBUpdateDAO.class);
+        Handle handle = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString")).open();
+        DestinationDBUpdateDAO destinationDBUpdateDAO = handle.attach(DestinationDBUpdateDAO.class);
         databaseObjectRegistry.add(destinationDBUpdateDAO);
         return destinationDBUpdateDAO;
     }
@@ -60,7 +61,7 @@ public class Application {
             @Override
             public void run() {
                 executorService.shutdown();
-                databaseObjectRegistry.forEach(DBQueryDAO::close);
+                databaseObjectRegistry.forEach(CloseableDAO::close);
                 ConsoleLogger.log("Shutdown completed...");
             }
         });
