@@ -170,12 +170,12 @@
     register: "premises"
     registry: "health-and-safety-executive"
   last-updated: "2015-09-15T13:44:53.244Z"
-- hash: "413a0a13deca27faa2a1b60f178f9af54974f010"
+- hash: "ed2785fec41ac8b42a0b7a361d778d0420ad4d21"
   entry:
-    text: "The register of UK Government domain names."
+    text: "The register of UK Government domain names.\n"
     fields:
     - "government-domain"
     - "owner"
     - "end-date"
     register: "government-domain"
-  last-updated: "2015-09-30T10:10:51.430Z"
+  last-updated: "2015-09-30T10:20:13.741Z"
