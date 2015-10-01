@@ -8,6 +8,8 @@ import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.StringValue;
+import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -24,7 +26,7 @@ public class TurtleWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration()) {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(new PublicBodiesConfiguration())) {
             @Override
             public String requestUrl() {
                 return "http://widget.openregister.org/widget/123";
@@ -45,7 +47,7 @@ public class TurtleWriterTest {
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        turtleWriter.writeEntriesTo(entityStream, new Register("company", ImmutableSet.of("company", "registered-address", "name"), "", "companies-house", ""), Collections.singletonList(entry));
+        turtleWriter.writeEntriesTo(entityStream, new Register("company", ImmutableSet.of("company", "registered-address", "name"), "", new PublicBody("Companies House", "companies-house"), ""), Collections.singletonList(entry));
 
 
         assertThat(entityStream.contents, containsString("field:registered-address <http://address.openregister.org/address/1111111>"));

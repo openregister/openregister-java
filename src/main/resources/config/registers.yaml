@@ -68,7 +68,7 @@
     fields:
     - "fields"
     - "text"
-    register: "fields"
+    register: "datatype"
     registry: "cabinet-office"
     text: "This register of datatypes constraining a field value and idenitifying\
       \ ways in which it may be encoded a representation.\n"
