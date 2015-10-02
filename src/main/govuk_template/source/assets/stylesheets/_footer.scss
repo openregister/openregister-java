@@ -3,6 +3,7 @@
 #footer {
   background-color: $grey-8;
   border-top: 1px solid $grey-6;
+  margin-top: 90px;
 
   .footer-wrapper {
     @include outer-block;
