@@ -1,5 +1,6 @@
 package uk.gov.indexer.dao;
 
+import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
 interface TotalRegisterEntriesUpdateDAO extends DBConnectionDAO {
@@ -11,6 +12,6 @@ interface TotalRegisterEntriesUpdateDAO extends DBConnectionDAO {
     @SqlUpdate("INSERT INTO " + TOTAL_REGISTER_ENTRIES_TABLE + "(COUNT) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM " + TOTAL_REGISTER_ENTRIES_TABLE + ")")
     void initialiseTotalEntriesInRegisterIfRequired();
 
-    @SqlUpdate("UPDATE " + TOTAL_REGISTER_ENTRIES_TABLE + " SET COUNT=COUNT+1")
-    void increaseTotalEntriesInRegisterCount();
+    @SqlUpdate("UPDATE " + TOTAL_REGISTER_ENTRIES_TABLE + " SET COUNT=COUNT+:noOfEntries")
+    void increaseTotalEntriesInRegisterCount(@Bind("noOfEntries") int noOfEntries);
 }

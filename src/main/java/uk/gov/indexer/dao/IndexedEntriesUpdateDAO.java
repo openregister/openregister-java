@@ -1,9 +1,9 @@
 package uk.gov.indexer.dao;
 
 import org.postgresql.util.PGobject;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.*;
+
+import java.util.Iterator;
 
 interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     String INDEXED_ENTRIES_TABLE = "ORDERED_ENTRY_INDEX";
@@ -16,4 +16,7 @@ interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
 
     @SqlQuery("SELECT MAX(SERIAL_NUMBER) FROM " + INDEXED_ENTRIES_TABLE)
     int lastReadSerialNumber();
+
+    @SqlBatch("INSERT INTO " + INDEXED_ENTRIES_TABLE + "(SERIAL_NUMBER, ENTRY) VALUES(:serial_number, :content)")
+    void writeBatch(@BindBean Iterator<OrderedIndexEntry> orderedIndexEntry);
 }

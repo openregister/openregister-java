@@ -1,8 +1,9 @@
 package uk.gov.indexer.dao;
 
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.*;
+
+import java.util.Iterator;
+import java.util.List;
 
 interface CurrentKeysUpdateDAO extends DBConnectionDAO {
     String CURRENT_KEYS_TABLE = "CURRENT_KEYS";
@@ -18,5 +19,11 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
 
     @SqlQuery("SELECT 1 FROM " + CURRENT_KEYS_TABLE + " WHERE KEY=:key")
     boolean doesRecordExistWithKey(@Bind("key") String key);
+
+    @SqlQuery("SELECT KEY FROM " + CURRENT_KEYS_TABLE + " WHERE KEY IN (:keys)")
+    List<String> getExistingKeys(@Bind("keys") String keys);
+
+    @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(SERIAL_NUMBER, KEY) values(:serial_number, :primaryKey)")
+    void insertEntries(@BindBean Iterator<OrderedIndexEntry> entries);
 }
 
