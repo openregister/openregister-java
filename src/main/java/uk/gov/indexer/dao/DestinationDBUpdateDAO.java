@@ -1,7 +1,6 @@
 package uk.gov.indexer.dao;
 
 import com.google.common.collect.Lists;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 
 
 public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private final TotalRegisterEntriesUpdateDAO totalRegisterEntriesUpdateDAO;
     private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
     private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;

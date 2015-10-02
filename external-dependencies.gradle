@@ -2,7 +2,7 @@ ext {
 
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
     jdbi = 'org.jdbi:jdbi:2.59'
-    jackson_mapper = 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+    aws_cloudsearch = 'com.amazonaws:aws-java-sdk-cloudsearch:1.10.22'
 
     //test dependency
     junit = 'junit:junit:4.12'
