@@ -33,17 +33,16 @@ public class AWSCloudSearch {
 
     public void upload(List<Entry> entries) {
         byte[] bytes = Jackson.toJsonString(Lists.transform(entries, this::document)).getBytes(StandardCharsets.UTF_8);
-        System.out.println("new String(bytes) = " + new String(bytes));
         UploadDocumentsRequest uploadDocumentsRequest = new UploadDocumentsRequest();
         uploadDocumentsRequest.setContentType(ContentType.Applicationjson);
         uploadDocumentsRequest.setContentLength((long) bytes.length);
         uploadDocumentsRequest.setDocuments(new ByteArrayInputStream(bytes));
         UploadDocumentsResult uploadDocumentsResult = cloudSearchDomain.uploadDocuments(uploadDocumentsRequest);
 
-        //TODO: handle result
-        System.out.println("uploadDocumentsResult = " + uploadDocumentsResult);
+        if (!"success".equalsIgnoreCase(uploadDocumentsResult.getStatus())) {
+            throw new RuntimeException("Address upload request failed: " + uploadDocumentsResult.toString());
+        }
     }
-
 
     private ObjectNode document(Entry e) {
         JsonNode jsonNode = Jackson.jsonNodeOf(new String(e.contents, StandardCharsets.UTF_8));
