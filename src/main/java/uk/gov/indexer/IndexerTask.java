@@ -31,7 +31,7 @@ public class IndexerTask implements Runnable {
     protected void update() {
         List<Entry> entries;
         while (!(entries = fetchNewEntries()).isEmpty()) {
-            destinationDBUpdateDAO.writeEntries(register, entries);
+            destinationDBUpdateDAO.writeEntriesInBatch(register, entries);
         }
     }
 

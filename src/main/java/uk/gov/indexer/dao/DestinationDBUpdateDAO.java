@@ -1,16 +1,14 @@
 package uk.gov.indexer.dao;
 
-import org.codehaus.jackson.JsonNode;
+import com.google.common.collect.Lists;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 
-import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
@@ -40,51 +38,26 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntries(String registerName, List<Entry> entries) {
-        for (Entry entry : entries) {
-            String contents = new String(entry.contents, StandardCharsets.UTF_8);
+    public void writeEntriesInBatch(String registerName, List<Entry> entries) {
 
-            int result = indexedEntriesUpdateDAO.write(entry.serial_number, pgObject(contents));
+        List<OrderedIndexEntry> orderedIndexEntry = entries.stream().map((entry) -> entry.dbEntry(registerName)).collect(Collectors.toList());
+        indexedEntriesUpdateDAO.writeBatch(orderedIndexEntry.iterator());
+        totalRegisterEntriesUpdateDAO.increaseTotalEntriesInRegisterCount(orderedIndexEntry.size());
+        upsertInCurrentKeysTable(orderedIndexEntry);
+    }
 
-            if (result > 0) {
-                totalRegisterEntriesUpdateDAO.increaseTotalEntriesInRegisterCount();
+    private void upsertInCurrentKeysTable(List<OrderedIndexEntry> orderedIndexEntry) {
+        List<String> allKeys = Lists.transform(orderedIndexEntry, e -> e.primaryKey);
+        List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(String.join(",", allKeys));
 
-                String key = getKey(registerName, contents);
+        allKeys.removeAll(existingKeys);
 
-                if (currentKeysUpdateDAO.doesRecordExistWithKey(key)) {
-                    currentKeysUpdateDAO.updateSerialNumber(entry.serial_number, key);
-                } else {
-                    currentKeysUpdateDAO.writeCurrentKey(entry.serial_number, key);
-                }
-            } else {
-                throw new RuntimeException("Could not write entry: " + contents);
-            }
+        List<OrderedIndexEntry> newEntries = orderedIndexEntry.stream().filter(e -> allKeys.contains(e.primaryKey)).collect(Collectors.toList());
+        List<OrderedIndexEntry> updateEntries = orderedIndexEntry.stream().filter(e -> existingKeys.contains(e.primaryKey)).collect(Collectors.toList());
+
+        for (OrderedIndexEntry updateEntry : updateEntries) {
+            currentKeysUpdateDAO.updateSerialNumber(updateEntry.serial_number, updateEntry.primaryKey);
         }
+        currentKeysUpdateDAO.insertEntries(newEntries.iterator());
     }
-
-    private String getKey(String registerName, String entry) {
-        JsonNode jsonNode = getJsonNode(entry);
-        return jsonNode.get("entry").get(registerName).getTextValue();
-    }
-
-
-    private PGobject pgObject(String entry) {
-        try {
-            PGobject pGobject = new PGobject();
-            pGobject.setType("jsonb");
-            pGobject.setValue(entry);
-            return pGobject;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private JsonNode getJsonNode(String entry) {
-        try {
-            return objectMapper.readTree(entry);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }
