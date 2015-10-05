@@ -39,7 +39,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     public void writeEntriesInBatch(String registerName, List<Entry> entries) {
 
         List<OrderedIndexEntry> orderedIndexEntry = entries.stream().map((entry) -> entry.dbEntry(registerName)).collect(Collectors.toList());
-        indexedEntriesUpdateDAO.writeBatch(orderedIndexEntry.iterator());
+        indexedEntriesUpdateDAO.writeBatch(orderedIndexEntry);
         totalRegisterEntriesUpdateDAO.increaseTotalEntriesInRegisterCount(orderedIndexEntry.size());
         upsertInCurrentKeysTable(orderedIndexEntry);
     }
@@ -56,6 +56,6 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         for (OrderedIndexEntry updateEntry : updateEntries) {
             currentKeysUpdateDAO.updateSerialNumber(updateEntry.serial_number, updateEntry.primaryKey);
         }
-        currentKeysUpdateDAO.insertEntries(newEntries.iterator());
+        currentKeysUpdateDAO.insertEntries(newEntries);
     }
 }

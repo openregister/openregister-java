@@ -5,8 +5,6 @@ import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
-import java.util.Iterator;
-
 interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     String INDEXED_ENTRIES_TABLE = "ORDERED_ENTRY_INDEX";
 
@@ -17,5 +15,5 @@ interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     int lastReadSerialNumber();
 
     @SqlBatch("INSERT INTO " + INDEXED_ENTRIES_TABLE + "(SERIAL_NUMBER, ENTRY) VALUES(:serial_number, :content)")
-    void writeBatch(@BindBean Iterator<OrderedIndexEntry> orderedIndexEntry);
+    void writeBatch(@BindBean Iterable<OrderedIndexEntry> orderedIndexEntry);
 }
