@@ -2,7 +2,6 @@ package uk.gov.indexer.dao;
 
 import org.skife.jdbi.v2.sqlobject.*;
 
-import java.util.Iterator;
 import java.util.List;
 
 interface CurrentKeysUpdateDAO extends DBConnectionDAO {
@@ -18,6 +17,6 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
     List<String> getExistingKeys(@Bind("keys") String keys);
 
     @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(SERIAL_NUMBER, KEY) values(:serial_number, :primaryKey)")
-    void insertEntries(@BindBean Iterator<OrderedIndexEntry> entries);
+    void insertEntries(@BindBean Iterable<OrderedIndexEntry> entries);
 }
 

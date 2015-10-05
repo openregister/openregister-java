@@ -31,7 +31,7 @@ public class Application {
                 DestinationDBUpdateDAO destinationQueryDAO = createDestinationDAO(register, configuration);
                 SourceDBQueryDAO sourceQueryDAO = createSourceDAO(register, configuration);
 
-                executorService.scheduleAtFixedRate(new IndexerTask(register, sourceQueryDAO, destinationQueryDAO), 0, 10, TimeUnit.SECONDS);
+                executorService.scheduleAtFixedRate(new IndexerTask(register, sourceQueryDAO, destinationQueryDAO, configuration.cloudSearchEndPoint(register)), 0, 10, TimeUnit.SECONDS);
             } catch (Throwable e) {
                 e.printStackTrace();
                 ConsoleLogger.log("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
