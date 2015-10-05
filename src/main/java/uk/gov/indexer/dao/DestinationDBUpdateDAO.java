@@ -45,16 +45,16 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     private void upsertInCurrentKeysTable(List<OrderedIndexEntry> orderedIndexEntry) {
-        List<String> allKeys = Lists.transform(orderedIndexEntry, e -> e.primaryKey);
+        List<String> allKeys = Lists.transform(orderedIndexEntry, OrderedIndexEntry::getPrimaryKey);
         List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(String.join(",", allKeys));
 
         allKeys.removeAll(existingKeys);
 
-        List<OrderedIndexEntry> newEntries = orderedIndexEntry.stream().filter(e -> allKeys.contains(e.primaryKey)).collect(Collectors.toList());
-        List<OrderedIndexEntry> updateEntries = orderedIndexEntry.stream().filter(e -> existingKeys.contains(e.primaryKey)).collect(Collectors.toList());
+        List<OrderedIndexEntry> newEntries = orderedIndexEntry.stream().filter(e -> allKeys.contains(e.getPrimaryKey())).collect(Collectors.toList());
+        List<OrderedIndexEntry> updateEntries = orderedIndexEntry.stream().filter(e -> existingKeys.contains(e.getPrimaryKey())).collect(Collectors.toList());
 
         for (OrderedIndexEntry updateEntry : updateEntries) {
-            currentKeysUpdateDAO.updateSerialNumber(updateEntry.serial_number, updateEntry.primaryKey);
+            currentKeysUpdateDAO.updateSerialNumber(updateEntry.getSerial_number(), updateEntry.getPrimaryKey());
         }
         currentKeysUpdateDAO.insertEntries(newEntries);
     }
