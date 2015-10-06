@@ -16,14 +16,14 @@ public class Register {
     final String registerName;
     final Set<String> fields;
     final Optional<String> copyright;
-    final String registry;
+    final PublicBody registry;
     final String text;
 
     @JsonCreator
     public Register(@JsonProperty("register") String registerName,
                     @JsonProperty("fields") Set<String> fields,
                     @JsonProperty("copyright") String copyright,
-                    @JsonProperty("registry") String registry,
+                    @JsonProperty("registry") PublicBody registry,
                     @JsonProperty("text") String text) {
         this.registerName = registerName;
         this.fields = new TreeSet<>(fields); // ensure sorted order
@@ -42,5 +42,13 @@ public class Register {
 
     public Iterable<String> getFields() {
         return fields;
+    }
+
+    public PublicBody getRegistry() {
+        return registry;
+    }
+
+    public String getText() {
+        return text;
     }
 }
