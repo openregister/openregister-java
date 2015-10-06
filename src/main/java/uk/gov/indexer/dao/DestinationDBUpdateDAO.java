@@ -47,18 +47,36 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndex) {
-        List<String> allKeys = orderedEntryIndex.stream().map(e -> getKey(registerName, e.getEntry())).collect(Collectors.toList());
+
+        List<String> allKeys = orderedEntryIndex.stream()
+                .map(e -> getKey(registerName, e.getEntry()))
+                .collect(Collectors.toList());
+
         List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(String.join(",", allKeys));
 
         allKeys.removeAll(existingKeys);
 
-        List<OrderedEntryIndex> newEntries = orderedEntryIndex.stream().filter(e -> allKeys.contains(getKey(registerName, e.getEntry()))).collect(Collectors.toList());
-        List<OrderedEntryIndex> updateEntries = orderedEntryIndex.stream().filter(e -> existingKeys.contains(getKey(registerName, e.getEntry()))).collect(Collectors.toList());
+        List<OrderedEntryIndex> newEntries = orderedEntryIndex.stream()
+                .filter(e -> allKeys.contains(getKey(registerName, e.getEntry())))
+                .collect(Collectors.toList());
+
+        List<OrderedEntryIndex> updateEntries = orderedEntryIndex.stream()
+                .filter(e -> existingKeys.contains(getKey(registerName, e.getEntry())))
+                .collect(Collectors.toList());
 
         for (OrderedEntryIndex updateEntry : updateEntries) {
-            currentKeysUpdateDAO.updateSerialNumber(updateEntry.getSerial_number(), getKey(registerName, updateEntry.getEntry()));
+            currentKeysUpdateDAO.updateSerialNumber(
+                    updateEntry.getSerial_number(),
+                    getKey(registerName, updateEntry.getEntry())
+            );
         }
-        currentKeysUpdateDAO.insertEntries(Lists.transform(newEntries, e -> new CurrentKeys(e.getSerial_number(), getKey(registerName, e.getEntry()))));
+        currentKeysUpdateDAO.insertEntries(
+                Lists.transform(newEntries, e -> new CurrentKey(
+                                e.getSerial_number(),
+                                getKey(registerName, e.getEntry())
+                        )
+                )
+        );
     }
 
     private String getKey(String registerName, String entry) {

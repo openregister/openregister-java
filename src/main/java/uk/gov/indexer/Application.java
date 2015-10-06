@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,9 +41,7 @@ public class Application {
                         TimeUnit.SECONDS
                 );
 
-                Optional<String> searchDomainEndPoint = configuration.cloudSearchEndPoint(register);
-
-                searchDomainEndPoint.ifPresent(
+                configuration.cloudSearchEndPoint(register).ifPresent(
                         endPoint -> executorService.scheduleAtFixedRate(
                                 new CloudSearchDataUploadTask(register, endPoint, configuration.cloudSearchWaterMarkEndPoint(register).get(), dbi.onDemand(IndexedEntriesUpdateDAO.class)),
                                 0,

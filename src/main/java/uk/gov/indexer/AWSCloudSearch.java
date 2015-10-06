@@ -22,27 +22,27 @@ import java.util.Map;
 public class AWSCloudSearch {
 
     private final String registerName;
-    private final AmazonCloudSearchDomain cloudSearchDomain;
-    private final AmazonCloudSearchDomain cloudSearchWatermarkDomain;
+    private final AmazonCloudSearchDomain cloudSearchData;
+    private final AmazonCloudSearchDomain cloudSearchWatermark;
 
-    public AWSCloudSearch(String registerName, String searchDomainEndPoint, String searchDomainWatermarkEndPoint) {
+    public AWSCloudSearch(String registerName, String searchDataDomainEndPoint, String watermarkDomainEndPoint) {
         this.registerName = registerName;
 
-        this.cloudSearchDomain = new AmazonCloudSearchDomainClient(new DefaultAWSCredentialsProviderChain());
-        this.cloudSearchDomain.setRegion(Region.getRegion(Regions.EU_WEST_1));
-        this.cloudSearchDomain.setEndpoint(searchDomainEndPoint);
+        this.cloudSearchData = new AmazonCloudSearchDomainClient(new DefaultAWSCredentialsProviderChain());
+        this.cloudSearchData.setRegion(Region.getRegion(Regions.EU_WEST_1));
+        this.cloudSearchData.setEndpoint(searchDataDomainEndPoint);
 
-        this.cloudSearchWatermarkDomain = new AmazonCloudSearchDomainClient(new DefaultAWSCredentialsProviderChain());
-        this.cloudSearchWatermarkDomain.setRegion(Region.getRegion(Regions.EU_WEST_1));
-        this.cloudSearchWatermarkDomain.setEndpoint(searchDomainWatermarkEndPoint);
+        this.cloudSearchWatermark = new AmazonCloudSearchDomainClient(new DefaultAWSCredentialsProviderChain());
+        this.cloudSearchWatermark.setRegion(Region.getRegion(Regions.EU_WEST_1));
+        this.cloudSearchWatermark.setEndpoint(watermarkDomainEndPoint);
     }
 
-    int currentWaterMark() {
+    public int currentWaterMark() {
         SearchRequest searchRequest = new SearchRequest();
-        //TODO: must search by id
+        //TODO: must search by id- remove temporary workaround i.e. kept extra field 'document_type' in document
         searchRequest.setQuery("watermark");
         searchRequest.setReturn("serial_number");
-        SearchResult searchResult = cloudSearchWatermarkDomain.search(searchRequest);
+        SearchResult searchResult = cloudSearchWatermark.search(searchRequest);
 
         if (searchResult.getHits().getFound() == 0) {
             return 0;
@@ -54,10 +54,10 @@ public class AWSCloudSearch {
     public void resetWatermark(int watermark) {
         byte[] bytes = Jackson.toJsonString(Collections.singletonList(watermarkDocument(watermark))).getBytes(StandardCharsets.UTF_8);
 
-        UploadDocumentsResult uploadDocumentsResult = cloudSearchWatermarkDomain.uploadDocuments(createUploadDocumentsRequest(bytes));
+        UploadDocumentsResult uploadDocumentsResult = cloudSearchWatermark.uploadDocuments(createUploadDocumentsRequest(bytes));
 
         if (!"success".equalsIgnoreCase(uploadDocumentsResult.getStatus())) {
-            throw new RuntimeException(registerName + " Watermark upload request failed: " + uploadDocumentsResult.toString());
+            throw new RuntimeException(registerName + " Watermark reset request failed: " + uploadDocumentsResult.toString());
         }
 
     }
@@ -65,7 +65,7 @@ public class AWSCloudSearch {
     public void upload(List<OrderedEntryIndex> entries) {
         byte[] bytes = Jackson.toJsonString(Lists.transform(entries, this::entryDocument)).getBytes(StandardCharsets.UTF_8);
 
-        UploadDocumentsResult uploadDocumentsResult = cloudSearchDomain.uploadDocuments(createUploadDocumentsRequest(bytes));
+        UploadDocumentsResult uploadDocumentsResult = cloudSearchData.uploadDocuments(createUploadDocumentsRequest(bytes));
 
         if (!"success".equalsIgnoreCase(uploadDocumentsResult.getStatus())) {
             throw new RuntimeException(registerName + " document upload request failed: " + uploadDocumentsResult.toString());
@@ -95,30 +95,32 @@ public class AWSCloudSearch {
         cloudSearchDocument.addField("document_type", "watermark");
         return cloudSearchDocument;
     }
+
+    @SuppressWarnings("ALL")
+    private static class CloudSearchDocument {
+        @JsonProperty
+        private final String type = "add";
+        @JsonProperty
+        private String id;
+        @JsonProperty
+        private Map<String, Object> fields = new HashMap<>();
+
+        void setID(String id) {
+            this.id = id;
+        }
+
+        void addIntField(String fieldName, int value) {
+            fields.put(fieldName, value);
+        }
+
+        void addField(String fieldName, String value) {
+            fields.put(fieldName, value);
+        }
+
+        void setFields(JsonNode fields) {
+            this.fields = Jackson.fromJsonString(Jackson.toJsonString(fields), Map.class);
+        }
+    }
+
 }
 
-class CloudSearchDocument {
-    @JsonProperty
-    private final String type = "add";
-    @JsonProperty
-    private String id;
-    @JsonProperty
-    private Map<String, Object> fields = new HashMap<>();
-
-    void setID(String id) {
-        this.id = id;
-    }
-
-    void addIntField(String fieldName, int value) {
-        fields.put(fieldName, value);
-    }
-
-    void addField(String fieldName, String value) {
-        fields.put(fieldName, value);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void setFields(JsonNode fields) {
-        this.fields = Jackson.fromJsonString(Jackson.toJsonString(fields), Map.class);
-    }
-}

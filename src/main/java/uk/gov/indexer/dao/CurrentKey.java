@@ -1,10 +1,10 @@
 package uk.gov.indexer.dao;
 
-public class CurrentKeys {
+public class CurrentKey {
     private final int serial_number;
     private final String key;
 
-    public CurrentKeys(int serial_number, String key) {
+    public CurrentKey(int serial_number, String key) {
         this.serial_number = serial_number;
         this.key = key;
     }
