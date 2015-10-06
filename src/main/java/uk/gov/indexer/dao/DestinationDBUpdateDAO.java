@@ -1,5 +1,7 @@
 package uk.gov.indexer.dao;
 
+import com.amazonaws.util.json.Jackson;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -38,24 +40,29 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void writeEntriesInBatch(String registerName, List<Entry> entries) {
 
-        List<OrderedIndexEntry> orderedIndexEntry = entries.stream().map((entry) -> entry.dbEntry(registerName)).collect(Collectors.toList());
-        indexedEntriesUpdateDAO.writeBatch(orderedIndexEntry);
-        totalRegisterEntriesUpdateDAO.increaseTotalEntriesInRegisterCount(orderedIndexEntry.size());
-        upsertInCurrentKeysTable(orderedIndexEntry);
+        List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(Entry::dbEntry).collect(Collectors.toList());
+        indexedEntriesUpdateDAO.writeBatch(orderedEntryIndex);
+        totalRegisterEntriesUpdateDAO.increaseTotalEntriesInRegisterCount(orderedEntryIndex.size());
+        upsertInCurrentKeysTable(registerName, orderedEntryIndex);
     }
 
-    private void upsertInCurrentKeysTable(List<OrderedIndexEntry> orderedIndexEntry) {
-        List<String> allKeys = Lists.transform(orderedIndexEntry, OrderedIndexEntry::getPrimaryKey);
+    private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndex) {
+        List<String> allKeys = orderedEntryIndex.stream().map(e -> getKey(registerName, e.getEntry())).collect(Collectors.toList());
         List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(String.join(",", allKeys));
 
         allKeys.removeAll(existingKeys);
 
-        List<OrderedIndexEntry> newEntries = orderedIndexEntry.stream().filter(e -> allKeys.contains(e.getPrimaryKey())).collect(Collectors.toList());
-        List<OrderedIndexEntry> updateEntries = orderedIndexEntry.stream().filter(e -> existingKeys.contains(e.getPrimaryKey())).collect(Collectors.toList());
+        List<OrderedEntryIndex> newEntries = orderedEntryIndex.stream().filter(e -> allKeys.contains(getKey(registerName, e.getEntry()))).collect(Collectors.toList());
+        List<OrderedEntryIndex> updateEntries = orderedEntryIndex.stream().filter(e -> existingKeys.contains(getKey(registerName, e.getEntry()))).collect(Collectors.toList());
 
-        for (OrderedIndexEntry updateEntry : updateEntries) {
-            currentKeysUpdateDAO.updateSerialNumber(updateEntry.getSerial_number(), updateEntry.getPrimaryKey());
+        for (OrderedEntryIndex updateEntry : updateEntries) {
+            currentKeysUpdateDAO.updateSerialNumber(updateEntry.getSerial_number(), getKey(registerName, updateEntry.getEntry()));
         }
-        currentKeysUpdateDAO.insertEntries(newEntries);
+        currentKeysUpdateDAO.insertEntries(Lists.transform(newEntries, e -> new CurrentKeys(e.getSerial_number(), getKey(registerName, e.getEntry()))));
+    }
+
+    private String getKey(String registerName, String entry) {
+        JsonNode jsonNode = Jackson.jsonNodeOf(entry);
+        return jsonNode.get("entry").get(registerName).textValue();
     }
 }

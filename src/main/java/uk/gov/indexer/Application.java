@@ -4,12 +4,14 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.indexer.dao.DBConnectionDAO;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
+import uk.gov.indexer.dao.IndexedEntriesUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -23,15 +25,35 @@ public class Application {
         Configuration configuration = new Configuration(args);
         Set<String> registers = configuration.getRegisters();
 
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(registers.size());
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool((int) registers.stream().filter(r -> configuration.cloudSearchEndPoint(r).isPresent()).count() + registers.size());
+
         addShutdownHook(executorService);
 
         for (String register : registers) {
             try {
-                DestinationDBUpdateDAO destinationQueryDAO = createDestinationDAO(register, configuration);
-                SourceDBQueryDAO sourceQueryDAO = createSourceDAO(register, configuration);
+                DBI dbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
 
-                executorService.scheduleAtFixedRate(new IndexerTask(register, sourceQueryDAO, destinationQueryDAO, configuration.cloudSearchEndPoint(register)), 0, 10, TimeUnit.SECONDS);
+                DestinationDBUpdateDAO destinationDBUpdateDAO = createDestinationDBUpdateDAO(dbi);
+
+                executorService.scheduleAtFixedRate(
+                        new IndexerTask(register, createSourceDAO(register, configuration), destinationDBUpdateDAO),
+                        0,
+                        10,
+                        TimeUnit.SECONDS
+                );
+
+                Optional<String> searchDomainEndPoint = configuration.cloudSearchEndPoint(register);
+
+                searchDomainEndPoint.ifPresent(
+                        endPoint -> executorService.scheduleAtFixedRate(
+                                new CloudSearchDataUploadTask(register, endPoint, configuration.cloudSearchWaterMarkEndPoint(register).get(), dbi.onDemand(IndexedEntriesUpdateDAO.class)),
+                                0,
+                                10,
+                                TimeUnit.SECONDS
+                        )
+                );
+
+
             } catch (Throwable e) {
                 e.printStackTrace();
                 ConsoleLogger.log("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
@@ -48,8 +70,8 @@ public class Application {
         return sourceDBQueryDAO;
     }
 
-    private static DestinationDBUpdateDAO createDestinationDAO(String register, Configuration configuration) {
-        Handle handle = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString")).open();
+    private static DestinationDBUpdateDAO createDestinationDBUpdateDAO(DBI dbi) {
+        Handle handle = dbi.open();
         DestinationDBUpdateDAO destinationDBUpdateDAO = handle.attach(DestinationDBUpdateDAO.class);
         databaseObjectRegistry.add(destinationDBUpdateDAO);
         return destinationDBUpdateDAO;
