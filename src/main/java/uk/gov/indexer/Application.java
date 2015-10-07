@@ -45,8 +45,8 @@ public class Application {
                         endPoint -> executorService.scheduleAtFixedRate(
                                 new CloudSearchDataUploadTask(register, endPoint, configuration.cloudSearchWaterMarkEndPoint(register).get(), dbi.onDemand(IndexedEntriesUpdateDAO.class)),
                                 0,
-                                10,
-                                TimeUnit.SECONDS
+                                5,
+                                TimeUnit.MINUTES
                         )
                 );
 
