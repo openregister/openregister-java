@@ -2,6 +2,7 @@ package uk.gov.indexer.dao;
 
 import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -46,32 +47,23 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         upsertInCurrentKeysTable(registerName, orderedEntryIndex);
     }
 
-    private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndex) {
+    private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
 
-        List<String> allKeys = orderedEntryIndex.stream()
-                .map(e -> getKey(registerName, e.getEntry()))
-                .collect(Collectors.toList());
+        List<String> allKeys = Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry()));
 
         List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(String.join(",", allKeys));
 
-        allKeys.removeAll(existingKeys);
+        Iterable<OrderedEntryIndex> newEntries = Iterables.filter(orderedEntryIndexes, e -> !existingKeys.contains(getKey(registerName, e.getEntry())));
 
-        List<OrderedEntryIndex> newEntries = orderedEntryIndex.stream()
-                .filter(e -> allKeys.contains(getKey(registerName, e.getEntry())))
-                .collect(Collectors.toList());
+        orderedEntryIndexes.forEach(e -> currentKeysUpdateDAO.updateSerialNumber(
+                        e.getSerial_number(),
+                        getKey(registerName, e.getEntry())
+                )
+        );
 
-        List<OrderedEntryIndex> updateEntries = orderedEntryIndex.stream()
-                .filter(e -> existingKeys.contains(getKey(registerName, e.getEntry())))
-                .collect(Collectors.toList());
-
-        for (OrderedEntryIndex updateEntry : updateEntries) {
-            currentKeysUpdateDAO.updateSerialNumber(
-                    updateEntry.getSerial_number(),
-                    getKey(registerName, updateEntry.getEntry())
-            );
-        }
         currentKeysUpdateDAO.insertEntries(
-                Lists.transform(newEntries, e -> new CurrentKey(
+                Iterables.transform(newEntries,
+                        e -> new CurrentKey(
                                 e.getSerial_number(),
                                 getKey(registerName, e.getEntry())
                         )
