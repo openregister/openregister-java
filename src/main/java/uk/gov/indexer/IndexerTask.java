@@ -5,19 +5,16 @@ import uk.gov.indexer.dao.Entry;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
 import java.util.List;
-import java.util.Optional;
 
 public class IndexerTask implements Runnable {
     private final String register;
     private final SourceDBQueryDAO sourceDBQueryDAO;
     private final DestinationDBUpdateDAO destinationDBUpdateDAO;
-    private final Optional<AWSCloudSearch> cloudSearch;
 
-    public IndexerTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO, Optional<String> searchDomainEndPoint) {
+    public IndexerTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO) {
         this.register = register;
         this.sourceDBQueryDAO = sourceDBQueryDAO;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
-        this.cloudSearch = searchDomainEndPoint.map(ep -> new AWSCloudSearch(register, ep));
     }
 
     @Override
@@ -35,13 +32,9 @@ public class IndexerTask implements Runnable {
         List<Entry> entries;
         while (!(entries = fetchNewEntries()).isEmpty()) {
             destinationDBUpdateDAO.writeEntriesInBatch(register, entries);
-            uploadEntriesTocloudSearch(entries);
         }
     }
 
-    private void uploadEntriesTocloudSearch(final List<Entry> entries) {
-        cloudSearch.ifPresent(cs -> cs.upload(entries));
-    }
 
     private List<Entry> fetchNewEntries() {
         return sourceDBQueryDAO.read(destinationDBUpdateDAO.lastReadSerialNumber());

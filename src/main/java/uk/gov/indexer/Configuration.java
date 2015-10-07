@@ -11,23 +11,25 @@ class Configuration {
     private final Set<String> registers;
     private final Properties properties;
     private final Map<String, String> cloudSearchEndPoints;
+    private final Map<String, String> cloudSearchWatermarkEndPoints;
 
     public Configuration(String[] args) {
         try {
             this.properties = new Properties();
             properties.load(configurationPropertiesStream(createConfigurationMap(args).get("config.file")));
             this.registers = extractConfiguredRegisters();
-            this.cloudSearchEndPoints = createCloudSearchEndPoints();
+            this.cloudSearchEndPoints = createCloudSearchEndPoints(".cloudsearch.search.endpoint");
+            this.cloudSearchWatermarkEndPoints = createCloudSearchEndPoints(".cloudsearch.highwatermark.endpoint");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Map<String, String> createCloudSearchEndPoints() {
+    private Map<String, String> createCloudSearchEndPoints(String keyEndsWithString) {
         return properties.keySet()
                 .stream()
                 .map(Object::toString)
-                .filter(key -> key.endsWith(".cloudsearch.endpoint"))
+                .filter(key -> key.endsWith(keyEndsWithString))
                 .collect(Collectors.toMap(key -> key.split("\\.")[0], properties::getProperty));
     }
 
@@ -70,5 +72,9 @@ class Configuration {
 
     public Optional<String> cloudSearchEndPoint(String register) {
         return Optional.ofNullable(cloudSearchEndPoints.get(register));
+    }
+
+    public Optional<String> cloudSearchWaterMarkEndPoint(String register) {
+        return Optional.ofNullable(cloudSearchWatermarkEndPoints.get(register));
     }
 }

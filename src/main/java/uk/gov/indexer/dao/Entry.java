@@ -11,7 +11,7 @@ public class Entry {
         this.contents = contents;
     }
 
-    public OrderedIndexEntry dbEntry(String registerName) {
-        return new OrderedIndexEntry(serial_number, registerName, new String(contents, StandardCharsets.UTF_8));
+    public OrderedEntryIndex dbEntry() {
+        return new OrderedEntryIndex(serial_number, new String(contents, StandardCharsets.UTF_8));
     }
 }

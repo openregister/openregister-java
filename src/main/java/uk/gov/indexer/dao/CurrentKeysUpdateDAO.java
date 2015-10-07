@@ -14,9 +14,9 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
     int updateSerialNumber(@Bind("serial_number") int serial_number, @Bind("key") String key);
 
     @SqlQuery("SELECT KEY FROM " + CURRENT_KEYS_TABLE + " WHERE KEY IN (:keys)")
-    List<String> getExistingKeys(@Bind("keys") String keys);
+    List<String> getExistingKeys(@Bind("keys") String commaSeparatedKeys);
 
-    @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(SERIAL_NUMBER, KEY) values(:serial_number, :primaryKey)")
-    void insertEntries(@BindBean Iterable<OrderedIndexEntry> entries);
+    @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(SERIAL_NUMBER, KEY) values(:serial_number, :key)")
+    void insertEntries(@BindBean Iterable<CurrentKey> keys);
 }
 
