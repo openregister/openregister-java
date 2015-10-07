@@ -8,9 +8,11 @@ import java.util.List;
 
 public class CloudSearchDataUploadTask implements Runnable {
     private final AWSCloudSearch cloudSearch;
+    private final String register;
     private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;
 
     public CloudSearchDataUploadTask(String register, String searchDomainEndPoint, String searchDomainWaterMarkEndPoint, IndexedEntriesUpdateDAO indexedEntriesUpdateDAO) {
+        this.register = register;
         this.indexedEntriesUpdateDAO = indexedEntriesUpdateDAO;
         this.cloudSearch = new AWSCloudSearch(register, searchDomainEndPoint, searchDomainWaterMarkEndPoint);
     }
@@ -18,7 +20,9 @@ public class CloudSearchDataUploadTask implements Runnable {
     @Override
     public void run() {
         try {
+            ConsoleLogger.log("Starting upload to cloudsearch domain for register: " + register);
             uploadEntries();
+            ConsoleLogger.log("upload to cloudsearch domain completed for register: " + register);
         } catch (Throwable e) {
             e.printStackTrace();
             throw e;
