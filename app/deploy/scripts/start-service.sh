@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 INSTANCE_ID=$(curl 169.254.169.254/2014-11-05/meta-data/instance-id)
 export AWS_DEFAULT_REGION=eu-west-1
 REGISTER_NAME=$(aws ec2 describe-tags --filters Name=resource-id,Values=$INSTANCE_ID Name=key,Values=Name --query 'Tags[0].Value' --output text)
