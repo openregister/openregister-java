@@ -1,19 +1,36 @@
 package uk.gov.register.presentation;
 
-public class StringValue implements FieldValue {
-    String value;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-    public StringValue(String value) {
+import javax.validation.constraints.NotNull;
+
+public class StringValue implements FieldValue {
+    @NotNull
+    public final String value;
+
+    public StringValue(@NotNull String value) {
         this.value = value;
     }
 
     @Override
-    public boolean isLink() {
-        return false;
+    @JsonValue
+    public String value() {
+        return value;
     }
 
     @Override
-    public String value() {
-        return value;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StringValue that = (StringValue) o;
+
+        return value.equals(that.value);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 }

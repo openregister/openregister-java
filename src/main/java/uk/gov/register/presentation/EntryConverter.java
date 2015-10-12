@@ -1,16 +1,19 @@
 package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
+import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static uk.gov.register.presentation.Cardinality.ONE;
 
 @Service
 public class EntryConverter {
@@ -34,9 +37,41 @@ public class EntryConverter {
         );
     }
 
+    private FieldValue convert(Map.Entry<String, JsonNode> mapEntry) {
+        String fieldName = mapEntry.getKey();
+        JsonNode value = mapEntry.getValue();
+        FieldConverter fieldConverter = new FieldConverter(fieldsConfiguration.getField(fieldName));
+        return fieldConverter.convert(value);
+    }
 
-    private FieldValue convert(Map.Entry<String, JsonNode> entry) {
-        Optional<String> register = fieldsConfiguration.getField(entry.getKey()).getRegister();
-        return register.isPresent() ? new LinkValue(register.get(), entry.getValue().textValue()) : new StringValue(entry.getValue().textValue());
+    private static class FieldConverter {
+        private final Field field;
+
+        public FieldConverter(Field field) {
+            this.field = field;
+        }
+
+        public FieldValue convert(JsonNode value) {
+            Cardinality cardinality = field.getCardinality();
+            if (cardinality == ONE) {
+                return convertScalar(value);
+            } else {
+                return convertArray(value);
+            }
+        }
+
+        private FieldValue convertArray(JsonNode value) {
+            return new ListValue(
+                    Iterables.transform(value, this::convertScalar)
+            );
+        }
+
+        private FieldValue convertScalar(JsonNode value) {
+            if (field.getRegister().isPresent()) {
+                return new LinkValue(field.getRegister().get(), value.textValue());
+            } else {
+                return new StringValue(value.textValue());
+            }
+        }
     }
 }
