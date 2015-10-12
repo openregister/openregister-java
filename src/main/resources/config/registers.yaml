@@ -1,10 +1,8 @@
 ---
-- hash: "c17e5f868dac5872a89707ac147a07f24f3988b7"
+- hash: "1156f7416b4467e445a3d0427cd839be4eea3d23"
   entry:
-    copyright: "Contains Ordnance Survey data © Crown copyright & database right\
-      \ 2015  \nContains National Statistics data © Crown copyright & database\
-      \ right 2015  \nContains Royal Mail data © Royal Mail copyright & database\
-      \ right 2015  \n"
+    text: "The register of places in the UK with a postal address. Some addresses\
+      \ have a geographical location.\n"
     fields:
     - "address"
     - "property"
@@ -18,9 +16,10 @@
     - "longitude"
     register: "address"
     registry: "ordnance-survey"
-    text: "The register of places in the UK with a postal address. Some addresses\
-      \ have a geographical location.\n"
-  last-updated: "2015-06-02T17:42:58.755+01:00"
+    copyright: "Contains Ordnance Survey data © Crown copyright & database right 2015\n\
+      Contains National Statistics data © Crown copyright & database right 2015\n\
+      Contains Royal Mail data © Royal Mail copyright & database right 2015\n"
+  last-updated: "2015-09-24T16:11:36.526Z"
 - hash: "b5722c61950ba170f99c5143fd1feac3bc5094dd"
   entry:
     fields:
@@ -32,12 +31,16 @@
     register: "charity"
     registry: "charity-commission"
     text: "The register of UK charities.\n"
-  last-updated: "2015-06-02T17:42:58.785+01:00"
-- hash: "6d59f8c8603ac6410af585c3ab14c9a7ba21eeaa"
+  last-updated: "2015-09-24T16:11:36.885Z"
+- hash: "411d9ba3045f0860fbacf8e2d4514deb806cee28"
   entry:
     fields:
     - "name"
     - "company"
+    - "company-account-category"
+    - "company-status"
+    - "company-type"
+    - "accounts-last-made-up-date"
     - "post-town"
     - "postcode"
     - "start-date"
@@ -45,9 +48,13 @@
     register: "company"
     registry: "companies-house"
     text: "The register of UK companies.\n"
-  last-updated: "2015-06-02T17:42:58.798+01:00"
+  last-updated: "2015-09-24T16:11:37.135Z"
 - hash: "05e82a8fac07937e55571a1a8088276e2680d14e"
   entry:
+    text: "The register of [Foreign & Commonwealth Office](https://www.gov.uk/government/organisations/foreign-commonwealth-office)\
+      \ list of approved British English-language names and descriptive terms for\
+      \ [countries](http://country.openregister.org) and territories of the world\
+      \ and their citizens.\n"
     fields:
     - "country"
     - "name"
@@ -58,35 +65,33 @@
     - "text"
     register: "country"
     registry: "foreign-commonwealth-office"
-    text: "The register of [Foreign & Commonwealth Office](https://www.gov.uk/government/organisations/foreign-commonwealth-office)\
-      \ list of approved British English-language names and descriptive terms for\
-      \ [countries](http://country.openregister.org) and territories of the world\
-      \ and their citizens.\n"
-  last-updated: "2015-06-02T17:42:58.812+01:00"
+  last-updated: "2015-09-24T16:11:37.290Z"
 - hash: "e3185a82503621f80e8ed60891dbbcd52764cc1a"
   entry:
+    text: "This register of datatypes constraining a field value and idenitifying\
+      \ ways in which it may be encoded a representation.\n"
     fields:
-    - "fields"
+    - "datatype"
     - "text"
     register: "datatype"
     registry: "cabinet-office"
-    text: "This register of datatypes constraining a field value and idenitifying\
-      \ ways in which it may be encoded a representation.\n"
-  last-updated: "2015-06-02T17:42:58.826+01:00"
+  last-updated: "2015-09-24T16:11:37.464Z"
 - hash: "e56d6a9f676ae012b64bda234757ea78bb68fd38"
   entry:
+    text: "The register of field names which may appear in a register.\n"
     fields:
     - "field"
-    - "fields"
+    - "datatype"
     - "register"
     - "cardinality"
     - "text"
     register: "field"
     registry: "cabinet-office"
-    text: "The register of field names which may appear in a register.\n"
-  last-updated: "2015-06-02T17:42:58.840+01:00"
+  last-updated: "2015-09-24T16:11:37.683Z"
 - hash: "1e5b3697a1e43a13a707d76ac079b98dea05393f"
   entry:
+    text: "The register of [Post towns](http://en.wikipedia.org/wiki/Post_town) which\
+      \ may appear in postal [addresses](http://address.openregister.org) in the UK.\n"
     fields:
     - "post-town"
     - "start-date"
@@ -94,25 +99,25 @@
     - "text"
     register: "post-town"
     registry: "cabinet-office"
-    text: "The register of [Post towns](http://en.wikipedia.org/wiki/Post_town) which\
-      \ may appear in postal [addresses](http://address.openregister.org) in the UK.\n"
-  last-updated: "2015-06-02T17:42:58.854+01:00"
+  last-updated: "2015-09-24T16:11:39.051Z"
 - hash: "0fc4b18d1d8bae695b69bd36e1c9d6589d53247f"
   entry:
-    copyright: "Contains Ordnance Survey data © Crown copyright & database right 2015\
-      \  \nContains National Statistics data © Crown copyright & database right 2015\
-      \  \nContains Royal Mail data © Royal Mail copyright & database right 2015 \
-      \ \n"
+    text: "The register of UK Postal codes which may appear in an [address](http://address.openregister.org).\n"
     fields:
     - "postcode"
     - "latitude"
     - "longitude"
     register: "postcode"
     registry: "office-for-national-statistics"
-    text: "The register of UK Postal codes which may appear in an [address](http://address.openregister.org).\n"
-  last-updated: "2015-06-02T17:42:58.870+01:00"
-- hash: "d05c06591eca2fe6a1475458017c4928bc84c765"
+    copyright: "Contains Ordnance Survey data © Crown copyright & database right 2015\
+      \  \nContains National Statistics data © Crown copyright & database right 2015\
+      \  \nContains Royal Mail data © Royal Mail copyright & database right 2015 \
+      \ \n"
+  last-updated: "2015-09-24T16:11:39.167Z"
+- hash: "45dd2b4e94cfffbf66bbe8f2eb6307d04f8153d4"
   entry:
+    text: "The register of UK Ministerial Departments, agencies and public bodies\
+      \ sponsored by the UK government.\n"
     fields:
     - "public-body"
     - "name"
@@ -121,13 +126,13 @@
     - "parent-bodies"
     - "text"
     - "crest"
+    - "official-colour"
     register: "public-body"
     registry: "cabinet-office"
-    text: "The register of UK Ministerial Departments, agencies and public bodies\
-      \ sponsored by the UK government.\n"
-  last-updated: "2015-06-02T17:42:58.880+01:00"
+  last-updated: "2015-09-24T16:11:40.937Z"
 - hash: "a8311d6acc8f3d70bd43f99348ab036f1bac8e66"
   entry:
+    text: "The register of UK government registers.\n"
     fields:
     - "register"
     - "text"
@@ -136,9 +141,8 @@
     - "fields"
     register: "register"
     registry: "cabinet-office"
-    text: "The register of UK government registers.\n"
-  last-updated: "2015-06-02T17:42:58.897+01:00"
-- hash: "befe6cc0ea9ae3158f78e8c042f945389a59f221"
+  last-updated: "2015-09-24T16:11:41.813Z"
+- hash: "524839933bb3b60fac4d3e42acdcb3a7ed636e1d"
   entry:
     fields:
     - "school"
@@ -153,10 +157,10 @@
     - "website"
     - "address"
     register: "school"
-    registry: "department-of-education"
+    registry: "department-for-education"
     text: "The register of primary, secondary and\_special needs schools in England\
       \ and Wales.\n"
-  last-updated: "2015-06-02T17:42:58.910+01:00"
+  last-updated: "2015-09-24T16:11:42.291Z"
 - hash: "8fea83332e1888d32475493453dc355147aa3ee8"
   entry:
     text: "Trading addresses in the UK\n"
@@ -169,7 +173,7 @@
     - "company"
     register: "premises"
     registry: "health-and-safety-executive"
-  last-updated: "2015-09-15T13:44:53.244Z"
+  last-updated: "2015-09-24T16:11:39.281Z"
 - hash: "ed2785fec41ac8b42a0b7a361d778d0420ad4d21"
   entry:
     text: "The register of UK Government domain names.\n"
