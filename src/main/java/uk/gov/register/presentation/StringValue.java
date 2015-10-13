@@ -14,23 +14,15 @@ public class StringValue implements FieldValue {
 
     @Override
     @JsonValue
-    public String value() {
+    public String getValue() {
         return value;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        StringValue that = (StringValue) o;
-
-        return value.equals(that.value);
-
+    public boolean isLink() {
+        return false;
     }
 
-    @Override
-    public int hashCode() {
-        return value.hashCode();
+    public boolean isList() {
+        return false;
     }
 }

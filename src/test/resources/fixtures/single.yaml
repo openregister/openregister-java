@@ -2,7 +2,7 @@
 serial-number: 1
 hash: "someHash1"
 entry:
-  address: "12345"
-  area: "value1"
-  street: "The Entry 1"
-  town: "town1"
+  fields:
+  - "field1"
+  register: "value1"
+  text: "The Entry 1"

@@ -18,6 +18,11 @@ public class DBSupport {
 
 
     public static void publishMessages(List<String> messages) {
+        publishMessages("address", messages);
+
+    }
+
+    public static void publishMessages(String registerName, List<String> messages) {
         try (Connection connection = createConnection()) {
             for (String message : messages) {
 
@@ -28,13 +33,13 @@ public class DBSupport {
 
                 Statement statement = connection.createStatement();
 
-                String primaryKeyValue = extractRegisterKey(message);
+                String primaryKeyValue = extractRegisterKey(registerName, message);
                 int id = getIdOfThisPublishedMessage(statement);
 
                 if (isSupersedingAnEntry(statement, primaryKeyValue)) {
                     statement.executeUpdate(String.format("Update current_keys set serial_number=%s where key='%s'", id, primaryKeyValue));
                 } else {
-                    statement.executeUpdate(String.format("Insert into current_keys(serial_number,key) values(%s,%s)", id, primaryKeyValue));
+                    statement.executeUpdate(String.format("Insert into current_keys(serial_number,key) values(%s,'%s')", id, primaryKeyValue));
                 }
 
                 statement.executeUpdate("Update register_entries_count set count=count+1");
@@ -43,7 +48,6 @@ public class DBSupport {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private static boolean isSupersedingAnEntry(Statement statement, String primaryKeyValue) throws SQLException {
@@ -51,8 +55,8 @@ public class DBSupport {
         return statement.getResultSet().next();
     }
 
-    private static String extractRegisterKey(String message) {
-        return message.replaceAll(".*\"address\"\\s*:\\s*\"([^\"]+)\".*", "$1");
+    private static String extractRegisterKey(String registerName, String message) {
+        return message.replaceAll(".*\"" + registerName + "\"\\s*:\\s*\"([^\"]+)\".*", "$1");
     }
 
     private static int getIdOfThisPublishedMessage(Statement statement) throws SQLException {

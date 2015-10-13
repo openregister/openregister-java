@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,6 +46,8 @@ public class EntryConverterTest {
 
         EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
 
-        assertThat(((ListValue) entryView.getField("fields").get()), contains(new StringValue("value1"), new StringValue("value2")));
+        ListValue fields = (ListValue) entryView.getField("fields").get();
+
+        assertThat(fields, contains(samePropertyValuesAs(new LinkValue("field", "value1")), samePropertyValuesAs(new LinkValue("field", "value2"))));
     }
 }

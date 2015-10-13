@@ -1,9 +1,11 @@
 package uk.gov.register.presentation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ListValue implements FieldValue, Iterable<FieldValue> {
     private List<FieldValue> elements;
@@ -12,13 +14,26 @@ public class ListValue implements FieldValue, Iterable<FieldValue> {
         this.elements = ImmutableList.copyOf(elements);
     }
 
+    public boolean isList() {
+        return true;
+    }
+
     @Override
-    public String value() {
-        return null;
+    @JsonIgnore
+    public String getValue() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Iterator<FieldValue> iterator() {
         return elements.iterator();
+    }
+
+    public Stream<FieldValue> stream() {
+        return elements.stream();
+    }
+
+    public boolean isLink() {
+        return false;
     }
 }

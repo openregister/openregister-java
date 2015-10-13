@@ -1,7 +1,6 @@
 @prefix field: <http://field.openregister.org/field/>.
 
-<http://address.beta.openregister.org/entry/1>
- field:address <http://address.openregister.org/address/12345> ;
- field:area "value1" ;
- field:street "The Entry 1" ;
- field:town "town1" .
+<http://register.beta.openregister.org/entry/1>
+ field:fields <http://field.openregister.org/field/field1> ;
+ field:register <http://register.openregister.org/register/value1> ;
+ field:text "The Entry 1" .

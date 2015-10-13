@@ -4,12 +4,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import uk.gov.register.presentation.EntryView;
+import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
 import uk.gov.register.presentation.config.Register;
 
 import java.io.IOException;
 import java.util.Collections;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -31,6 +33,32 @@ public class TsvWriterTest {
         writer.writeEntriesTo(entityStream, new Register("registerName", ImmutableSet.of("key1", "key2", "key3", "key4"), "", null, ""), Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("entry\tkey1\tkey2\tkey3\tkey4\n52\tvalue1\tvalue2\tval\"ue3\tvalue4\n"));
+    }
+
+    @Test
+    public void writeEntriesTo_writesLists() throws IOException {
+        EntryView entry = new EntryView(52, "hash1", "registerName",
+                ImmutableMap.of("key1",
+                        new ListValue(asList(
+                                new StringValue("value1"),
+                                new StringValue("value2"),
+                                new StringValue("value3"))
+                        ),
+                        "key2",
+                        new ListValue(asList(
+                                new StringValue("value4"),
+                                new StringValue("value5"),
+                                new StringValue("value6"))
+                        )));
+
+        TestOutputStream entityStream = new TestOutputStream();
+
+        writer.writeEntriesTo(
+                entityStream,
+                new Register("registerName", ImmutableSet.of("key1", "key2"), "", null, ""),
+                Collections.singletonList(entry));
+
+        assertThat(entityStream.contents, equalTo("entry\tkey1\tkey2\n52\tvalue1;value2;value3\tvalue4;value5;value6\n"));
     }
 
     @Test

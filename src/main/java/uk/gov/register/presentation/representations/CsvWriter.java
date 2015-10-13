@@ -3,6 +3,7 @@ package uk.gov.register.presentation.representations;
 import org.apache.commons.lang3.StringEscapeUtils;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.config.Register;
 
 import javax.ws.rs.Produces;
@@ -26,9 +27,22 @@ public class CsvWriter extends RepresentationWriter {
 
     private void writeRow(OutputStream entityStream, Iterable<String> fields, EntryView entry) throws IOException {
         String row = StreamSupport.stream(fields.spliterator(),false)
-                .map(field -> escape(entry.getField(field).map(FieldValue::value).orElse("")))
+                .map(field -> escape(entry.getField(field).map(this::renderField).orElse("")))
                 .collect(Collectors.joining(",", entry.getSerialNumber() + ",", "\r\n"));
         entityStream.write(row.getBytes("utf-8"));
+    }
+
+    private String renderField(FieldValue fieldValue) {
+        if (fieldValue.isList()) {
+            return renderList((ListValue) fieldValue);
+        }
+        return fieldValue.getValue();
+    }
+
+    private String renderList(ListValue listValue) {
+        return listValue.stream()
+                .map(FieldValue::getValue)
+                .collect(Collectors.joining(";"));
     }
 
     private String escape(String data) {

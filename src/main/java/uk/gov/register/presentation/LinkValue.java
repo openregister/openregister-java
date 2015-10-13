@@ -19,11 +19,15 @@ public class LinkValue implements FieldValue {
 
     @Override
     @JsonValue
-    public String value() {
+    public String getValue() {
         return value;
     }
 
     public String link() {
         return link;
+    }
+
+    public boolean isList() {
+        return false;
     }
 }
