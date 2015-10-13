@@ -6,7 +6,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.218Z"
+  last-updated: "2015-10-13T09:42:32.570Z"
 - hash: "6b9a4103304d9e705d666da581e2f2672e70d30d"
   entry:
     text: "A place in the UK with a postal address."
@@ -14,7 +14,7 @@
     datatype: "string"
     register: "address"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.218Z"
+  last-updated: "2015-10-13T09:42:32.570Z"
 - hash: "eefd1cb9b52bd12b1f395cb82b1f0c9e9f9d496a"
   entry:
     text: "The administrative area of an address."
@@ -22,7 +22,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.218Z"
+  last-updated: "2015-10-13T09:42:32.570Z"
 - hash: "25b7ada5a868395579210616f0a8f0b94c9cf7d3"
   entry:
     text: "A geographic boundary."
@@ -30,7 +30,7 @@
     datatype: "polygon"
     register: ""
     cardinality: "n"
-  last-updated: "2015-09-14T13:25:21.218Z"
+  last-updated: "2015-10-13T09:42:32.570Z"
 - hash: "085a55f7ce6a85c103951bd7677fa818c98082ce"
   entry:
     text: "Number of elements of the set (1 or n)."
@@ -38,7 +38,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.218Z"
+  last-updated: "2015-10-13T09:42:32.570Z"
 - hash: "4f0071ce5c1dd3c8cee5c039022c5312827ef259"
   entry:
     text: "A Crown Commercial Service sourcing id."
@@ -46,7 +46,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.218Z"
+  last-updated: "2015-10-13T09:42:32.570Z"
 - hash: "56b262a4d691166ee7bc0c28f8e9474e3636e930"
   entry:
     text: "A UK charity company."
@@ -54,7 +54,7 @@
     datatype: "string"
     register: "charity"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.571Z"
 - hash: "637b838898f22d3fc2ca32928e7440497fdf73a2"
   entry:
     text: "Name for the citzens of a country."
@@ -62,7 +62,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.571Z"
 - hash: "9131bc88ce38a112854eb8df2a627ff55b1e7be4"
   entry:
     text: "A list of clients."
@@ -70,7 +70,7 @@
     datatype: "string"
     register: ""
     cardinality: "n"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.571Z"
 - hash: "57e95ae02b63e194fb9bcf869fb8609b5bede2e5"
   entry:
     text: "A clinical commissioning group."
@@ -78,7 +78,7 @@
     datatype: "string"
     register: "clinical-commissioning-group"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.571Z"
 - hash: "e69d8c4adfabbb31c46954126779a509c3fba033"
   entry:
     text: "A UK registered company."
@@ -86,7 +86,7 @@
     datatype: "string"
     register: "company"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.571Z"
 - hash: "8f63dc775c2cd195d9bb8f8a952acfbe99e7a439"
   entry:
     text: "The category of account of a UK company."
@@ -94,7 +94,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.571Z"
 - hash: "12b7a8c6c9166650c77260fd1bd4811b930bd339"
   entry:
     text: "The status of a UK company."
@@ -102,7 +102,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.571Z"
 - hash: "787e3762265984b57ed0236359200c37f264f00c"
   entry:
     text: "The type of a UK company."
@@ -110,7 +110,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.572Z"
 - hash: "b48dce2bd0eff7a6e26b041546df1f7117fccd27"
   entry:
     text: "The name of a person to contact."
@@ -118,7 +118,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.572Z"
 - hash: "a1e0cf7bcd155b09c9a061a0206b5121d186b727"
   entry:
     text: "Copyright for the data in the register."
@@ -126,7 +126,7 @@
     datatype: "text"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.572Z"
 - hash: "cf762ee65811f911317fe17448e06298ebeddea3"
   entry:
     text: "Council Tax band."
@@ -134,7 +134,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.572Z"
 - hash: "44dfb672225343661374fbe1dd2203fa90a10598"
   entry:
     text: "ISO 3166-2 two letter code for a country."
@@ -142,7 +142,7 @@
     datatype: "string"
     register: "country"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.572Z"
 - hash: "4d5072533a016f4d7d184f2271e2f20fe3a9cc83"
   entry:
     text: "Official crest for a government body."
@@ -150,7 +150,7 @@
     datatype: "url"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.219Z"
+  last-updated: "2015-10-13T09:42:32.572Z"
 - hash: "6962b33cbb4f0f33d93959d85ab94f81a8022593"
   entry:
     text: "The data type for constraining a field value."
@@ -158,7 +158,7 @@
     datatype: "string"
     register: "datatype"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.220Z"
+  last-updated: "2015-10-13T09:42:32.572Z"
 - hash: "6c528671d78b694fb9e228c47520b3cb51f786ba"
   entry:
     text: "Date of Food Standards Agency hygiene rating."
@@ -166,7 +166,7 @@
     datatype: "date-time"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.220Z"
+  last-updated: "2015-10-13T09:42:32.573Z"
 - hash: "317f846285be7040af48b6c5fabdd7cd2d091158"
   entry:
     text: "An email address."
@@ -174,7 +174,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.220Z"
+  last-updated: "2015-10-13T09:42:32.573Z"
 - hash: "46358ffeb089839f7424446a15f3d94191b3960f"
   entry:
     text: "End datetime for the applicability of a register entry."
@@ -182,7 +182,7 @@
     datatype: "date-time"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.234Z"
+  last-updated: "2015-10-13T09:42:32.573Z"
 - hash: "40c70cc7a8445a5d06383460188de4e0abc6e809"
   entry:
     text: "A polygon representing the extent of a place."
@@ -190,7 +190,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.234Z"
+  last-updated: "2015-10-13T09:42:32.573Z"
 - hash: "c13c8b2003d0bb0b4c38e58d2283eefa009bf28a"
   entry:
     text: "Field name of register entry."
@@ -198,15 +198,15 @@
     datatype: "string"
     register: "field"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.234Z"
-- hash: "38260c32b0a7cbccb1b25d999f1d14c8889ff9a2"
+  last-updated: "2015-10-13T09:42:32.573Z"
+- hash: "f6ac70bcae594ee72a693e5ad559117cdd397563"
   entry:
     text: "Set of field names."
     field: "fields"
     datatype: "string"
-    register: ""
+    register: "field"
     cardinality: "n"
-  last-updated: "2015-09-14T13:25:21.234Z"
+  last-updated: "2015-10-13T09:42:32.573Z"
 - hash: "ce4dda2c02916429f046b0b8d3f6d7c4b6e73f49"
   entry:
     text: "The register of [Food Standards Agency](http://www.food.gov.uk/) hygiene\
@@ -215,7 +215,7 @@
     datatype: "string"
     register: "food-hygiene"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.234Z"
+  last-updated: "2015-10-13T09:42:32.573Z"
 - hash: "8a6237452760ac04aa6afead3b18eaaeaa925136"
   entry:
     text: "Fuel type for vehicle."
@@ -223,7 +223,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.574Z"
 - hash: "d65542b45db5e43de090d8457574fca97e3a0923"
   entry:
     text: "A G-Cloud supplier."
@@ -231,7 +231,7 @@
     datatype: "string"
     register: "g-cloud-supplier"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.574Z"
 - hash: "75781641a50e1a3df5008eda7dea80992ed9baf3"
   entry:
     text: "Contact details for a G-Cloud supplier."
@@ -239,7 +239,7 @@
     datatype: "string"
     register: "g-cloud-supplier-contact"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.574Z"
 - hash: "4a23daa2a7537c47e933bd3f853ce97b66d36a38"
   entry:
     text: "Gender."
@@ -247,7 +247,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.574Z"
 - hash: "8d5cb240caf44debad15879bb1c9afefbc337278"
   entry:
     text: "Headteacher of school."
@@ -255,7 +255,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.574Z"
 - hash: "1333403c4b2e1c4032eebfc1cdda8f045dde439a"
   entry:
     text: "A person or an organisation holding an interest."
@@ -263,7 +263,7 @@
     datatype: "curie"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.574Z"
 - hash: "449b1dd51c38c6f9057199d0c2d1677a6d146b85"
   entry:
     text: "A hospital."
@@ -271,7 +271,7 @@
     datatype: "string"
     register: "hospital"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.574Z"
 - hash: "193a15284ce1ea46c191b09aefbb50a0d8976f0b"
   entry:
     text: "date when inspection is done."
@@ -279,7 +279,7 @@
     datatype: "date-time"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "96d67a2ffadedc51f5eddb0f9353816c17782118"
   entry:
     text: "Latitude of a place."
@@ -287,7 +287,7 @@
     datatype: "decimal-degrees"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "cbb3b39df7e4e72c947061b2e3fbd8cbe7674d0b"
   entry:
     text: "The area within a post town."
@@ -295,7 +295,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.235Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "1bbfbfa10f16a1359763176d7ea51dea8075628b"
   entry:
     text: "Longitude of a place."
@@ -303,7 +303,7 @@
     datatype: "decimal-degrees"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "82423bf88d09359743b810c83995f08dfec04f86"
   entry:
     text: "A vehicle make."
@@ -311,7 +311,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "eb2c5ee89696166a9f3a08fd179e409f32f0e3cf"
   entry:
     text: "Maximum intake age for pupils at a school."
@@ -319,7 +319,7 @@
     datatype: "integer"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "84396cd51a2d0c95a43f355b691833cbf9064eb1"
   entry:
     text: "Minimum intake age for pupils at a school."
@@ -327,7 +327,7 @@
     datatype: "integer"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "8167af4e18b867f96f9a4c5f93552f86d1b03326"
   entry:
     text: "A vehicle model"
@@ -335,7 +335,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.575Z"
 - hash: "53820a3865708b798e57dc4251bbe838f35fe965"
   entry:
     text: "A Mot test register"
@@ -343,7 +343,7 @@
     datatype: "string"
     register: "mot-test"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "ddfa4190d281695eebe84bc430777e19e422b099"
   entry:
     text: "Name of field"
@@ -351,7 +351,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "41c48617a0833387733f34c65e7c6a97003446b0"
   entry:
     text: "Official name of country"
@@ -359,7 +359,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "abc7ff151a024ca747c460da1a9e2d1303f02f4d"
   entry:
     text: "Official colour for a public body."
@@ -367,7 +367,7 @@
     datatype: "colour"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "b8ac4568c7bf63853c5ad9b66fbd8ecb82d9a4b2"
   entry:
     text: "A passport office."
@@ -375,7 +375,7 @@
     datatype: "string"
     register: "passport-office"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "29fd135d1807158c4f8723f5f6dfe96db4971263"
   entry:
     text: "Parent bodies."
@@ -383,7 +383,7 @@
     datatype: "string"
     register: ""
     cardinality: "n"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "b6605afb857319c68354bfa3e3d27f90b0c2dbf2"
   entry:
     text: "A UK telephone number"
@@ -391,7 +391,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.251Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "ba33573339ba8e52d13c68542e7e65184ba36993"
   entry:
     text: "A required part of postal addresses in the UK encompassing one or more\
@@ -400,7 +400,7 @@
     datatype: "string"
     register: "post-town"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.576Z"
 - hash: "60ea57f6d13af15dd0809bab64a901cb1aff2aa5"
   entry:
     text: "UK Postcodes."
@@ -408,7 +408,7 @@
     datatype: "string"
     register: "postcode"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.577Z"
 - hash: "591a4e79badf765e70ea6d6a2cc302cbe7b3f345"
   entry:
     text: "The price paid for the thing."
@@ -416,7 +416,7 @@
     datatype: "integer"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.577Z"
 - hash: "c1e1f4d6afa8b48fd391dabb477d0f8ff4aa655e"
   entry:
     text: "A building, institution or house name in an address."
@@ -424,7 +424,7 @@
     datatype: "string"
     register: "property"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.577Z"
 - hash: "3326597ef0122468c41156fe87e72457f5ca4aee"
   entry:
     text: "An interest on something."
@@ -432,7 +432,7 @@
     datatype: "string"
     register: "property-interest"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.577Z"
 - hash: "f2131da6455a7fcc34249363b14a522363126967"
   entry:
     text: "The property title."
@@ -440,7 +440,7 @@
     datatype: "string"
     register: "property-title"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.577Z"
 - hash: "8ef15c932c45149ee25fa63057e4de0f6ca6f839"
   entry:
     text: "A person holding an interest on a property."
@@ -448,7 +448,7 @@
     datatype: "name"
     register: "proprietor"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.577Z"
 - hash: "dc405268e2ac1924b3c19df76219794ff0fd33e8"
   entry:
     text: "A UK governmental body."
@@ -456,7 +456,7 @@
     datatype: "string"
     register: "public-body"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.577Z"
 - hash: "bc7694b3a6b0cced418ee631fcebb5a2fcd7ee2c"
   entry:
     text: "Type of government body."
@@ -464,7 +464,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "b90363820bd4fdc6c061dc95ab103b334cd8fcea"
   entry:
     text: "A tax rate (in per cent)."
@@ -472,7 +472,7 @@
     datatype: "decimal"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "be7c9b3010d72a8083e1e183bcd07a2a5c5e1d62"
   entry:
     text: "Food hygiene rating."
@@ -480,7 +480,7 @@
     datatype: "integer"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "8c14df23b2eab1892aeafac7d341959f628b3e1a"
   entry:
     text: "reason codes for of the result."
@@ -488,7 +488,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "521cd70ac2d9ac39cac495796c2c38336b9e8189"
   entry:
     text: "A register name."
@@ -496,7 +496,7 @@
     datatype: "string"
     register: "register"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.252Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "84c6f1499e11944895249eedd821ce3bf83aada3"
   entry:
     text: "A register office."
@@ -504,7 +504,7 @@
     datatype: "string"
     register: "register-office"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "5abbeb1d4cca5798df7a56d2ea0d3e3867747df4"
   entry:
     text: "Organisation responsible for the data in the register."
@@ -512,7 +512,7 @@
     datatype: "string"
     register: "public-body"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "280d8b7e76e4dcdc24dcbf6060d26440478a3daf"
   entry:
     text: "Religious character of school as declared by the school."
@@ -520,7 +520,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.578Z"
 - hash: "9e7deae3ceca36944a483893a8c89b4ac1e06843"
   entry:
     text: "A result of some test."
@@ -528,7 +528,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "ea64c784a8334459a2b107bbe57f4f1bbfab3164"
   entry:
     text: "A school in the UK."
@@ -536,7 +536,7 @@
     datatype: "string"
     register: "school"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "c1c28a73f282fdac88e661e673a150749d150cde"
   entry:
     text: "Start datetime for the applicability of a register entry."
@@ -544,7 +544,7 @@
     datatype: "date-time"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "fe6e218ced074494485cdcea3ab4dd28f57377a2"
   entry:
     text: "The number and street name of an address."
@@ -552,7 +552,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "ed2df07b8d240a3da0a01e0dfc42a06551a81747"
   entry:
     text: "A test type."
@@ -560,7 +560,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "28eb7fb268fea629b6aa378d811d237ea5a4c019"
   entry:
     text: "Description of register entry."
@@ -568,7 +568,7 @@
     datatype: "text"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "c7e0f3c523a562ecc2b558195672b770ee1fdf8b"
   entry:
     text: "The town of an address."
@@ -576,7 +576,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "3f3e1d74b0061f9538e190785831c9d40cedb29f"
   entry:
     text: "A VAT rate."
@@ -584,7 +584,7 @@
     datatype: "string"
     register: "vat-rate"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.579Z"
 - hash: "59b92411ca3bb9647c293012e19bc6860cddd999"
   entry:
     text: "vehicle id."
@@ -592,7 +592,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.253Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "dd07130f5ebf43a3139767abf34a82b92aa0d493"
   entry:
     text: "vehicle class."
@@ -600,7 +600,7 @@
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.271Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "f1744d1132554f58c10c0e2e5b67e2f6f9fc5c8b"
   entry:
     text: "Website for register entry."
@@ -608,7 +608,7 @@
     datatype: "url"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.271Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "3ff7bc5e1465b018f0b2c94facc7a754b933efb2"
   entry:
     text: "The location of a trading address."
@@ -616,7 +616,7 @@
     datatype: "string"
     register: "premises"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.271Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "b66020678790dfe48f71d7a8c99aa600b5f87635"
   entry:
     text: "The trading address of an establishment handling, preparing or producing\
@@ -625,7 +625,7 @@
     datatype: "string"
     register: "products-of-animal-origin-premises"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.271Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "57f0ce071964ab30d4c58d002fef5dd12a8e7214"
   entry:
     text: "Handling and processing activities for which a products-of-animal-origin-premises\
@@ -634,7 +634,7 @@
     datatype: "string"
     register: "products-of-animal-origin-activity"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.271Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "6b96791c6b8842de683d0748d37f3a72d7a32171"
   entry:
     text: "A product of animal origin sector for which a products-of-animal-origin-premises\
@@ -643,7 +643,7 @@
     datatype: "string"
     register: "products-of-animal-origin-section"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.271Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "6ceac1334310ae48218f21d489004ef6952f06e2"
   entry:
     text: "Species which for which an products-of-animal-origin-premises is approved\
@@ -652,7 +652,7 @@
     datatype: "string"
     register: "products-of-animal-origin-species"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.272Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "10543c8b8f4c629128b561c56bc298e39c4109d2"
   entry:
     text: "Legislation or EU regulation."
@@ -660,7 +660,7 @@
     datatype: "string"
     register: "legislation"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.272Z"
+  last-updated: "2015-10-13T09:42:32.580Z"
 - hash: "97b3868b43bc8b9b96680772351577aacaa40bd1"
   entry:
     text: "A combination of product of animal origin section and activity that desribes\
@@ -669,7 +669,7 @@
     datatype: "string"
     register: "food-establishment-category"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.272Z"
+  last-updated: "2015-10-13T09:42:32.581Z"
 - hash: "ac1468e87bdf74beee319298782669ae70d4a177"
   entry:
     text: "List of food establishment types."
@@ -677,7 +677,7 @@
     datatype: "string"
     register: ""
     cardinality: "n"
-  last-updated: "2015-09-14T13:25:21.272Z"
+  last-updated: "2015-10-13T09:42:32.581Z"
 - hash: "1f7181a19bf4859da79483c8678d9349e64380f3"
   entry:
     text: "A registration district"
@@ -685,7 +685,7 @@
     datatype: "string"
     register: "registration-district"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.272Z"
+  last-updated: "2015-10-13T09:42:32.581Z"
 - hash: "f6047820c6c77562bb49b145996750cc7b89f622"
   entry:
     text: "A domain"
@@ -693,12 +693,12 @@
     datatype: "string"
     register: "government-domain"
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.272Z"
+  last-updated: "2015-10-13T09:42:32.581Z"
 - hash: "6fadc1ac16f202d8c0f3dc7933c3e1586d675800"
   entry:
-    text: "An owner of a government domain"
+    text: "An owner of government domain"
     field: "owner"
     datatype: "string"
     register: ""
     cardinality: "1"
-  last-updated: "2015-09-14T13:25:21.272Z"
+  last-updated: "2015-10-13T09:42:32.581Z"
