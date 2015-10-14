@@ -2,9 +2,8 @@ package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.collect.ImmutableMap;
 
-import java.util.Map;
+import java.util.stream.Stream;
 
 public enum Cardinality {
     ONE("1"),MANY("n");
@@ -15,11 +14,6 @@ public enum Cardinality {
         this.id = id;
     }
 
-    private static final Map<String,Cardinality> cardinalityMap = ImmutableMap.of(
-            ONE.getId(),  ONE,
-            MANY.getId(), MANY
-    );
-
     /**
      * this method shouldn't be needed -- the @JsonValue annotation has a special case for enums that
      * means it can be used for both serialization and deserialization -- but there's a bug.
@@ -27,7 +21,9 @@ public enum Cardinality {
      */
     @JsonCreator
     public static Cardinality fromId(String id) {
-        return cardinalityMap.get(id);
+        return Stream.of(values())
+                .filter(x -> x.getId().equals(id))
+                .findFirst().get();
     }
 
     @JsonValue
