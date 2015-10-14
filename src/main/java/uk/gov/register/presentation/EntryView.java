@@ -41,7 +41,7 @@ public class EntryView {
 
     @SuppressWarnings("unused, used from html templates")
     public String primaryKey() {
-        return entryMap.get(registerName).value();
+        return entryMap.get(registerName).getValue();
     }
 
     @SuppressWarnings("unused, used from html templates")

@@ -3,6 +3,7 @@ package uk.gov.register.presentation.config;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.presentation.Cardinality;
 
 import java.util.Optional;
 
@@ -10,14 +11,14 @@ public class Field {
     final String fieldName;
     final String datatype;
     final Optional<String> register;
-    final String cardinality;
+    final Cardinality cardinality;
     final String text;
 
     @JsonCreator
     public Field(@JsonProperty("field") String fieldName,
                  @JsonProperty("datatype") String datatype,
                  @JsonProperty("register") String register,
-                 @JsonProperty("cardinality") String cardinality,
+                 @JsonProperty("cardinality") Cardinality cardinality,
                  @JsonProperty("text") String text) {
         this.fieldName = fieldName;
         this.datatype = datatype;
@@ -28,5 +29,9 @@ public class Field {
 
     public Optional<String> getRegister() {
         return register;
+    }
+
+    public Cardinality getCardinality() {
+        return cardinality;
     }
 }

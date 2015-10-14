@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
 public class RepresentationsTest extends FunctionalTestBase {
+    public static final String REGISTER_NAME = "register";
     private final String extension;
     private final String expectedContentType;
     private final String expectedSingleEntry;
@@ -27,9 +28,9 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @BeforeClass
     public static void publishTestMessages() {
-        DBSupport.publishMessages(ImmutableList.of(
-                "{\"hash\":\"someHash1\",\"entry\":{\"street\":\"The Entry 1\", \"area\":\"value1\", \"address\":\"12345\",\"town\":\"town1\"}}",
-                "{\"hash\":\"someHash2\",\"entry\":{\"street\":\"The Entry 2\", \"area\":\"value2\", \"address\":\"67890\",\"town\":\"town2\"}}"
+        DBSupport.publishMessages(REGISTER_NAME, ImmutableList.of(
+                "{\"hash\":\"someHash1\",\"entry\":{\"text\":\"The Entry 1\", \"register\":\"value1\", \"fields\":[\"field1\"]}}",
+                "{\"hash\":\"someHash2\",\"entry\":{\"text\":\"The Entry 2\", \"register\":\"value2\", \"fields\":[\"field1\",\"field2\"]}}"
         ));
     }
 
@@ -52,7 +53,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @Test
     public void representationIsSupportedForSingleEntryView() {
-        Response response = getRequest("/entry/1." + extension);
+        Response response = getRequest(REGISTER_NAME, "/entry/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -61,7 +62,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @Test
     public void representationIsSupportedForListEntryView() {
-        Response response = getRequest("/current." + extension);
+        Response response = getRequest(REGISTER_NAME, "/current." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));

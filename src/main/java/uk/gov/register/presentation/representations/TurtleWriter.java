@@ -4,6 +4,7 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
+import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -44,29 +45,50 @@ public class TurtleWriter extends RepresentationWriter {
         URI entryUri = uri(entry.getSerialNumber());
         String entity = String.format("<%s>\n", entryUri);
         return StreamSupport.stream(fields.spliterator(),false)
-                .flatMap(field -> renderFieldIfPresent(field, entry.getField(field)))
+                .flatMap(field -> new FieldRenderer(field).render(entry.getField(field)))
                 .collect(Collectors.joining(" ;\n", entity, " ."));
     }
 
-    private Stream<String> renderFieldIfPresent(String fieldName, Optional<FieldValue> fieldO) {
-        Optional<String> renderedField = fieldO.map(fieldValue -> renderField(fieldName, fieldValue));
-        return optionalStream(renderedField);
-    }
-
-    private <T> Stream<T> optionalStream(Optional<T> optional) {
-        return optional.map(Stream::of)
-                .orElse(Stream.empty());
-    }
-
-    private String renderField(String fieldName, FieldValue value) {
-        if (value.isLink()) {
-            return String.format(" field:%s <%s>", fieldName, ((LinkValue) value).link());
-        } else {
-            return String.format(" field:%s \"%s\"", fieldName, value.value());
-        }
-    }
 
     private URI uri(int serialNumber) {
         return UriBuilder.fromUri(requestContext.requestUrl()).replacePath(null).path("entry").path(Integer.toString(serialNumber)).build();
+    }
+
+    private static class FieldRenderer {
+        private final String fieldName;
+
+        public FieldRenderer(String fieldName) {
+            this.fieldName = fieldName;
+        }
+
+        public Stream<String> render(Optional<FieldValue> fieldO) {
+            return optionalStream(fieldO).flatMap(this::renderField);
+        }
+
+        private Stream<String> renderField(FieldValue value) {
+            if (value.isList()) {
+                return renderList((ListValue) value);
+            }
+            else {
+                return Stream.of(renderScalar(value));
+            }
+        }
+
+        private Stream<String> renderList(ListValue listValue) {
+            return listValue.stream().map(this::renderScalar);
+        }
+
+        private String renderScalar(FieldValue value) {
+            if (value.isLink()) {
+                return String.format(" field:%s <%s>", this.fieldName, ((LinkValue) value).link());
+            } else {
+                return String.format(" field:%s \"%s\"", this.fieldName, value.getValue());
+            }
+        }
+
+        private <T> Stream<T> optionalStream(Optional<T> optional) {
+            return optional.map(Stream::of)
+                    .orElse(Stream.empty());
+        }
     }
 }

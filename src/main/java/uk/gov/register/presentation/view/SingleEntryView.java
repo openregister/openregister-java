@@ -22,7 +22,7 @@ public class SingleEntryView extends ThymeleafView {
     private String constructVersionHistoryLink(EntryView entryView, String primaryKey) {
         return String.format("/%s/%s/history",
                 primaryKey,
-                entryView.getContent().get(primaryKey).value());
+                entryView.getContent().get(primaryKey).getValue());
     }
 
     @JsonValue

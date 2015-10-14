@@ -2,6 +2,7 @@ package uk.gov.register.presentation.representations;
 
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.config.Register;
 
 import javax.ws.rs.Produces;
@@ -25,8 +26,21 @@ public class TsvWriter extends RepresentationWriter {
 
     private void writeRow(OutputStream entityStream, Iterable<String> fields, EntryView entry) throws IOException {
         String row = StreamSupport.stream(fields.spliterator(),false)
-                .map(field -> entry.getField(field).map(FieldValue::value).orElse(""))
+                .map(field -> entry.getField(field).map(this::renderField).orElse(""))
                 .collect(Collectors.joining("\t", entry.getSerialNumber() + "\t", "\n"));
         entityStream.write(row.getBytes("utf-8"));
+    }
+
+    private String renderField(FieldValue fieldValue) {
+        if (fieldValue.isList()) {
+            return renderList((ListValue) fieldValue);
+        }
+        return fieldValue.getValue();
+    }
+
+    private String renderList(ListValue listValue) {
+        return listValue.stream()
+                .map(FieldValue::getValue)
+                .collect(Collectors.joining(";"));
     }
 }

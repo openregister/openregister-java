@@ -1,5 +1,7 @@
 package uk.gov.register.presentation;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public class LinkValue implements FieldValue {
     private static final String template = "http://%1$s.openregister.org/%1$s/%2$s";
     private final String value;
@@ -16,11 +18,16 @@ public class LinkValue implements FieldValue {
     }
 
     @Override
-    public String value() {
+    @JsonValue
+    public String getValue() {
         return value;
     }
 
     public String link() {
         return link;
+    }
+
+    public boolean isList() {
+        return false;
     }
 }

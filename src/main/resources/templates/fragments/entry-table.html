@@ -17,9 +17,9 @@
                        th:text="${keyValue.key}"></a>
                 </td>
                 <td th:if="${keyValue.value.isLink()}">
-                    <a th:href="${keyValue.value.link()}" th:text="${keyValue.value.value()}"></a>
+                    <a th:href="${keyValue.value.link()}" th:text="${keyValue.value.value}"></a>
                 </td>
-                <td th:unless="${keyValue.value.isLink()}" th:text="${keyValue.value.value()}"></td>
+                <td th:unless="${keyValue.value.isLink()}" th:text="${keyValue.value.value}"></td>
             </tr>
         </tbody>
     </table>

@@ -22,7 +22,7 @@
             <td><a th:href="${'/entry/' + entry.serialNumber}" th:text="${entry.serialNumber}"></a></td>
             <td><a th:href="${'/' + registerId + '/' + entry.primaryKey()}" th:text="${entry.primaryKey()}"></a></td>
             <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-                <td th:if="${entry.getField(fieldName).present}" th:text="${entry.getField(fieldName).get().value()}"></td>
+                <td th:if="${entry.getField(fieldName).present}" th:text="${entry.getField(fieldName).get().value}"></td>
                 <td th:unless="${entry.getField(fieldName).present}"></td>
             </th:block>
         </tr>
