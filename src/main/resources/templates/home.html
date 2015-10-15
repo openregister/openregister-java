@@ -19,7 +19,7 @@
         <dt>Last updated:</dt>
         <dd><a href="/feed">Last updated</a></dd>
         <dt>Fields in this register:</dt>
-        <dd>Register Fields</dd>
+        <dd><ul><li th:each="field : ${register.fields}" th:text="${field}"></li></ul></dd>
     </dl>
 
     <p th:replace="copyright.html::copyright">Copyright text</p>
