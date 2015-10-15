@@ -2,6 +2,7 @@ package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +22,7 @@ public class ListValue implements FieldValue, Iterable<FieldValue> {
     @Override
     @JsonIgnore
     public String getValue() {
-        throw new UnsupportedOperationException();
+        return "[ " + String.join(", ", Lists.transform(elements, FieldValue::getValue)) + " ]";
     }
 
     @Override
