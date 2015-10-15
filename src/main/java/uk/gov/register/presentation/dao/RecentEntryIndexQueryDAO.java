@@ -16,9 +16,9 @@ public interface RecentEntryIndexQueryDAO {
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index ORDER BY serial_number DESC LIMIT :limit OFFSET :offset")
     List<DbEntry> getAllEntries(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY serial_number DESC limit 1")
+    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE serial_number = (SELECT serial_number FROM CURRENT_KEYS WHERE key = :key)")
     @SingleValueResult(DbEntry.class)
-    Optional<DbEntry> findByKeyValue(@Bind("key") String key, @Bind("value") String value);
+    Optional<DbEntry> findByPrimaryKey(@Bind("key") String key);
 
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['entry',:key]) = :value ORDER BY serial_number DESC")
     List<DbEntry> findAllByKeyValue(@Bind("key") String key, @Bind("value") String value);

@@ -82,7 +82,7 @@ public class SearchResourceTest {
 
     @Test
     public void findByPrimaryKey_throwsNotFoundException_whenSearchedKeyIsNotFound() {
-        when(queryDAO.findByKeyValue("school", "value")).thenReturn(Optional.<DbEntry>empty());
+        when(queryDAO.findByPrimaryKey("value")).thenReturn(Optional.<DbEntry>empty());
         try {
             resource.findByPrimaryKey("school", "value");
             fail("Must fail");

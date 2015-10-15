@@ -35,7 +35,7 @@ public class SearchResource {
         if (!key.equals(requestContext.getRegisterPrimaryKey())) {
             throw new NotFoundException();
         }
-        Optional<DbEntry> entryO = queryDAO.findByKeyValue(key, value);
+        Optional<DbEntry> entryO = queryDAO.findByPrimaryKey(value);
         return entryResponse(entryO, viewFactory::getLatestEntryView);
     }
 
