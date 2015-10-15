@@ -94,6 +94,14 @@ main {
   white-space: pre-line;
 }
 
+dd a {
+  text-decoration: none;
+}
+
+.registry-label {
+  margin-top: 60px;
+}
+
 // tables
 
 $table-header: #f5f5f5;

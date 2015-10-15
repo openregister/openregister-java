@@ -862,6 +862,12 @@ body {
   /* fallback for IE 6-7 */
   white-space: pre-line; }
 
+dd a {
+  text-decoration: none; }
+
+.registry-label {
+  margin-top: 60px; }
+
 table {
   font-family: "nta", Arial, sans-serif;
   font-size: 12px;
