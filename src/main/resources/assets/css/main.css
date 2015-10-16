@@ -911,9 +911,18 @@ body {
         font-size: 24px;
         line-height: 1.25; } }
 
+.registry-label {
+  margin-bottom: 5px; }
+
+.org-name {
+  font-size: 24px;
+  margin-top: 0px;
+  margin-bottom: 15px; }
+
 .side-nav {
   font-weight: 700;
-  list-style-type: none; }
+  list-style-type: none;
+  line-height: 30px; }
   .side-nav a {
     text-decoration: none; }
 
@@ -958,10 +967,20 @@ dd a {
   background-color: #F8F8F8;
   border: 1px solid #BFC1C3; }
 
-.field-list {
+.field-list ul {
+  padding-left: 0; }
+
+.field-list li {
   font-family: monospace;
   font-size: 16px;
-  display: block; }
+  display: inline-block;
+  padding-right: 10px; }
+
+.field-list li:after {
+  content: ", "; }
+
+.field-list li:last-child:after {
+  content: ""; }
 
 table {
   font-family: "GDS-Logo", sans-serif;

@@ -12,7 +12,7 @@
 
             <div class="registry">
                 <p class="registry-label">Provided by:</p>
-                <span th:text="${register.registry.name}">Cabinet Office</span>
+                <p class="org-name" th:text="${register.registry.name}">Cabinet Office</p>
             </div>
 
             <dl class="primary-metadata">
@@ -30,7 +30,7 @@
         <h2 class="heading-large">Technical information</h2>
             <p>Registers are made up of entries containing fields of data. To build services on top of these registers you can access the data in a variety of formats.</p>
             <dt>Fields in this register:</dt>
-            <div class="field-list"> <p th:each="field : ${register.fields}" th:text="${field}">,</p> </div>
+            <div class="field-list"> <ul><li th:each="field : ${register.fields}" th:text="${field}"></li></ul> </div>
         </div>
         <div class="column-third">
             <ul class="side-nav">
