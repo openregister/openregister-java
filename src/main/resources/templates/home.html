@@ -6,32 +6,46 @@
 <header th:replace="main.html::header"></header>
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
-    <h1 th:text="${register.text}">The register of UK government registers.</h1>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="homepage-intro" th:text="${register.text}">The register of UK government registers.</h1>
 
-    <div class="registry">
-        <p class="registry-label">Provided by:</p>
-        <span th:text="${register.registry.name}">Cabinet Office</span>
+            <div class="registry">
+                <p class="registry-label">Provided by:</p>
+                <span th:text="${register.registry.name}">Cabinet Office</span>
+            </div>
+
+            <dl class="primary-metadata">
+                <dt>Total entries:</dt>
+                <dd><a href="/current">Total entries</a></dd>
+                <dt>Last updated:</dt>
+                <dd><a href="/feed">Last updated</a></dd>
+            </dl>
+        </div>
     </div>
-
-    <dl class="primary-metadata">
-        <dt>Total entries:</dt>
-        <dd><a href="/current">Total entries</a></dd>
-        <dt>Last updated:</dt>
-        <dd><a href="/feed">Last updated</a></dd>
-        <dt>Fields in this register:</dt>
-        <dd><ul><li th:each="field : ${register.fields}" th:text="${field}"></li></ul></dd>
-    </dl>
-
-    <p th:replace="copyright.html::copyright">Copyright text</p>
-
-        <div class="small-12 large-4 columns nav">
-
+    <div class="grid-row">
+    <div class="technical-information">
+    <div class="grid-row">
+        <div class="column-two-thirds">
+        <h2 class="heading-large">Technical information</h2>
+            <p>Registers are made up of entries containing fields of data. To build services on top of these registers you can access the data in a variety of formats.</p>
+            <dt>Fields in this register:</dt>
+            <div class="field-list"> <p th:each="field : ${register.fields}" th:text="${field}">,</p> </div>
+        </div>
+        <div class="column-third">
             <ul class="side-nav">
                 <li><a href="http://www.openregister.org/">About registers</a></li>
                 <li><a href="http://www.openregister.org/developer">Developer documentation</a></li>
                 <li><a href="/download">Download all entries</a></li>
             </ul>
         </div>
+    </div>    
+    </div>
+    </div>
+
+    <p th:replace="copyright.html::copyright">Copyright text</p>
+
+        
 
 </main>
 

@@ -17,57 +17,13 @@
 @-o-viewport {
   width: device-width; }
 
-#global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
-  content: "";
-  display: block;
-  clear: both; }
-
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-
 @-ms-viewport {
   width: device-width; }
 
 @-o-viewport {
   width: device-width; }
 
-@font-face {
-  font-family: GDS-Logo;
-  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
-
-@-ms-viewport {
-  width: device-width; }
-
-@-o-viewport {
-  width: device-width; }
-
-@-ms-viewport {
-  width: device-width; }
-
-@-o-viewport {
-  width: device-width; }
-
-#global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
-#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
-  content: "";
-  display: block;
-  clear: both; }
-
-@-ms-viewport {
-  width: device-width; }
-
-@-o-viewport {
-  width: device-width; }
-
-@-ms-viewport {
-  width: device-width; }
-
-@-o-viewport {
-  width: device-width; }
-
-#global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
+.grid-row:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
   content: "";
   display: block;
@@ -83,13 +39,107 @@
     #global-header-bar, #global-cookie-message p, main {
       margin: 0 auto; } }
 
+.hero-image {
+  margin-left: -15px;
+  margin-right: -15px; }
+  @media (min-width: 641px) {
+    .hero-image {
+      margin-left: -30px;
+      margin-right: -30px; } }
+
+.grid-row {
+  margin: 0 -15px; }
+
 @-ms-viewport {
   width: device-width; }
 
 @-o-viewport {
   width: device-width; }
 
-#global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
+.grid-row:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
+  content: "";
+  display: block;
+  clear: both; }
+
+@font-face {
+  font-family: GDS-Logo;
+  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
+
+@-ms-viewport {
+  width: device-width; }
+
+@-o-viewport {
+  width: device-width; }
+
+@font-face {
+  font-family: GDS-Logo;
+  src: local("HelveticaNeue"), local("Helvetica Neue"), local("Arial"), local("Helvetica"); }
+
+@-ms-viewport {
+  width: device-width; }
+
+@-o-viewport {
+  width: device-width; }
+
+@-ms-viewport {
+  width: device-width; }
+
+@-o-viewport {
+  width: device-width; }
+
+.grid-row:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
+  content: "";
+  display: block;
+  clear: both; }
+
+@-ms-viewport {
+  width: device-width; }
+
+@-o-viewport {
+  width: device-width; }
+
+@-ms-viewport {
+  width: device-width; }
+
+@-o-viewport {
+  width: device-width; }
+
+.grid-row:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
+#global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
+  content: "";
+  display: block;
+  clear: both; }
+
+#global-header-bar, #global-cookie-message p, main {
+  max-width: 960px;
+  margin: 0 15px; }
+  @media (min-width: 641px) {
+    #global-header-bar, #global-cookie-message p, main {
+      margin: 0 30px; } }
+  @media (min-width: 1020px) {
+    #global-header-bar, #global-cookie-message p, main {
+      margin: 0 auto; } }
+
+.hero-image {
+  margin-left: -15px;
+  margin-right: -15px; }
+  @media (min-width: 641px) {
+    .hero-image {
+      margin-left: -30px;
+      margin-right: -30px; } }
+
+.grid-row {
+  margin: 0 -15px; }
+
+@-ms-viewport {
+  width: device-width; }
+
+@-o-viewport {
+  width: device-width; }
+
+.grid-row:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
   content: "";
   display: block;
@@ -359,7 +409,7 @@ button:focus,
 @-o-viewport {
   width: device-width; }
 
-#global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
+.grid-row:after, #global-header .header-wrapper:after, #global-header .header-wrapper .header-global:after, #global-header .header-wrapper .header-global .header-logo:after, #global-header .header-proposition #proposition-link:after,
 #global-header .header-proposition #proposition-links:after, #footer .footer-wrapper:after, #footer .footer-meta:after {
   content: "";
   display: block;
@@ -413,13 +463,13 @@ button:focus,
   #global-header #logo {
     float: left;
     position: relative;
-    top: -4px;
+    top: -1px;
     height: 30px;
     overflow: visible;
     vertical-align: baseline;
     color: #fff;
     font-weight: bold;
-    font-size: 27px;
+    font-size: 24px;
     line-height: 1em;
     text-decoration: none;
     text-rendering: optimizeLegibility;
@@ -777,7 +827,7 @@ body {
   .phase-banner p {
     margin: 0;
     color: #000;
-    font-family: "nta", Arial, sans-serif;
+    font-family: "GDS-Logo", sans-serif;
     font-size: 14px;
     line-height: 1.14286;
     font-weight: 400;
@@ -792,7 +842,7 @@ body {
     vertical-align: top;
     margin: 0 8px 0 0;
     padding: 2px 5px 0;
-    font-family: "nta", Arial, sans-serif;
+    font-family: "GDS-Logo", sans-serif;
     font-size: 14px;
     line-height: 1.14286;
     font-weight: 700;
@@ -815,8 +865,14 @@ body {
       .phase-banner span {
         vertical-align: baseline; } }
 
+.homepage-intro {
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 30px;
+  margin-bottom: 60px; }
+
 .primary-metadata dt {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS-Logo", sans-serif;
   font-size: 14px;
   line-height: 1.14286;
   font-weight: 400;
@@ -831,7 +887,7 @@ body {
 
 .primary-metadata dd {
   margin: 5px 0 0 0;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS-Logo", sans-serif;
   font-size: 18px;
   line-height: 1.2;
   font-weight: 700;
@@ -842,8 +898,10 @@ body {
       line-height: 1.25; } }
   .primary-metadata dd p, .primary-metadata dd strong {
     font-weight: bold; }
+  .primary-metadata dd a {
+    text-decoration: none; }
   .primary-metadata dd .show-other-content {
-    font-family: "nta", Arial, sans-serif;
+    font-family: "GDS-Logo", sans-serif;
     font-size: 18px;
     line-height: 1.2;
     font-weight: 700;
@@ -852,6 +910,12 @@ body {
       .primary-metadata dd .show-other-content {
         font-size: 24px;
         line-height: 1.25; } }
+
+.side-nav {
+  font-weight: 700;
+  list-style-type: none; }
+  .side-nav a {
+    text-decoration: none; }
 
 @media (min-width: 641px) {
   #footer .footer-meta .footer-meta-inner .custom-government-licence {
@@ -868,8 +932,39 @@ dd a {
 .registry-label {
   margin-top: 60px; }
 
+.grid-row .column-third {
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+  @media (min-width: 641px) {
+    .grid-row .column-third {
+      float: left;
+      width: 33.33333%; } }
+
+.grid-row .column-two-thirds {
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+  @media (min-width: 641px) {
+    .grid-row .column-two-thirds {
+      float: left;
+      width: 66.66667%; } }
+
+.technical-information {
+  margin: 35px 15px 15px 15px;
+  padding: 25px;
+  background-color: #F8F8F8;
+  border: 1px solid #BFC1C3; }
+
+.field-list {
+  font-family: monospace;
+  font-size: 16px;
+  display: block; }
+
 table {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS-Logo", sans-serif;
   font-size: 12px;
   line-height: 1.25;
   font-weight: 400;
