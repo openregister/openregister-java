@@ -105,6 +105,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jerseyEnvironment.register(NotFoundExceptionMapper.class);
         jerseyEnvironment.register(ThrowableExceptionMapper.class);
 
+        jerseyEnvironment.register(CacheNoTransformFilterFactory.class);
+
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 
         setCorsPreflight(applicationContext);
