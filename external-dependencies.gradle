@@ -11,6 +11,8 @@ ext {
             "io.dropwizard:dropwizard-assets:${dropwizard_version}"
     ]
 
+    markdown = 'org.markdownj:markdownj-core:0.4'
+
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
 
     thymeleaf = 'org.thymeleaf:thymeleaf:2.1.4.RELEASE'
