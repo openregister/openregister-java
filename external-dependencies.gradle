@@ -1,7 +1,8 @@
 ext {
 
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
-    jdbi = 'org.jdbi:jdbi:2.59'
+    jdbi = 'org.jdbi:jdbi:2.63.1'
+    stringTemplate= 'org.antlr:stringtemplate:3.2.1'
     aws_cloudsearch = 'com.amazonaws:aws-java-sdk-cloudsearch:1.10.22'
 
     //test dependency

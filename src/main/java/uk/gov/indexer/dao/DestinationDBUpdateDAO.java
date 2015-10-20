@@ -51,7 +51,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         List<String> allKeys = Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry()));
 
-        List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(String.join(",", allKeys));
+        List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(allKeys);
 
         Iterable<OrderedEntryIndex> newEntries = Iterables.filter(orderedEntryIndexes, e -> !existingKeys.contains(getKey(registerName, e.getEntry())));
 
