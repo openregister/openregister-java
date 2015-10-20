@@ -163,12 +163,11 @@ dd a {
   font-family: monospace;
   font-size: 16px;
   display: inline-block;
-  padding-right: 10px;
 }
 
 
 .field-list li:after {
-  content: ", ";
+  content: ",\a0";
 }
 
 .field-list li:last-child:after {

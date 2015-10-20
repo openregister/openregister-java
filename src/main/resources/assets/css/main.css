@@ -868,8 +868,7 @@ body {
 .homepage-intro {
   font-weight: 400;
   font-size: 24px;
-  line-height: 30px;
-  /*margin-bottom: 60px;*/ }
+  line-height: 30px; }
 
 .primary-metadata dt {
   font-family: "GDS-Logo", sans-serif;
@@ -973,11 +972,10 @@ dd a {
 .field-list li {
   font-family: monospace;
   font-size: 16px;
-  display: inline-block;
-  padding-right: 10px; }
+  display: inline-block; }
 
 .field-list li:after {
-  content: ", "; }
+  content: ",\a0"; }
 
 .field-list li:last-child:after {
   content: ""; }
