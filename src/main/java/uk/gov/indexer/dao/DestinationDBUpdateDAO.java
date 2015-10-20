@@ -2,7 +2,6 @@ package uk.gov.indexer.dao;
 
 import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -10,6 +9,7 @@ import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -48,26 +48,19 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
-
         List<String> allKeys = Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry()));
 
-        List<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(allKeys);
+        Set<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(allKeys);
 
-        Iterable<OrderedEntryIndex> newEntries = Iterables.filter(orderedEntryIndexes, e -> !existingKeys.contains(getKey(registerName, e.getEntry())));
-
-        orderedEntryIndexes.forEach(e -> currentKeysUpdateDAO.updateSerialNumber(
-                        e.getSerial_number(),
-                        getKey(registerName, e.getEntry())
-                )
-        );
-
-        currentKeysUpdateDAO.insertEntries(
-                Iterables.transform(newEntries,
-                        e -> new CurrentKey(
-                                e.getSerial_number(),
-                                getKey(registerName, e.getEntry())
-                        )
-                )
+        orderedEntryIndexes.forEach(e -> {
+                    String key = getKey(registerName, e.getEntry());
+                    if (existingKeys.contains(key)) {
+                        currentKeysUpdateDAO.updateSerialNumber(e.getSerial_number(), key);
+                    } else {
+                        currentKeysUpdateDAO.insertNewKey(e.getSerial_number(), key);
+                        existingKeys.add(key);
+                    }
+                }
         );
     }
 
