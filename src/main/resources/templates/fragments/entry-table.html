@@ -21,8 +21,8 @@
                     <a th:href="${keyValue.value.link()}" th:text="${keyValue.value.value}"></a>
                 </td>
 
-                <td th:if="${keyValue.value.isList()}">
-                    <ul class="field-list-in-table">
+                <td th:if="${keyValue.value.isList()}" class="field-list-in-table">
+                    <ul>
                         <th:block th:each="fieldValue : ${keyValue.value}">
                             <li th:if="${fieldValue.isLink()}">
                                 <a th:href="${fieldValue.link()}" th:text="${fieldValue.value}"></a>
