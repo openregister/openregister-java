@@ -22,14 +22,14 @@
                 </td>
 
                 <td th:if="${keyValue.value.isList()}">
-                    <th:block th:each="fieldValue : ${keyValue.value}">
-                        <ul class="field-list">
-                        <li th:if="${fieldValue.isLink()}">
-                            <a th:href="${fieldValue.link()}" th:text="${fieldValue.value}"></a>
-                        </li>
-                        <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
-                            </ul>
-                    </th:block>
+                    <ul class="field-list-in-table">
+                        <th:block th:each="fieldValue : ${keyValue.value}">
+                            <li th:if="${fieldValue.isLink()}">
+                                <a th:href="${fieldValue.link()}" th:text="${fieldValue.value}"></a>
+                            </li>
+                            <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
+                        </th:block>
+                    </ul>
                 </td>
 
                 <td th:unless="${keyValue.value.isLink() || keyValue.value.isList()}" th:text="${keyValue.value.value}"></td>
