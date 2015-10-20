@@ -157,6 +157,7 @@ dd a {
 
 .field-list ul {
   padding-left: 0;
+  margin-top: 0;
 }
 
 .field-list li {
@@ -164,7 +165,6 @@ dd a {
   font-size: 16px;
   display: inline-block;
 }
-
 
 .field-list li:after {
   content: ",\a0";
@@ -174,26 +174,10 @@ dd a {
   content: "";
 }
 
-.field-list-in-table ul {
-  padding-left: 0;
-  margin-top: 0;
-}
-
 .field-list-in-table li {
-  font-family: monospace;
   font-size: 14px;
-  display: inline-block;
- }
-
-.field-list-in-table li:after {
-  content: ", ";
+  padding-right: 0px;
 }
-
-.field-list-in-table li:last-child:after {
-  content: "";
-}
-
-
 
 // tables
 

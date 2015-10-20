@@ -967,7 +967,9 @@ dd a {
   border: 1px solid #BFC1C3; }
 
 .field-list ul {
-  padding-left: 0; }
+  padding-left: 0;
+  margin-top: 0;
+  }
 
 .field-list li {
   font-family: monospace;
@@ -980,20 +982,9 @@ dd a {
 .field-list li:last-child:after {
   content: ""; }
 
-.field-list-in-table ul {
-  padding-left: 0;
-  margin-top: 0; }
-
 .field-list-in-table li {
-  font-family: monospace;
   font-size: 14px;
-  display: inline-block; }
-
-.field-list-in-table li:after {
-  content: ", "; }
-
-.field-list-in-table li:last-child:after {
-  content: ""; }
+  padding-right: 0px; }
 
 table {
   font-family: "GDS-Logo", sans-serif;

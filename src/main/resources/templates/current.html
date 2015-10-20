@@ -20,7 +20,7 @@
         <tr th:each="entry : ${entries}">
             <td><a th:href="${'/' + registerId + '/' + entry.primaryKey()}" th:text="${entry.primaryKey()}"></a></td>
             <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-                <td th:if="${entry.getField(fieldName).present}" class="field-list-in-table">
+                <td th:if="${entry.getField(fieldName).present}" class="field-list field-list-in-table">
                     <ul>
                         <th:block th:if="${entry.getField(fieldName).get().isList()}" th:each="fieldValue: ${entry.getField(fieldName).get()}">
                             <li th:text="${fieldValue.value}"></li>
