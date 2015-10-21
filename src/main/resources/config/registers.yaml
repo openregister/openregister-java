@@ -88,7 +88,7 @@
     register: "field"
     registry: "cabinet-office"
   last-updated: "2015-09-24T16:11:37.683Z"
-- hash: "e19b9845c5c3e63bca70c4082c87b04cc358a549"
+- hash: "b71adebed034bfbc6a62ddc53ab9d02697902c08"
   entry:
     fields:
     - "food-hygiene"
@@ -97,8 +97,9 @@
     - "date-of-rating"
     - "address"
     register: "food-hygiene"
+    registry: "food-standards-agency"
     text: "The register of [Food Standards Agency](http://www.food.gov.uk/) hygiene\
-    \ inspection ratings.\n"
+      \ inspection ratings.\n"
 - hash: "1e5b3697a1e43a13a707d76ac079b98dea05393f"
   entry:
     text: "The register of [Post towns](http://en.wikipedia.org/wiki/Post_town) which\
