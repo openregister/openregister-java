@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -18,7 +19,7 @@ public class TsvWriter extends RepresentationWriter {
     @Override
     protected void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException, WebApplicationException {
         Iterable<String> fields = register.getFields();
-        entityStream.write(("entry\t" + String.join("\t", fields) + "\n").getBytes("utf-8"));
+        entityStream.write(("entry\t" + String.join("\t", fields) + "\n").getBytes(StandardCharsets.UTF_8));
         for (EntryView entry : entries) {
             writeRow(entityStream, fields, entry);
         }
@@ -28,7 +29,7 @@ public class TsvWriter extends RepresentationWriter {
         String row = StreamSupport.stream(fields.spliterator(),false)
                 .map(field -> entry.getField(field).map(this::renderField).orElse(""))
                 .collect(Collectors.joining("\t", entry.getSerialNumber() + "\t", "\n"));
-        entityStream.write(row.getBytes("utf-8"));
+        entityStream.write(row.getBytes(StandardCharsets.UTF_8));
     }
 
     private String renderField(FieldValue fieldValue) {
