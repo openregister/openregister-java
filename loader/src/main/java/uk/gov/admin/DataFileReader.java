@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class DataFileReader {
 
     private BufferedReader reader() {
         try {
-            InputStreamReader inputStreamReader = new InputStreamReader(datafileURI.toURL().openStream());
+            InputStreamReader inputStreamReader = new InputStreamReader(datafileURI.toURL().openStream(), StandardCharsets.UTF_8);
             return new BufferedReader(inputStreamReader);
         } catch (Exception e) {
             throw new RuntimeException("Error creating stream to read data to load", e);

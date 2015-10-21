@@ -10,4 +10,4 @@ CONFIG_BUCKET=openregister.${ENV}.config
 aws s3 cp s3://${CONFIG_BUCKET}/${REGISTER_NAME}/mint/mint-config.yaml /srv/mint --region eu-west-1
 docker run -d --name=mintApp -p 4567:4567 \
     --volume /srv/mint:/srv/mint \
-    jstepien/openjdk8 java -jar /srv/mint/mint.jar server /srv/mint/mint-config.yaml
+    jstepien/openjdk8 java -Dfile.encoding=UTF-8 -jar /srv/mint/mint.jar server /srv/mint/mint-config.yaml
