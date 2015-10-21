@@ -41,7 +41,7 @@ public class ThymeleafViewRenderer implements ViewRenderer {
 
         templateResolver.setTemplateMode(templateMode);
         templateResolver.setCacheable(cacheable);
-        templateResolver.setCharacterEncoding("UTF-8");
+        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         engine = new TemplateEngine();
         engine.setTemplateResolver(templateResolver);
 

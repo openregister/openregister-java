@@ -14,6 +14,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,9 +36,9 @@ public class TurtleWriter extends RepresentationWriter {
     @Override
     protected void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException {
         Iterable<String> fields = register.getFields();
-        entityStream.write(PREFIX.getBytes("utf-8"));
+        entityStream.write(PREFIX.getBytes(StandardCharsets.UTF_8));
         for (EntryView entry : entries) {
-            entityStream.write((renderEntry(entry, fields) + "\n").getBytes("utf-8"));
+            entityStream.write((renderEntry(entry, fields) + "\n").getBytes(StandardCharsets.UTF_8));
         }
     }
 
