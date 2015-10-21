@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.gov.store.EntriesUpdateDAO;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class LoadHandler {
         final List<byte[]> entriesAsBytes = Arrays.stream(entries)
                 .map(e -> {
                     try {
-                        final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes("UTF-8"));
+                        final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
                         return canonicalJsonMapper.writeToBytes(hashedEntry(jsonNode));
                     } catch (Exception e1) {
                         throw new RuntimeException("Error parsing json entry: " + e, e1);

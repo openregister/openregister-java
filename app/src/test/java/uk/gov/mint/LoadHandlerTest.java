@@ -10,6 +10,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.store.EntriesUpdateDAO;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,7 +52,7 @@ public class LoadHandlerTest {
 
     private byte[] canonicalise(String nonCanonical) throws IOException {
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-        final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(nonCanonical.getBytes("UTF-8"));
+        final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(nonCanonical.getBytes(StandardCharsets.UTF_8));
         return canonicalJsonMapper.writeToBytes(jsonNode);
     }
 }
