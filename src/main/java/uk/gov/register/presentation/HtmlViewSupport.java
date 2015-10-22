@@ -28,6 +28,10 @@ public class HtmlViewSupport {
         return UriBuilder.fromPath("http://field.openregister.org/field").path(fieldName).build().toString();
     }
 
+    public static String publicBodyLink(String publicBodyId){
+        return UriBuilder.fromPath("http://public-body.openregister.org/public-body").path(publicBodyId).build().toString();
+    }
+
     public static String renderMarkdown(String input) {
         return markdownProcessor.markdown(input);
     }
