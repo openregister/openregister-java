@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.DbContent;
 import uk.gov.register.presentation.DbEntry;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 
@@ -32,7 +31,7 @@ public class HistoryResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new HistoryResource(new RequestContext(new RegistersConfiguration(new PublicBodiesConfiguration())) {
+        resource = new HistoryResource(new RequestContext(new RegistersConfiguration()) {
             @Override
             public String getRegisterPrimaryKey() {
                 return "school";

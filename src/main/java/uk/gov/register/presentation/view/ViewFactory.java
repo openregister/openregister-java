@@ -3,8 +3,10 @@ package uk.gov.register.presentation.view;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.thymeleaf.HomePageView;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
@@ -15,11 +17,13 @@ import java.util.stream.Collectors;
 public class ViewFactory {
     private final RequestContext requestContext;
     private final EntryConverter entryConverter;
+    private final PublicBodiesConfiguration publicBodiesConfiguration;
 
     @Inject
-    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter) {
+    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration) {
         this.requestContext = requestContext;
         this.entryConverter = entryConverter;
+        this.publicBodiesConfiguration = publicBodiesConfiguration;
     }
 
     public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
@@ -48,6 +52,10 @@ public class ViewFactory {
 
     public ThymeleafView thymeleafView(String templateName) {
         return new ThymeleafView(requestContext, templateName);
+    }
+
+    public HomePageView homePageView() {
+        return new HomePageView(publicBodiesConfiguration, requestContext);
     }
 
 }

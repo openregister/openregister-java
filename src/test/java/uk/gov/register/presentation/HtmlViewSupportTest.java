@@ -41,10 +41,4 @@ public class HtmlViewSupportTest {
         String link = HtmlViewSupport.representationLink(servletRequest, "html");
         assertThat(link, equalTo("/hash/hashvalue?query=value"));
     }
-
-    @Test
-    public void renderMarkdown_rendersCorrectly() throws Exception {
-        String result = HtmlViewSupport.renderMarkdown("foo *bar* [baz](/quux)");
-        assertThat(result, equalTo("<p>foo <em>bar</em> <a href=\"/quux\">baz</a></p>\n"));
-    }
 }

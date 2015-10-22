@@ -31,8 +31,4 @@ public class HtmlViewSupport {
     public static String publicBodyLink(String publicBodyId){
         return new LinkValue("public-body", publicBodyId).link();
     }
-
-    public static String renderMarkdown(String input) {
-        return markdownProcessor.markdown(input);
-    }
 }

@@ -64,5 +64,5 @@ public class ThymeleafView extends View {
         return requestContext.getHttpServletRequest();
     }
 
-
 }
+

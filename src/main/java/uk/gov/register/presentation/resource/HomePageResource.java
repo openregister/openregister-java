@@ -22,7 +22,7 @@ public class HomePageResource {
     @GET
     @Produces({ExtraMediaType.TEXT_HTML})
     public View home() {
-        return viewFactory.thymeleafView("home.html");
+        return viewFactory.homePageView();
     }
 
     @GET

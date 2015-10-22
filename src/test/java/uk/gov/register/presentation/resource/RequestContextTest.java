@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,7 @@ public class RequestContextTest {
 
     @Test
     public void takesRegisterNameFromHttpHost() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(new PublicBodiesConfiguration()));
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration());
         requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getHeader("Host")).thenReturn("school.beta.openregister.org");
 
@@ -31,7 +30,7 @@ public class RequestContextTest {
 
     @Test
     public void behavesGracefullyWhenGivenHostWithNoDots() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(new PublicBodiesConfiguration()));
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration());
         requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getHeader("Host")).thenReturn("school");
 
