@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThat;
 public class RegisterTest {
     @Test
     public void getFields_returnsFieldsInSortedOrder() throws Exception {
-        Register register = new Register("address", ImmutableSet.of("address", "street", "postcode", "area", "property"), "", new PublicBody("",""), "");
+        Register register = new Register("address", ImmutableSet.of("address", "street", "postcode", "area", "property"), "", "", "");
 
         Iterable<String> fields = register.getFields();
 
@@ -18,7 +18,7 @@ public class RegisterTest {
 
     @Test
     public void getNonPrimaryFields_returnsFieldsOtherThanPrimaryInSortedOrder() throws Exception {
-        Register register = new Register("company", ImmutableSet.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", new PublicBody("",""), "");
+        Register register = new Register("company", ImmutableSet.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "");
 
         Iterable<String> fields = register.getNonPrimaryFields();
 

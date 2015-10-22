@@ -8,12 +8,12 @@
     <div th:replace="main.html::phase"></div>
     <div class="grid-row">
         <div class="column-two-thirds">
-            <div class="homepage-intro" th:utext="${@uk.gov.register.presentation.HtmlViewSupport@renderMarkdown(register.text)}">The register of UK government registers.</div>
+            <div class="homepage-intro" th:utext="${registerText}">The register of UK government registers.</div>
 
             <div class="registry">
                 <p class="registry-label">Provided by:</p>
                 <p class="org-name">
-                    <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@publicBodyLink(register.registry.publicBodyId)}" th:text="${register.registry.name}">Cabinet Office</a>
+                    <a th:href="${publicBody.recordLink}" th:text="${publicBody.name}">Cabinet Office</a>
                 </p>
             </div>
 
