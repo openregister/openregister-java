@@ -25,11 +25,11 @@ public class HtmlViewSupport {
     }
 
     public static String fieldLink(String fieldName) {
-        return UriBuilder.fromPath("http://field.openregister.org/field").path(fieldName).build().toString();
+        return new LinkValue("field", fieldName).link();
     }
 
     public static String publicBodyLink(String publicBodyId){
-        return UriBuilder.fromPath("http://public-body.openregister.org/public-body").path(publicBodyId).build().toString();
+        return new LinkValue("public-body", publicBodyId).link();
     }
 
     public static String renderMarkdown(String input) {
