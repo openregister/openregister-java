@@ -31,6 +31,10 @@ public class PaginationTest {
         new Pagination("/feed", Optional.of(-1l), Optional.of(1l), 10);
     }
 
+    @Test(expected = NotFoundException.class)
+    public void construct_throwsNotFoundException_whenNoMoreEntriesForGivenPageSizeAndPageIndexValues() {
+        new Pagination("/feed", Optional.of(2l), Optional.of(10l), 10);
+    }
 
     @Test
     public void offset_returnsTheNumberWhichOffsetsTheTotalEntriesBasedOnPageSize() {
@@ -85,10 +89,5 @@ public class PaginationTest {
     public void getPreviousPageLink_returnsTheLinkForPreviousPage() {
         Pagination pagination = new Pagination("/feed", Optional.of(2l), Optional.of(10l), 11);
         assertThat(pagination.getPreviousPageLink(), equalTo("/feed?pageIndex=1&pageSize=10"));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void construct_throwsNotFoundException_whenNoMoreEntriesForGivenPageSizeAndPageIndexValues() {
-        new Pagination("/feed", Optional.of(2l), Optional.of(10l), 10);
     }
 }
