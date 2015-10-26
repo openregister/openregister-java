@@ -23,7 +23,7 @@ public class Pagination {
             throw new BadRequestException();
         }
 
-        if ((this.pageIndex - 1) * this.pageSize >= totalEntries) {
+        if (pageIndex > 1 && ((pageIndex - 1) * pageSize) >= totalEntries) {
             throw new NotFoundException();
         }
     }
