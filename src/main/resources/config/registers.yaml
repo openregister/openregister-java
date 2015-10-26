@@ -88,11 +88,12 @@
     register: "field"
     registry: "cabinet-office"
   last-updated: "2015-09-24T16:11:37.683Z"
-- hash: "b71adebed034bfbc6a62ddc53ab9d02697902c08"
+- hash: "0eb33ca1349167da65b114dbe0880343c9461695"
   entry:
     fields:
     - "food-hygiene"
     - "rating"
+    - "company"
     - "name"
     - "date-of-rating"
     - "address"
