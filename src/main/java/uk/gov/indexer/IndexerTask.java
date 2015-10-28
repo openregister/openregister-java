@@ -20,8 +20,9 @@ public class IndexerTask implements Runnable {
     @Override
     public void run() {
         try {
+            ConsoleLogger.log("Starting update for: " + register);
             update();
-            ConsoleLogger.log("Index update completed for register: " + register);
+            ConsoleLogger.log("Finished for register: " + register);
         } catch (Throwable e) {
             e.printStackTrace();
             throw e;

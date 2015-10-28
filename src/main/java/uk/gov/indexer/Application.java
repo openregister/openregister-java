@@ -30,6 +30,7 @@ public class Application {
 
         for (String register : registers) {
             try {
+                ConsoleLogger.log("setting up register " + register);
                 DBI dbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
 
                 DestinationDBUpdateDAO destinationDBUpdateDAO = createDestinationDBUpdateDAO(dbi);
