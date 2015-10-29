@@ -702,3 +702,116 @@
     register: ""
     cardinality: "1"
   last-updated: "2015-10-13T09:42:32.581Z"
+- hash: "2f9cca0818a66245511c34c141ba6ab0c49241d5"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "registered-office"
+    register: "address"
+    text: "Registered address for a company or other legal entity."
+- hash: "ec32db4270965eda586ca42f2d034760d509a07f"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "industry"
+    register: "industry"
+    text: "Standard industrial classification."
+- hash: "f72e0950fcc4ae3d7b7262b15d816a8ecf7b9a79"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "email"
+    register: ""
+    text: "An email address for contact."
+- hash: "aac953d002a53c8f7c34562a17ba99ea3813da49"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "premises"
+    register: "premises"
+    text: "A business premises."
+- hash: "585edf48614f15d414e4aea01af2361fa4fb1e89"
+  entry:
+    cardinality: "1"
+    datatype: "text"
+    field: "food-premises-rating-reply"
+    register: ""
+    text: "An explanation by a food-premises to potential customers any actions that\
+      \ have taken to improve hygiene standards after a food hygiene rating has been\
+      \ given or to say if there were particular circumstances at the time of the\
+      \ inspection that might have affected the rating."
+- hash: "b6b9d1329569d05f78817d2dfbff3d02d280125b"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "local-authority"
+    register: "local-authority"
+    text: "A Local Authority in England, Scotland, Wales or Northern Ireland."
+- hash: "86a0dd2ecce19b2398521aead763997e627d6f29"
+  entry:
+    cardinality: "1"
+    datatype: "integer"
+    field: "food-premises-rating-confidence-in-management-score"
+    register: ""
+    text: "Level of confidence with management. Lower scores are better."
+- hash: "855a320c2604f986736e692c6d9d4e2d0dfcab57"
+  entry:
+    cardinality: "1"
+    datatype: "integer"
+    field: "food-premises-rating-structural-score"
+    register: ""
+    text: "Level of compliance with structural requirements including cleanliness,\
+      \ layout, condition of structure, lighting, ventilation, facilities etc. Lower\
+      \ scores are better."
+- hash: "3d4e3aeac89bf840d5f92a947cb0c4c6846b2ca4"
+  entry:
+    cardinality: "1"
+    datatype: "integer"
+    field: "food-premises-rating-hygiene-score"
+    register: ""
+    text: "Level of compliance with food hygiene and safety procedures including food\
+      \ handling practices and procedures, and temperature control. Lower scores are\
+      \ better."
+- hash: "b535d71bc8707308b0514f0f2e166a6514bb7cba"
+  entry:
+    cardinality: "1"
+    datatype: "integer"
+    field: "food-premises-rating-value"
+    register: ""
+    text: "A rating of the food hygiene served at a premises, 0-5 with 5 meaning 'very\
+      \ good'."
+- hash: "47ebc34775ee19b52f874c92a6ff8f6d55489308"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "food-premises"
+    register: "food-premises"
+    text: "A premises which serves or processes food."
+- hash: "6b35aaaef899e10a723f6982cd42b473be5bf210"
+  entry:
+    cardinality: "1"
+    datatype: "integer"
+    field: "food-premises-rating"
+    register: ""
+    text: "A score for the rating of a food premises."
+- hash: "21e830ef2e84ea39a0d456dc5d941a0227d2243c"
+  entry:
+    cardinality: "n"
+    datatype: "string"
+    field: "food-premises-types"
+    register: "food-premises-type"
+    text: "A set of food premises types."
+- hash: "93154f6f5e61e6549531d10dbac8a8cb53717450"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "food-premises-type"
+    register: "food-premises-type"
+    text: "The type of food premises."
+- hash: "0c4be53db65d11354605ffa17aa46535de3552bb"
+  entry:
+    cardinality: "1"
+    datatype: "curie"
+    field: "business"
+    register: ""
+    text: "A Limited Company, School or other legal entity that trades."
