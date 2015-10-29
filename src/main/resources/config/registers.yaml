@@ -214,13 +214,15 @@
     register: "food-premises-type"
     registry: "food-standards-agency"
     text: "Types of food premises."
-- hash: "0023a29646929f0a2699f6ca628c98b8af6c57f9"
+- hash: "84db49e0418dfb512ea762d18059c27bff63ddf8"
   entry:
     fields:
     - "food-premises"
     - "name"
     - "business"
-    - "food-premises-type"
+    - "food-premises-types"
+    - "local-authority"
+    - "premises"
     - "start-date"
     - "end-date"
     register: "food-premises"
