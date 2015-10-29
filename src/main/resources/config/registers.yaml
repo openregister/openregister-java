@@ -190,7 +190,7 @@
     register: "local-authority"
     registry: "department-for-communities-and-local-government"
     text: "The register of local authorities."
-- hash: "65662c3ca356a5106a7cb20f1905a1f96599c39e"
+- hash: "785f2592364ebb5decbfa775aebeab6688ad00ee"
   entry:
     fields:
     - "food-premises-rating"
@@ -202,6 +202,7 @@
     - "local-authority"
     - "food-premises-rating-reply"
     - "start-date"
+    - "inspector"
     - "end-date"
     register: "food-premises-rating"
     registry: "food-standards-agency"
