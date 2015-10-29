@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AWSCloudSearch {
 
@@ -118,9 +119,9 @@ public class AWSCloudSearch {
         }
 
         void setFields(JsonNode fields) {
-            this.fields = Jackson.fromJsonString(Jackson.toJsonString(fields), Map.class);
+            Map<String, Object> fieldsMap = Jackson.fromJsonString(Jackson.toJsonString(fields), Map.class);
+            this.fields = fieldsMap.keySet().stream().collect(Collectors.toMap(key -> key.replaceAll("-","_"), key -> fieldsMap.get(key)));
         }
     }
-
 }
 
