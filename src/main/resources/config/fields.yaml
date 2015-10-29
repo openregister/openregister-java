@@ -815,3 +815,10 @@
     field: "business"
     register: ""
     text: "A Limited Company, School or other legal entity that trades."
+- hash: "8db2f82cdfa898ce4ac2e82dba087dc3e9959f67"
+  entry:
+    cardinality: "1"
+    datatype: "curie"
+    field: "inspector"
+    register: ""
+    text: "The organisation conducting an inspection"
