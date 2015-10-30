@@ -13,9 +13,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 
 import java.io.IOException;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,6 +38,7 @@ public class EntryConverterTest {
         assertThat(((LinkValue) entryView.getField("registry").get()).link(), equalTo("http://public-body.openregister.org/public-body/somevalue"));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void convert_convertsListValues() throws Exception {
         JsonNode jsonNode = MAPPER.readValue("{\"fields\":[\"value1\",\"value2\"]}", JsonNode.class);
@@ -49,5 +48,18 @@ public class EntryConverterTest {
         ListValue fields = (ListValue) entryView.getField("fields").get();
 
         assertThat(fields, contains(samePropertyValuesAs(new LinkValue("field", "value1")), samePropertyValuesAs(new LinkValue("field", "value2"))));
+    }
+
+    @Test
+    public void convert_convertsCurieValueToTheRegisterLink() throws IOException {
+
+        JsonNode jsonNode = MAPPER.readValue("{\"business\":\"company:12345\"}", JsonNode.class);
+
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+
+        LinkValue.CurieValue curieValue = (LinkValue.CurieValue) entryView.getField("business").get();
+
+        assertThat(curieValue.getValue(), equalTo("company:12345"));
+        assertThat(curieValue.link(), equalTo("http://company.openregister.org/company/12345"));
     }
 }

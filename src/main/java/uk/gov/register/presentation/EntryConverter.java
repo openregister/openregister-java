@@ -69,6 +69,10 @@ public class EntryConverter {
         private FieldValue convertScalar(JsonNode value) {
             if (field.getRegister().isPresent()) {
                 return new LinkValue(field.getRegister().get(), value.textValue());
+                //Note: the equals check below must be replaced with the specified datatype, instead of doing string comparision
+                // We should replace this once the datatype register is available
+            } else if (field.getDatatype().equals("curie")) {
+                return new LinkValue.CurieValue(value.textValue());
             } else {
                 return new StringValue(value.textValue());
             }

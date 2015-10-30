@@ -8,8 +8,12 @@ public class LinkValue implements FieldValue {
     private final String link;
 
     public LinkValue(String registerName, String value) {
+        this(registerName, value, value);
+    }
+
+    private LinkValue(String registerName, String value, String linkKey){
         this.value = value;
-        this.link = String.format(template, registerName, value);
+        this.link = String.format(template, registerName, linkKey);
     }
 
     @Override
@@ -29,5 +33,11 @@ public class LinkValue implements FieldValue {
 
     public boolean isList() {
         return false;
+    }
+
+    public static class CurieValue extends LinkValue {
+        public CurieValue(String curieValue) {
+            super(curieValue.split(":")[0], curieValue, curieValue.split(":")[1]);
+        }
     }
 }
