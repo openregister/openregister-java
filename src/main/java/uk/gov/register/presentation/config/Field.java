@@ -34,4 +34,8 @@ public class Field {
     public Cardinality getCardinality() {
         return cardinality;
     }
+
+    public String getDatatype() {
+        return datatype;
+    }
 }
