@@ -1,9 +1,10 @@
 package uk.gov.indexer;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class Application {
     public static void main(String[] args) throws InterruptedException {
@@ -12,21 +13,21 @@ public class Application {
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool((int) registers.stream().filter(r -> configuration.cloudSearchEndPoint(r).isPresent()).count() + registers.size());
 
-        Stream<Indexer> indexerStream = registers.stream().map(r -> new Indexer(configuration, r));
+        List<Indexer> indexers = registers.stream().map(r -> new Indexer(configuration, r)).collect(Collectors.toList());
 
-        addShutdownHook(executorService, indexerStream);
+        addShutdownHook(executorService, indexers);
 
-        indexerStream.parallel().forEach(indexer -> indexer.start(executorService));
+        indexers.stream().parallel().forEach(indexer -> indexer.start(executorService));
 
         Thread.currentThread().join();
     }
 
-    private static void addShutdownHook(final ScheduledExecutorService executorService, Stream<Indexer> indexerStream) {
+    private static void addShutdownHook(final ScheduledExecutorService executorService, List<Indexer> indexers) {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 executorService.shutdown();
-                indexerStream.forEach(Indexer::stop);
+                indexers.forEach(Indexer::stop);
                 ConsoleLogger.log("Shutdown completed...");
             }
         });
