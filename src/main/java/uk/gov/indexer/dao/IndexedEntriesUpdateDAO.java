@@ -6,26 +6,26 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import java.util.List;
 
 public interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
-    String INDEXED_ENTRIES_TABLE = "ORDERED_ENTRY_INDEX";
-    String INDEXED_ENTRIES_INDEX = INDEXED_ENTRIES_TABLE + "_GIN";
+    String INDEXED_ENTRIES_TABLE = "ordered_entry_index";
+    String INDEXED_ENTRIES_INDEX = INDEXED_ENTRIES_TABLE + "_gin";
 
-    @SqlUpdate("CREATE TABLE IF NOT EXISTS " + INDEXED_ENTRIES_TABLE + " (SERIAL_NUMBER INTEGER PRIMARY KEY, ENTRY JSONB)")
+    @SqlUpdate("create table if not exists " + INDEXED_ENTRIES_TABLE + " (serial_number integer primary key, entry jsonb)")
     void ensureIndexedEntriesTableExists();
 
 
-    @SqlUpdate("CREATE INDEX " + INDEXED_ENTRIES_INDEX + " ON " + INDEXED_ENTRIES_TABLE + " USING gin(ENTRY jsonb_path_ops)")
+    @SqlUpdate("create index " + INDEXED_ENTRIES_INDEX + " on " + INDEXED_ENTRIES_TABLE + " using gin(entry jsonb_path_ops)")
     void createIndexedEntriesIndex();
 
-    @SqlQuery("SELECT 1 FROM pg_indexes WHERE indexname='" + INDEXED_ENTRIES_INDEX + "'")
+    @SqlQuery("select 1 from pg_indexes where indexname='" + INDEXED_ENTRIES_INDEX + "'")
     boolean indexedEntriesIndexExists();
 
-    @SqlQuery("SELECT MAX(SERIAL_NUMBER) FROM " + INDEXED_ENTRIES_TABLE)
+    @SqlQuery("select max(serial_number) from " + INDEXED_ENTRIES_TABLE)
     int lastReadSerialNumber();
 
-    @SqlBatch("INSERT INTO " + INDEXED_ENTRIES_TABLE + "(SERIAL_NUMBER, ENTRY) VALUES(:serial_number, :dbEntry)")
+    @SqlBatch("insert into " + INDEXED_ENTRIES_TABLE + "(serial_number, entry) values(:serial_number, :dbentry)")
     void writeBatch(@BindBean Iterable<OrderedEntryIndex> orderedIndexEntry);
 
     @RegisterMapper(OrderedEntryIndexMapper.class)
-    @SqlQuery("SELECT * FROM " + INDEXED_ENTRIES_TABLE + " WHERE SERIAL_NUMBER > :serial_number ORDER BY SERIAL_NUMBER LIMIT 5000")
+    @SqlQuery("select * from " + INDEXED_ENTRIES_TABLE + " where serial_number > :serial_number order by serial_number limit 5000")
     List<OrderedEntryIndex> fetchEntriesAfter(@Bind("serial_number") int watermark);
 }
