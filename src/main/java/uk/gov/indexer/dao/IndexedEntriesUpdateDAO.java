@@ -18,26 +18,30 @@ public interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     @SqlUpdate(
             "CREATE TABLE IF NOT EXISTS " + INDEXED_ENTRIES_TABLE + " (serial_number INTEGER PRIMARY KEY, entry JSONB);" +
 
-            "CREATE TABLE IF NOT EXISTS " + TOTAL_ENTRIES_TABLE + " (count INTEGER);" +
+                    "CREATE TABLE IF NOT EXISTS " + TOTAL_ENTRIES_TABLE + " (count INTEGER);" +
 
-            "INSERT INTO " + TOTAL_ENTRIES_TABLE + "(count) SELECT (SELECT count FROM register_entries_count LIMIT 1)  WHERE NOT EXISTS(SELECT 1 FROM " + TOTAL_ENTRIES_TABLE + ");" +
+                    //Insert query copies the no of entries from register_entries_count table, this query will be deleted when we delete the register_entries_count table
+                    "INSERT INTO " + TOTAL_ENTRIES_TABLE + "(count) SELECT (SELECT count FROM register_entries_count LIMIT 1)  WHERE NOT EXISTS(SELECT 1 FROM " + TOTAL_ENTRIES_TABLE + ");" +
 
-            "CREATE OR REPLACE FUNCTION " + TOTAL_ENTRIES_FUNCTION + " RETURNS TRIGGER\n" +
-            "AS $$\n" +
-            "BEGIN\n" +
-            "  IF TG_OP = 'INSERT' THEN\n" +
-            "     EXECUTE 'UPDATE " + TOTAL_ENTRIES_TABLE + " SET COUNT=COUNT + 1';\n" +
-            "     RETURN NEW;\n" +
-            "  END IF;\n" +
-            "  RETURN NULL;\n" +
-            "  END;\n" +
-            "$$ LANGUAGE plpgsql;" +
+                    //Insert query below initializes the total_entries table by 0 if it is not initialized yet
+                    "INSERT INTO " + TOTAL_ENTRIES_TABLE + "(COUNT) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM " + TOTAL_ENTRIES_TABLE + ");" +
 
-            "DROP TRIGGER IF EXISTS " + TOTAL_ENTRIES_TRIGGER + " ON " + INDEXED_ENTRIES_TABLE + ";" +
+                    "CREATE OR REPLACE FUNCTION " + TOTAL_ENTRIES_FUNCTION + " RETURNS TRIGGER\n" +
+                    "AS $$\n" +
+                    "BEGIN\n" +
+                    "  IF TG_OP = 'INSERT' THEN\n" +
+                    "     EXECUTE 'UPDATE " + TOTAL_ENTRIES_TABLE + " SET COUNT=COUNT + 1';\n" +
+                    "     RETURN NEW;\n" +
+                    "  END IF;\n" +
+                    "  RETURN NULL;\n" +
+                    "  END;\n" +
+                    "$$ LANGUAGE plpgsql;" +
 
-            "CREATE TRIGGER " + TOTAL_ENTRIES_TRIGGER + " \n" +
-            " AFTER INSERT ON " + INDEXED_ENTRIES_TABLE +
-            " FOR EACH ROW EXECUTE PROCEDURE " + TOTAL_ENTRIES_FUNCTION + ";"
+                    "DROP TRIGGER IF EXISTS " + TOTAL_ENTRIES_TRIGGER + " ON " + INDEXED_ENTRIES_TABLE + ";" +
+
+                    "CREATE TRIGGER " + TOTAL_ENTRIES_TRIGGER + " \n" +
+                    " AFTER INSERT ON " + INDEXED_ENTRIES_TABLE +
+                    " FOR EACH ROW EXECUTE PROCEDURE " + TOTAL_ENTRIES_FUNCTION + ";"
     )
     void ensureIndexedEntriesTableExists();
 
