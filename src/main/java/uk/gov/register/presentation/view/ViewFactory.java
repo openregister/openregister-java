@@ -4,6 +4,7 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.HomePageView;
@@ -18,12 +19,15 @@ public class ViewFactory {
     private final RequestContext requestContext;
     private final EntryConverter entryConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
+    private final RecentEntryIndexQueryDAO recentEntryIndexQueryDAO;
+
 
     @Inject
-    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration) {
+    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration, RecentEntryIndexQueryDAO recentEntryIndexQueryDAO) {
         this.requestContext = requestContext;
         this.entryConverter = entryConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
+        this.recentEntryIndexQueryDAO = recentEntryIndexQueryDAO;
     }
 
     public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
@@ -55,7 +59,7 @@ public class ViewFactory {
     }
 
     public HomePageView homePageView() {
-        return new HomePageView(publicBodiesConfiguration, requestContext);
+        return new HomePageView(publicBodiesConfiguration, requestContext, recentEntryIndexQueryDAO);
     }
 
 }
