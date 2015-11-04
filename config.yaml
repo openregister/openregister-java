@@ -1,5 +1,8 @@
 server:
   registerDefaultExceptionMappers: false
+  adminConnectors:
+    - type: http
+      port: 9092
 
 database:
   driverClass: org.postgresql.Driver
