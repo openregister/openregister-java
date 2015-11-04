@@ -40,6 +40,7 @@ public class DBSupport {
                     statement.executeUpdate(String.format("Update current_keys set serial_number=%s where key='%s'", id, primaryKeyValue));
                 } else {
                     statement.executeUpdate(String.format("Insert into current_keys(serial_number,key) values(%s,'%s')", id, primaryKeyValue));
+                    statement.executeUpdate("Update total_records set count=count+1");
                 }
 
                 statement.executeUpdate("Update total_entries set count=count+1");

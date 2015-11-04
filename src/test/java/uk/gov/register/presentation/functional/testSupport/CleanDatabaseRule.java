@@ -21,11 +21,16 @@ public class CleanDatabaseRule extends ExternalResource {
             connection.prepareStatement("DROP TABLE IF EXISTS " + tableName).execute();
             connection.prepareStatement("CREATE TABLE " + tableName + " (SERIAL_NUMBER SERIAL PRIMARY KEY, ENTRY JSONB)").execute();
 
-            connection.prepareStatement("DROP TABLE IF EXISTS total_entries").execute();
-            connection.prepareStatement("CREATE TABLE total_entries (COUNT INTEGER)").execute();
+            connection.prepareStatement("DROP TABLE IF EXISTS TOTAL_ENTRIES").execute();
+            connection.prepareStatement("CREATE TABLE TOTAL_ENTRIES (COUNT INTEGER)").execute();
+            connection.prepareStatement("INSERT INTO TOTAL_ENTRIES(COUNT) VALUES(0)").execute();
 
             connection.prepareStatement("DROP TABLE IF EXISTS CURRENT_KEYS").execute();
             connection.prepareStatement("CREATE TABLE CURRENT_KEYS (SERIAL_NUMBER INTEGER PRIMARY KEY, KEY VARCHAR UNIQUE)").execute();
+
+            connection.prepareStatement("DROP TABLE IF EXISTS TOTAL_RECORDS").execute();
+            connection.prepareStatement("CREATE TABLE TOTAL_RECORDS (COUNT INTEGER)").execute();
+            connection.prepareStatement("INSERT INTO TOTAL_RECORDS(COUNT) VALUES(0)").execute();
         }
     }
 }
