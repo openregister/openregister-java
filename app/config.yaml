@@ -14,5 +14,8 @@ database:
 
 server:
   applicationConnectors:
-  - type: http
-    port: 4567
+    - type: http
+      port: 4567
+  adminConnectors:
+    - type: http
+      port: 9091
