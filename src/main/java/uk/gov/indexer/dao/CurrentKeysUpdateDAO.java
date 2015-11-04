@@ -21,7 +21,7 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
 
                     "CREATE TABLE IF NOT EXISTS " + TOTAL_RECORDS_TABLE + " (COUNT INTEGER);" +
 
-                    "INSERT INTO " + TOTAL_RECORDS_TABLE + "(COUNT) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM " + TOTAL_RECORDS_TABLE + ");" +
+                    "INSERT INTO " + TOTAL_RECORDS_TABLE + "(COUNT) SELECT COUNT(*) FROM " + CURRENT_KEYS_TABLE + ";" +
 
                     "CREATE OR REPLACE FUNCTION " + TOTAL_RECORDS_FUNCTION + " RETURNS TRIGGER\n" +
                     "AS $$\n" +
@@ -40,7 +40,7 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
                     " AFTER INSERT ON " + CURRENT_KEYS_TABLE +
                     " FOR EACH ROW EXECUTE PROCEDURE " + TOTAL_RECORDS_FUNCTION + ";"
     )
-    void ensureDatabaseEntitiesInPlace();
+    void ensureRecordTablesInPlace();
 
     @SqlUpdate("UPDATE " + CURRENT_KEYS_TABLE + " SET SERIAL_NUMBER=:serial_number WHERE KEY=:key")
     int updateSerialNumber(@Bind("serial_number") int serial_number, @Bind("key") String key);
