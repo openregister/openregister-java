@@ -21,7 +21,8 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
 
                     "CREATE TABLE IF NOT EXISTS " + TOTAL_RECORDS_TABLE + " (COUNT INTEGER);" +
 
-                    "INSERT INTO " + TOTAL_RECORDS_TABLE + "(COUNT) SELECT COUNT(*) FROM " + CURRENT_KEYS_TABLE + ";" +
+                    //Insert query below initializes the total records for pre existing register by setting the value as no of rows in current_keys table
+                    "INSERT INTO " + TOTAL_RECORDS_TABLE + "(COUNT) SELECT (SELECT COUNT(*) FROM " + CURRENT_KEYS_TABLE + ") WHERE NOT EXISTS(SELECT 1 FROM " + TOTAL_RECORDS_TABLE + ");" +
 
                     "CREATE OR REPLACE FUNCTION " + TOTAL_RECORDS_FUNCTION + " RETURNS TRIGGER\n" +
                     "AS $$\n" +
