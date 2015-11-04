@@ -31,7 +31,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
             indexedEntriesUpdateDAO.createIndexedEntriesIndex();
         }
 
-        currentKeysUpdateDAO.ensureCurrentKeysTableExists();
+        currentKeysUpdateDAO.ensureDatabaseEntitiesInPlace();
 
         totalRegisterEntriesUpdateDAO.ensureTotalEntriesInRegisterTableExists();
         totalRegisterEntriesUpdateDAO.initialiseTotalEntriesInRegisterIfRequired();
