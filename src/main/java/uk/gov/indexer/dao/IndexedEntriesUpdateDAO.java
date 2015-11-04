@@ -18,7 +18,7 @@ public interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     @SqlUpdate(
             "CREATE TABLE IF NOT EXISTS " + INDEXED_ENTRIES_TABLE + " (serial_number INTEGER PRIMARY KEY, entry JSONB);" +
 
-                    "CREATE TABLE IF NOT EXISTS " + TOTAL_ENTRIES_TABLE + " (count INTEGER);" +
+                    "CREATE TABLE IF NOT EXISTS " + TOTAL_ENTRIES_TABLE + " (count INTEGER, last_updated TIMESTAMP WITHOUT TIME ZONE);" +
 
                     //Insert query copies the no of entries from register_entries_count table, this query will be deleted when we delete the register_entries_count table
                     "INSERT INTO " + TOTAL_ENTRIES_TABLE + "(count) SELECT (SELECT count FROM register_entries_count LIMIT 1)  WHERE NOT EXISTS(SELECT 1 FROM " + TOTAL_ENTRIES_TABLE + ");" +
@@ -30,7 +30,7 @@ public interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
                     "AS $$\n" +
                     "BEGIN\n" +
                     "  IF TG_OP = 'INSERT' THEN\n" +
-                    "     EXECUTE 'UPDATE " + TOTAL_ENTRIES_TABLE + " SET COUNT=COUNT + 1';\n" +
+                    "     EXECUTE 'UPDATE " + TOTAL_ENTRIES_TABLE + " SET count=count + 1, last_updated=now()';\n" +
                     "     RETURN NEW;\n" +
                     "  END IF;\n" +
                     "  RETURN NULL;\n" +
