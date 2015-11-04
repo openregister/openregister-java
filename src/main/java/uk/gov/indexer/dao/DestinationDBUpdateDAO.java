@@ -24,17 +24,17 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
 
+        currentKeysUpdateDAO.ensureRecordTablesInPlace();
+
+        totalRegisterEntriesUpdateDAO.ensureTotalEntriesInRegisterTableExists();
+        totalRegisterEntriesUpdateDAO.initialiseTotalEntriesInRegisterIfRequired();
+
         indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
 
         indexedEntriesUpdateDAO.ensureIndexedEntriesTableExists();
         if (!indexedEntriesUpdateDAO.indexedEntriesIndexExists()) {
             indexedEntriesUpdateDAO.createIndexedEntriesIndex();
         }
-
-        currentKeysUpdateDAO.ensureRecordTablesInPlace();
-
-        totalRegisterEntriesUpdateDAO.ensureTotalEntriesInRegisterTableExists();
-        totalRegisterEntriesUpdateDAO.initialiseTotalEntriesInRegisterIfRequired();
     }
 
     public int lastReadSerialNumber() {
