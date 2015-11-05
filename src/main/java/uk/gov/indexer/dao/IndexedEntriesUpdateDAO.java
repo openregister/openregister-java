@@ -2,16 +2,17 @@ package uk.gov.indexer.dao;
 
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
 import java.util.List;
 
+@UseStringTemplate3StatementLocator("/sql/init_entries.sql")
 public interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     String INDEXED_ENTRIES_TABLE = "ordered_entry_index";
     String INDEXED_ENTRIES_INDEX = INDEXED_ENTRIES_TABLE + "_gin";
 
-    @SqlUpdate("CREATE TABLE IF NOT EXISTS " + INDEXED_ENTRIES_TABLE + " (serial_number INTEGER PRIMARY KEY, entry JSONB)")
-    void ensureIndexedEntriesTableExists();
-
+    @SqlUpdate
+    void ensureEntryTablesInPlace();
 
     @SqlUpdate("CREATE INDEX " + INDEXED_ENTRIES_INDEX + " ON " + INDEXED_ENTRIES_TABLE + " USING gin(entry jsonb_path_ops)")
     void createIndexedEntriesIndex();
