@@ -14,20 +14,15 @@ import java.util.stream.Collectors;
 
 
 public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
-    private final TotalRegisterEntriesUpdateDAO totalRegisterEntriesUpdateDAO;
     private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
     private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;
 
     public DestinationDBUpdateDAO() {
         Handle handle = getHandle();
-        totalRegisterEntriesUpdateDAO = handle.attach(TotalRegisterEntriesUpdateDAO.class);
 
         currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
 
         currentKeysUpdateDAO.ensureRecordTablesInPlace();
-
-        totalRegisterEntriesUpdateDAO.ensureTotalEntriesInRegisterTableExists();
-        totalRegisterEntriesUpdateDAO.initialiseTotalEntriesInRegisterIfRequired();
 
         indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
 
@@ -46,7 +41,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(Entry::dbEntry).collect(Collectors.toList());
         indexedEntriesUpdateDAO.writeBatch(orderedEntryIndex);
-        totalRegisterEntriesUpdateDAO.increaseTotalEntriesInRegisterCount(orderedEntryIndex.size());
+
         upsertInCurrentKeysTable(registerName, orderedEntryIndex);
     }
 
