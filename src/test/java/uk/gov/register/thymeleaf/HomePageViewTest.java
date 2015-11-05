@@ -20,7 +20,7 @@ public class HomePageViewTest {
 
     @Test
     public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
-        HomePageView homePageView = new HomePageView(null, mockRequestContext, null);
+        HomePageView homePageView = new HomePageView(null, mockRequestContext, 1);
 
         String registerText = "foo *bar* [baz](/quux)";
         when(mockRequestContext.getRegister()).thenReturn(new Register("", Sets.newSet(), "", "", registerText));
