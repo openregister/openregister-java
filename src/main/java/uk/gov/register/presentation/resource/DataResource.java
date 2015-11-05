@@ -21,7 +21,6 @@ import java.util.Optional;
 
 @Path("/")
 public class DataResource {
-    public static final long ENTRY_LIMIT = 100;
     protected final RequestContext requestContext;
     private final RecentEntryIndexQueryDAO queryDAO;
 
@@ -65,8 +64,12 @@ public class DataResource {
     @GET
     @Path("/current")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView current() {
-        return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(ENTRY_LIMIT));
+    public EntryListView current(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
+        Pagination pagination = new Pagination("/current", pageIndex, pageSize, queryDAO.getTotalRecords());
+
+        setNextAndPreviousPageLinkHeader(pagination);
+
+        return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
     @GET

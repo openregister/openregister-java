@@ -60,7 +60,7 @@ public class DataResourceTest {
 
     @Test
     public void currentSupportsJsonCsvTsvHtmlAndTurtle() throws Exception {
-        Method allMethod = DataResource.class.getDeclaredMethod("current");
+        Method allMethod = DataResource.class.getDeclaredMethod("current", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,

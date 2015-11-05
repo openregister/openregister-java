@@ -44,5 +44,17 @@ public class CurrentResourceFunctionalTest extends FunctionalTestBase {
         assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/current.json"));
 
     }
+
+    @Test
+    public void current_hasLinkHeaderForNextAndPreviousPage() {
+        Response response = getRequest("/current.json?pageIndex=1&pageSize=1");
+        assertThat(response.getHeaderString("Link"), equalTo("</current?pageIndex=2&pageSize=1>; rel=\"next\""));
+
+        response = getRequest("/current.json?pageIndex=2&pageSize=1");
+        assertThat(response.getHeaderString("Link"), equalTo("</current?pageIndex=3&pageSize=1>; rel=\"next\",</current?pageIndex=1&pageSize=1>; rel=\"previous\""));
+
+        response = getRequest("/current.json?pageIndex=3&pageSize=1");
+        assertThat(response.getHeaderString("Link"), equalTo("</current?pageIndex=2&pageSize=1>; rel=\"previous\""));
+    }
 }
 
