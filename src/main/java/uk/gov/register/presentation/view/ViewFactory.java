@@ -54,8 +54,8 @@ public class ViewFactory {
         return new ThymeleafView(requestContext, templateName);
     }
 
-    public HomePageView homePageView() {
-        return new HomePageView(publicBodiesConfiguration, requestContext);
+    public HomePageView homePageView(int totalRecords) {
+        return new HomePageView(publicBodiesConfiguration, requestContext, totalRecords);
     }
 
 }
