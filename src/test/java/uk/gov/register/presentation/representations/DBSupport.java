@@ -42,7 +42,7 @@ public class DBSupport {
                     statement.executeUpdate(String.format("Insert into current_keys(serial_number,key) values(%s,'%s')", id, primaryKeyValue));
                 }
 
-                statement.executeUpdate("Update register_entries_count set count=count+1");
+                statement.executeUpdate("Update total_entries set count=count+1");
 
             }
         } catch (SQLException e) {

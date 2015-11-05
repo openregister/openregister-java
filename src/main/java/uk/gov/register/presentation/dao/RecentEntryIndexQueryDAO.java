@@ -37,7 +37,7 @@ public interface RecentEntryIndexQueryDAO {
             ") ORDER BY serial_number DESC")
     List<DbEntry> getLatestEntriesOfRecords(@Bind("limit") long maxNumberToFetch);
 
-    @SqlQuery("SELECT COUNT FROM register_entries_count")
+    @SqlQuery("SELECT COUNT FROM total_entries")
     int getTotalEntriesCount();
 
     @SqlQuery("SELECT COUNT FROM total_records")
