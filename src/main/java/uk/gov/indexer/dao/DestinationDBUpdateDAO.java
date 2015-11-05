@@ -31,7 +31,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
 
-        indexedEntriesUpdateDAO.ensureIndexedEntriesTableExists();
+        indexedEntriesUpdateDAO.ensureEntryTablesInPlace();
         if (!indexedEntriesUpdateDAO.indexedEntriesIndexExists()) {
             indexedEntriesUpdateDAO.createIndexedEntriesIndex();
         }
