@@ -4,7 +4,7 @@ ensureEntryTablesInPlace() ::= <<
 
 CREATE TABLE IF NOT EXISTS   ordered_entry_index   (serial_number INTEGER PRIMARY KEY, entry JSONB);
 
-CREATE TABLE IF NOT EXISTS   total_entries   (count INTEGER, last_updated TIMESTAMP WITHOUT TIME ZONE);
+CREATE TABLE IF NOT EXISTS   total_entries   (count INTEGER, last_updated TIMESTAMP WITHOUT TIME ZONE DEFAULT now());
 
 --Insert query copies the no of entries from register_entries_count table, this query will be deleted when we delete the register_entries_count table
 INSERT INTO   total_entries  (count) SELECT (SELECT count FROM register_entries_count LIMIT 1)  WHERE NOT EXISTS(SELECT 1 FROM   total_entries  );
