@@ -10,6 +10,7 @@ import uk.gov.register.thymeleaf.HomePageView;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,8 +55,8 @@ public class ViewFactory {
         return new ThymeleafView(requestContext, templateName);
     }
 
-    public HomePageView homePageView(int totalRecords) {
-        return new HomePageView(publicBodiesConfiguration, requestContext, totalRecords);
+    public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {
+        return new HomePageView(publicBodiesConfiguration, requestContext, totalRecords, lastUpdated);
     }
 
 }

@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.mapper.EntryMapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,9 +38,13 @@ public interface RecentEntryIndexQueryDAO {
             ") ORDER BY serial_number DESC")
     List<DbEntry> getLatestEntriesOfRecords(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
-    @SqlQuery("SELECT COUNT FROM total_entries")
+    @SqlQuery("SELECT count FROM total_entries")
     int getTotalEntriesCount();
 
-    @SqlQuery("SELECT COUNT FROM total_records")
+    @SqlQuery("SELECT count FROM total_records")
     int getTotalRecords();
+
+    @SqlQuery("SELECT last_updated FROM total_entries")
+    LocalDateTime getLastUpdatedTime();
+
 }
