@@ -30,7 +30,7 @@ public class HistoryResource {
     @GET
     @Path("/{primaryKey}/{primaryKeyValue}/history")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
-    public ListVersionView history(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) {
+    public ListVersionView history(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) throws Exception {
         String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
             return new ListVersionView(requestContext, queryDAO.findAllByKeyValue(key, value).stream().map(r -> new Version(r.getSerialNumber(), r.getContent().getHash())).collect(Collectors.toList()));
