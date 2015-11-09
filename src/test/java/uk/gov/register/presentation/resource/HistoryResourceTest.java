@@ -13,7 +13,6 @@ import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 
 import javax.ws.rs.NotFoundException;
-
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -41,7 +40,7 @@ public class HistoryResourceTest {
     }
 
     @Test
-    public void history_throwsNotFoundExceptionForNonPrimaryKeyRequests() {
+    public void history_throwsNotFoundExceptionForNonPrimaryKeyRequests() throws Exception {
         try {
             resource.history("someOtherKey", "value");
             fail("Must fail");
