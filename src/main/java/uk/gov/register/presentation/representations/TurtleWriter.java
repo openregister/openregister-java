@@ -5,7 +5,6 @@ import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.ListValue;
-import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
@@ -34,8 +33,7 @@ public class TurtleWriter extends RepresentationWriter {
     }
 
     @Override
-    protected void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException {
-        Iterable<String> fields = register.getFields();
+    protected void writeEntriesTo(OutputStream entityStream, Iterable<String> fields, List<EntryView> entries) throws IOException {
         entityStream.write(PREFIX.getBytes(StandardCharsets.UTF_8));
         for (EntryView entry : entries) {
             entityStream.write((renderEntry(entry, fields) + "\n").getBytes(StandardCharsets.UTF_8));

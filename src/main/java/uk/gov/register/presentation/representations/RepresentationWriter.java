@@ -37,16 +37,16 @@ public abstract class RepresentationWriter implements MessageBodyWriter<View> {
     @Override
     public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         if (view instanceof SingleEntryView) {
-            writeEntryTo(entityStream, requestContext.getRegister(), ((SingleEntryView) view).getEntry());
+            writeEntryTo(entityStream, requestContext.getRegister().getFields(), ((SingleEntryView) view).getEntry());
         }
         else {
-            writeEntriesTo(entityStream, requestContext.getRegister(), ((EntryListView) view).getEntries());
+            writeEntriesTo(entityStream, requestContext.getRegister().getFields(), ((EntryListView) view).getEntries());
         }
     }
 
-    protected void writeEntryTo(OutputStream entityStream, Register register, EntryView entry) throws IOException {
-        writeEntriesTo(entityStream, register, Collections.singletonList(entry));
+    protected void writeEntryTo(OutputStream entityStream, Iterable<String> fields, EntryView entry) throws IOException {
+        writeEntriesTo(entityStream, fields, Collections.singletonList(entry));
     }
 
-    protected abstract void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException, WebApplicationException;
+    protected abstract void writeEntriesTo(OutputStream entityStream, Iterable<String> fields, List<EntryView> entries) throws IOException, WebApplicationException;
 }

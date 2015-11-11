@@ -4,8 +4,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.presentation.*;
-import uk.gov.register.presentation.config.Register;
+import uk.gov.register.presentation.EntryView;
+import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.LinkValue;
+import uk.gov.register.presentation.ListValue;
+import uk.gov.register.presentation.StringValue;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -43,7 +46,7 @@ public class TurtleWriterTest {
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        turtleWriter.writeEntriesTo(entityStream, new Register("company", ImmutableSet.of("company", "registered-address", "name"), "", "companies-house", ""), Collections.singletonList(entry));
+        turtleWriter.writeEntriesTo(entityStream, ImmutableSet.of("company", "registered-address", "name"), Collections.singletonList(entry));
 
 
         assertThat(entityStream.contents, containsString("field:registered-address <http://address.openregister.org/address/1111111>"));
@@ -63,7 +66,7 @@ public class TurtleWriterTest {
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        turtleWriter.writeEntriesTo(entityStream, new Register("company", ImmutableSet.of("link-values", "string-values", "name"), "", "companies-house", ""), Collections.singletonList(entry));
+        turtleWriter.writeEntriesTo(entityStream, ImmutableSet.of("link-values", "string-values", "name"), Collections.singletonList(entry));
 
 
         assertThat(entityStream.contents, containsString("field:link-values <http://address.openregister.org/address/1111111>"));
