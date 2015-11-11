@@ -36,6 +36,22 @@ public class TsvWriterTest {
     }
 
     @Test
+    public void newlinesArePrintedAsBackslashN() throws Exception {
+        /* Rationale: this is not standard, but we need to do /something/ to make data with newlines usable.
+         * This is what we have agreed on. */
+        EntryView entry = new EntryView(52, "hash1", "registerName", ImmutableMap.of(
+                "key1", new StringValue("val\nue1")
+        ));
+
+        TestOutputStream entityStream = new TestOutputStream();
+
+        writer.writeEntriesTo(entityStream, new Register("registerName", ImmutableSet.of("key1"), "", null, ""), Collections.singletonList(entry));
+
+        assertThat(entityStream.contents, equalTo("entry\tkey1\n52\tval\\nue1\n"));
+
+    }
+
+    @Test
     public void writeEntriesTo_writesLists() throws IOException {
         EntryView entry = new EntryView(52, "hash1", "registerName",
                 ImmutableMap.of("key1",

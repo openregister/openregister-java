@@ -36,7 +36,11 @@ public class TsvWriter extends RepresentationWriter {
         if (fieldValue.isList()) {
             return renderList((ListValue) fieldValue);
         }
-        return fieldValue.getValue();
+        return escape(fieldValue.getValue());
+    }
+
+    private String escape(String value) {
+        return value.replace("\n","\\n");
     }
 
     private String renderList(ListValue listValue) {
