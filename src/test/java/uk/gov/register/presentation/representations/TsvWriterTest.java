@@ -6,7 +6,6 @@ import org.junit.Test;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
-import uk.gov.register.presentation.config.Register;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -30,9 +29,25 @@ public class TsvWriterTest {
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        writer.writeEntriesTo(entityStream, new Register("registerName", ImmutableSet.of("key1", "key2", "key3", "key4"), "", null, ""), Collections.singletonList(entry));
+        writer.writeEntriesTo(entityStream, ImmutableSet.of("key1", "key2", "key3", "key4"), Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("entry\tkey1\tkey2\tkey3\tkey4\n52\tvalue1\tvalue2\tval\"ue3\tvalue4\n"));
+    }
+
+    @Test
+    public void newlinesArePrintedAsBackslashN() throws Exception {
+        /* Rationale: this is not standard, but we need to do /something/ to make data with newlines usable.
+         * This is what we have agreed on. */
+        EntryView entry = new EntryView(52, "hash1", "registerName", ImmutableMap.of(
+                "key1", new StringValue("val\nue1")
+        ));
+
+        TestOutputStream entityStream = new TestOutputStream();
+
+        writer.writeEntriesTo(entityStream, ImmutableSet.of("key1"), Collections.singletonList(entry));
+
+        assertThat(entityStream.contents, equalTo("entry\tkey1\n52\tval\\nue1\n"));
+
     }
 
     @Test
@@ -55,7 +70,7 @@ public class TsvWriterTest {
 
         writer.writeEntriesTo(
                 entityStream,
-                new Register("registerName", ImmutableSet.of("key1", "key2"), "", null, ""),
+                ImmutableSet.of("key1", "key2"),
                 Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("entry\tkey1\tkey2\n52\tvalue1;value2;value3\tvalue4;value5;value6\n"));
@@ -69,7 +84,7 @@ public class TsvWriterTest {
 
         TestOutputStream entityStream = new TestOutputStream();
 
-        writer.writeEntriesTo(entityStream, new Register("registerName", ImmutableSet.of("key1", "key2", "key3", "key4"), "", null, ""), Collections.singletonList(entry));
+        writer.writeEntriesTo(entityStream, ImmutableSet.of("key1", "key2", "key3", "key4"), Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("entry\tkey1\tkey2\tkey3\tkey4\n52\tvalue1\t\t\t\n"));
     }

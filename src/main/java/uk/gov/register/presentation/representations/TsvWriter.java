@@ -3,7 +3,6 @@ package uk.gov.register.presentation.representations;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.ListValue;
-import uk.gov.register.presentation.config.Register;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -17,8 +16,7 @@ import java.util.stream.StreamSupport;
 @Produces(ExtraMediaType.TEXT_TSV)
 public class TsvWriter extends RepresentationWriter {
     @Override
-    protected void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException, WebApplicationException {
-        Iterable<String> fields = register.getFields();
+    protected void writeEntriesTo(OutputStream entityStream, Iterable<String> fields, List<EntryView> entries) throws IOException, WebApplicationException {
         entityStream.write(("entry\t" + String.join("\t", fields) + "\n").getBytes(StandardCharsets.UTF_8));
         for (EntryView entry : entries) {
             writeRow(entityStream, fields, entry);
@@ -36,7 +34,11 @@ public class TsvWriter extends RepresentationWriter {
         if (fieldValue.isList()) {
             return renderList((ListValue) fieldValue);
         }
-        return fieldValue.getValue();
+        return escape(fieldValue.getValue());
+    }
+
+    private String escape(String value) {
+        return value.replace("\n","\\n");
     }
 
     private String renderList(ListValue listValue) {

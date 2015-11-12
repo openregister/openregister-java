@@ -6,7 +6,6 @@ import org.junit.Test;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
-import uk.gov.register.presentation.config.Register;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -32,7 +31,7 @@ public class CsvWriterTest {
 
         csvWriter.writeEntriesTo(
                 entityStream,
-                new Register("registerName", ImmutableSet.of("key1", "key2", "key3", "key4"), "", null, ""),
+                ImmutableSet.of("key1", "key2", "key3", "key4"),
                 Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("entry,key1,key2,key3,key4\r\n52,valu\te1,\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
@@ -58,7 +57,7 @@ public class CsvWriterTest {
 
         csvWriter.writeEntriesTo(
                 entityStream,
-                new Register("registerName", ImmutableSet.of("key1", "key2"), "", null, ""),
+                ImmutableSet.of("key1", "key2"),
                 Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("entry,key1,key2\r\n52,value1;value2;value3,value4;value5;value6\r\n"));
@@ -74,7 +73,7 @@ public class CsvWriterTest {
 
         csvWriter.writeEntriesTo(
                 entityStream,
-                new Register("registerName", ImmutableSet.of("key1", "key2", "key3", "key4"), "", null, ""),
+                ImmutableSet.of("key1", "key2", "key3", "key4"),
                 Collections.singletonList(entry));
 
         assertThat(entityStream.contents, equalTo("entry,key1,key2,key3,key4\r\n52,value1,,,\r\n"));

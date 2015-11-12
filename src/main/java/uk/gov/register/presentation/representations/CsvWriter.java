@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.ListValue;
-import uk.gov.register.presentation.config.Register;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -18,8 +17,7 @@ import java.util.stream.StreamSupport;
 @Produces(ExtraMediaType.TEXT_CSV)
 public class CsvWriter extends RepresentationWriter {
     @Override
-    protected void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException, WebApplicationException {
-        Iterable<String> fields = register.getFields();
+    protected void writeEntriesTo(OutputStream entityStream, Iterable<String> fields, List<EntryView> entries) throws IOException, WebApplicationException {
         entityStream.write(("entry," + String.join(",", fields) + "\r\n").getBytes(StandardCharsets.UTF_8));
         for (EntryView entry : entries) {
             writeRow(entityStream, fields, entry);

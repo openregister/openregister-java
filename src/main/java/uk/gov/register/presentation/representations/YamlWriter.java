@@ -5,7 +5,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.dropwizard.jackson.Jackson;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.EntryView;
-import uk.gov.register.presentation.config.Register;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
@@ -25,12 +24,12 @@ public class YamlWriter extends RepresentationWriter {
     }
 
     @Override
-    protected void writeEntriesTo(OutputStream entityStream, Register register, List<EntryView> entries) throws IOException, WebApplicationException {
+    protected void writeEntriesTo(OutputStream entityStream, Iterable<String> fields, List<EntryView> entries) throws IOException, WebApplicationException {
         objectMapper.writeValue(entityStream, entries);
     }
 
     @Override
-    protected void writeEntryTo(OutputStream entityStream, Register register, EntryView entry) throws IOException {
+    protected void writeEntryTo(OutputStream entityStream, Iterable<String> fields, EntryView entry) throws IOException {
         objectMapper.writeValue(entityStream, entry);
     }
 }
