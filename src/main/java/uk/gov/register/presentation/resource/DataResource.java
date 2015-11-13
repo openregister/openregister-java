@@ -15,10 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Path("/")
@@ -88,18 +85,6 @@ public class DataResource {
         return create301Response("/records", pageIndex, pageSize);
     }
 
-    @GET
-    @Path("/all")
-    public Response all() {
-        return create301Response("current");
-    }
-
-    @GET
-    @Path("/latest")
-    public Response latest() {
-        return create301Response("feed");
-    }
-
     private void setNextAndPreviousPageLinkHeader(Pagination pagination) {
         List<String> headerValues = new ArrayList<>();
 
@@ -116,18 +101,7 @@ public class DataResource {
         }
     }
 
-    private Response create301Response(String path) {
-        return create301Response(path, Collections.emptyMap());
-    }
-
     private Response create301Response(String path, Optional<Long> pageIndex, Optional<Long> pageSize) {
-        HashMap<String, Long> queryParams = new HashMap<>();
-        pageIndex.ifPresent(i -> queryParams.put(Pagination.INDEX_PARAM, i));
-        pageSize.ifPresent(s -> queryParams.put(Pagination.SIZE_PARAM, s));
-        return create301Response(path, queryParams);
-    }
-
-    private Response create301Response(String path, Map<String, ?> queryParams) {
         String requestURI = requestContext.requestURI();
         String representation = requestURI.substring(requestURI.lastIndexOf("/")).replaceAll("[^\\.]+(.*)", "$1");
 
@@ -136,8 +110,11 @@ public class DataResource {
                 .replacePath(null)
                 .path(path + representation);
 
-        for (Map.Entry<String, ?> queryParam : queryParams.entrySet()) {
-            builder = builder.queryParam(queryParam.getKey(), queryParam.getValue());
+        if (pageIndex.isPresent()) {
+            builder = builder.queryParam(Pagination.INDEX_PARAM, pageIndex.get());
+        }
+        if (pageSize.isPresent()) {
+            builder = builder.queryParam(Pagination.SIZE_PARAM, pageSize.get());
         }
 
         return Response
