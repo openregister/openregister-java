@@ -62,7 +62,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @Test
     public void representationIsSupportedForListEntryView() {
-        Response response = getRequest(REGISTER_NAME, "/current." + extension);
+        Response response = getRequest(REGISTER_NAME, "/records." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));

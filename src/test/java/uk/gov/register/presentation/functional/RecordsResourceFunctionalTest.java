@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class CurrentResourceFunctionalTest extends FunctionalTestBase {
+public class RecordsResourceFunctionalTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
         DBSupport.publishMessages(ImmutableList.of(
@@ -23,8 +23,8 @@ public class CurrentResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void current_shouldReturnAllCurrentVersionsOnly() throws Exception {
-        Response response = getRequest("/current.json");
+    public void records_shouldReturnAllCurrentVersionsOnly() throws Exception {
+        Response response = getRequest("/records.json");
 
         String jsonResponse = response.readEntity(String.class);
         JSONAssert.assertEquals(jsonResponse,
@@ -37,24 +37,24 @@ public class CurrentResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void all_movedPermanentlyToCurrentSoReturns301() throws InterruptedException, IOException {
-        Response response = getRequest("/all.json");
+    public void current_movedPermanentlyToRecordsSoReturns301() throws InterruptedException, IOException {
+        Response response = getRequest("/current.json");
 
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/current.json"));
+        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/records.json"));
 
     }
 
     @Test
-    public void current_hasLinkHeaderForNextAndPreviousPage() {
-        Response response = getRequest("/current.json?pageIndex=1&pageSize=1");
-        assertThat(response.getHeaderString("Link"), equalTo("</current?pageIndex=2&pageSize=1>; rel=\"next\""));
+    public void records_hasLinkHeaderForNextAndPreviousPage() {
+        Response response = getRequest("/records.json?page-index=1&page-size=1");
+        assertThat(response.getHeaderString("Link"), equalTo("</records?page-index=2&page-size=1>; rel=\"next\""));
 
-        response = getRequest("/current.json?pageIndex=2&pageSize=1");
-        assertThat(response.getHeaderString("Link"), equalTo("</current?pageIndex=3&pageSize=1>; rel=\"next\",</current?pageIndex=1&pageSize=1>; rel=\"previous\""));
+        response = getRequest("/records.json?page-index=2&page-size=1");
+        assertThat(response.getHeaderString("Link"), equalTo("</records?page-index=3&page-size=1>; rel=\"next\",</records?page-index=1&page-size=1>; rel=\"previous\""));
 
-        response = getRequest("/current.json?pageIndex=3&pageSize=1");
-        assertThat(response.getHeaderString("Link"), equalTo("</current?pageIndex=2&pageSize=1>; rel=\"previous\""));
+        response = getRequest("/records.json?page-index=3&page-size=1");
+        assertThat(response.getHeaderString("Link"), equalTo("</records?page-index=2&page-size=1>; rel=\"previous\""));
     }
 }
 

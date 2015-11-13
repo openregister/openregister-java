@@ -14,9 +14,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Path("/")
@@ -51,10 +53,10 @@ public class DataResource {
     }
 
     @GET
-    @Path("/feed")
+    @Path("/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView feed(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
-        Pagination pagination = new Pagination("/feed", pageIndex, pageSize, queryDAO.getTotalEntriesCount());
+    public EntryListView entries(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
+        Pagination pagination = new Pagination("/entries", pageIndex, pageSize, queryDAO.getTotalEntriesCount());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
@@ -62,14 +64,28 @@ public class DataResource {
     }
 
     @GET
-    @Path("/current")
+    @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView current(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
-        Pagination pagination = new Pagination("/current", pageIndex, pageSize, queryDAO.getTotalRecords());
+    public EntryListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
+        Pagination pagination = new Pagination("/records", pageIndex, pageSize, queryDAO.getTotalRecords());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
         return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
+    }
+
+    @GET
+    @Path("/feed")
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    public Response feed(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
+        return create301Response("/entries", pageIndex, pageSize);
+    }
+
+    @GET
+    @Path("/current")
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    public Response current(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
+        return create301Response("/records", pageIndex, pageSize);
     }
 
     @GET
@@ -100,19 +116,33 @@ public class DataResource {
         }
     }
 
-    private Response create301Response(String locationMethod) {
+    private Response create301Response(String path) {
+        return create301Response(path, Collections.emptyMap());
+    }
+
+    private Response create301Response(String path, Optional<Long> pageIndex, Optional<Long> pageSize) {
+        HashMap<String, Long> queryParams = new HashMap<>();
+        pageIndex.ifPresent(i -> queryParams.put(Pagination.INDEX_PARAM, i));
+        pageSize.ifPresent(s -> queryParams.put(Pagination.SIZE_PARAM, s));
+        return create301Response(path, queryParams);
+    }
+
+    private Response create301Response(String path, Map<String, ?> queryParams) {
         String requestURI = requestContext.requestURI();
         String representation = requestURI.substring(requestURI.lastIndexOf("/")).replaceAll("[^\\.]+(.*)", "$1");
 
-        URI uri = UriBuilder
+        UriBuilder builder = UriBuilder
                 .fromUri(requestURI)
                 .replacePath(null)
-                .path(locationMethod + representation)
-                .build();
+                .path(path + representation);
+
+        for (Map.Entry<String, ?> queryParam : queryParams.entrySet()) {
+            builder = builder.queryParam(queryParam.getKey(), queryParam.getValue());
+        }
 
         return Response
                 .status(Response.Status.MOVED_PERMANENTLY)
-                .location(uri)
+                .location(builder.build())
                 .build();
     }
 
