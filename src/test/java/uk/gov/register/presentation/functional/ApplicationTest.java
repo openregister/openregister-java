@@ -16,7 +16,7 @@ public class ApplicationTest extends FunctionalTestBase {
     @Test
     public void appSupportsCORS() {
         String origin = "http://originfortest.com";
-        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/feed")
+        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/entries")
                 .request()
                 .header(HttpHeaders.ORIGIN, origin)
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
@@ -35,7 +35,7 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appSupportsContentSecurityPolicy() throws Exception {
-        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/feed")
+        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/entries")
                 .request()
                 .get();
 
@@ -44,7 +44,7 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appExplicitlySendsHtmlCharsetInHeader() throws Exception {
-        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/feed")
+        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/entries")
                 .request()
                 .get();
 

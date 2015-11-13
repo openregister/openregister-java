@@ -14,7 +14,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,10 +50,10 @@ public class DataResource {
     }
 
     @GET
-    @Path("/feed")
+    @Path("/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView feed(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
-        Pagination pagination = new Pagination("/feed", pageIndex, pageSize, queryDAO.getTotalEntriesCount());
+    public EntryListView entries(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
+        Pagination pagination = new Pagination("/entries", pageIndex, pageSize, queryDAO.getTotalEntriesCount());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
@@ -62,10 +61,10 @@ public class DataResource {
     }
 
     @GET
-    @Path("/current")
+    @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView current(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
-        Pagination pagination = new Pagination("/current", pageIndex, pageSize, queryDAO.getTotalRecords());
+    public EntryListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
+        Pagination pagination = new Pagination("/records", pageIndex, pageSize, queryDAO.getTotalRecords());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
@@ -73,15 +72,17 @@ public class DataResource {
     }
 
     @GET
-    @Path("/all")
-    public Response all() {
-        return create301Response("current");
+    @Path("/feed")
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    public Response feed(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
+        return create301Response("/entries", pageIndex, pageSize);
     }
 
     @GET
-    @Path("/latest")
-    public Response latest() {
-        return create301Response("feed");
+    @Path("/current")
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    public Response current(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
+        return create301Response("/records", pageIndex, pageSize);
     }
 
     private void setNextAndPreviousPageLinkHeader(Pagination pagination) {
@@ -100,19 +101,25 @@ public class DataResource {
         }
     }
 
-    private Response create301Response(String locationMethod) {
+    private Response create301Response(String path, Optional<Long> pageIndex, Optional<Long> pageSize) {
         String requestURI = requestContext.requestURI();
         String representation = requestURI.substring(requestURI.lastIndexOf("/")).replaceAll("[^\\.]+(.*)", "$1");
 
-        URI uri = UriBuilder
+        UriBuilder builder = UriBuilder
                 .fromUri(requestURI)
                 .replacePath(null)
-                .path(locationMethod + representation)
-                .build();
+                .path(path + representation);
+
+        if (pageIndex.isPresent()) {
+            builder = builder.queryParam(Pagination.INDEX_PARAM, pageIndex.get());
+        }
+        if (pageSize.isPresent()) {
+            builder = builder.queryParam(Pagination.SIZE_PARAM, pageSize.get());
+        }
 
         return Response
                 .status(Response.Status.MOVED_PERMANENTLY)
-                .location(uri)
+                .location(builder.build())
                 .build();
     }
 

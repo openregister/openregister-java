@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public class Pagination {
     public static final long ENTRY_LIMIT = 100;
+    public static final String INDEX_PARAM = "page-index";
+    public static final String SIZE_PARAM = "page-size";
 
     private final long pageIndex;
     private final String resourcePath;
@@ -50,11 +52,11 @@ public class Pagination {
     }
 
     public String getNextPageLink() {
-        return String.format("%s?pageIndex=%s&pageSize=%s", resourcePath, getNextPageNumber(), pageSize());
+        return String.format("%s?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", resourcePath, getNextPageNumber(), pageSize());
     }
 
     public String getPreviousPageLink() {
-        return String.format("%s?pageIndex=%s&pageSize=%s", resourcePath, getPreviousPageNumber(), pageSize());
+        return String.format("%s?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", resourcePath, getPreviousPageNumber(), pageSize());
     }
 
     public long pageSize() {

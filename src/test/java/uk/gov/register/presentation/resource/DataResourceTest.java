@@ -47,7 +47,7 @@ public class DataResourceTest {
 
     @Test
     public void feedSupportsJsonCsvTsv() throws Exception {
-        Method feedMethod = DataResource.class.getDeclaredMethod("feed", Optional.class, Optional.class);
+        Method feedMethod = DataResource.class.getDeclaredMethod("entries", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(feedMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
@@ -60,7 +60,7 @@ public class DataResourceTest {
 
     @Test
     public void currentSupportsJsonCsvTsvHtmlAndTurtle() throws Exception {
-        Method allMethod = DataResource.class.getDeclaredMethod("current", Optional.class, Optional.class);
+        Method allMethod = DataResource.class.getDeclaredMethod("records", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
                 MediaType.APPLICATION_JSON,
@@ -72,43 +72,43 @@ public class DataResourceTest {
     }
 
     @Test
-    public void allWithRepresentation_permanentlyRedirectsToCurrentWithSameRepresentation() {
+    public void currentWithRepresentation_permanentlyRedirectsToRecordsWithSameRepresentation() {
 
-        when(requestContext.requestURI()).thenReturn("http://abc/all.json");
+        when(requestContext.requestURI()).thenReturn("http://abc/current.json");
 
-        Response response = dataResource.all();
+        Response response = dataResource.current(Optional.empty(), Optional.empty());
 
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://abc/current.json"));
+        assertThat(response.getHeaderString("Location"), equalTo("http://abc/records.json"));
     }
 
     @Test
-    public void allWithoutRepresentation_permanentlyRedirectsToCurrentWithoputRepresentation() {
-        when(requestContext.requestURI()).thenReturn("http://abc/all");
+    public void currentWithoutRepresentation_permanentlyRedirectsToRecordsWithoputRepresentation() {
+        when(requestContext.requestURI()).thenReturn("http://abc/current");
 
-        Response response = dataResource.all();
+        Response response = dataResource.current(Optional.empty(), Optional.empty());
 
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://abc/current"));
+        assertThat(response.getHeaderString("Location"), equalTo("http://abc/records"));
     }
 
     @Test
-    public void latestWithRepresentation_permanentlyRedirectsToFeedWithSameRepresentation() {
-        when(requestContext.requestURI()).thenReturn("http://abc/latest.json");
+    public void feedWithRepresentation_permanentlyRedirectsToEntriesWithSameRepresentation() {
+        when(requestContext.requestURI()).thenReturn("http://abc/entries.json");
 
-        Response response = dataResource.latest();
+        Response response = dataResource.feed(Optional.empty(), Optional.empty());
 
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://abc/feed.json"));
+        assertThat(response.getHeaderString("Location"), equalTo("http://abc/entries.json"));
     }
 
     @Test
-    public void latestWithoutRepresentation_permanentlyRedirectsToFeedWithoputRepresentation() {
-        when(requestContext.requestURI()).thenReturn("http://abc/latest");
+    public void feedWithoutRepresentation_permanentlyRedirectsToEntiresWithoputRepresentation() {
+        when(requestContext.requestURI()).thenReturn("http://abc/feed");
 
-        Response response = dataResource.latest();
+        Response response = dataResource.feed(Optional.empty(), Optional.empty());
 
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://abc/feed"));
+        assertThat(response.getHeaderString("Location"), equalTo("http://abc/entries"));
     }
 }
