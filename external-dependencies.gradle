@@ -1,6 +1,7 @@
 ext {
     dropwizard_version = '0.8.2'
     dropwizard_java8_version = '0.8.0-1'
+    jersey_version = '2.19' // based on dropwizard 0.8.2's jersey version
 
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
@@ -10,6 +11,8 @@ ext {
             "io.dropwizard:dropwizard-views:${dropwizard_version}",
             "io.dropwizard:dropwizard-assets:${dropwizard_version}"
     ]
+
+    jerseyMedia = "org.glassfish.jersey.media:jersey-media-multipart:${jersey_version}"
 
     markdown = 'org.markdownj:markdownj-core:0.4'
 

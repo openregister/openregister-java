@@ -19,7 +19,7 @@ configurations {
     compile.exclude module: 'slf4j-simple' // dropwizard uses logback, not slf4j-simple
 }
 dependencies {
-    compile dropwizard, markdown, postgresClient, thymeleaf
+    compile dropwizard, jerseyMedia, markdown, postgresClient, thymeleaf
 
     testCompile dropwizardTest, junit, jsonAssert
 }
