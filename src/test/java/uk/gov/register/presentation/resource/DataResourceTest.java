@@ -46,7 +46,7 @@ public class DataResourceTest {
     }
 
     @Test
-    public void feedSupportsJsonCsvTsv() throws Exception {
+    public void entries_supportsJsonCsvTsv() throws Exception {
         Method feedMethod = DataResource.class.getDeclaredMethod("entries", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(feedMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
@@ -59,7 +59,7 @@ public class DataResourceTest {
     }
 
     @Test
-    public void currentSupportsJsonCsvTsvHtmlAndTurtle() throws Exception {
+    public void records_supportsJsonCsvTsvHtmlAndTurtle() throws Exception {
         Method allMethod = DataResource.class.getDeclaredMethod("records", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes, hasItems(
