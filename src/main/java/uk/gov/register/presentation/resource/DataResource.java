@@ -59,22 +59,8 @@ public class DataResource {
 
         setNextAndPreviousPageLinkHeader(pagination);
 
-        getFileExtension().ifPresent(this::addContentDispositionHeader);
+        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
         return viewFactory.getEntryFeedView(queryDAO.getAllEntries(pagination.pageSize(), pagination.offset()), pagination);
-    }
-
-    private void addContentDispositionHeader(String ext) {
-        ContentDisposition contentDisposition = ContentDisposition.type("attachment").fileName(requestContext.getRegisterPrimaryKey() + "-entries." + ext).build();
-        requestContext.getHttpServletResponse().addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-    }
-
-    private Optional<String> getFileExtension() {
-        String requestURI = requestContext.getHttpServletRequest().getRequestURI();
-        if (requestURI.lastIndexOf('.') == -1) {
-            return Optional.empty();
-        }
-        String[] tokens = requestURI.split("\\.");
-        return Optional.of(tokens[tokens.length-1]);
     }
 
     @GET
@@ -85,6 +71,7 @@ public class DataResource {
 
         setNextAndPreviousPageLinkHeader(pagination);
 
+        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
         return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
@@ -100,6 +87,20 @@ public class DataResource {
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public Response current(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
         return create301Response("/records", pageIndex, pageSize);
+    }
+
+    private Optional<String> getFileExtension() {
+        String requestURI = requestContext.getHttpServletRequest().getRequestURI();
+        if (requestURI.lastIndexOf('.') == -1) {
+            return Optional.empty();
+        }
+        String[] tokens = requestURI.split("\\.");
+        return Optional.of(tokens[tokens.length-1]);
+    }
+
+    private void addContentDispositionHeader(String fileName) {
+        ContentDisposition contentDisposition = ContentDisposition.type("attachment").fileName(fileName).build();
+        requestContext.getHttpServletResponse().addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
     }
 
     private void setNextAndPreviousPageLinkHeader(Pagination pagination) {
