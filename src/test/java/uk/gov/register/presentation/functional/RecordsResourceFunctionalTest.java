@@ -6,9 +6,11 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.presentation.representations.DBSupport;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -34,6 +36,13 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
                         "{\"serial-number\":1,\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}" +
                         "]"
                 , false);
+    }
+
+    @Test
+    public void records_setsAppropriateFilenameForDownload() {
+        Response response = getRequest("address", "/records.json");
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
     }
 
     @Test
