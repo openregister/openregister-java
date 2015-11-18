@@ -2,14 +2,10 @@
 // ==========================================================================
 
 .fingerprint-container {
-    margin: 35px 15px 15px 15px;
+    margin-top: 35px;
+    margin-bottom: 15px;
     background-color: $pale-grey;
     padding: 25px;
-}
-
-.fingerprint {
-    font-family: monospace;
-    white-space: pre;
 }
 
 .fingerprint-explanation {
