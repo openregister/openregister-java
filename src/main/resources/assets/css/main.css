@@ -806,6 +806,36 @@ button:focus,
             text-align: right; } }
 
 /* Register styles */
+details {
+  display: block; }
+  details summary {
+    display: inline-block;
+    color: #005ea5;
+    cursor: pointer;
+    position: relative;
+    margin-bottom: em(5); }
+    details summary:hover {
+      color: #2e8aca; }
+    details summary:focus {
+      outline: 3px solid #ffbf47; }
+  details .summary {
+    text-decoration: underline; }
+  details .arrow {
+    margin-right: .35em;
+    font-style: normal; }
+
+.fingerprint-container {
+  margin: 35px 15px 15px 15px;
+  background-color: #f5f5f5;
+  padding: 25px; }
+
+.fingerprint {
+  font-family: monospace;
+  white-space: pre; }
+
+.fingerprint-explanation {
+  float: right; }
+
 body {
   font-family: "GDS-Logo", sans-serif; }
 
@@ -963,13 +993,12 @@ dd a {
 .technical-information {
   margin: 35px 15px 15px 15px;
   padding: 25px;
-  background-color: #F8F8F8;
+  background-color: #f5f5f5;
   border: 1px solid #BFC1C3; }
 
 .field-list ul {
   padding-left: 0;
-  margin-top: 0;
-  }
+  margin-top: 0; }
 
 .field-list li {
   font-family: monospace;

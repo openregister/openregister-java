@@ -1,0 +1,17 @@
+// Digital fingerprint styles
+// ==========================================================================
+
+.fingerprint-container {
+    margin: 35px 15px 15px 15px;
+    background-color: $pale-grey;
+    padding: 25px;
+}
+
+.fingerprint {
+    font-family: monospace;
+    white-space: pre;
+}
+
+.fingerprint-explanation {
+    float: right;
+}
