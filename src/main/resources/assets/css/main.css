@@ -830,12 +830,16 @@ details {
   background-color: #f5f5f5;
   padding: 25px; }
 
-.fingerprint {
-  font-family: monospace;
-  white-space: pre; }
-
 .fingerprint-explanation {
   float: right; }
+
+hr {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  height: 1px;
+  color: #BFC1C3;
+  background: #BFC1C3;
+  border: 0; }
 
 body {
   font-family: "GDS-Logo", sans-serif; }
