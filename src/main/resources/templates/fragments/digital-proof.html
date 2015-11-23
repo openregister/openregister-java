@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<body>
+<details th:fragment="digital-proof(sth,auditPath)">
+    <summary>Check the digital proof for this entry</summary>
+    <div class="fingerprint-container">
+        <span class="fingerprint-explanation"><a
+                href="https://gdstechnology.blog.gov.uk/2015/10/13/guaranteeing-the-integrity-of-a-register/">See how
+            digital proofing works</a></span>
+        <pre class="fingerprint"><code th:text="${sth}"/><hr/><code th:text="${auditPath}"/></pre>
+    </div>
+</details>
+</body>
+</html>
