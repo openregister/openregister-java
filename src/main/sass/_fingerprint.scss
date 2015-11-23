@@ -11,3 +11,12 @@
 .fingerprint-explanation {
     float: right;
 }
+
+hr {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 1px;
+    color: $dark-grey;
+    background: $dark-grey;
+    border: 0;
+}
