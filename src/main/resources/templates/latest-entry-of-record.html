@@ -17,8 +17,9 @@
 
     <div th:include="data-formats.html::data-formats"></div>
 
-    <p>View all versions of this record <a
-            th:href="${versionHistoryLink}">here</a>
+    <details th:replace="fragments/digital-proof.html :: digital-proof"/>
+
+    <p><a th:href="${versionHistoryLink}">View all versions of this record</a>
     </p>
 
     <p th:replace="copyright.html::copyright"></p>
