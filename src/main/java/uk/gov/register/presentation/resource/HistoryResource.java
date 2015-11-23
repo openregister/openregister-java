@@ -2,6 +2,7 @@ package uk.gov.register.presentation.resource;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.Version;
+import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.thymeleaf.ThymeleafView;
@@ -20,11 +21,13 @@ import java.util.stream.Collectors;
 public class HistoryResource {
     private final RequestContext requestContext;
     private final RecentEntryIndexQueryDAO queryDAO;
+    private final PublicBodiesConfiguration publicBodiesConfiguration;
 
     @Inject
-    public HistoryResource(RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+    public HistoryResource(RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, PublicBodiesConfiguration publicBodiesConfiguration) {
         this.requestContext = requestContext;
         this.queryDAO = queryDAO;
+        this.publicBodiesConfiguration = publicBodiesConfiguration;
     }
 
     @GET
@@ -33,7 +36,7 @@ public class HistoryResource {
     public ListVersionView history(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) throws Exception {
         String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
-            return new ListVersionView(requestContext, queryDAO.findAllByKeyValue(key, value).stream().map(r -> new Version(r.getSerialNumber(), r.getContent().getHash())).collect(Collectors.toList()));
+            return new ListVersionView(requestContext, publicBodiesConfiguration, queryDAO.findAllByKeyValue(key, value).stream().map(r -> new Version(r.getSerialNumber(), r.getContent().getHash())).collect(Collectors.toList()));
         }
         throw new NotFoundException();
     }
@@ -41,8 +44,8 @@ public class HistoryResource {
     public static class ListVersionView extends ThymeleafView {
         private final List<Version> versions;
 
-        public ListVersionView(RequestContext requestContext, List<Version> versions) {
-            super(requestContext, "history.html");
+        public ListVersionView(RequestContext requestContext, PublicBodiesConfiguration publicBodiesConfiguration, List<Version> versions) {
+            super(requestContext, publicBodiesConfiguration, "history.html");
             this.versions = versions;
         }
 

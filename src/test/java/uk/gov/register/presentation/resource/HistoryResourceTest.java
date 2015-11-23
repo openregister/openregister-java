@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.DbContent;
 import uk.gov.register.presentation.DbEntry;
+import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 
@@ -26,6 +27,8 @@ public class HistoryResourceTest {
     private HistoryResource resource;
     @Mock
     private RecentEntryIndexQueryDAO queryDAO;
+    @Mock
+    private PublicBodiesConfiguration publicBodiesConfiguration;
     private ObjectMapper objectMapper;
 
     @Before
@@ -35,7 +38,7 @@ public class HistoryResourceTest {
             public String getRegisterPrimaryKey() {
                 return "school";
             }
-        }, queryDAO);
+        }, queryDAO, publicBodiesConfiguration);
         objectMapper = Jackson.newObjectMapper();
     }
 

@@ -28,18 +28,18 @@ public class ViewFactory {
     }
 
     public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry));
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), publicBodiesConfiguration);
     }
 
     public SingleEntryView getLatestEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), "latest-entry-of-record.html");
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), publicBodiesConfiguration, "latest-entry-of-record.html");
     }
 
     public EntryListView getEntriesView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                "entries.html"
+                publicBodiesConfiguration, "entries.html"
         );
     }
 
@@ -47,12 +47,12 @@ public class ViewFactory {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                "records.html"
+                publicBodiesConfiguration, "records.html"
         );
     }
 
     public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, templateName);
+        return new ThymeleafView(requestContext, publicBodiesConfiguration, templateName);
     }
 
     public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {

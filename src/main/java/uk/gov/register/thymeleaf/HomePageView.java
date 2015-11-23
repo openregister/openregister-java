@@ -2,7 +2,6 @@ package uk.gov.register.thymeleaf;
 
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
-import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.time.LocalDateTime;
@@ -11,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 public class HomePageView extends ThymeleafView {
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/YYYY HH:mm:ss");
 
-    private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
     private final LocalDateTime lastUpdated;
@@ -23,15 +21,9 @@ public class HomePageView extends ThymeleafView {
             int totalRecords,
             LocalDateTime lastUpdated
     ) {
-        super(requestContext, "home.html");
-        this.publicBodiesConfiguration = publicBodiesConfiguration;
+        super(requestContext, publicBodiesConfiguration, "home.html");
         this.totalRecords = totalRecords;
         this.lastUpdated = lastUpdated;
-    }
-
-    @SuppressWarnings("unused, used from template")
-    public PublicBody getPublicBody() {
-        return publicBodiesConfiguration.getPublicBody(getRegister().getRegistry());
     }
 
     @SuppressWarnings("unused, used from template")
