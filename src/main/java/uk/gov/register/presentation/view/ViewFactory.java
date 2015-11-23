@@ -35,19 +35,19 @@ public class ViewFactory {
         return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), "latest-entry-of-record.html");
     }
 
-    public EntryListView getEntryFeedView(List<DbEntry> allDbEntries, Pagination pagination) {
+    public EntryListView getEntriesView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                "feed.html"
+                "entries.html"
         );
     }
 
-    public EntryListView getRecordEntriesView(List<DbEntry> allDbEntries, Pagination pagination) {
+    public EntryListView getRecordsView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                "current.html"
+                "records.html"
         );
     }
 

@@ -60,7 +60,7 @@ public class DataResource {
         setNextAndPreviousPageLinkHeader(pagination);
 
         getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-        return viewFactory.getEntryFeedView(queryDAO.getAllEntries(pagination.pageSize(), pagination.offset()), pagination);
+        return viewFactory.getEntriesView(queryDAO.getAllEntries(pagination.pageSize(), pagination.offset()), pagination);
     }
 
     @GET
@@ -72,7 +72,7 @@ public class DataResource {
         setNextAndPreviousPageLinkHeader(pagination);
 
         getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
-        return viewFactory.getRecordEntriesView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
+        return viewFactory.getRecordsView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
     @GET
