@@ -2,13 +2,44 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <body>
-<details th:fragment="digital-proof(sth,auditPath)">
+<details th:fragment="digital-proof">
     <summary>Check the digital proof for this entry</summary>
     <div class="fingerprint-container">
         <span class="fingerprint-explanation"><a
                 href="https://gdstechnology.blog.gov.uk/2015/10/13/guaranteeing-the-integrity-of-a-register/">See how
             digital proofing works</a></span>
-        <pre class="fingerprint"><code th:text="${sth}"/><hr/><code th:text="${auditPath}"/></pre>
+        <pre class="fingerprint"><code>{
+  "tree_size": 9803348,
+  "timestamp": 1447421303202,
+  "sha256_root_hash": "JATHxRF5gczvNPP1S1WuhD8jSx2bl+WoTt8bIE3YKvU=",
+  "tree_head_signature":
+  "BAMARzBFAiEAkKM3aRUBKhShdCyrGLdd8lYBV52FLrwqjHa5/YuzK7ECIFTlRmNuKLqbVQv0QS8nq0pAUwgbilKOR5piBAIC8LpS"
+}</code><hr/><code>[
+  "99t31KVfWjz8ix0pWRT0KTUKJauAtc4TH1nhtyyvRjA=",
+  "IRFw6DVWcNgwxDbXhCuIuN6y51t/pfJBgKjkcJRlrEw=",
+  "DlqcXhFIdgUICJdA17917ph1vHSTXOzw/G2SXecJNTA=",
+  "5Jj7g1Y4MYvARwgOnfhDot7DkJxdYYD6Qr8Jzl1ncTI=",
+  "yEkOmJ73J4XL4Qpkv3D4qC1mN82Od/Ndbu4sXEEiOew=",
+  "uswSM2HekesEAPIGdkZERYEBEZ7hawvgqLWUz9Ewkkk=",
+  "fgO4O6M679Cl1qfCGmPK3YI6at1Jgy8rbWKGQ6qE2x8=",
+  "5gWmZgloC8TvI6rhFHmjCepyJ7kOaspGu70+JtK6W4c=",
+  "em+6WJKsyinGMrqVXLSN/bohuCw8gOyZGrinn5Q37Ek=",
+  "jgSUxKvxj54SrM6U6LdCaYb8MuexWNy6P3rKXGmPFqU=",
+  "NQKBgE3nKluraAwT+KLXQEcXeI4gVO48l+Hw8xlbwXA=",
+  "k+v2l72v43sbi62VfVqJJNNsNrAiVG9st26MY06A5tY=",
+  "8yjmDGwaIDNf4O+It4hGpXpVvXad8tD/I1qlq2P2JUQ=",
+  "i8w8ouWREDi+3vvjjnX/pNstQdU2JlIO0vt9+qGXaA0=",
+  "pCU8INpSyecydfBsX/haKkaUyfezlFOW2bAIqrXV8Ng=",
+  "fWn9RMbuj6A3t11BfWD1zM+nKN0aKdP7WoOiEYcvd+w=",
+  "SUQv6JOv8tGH82/xV63LXBpQwRfhAjchH8ComhkGa4E=",
+  "yRz2PS0g52P2sRuryDE68qtSXmia/a74+NuPckpYHc0=",
+  "eaCVxf1sLjsrN2D9QtYFrIM9jGJ6K4D+NKF9Lyifv34=",
+  "aWa1ytHZyVlvu3EYGB7NPtlAssfijpxPzzILTe6sXD8=",
+  "r454DNNoeAguA407gutu8IzNNSLlGFH2F91rqybbzFQ=",
+  "zeC0N4isU4ZrwaeCJdjy31+X9avF8zt87NN6G+xOThQ=",
+  "WBb5QnpttrokZ3kMCNNyAymfQK/BfPgIdsh3izVZgK0=",
+  "lyzm0rW0RIi1OXHwnpQ4WVB+cbSzLplTeAWrIDZaavU="
+]</code></pre>
     </div>
 </details>
 </body>
