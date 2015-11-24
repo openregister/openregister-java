@@ -946,6 +946,7 @@ body {
         line-height: 1.25; } }
 
 .registry-label {
+  margin-top: 60px;
   margin-bottom: 5px; }
 
 .org-name {
@@ -971,9 +972,6 @@ body {
 
 dd a {
   text-decoration: none; }
-
-.registry-label {
-  margin-top: 60px; }
 
 .grid-row .column-third {
   padding: 0 15px;
