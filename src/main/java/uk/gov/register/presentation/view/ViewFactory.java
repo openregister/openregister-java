@@ -6,10 +6,12 @@ import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.thymeleaf.BadRequestExceptionView;
 import uk.gov.register.thymeleaf.HomePageView;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,6 +55,10 @@ public class ViewFactory {
 
     public ThymeleafView thymeleafView(String templateName) {
         return new ThymeleafView(requestContext, templateName);
+    }
+
+    public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
+        return new BadRequestExceptionView(requestContext, e);
     }
 
     public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {
