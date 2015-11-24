@@ -8,7 +8,7 @@
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
     <h1>Bad Request</h1>
-    <p>Please check the request parameters.</p>
+    <p th:text="${exception.message}"></p>
     <p th:replace="copyright.html::copyright"></p>
 </main>
 

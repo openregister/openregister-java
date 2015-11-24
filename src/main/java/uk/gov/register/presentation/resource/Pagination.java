@@ -22,8 +22,16 @@ public class Pagination {
         this.pageIndex = optionalPageIndex.orElse(1L);
         this.pageSize = optionalPageSize.orElse(ENTRY_LIMIT);
 
-        if (this.pageSize <= 0 || this.pageIndex <= 0 || this.pageSize > 5000) {
-            throw new BadRequestException();
+        if (this.pageSize <= 0){
+            throw new BadRequestException("page-size must be greater than 0.");
+        }
+
+        if(this.pageIndex <= 0) {
+            throw new BadRequestException("page-index must be greater than 0.");
+        }
+
+        if(this.pageSize > 5000){
+            throw new BadRequestException("page-size too big, maximum page size can be 5000.");
         }
 
         if (pageIndex > 1 && ((pageIndex - 1) * pageSize) >= totalEntries) {

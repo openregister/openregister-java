@@ -20,7 +20,7 @@ public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestExce
     public Response toResponse(BadRequestException exception) {
         return Response.status(Response.Status.BAD_REQUEST)
                 .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
-                .entity(viewFactory.thymeleafView("400.html"))
+                .entity(viewFactory.badRequestExceptionView(exception))
                 .build();
     }
 }
