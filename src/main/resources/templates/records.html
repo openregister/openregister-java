@@ -6,8 +6,13 @@
 <header th:replace="main.html::header"></header>
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
-    <h1 th:text="${entries.size()} + ' records'"></h1>
-    <table id="entries" th:if="${#lists.isEmpty(entries) == false}">
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 th:text="${entries.size()} + ' records'"></h1>
+        </div>
+        <div class="column-third" th:include="main.html :: attribution"></div>
+    </div>
+    <table th:if="${#lists.isEmpty(entries) == false}">
         <thead>
             <tr>
                 <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(registerId)}" th:text="${registerId}"></a></th>
