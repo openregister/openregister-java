@@ -3,6 +3,7 @@ package uk.gov.register.presentation.view;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -65,4 +66,7 @@ public class ViewFactory {
         return new HomePageView(publicBodiesConfiguration, requestContext, totalRecords, lastUpdated);
     }
 
+    public ListVersionView listVersionView(List<Version> versions) throws Exception {
+        return new ListVersionView(requestContext, publicBodiesConfiguration, versions);
+    }
 }

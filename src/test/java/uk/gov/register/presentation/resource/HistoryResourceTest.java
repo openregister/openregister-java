@@ -9,9 +9,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.DbContent;
 import uk.gov.register.presentation.DbEntry;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.view.ListVersionView;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ public class HistoryResourceTest {
     @Mock
     private RecentEntryIndexQueryDAO queryDAO;
     @Mock
-    private PublicBodiesConfiguration publicBodiesConfiguration;
+    private ViewFactory viewFactory;
     private ObjectMapper objectMapper;
 
     @Before
@@ -38,7 +39,7 @@ public class HistoryResourceTest {
             public String getRegisterPrimaryKey() {
                 return "school";
             }
-        }, queryDAO, publicBodiesConfiguration);
+        }, queryDAO, viewFactory);
         objectMapper = Jackson.newObjectMapper();
     }
 
@@ -59,7 +60,7 @@ public class HistoryResourceTest {
                 new DbEntry(17, new DbContent("hash2", objectMapper.readTree("{\"school\":\"1234\",\"head-teacher\":\"Caroline Atkins\"}")))
         ));
 
-        HistoryResource.ListVersionView history = resource.history("school", "1234");
+        ListVersionView history = resource.history("school", "1234");
 
         assertThat(history.getVersions().get(0).hash, equalTo("hash1"));
         assertThat(history.getVersions().get(0).serialNumber, equalTo(3));
