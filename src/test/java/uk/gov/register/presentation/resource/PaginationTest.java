@@ -12,6 +12,11 @@ import static org.junit.Assert.*;
 public class PaginationTest {
 
     @Test(expected = BadRequestException.class)
+    public void construct_throwsExceptionForPageSizeGreaterThan5000() {
+        new Pagination("/entries", Optional.of(1L), Optional.of(5001L), 10);
+    }
+
+    @Test(expected = BadRequestException.class)
     public void construct_throwsExceptionWhenPageSizeIsZero() {
         new Pagination("/entries", Optional.of(1l), Optional.of(0l), 10);
     }

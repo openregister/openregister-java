@@ -22,7 +22,7 @@ public class Pagination {
         this.pageIndex = optionalPageIndex.orElse(1L);
         this.pageSize = optionalPageSize.orElse(ENTRY_LIMIT);
 
-        if (this.pageSize <= 0 || this.pageIndex <= 0) {
+        if (this.pageSize <= 0 || this.pageIndex <= 0 || this.pageSize > 5000) {
             throw new BadRequestException();
         }
 

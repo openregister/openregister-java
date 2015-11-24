@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="main.html::head"></head>
+<body>
+<header th:replace="main.html::header"></header>
+
+<main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
+    <h1>Bad Request</h1>
+    <p>Please check the request parameters.</p>
+    <p th:replace="copyright.html::copyright"></p>
+</main>
+
+<footer th:replace="main.html::footer"></footer>
+</body>
+</html>
