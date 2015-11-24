@@ -31,6 +31,7 @@ import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.representations.TsvWriter;
 import uk.gov.register.presentation.representations.TurtleWriter;
 import uk.gov.register.presentation.representations.YamlWriter;
+import uk.gov.register.presentation.resource.BadRequestExceptionMapper;
 import uk.gov.register.presentation.resource.NotFoundExceptionMapper;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.resource.ThrowableExceptionMapper;
@@ -102,6 +103,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jerseyEnvironment.register(TurtleWriter.class);
         jerseyEnvironment.register(YamlWriter.class);
 
+        jerseyEnvironment.register(BadRequestExceptionMapper.class);
         jerseyEnvironment.register(NotFoundExceptionMapper.class);
         jerseyEnvironment.register(ThrowableExceptionMapper.class);
 
