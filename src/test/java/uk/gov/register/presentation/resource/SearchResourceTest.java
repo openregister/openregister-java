@@ -116,7 +116,7 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void findByPrimaryKeySupportsTurtleHtmlAndJson() throws Exception {
+    public void findSupportsTurtleHtmlAndJson() throws Exception {
         Method searchMethod = SearchResource.class.getDeclaredMethod("find", String.class, String.class);
         List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
@@ -127,8 +127,8 @@ public class SearchResourceTest {
 
     @Test
     public void findByHashSupportsTurtleHtmlAndJson() throws Exception {
-        Method findByPrimaryKeyMethod = SearchResource.class.getDeclaredMethod("findByHash", String.class);
-        List<String> declaredMediaTypes = asList(findByPrimaryKeyMethod.getDeclaredAnnotation(Produces.class).value());
+        Method findByHashMethod = SearchResource.class.getDeclaredMethod("findByHash", String.class);
+        List<String> declaredMediaTypes = asList(findByHashMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(ExtraMediaType.TEXT_HTML,
                         MediaType.APPLICATION_JSON,
@@ -137,8 +137,8 @@ public class SearchResourceTest {
 
     @Test
     public void findBySerialSupportsTurtleHtmlAndJson() throws Exception {
-        Method findByPrimaryKeyMethod = SearchResource.class.getDeclaredMethod("findBySerial", String.class);
-        List<String> declaredMediaTypes = asList(findByPrimaryKeyMethod.getDeclaredAnnotation(Produces.class).value());
+        Method findBySerialMethod = SearchResource.class.getDeclaredMethod("findBySerial", String.class);
+        List<String> declaredMediaTypes = asList(findBySerialMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(ExtraMediaType.TEXT_HTML,
                         MediaType.APPLICATION_JSON,

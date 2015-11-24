@@ -24,7 +24,7 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void findByPrimaryKey_shouldReturnEntryWithThPrimaryKey() throws JSONException {
+    public void find_shouldReturnEntryWithThPrimaryKey_whenSearchForPrimaryKey() throws JSONException {
         Response response = getRequest("/address/12345.json");
 
         assertThat(response.getHeaderString("Link"), equalTo("</address/12345/history>;rel=\"version-history\""));

@@ -42,7 +42,6 @@ public class SearchResource {
             return entryResponse(optionalEntry, viewFactory::getLatestEntryView);
         }
 
-        //note: pagination object below is created so that we can reuse records.html
         Pagination pagination = new Pagination(String.format("/%s/%s", key, value), Optional.empty(), Optional.empty(), 0);
         return viewFactory.getRecordsView(records, pagination);
     }
