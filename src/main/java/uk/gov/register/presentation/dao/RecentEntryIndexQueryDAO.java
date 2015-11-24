@@ -25,10 +25,6 @@ public abstract class RecentEntryIndexQueryDAO {
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index ORDER BY serial_number DESC LIMIT :limit OFFSET :offset")
     public abstract List<DbEntry> getAllEntries(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE serial_number = (SELECT serial_number FROM CURRENT_KEYS WHERE key = :key)")
-    @SingleValueResult(DbEntry.class)
-    public abstract Optional<DbEntry> findLatestEntryOfRecordByPrimaryKey(@Bind("key") String key);
-
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE (entry @> :content) ORDER BY serial_number DESC")
     public abstract List<DbEntry> findAllEntriesByJsonContent(@Bind("content") PGobject json);
 
@@ -46,7 +42,7 @@ public abstract class RecentEntryIndexQueryDAO {
             "AND idx.serial_number = ck.serial_number " +
             "LIMIT 100" +
             ") q_result " +
-            "order by serial_number desc")
+            "ORDER BY serial_number DESC")
     public abstract List<DbEntry> findLatestEntriesOfRecordsByJsonContent(@Bind("content") PGobject content);
 
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index " +

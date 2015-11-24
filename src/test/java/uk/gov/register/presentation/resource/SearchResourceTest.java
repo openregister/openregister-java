@@ -58,18 +58,6 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void find_throwsNotFoundException_whenSearchedPrimaryKeyIsNotFound() throws Exception {
-        when(queryDAO.findLatestEntryOfRecordByPrimaryKey("value")).thenReturn(Optional.<DbEntry>empty());
-        try {
-            resource.find("school", "value");
-            fail("Must fail");
-        } catch (NotFoundException e) {
-            //success
-        }
-    }
-
-
-    @Test
     public void findByHash_throwsNotFoundWhenHashIsNotFound() {
         when(queryDAO.findEntryByHash("123")).thenReturn(Optional.<DbEntry>empty());
         try {

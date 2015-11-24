@@ -34,24 +34,17 @@ public class SearchResource {
     @Path("/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ThymeleafView find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
-        if (key.equals(requestContext.getRegisterPrimaryKey())) {
-            return findLatestEntryOfRecordByPrimaryKey(value);
-        }
-        return findLatestEntryOfRecordByKeyValue(key, value);
-    }
 
-    private ThymeleafView findLatestEntryOfRecordByKeyValue(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
+        List<DbEntry> records = queryDAO.findLatestEntriesOfRecordsByKeyValue(key, value);
+
+        if (key.equals(requestContext.getRegisterPrimaryKey())) {
+            Optional<DbEntry> optionalEntry = (records.size() == 0 ? Optional.empty() : Optional.of(records.get(0)));
+            return entryResponse(optionalEntry, viewFactory::getLatestEntryView);
+        }
+
         //note: pagination object below is created so that we can reuse records.html
         Pagination pagination = new Pagination(String.format("/%s/%s", key, value), Optional.empty(), Optional.empty(), 0);
-
-        List<DbEntry> result = queryDAO.findLatestEntriesOfRecordsByKeyValue(key, value);
-
-        return viewFactory.getRecordsView(result, pagination);
-    }
-
-    private SingleEntryView findLatestEntryOfRecordByPrimaryKey(@PathParam("primaryKeyValue") String value) {
-        Optional<DbEntry> entryO = queryDAO.findLatestEntryOfRecordByPrimaryKey(value);
-        return entryResponse(entryO, viewFactory::getLatestEntryView);
+        return viewFactory.getRecordsView(records, pagination);
     }
 
     @GET
