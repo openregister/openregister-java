@@ -972,6 +972,13 @@ body {
   /* fallback for IE 6-7 */
   white-space: pre-line; }
 
+.provided-by {
+  float: left; }
+
+.custodian-small {
+  float: left;
+  clear: left; }
+
 .grid-row .column-third {
   padding: 0 15px;
   -webkit-box-sizing: border-box;

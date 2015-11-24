@@ -80,6 +80,15 @@ main {
   white-space: pre-line;
 }
 
+// attribution in top-right of many pages
+.provided-by {
+  float: left;
+}
+.custodian-small {
+  float: left;
+  clear: left;
+}
+
 //grids
 
 .grid-row {
@@ -95,6 +104,8 @@ main {
 .hero-image {
   @extend %outdent-to-full-width;
 }
+
+// comma-separated lists
 
 .field-list ul {
   padding-left: 0;
