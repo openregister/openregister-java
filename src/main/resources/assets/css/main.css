@@ -841,6 +841,69 @@ hr {
   background: #BFC1C3;
   border: 0; }
 
+.homepage-intro {
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 30px; }
+
+.primary-metadata dt {
+  font-family: "GDS-Logo", sans-serif;
+  font-size: 14px;
+  line-height: 1.14286;
+  font-weight: 400;
+  text-transform: none;
+  padding: 20px 0 5px 0; }
+  @media (min-width: 641px) {
+    .primary-metadata dt {
+      font-size: 16px;
+      line-height: 1.25; } }
+  .primary-metadata dt:first-child {
+    padding-top: 5px; }
+
+.primary-metadata dd {
+  margin: 5px 0 0 0;
+  font-family: "GDS-Logo", sans-serif;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: none; }
+  @media (min-width: 641px) {
+    .primary-metadata dd {
+      font-size: 24px;
+      line-height: 1.25; } }
+  .primary-metadata dd p, .primary-metadata dd strong {
+    font-weight: bold; }
+  .primary-metadata dd a {
+    text-decoration: none; }
+  .primary-metadata dd a:hover {
+    text-decoration: underline; }
+  .primary-metadata dd .show-other-content {
+    font-family: "GDS-Logo", sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      .primary-metadata dd .show-other-content {
+        font-size: 24px;
+        line-height: 1.25; } }
+
+.side-nav {
+  font-weight: 700;
+  list-style-type: none;
+  line-height: 30px; }
+  .side-nav a {
+    text-decoration: none; }
+  .side-nav a:hover {
+    text-decoration: underline; }
+
+.technical-information {
+  margin-top: 35px;
+  margin-bottom: 15px;
+  padding: 25px;
+  background-color: #f5f5f5;
+  border: 1px solid #BFC1C3; }
+
 body {
   font-family: "GDS-Logo", sans-serif; }
 
@@ -900,62 +963,6 @@ body {
       .phase-banner span {
         vertical-align: baseline; } }
 
-.homepage-intro {
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 30px; }
-
-.primary-metadata dt {
-  font-family: "GDS-Logo", sans-serif;
-  font-size: 14px;
-  line-height: 1.14286;
-  font-weight: 400;
-  text-transform: none;
-  padding: 20px 0 5px 0; }
-  @media (min-width: 641px) {
-    .primary-metadata dt {
-      font-size: 16px;
-      line-height: 1.25; } }
-  .primary-metadata dt:first-child {
-    padding-top: 5px; }
-
-.primary-metadata dd {
-  margin: 5px 0 0 0;
-  font-family: "GDS-Logo", sans-serif;
-  font-size: 18px;
-  line-height: 1.2;
-  font-weight: 700;
-  text-transform: none; }
-  @media (min-width: 641px) {
-    .primary-metadata dd {
-      font-size: 24px;
-      line-height: 1.25; } }
-  .primary-metadata dd p, .primary-metadata dd strong {
-    font-weight: bold; }
-  .primary-metadata dd a {
-    text-decoration: none; }
-  .primary-metadata dd a:hover {
-    text-decoration: underline; }
-  .primary-metadata dd .show-other-content {
-    font-family: "GDS-Logo", sans-serif;
-    font-size: 18px;
-    line-height: 1.2;
-    font-weight: 700;
-    text-transform: none; }
-    @media (min-width: 641px) {
-      .primary-metadata dd .show-other-content {
-        font-size: 24px;
-        line-height: 1.25; } }
-
-.side-nav {
-  font-weight: 700;
-  list-style-type: none;
-  line-height: 30px; }
-  .side-nav a {
-    text-decoration: none; }
-  .side-nav a:hover {
-    text-decoration: underline; }
-
 @media (min-width: 641px) {
   #footer .footer-meta .footer-meta-inner .custom-government-licence {
     padding-left: 0px; } }
@@ -984,13 +991,6 @@ body {
     .grid-row .column-two-thirds {
       float: left;
       width: 66.66667%; } }
-
-.technical-information {
-  margin-top: 35px;
-  margin-bottom: 15px;
-  padding: 25px;
-  background-color: #f5f5f5;
-  border: 1px solid #BFC1C3; }
 
 .field-list ul {
   padding-left: 0;
