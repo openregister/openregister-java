@@ -58,7 +58,7 @@ public class ViewFactory {
     }
 
     public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, e);
+        return new BadRequestExceptionView(requestContext, publicBodiesConfiguration, e);
     }
 
     public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {
