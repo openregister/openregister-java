@@ -90,29 +90,25 @@ main {
     a {
       text-decoration: none;
     }
+    a:hover {
+      text-decoration: underline;
+    }
     .show-other-content {
       @include bold-24;
     }
   }
 }
 
-.registry-label {
-  margin-bottom: 5px;
-}
-
-.org-name {
-  font-size: 24px;
-  margin-top: 0px;
-  margin-bottom: 15px;
-}
-
 .side-nav {
   font-weight: 700;
   list-style-type: none;
   line-height: 30px;
-    a{
-      text-decoration: none;
-    }
+  a {
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
 }
 
 #footer .footer-meta .footer-meta-inner {
@@ -128,14 +124,6 @@ main {
 .registry-copyright {
   white-space: pre; /* fallback for IE 6-7 */
   white-space: pre-line;
-}
-
-dd a {
-  text-decoration: none;
-}
-
-.registry-label {
-  margin-top: 60px;
 }
 
 //grids

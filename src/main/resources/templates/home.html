@@ -10,14 +10,9 @@
         <div class="column-two-thirds">
             <div class="homepage-intro" th:utext="${registerText}">The register of UK government registers.</div>
 
-            <div class="registry">
-                <p class="registry-label">Provided by:</p>
-                <p class="org-name">
-                    <a th:href="${publicBody.recordLink}" th:text="${publicBody.name}">Cabinet Office</a>
-                </p>
-            </div>
-
             <dl class="primary-metadata">
+                <dt>Provided by:</dt>
+                <dd><a th:href="${publicBody.recordLink}" th:text="${publicBody.name}">Cabinet Office</a></dd>
                 <dt>Total records:</dt>
                 <dd><a href="/records" th:text="${totalRecords}">Total records</a></dd>
                 <dt>Last updated:</dt>
@@ -30,7 +25,7 @@
         <div class="column-two-thirds">
         <h2 class="heading-large">Technical information</h2>
             <p>Registers are made up of entries containing fields of data. To build services on top of these registers you can access the data in a variety of formats.</p>
-            <dt>Fields in this register:</dt>
+            <h3>Fields in this register:</h3>
             <div class="field-list"> <ul><li th:each="field : ${register.fields}" th:text="${field}"></li></ul> </div>
         </div>
         <div class="column-third">
