@@ -34,12 +34,12 @@ $image-url-path: '/assets/' !default;
 
 $pale-grey: #f5f5f5;
 $dark-grey: #BFC1C3;
+$register: #2372b5;
+$NTA-Light: $Helvetica-Regular;
 
 @import "details";
 @import "fingerprint";
-
-$register: #2372b5;
-$NTA-Light: $Helvetica-Regular;
+@import "home";
 
 body {
   font-family: $Helvetica-Regular;
@@ -65,52 +65,6 @@ main {
   margin-bottom: $gutter;
 }
 
-.homepage-intro {
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 30px;
-}
-
-.primary-metadata {
-  dt {
-    @include core-16;
-    padding: ($gutter/6 + $gutter-half) 0 $gutter/6 0;
-    &:first-child {
-      padding-top: $gutter/6;
-    }
-  }
-  dd {
-    margin: 5px 0 0 0;
-    @include bold-24;
-    // some bits of metadata are included inside of other tags which have a
-    // default style of font-weight: normal
-    p, strong {
-      font-weight: bold;
-    }
-    a {
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .show-other-content {
-      @include bold-24;
-    }
-  }
-}
-
-.side-nav {
-  font-weight: 700;
-  list-style-type: none;
-  line-height: 30px;
-  a {
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-}
-
 #footer .footer-meta .footer-meta-inner {
   .custom-government-licence {
     @extend .open-government-licence;
@@ -124,6 +78,15 @@ main {
 .registry-copyright {
   white-space: pre; /* fallback for IE 6-7 */
   white-space: pre-line;
+}
+
+// attribution in top-right of many pages
+.provided-by {
+  float: left;
+}
+.custodian-small {
+  float: left;
+  clear: left;
 }
 
 //grids
@@ -142,13 +105,7 @@ main {
   @extend %outdent-to-full-width;
 }
 
-.technical-information {
-    margin-top: 35px;
-    margin-bottom: 15px;
-    padding: 25px;
-    background-color: $pale-grey;
-    border: 1px solid $dark-grey;
-}
+// comma-separated lists
 
 .field-list ul {
   padding-left: 0;
@@ -184,6 +141,8 @@ table {
   border-collapse: collapse;
   border: 1px solid $border-colour;
   width: 100%;
+
+  margin-top: 2rem;
 
   td, th {
     vertical-align: top;

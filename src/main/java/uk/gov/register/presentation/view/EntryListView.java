@@ -2,6 +2,7 @@ package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.EntryView;
+import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
@@ -16,8 +17,9 @@ public class EntryListView extends ThymeleafView {
             RequestContext requestContext,
             List<EntryView> entries,
             Pagination pagination,
+            PublicBodiesConfiguration publicBodiesConfiguration,
             String templateName) {
-        super(requestContext, templateName);
+        super(requestContext, publicBodiesConfiguration, templateName);
         this.entries = entries;
         this.pagination = pagination;
     }

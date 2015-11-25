@@ -6,11 +6,16 @@
 <header th:replace="main.html::header"></header>
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
-    <h1 class="entry-header" th:text="'Record ' + ${entry.primaryKey()}">Entry Name Header</h1>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="entry-header" th:text="'Record ' + ${entry.primaryKey()}">Entry Name Header</h1>
+            <p class="entry-source">A record in the <a href="/"
+                                                       th:text="${friendlyRegisterName}"></a>
+            </p>
+        </div>
+        <div class="column-third" th:include="main.html :: attribution"></div>
+    </div>
 
-    <p class="entry-source">A record in the <a href="/"
-                                               th:text="${friendlyRegisterName}"></a>
-    </p>
     <p>The latest entry for this record is:</p>
 
     <div th:include="fragments/entry-table.html :: entry-table (content = ${entry.content})"></div>

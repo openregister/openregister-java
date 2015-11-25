@@ -2,6 +2,8 @@ package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -12,13 +14,15 @@ import java.nio.charset.StandardCharsets;
 
 public class ThymeleafView extends View {
 
+    protected final PublicBodiesConfiguration publicBodiesConfiguration;
     private final RequestContext requestContext;
 
     private String thymeleafTemplateName;
 
-    public ThymeleafView(RequestContext requestContext, String templateName) {
+    public ThymeleafView(RequestContext requestContext, PublicBodiesConfiguration publicBodiesConfiguration, String templateName) {
         super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
+        this.publicBodiesConfiguration = publicBodiesConfiguration;
     }
 
     @Override
@@ -64,5 +68,9 @@ public class ThymeleafView extends View {
         return requestContext.getHttpServletRequest();
     }
 
+    @SuppressWarnings("unused, used by templates")
+    public PublicBody getCustodian() {
+        return publicBodiesConfiguration.getPublicBody(getRegister().getRegistry());
+    }
 }
 

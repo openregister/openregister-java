@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.StringValue;
+import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -17,11 +18,13 @@ import static org.mockito.Mockito.when;
 public class SingleEntryViewTest {
     @Mock
     private RequestContext requestContext;
+    @Mock
+    private PublicBodiesConfiguration publicBodiesConfiguration;
 
     @Test
     public void getVersionHistoryLink_constructsCorrectUrl() throws Exception {
         when(requestContext.getRegisterPrimaryKey()).thenReturn("primaryKey");
-        SingleEntryView singleEntryView = new SingleEntryView(requestContext, new EntryView(50, "hash", "primaryKey", ImmutableMap.of("primaryKey", new StringValue("12345"))));
+        SingleEntryView singleEntryView = new SingleEntryView(requestContext, new EntryView(50, "hash", "primaryKey", ImmutableMap.of("primaryKey", new StringValue("12345"))), publicBodiesConfiguration);
 
         String versionHistoryLink = singleEntryView.getVersionHistoryLink();
 
