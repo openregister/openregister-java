@@ -38,8 +38,7 @@ public class SearchResource {
         List<DbEntry> records = queryDAO.findLatestEntriesOfRecordsByKeyValue(key, value);
 
         if (key.equals(requestContext.getRegisterPrimaryKey())) {
-            Optional<DbEntry> optionalEntry = (records.size() == 0 ? Optional.empty() : Optional.of(records.get(0)));
-            return entryResponse(optionalEntry, viewFactory::getLatestEntryView);
+            return entryResponse(records.stream().findFirst(), viewFactory::getLatestEntryView);
         }
 
         Pagination pagination = new Pagination(String.format("/%s/%s", key, value), Optional.empty(), Optional.empty(), 0);
