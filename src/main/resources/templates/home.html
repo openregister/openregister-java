@@ -27,9 +27,11 @@
             <p>Registers are made up of entries containing fields of data. To build services on top of these registers you can access the data in a variety of formats.</p>
             <h3>Fields in this register:</h3>
             <div class="field-list"> <ul><li th:each="field : ${register.fields}" th:text="${field}"></li></ul> </div>
+
+            <div><a th:href="${linkToRegisterRegister}">View this entry in the register of registers</a></div>
         </div>
         <div class="column-third">
-            <ul class="side-nav">
+            <ul>
                 <li><a href="http://www.openregister.org/">About registers</a></li>
                 <li><a href="http://www.openregister.org/developer">Developer documentation</a></li>
                 <li><a href="/download">Download all entries</a></li>

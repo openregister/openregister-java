@@ -35,22 +35,19 @@
   }
 }
 
-.side-nav {
-  font-weight: 700;
-  list-style-type: none;
-  line-height: 30px;
-  a {
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-}
-
 .technical-information {
     margin-top: 35px;
     margin-bottom: 15px;
     padding: 25px;
     background-color: $pale-grey;
     border: 1px solid $dark-grey;
-}
+    a {
+        font-weight: 700;
+        list-style-type: none;
+        line-height: 30px;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+ }
