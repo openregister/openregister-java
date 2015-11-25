@@ -59,7 +59,7 @@ public class HistoryResourceTest {
     @Test
     @SuppressWarnings("unchecked, limitations of ArgumentCaptor with generics")
     public void history_returnsVersionsFromDatabase() throws Exception {
-        when(queryDAO.findAllByKeyValue("school", "1234")).thenReturn(Arrays.asList(
+        when(queryDAO.findAllEntriesByKeyValue("school", "1234")).thenReturn(Arrays.asList(
                 new DbEntry(3, new DbContent("hash1", objectMapper.readTree("{\"school\":\"1234\",\"head-teacher\":\"John Smith\"}"))),
                 new DbEntry(17, new DbContent("hash2", objectMapper.readTree("{\"school\":\"1234\",\"head-teacher\":\"Caroline Atkins\"}")))
         ));

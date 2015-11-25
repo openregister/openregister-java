@@ -24,19 +24,11 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void findByPrimaryKey_shouldReturnEntryWithThPrimaryKey() throws JSONException {
+    public void find_shouldReturnEntryWithThPrimaryKey_whenSearchForPrimaryKey() throws JSONException {
         Response response = getRequest("/address/12345.json");
 
         assertThat(response.getHeaderString("Link"), equalTo("</address/12345/history>;rel=\"version-history\""));
         JSONAssert.assertEquals("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}", response.readEntity(String.class), false);
-    }
-
-    @Test
-    public void findByPrimaryKey_returns400ForNonPrimaryKeySearch() {
-        Response response = getRequest("/key1/key1Value_1.json");
-
-        assertThat(response.getStatus(), equalTo(404));
-
     }
 
     @Test

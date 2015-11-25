@@ -34,7 +34,7 @@ public class HistoryResource {
     public ListVersionView history(@PathParam("primaryKey") String key, @PathParam("primaryKeyValue") String value) throws Exception {
         String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
         if (key.equals(registerPrimaryKey)) {
-            return viewFactory.listVersionView(queryDAO.findAllByKeyValue(key, value).stream().map(r -> new Version(r.getSerialNumber(), r.getContent().getHash())).collect(Collectors.toList()));
+            return viewFactory.listVersionView(queryDAO.findAllEntriesByKeyValue(key, value).stream().map(r -> new Version(r.getSerialNumber(), r.getContent().getHash())).collect(Collectors.toList()));
         }
         throw new NotFoundException();
     }

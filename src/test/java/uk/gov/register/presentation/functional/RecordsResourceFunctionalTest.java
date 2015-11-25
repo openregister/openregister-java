@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
+import org.json.JSONException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -20,7 +21,9 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
         DBSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"
+                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
+                "{\"hash\":\"hash4\",\"entry\":{\"name\":\"updatedEllisName\",\"address\":\"145678\"}}",
+                "{\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"6789\"}}"
         ));
     }
 
@@ -31,8 +34,8 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
         String jsonResponse = response.readEntity(String.class);
         JSONAssert.assertEquals(jsonResponse,
                 "[" +
-                        "{\"serial-number\":2,\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}," +
-                        "{\"serial-number\":3,\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}," +
+                        "{\"serial-number\":5,\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"6789\"}}," +
+                        "{\"serial-number\":4,\"hash\":\"hash4\",\"entry\":{\"name\":\"updatedEllisName\",\"address\":\"145678\"}}," +
                         "{\"serial-number\":1,\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}" +
                         "]"
                 , false);
@@ -64,6 +67,18 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
 
         response = getRequest("/records.json?page-index=3&page-size=1");
         assertThat(response.getHeaderString("Link"), equalTo("</records?page-index=2&page-size=1>; rel=\"previous\""));
+    }
+
+    @Test
+    public void fetchAllRecordsForAKeyValueCombinatiion() throws JSONException {
+        Response response = getRequest("/name/ellis.json");
+        String jsonResponse = response.readEntity(String.class);
+        JSONAssert.assertEquals(jsonResponse,
+                "[" +
+                        "{\"serial-number\":5,\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"6789\"}}," +
+                        "{\"serial-number\":1,\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}" +
+                        "]"
+                , false);
     }
 }
 
