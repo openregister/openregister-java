@@ -1,6 +1,7 @@
 package uk.gov.register.thymeleaf;
 
 import org.markdownj.MarkdownProcessor;
+import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -39,5 +40,10 @@ public class HomePageView extends ThymeleafView {
     @SuppressWarnings("unused, used from template")
     public String getLastUpdatedTime(){
         return DATE_TIME_FORMATTER.format(lastUpdated);
+    }
+
+    @SuppressWarnings("unused, used from template")
+    public String getLinkToRegisterRegister(){
+        return new LinkValue("register", getRegisterId()).link();
     }
 }
