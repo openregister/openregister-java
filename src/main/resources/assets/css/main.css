@@ -971,11 +971,7 @@ body {
   white-space: pre-line; }
 
 .provided-by {
-  float: left; }
-
-.custodian-small {
-  float: left;
-  clear: left; }
+  display: block; }
 
 .grid-row .column-third {
   padding: 0 15px;

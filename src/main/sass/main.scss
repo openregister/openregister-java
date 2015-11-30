@@ -82,11 +82,7 @@ main {
 
 // attribution in top-right of many pages
 .provided-by {
-  float: left;
-}
-.custodian-small {
-  float: left;
-  clear: left;
+  display: block;
 }
 
 //grids
