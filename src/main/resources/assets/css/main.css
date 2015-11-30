@@ -846,6 +846,11 @@ hr {
   font-size: 24px;
   line-height: 30px; }
 
+.primary-metadata a {
+  text-decoration: none; }
+  .primary-metadata a:focus, .primary-metadata a:hover {
+    text-decoration: underline; }
+
 .primary-metadata dt {
   font-family: "GDS-Logo", sans-serif;
   font-size: 14px;
@@ -873,10 +878,6 @@ hr {
       line-height: 1.25; } }
   .primary-metadata dd p, .primary-metadata dd strong {
     font-weight: bold; }
-  .primary-metadata dd a {
-    text-decoration: none; }
-  .primary-metadata dd a:hover {
-    text-decoration: underline; }
   .primary-metadata dd .show-other-content {
     font-family: "GDS-Logo", sans-serif;
     font-size: 18px;
@@ -895,12 +896,13 @@ hr {
   background-color: #f5f5f5;
   border: 1px solid #BFC1C3; }
   .technical-information a {
+    text-decoration: none; }
+    .technical-information a:focus, .technical-information a:hover {
+      text-decoration: underline; }
+  .technical-information a {
     font-weight: 700;
     list-style-type: none;
-    line-height: 30px;
-    text-decoration: none; }
-  .technical-information a:hover {
-    text-decoration: underline; }
+    line-height: 30px; }
 
 body {
   font-family: "GDS-Logo", sans-serif; }
