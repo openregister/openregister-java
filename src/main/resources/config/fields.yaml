@@ -822,3 +822,18 @@
     field: "inspector"
     register: ""
     text: "The organisation conducting an inspection"
+- hash: "14b924c2714ef004373831c4b96581e27920e5fb"
+  entry:
+    cardinality: "1"
+    datatype: "curie"
+    field: "location"
+    register: "location"
+    text: "A geographic location found in government data which may be published under\
+      \ an open government licence"
+- hash: "08c16af635da716f5f67cfbd359ba323c2167298"
+  entry:
+    cardinality: "1"
+    datatype: "point"
+    field: "point"
+    register: ""
+    text: "A geographical location"

@@ -252,3 +252,12 @@
     register: "premises"
     registry: "valuation-office-agency"
     text: "The register of business premises."
+- hash: "b6a1abf17b1405fe2eaa917dfa8f9bf22d2d3dc9"
+  entry:
+    fields:
+    - "location"
+    - "point"
+    register: "location"
+    registry: "cabinet-office"
+    text: "Geographic locations of places found in government data which may be published\
+      \ under an open government licence"
