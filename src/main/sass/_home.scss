@@ -1,6 +1,15 @@
 // Homepage-specific styles
 // ==========================================================================
 
+@mixin remove-link-underline {
+  a {
+    text-decoration: none;
+    &:focus, &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .homepage-intro {
   font-weight: 400;
   font-size: 24px;
@@ -8,6 +17,7 @@
 }
 
 .primary-metadata {
+  @include remove-link-underline;
   dt {
     @include core-16;
     padding: ($gutter/6 + $gutter-half) 0 $gutter/6 0;
@@ -23,12 +33,6 @@
     p, strong {
       font-weight: bold;
     }
-    a {
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
     .show-other-content {
       @include bold-24;
     }
@@ -36,6 +40,7 @@
 }
 
 .technical-information {
+    @include remove-link-underline;
     margin-top: 35px;
     margin-bottom: 15px;
     padding: 25px;
@@ -45,9 +50,5 @@
         font-weight: 700;
         list-style-type: none;
         line-height: 30px;
-        text-decoration: none;
-    }
-    a:hover {
-        text-decoration: underline;
     }
  }

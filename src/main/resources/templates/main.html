@@ -34,7 +34,7 @@
 
 <div th:fragment="attribution">
     <span class="provided-by">Provided by:</span>
-    <a class="custodian-small" th:href="${custodian.recordLink}" th:text="${custodian.name}">Cabinet Office</a>
+    <a th:href="${custodian.recordLink}" th:text="${custodian.name}">Cabinet Office</a>
 </div>
 
 <footer th:fragment="footer" id="footer" class="group" role="contentinfo">
