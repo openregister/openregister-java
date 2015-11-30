@@ -1025,7 +1025,7 @@ table {
   border-collapse: collapse;
   border: 1px solid #bfc1c3;
   width: 100%;
-  margin-top: 2rem; }
+  margin-top: 30px; }
   @media (min-width: 641px) {
     table {
       font-size: 14px;
