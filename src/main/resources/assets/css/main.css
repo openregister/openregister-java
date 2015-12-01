@@ -975,6 +975,12 @@ body {
 .provided-by {
   display: block; }
 
+.field-column {
+  width: 33%; }
+
+.value-column {
+  width: 67%; }
+
 .grid-row .column-third {
   padding: 0 15px;
   -webkit-box-sizing: border-box;
