@@ -72,7 +72,13 @@ public class EntryValidatorTest {
             assertThat(e.getMessage(), equalTo("Unknown field 'foo'."));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
+    }
 
+
+    @Test
+    public void noErrorWhenEntryIsValid() throws IOException, EntryValidator.EntryValidationException {
+        String jsonString = "{\"register\":\"aregister\",\"text\":\"some text\"}";
+        entryValidator.validateEntry("register", nodeOf(jsonString));
     }
 
     private JsonNode nodeOf(String jsonString) throws IOException {

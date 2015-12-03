@@ -25,7 +25,8 @@ public class MintService {
             return Response.ok().build();
         } catch (Exception e) {
             if (e.getCause() instanceof EntryValidator.EntryValidationException) {
-                return Response.status(400).entity(e).build();
+                EntryValidator.EntryValidationException errorCause = (EntryValidator.EntryValidationException) e.getCause();
+                return Response.status(400).entity(errorCause.getMessage() + "\nEntity: '" + errorCause.getEntry().toString() + "'").build();
             } else {
                 return Response.serverError().entity(e).build();
             }

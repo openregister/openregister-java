@@ -2,9 +2,10 @@ package uk.gov.mint;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
-import uk.gov.register.*;
+import uk.gov.register.FieldsConfiguration;
+import uk.gov.register.Register;
+import uk.gov.register.RegistersConfiguration;
 import uk.gov.register.datatype.Datatype;
-import uk.gov.register.datatype.DatatypeFactory;
 
 import java.util.Iterator;
 
@@ -34,25 +35,19 @@ public class EntryValidator {
             throw new EntryValidationException("Register's primary key field not available.", jsonNode);
         }
 
-        Field field = fieldsConfiguration.getField(primaryKey);
-
-        Datatype datatype = DatatypeFactory.get(field.getDatatype());
-
-        if (!datatype.valueExists(valueNode)) {
+        if (!datatypeOf(primaryKey).valueExists(valueNode)) {
             throw new EntryValidationException("Value for primary key field not exists.", jsonNode);
         }
 
     }
 
     private void validateFieldsValue(JsonNode jsonNode) throws EntryValidationException {
-        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration();
         Iterator<String> fieldIterator = jsonNode.fieldNames();
+
         while (fieldIterator.hasNext()) {
             String fieldName = fieldIterator.next();
-            Field field = fieldsConfiguration.getField(fieldName);
 
-            Datatype datatype = DatatypeFactory.get(field.getDatatype());
-            if (!datatype.isValid(jsonNode.get(fieldName))) {
+            if (!datatypeOf(fieldName).isValid(jsonNode.get(fieldName))) {
                 throw new EntryValidationException("Check field '" + fieldName + "' value, must be of acceptable datatype.", jsonNode);
             }
         }
@@ -61,12 +56,17 @@ public class EntryValidator {
     private void validateFields(Register register, JsonNode jsonNode) throws EntryValidationException {
         Iterator<String> fieldNames = jsonNode.fieldNames();
         Iterable<String> registerFields = register.getFields();
+
         while (fieldNames.hasNext()) {
             String fieldName = fieldNames.next();
             if (!Iterables.contains(registerFields, fieldName)) {
                 throw new EntryValidationException("Unknown field '" + fieldName + "'.", jsonNode);
             }
         }
+    }
+
+    private Datatype datatypeOf(String fieldName) {
+        return fieldsConfiguration.getField(fieldName).getDatatype();
     }
 
     public static class EntryValidationException extends Exception {

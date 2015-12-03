@@ -3,12 +3,14 @@ package uk.gov.register;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.datatype.Datatype;
+import uk.gov.register.datatype.DatatypeFactory;
 
 import java.util.Optional;
 
 public class Field {
     final String fieldName;
-    final String datatype;
+    final Datatype datatype;
     final Optional<String> register;
     final Cardinality cardinality;
     final String text;
@@ -20,7 +22,7 @@ public class Field {
                  @JsonProperty("cardinality") Cardinality cardinality,
                  @JsonProperty("text") String text) {
         this.fieldName = fieldName;
-        this.datatype = datatype;
+        this.datatype = DatatypeFactory.get(datatype);
         this.register = StringUtils.isNotEmpty(register) ? Optional.of(register) : Optional.empty();
         this.cardinality = cardinality;
         this.text = text;
@@ -30,11 +32,12 @@ public class Field {
         return register;
     }
 
+    @SuppressWarnings("unused")
     public Cardinality getCardinality() {
         return cardinality;
     }
 
-    public String getDatatype() {
+    public Datatype getDatatype() {
         return datatype;
     }
 }
