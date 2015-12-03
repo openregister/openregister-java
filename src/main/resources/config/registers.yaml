@@ -101,8 +101,7 @@
     text: "The register of UK Postal codes which may appear in an [address](http://address.openregister.org).\n"
     fields:
     - "postcode"
-    - "latitude"
-    - "longitude"
+    - "point"
     register: "postcode"
     registry: "office-for-national-statistics"
     copyright: "Contains Ordnance Survey data © Crown copyright & database right 2015\

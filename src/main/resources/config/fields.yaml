@@ -835,5 +835,13 @@
     cardinality: "1"
     datatype: "point"
     field: "point"
+
     register: ""
     text: "A geographical location"
+- hash: "08c16af635da716f5f67cfbd359ba323c2167ddd"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "phase"
+    register: ""
+    text: "Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual)."
