@@ -10,7 +10,7 @@ public class DummyDatatype implements Datatype{
     }
 
     @Override
-    public boolean valueExists(JsonNode value) {
+    public boolean hasValue(JsonNode value) {
         return true;
     }
 }

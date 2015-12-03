@@ -11,7 +11,7 @@ public class StringDatatype implements Datatype {
     }
 
     @Override
-    public boolean valueExists(JsonNode value) {
+    public boolean hasValue(JsonNode value) {
         return StringUtils.isNotBlank(value.textValue());
     }
 }
