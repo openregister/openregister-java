@@ -7,6 +7,7 @@ import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -15,8 +16,8 @@ import static org.junit.Assert.fail;
 public class EntryValidatorTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration();
-    private RegistersConfiguration registerConfiguration = new RegistersConfiguration();
+    private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty());
+    private RegistersConfiguration registerConfiguration = new RegistersConfiguration(Optional.empty());
 
     private EntryValidator entryValidator = new EntryValidator(registerConfiguration, fieldsConfiguration);
 

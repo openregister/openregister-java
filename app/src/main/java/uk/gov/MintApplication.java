@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
@@ -16,6 +15,8 @@ import uk.gov.mint.MintService;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
+
+import java.util.Optional;
 
 public class MintApplication extends Application<MintConfiguration> {
 
@@ -44,19 +45,15 @@ public class MintApplication extends Application<MintConfiguration> {
     public void run(MintConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
 
-        DataSourceFactory database = configuration.getDatabase();
+        DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        DBI jdbi = dbiFactory.build(environment, database, "postgres");
+        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
 
-        EntriesUpdateDAO entriesUpdateDAO = jdbi.onDemand(EntriesUpdateDAO.class);
-
-        RegistersConfiguration registersConfiguration = new RegistersConfiguration();
-
-        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration();
+        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
 
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, entryValidator);
+        LoadHandler loadHandler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new MintService(loadHandler));

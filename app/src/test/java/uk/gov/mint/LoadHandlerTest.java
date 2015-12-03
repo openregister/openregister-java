@@ -14,6 +14,7 @@ import uk.gov.store.EntriesUpdateDAO;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,7 +32,7 @@ public class LoadHandlerTest {
 
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, new EntryValidator(new RegistersConfiguration(), new FieldsConfiguration()));
+        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, new EntryValidator(new RegistersConfiguration(Optional.empty()), new FieldsConfiguration(Optional.empty())));
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
 

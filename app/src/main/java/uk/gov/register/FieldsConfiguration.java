@@ -8,24 +8,32 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class FieldsConfiguration {
 
     private final List<Field> fields;
 
-    public FieldsConfiguration() {
+    public FieldsConfiguration(Optional<String> fieldsResourceYamlPath) {
         try {
-            InputStream fieldsStream = this.getClass().getClassLoader().getResourceAsStream("config/fields.yaml");
+            InputStream fieldsStream = getFieldsStream(fieldsResourceYamlPath);
             ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
             List<FieldData> rawFields = yamlObjectMapper.readValue(fieldsStream, new TypeReference<List<FieldData>>() {
             });
             fields = Lists.transform(rawFields, m -> m.entry);
         } catch (IOException e) {
             throw new RuntimeException("Error loading fields configuration.", e);
+        }
+    }
+
+    protected InputStream getFieldsStream(Optional<String> fieldsResourceYamlPath) throws FileNotFoundException {
+        if (fieldsResourceYamlPath.isPresent()) {
+            return new FileInputStream(new File(fieldsResourceYamlPath.get()));
+        } else {
+            return this.getClass().getClassLoader().getResourceAsStream("config/fields.yaml");
         }
     }
 
