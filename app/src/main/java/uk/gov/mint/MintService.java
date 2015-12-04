@@ -23,14 +23,10 @@ public class MintService {
         try {
             loadHandler.handle(extractRegisterNameFromRequest(), payload);
             return Response.ok().build();
+        } catch (EntryValidationException e) {
+            return Response.status(400).entity(e.getMessage() + " Error entry: '" + e.getEntry().toString() + "'").build();
         } catch (Exception e) {
-            if (e.getCause() instanceof EntryValidator.EntryValidationException) {
-                EntryValidator.EntryValidationException errorCause = (EntryValidator.EntryValidationException) e.getCause();
-                return Response.status(400).entity(errorCause.getMessage() + "\nEntity: '" + errorCause.getEntry().toString() + "'").build();
-            } else {
-                return Response.serverError().entity(e).build();
-            }
-
+            return Response.serverError().entity(e).build();
         }
     }
 

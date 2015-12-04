@@ -28,7 +28,7 @@ public class EntryValidatorTest {
         try {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
-        } catch (EntryValidator.EntryValidationException e) {
+        } catch (EntryValidationException e) {
             assertThat(e.getMessage(), equalTo("Register's primary key field not available."));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -41,7 +41,7 @@ public class EntryValidatorTest {
         try {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
-        } catch (EntryValidator.EntryValidationException e) {
+        } catch (EntryValidationException e) {
             assertThat(e.getMessage(), equalTo("Value for primary key field not exists."));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -55,7 +55,7 @@ public class EntryValidatorTest {
         try {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
-        } catch (EntryValidator.EntryValidationException e) {
+        } catch (EntryValidationException e) {
             assertThat(e.getMessage(), equalTo("Check field 'text' value, must be of acceptable datatype."));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -69,7 +69,7 @@ public class EntryValidatorTest {
         try {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
-        } catch (EntryValidator.EntryValidationException e) {
+        } catch (EntryValidationException e) {
             assertThat(e.getMessage(), equalTo("Unknown field 'foo'."));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -77,7 +77,7 @@ public class EntryValidatorTest {
 
 
     @Test
-    public void noErrorWhenEntryIsValid() throws IOException, EntryValidator.EntryValidationException {
+    public void noErrorWhenEntryIsValid() throws IOException, EntryValidationException {
         String jsonString = "{\"register\":\"aregister\",\"text\":\"some text\"}";
         entryValidator.validateEntry("register", nodeOf(jsonString));
     }

@@ -69,16 +69,4 @@ public class EntryValidator {
         return fieldsConfiguration.getField(fieldName).getDatatype();
     }
 
-    public static class EntryValidationException extends Exception {
-        private JsonNode entry;
-
-        public EntryValidationException(String message, JsonNode entry) {
-            super(message);
-            this.entry = entry;
-        }
-
-        public JsonNode getEntry() {
-            return entry;
-        }
-    }
 }

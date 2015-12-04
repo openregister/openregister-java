@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class IntegerDatatype implements Datatype {
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public boolean isValid(JsonNode value) {
         if (value instanceof TextNode) {
