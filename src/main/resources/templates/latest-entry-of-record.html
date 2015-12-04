@@ -8,7 +8,8 @@
     <div th:replace="main.html::phase"></div>
     <div class="grid-row">
         <div class="column-two-thirds">
-            <h1 class="entry-header" th:text="'Record ' + ${entry.primaryKey()}">Entry Name Header</h1>
+            Record:
+            <h1 class="entry-header" th:text="${entry.primaryKey()}">Entry Name Header</h1>
             <p class="entry-source">A record in the <a href="/"
                                                        th:text="${friendlyRegisterName}"></a>
             </p>

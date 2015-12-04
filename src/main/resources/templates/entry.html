@@ -8,7 +8,8 @@
     <div th:replace="main.html::phase"></div>
     <div class="grid-row">
         <div class="column-two-thirds">
-            <h1 th:text="'Entry ' + ${entry.serialNumber}">Entry Name Header</h1>
+         Entry:
+            <h1 th:text="${entry.serialNumber}">Entry Name Header</h1>
 
             <p class="entry-source">
                 An entry in the
