@@ -12,10 +12,13 @@ import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class RegistersConfiguration {
 
     private final List<Register> registers;
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
+
 
     public RegistersConfiguration(Optional<String> registersResourceYamlPath) {
         try {
@@ -31,8 +34,10 @@ public class RegistersConfiguration {
 
     protected InputStream getRegistersStream(Optional<String> registersResourceYamlPath) throws FileNotFoundException {
         if (registersResourceYamlPath.isPresent()) {
+            logger.info("Loading external file '" + registersResourceYamlPath.get() + "' for registers data.");
             return new FileInputStream(new File(registersResourceYamlPath.get()));
         } else {
+            logger.info("Loading internal file 'config/registers.yaml' for registers data.");
             return this.getClass().getClassLoader().getResourceAsStream("config/registers.yaml");
         }
     }

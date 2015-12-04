@@ -12,10 +12,12 @@ import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class FieldsConfiguration {
 
     private final List<Field> fields;
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public FieldsConfiguration(Optional<String> fieldsResourceYamlPath) {
         try {
@@ -31,8 +33,10 @@ public class FieldsConfiguration {
 
     protected InputStream getFieldsStream(Optional<String> fieldsResourceYamlPath) throws FileNotFoundException {
         if (fieldsResourceYamlPath.isPresent()) {
+            logger.info("Loading external file '" + fieldsResourceYamlPath.get() + "' for fields data.");
             return new FileInputStream(new File(fieldsResourceYamlPath.get()));
         } else {
+            logger.info("Loading internal file 'config/fields.yaml' for fields data.");
             return this.getClass().getClassLoader().getResourceAsStream("config/fields.yaml");
         }
     }
