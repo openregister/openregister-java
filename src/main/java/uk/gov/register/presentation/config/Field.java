@@ -10,7 +10,6 @@ import java.util.Optional;
 public class Field {
     final String fieldName;
     final String datatype;
-    final String phase;
     final Optional<String> register;
     final Cardinality cardinality;
     final String text;
@@ -20,11 +19,9 @@ public class Field {
                  @JsonProperty("datatype") String datatype,
                  @JsonProperty("register") String register,
                  @JsonProperty("cardinality") Cardinality cardinality,
-                 @JsonProperty("text") String text,
-                 @JsonProperty("phase") String phase) {
+                 @JsonProperty("text") String text) {
         this.fieldName = fieldName;
         this.datatype = datatype;
-        this.phase = phase;
         this.register = StringUtils.isNotEmpty(register) ? Optional.of(register) : Optional.empty();
         this.cardinality = cardinality;
         this.text = text;
