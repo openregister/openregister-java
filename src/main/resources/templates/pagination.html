@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
-    <div th:fragment="pagination">
-        <ul>
-            <li th:if="${pagination.hasPreviousPage()}" class="previous">
-                <a th:href="${pagination.previousPageLink}" th:text="Previous">
-                </a>
+<div th:fragment="pagination-header(records_or_entries_string)" >
+    <th:block th:text="${pagination.firstEntryNumberOnThisPage + '-' + pagination.lastEntryNumberOnThisPage +' of ' + pagination.totalEntries + ' ' + records_or_entries_string}">1-100 of 1000 records</th:block>
+</div>
+
+<div th:fragment="pagination-footer">
+    <ul class="previous-next-navigation">
+        <li th:if="${pagination.hasPreviousPage()}" class="previous">
+            <a th:href="${pagination.previousPageLink}">
+                Previous
+                <span class="visuallyhidden">page</span>
                 <span class="page-numbers"
                       th:text="${pagination.previousPageNumber + ' of ' + pagination.totalPages}"></span>
-            </li>
-            <li th:if="${pagination.hasNextPage()}" class="next">
-                <a th:href="${pagination.nextPageLink}" th:text="Next">
-                </a>
-                <span class="page-numbers" th:text="${pagination.nextPageNumber + ' of ' + pagination.totalPages}"></span>
-            </li>
-        </ul>
-    </div>
+            </a>
+        </li>
+        <li th:if="${pagination.hasNextPage()}" class="next">
+            <a th:href="${pagination.nextPageLink}">
+                Next
+                <span class="visuallyhidden">page</span>
+                <span class="page-numbers"
+                      th:text="${pagination.nextPageNumber + ' of ' + pagination.totalPages}"></span>
+            </a>
+        </li>
+    </ul>
+</div>
 </html>
