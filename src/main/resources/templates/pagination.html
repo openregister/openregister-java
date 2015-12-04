@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
-<div th:fragment="pagination-header(records_or_entries_string)" >
-    <th:block th:text="${pagination.firstEntryNumberOnThisPage + '-' + pagination.lastEntryNumberOnThisPage +' of ' + pagination.totalEntries + ' ' + records_or_entries_string}">1-100 of 1000 records</th:block>
+<div th:fragment="pagination-top(records_or_entries_string)" >
+    <th:block th:if="${pagination.firstPageAndShowsAllEntries}" th:text="${pagination.totalEntries + ' ' + records_or_entries_string}">
+        100 records or entries
+    </th:block >
+    <th:block th:unless="${pagination.firstPageAndShowsAllEntries}"
+              th:text="${pagination.firstEntryNumberOnThisPage + '-' + pagination.lastEntryNumberOnThisPage +' of ' + pagination.totalEntries + ' ' + records_or_entries_string}">
+        1-100 of 1000 records or entries
+    </th:block>
 </div>
 
-<div th:fragment="pagination-footer">
+<div th:fragment="pagination-bottom">
     <ul class="previous-next-navigation">
         <li th:if="${pagination.hasPreviousPage()}" class="previous">
             <a th:href="${pagination.previousPageLink}">

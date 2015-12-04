@@ -47,6 +47,10 @@ public class Pagination {
         return totalEntries;
     }
 
+    public boolean isFirstPageAndShowsAllEntries() {
+        return pageIndex == 1 && pageSize >= totalEntries;
+    }
+
     public long getFirstEntryNumberOnThisPage() {
         return offset() + 1;
     }
