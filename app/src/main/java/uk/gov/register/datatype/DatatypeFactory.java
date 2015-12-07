@@ -11,6 +11,6 @@ public class DatatypeFactory {
         else if ("curie".equals(datatype) || "string".equals(datatype) || "text".equals(datatype))
             return new StringDatatype();
         else
-            return new DummyDatatype();
+            return new UnvalidatedDatatype();
     }
 }
