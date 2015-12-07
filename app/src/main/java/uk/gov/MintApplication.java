@@ -9,9 +9,14 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.mint.EntryValidator;
 import uk.gov.mint.LoadHandler;
 import uk.gov.mint.MintService;
+import uk.gov.register.FieldsConfiguration;
+import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
+
+import java.util.Optional;
 
 public class MintApplication extends Application<MintConfiguration> {
 
@@ -39,15 +44,19 @@ public class MintApplication extends Application<MintConfiguration> {
     @Override
     public void run(MintConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
+
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        EntriesUpdateDAO entriesUpdateDAO = jdbi.onDemand(EntriesUpdateDAO.class);
+        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
 
+        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO);
+        EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
+
+        LoadHandler loadHandler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(loadHandler));
+        jersey.register(new MintService(configuration.getRegister(), loadHandler));
     }
 }
 

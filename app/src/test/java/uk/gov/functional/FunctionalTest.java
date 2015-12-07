@@ -46,7 +46,7 @@ public class FunctionalTest {
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
-        String messageString = String.format("{\"name\":\"ft_mint_test\",\"test\":\"test_%s\"}",
+        String messageString = String.format("{\"register\":\"ft_mint_test\",\"text\":\"test_%s\"}",
                 String.valueOf(System.currentTimeMillis()));
         byte[] message = messageString.getBytes();
         JsonNode messageJson = canonicalJsonMapper.readFromBytes(message);
@@ -64,16 +64,16 @@ public class FunctionalTest {
         assertThat(actualJson.get("hash"), notNullValue(JsonNode.class));
         assertThat(entryNode, notNullValue(JsonNode.class));
 
-        assertThat(entryNode.get("name").textValue(),
-                equalTo(messageJson.get("name").textValue()));
-        assertThat(entryNode.get("test").textValue(),
-                equalTo(messageJson.get("test").textValue()));
+        assertThat(entryNode.get("register").textValue(),
+                equalTo(messageJson.get("register").textValue()));
+        assertThat(entryNode.get("text").textValue(),
+                equalTo(messageJson.get("text").textValue()));
     }
 
     private void send(List<String> payload) {
         try {
             JerseyClient jerseyClient = JerseyClientBuilder.createClient();
-            Response response = jerseyClient.target("http://localhost:4568/load").request(MediaType.APPLICATION_JSON_TYPE).buildPost(Entity.json(String.join("\n", payload))).invoke();
+            Response response = jerseyClient.target("http://register.openregister.dev:4568/load").request(MediaType.APPLICATION_JSON_TYPE).buildPost(Entity.json(String.join("\n", payload))).invoke();
             if (response.getStatus() != 200)
                 System.err.println("Unexpected result: " + response.readEntity(String.class));
             else

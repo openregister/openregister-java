@@ -14,7 +14,16 @@ public class MintConfiguration extends Configuration {
     @JsonProperty
     private DataSourceFactory database;
 
+    @SuppressWarnings("unused")
+    @Valid
+    @JsonProperty
+    private String register;
+
     public DataSourceFactory getDatabase() {
         return database;
+    }
+
+    public String getRegister() {
+        return register;
     }
 }

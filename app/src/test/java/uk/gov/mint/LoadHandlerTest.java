@@ -7,11 +7,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.FieldsConfiguration;
+import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,19 +32,19 @@ public class LoadHandlerTest {
 
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO);
+        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, new EntryValidator(new RegistersConfiguration(Optional.empty()), new FieldsConfiguration(Optional.empty())));
 
-        String payload = "{\"key1\":\"value1\"}\n{\"key2\":\"value2\"}";
+        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
 
-        String expectedHash1 = Digest.shasum("{\"key1\":\"value1\"}");
-        String expectedHash2 = Digest.shasum("{\"key2\":\"value2\"}");
+        String expectedHash1 = Digest.shasum("{\"register\":\"value1\"}");
+        String expectedHash2 = Digest.shasum("{\"register\":\"value2\"}");
 
-        final String entry1 = "{\"entry\":{\"key1\":\"value1\"},\"hash\":\"" + expectedHash1 + "\"}";
+        final String entry1 = "{\"entry\":{\"register\":\"value1\"},\"hash\":\"" + expectedHash1 + "\"}";
         final byte[] entry1Bytes = canonicalise(entry1);
-        final String entry2 = "{\"entry\":{\"key2\":\"value2\"},\"hash\":\"" + expectedHash2 + "\"}";
+        final String entry2 = "{\"entry\":{\"register\":\"value2\"},\"hash\":\"" + expectedHash2 + "\"}";
         final byte[] entry2Bytes = canonicalise(entry2);
 
-        loadHandler.handle(payload);
+        loadHandler.handle("register", payload);
 
         verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
         final List<byte[]> payloadArray = entriesCaptor.getValue();
