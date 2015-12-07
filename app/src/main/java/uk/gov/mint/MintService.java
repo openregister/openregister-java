@@ -1,5 +1,7 @@
 package uk.gov.mint;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -8,9 +10,11 @@ import javax.ws.rs.core.Response;
 
 @Path("/")
 public class MintService {
+    private final String register;
     private final LoadHandler loadHandler;
 
-    public MintService(LoadHandler loadHandler) {
+    public MintService(String register, LoadHandler loadHandler) {
+        this.register = register;
         this.loadHandler = loadHandler;
     }
 
@@ -31,6 +35,9 @@ public class MintService {
     }
 
     protected String extractRegisterNameFromRequest() {
+        if(StringUtils.isNotBlank(register)){
+            return register;
+        }
         String host = httpServletRequest.getHeader("Host");
         return host.split(":")[0].split("\\.")[0];
     }

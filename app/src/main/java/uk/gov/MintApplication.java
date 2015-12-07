@@ -56,7 +56,7 @@ public class MintApplication extends Application<MintConfiguration> {
         LoadHandler loadHandler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(loadHandler));
+        jersey.register(new MintService(configuration.getRegister(), loadHandler));
     }
 }
 
