@@ -10,3 +10,5 @@ server:
   applicationConnectors:
   - type: http
     port: 4568
+
+register: register

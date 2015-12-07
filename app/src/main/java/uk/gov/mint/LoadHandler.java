@@ -13,26 +13,28 @@ import java.util.stream.Collectors;
 
 public class LoadHandler {
     private final CanonicalJsonMapper canonicalJsonMapper;
+    private final String register;
     private final EntriesUpdateDAO entriesUpdateDAO;
     private final EntryValidator entryValidator;
 
-    public LoadHandler(EntriesUpdateDAO entriesUpdateDAO, EntryValidator entryValidator) {
+    public LoadHandler(String register, EntriesUpdateDAO entriesUpdateDAO, EntryValidator entryValidator) {
+        this.register = register;
         this.entriesUpdateDAO = entriesUpdateDAO;
         this.entryValidator = entryValidator;
         this.canonicalJsonMapper = new CanonicalJsonMapper();
         entriesUpdateDAO.ensureTableExists();
     }
 
-    public void handle(String registerName, String payload) {
-        processEntries(registerName, payload.split("\n"));
+    public void handle(String payload) {
+        processEntries(payload.split("\n"));
     }
 
-    private void processEntries(String registerName, String[] entries) {
+    private void processEntries(String[] entries) {
         final List<byte[]> entriesAsBytes = Arrays.stream(entries)
                 .map(e -> {
                     try {
                         final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
-                        entryValidator.validateEntry(registerName, jsonNode);
+                        entryValidator.validateEntry(register, jsonNode);
                         return canonicalJsonMapper.writeToBytes(hashedEntry(jsonNode));
                     } catch (Exception ex) {
                         throw Throwables.propagate(ex);
