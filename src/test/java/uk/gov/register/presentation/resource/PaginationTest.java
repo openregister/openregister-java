@@ -109,17 +109,17 @@ public class PaginationTest {
     }
 
     @Test
-    public void isFirstPageAndShowsAllEntries_retrunsTrue_whenPageContainsAllEntries() {
+    public void isSinglePage_retrunsTrue_whenPageContainsAllEntries() {
         Pagination pagination = new Pagination("/entries", Optional.of(1L), Optional.of(100L), 99);
-        assertThat(pagination.isFirstPageAndShowsAllEntries(), equalTo(true));
+        assertThat(pagination.isSinglePage(), equalTo(true));
         pagination = new Pagination("/entries", Optional.of(1L), Optional.of(100L), 100);
-        assertThat(pagination.isFirstPageAndShowsAllEntries(), equalTo(true));
+        assertThat(pagination.isSinglePage(), equalTo(true));
     }
 
     @Test
-    public void isFirstPageAndShowsAllEntries_retrunsFalse_whenPageDoesNotContainsAllEntries() {
+    public void isSinglePage_retrunsFalse_whenPageDoesNotContainsAllEntries() {
         Pagination pagination = new Pagination("/entries", Optional.of(2L), Optional.of(50L), 99);
-        assertThat(pagination.isFirstPageAndShowsAllEntries(), equalTo(false));
+        assertThat(pagination.isSinglePage(), equalTo(false));
     }
 
 }

@@ -47,7 +47,7 @@ public class Pagination {
         return totalEntries;
     }
 
-    public boolean isFirstPageAndShowsAllEntries() {
+    public boolean isSinglePage() {
         return pageIndex == 1 && pageSize >= totalEntries;
     }
 
