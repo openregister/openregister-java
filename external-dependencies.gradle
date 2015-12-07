@@ -5,7 +5,8 @@ ext {
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
             "io.dropwizard:dropwizard-configuration:${dropwizard_version}",
-            "io.dropwizard:dropwizard-jdbi:${dropwizard_version}"
+            "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
+            "io.dropwizard:dropwizard-logging:${dropwizard_version}"
     ]
 
     jcabi = [

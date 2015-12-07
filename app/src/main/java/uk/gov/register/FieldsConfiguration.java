@@ -7,17 +7,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
+
 
 public class FieldsConfiguration {
 
     private final List<Field> fields;
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public FieldsConfiguration(Optional<String> fieldsResourceYamlPath) {
         try {
