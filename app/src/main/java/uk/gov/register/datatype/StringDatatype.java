@@ -1,7 +1,6 @@
 package uk.gov.register.datatype;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.lang3.StringUtils;
 
 public class StringDatatype implements Datatype {
 
@@ -10,8 +9,4 @@ public class StringDatatype implements Datatype {
         return value.isTextual();
     }
 
-    @Override
-    public boolean hasValue(JsonNode value) {
-        return StringUtils.isNotBlank(value.textValue());
-    }
 }

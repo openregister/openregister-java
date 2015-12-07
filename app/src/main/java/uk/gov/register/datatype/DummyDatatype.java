@@ -9,8 +9,4 @@ public class DummyDatatype implements Datatype{
         return true;
     }
 
-    @Override
-    public boolean hasValue(JsonNode value) {
-        return true;
-    }
 }

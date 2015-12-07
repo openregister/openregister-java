@@ -34,11 +34,6 @@ public class EntryValidator {
         if (valueNode == null) {
             throw new EntryValidationException("Register's primary key field not available.", jsonNode);
         }
-
-        if (!datatypeOf(primaryKey).hasValue(valueNode)) {
-            throw new EntryValidationException("Value for primary key field not exists.", jsonNode);
-        }
-
     }
 
     private void validateFieldsValue(JsonNode jsonNode) throws EntryValidationException {
