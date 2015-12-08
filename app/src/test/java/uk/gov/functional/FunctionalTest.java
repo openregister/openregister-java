@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -51,11 +53,7 @@ public class FunctionalTest {
         byte[] message = messageString.getBytes();
         JsonNode messageJson = canonicalJsonMapper.readFromBytes(message);
 
-        waitForMessageToBeConsumed();
-
         send(Collections.singletonList(messageString));
-
-        waitForMessageToBeConsumed();
 
         byte[] actual = tableRecord();
         final JsonNode actualJson = canonicalJsonMapper.readFromBytes(actual);
@@ -71,16 +69,20 @@ public class FunctionalTest {
     }
 
     private void send(List<String> payload) {
-        try {
-            JerseyClient jerseyClient = JerseyClientBuilder.createClient();
-            Response response = jerseyClient.target("http://register.openregister.dev:4568/load").request(MediaType.APPLICATION_JSON_TYPE).buildPost(Entity.json(String.join("\n", payload))).invoke();
-            if (response.getStatus() != 200)
-                System.err.println("Unexpected result: " + response.readEntity(String.class));
-            else
-                System.out.println("Loaded " + payload.size() + " entries...");
-        } catch (Exception e) {
-            System.err.println("Error occurred sending data to mint: " + e);
+        JerseyClient jerseyClient = authenticatingClient();
+        Response response = jerseyClient.target("http://localhost:4568/load")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(Entity.json(String.join("\n", payload)));
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Unexpected result: " + response.readEntity(String.class));
         }
+        System.out.println("Loaded " + payload.size() + " entries...");
+    }
+
+    private JerseyClient authenticatingClient() {
+        ClientConfig configuration = new ClientConfig();
+        configuration.register(HttpAuthenticationFeature.basic("foo", "bar"));
+        return JerseyClientBuilder.createClient(configuration);
     }
 
     private byte[] tableRecord() throws SQLException {
@@ -90,9 +92,5 @@ public class FunctionalTest {
             ResultSet resultSet = statement.getResultSet();
             return resultSet.next() ? resultSet.getBytes(1) : null;
         }
-    }
-
-    private void waitForMessageToBeConsumed() throws InterruptedException {
-        Thread.sleep(1000);
     }
 }

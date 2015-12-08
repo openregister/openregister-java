@@ -12,3 +12,7 @@ server:
     port: 4568
 
 register: register
+
+credentials:
+  user: foo
+  password: bar
