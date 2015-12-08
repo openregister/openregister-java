@@ -1,16 +1,17 @@
 ext {
-    dropwizard_version = '0.8.2'
-    dropwizard_java8_version = '0.8.0-1'
-    jersey_version = '2.19' // based on dropwizard 0.8.2's jersey version
+    dropwizard_version = '0.9.1'
+    dropwizard_java8_version = '0.9.0-1'
+    jersey_version = '2.22.1' // based on dropwizard 0.9.1's jersey version
 
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
             "io.dropwizard:dropwizard-configuration:${dropwizard_version}",
-            "io.dropwizard.modules:dropwizard-java8:${dropwizard_java8_version}",
-            "io.dropwizard.modules:dropwizard-java8-jdbi:${dropwizard_java8_version}",
+            "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
             "io.dropwizard:dropwizard-views:${dropwizard_version}",
             "io.dropwizard:dropwizard-assets:${dropwizard_version}"
     ]
+    dropwizard_module_java8      = "io.dropwizard.modules:dropwizard-java8:${dropwizard_java8_version}"
+    dropwizard_module_java8_jdbi = "io.dropwizard.modules:dropwizard-java8-jdbi:${dropwizard_java8_version}"
 
     jerseyMedia = "org.glassfish.jersey.media:jersey-media-multipart:${jersey_version}"
 
