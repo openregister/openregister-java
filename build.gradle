@@ -21,6 +21,13 @@ configurations {
 dependencies {
     compile dropwizard, jerseyMedia, markdown, postgresClient, thymeleaf
 
+    compile(dropwizard_module_java8) {
+        exclude group: 'io.dropwizard'
+    }
+    compile(dropwizard_module_java8_jdbi) {
+        exclude group: 'io.dropwizard'
+    }
+
     testCompile dropwizardTest, junit, jsonAssert
 }
 
