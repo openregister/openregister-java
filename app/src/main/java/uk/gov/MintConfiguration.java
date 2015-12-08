@@ -16,6 +16,7 @@ public class MintConfiguration extends Configuration {
 
     @SuppressWarnings("unused")
     @Valid
+    @NotNull
     @JsonProperty
     private String register;
 

@@ -32,7 +32,7 @@ public class LoadHandlerTest {
 
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, new EntryValidator(new RegistersConfiguration(Optional.empty()), new FieldsConfiguration(Optional.empty())));
+        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, new EntryValidator(new RegistersConfiguration(Optional.empty()), new FieldsConfiguration(Optional.empty())));
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
 
@@ -44,7 +44,7 @@ public class LoadHandlerTest {
         final String entry2 = "{\"entry\":{\"register\":\"value2\"},\"hash\":\"" + expectedHash2 + "\"}";
         final byte[] entry2Bytes = canonicalise(entry2);
 
-        loadHandler.handle("register", payload);
+        loadHandler.handle(payload);
 
         verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
         final List<byte[]> payloadArray = entriesCaptor.getValue();

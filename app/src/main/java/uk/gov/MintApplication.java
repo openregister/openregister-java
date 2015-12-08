@@ -53,10 +53,10 @@ public class MintApplication extends Application<MintConfiguration> {
 
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
 
-        LoadHandler loadHandler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
+        LoadHandler loadHandler = new LoadHandler(configuration.getRegister(), jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(configuration.getRegister(), loadHandler));
+        jersey.register(new MintService(loadHandler));
     }
 }
 
