@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import uk.gov.register.presentation.representations.DBSupport;
+import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
