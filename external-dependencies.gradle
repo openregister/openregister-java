@@ -1,6 +1,6 @@
 ext {
 
-    dropwizard_version = '0.8.2'
+    dropwizard_version = '0.9.1'
 
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
