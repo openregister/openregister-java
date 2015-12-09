@@ -129,3 +129,9 @@ task(run, type: JavaExec) {
     args = ["server", "config.yaml"]
     jvmArgs = ["-DbaseDirForTemplates=$projectDir/src/main/resources"]
 }
+
+task(loadSchoolData, type: JavaExec) {
+    main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
+    classpath = sourceSets.test.runtimeClasspath
+    args = ["school", "school-data.jsonl", "jdbc:postgresql://localhost:5432/school"]
+}

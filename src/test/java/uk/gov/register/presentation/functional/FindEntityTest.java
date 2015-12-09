@@ -5,7 +5,7 @@ import org.json.JSONException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import uk.gov.register.presentation.representations.DBSupport;
+import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
 
