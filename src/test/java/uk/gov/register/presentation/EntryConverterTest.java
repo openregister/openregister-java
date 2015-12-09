@@ -62,4 +62,31 @@ public class EntryConverterTest {
         assertThat(curieValue.getValue(), equalTo("company:12345"));
         assertThat(curieValue.link(), equalTo("http://company.openregister.org/company/12345"));
     }
+
+    @Test
+    public void convert_convertsCurieValueToTheDefaultRegisterLink() throws IOException {
+
+        JsonNode jsonNode = MAPPER.readValue("{\"business\":\"12345\"}", JsonNode.class);
+
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+
+        LinkValue linkValue = (LinkValue) entryView.getField("business").get();
+
+        assertThat(linkValue.getValue(), equalTo("12345"));
+        assertThat(linkValue.link(), equalTo("http://company.openregister.org/company/12345"));
+    }
+
+    @Test
+    public void convert_convertsCurieValueToASpecifiedRegisterLink() throws IOException {
+
+        JsonNode jsonNode = MAPPER.readValue("{\"business\":\"sole-trader:12345\"}", JsonNode.class);
+
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+
+        LinkValue.CurieValue curieValue = (LinkValue.CurieValue) entryView.getField("business").get();
+
+        assertThat(curieValue.getValue(), equalTo("sole-trader:12345"));
+        assertThat(curieValue.link(), equalTo("http://sole-trader.openregister.org/sole-trader/12345"));
+    }
+
 }
