@@ -2,6 +2,8 @@ package uk.gov;
 
 import com.google.common.base.Throwables;
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jdbi.DBIFactory;
@@ -12,6 +14,7 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.EntryValidator;
 import uk.gov.mint.LoadHandler;
 import uk.gov.mint.MintService;
+import uk.gov.mint.User;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
@@ -44,11 +47,9 @@ public class MintApplication extends Application<MintConfiguration> {
     @Override
     public void run(MintConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
-
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
-
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
@@ -57,6 +58,15 @@ public class MintApplication extends Application<MintConfiguration> {
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new MintService(loadHandler));
+
+        configuration.getAuthenticator().build()
+                .ifPresent(authenticator ->
+                                jersey.register(new AuthDynamicFeature(
+                                        new BasicCredentialAuthFilter.Builder<User>()
+                                                .setAuthenticator(authenticator)
+                                                .buildAuthFilter()
+                                ))
+                );
     }
 }
 

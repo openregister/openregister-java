@@ -1,5 +1,6 @@
 package uk.gov.mint;
 
+import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,6 +19,7 @@ public class MintService {
     HttpServletRequest httpServletRequest;
 
     @POST
+    @PermitAll
     @Path("/load")
     public Response load(String payload) {
         try {
