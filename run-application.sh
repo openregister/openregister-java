@@ -15,7 +15,7 @@ psql $db_name -U postgres -c "CREATE TABLE IF NOT EXISTS total_entries(count INT
 psql $db_name -U postgres -c "insert into total_entries (count) select 0 where not exists (select count from total_entries)"
 
 
-if [ `psql $db_name -U postgres -c "select count(*) from ordered_entry_index" | egrep -v [a-z-]+ | grep -E '[0-9]' | sed 's/ //g'` -eq 0 ]; then
+if [ `psql $db_name -U postgres -A -t -c "select count(*) from ordered_entry_index"` -eq 0 ]; then
     ./gradlew loadSchoolData
 fi
 

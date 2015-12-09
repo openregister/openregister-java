@@ -12,7 +12,7 @@ A presentation layer for registers.
 # Build and Run project
 
 - Checkout project
-- Add `address.openregister.dev` as an alias for localhost to /etc/hosts
+- Add `school.openregister.dev` as an alias for localhost to /etc/hosts
 - Run the `./go` script to set everything up
 - Build project using command `./gradlew clean build`
 
