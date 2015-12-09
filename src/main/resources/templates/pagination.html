@@ -10,24 +10,21 @@
     </th:block>
 </div>
 
-<div th:fragment="pagination-bottom">
-    <ul class="previous-next-navigation">
-        <li th:if="${pagination.hasPreviousPage()}" class="previous">
-            <a th:href="${pagination.previousPageLink}">
-                Previous
-                <span class="visuallyhidden">page</span>
-                <span class="page-numbers"
-                      th:text="${pagination.previousPageNumber + ' of ' + pagination.totalPages}"></span>
+<!-- Based on govuk-component's pagination code: http://govuk-component-guide.herokuapp.com/components/previous_and_next_navigation -->
+<nav th:fragment="pagination-bottom" class="previous-and-next-navigation" role="navigation" aria-label="Pagination">
+    <ul class="group">
+        <li th:if="${pagination.hasPreviousPage()}" class="previous-page">
+            <a th:href="${pagination.previousPageLink}" rel="previous">
+                <span class="pagination-part-title">Previous page</span>
+                <span class="pagination-label" th:text="${pagination.previousPageNumber + ' of ' + pagination.totalPages}"></span>
             </a>
         </li>
-        <li th:if="${pagination.hasNextPage()}" class="next">
-            <a th:href="${pagination.nextPageLink}">
-                Next
-                <span class="visuallyhidden">page</span>
-                <span class="page-numbers"
-                      th:text="${pagination.nextPageNumber + ' of ' + pagination.totalPages}"></span>
+        <li th:if="${pagination.hasNextPage()}" class="next-page">
+            <a th:href="${pagination.nextPageLink}" rel="next">
+                <span class="pagination-part-title">Next page</span>
+                <span class="pagination-label" th:text="${pagination.nextPageNumber + ' of ' + pagination.totalPages}"></span>
             </a>
         </li>
     </ul>
-</div>
+</nav>
 </html>
