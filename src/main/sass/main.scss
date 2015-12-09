@@ -40,6 +40,7 @@ $NTA-Light: $Helvetica-Regular;
 @import "details";
 @import "fingerprint";
 @import "home";
+@import "page-navigation";
 
 body {
   font-family: $Helvetica-Regular;
@@ -146,6 +147,7 @@ table {
   width: 100%;
 
   margin-top: $gutter;
+  margin-bottom: $gutter;
 
   td, th {
     vertical-align: top;

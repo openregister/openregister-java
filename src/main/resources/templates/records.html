@@ -7,9 +7,7 @@
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
     <div class="grid-row">
-        <div class="column-two-thirds">
-            <h1 th:text="${entries.size()} + ' records'"></h1>
-        </div>
+        <div class="column-two-thirds" th:include="pagination.html::pagination-top('records')"></div>
         <div class="column-third" th:include="main.html :: attribution"></div>
     </div>
     <table th:if="${#lists.isEmpty(entries) == false}">
@@ -40,7 +38,7 @@
         </tbody>
     </table>
 
-    <div th:include="pagination.html::pagination"></div>
+    <nav th:replace="pagination.html::pagination-bottom"></nav>
 
     <div th:include="data-formats.html::data-formats"></div>
 </main>

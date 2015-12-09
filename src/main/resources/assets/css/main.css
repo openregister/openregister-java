@@ -904,6 +904,83 @@ hr {
     list-style-type: none;
     line-height: 30px; }
 
+.previous-and-next-navigation {
+  display: block; }
+  @media (max-width: 640px) {
+    .previous-and-next-navigation {
+      margin: 2em 0 0 0; } }
+  .previous-and-next-navigation ul {
+    margin: 0;
+    padding: 0; }
+  .previous-and-next-navigation li {
+    font-family: "GDS-Logo", sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 400;
+    text-transform: none;
+    float: left;
+    list-style: none;
+    text-align: right;
+    margin: 0;
+    padding: 0;
+    width: 49%; }
+    @media (min-width: 641px) {
+      .previous-and-next-navigation li {
+        font-size: 16px;
+        line-height: 1.25; } }
+    .previous-and-next-navigation li a {
+      display: block;
+      color: #005ea5;
+      text-decoration: none; }
+      .previous-and-next-navigation li a:hover,
+      .previous-and-next-navigation li a:active {
+        background-color: #f8f8f8; }
+      .previous-and-next-navigation li a .pagination-part-title {
+        font-family: "GDS-Logo", sans-serif;
+        font-size: 20px;
+        line-height: 1.11111;
+        font-weight: 400;
+        text-transform: none;
+        margin-bottom: 0.1em;
+        display: block; }
+        @media (min-width: 641px) {
+          .previous-and-next-navigation li a .pagination-part-title {
+            font-size: 27px;
+            line-height: 1.25; } }
+    .previous-and-next-navigation li.next-page {
+      float: right;
+      text-align: right; }
+    .previous-and-next-navigation li.next-page a:before {
+      background: transparent url("/assets/images/arrow-sprite.png") no-repeat -102px -11px;
+      margin: -4px -32px 0 0;
+      display: block;
+      float: right;
+      width: 30px;
+      height: 38px;
+      content: " "; }
+    .previous-and-next-navigation li.previous-page a:before {
+      background: transparent url("/assets/images/arrow-sprite.png") no-repeat -20px -11px;
+      margin: -4px 0 0 -32px;
+      display: block;
+      float: left;
+      width: 30px;
+      height: 38px;
+      content: " "; }
+    .previous-and-next-navigation li.previous-page {
+      float: left;
+      text-align: left; }
+    .previous-and-next-navigation li.previous-page a {
+      padding: 0.75em 0 0.75em 3em; }
+    .previous-and-next-navigation li.next-page a {
+      padding: 0.75em 3em 0.75em 0; }
+    @media (max-width: 640px) {
+      .previous-and-next-navigation li.previous-page,
+      .previous-and-next-navigation li.next-page {
+        float: none;
+        width: 100%; }
+      .previous-and-next-navigation li.next-page a {
+        text-align: right; } }
+
 body {
   font-family: "GDS-Logo", sans-serif; }
 
@@ -1029,7 +1106,8 @@ table {
   border-collapse: collapse;
   border: 1px solid #bfc1c3;
   width: 100%;
-  margin-top: 30px; }
+  margin-top: 30px;
+  margin-bottom: 30px; }
   @media (min-width: 641px) {
     table {
       font-size: 14px;
