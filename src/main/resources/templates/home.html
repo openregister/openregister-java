@@ -12,7 +12,7 @@
 
             <dl class="primary-metadata">
                 <dt>Provided by:</dt>
-                <dd><a th:href="${custodian.recordLink}" th:utext="${branding.logoFormattedName}" th:class="${'organisation-logo organisation-logo-' + branding.logoClassName + ' ' + branding.colourClassName}">Cabinet Office</a></dd>
+                <dd><a th:href="${custodian.recordLink}" th:utext="${branding.logoFormattedName}" class="organisation-logo" th:classappend="|organisation-logo-${branding.logoClassName} ${branding.colourClassName}|">Cabinet Office</a></dd>
                 <dt>Total records:</dt>
                 <dd><a href="/records" th:text="${totalRecords}">Total records</a></dd>
                 <dt>Last updated:</dt>
