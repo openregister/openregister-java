@@ -11,8 +11,8 @@ import java.util.List;
 public class ListVersionView extends AttributionView {
     private final List<Version> versions;
 
-    public ListVersionView(RequestContext requestContext, PublicBody custodian, List<Version> versions) {
-        super(requestContext, custodian, "history.html");
+    public ListVersionView(RequestContext requestContext, PublicBody custodian, GovukOrganisation.Details custodianBranding, List<Version> versions) {
+        super(requestContext, custodian, custodianBranding, "history.html");
         this.versions = versions;
     }
 

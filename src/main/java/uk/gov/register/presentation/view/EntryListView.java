@@ -18,8 +18,9 @@ public class EntryListView extends AttributionView {
             List<EntryView> entries,
             Pagination pagination,
             PublicBody custodian,
+            GovukOrganisation.Details custodianBranding,
             String templateName) {
-        super(requestContext, custodian, templateName);
+        super(requestContext, custodian, custodianBranding, templateName);
         this.entries = entries;
         this.pagination = pagination;
     }

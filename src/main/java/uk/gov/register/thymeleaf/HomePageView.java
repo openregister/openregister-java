@@ -4,6 +4,7 @@ import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.presentation.view.GovukOrganisation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,11 +19,12 @@ public class HomePageView extends AttributionView {
 
     public HomePageView(
             PublicBody custodian,
+            GovukOrganisation.Details custodianBranding,
             RequestContext requestContext,
             int totalRecords,
             LocalDateTime lastUpdated
     ) {
-        super(requestContext, custodian, "home.html");
+        super(requestContext, custodian, custodianBranding, "home.html");
         this.totalRecords = totalRecords;
         this.lastUpdated = lastUpdated;
     }

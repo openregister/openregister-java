@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.java8.Java8Bundle;
@@ -40,6 +41,7 @@ import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 
 import javax.inject.Singleton;
 import javax.servlet.DispatcherType;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.util.EnumSet;
 
@@ -83,6 +85,9 @@ public class PresentationApplication extends Application<PresentationConfigurati
         );
         resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
 
+        Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
+                .build("http-client");
+
         jerseyEnvironment.register(new AbstractBinder() {
             @Override
             protected void configure() {
@@ -93,6 +98,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(EntryConverter.class).to(EntryConverter.class).in(Singleton.class);
+                bind(client).to(Client.class);
             }
         });
 

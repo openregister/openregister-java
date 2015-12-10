@@ -10,12 +10,12 @@ public class SingleEntryView extends AttributionView {
     private final EntryView entryView;
     private final String versionHistoryLink;
 
-    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBody custodian) {
-        this(requestContext, entryView, custodian, "entry.html");
+    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBody custodian, GovukOrganisation.Details custodianBranding) {
+        this(requestContext, entryView, custodian, custodianBranding, "entry.html");
     }
 
-    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBody custodian, String templateName) {
-        super(requestContext, custodian, templateName);
+    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBody custodian, GovukOrganisation.Details custodianBranding, String templateName) {
+        super(requestContext, custodian, custodianBranding, templateName);
         this.entryView = entryView;
         versionHistoryLink = constructVersionHistoryLink(entryView, requestContext.getRegisterPrimaryKey());
     }
