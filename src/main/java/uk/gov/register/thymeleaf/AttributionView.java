@@ -1,21 +1,20 @@
 package uk.gov.register.thymeleaf;
 
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
 
 public class AttributionView extends ThymeleafView {
 
-    protected final PublicBodiesConfiguration publicBodiesConfiguration;
+    private final PublicBody custodian;
 
-    public AttributionView(RequestContext requestContext, PublicBodiesConfiguration publicBodiesConfiguration, String templateName) {
+    public AttributionView(RequestContext requestContext, PublicBody custodian, String templateName) {
         super(requestContext, templateName);
-        this.publicBodiesConfiguration = publicBodiesConfiguration;
+        this.custodian = custodian;
     }
 
     @SuppressWarnings("unused, used by templates")
     public PublicBody getCustodian() {
-        return publicBodiesConfiguration.getPublicBody(getRegister().getRegistry());
+        return custodian;
     }
 }
 

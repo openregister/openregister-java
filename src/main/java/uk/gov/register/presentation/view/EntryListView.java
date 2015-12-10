@@ -2,7 +2,7 @@ package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.EntryView;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.AttributionView;
@@ -17,9 +17,9 @@ public class EntryListView extends AttributionView {
             RequestContext requestContext,
             List<EntryView> entries,
             Pagination pagination,
-            PublicBodiesConfiguration publicBodiesConfiguration,
+            PublicBody custodian,
             String templateName) {
-        super(requestContext, publicBodiesConfiguration, templateName);
+        super(requestContext, custodian, templateName);
         this.entries = entries;
         this.pagination = pagination;
     }
