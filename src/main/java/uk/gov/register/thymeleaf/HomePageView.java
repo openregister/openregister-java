@@ -2,13 +2,13 @@ package uk.gov.register.thymeleaf;
 
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.LinkValue;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class HomePageView extends ThymeleafView {
+public class HomePageView extends AttributionView {
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu");
 
     private final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
@@ -17,12 +17,12 @@ public class HomePageView extends ThymeleafView {
     private final int totalRecords;
 
     public HomePageView(
-            PublicBodiesConfiguration publicBodiesConfiguration,
+            PublicBody custodian,
             RequestContext requestContext,
             int totalRecords,
             LocalDateTime lastUpdated
     ) {
-        super(requestContext, publicBodiesConfiguration, "home.html");
+        super(requestContext, custodian, "home.html");
         this.totalRecords = totalRecords;
         this.lastUpdated = lastUpdated;
     }

@@ -5,6 +5,7 @@ import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.BadRequestExceptionView;
@@ -31,18 +32,18 @@ public class ViewFactory {
     }
 
     public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), publicBodiesConfiguration);
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian());
     }
 
     public SingleEntryView getLatestEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), publicBodiesConfiguration, "latest-entry-of-record.html");
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian(), "latest-entry-of-record.html");
     }
 
     public EntryListView getEntriesView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                publicBodiesConfiguration, "entries.html"
+                getCustodian(), "entries.html"
         );
     }
 
@@ -50,23 +51,27 @@ public class ViewFactory {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                publicBodiesConfiguration, "records.html"
+                getCustodian(), "records.html"
         );
     }
 
     public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, publicBodiesConfiguration, templateName);
+        return new ThymeleafView(requestContext, templateName);
     }
 
     public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, publicBodiesConfiguration, e);
+        return new BadRequestExceptionView(requestContext, e);
     }
 
     public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {
-        return new HomePageView(publicBodiesConfiguration, requestContext, totalRecords, lastUpdated);
+        return new HomePageView(getCustodian(), requestContext, totalRecords, lastUpdated);
     }
 
     public ListVersionView listVersionView(List<Version> versions) throws Exception {
-        return new ListVersionView(requestContext, publicBodiesConfiguration, versions);
+        return new ListVersionView(requestContext, getCustodian(), versions);
+    }
+
+    private PublicBody getCustodian() {
+        return publicBodiesConfiguration.getPublicBody(requestContext.getRegister().getRegistry());
     }
 }

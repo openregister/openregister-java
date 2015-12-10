@@ -2,20 +2,20 @@ package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.EntryView;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.thymeleaf.ThymeleafView;
+import uk.gov.register.thymeleaf.AttributionView;
 
-public class SingleEntryView extends ThymeleafView {
+public class SingleEntryView extends AttributionView {
     private final EntryView entryView;
     private final String versionHistoryLink;
 
-    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBodiesConfiguration publicBodiesConfiguration) {
-        this(requestContext, entryView, publicBodiesConfiguration, "entry.html");
+    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBody custodian) {
+        this(requestContext, entryView, custodian, "entry.html");
     }
 
-    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBodiesConfiguration publicBodiesConfiguration, String templateName) {
-        super(requestContext, publicBodiesConfiguration, templateName);
+    SingleEntryView(RequestContext requestContext, EntryView entryView, PublicBody custodian, String templateName) {
+        super(requestContext, custodian, templateName);
         this.entryView = entryView;
         versionHistoryLink = constructVersionHistoryLink(entryView, requestContext.getRegisterPrimaryKey());
     }
