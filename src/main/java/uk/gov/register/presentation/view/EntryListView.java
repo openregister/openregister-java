@@ -5,11 +5,11 @@ import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.thymeleaf.ThymeleafView;
+import uk.gov.register.thymeleaf.AttributionView;
 
 import java.util.List;
 
-public class EntryListView extends ThymeleafView {
+public class EntryListView extends AttributionView {
     private final List<EntryView> entries;
     private final Pagination pagination;
 

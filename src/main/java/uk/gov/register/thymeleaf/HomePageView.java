@@ -8,7 +8,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class HomePageView extends ThymeleafView {
+public class HomePageView extends AttributionView {
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu");
 
     private final MarkdownProcessor markdownProcessor = new MarkdownProcessor();

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.thymeleaf.ThymeleafView;
+import uk.gov.register.thymeleaf.AttributionView;
 
-public class SingleEntryView extends ThymeleafView {
+public class SingleEntryView extends AttributionView {
     private final EntryView entryView;
     private final String versionHistoryLink;
 

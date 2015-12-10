@@ -55,11 +55,11 @@ public class ViewFactory {
     }
 
     public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, publicBodiesConfiguration, templateName);
+        return new ThymeleafView(requestContext, templateName);
     }
 
     public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, publicBodiesConfiguration, e);
+        return new BadRequestExceptionView(requestContext, e);
     }
 
     public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {

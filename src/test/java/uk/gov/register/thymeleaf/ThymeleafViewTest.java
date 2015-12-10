@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -16,13 +15,11 @@ import static org.mockito.Mockito.when;
 public class ThymeleafViewTest {
     @Mock
     private RequestContext requestContext;
-    @Mock
-    private PublicBodiesConfiguration publicBodiesConfiguration;
     private ThymeleafView thymeleafView;
 
     @Before
     public void setUp() throws Exception {
-        thymeleafView = new ThymeleafView(requestContext, publicBodiesConfiguration, "don't care");
+        thymeleafView = new ThymeleafView(requestContext, "don't care");
     }
 
     @Test
