@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 public class PresentationConfiguration extends Configuration {
     @Valid
     @NotNull
+    @JsonProperty
     private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
 
     @Valid
