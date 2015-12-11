@@ -1,6 +1,8 @@
 package uk.gov.register.presentation.view;
 
 import org.jvnet.hk2.annotations.Service;
+import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.Version;
@@ -14,9 +16,9 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.client.Client;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,14 +26,14 @@ public class ViewFactory {
     private final RequestContext requestContext;
     private final EntryConverter entryConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
-    private final Client client;
+    private final GovukOrganisationClient organisationClient;
 
     @Inject
-    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration, Client client) {
+    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration, GovukOrganisationClient organisationClient) {
         this.requestContext = requestContext;
         this.entryConverter = entryConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
-        this.client = client;
+        this.organisationClient = organisationClient;
     }
 
     public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
@@ -82,11 +84,8 @@ public class ViewFactory {
         return publicBodiesConfiguration.getPublicBody(requestContext.getRegister().getRegistry());
     }
 
-    private GovukOrganisation.Details getBranding() {
-        String custodianId = requestContext.getRegister().getRegistry();
-        return client.target("https://www.gov.uk/api/organisations/" + custodianId)
-                .request()
-                .get(GovukOrganisation.class)
-                .getDetails();
+    private Optional<GovukOrganisation.Details> getBranding() {
+        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(requestContext.getRegister().getRegistry());
+        return organisation.map(GovukOrganisation::getDetails);
     }
 }

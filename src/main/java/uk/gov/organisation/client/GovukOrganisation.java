@@ -1,15 +1,12 @@
-package uk.gov.register.presentation.view;
+package uk.gov.organisation.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GovukOrganisation {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GovukOrganisation.class);
     @JsonProperty
     private Details details;
 
@@ -36,8 +33,7 @@ public class GovukOrganisation {
 
         @SuppressWarnings("unused, used by templates")
         public String getLogoFormattedName() {
-            LOGGER.info("logo formatted name: \""+ logoFormattedName + "\"");
-            return logoFormattedName.replaceAll("\r\n","<br/>");
+            return logoFormattedName;
         }
     }
 

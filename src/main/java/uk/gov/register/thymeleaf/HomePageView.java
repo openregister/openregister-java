@@ -4,10 +4,11 @@ import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.presentation.view.GovukOrganisation;
+import uk.gov.organisation.client.GovukOrganisation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class HomePageView extends AttributionView {
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu");
@@ -19,7 +20,7 @@ public class HomePageView extends AttributionView {
 
     public HomePageView(
             PublicBody custodian,
-            GovukOrganisation.Details custodianBranding,
+            Optional<GovukOrganisation.Details> custodianBranding,
             RequestContext requestContext,
             int totalRecords,
             LocalDateTime lastUpdated

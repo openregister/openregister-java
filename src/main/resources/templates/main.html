@@ -32,10 +32,15 @@
     </p>
 </div>
 
+<th:block th:fragment="organisation(organisation, branding)">
+    <a th:if="${branding.present}" th:href="${organisation.recordLink}" th:utext="${#strings.replace(branding.get().logoFormattedName,'\r\n','&lt;br/&gt;')}" class="organisation-logo" th:classappend="|organisation-logo-${branding.get().logoClassName} ${branding.get().colourClassName}|">Cabinet Office</a>
+    <a th:unless="${branding.present}" th:href="${organisation.recordLink}" th:text="${organisation.name}" class="organisation-logo organisation-logo-no-identity">Cabinet Office</a>
+</th:block>
+
 <div th:fragment="attribution">
     <div class="organisation">
         <span class="provided-by">Provided by:</span>
-        <a th:href="${custodian.recordLink}" th:utext="${branding.logoFormattedName}" class="organisation-logo" th:classappend="|organisation-logo-${branding.logoClassName} ${branding.colourClassName}|">Cabinet Office</a>
+        <th:block th:include="main.html::organisation(${custodian}, ${branding})"></th:block>
     </div>
 </div>
 

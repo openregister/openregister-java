@@ -1,5 +1,8 @@
 package uk.gov.register.presentation.app;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
@@ -7,6 +10,7 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.java8.Java8Bundle;
 import io.dropwizard.java8.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -20,6 +24,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.ContentSecurityPolicyFilter;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
@@ -56,6 +61,12 @@ public class PresentationApplication extends Application<PresentationConfigurati
         return "presentation";
     }
 
+    public static ObjectMapper customObjectMapper() {
+        ObjectMapper objectMapper = Jackson.newObjectMapper();
+        objectMapper.registerModules(new Jdk8Module(), new JavaTimeModule());
+        return objectMapper;
+    }
+
     @Override
     public void initialize(Bootstrap<PresentationConfiguration> bootstrap) {
         bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new ThymeleafViewRenderer("HTML5", "/templates/", ".html", false))));
@@ -65,6 +76,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
         bootstrap.addBundle(new Java8Bundle());
+        bootstrap.setObjectMapper(customObjectMapper());
     }
 
     @Override
@@ -98,6 +110,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(EntryConverter.class).to(EntryConverter.class).in(Singleton.class);
+                bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
+                bind(configuration);
                 bind(client).to(Client.class);
             }
         });
