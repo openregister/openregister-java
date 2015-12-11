@@ -1,6 +1,8 @@
 package uk.gov.register.presentation.view;
 
 import org.jvnet.hk2.annotations.Service;
+import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.Version;
@@ -16,6 +18,7 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,27 +26,31 @@ public class ViewFactory {
     private final RequestContext requestContext;
     private final EntryConverter entryConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
+    private final GovukOrganisationClient organisationClient;
 
     @Inject
-    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration) {
+    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration, GovukOrganisationClient organisationClient) {
         this.requestContext = requestContext;
         this.entryConverter = entryConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
+        this.organisationClient = organisationClient;
     }
 
     public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian());
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian(), getBranding());
     }
 
     public SingleEntryView getLatestEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian(), "latest-entry-of-record.html");
+        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian(), getBranding(), "latest-entry-of-record.html");
     }
 
     public EntryListView getEntriesView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                getCustodian(), "entries.html"
+                getCustodian(),
+                getBranding(),
+                "entries.html"
         );
     }
 
@@ -51,7 +58,9 @@ public class ViewFactory {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
                 pagination,
-                getCustodian(), "records.html"
+                getCustodian(),
+                getBranding(),
+                "records.html"
         );
     }
 
@@ -64,14 +73,19 @@ public class ViewFactory {
     }
 
     public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {
-        return new HomePageView(getCustodian(), requestContext, totalRecords, lastUpdated);
+        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, lastUpdated);
     }
 
     public ListVersionView listVersionView(List<Version> versions) throws Exception {
-        return new ListVersionView(requestContext, getCustodian(), versions);
+        return new ListVersionView(requestContext, getCustodian(), getBranding(), versions);
     }
 
     private PublicBody getCustodian() {
         return publicBodiesConfiguration.getPublicBody(requestContext.getRegister().getRegistry());
+    }
+
+    private Optional<GovukOrganisation.Details> getBranding() {
+        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(requestContext.getRegister().getRegistry());
+        return organisation.map(GovukOrganisation::getDetails);
     }
 }

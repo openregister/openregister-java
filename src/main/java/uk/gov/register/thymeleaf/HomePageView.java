@@ -4,9 +4,11 @@ import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.organisation.client.GovukOrganisation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class HomePageView extends AttributionView {
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu");
@@ -18,11 +20,12 @@ public class HomePageView extends AttributionView {
 
     public HomePageView(
             PublicBody custodian,
+            Optional<GovukOrganisation.Details> custodianBranding,
             RequestContext requestContext,
             int totalRecords,
             LocalDateTime lastUpdated
     ) {
-        super(requestContext, custodian, "home.html");
+        super(requestContext, custodian, custodianBranding, "home.html");
         this.totalRecords = totalRecords;
         this.lastUpdated = lastUpdated;
     }
