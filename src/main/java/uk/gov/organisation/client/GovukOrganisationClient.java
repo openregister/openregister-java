@@ -1,6 +1,7 @@
 package uk.gov.organisation.client;
 
 import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import java.util.Optional;
@@ -22,7 +23,8 @@ public class GovukOrganisationClient {
                     .path("/api/organisations/" + organisation)
                     .request()
                     .get(GovukOrganisation.class));
-        } catch (WebApplicationException e) {
+        } catch (WebApplicationException | ProcessingException e) {
+            // ProcessingException is thrown on timeout
             return Optional.empty();
         }
     }

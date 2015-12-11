@@ -1,6 +1,8 @@
 package uk.gov.organisation.client;
 
+import com.google.common.base.Throwables;
 import io.dropwizard.testing.junit.DropwizardClientRule;
+import io.dropwizard.util.Duration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,6 +54,27 @@ public class GovukOrganisationClientTest {
         assertThat(organisation.getDetails().getColourClassName(), equalTo("department-for-education"));
         assertThat(organisation.getDetails().getLogoClassName(), equalTo("single-identity"));
         assertThat(organisation.getDetails().getLogoFormattedName(), equalTo("Department \r\nfor Education"));
+    }
+
+    @Test
+    public void getOrganisation_handlesTimeoutGracefully() throws Exception {
+        dfeHandler = slowHandler(500);
+        organisationClient = new GovukOrganisationClient(createTestJerseyClient(Duration.milliseconds(200)), govukClientRule::baseUri);
+
+        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation("department-for-education");
+
+        assertThat(organisation, equalTo(empty()));
+    }
+
+    private Supplier<String> slowHandler(int millis) {
+        return () -> {
+            try {
+                Thread.sleep(millis);
+                return DEPARTMENT_FOR_EDUCATION_JSON;
+            } catch (InterruptedException e) {
+                throw Throwables.propagate(e);
+            }
+        };
     }
 
     @Test

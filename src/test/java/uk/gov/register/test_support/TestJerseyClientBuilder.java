@@ -12,13 +12,17 @@ import javax.ws.rs.client.Client;
 import static javax.validation.Validation.buildDefaultValidatorFactory;
 
 public abstract class TestJerseyClientBuilder {
-    public static <T> Client createTestJerseyClient() {
+    public static Client createTestJerseyClient() {
+        return createTestJerseyClient(Duration.seconds(10));
+    }
+
+    public static Client createTestJerseyClient(Duration timeout) {
         Environment environment = new Environment("test-dropwizard-apache-connector", PresentationApplication.customObjectMapper(),
                 buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
                 TestJerseyClientBuilder.class.getClassLoader());
 
         JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setTimeout(Duration.seconds(10));
+        configuration.setTimeout(timeout);
         return new JerseyClientBuilder(environment).using(configuration).build("test-jersey-client");
     }
 
