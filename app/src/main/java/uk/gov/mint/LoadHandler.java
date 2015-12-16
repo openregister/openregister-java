@@ -34,7 +34,9 @@ public class LoadHandler {
                 .map(e -> {
                     try {
                         final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
-                        entryValidator.validateEntry(register, jsonNode);
+                        //Note: commented the entry validation till the data is not cleaned
+                        //Also Validation doesn't respect the cardinality of a field. trello card https://trello.com/c/6GIewuwc
+//                        entryValidator.validateEntry(register, jsonNode);
                         return canonicalJsonMapper.writeToBytes(hashedEntry(jsonNode));
                     } catch (Exception ex) {
                         throw Throwables.propagate(ex);
