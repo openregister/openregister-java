@@ -73,7 +73,7 @@ public class FunctionalTest {
         Response response = jerseyClient.target("http://localhost:4568/load")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(String.join("\n", payload)));
-        if (response.getStatus() != 200) {
+        if (response.getStatus() != 204) {
             throw new RuntimeException("Unexpected result: " + response.readEntity(String.class));
         }
         System.out.println("Loaded " + payload.size() + " entries...");
