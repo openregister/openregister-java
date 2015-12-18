@@ -38,6 +38,8 @@ public class LoadHandler {
 //                        entryValidator.validateEntry(register, jsonNode);
                         return canonicalJsonMapper.writeToBytes(hashedEntry(jsonNode));
                     } catch (Exception ex) {
+                        //Rethrowing this error using ExceptionUtils because I want to return
+                        //the JsonParseException to the caller of processEntries method. This will be then handled by JsonParseExceptionMapper.
                         return ExceptionUtils.rethrow(ex);
                     }
                 })
