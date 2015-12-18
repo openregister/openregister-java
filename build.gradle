@@ -1,20 +1,72 @@
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-    apply plugin: 'idea'
-    apply from: "${rootProject.projectDir}/external-dependencies.gradle"
-}
-
-subprojects {
-    apply plugin: 'java'
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
-}
-
+apply plugin: 'idea'
+apply plugin: 'java'
+apply from: 'external-dependencies.gradle'
 apply from: 'idea-config.gradle'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
 }
 
+group 'mint'
+
+repositories {
+    mavenCentral()
+}
+
+//noinspection GroovyAssignabilityCheck
+dependencies {
+    compile dropwizard, apacheCommonsCodec
+
+    compile(postgresClient) {
+        exclude group: 'org.slf4j'
+    }
+
+
+    testCompile junit, mockito, dropwizardTest
+}
+
+
+jar.baseName = "mint"
+
+jar {
+    doFirst {
+        from {
+            configurations.compile.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        } {
+            exclude "META-INF/*.SF"
+            exclude "META-INF/*.DSA"
+            exclude "META-INF/*.RSA"
+        }
+
+        manifest {
+            attributes(
+                    "Main-Class": "uk.gov.MintApplication",
+                    "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
+            )
+        }
+    }
+}
+
+assemble {
+    doLast {
+        new File("deploy/mint.jar").bytes = new File("build/libs/mint.jar").bytes
+        createDeployableBundle.execute()
+    }
+}
+
+task createDeployableBundle(type: Zip) {
+    Map env = System.getenv()
+    baseName("mint-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
+    from('deploy/')
+    include('*')
+    include('scripts/*')
+    destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
+}
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}

@@ -15,5 +15,5 @@ build/*
 
 **/.gradletasknamecache
 
-app/deploy/mint.jar
-app/deployable_bundle
+deploy/mint.jar
+deployable_bundle

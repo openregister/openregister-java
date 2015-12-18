@@ -1,4 +1,0 @@
-rootProject.name = 'mint'
-
-include 'app'
-include 'loader'
