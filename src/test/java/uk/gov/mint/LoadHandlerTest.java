@@ -1,5 +1,6 @@
 package uk.gov.mint;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,9 +31,11 @@ public class LoadHandlerTest {
     @Captor
     ArgumentCaptor<List<byte[]>> entriesCaptor;
 
+    EntryValidator entryValidator = new EntryValidator(new RegistersConfiguration(Optional.empty()), new FieldsConfiguration(Optional.empty()));
+
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, new EntryValidator(new RegistersConfiguration(Optional.empty()), new FieldsConfiguration(Optional.empty())));
+        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
 
@@ -51,6 +54,13 @@ public class LoadHandlerTest {
         assertThat(payloadArray.size(), equalTo(2));
         assertThat(payloadArray.get(0), equalTo(entry1Bytes));
         assertThat(payloadArray.get(1), equalTo(entry2Bytes));
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void handle_throwsJsonParseExceptionWhenTheInputIsNotValidJsonl() {
+        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
+        String payload = "{\"register\":\n\"value1\"}";
+        loadHandler.handle(payload);
     }
 
     private byte[] canonicalise(String nonCanonical) throws IOException {
