@@ -25,6 +25,8 @@ ext {
 
     jackson_csv = 'com.fasterxml.jackson:jackson-dataformat-csv:0.5.0'
 
+    jackson_dataformat_yaml = 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.5.4'
+
     guava = 'com.google.guava:guava:18.0'
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
     apacheCommonsCodec = 'commons-codec:commons-codec:1.9'

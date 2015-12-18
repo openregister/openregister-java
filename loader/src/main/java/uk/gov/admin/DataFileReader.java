@@ -1,7 +1,10 @@
 package uk.gov.admin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.collect.Iterators;
 import org.codehaus.jackson.map.MappingIterator;
 
 import java.io.BufferedReader;
@@ -17,6 +20,7 @@ import java.util.Map;
 public class DataFileReader {
     private final URI datafileURI;
     private final String type;
+    private final ObjectMapper yamlObjectMapper = new ObjectMapper(new YAMLFactory());
 
     public DataFileReader(String datafile, String type) throws URISyntaxException {
         this.datafileURI = createDataUri(datafile);
@@ -25,6 +29,8 @@ public class DataFileReader {
 
     public Iterator<String> getFileEntriesIterator() throws IOException {
         switch (type) {
+            case "yaml":
+                return Iterators.forArray(yamlObjectMapper.readTree(datafileURI.toURL().openStream()).toString());
             case "jsonl":
                 return reader().lines().iterator();
             case "csv":
