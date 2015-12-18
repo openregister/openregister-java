@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 
 @Path("/")
 public class MintService {
@@ -21,14 +20,7 @@ public class MintService {
     @POST
     @PermitAll
     @Path("/load")
-    public Response load(String payload) {
-        try {
-            loadHandler.handle(payload);
-            return Response.ok().build();
-        } catch (EntryValidationException e) {
-            return Response.status(400).entity(e.getMessage() + " Error entry: '" + e.getEntry().toString() + "'").build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e).build();
-        }
+    public void load(String payload) {
+        loadHandler.handle(payload);
     }
 }

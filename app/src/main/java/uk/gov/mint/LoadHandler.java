@@ -3,7 +3,6 @@ package uk.gov.mint;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Throwables;
 import uk.gov.store.EntriesUpdateDAO;
 
 import java.nio.charset.StandardCharsets;
@@ -39,7 +38,7 @@ public class LoadHandler {
 //                        entryValidator.validateEntry(register, jsonNode);
                         return canonicalJsonMapper.writeToBytes(hashedEntry(jsonNode));
                     } catch (Exception ex) {
-                        throw Throwables.propagate(ex);
+                        return ExceptionUtils.rethrow(ex);
                     }
                 })
                 .collect(Collectors.toList());
@@ -54,4 +53,3 @@ public class LoadHandler {
     }
 
 }
-
