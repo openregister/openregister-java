@@ -35,7 +35,7 @@ public class LoadHandlerTest {
 
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
+        LoadHandler loadHandler = new LoadHandler("register", "ctserver", null, entriesUpdateDAO, entryValidator);
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
 
@@ -58,7 +58,7 @@ public class LoadHandlerTest {
 
     @Test(expected = JsonParseException.class)
     public void handle_throwsJsonParseExceptionWhenTheInputIsNotValidJsonl() {
-        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
+        LoadHandler loadHandler = new LoadHandler("register", "ctserver", null, entriesUpdateDAO, entryValidator);
         String payload = "{\"register\":\n\"value1\"}";
         loadHandler.handle(payload);
     }

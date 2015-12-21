@@ -21,3 +21,16 @@ server:
       port: 9091
 
 register: field
+
+jerseyClient:
+    #The maximum idle time for a connection, once established.
+    timeout: 512ms
+    #The size of the work queue of the pool used for asynchronous requests.
+    #Additional threads will be spawn only if the queue is reached its maximum size.
+    workQueueSize: 16
+
+    # xjson-server doesn't support GZip and will throw Invalid JSON errors
+    gzipEnabledForRequests: false
+
+# This is the CT Server write endpoint
+#ctserver: http://ec2-52-48-93-254.eu-west-1.compute.amazonaws.com/ct/v1/add-json

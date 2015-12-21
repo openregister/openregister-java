@@ -7,7 +7,8 @@ ext {
             "io.dropwizard:dropwizard-auth:${dropwizard_version}",
             "io.dropwizard:dropwizard-configuration:${dropwizard_version}",
             "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
-            "io.dropwizard:dropwizard-logging:${dropwizard_version}"
+            "io.dropwizard:dropwizard-logging:${dropwizard_version}",
+            "io.dropwizard:dropwizard-client:${dropwizard_version}"
     ]
 
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
