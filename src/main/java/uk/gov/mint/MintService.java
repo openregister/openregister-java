@@ -5,13 +5,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
+import java.util.List;
 
 @Path("/")
 public class MintService {
-    private final LoadHandler loadHandler;
+    private final List<Handler> loadHandlers;
 
-    public MintService(LoadHandler loadHandler) {
-        this.loadHandler = loadHandler;
+    public MintService(List<Handler> loadHandlers) {
+        this.loadHandlers = loadHandlers;
     }
 
     @Context
@@ -21,6 +22,8 @@ public class MintService {
     @PermitAll
     @Path("/load")
     public void load(String payload) {
-        loadHandler.handle(payload);
+        for (Handler h : loadHandlers) {
+            h.handle(payload);
+        }
     }
 }

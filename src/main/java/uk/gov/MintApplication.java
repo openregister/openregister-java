@@ -12,6 +12,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
@@ -20,6 +21,8 @@ import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
 import javax.ws.rs.client.Client;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -56,14 +59,20 @@ public class MintApplication extends Application<MintConfiguration> {
 
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
 
-
+        LoadHandler loadHandler = new LoadHandler(configuration.getRegister(), jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
         final Client client = new JerseyClientBuilder(environment)
                 .using(configuration.getJerseyClientConfiguration())
                 .build(getName());
-        LoadHandler loadHandler = new LoadHandler(configuration.getRegister(), configuration.getCTServer(), client, jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
+        if(client == null && StringUtils.isNotBlank(configuration.getCTServer())) {
+            throw new RuntimeException("Failed to create Jersey client");
+        }
+        CTHandler ctHandler = new CTHandler(configuration.getCTServer(), client);
+        List<Handler> handlers = new ArrayList<Handler>();
+        handlers.add(loadHandler);
+        handlers.add(ctHandler);
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(loadHandler));
+        jersey.register(new MintService(handlers));
 
         jersey.register(EntryValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);

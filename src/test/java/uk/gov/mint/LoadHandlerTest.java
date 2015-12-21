@@ -31,9 +31,6 @@ public class LoadHandlerTest {
     @Mock
     EntriesUpdateDAO entriesUpdateDAO;
 
-    @Mock
-    Client client;
-
     @Captor
     ArgumentCaptor<List<byte[]>> entriesCaptor;
 
@@ -41,7 +38,7 @@ public class LoadHandlerTest {
 
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler("register", "ctserver", null, entriesUpdateDAO, entryValidator);
+        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
 
@@ -64,64 +61,9 @@ public class LoadHandlerTest {
 
     @Test(expected = JsonParseException.class)
     public void handle_throwsJsonParseExceptionWhenTheInputIsNotValidJsonl() {
-        LoadHandler loadHandler = new LoadHandler("register", "ctserver", null, entriesUpdateDAO, entryValidator);
+        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
         String payload = "{\"register\":\n\"value1\"}";
         loadHandler.handle(payload);
-    }
-
-    @Test
-    public void writesToCTServer()  {
-        String ctserver = "ctserver";
-        LoadHandler loadHandler = new LoadHandler("register", ctserver, client, entriesUpdateDAO, entryValidator);
-
-        WebTarget mockedWebTarget = mock(WebTarget.class);
-        when(client.target(ctserver)).thenReturn(mockedWebTarget);
-        Invocation.Builder mockedBuilder = mock(Invocation.Builder.class);
-        when(mockedWebTarget.request()).thenReturn(mockedBuilder);
-        Response mockedResponse = mock(Response.class);
-        when(mockedBuilder.post(any(Entity.class), eq(Response.class))).thenReturn(mockedResponse);
-        when(mockedResponse.getStatusInfo()).thenReturn(Response.Status.OK);
-
-        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
-        loadHandler.handle(payload);
-
-        verify(client).target(ctserver);
-        verify(mockedWebTarget, times(2)).request();
-        verify(mockedBuilder, times(2)).post(any(Entity.class), any(Class.class));
-        verify(mockedResponse, times(2)).getStatusInfo();
-    }
-
-    @Test
-    public void doesNotWriteToCTServerIfEndpointNull()  {
-        String ctserver = null;
-        LoadHandler loadHandler = new LoadHandler("register", ctserver, client, entriesUpdateDAO, entryValidator);
-
-        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
-        loadHandler.handle(payload);
-
-        verify(client, never()).target(ctserver);
-    }
-
-    @Test
-    public void doesNotWriteToCTServerIfEndpointBlank()  {
-        String ctserver = " ";
-        LoadHandler loadHandler = new LoadHandler("register", ctserver, client, entriesUpdateDAO, entryValidator);
-
-        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
-        loadHandler.handle(payload);
-
-        verify(client, never()).target(ctserver);
-    }
-
-    @Test
-    public void doesNotWriteToCTServerIfClientNull()  {
-        String ctserver = "";
-        LoadHandler loadHandler = new LoadHandler("register", ctserver, null, entriesUpdateDAO, entryValidator);
-
-        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
-        loadHandler.handle(payload);
-
-        verify(client, never()).target(ctserver);
     }
 
     private byte[] canonicalise(String nonCanonical) throws IOException {

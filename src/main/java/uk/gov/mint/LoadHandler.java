@@ -17,18 +17,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LoadHandler {
+public class LoadHandler implements Handler {
     private final CanonicalJsonMapper canonicalJsonMapper;
     private final String register;
-    private final String ctserver;
-    private final Client client;
     private final EntriesUpdateDAO entriesUpdateDAO;
     private final EntryValidator entryValidator;
 
-    public LoadHandler(String register, String ctserver, Client client, EntriesUpdateDAO entriesUpdateDAO, EntryValidator entryValidator) {
+    public LoadHandler(String register, EntriesUpdateDAO entriesUpdateDAO, EntryValidator entryValidator) {
         this.register = register;
-        this.ctserver = ctserver;
-        this.client = client;
         this.entriesUpdateDAO = entriesUpdateDAO;
         this.entryValidator = entryValidator;
         this.canonicalJsonMapper = new CanonicalJsonMapper();
@@ -54,26 +50,6 @@ public class LoadHandler {
                 })
                 .collect(Collectors.toList());
         entriesUpdateDAO.add(entriesAsBytes);
-
-        // Propagate to CT server if set
-        if(client != null && StringUtils.isNotBlank(ctserver)) {
-            WebTarget wt = client.target(ctserver);
-
-            Arrays.stream(entries).forEach(e -> {
-                try {
-                    final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
-                    Response r = wt.request()
-                            .post(Entity.entity(jsonNode, MediaType.APPLICATION_JSON), Response.class);
-                    if(r.getStatusInfo() != Response.Status.OK) {
-                        throw new RuntimeException(r.readEntity(String.class));
-                    }
-                }
-                catch(Exception ex) {
-                    ExceptionUtils.rethrow(ex);
-                }
-            }
-            );
-        }
     }
 
     private ObjectNode hashedEntry(JsonNode entryJsonNode) {
