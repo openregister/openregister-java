@@ -8,11 +8,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class IntegerDatatypeTest {
-    IntegerDatatype integerDatatype = new IntegerDatatype();
+    IntegerDatatype integerDatatype = new IntegerDatatype("integer");
 
     @Test
     public void isValid_true_whenValueIsAnIntegerValue() {
-        assertTrue(integerDatatype.isValid(IntNode.valueOf(5)));
         assertTrue(integerDatatype.isValid(TextNode.valueOf("5")));
     }
 
@@ -21,4 +20,8 @@ public class IntegerDatatypeTest {
         assertFalse(integerDatatype.isValid(TextNode.valueOf("5a")));
     }
 
+    @Test
+    public void isValid_false_whenValueIsNotAStringNode() {
+        assertFalse(integerDatatype.isValid(IntNode.valueOf(5)));
+    }
 }

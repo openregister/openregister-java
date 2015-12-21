@@ -7,7 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class UrlDatatypeTest {
-    UrlDatatype urlDatatype = new UrlDatatype();
+    UrlDatatype urlDatatype = new UrlDatatype("url");
     @Test
     public void isValid_true_onlyWhenAValidURlStringValue() {
         assertTrue(urlDatatype.isValid(TextNode.valueOf("http://foo/ff")));

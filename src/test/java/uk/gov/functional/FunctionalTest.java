@@ -20,8 +20,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.*;
-import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -43,40 +41,57 @@ public class FunctionalTest {
             );
 
 
-    //TODO: rewrite this test
+    private final JerseyClient jerseyClient = authenticatingClient();
+
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
-        String messageString = String.format("{\"register\":\"ft_mint_test\",\"text\":\"test_%s\"}",
-                String.valueOf(System.currentTimeMillis()));
-        byte[] message = messageString.getBytes();
-        JsonNode messageJson = canonicalJsonMapper.readFromBytes(message);
+        send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
 
-        send(Collections.singletonList(messageString));
 
-        byte[] actual = tableRecord();
-        final JsonNode actualJson = canonicalJsonMapper.readFromBytes(actual);
+        JsonNode storedEntry = canonicalJsonMapper.readFromBytes(tableRecord());
 
-        JsonNode entryNode = actualJson.get("entry");
-        assertThat(actualJson.get("hash"), notNullValue(JsonNode.class));
+        assertThat(storedEntry.get("hash"), notNullValue(JsonNode.class));
+
+        JsonNode entryNode = storedEntry.get("entry");
         assertThat(entryNode, notNullValue(JsonNode.class));
 
-        assertThat(entryNode.get("register").textValue(),
-                equalTo(messageJson.get("register").textValue()));
-        assertThat(entryNode.get("text").textValue(),
-                equalTo(messageJson.get("text").textValue()));
+        assertThat(entryNode.get("register").textValue(), equalTo("ft_mint_test"));
+        assertThat(entryNode.get("text").textValue(), equalTo("SomeText"));
     }
 
-    private void send(List<String> payload) {
-        JerseyClient jerseyClient = authenticatingClient();
-        Response response = jerseyClient.target("http://localhost:4568/load")
+    @Test
+    public void validation_FailsToLoadEntryWhenNonEmptyPrimaryKeyFieldIsNotExist() {
+        Response response = send("{}");
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("Entry does not contain primary key field 'register'. Error entry: '{}'"));
+
+        response = send("{\"register\":\"  \"}");
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("Primary key field 'register' must have some valid value. Error entry: '{\"register\":\"  \"}'"));
+    }
+
+    @Test
+    public void validation_FailsToLoadEntryWhenEntryContainsInvalidFields() {
+        Response response = send("{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("Entry contains invalid fields: [foo, foo1]. Error entry: '{\"foo\":\"bar\",\"foo1\":\"bar1\"}'"));
+    }
+
+    @Test
+    public void validation_FailsToLoadEntryWhenFieldWithCardinalityManyIsNotAJsonArray() {
+        String entry = "{\"register\":\"someregister\",\"fields\":\"value\"}";
+        Response response = send(entry);
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'. Error entry: '" + entry + "'"));
+    }
+
+    private Response send(String... payload) {
+        return jerseyClient.target("http://localhost:4568/load")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(String.join("\n", payload)));
-        if (response.getStatus() != 204) {
-            throw new RuntimeException("Unexpected result: " + response.readEntity(String.class));
-        }
-        System.out.println("Loaded " + payload.size() + " entries...");
+
     }
 
     private JerseyClient authenticatingClient() {

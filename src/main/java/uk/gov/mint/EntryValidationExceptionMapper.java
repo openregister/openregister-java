@@ -7,6 +7,6 @@ public class EntryValidationExceptionMapper implements ExceptionMapper<EntryVali
 
     @Override
     public Response toResponse(EntryValidationException exception) {
-        return Response.status(400).entity(exception.getMessage() + " Error entry: '" + exception.getEntry().toString() + "'").build();
+        return Response.status(400).entity(exception.getMessage() + ". Error entry: '" + exception.getEntry().toString() + "'").build();
     }
 }

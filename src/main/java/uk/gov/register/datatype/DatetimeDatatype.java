@@ -2,19 +2,20 @@ package uk.gov.register.datatype;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class StringDatatype implements Datatype {
+public class DatetimeDatatype implements Datatype {
     private final String datatypeName;
 
-    public StringDatatype(String datatypeName) {
+    public DatetimeDatatype(String datatypeName) {
         this.datatypeName = datatypeName;
     }
 
+    //TODO: implement the validations for Datetime datatype
     @Override
     public boolean isValid(JsonNode value) {
-        return value.isTextual();
+        return true;
     }
 
-    public String getName(){
+    public String getName() {
         return datatypeName;
     }
 }

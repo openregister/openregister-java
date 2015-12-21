@@ -22,7 +22,7 @@ public class Register {
         return registerName;
     }
 
-    public Iterable<String> getFields() {
-        return fields;
+    public boolean containsField(String fieldName){
+        return fields.contains(fieldName);
     }
 }
