@@ -12,6 +12,8 @@ import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -19,14 +21,18 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoadHandlerTest {
 
     @Mock
     EntriesUpdateDAO entriesUpdateDAO;
+
+    @Mock
+    Client client;
 
     @Captor
     ArgumentCaptor<List<byte[]>> entriesCaptor;
@@ -61,6 +67,61 @@ public class LoadHandlerTest {
         LoadHandler loadHandler = new LoadHandler("register", "ctserver", null, entriesUpdateDAO, entryValidator);
         String payload = "{\"register\":\n\"value1\"}";
         loadHandler.handle(payload);
+    }
+
+    @Test
+    public void writesToCTServer()  {
+        String ctserver = "ctserver";
+        LoadHandler loadHandler = new LoadHandler("register", ctserver, client, entriesUpdateDAO, entryValidator);
+
+        WebTarget mockedWebTarget = mock(WebTarget.class);
+        when(client.target(ctserver)).thenReturn(mockedWebTarget);
+        Invocation.Builder mockedBuilder = mock(Invocation.Builder.class);
+        when(mockedWebTarget.request()).thenReturn(mockedBuilder);
+        Response mockedResponse = mock(Response.class);
+        when(mockedBuilder.post(any(Entity.class), eq(Response.class))).thenReturn(mockedResponse);
+        when(mockedResponse.getStatusInfo()).thenReturn(Response.Status.OK);
+
+        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
+        loadHandler.handle(payload);
+
+        verify(client).target(ctserver);
+        verify(mockedWebTarget, times(2)).request();
+        verify(mockedBuilder, times(2)).post(any(Entity.class), any(Class.class));
+        verify(mockedResponse, times(2)).getStatusInfo();
+    }
+
+    @Test
+    public void doesNotWriteToCTServerIfEndpointNull()  {
+        String ctserver = null;
+        LoadHandler loadHandler = new LoadHandler("register", ctserver, client, entriesUpdateDAO, entryValidator);
+
+        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
+        loadHandler.handle(payload);
+
+        verify(client, never()).target(ctserver);
+    }
+
+    @Test
+    public void doesNotWriteToCTServerIfEndpointBlank()  {
+        String ctserver = " ";
+        LoadHandler loadHandler = new LoadHandler("register", ctserver, client, entriesUpdateDAO, entryValidator);
+
+        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
+        loadHandler.handle(payload);
+
+        verify(client, never()).target(ctserver);
+    }
+
+    @Test
+    public void doesNotWriteToCTServerIfClientNull()  {
+        String ctserver = "";
+        LoadHandler loadHandler = new LoadHandler("register", ctserver, null, entriesUpdateDAO, entryValidator);
+
+        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
+        loadHandler.handle(payload);
+
+        verify(client, never()).target(ctserver);
     }
 
     private byte[] canonicalise(String nonCanonical) throws IOException {

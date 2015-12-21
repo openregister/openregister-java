@@ -56,7 +56,7 @@ public class LoadHandler {
         entriesUpdateDAO.add(entriesAsBytes);
 
         // Propagate to CT server if set
-        if(client != null && StringUtils.isNotEmpty(ctserver)) {
+        if(client != null && StringUtils.isNotBlank(ctserver)) {
             WebTarget wt = client.target(ctserver);
 
             Arrays.stream(entries).forEach(e -> {
