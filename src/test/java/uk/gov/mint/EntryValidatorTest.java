@@ -35,6 +35,19 @@ public class EntryValidatorTest {
     }
 
     @Test
+    public void validateEntry_throwsValidationException_givenPrimaryKeyFieldIsEmpty() throws IOException {
+        String jsonString = "{\"register\":\"  \",\"text\":\"bar\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+        try {
+            entryValidator.validateEntry("register", jsonNode);
+            fail("Must not execute this statement");
+        } catch (EntryValidationException e) {
+            assertThat(e.getMessage(), equalTo("Primary key field 'register' must have some valid value"));
+            assertThat(e.getEntry().toString(), equalTo(jsonString));
+        }
+    }
+
+    @Test
     public void validateEntry_throwsValidationException_givenFieldValueIsNotOfCorrectDatatypeType() throws IOException {
         String jsonString = "{\"register\":\"aregister\",\"text\":5}";
         JsonNode jsonNode = nodeOf(jsonString);

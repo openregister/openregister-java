@@ -3,6 +3,7 @@ package uk.gov.mint;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
 import jersey.repackaged.com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.*;
 import uk.gov.register.datatype.Datatype;
 
@@ -29,7 +30,9 @@ public class EntryValidator {
     }
 
     private void validatePrimaryKeyExists(JsonNode jsonNode, String registerName) throws EntryValidationException {
-        throwEntryValidationExceptionIfConditionIsFalse(jsonNode.get(registerName) == null, jsonNode, "Entry does not contain primary key field '" + registerName + "'");
+        JsonNode primaryKeyNode = jsonNode.get(registerName);
+        throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, jsonNode, "Entry does not contain primary key field '" + registerName + "'");
+        validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), jsonNode, "Primary key field '" + registerName + "' must have some valid value of");
     }
 
     private void validateFields(JsonNode jsonNode, Register register) throws EntryValidationException {
@@ -61,6 +64,10 @@ public class EntryValidator {
             }
 
         });
+    }
+
+    private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode jsonNode, String errorMessage) {
+        throwEntryValidationExceptionIfConditionIsFalse(condition, jsonNode, errorMessage);
     }
 
     private void throwEntryValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
