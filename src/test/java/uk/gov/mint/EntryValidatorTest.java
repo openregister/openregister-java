@@ -29,7 +29,20 @@ public class EntryValidatorTest {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
         } catch (EntryValidationException e) {
-            assertThat(e.getMessage(), equalTo("Register's primary key field not available."));
+            assertThat(e.getMessage(), equalTo("Entry does not contain primary key field 'register'"));
+            assertThat(e.getEntry().toString(), equalTo(jsonString));
+        }
+    }
+
+    @Test
+    public void validateEntry_throwsValidationException_givenPrimaryKeyFieldIsEmpty() throws IOException {
+        String jsonString = "{\"register\":\"  \",\"text\":\"bar\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+        try {
+            entryValidator.validateEntry("register", jsonNode);
+            fail("Must not execute this statement");
+        } catch (EntryValidationException e) {
+            assertThat(e.getMessage(), equalTo("Primary key field 'register' must have some valid value"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
     }
@@ -42,25 +55,49 @@ public class EntryValidatorTest {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
         } catch (EntryValidationException e) {
-            assertThat(e.getMessage(), equalTo("Check field 'text' value, must be of acceptable datatype."));
+            assertThat(e.getMessage(), equalTo("Field 'text' value must be of type 'text'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
-
     }
 
     @Test
     public void validateEntry_throwsValidationException_givenEntryContainsUnknownFields() throws IOException {
-        String jsonString = "{\"register\":\"aregister\",\"text\":5,\"foo\":\"bar\"}";
+        String jsonString = "{\"register\":\"aregister\",\"text\":5,\"key1\":\"value\",\"key2\":\"value\"}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
         } catch (EntryValidationException e) {
-            assertThat(e.getMessage(), equalTo("Unknown field 'foo'."));
+            assertThat(e.getMessage(), equalTo("Entry contains invalid fields: [key1, key2]"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
     }
 
+    @Test
+    public void validateEntry_throwsValidationException_givenFieldWithCardinalityManyHasNonArrayValue() throws IOException {
+        String jsonString = "{\"register\":\"aregister\",\"fields\":\"nonAcceptableNonArrayFieldValue\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+        try {
+            entryValidator.validateEntry("register", jsonNode);
+            fail("Must not execute this statement");
+        } catch (EntryValidationException e) {
+            assertThat(e.getMessage(), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'"));
+            assertThat(e.getEntry().toString(), equalTo(jsonString));
+        }
+    }
+
+    @Test
+    public void validateEntry_throwsValidationException_givenFieldWithCardinalityManyHasNonMatchedDatatypeValues() throws IOException {
+        String jsonString = "{\"register\":\"aregister\",\"fields\":[\"foo\",5]}";
+        JsonNode jsonNode = nodeOf(jsonString);
+        try {
+            entryValidator.validateEntry("register", jsonNode);
+            fail("Must not execute this statement");
+        } catch (EntryValidationException e) {
+            assertThat(e.getMessage(), equalTo("Field 'fields' values must be of type 'string'"));
+            assertThat(e.getEntry().toString(), equalTo(jsonString));
+        }
+    }
 
     @Test
     public void noErrorWhenEntryIsValid() throws IOException, EntryValidationException {

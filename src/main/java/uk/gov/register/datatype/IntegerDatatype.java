@@ -1,17 +1,20 @@
 package uk.gov.register.datatype;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 public class IntegerDatatype implements Datatype {
+    private final String datatypeName;
+
+    public IntegerDatatype(String datatypeName) {
+        this.datatypeName = datatypeName;
+    }
 
     @Override
     public boolean isValid(JsonNode value) {
-        if (value instanceof TextNode) {
-            return value.textValue().matches("^[-]?\\d+$");
-        } else {
-            return value.isInt();
-        }
+        return value.isTextual() && value.textValue().matches("^[-]?\\d+$");
     }
 
+    public String getName() {
+        return datatypeName;
+    }
 }

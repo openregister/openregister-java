@@ -7,7 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class PointDatatypeTest {
-    PointDatatype pointDatatype = new PointDatatype();
+    PointDatatype pointDatatype = new PointDatatype("point");
 
     @Test
     public void isValid_true_onlyWhenValueIsAValidPoint() {

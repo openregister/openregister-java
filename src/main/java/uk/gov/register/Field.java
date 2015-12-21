@@ -22,9 +22,9 @@ public class Field {
                  @JsonProperty("register") String register,
                  @JsonProperty("cardinality") Cardinality cardinality) {
         this.fieldName = fieldName;
-        this.datatype = DatatypeFactory.get(datatype);
         this.register = StringUtils.isNotEmpty(register) ? Optional.of(register) : Optional.empty();
         this.cardinality = cardinality;
+        this.datatype = DatatypeFactory.get(datatype);
     }
 
     public Optional<String> getRegister() {
