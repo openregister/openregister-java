@@ -1,13 +1,12 @@
 package uk.gov.mint;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Iterables;
-import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.Register;
-import uk.gov.register.RegistersConfiguration;
+import com.google.common.collect.Iterators;
+import jersey.repackaged.com.google.common.collect.Sets;
+import uk.gov.register.*;
 import uk.gov.register.datatype.Datatype;
 
-import java.util.Iterator;
+import java.util.Set;
 
 public class EntryValidator {
 
@@ -19,49 +18,54 @@ public class EntryValidator {
         this.registersConfiguration = registersConfiguration;
     }
 
-    public void validateEntry(String registerName, JsonNode jsonNode) throws EntryValidationException{
+    public void validateEntry(String registerName, JsonNode jsonNode) throws EntryValidationException {
         Register register = registersConfiguration.getRegister(registerName);
-        validateFields(register, jsonNode);
-        validatePrimaryKeyExists(register, jsonNode);
+
+        validateFields(jsonNode, register);
+
+        validatePrimaryKeyExists(jsonNode, register.getRegisterName());
+
         validateFieldsValue(jsonNode);
     }
 
-    private void validatePrimaryKeyExists(Register register, JsonNode jsonNode) throws EntryValidationException {
-        String primaryKey = register.getRegisterName();
+    private void validatePrimaryKeyExists(JsonNode jsonNode, String registerName) throws EntryValidationException {
+        throwEntryValidationExceptionIfConditionIsFalse(jsonNode.get(registerName) == null, jsonNode, "Entry does not contain primary key field '" + registerName + "'");
+    }
 
-        JsonNode valueNode = jsonNode.get(primaryKey);
+    private void validateFields(JsonNode jsonNode, Register register) throws EntryValidationException {
+        Set<String> unknownFields = Sets.newHashSet(
+                Iterators.filter(jsonNode.fieldNames(), fieldName -> !register.containsField(fieldName))
+        );
 
-        if (valueNode == null) {
-            throw new EntryValidationException("Register's primary key field not available.", jsonNode);
-        }
+        throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), jsonNode, "Entry contains invalid fields: " + unknownFields.toString());
     }
 
     private void validateFieldsValue(JsonNode jsonNode) throws EntryValidationException {
-        Iterator<String> fieldIterator = jsonNode.fieldNames();
+        jsonNode.fieldNames().forEachRemaining(fieldName -> {
+            Field field = fieldsConfiguration.getField(fieldName);
 
-        while (fieldIterator.hasNext()) {
-            String fieldName = fieldIterator.next();
+            Datatype datatype = field.getDatatype();
 
-            if (!datatypeOf(fieldName).isValid(jsonNode.get(fieldName))) {
-                throw new EntryValidationException("Check field '" + fieldName + "' value, must be of acceptable datatype.", jsonNode);
+            JsonNode fieldValue = jsonNode.get(fieldName);
+
+            if (field.getCardinality().equals(Cardinality.MANY)) {
+
+                throwEntryValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), jsonNode, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, datatype.getName()));
+
+                fieldValue.elements().forEachRemaining(element -> {
+                    throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(element), jsonNode, String.format("Field '%s' values must be of type '%s'", fieldName, datatype.getName()));
+                });
+
+            } else {
+                throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(fieldValue), jsonNode, String.format("Field '%s' value must be of type '%s'", fieldName, datatype.getName()));
             }
+
+        });
+    }
+
+    private void throwEntryValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
+        if (condition) {
+            throw new EntryValidationException(errorMessage, inputJsonEntry);
         }
     }
-
-    private void validateFields(Register register, JsonNode jsonNode) throws EntryValidationException {
-        Iterator<String> fieldNames = jsonNode.fieldNames();
-        Iterable<String> registerFields = register.getFields();
-
-        while (fieldNames.hasNext()) {
-            String fieldName = fieldNames.next();
-            if (!Iterables.contains(registerFields, fieldName)) {
-                throw new EntryValidationException("Unknown field '" + fieldName + "'.", jsonNode);
-            }
-        }
-    }
-
-    private Datatype datatypeOf(String fieldName) {
-        return fieldsConfiguration.getField(fieldName).getDatatype();
-    }
-
 }

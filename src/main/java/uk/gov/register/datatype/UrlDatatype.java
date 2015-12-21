@@ -5,19 +5,25 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class UrlDatatype extends StringDatatype {
-    @Override
-    public boolean isValid(JsonNode value) {
-        return super.isValid(value) && validUrl(value);
+public class UrlDatatype implements Datatype {
+    private final String datatypeName;
+
+    public UrlDatatype(String datatypeName) {
+        this.datatypeName = datatypeName;
     }
 
-    private boolean validUrl(JsonNode value) {
+    @Override
+    public boolean isValid(JsonNode value) {
         String url = value.textValue();
-        try{
+        try {
             new URL(url);
             return true;
-        }catch(MalformedURLException e){
+        } catch (MalformedURLException e) {
             return false;
         }
+    }
+
+    public String getName() {
+        return datatypeName;
     }
 }
