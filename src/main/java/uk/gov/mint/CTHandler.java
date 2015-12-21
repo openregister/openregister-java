@@ -2,17 +2,21 @@ package uk.gov.mint;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.store.EntriesUpdateDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class CTHandler implements Handler {
+    private static final Logger LOG = LoggerFactory.getLogger(CTHandler.class);
+
     private final CanonicalJsonMapper canonicalJsonMapper;
     private final String register;
     private final String ctserver;
@@ -42,10 +46,10 @@ public class CTHandler implements Handler {
                     Response r = wt.request()
                             .post(Entity.entity(jsonNode, MediaType.APPLICATION_JSON), Response.class);
                     if(r.getStatusInfo() != Response.Status.OK) {
-                        throw new RuntimeException(r.readEntity(String.class));
+                        throw new CTException(r.getStatus(), r.readEntity(String.class));
                     }
                 }
-                catch(Exception ex) {
+                catch(IOException ex) {
                     ExceptionUtils.rethrow(ex);
                 }
             }

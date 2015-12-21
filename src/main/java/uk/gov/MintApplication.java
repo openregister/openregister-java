@@ -74,9 +74,11 @@ public class MintApplication extends Application<MintConfiguration> {
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new MintService(handlers));
 
+        jersey.register(CTExceptionMapper.class);
         jersey.register(EntryValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
         jersey.register(ThrowableExceptionMapper.class);
+
 
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
