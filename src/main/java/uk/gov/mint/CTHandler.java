@@ -14,12 +14,16 @@ import java.util.Arrays;
 
 public class CTHandler implements Handler {
     private final CanonicalJsonMapper canonicalJsonMapper;
+    private final String register;
     private final String ctserver;
     private final Client client;
+    private final EntryValidator entryValidator;
 
-    public CTHandler(String ctserver, Client client) {
+    public CTHandler(String register, String ctserver, Client client, EntryValidator entryValidator) {
+        this.register = register;
         this.ctserver = ctserver;
         this.client = client;
+        this.entryValidator = entryValidator;
         this.canonicalJsonMapper = new CanonicalJsonMapper();
     }
 
@@ -34,6 +38,7 @@ public class CTHandler implements Handler {
             Arrays.stream(entries).forEach(e -> {
                 try {
                     final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
+                    entryValidator.validateEntry(register, jsonNode);
                     Response r = wt.request()
                             .post(Entity.entity(jsonNode, MediaType.APPLICATION_JSON), Response.class);
                     if(r.getStatusInfo() != Response.Status.OK) {

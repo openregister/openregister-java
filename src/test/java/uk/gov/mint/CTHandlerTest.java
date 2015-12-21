@@ -1,6 +1,5 @@
 package uk.gov.mint;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,8 +10,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import static org.mockito.Mockito.*;
 
@@ -21,10 +18,13 @@ public class CTHandlerTest {
     @Mock
     Client client;
 
+    @Mock
+    EntryValidator entryValidator;
+
     @Test
     public void writesToCTServer() {
         String ctserver = "ctserver";
-        Handler testObject = new CTHandler(ctserver, client);
+        Handler testObject = new CTHandler("register", ctserver, client, entryValidator);
 
         WebTarget mockedWebTarget = mock(WebTarget.class);
         when(client.target(ctserver)).thenReturn(mockedWebTarget);
@@ -46,7 +46,7 @@ public class CTHandlerTest {
     @Test
     public void doesNotWriteToCTServerIfEndpointNull() {
         String ctserver = null;
-        Handler testObject = new CTHandler(ctserver, client);
+        Handler testObject = new CTHandler("register", ctserver, client, entryValidator);
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
         testObject.handle(payload);
@@ -57,7 +57,7 @@ public class CTHandlerTest {
     @Test
     public void doesNotWriteToCTServerIfEndpointBlank() {
         String ctserver = " ";
-        Handler testObject = new CTHandler(ctserver, client);
+        Handler testObject = new CTHandler("register", ctserver, client, entryValidator);
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
         testObject.handle(payload);
@@ -68,7 +68,7 @@ public class CTHandlerTest {
     @Test
     public void doesNotWriteToCTServerIfClientNull() {
         String ctserver = "";
-        Handler testObject = new CTHandler(ctserver, client);
+        Handler testObject = new CTHandler("register", ctserver, client, entryValidator);
 
         String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
         testObject.handle(payload);

@@ -66,7 +66,7 @@ public class MintApplication extends Application<MintConfiguration> {
         if(client == null && StringUtils.isNotBlank(configuration.getCTServer())) {
             throw new RuntimeException("Failed to create Jersey client");
         }
-        CTHandler ctHandler = new CTHandler(configuration.getCTServer(), client);
+        CTHandler ctHandler = new CTHandler(configuration.getRegister(), configuration.getCTServer(), client, entryValidator);
         List<Handler> handlers = new ArrayList<Handler>();
         handlers.add(loadHandler);
         handlers.add(ctHandler);
