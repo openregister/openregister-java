@@ -19,55 +19,55 @@ public class EntryValidator {
         this.registersConfiguration = registersConfiguration;
     }
 
-    public void validateEntry(String registerName, JsonNode jsonNode) throws EntryValidationException {
+    public void validateEntry(String registerName, JsonNode inputEntry) throws EntryValidationException {
         Register register = registersConfiguration.getRegister(registerName);
 
-        validateFields(jsonNode, register);
+        validateFields(inputEntry, register);
 
-        validatePrimaryKeyExists(jsonNode, register.getRegisterName());
+        validatePrimaryKeyExists(inputEntry, register.getRegisterName());
 
-        validateFieldsValue(jsonNode);
+        validateFieldsValue(inputEntry);
     }
 
-    private void validatePrimaryKeyExists(JsonNode jsonNode, String registerName) throws EntryValidationException {
-        JsonNode primaryKeyNode = jsonNode.get(registerName);
-        throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, jsonNode, "Entry does not contain primary key field '" + registerName + "'");
-        validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), jsonNode, "Primary key field '" + registerName + "' must have some valid value of");
+    private void validatePrimaryKeyExists(JsonNode inputEntry, String registerName) throws EntryValidationException {
+        JsonNode primaryKeyNode = inputEntry.get(registerName);
+        throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerName + "'");
+        validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerName + "' must have some valid value");
     }
 
-    private void validateFields(JsonNode jsonNode, Register register) throws EntryValidationException {
+    private void validateFields(JsonNode inputEntry, Register register) throws EntryValidationException {
         Set<String> unknownFields = Sets.newHashSet(
-                Iterators.filter(jsonNode.fieldNames(), fieldName -> !register.containsField(fieldName))
+                Iterators.filter(inputEntry.fieldNames(), fieldName -> !register.containsField(fieldName))
         );
 
-        throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), jsonNode, "Entry contains invalid fields: " + unknownFields.toString());
+        throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
     }
 
-    private void validateFieldsValue(JsonNode jsonNode) throws EntryValidationException {
-        jsonNode.fieldNames().forEachRemaining(fieldName -> {
+    private void validateFieldsValue(JsonNode inputEntry) throws EntryValidationException {
+        inputEntry.fieldNames().forEachRemaining(fieldName -> {
             Field field = fieldsConfiguration.getField(fieldName);
 
             Datatype datatype = field.getDatatype();
 
-            JsonNode fieldValue = jsonNode.get(fieldName);
+            JsonNode fieldValue = inputEntry.get(fieldName);
 
             if (field.getCardinality().equals(Cardinality.MANY)) {
 
-                throwEntryValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), jsonNode, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, datatype.getName()));
+                throwEntryValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), inputEntry, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, datatype.getName()));
 
                 fieldValue.elements().forEachRemaining(element -> {
-                    throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(element), jsonNode, String.format("Field '%s' values must be of type '%s'", fieldName, datatype.getName()));
+                    throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(element), inputEntry, String.format("Field '%s' values must be of type '%s'", fieldName, datatype.getName()));
                 });
 
             } else {
-                throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(fieldValue), jsonNode, String.format("Field '%s' value must be of type '%s'", fieldName, datatype.getName()));
+                throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(fieldValue), inputEntry, String.format("Field '%s' value must be of type '%s'", fieldName, datatype.getName()));
             }
 
         });
     }
 
-    private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode jsonNode, String errorMessage) {
-        throwEntryValidationExceptionIfConditionIsFalse(condition, jsonNode, errorMessage);
+    private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
+        throwEntryValidationExceptionIfConditionIsFalse(condition, inputJsonEntry, errorMessage);
     }
 
     private void throwEntryValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
