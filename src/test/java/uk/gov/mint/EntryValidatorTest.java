@@ -42,7 +42,7 @@ public class EntryValidatorTest {
             entryValidator.validateEntry("register", jsonNode);
             fail("Must not execute this statement");
         } catch (EntryValidationException e) {
-            assertThat(e.getMessage(), equalTo("Primary key field 'register' must have some valid value"));
+            assertThat(e.getMessage(), equalTo("Primary key field 'register' must have a valid value"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
     }
