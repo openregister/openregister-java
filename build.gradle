@@ -22,7 +22,7 @@ dependencies {
     }
 
 
-    testCompile junit, mockito, dropwizardTest
+    testCompile junit, mockito, dropwizardTest, wiremock
 }
 
 
