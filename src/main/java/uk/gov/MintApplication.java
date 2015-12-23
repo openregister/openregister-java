@@ -58,18 +58,11 @@ public class MintApplication extends Application<MintConfiguration> {
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
-
-        LoadHandler loadHandler = new LoadHandler(configuration.getRegister(), jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
-        final Client client = new JerseyClientBuilder(environment)
-                .using(configuration.getJerseyClientConfiguration())
-                .build(getName());
-        if(client == null && StringUtils.isNotBlank(configuration.getCTServer())) {
-            throw new RuntimeException("Failed to create Jersey client");
-        }
-        CTHandler ctHandler = new CTHandler(configuration.getRegister(), configuration.getCTServer(), client, entryValidator);
         List<Handler> handlers = new ArrayList<Handler>();
-        handlers.add(loadHandler);
-        handlers.add(ctHandler);
+        handlers.add(new LoadHandler(configuration.getRegister(), jdbi.onDemand(EntriesUpdateDAO.class), entryValidator));
+        if(StringUtils.isNotEmpty(configuration.getCTServer())) {
+            handlers.add(new CTHandler(configuration, environment, getName(), entryValidator));
+        }
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new MintService(handlers));
