@@ -4,8 +4,6 @@ import com.google.common.base.Throwables;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jdbi.DBIFactory;
@@ -13,18 +11,15 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
-import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 public class MintApplication extends Application<MintConfiguration> {
 
@@ -60,7 +55,7 @@ public class MintApplication extends Application<MintConfiguration> {
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
         List<Handler> handlers = new ArrayList<Handler>();
         handlers.add(new LoadHandler(configuration.getRegister(), jdbi.onDemand(EntriesUpdateDAO.class), entryValidator));
-        if(StringUtils.isNotEmpty(configuration.getCTServer())) {
+        if (StringUtils.isNotEmpty(configuration.getCTServer())) {
             handlers.add(new CTHandler(configuration, environment, getName(), entryValidator));
         }
 
@@ -75,11 +70,11 @@ public class MintApplication extends Application<MintConfiguration> {
 
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
-                                jersey.register(new AuthDynamicFeature(
-                                        new BasicCredentialAuthFilter.Builder<User>()
-                                                .setAuthenticator(authenticator)
-                                                .buildAuthFilter()
-                                ))
+                        jersey.register(new AuthDynamicFeature(
+                                new BasicCredentialAuthFilter.Builder<User>()
+                                        .setAuthenticator(authenticator)
+                                        .buildAuthFilter()
+                        ))
                 );
     }
 }
