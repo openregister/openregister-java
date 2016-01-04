@@ -11,12 +11,10 @@ public class Pagination {
     public static final String SIZE_PARAM = "page-size";
 
     private final long pageIndex;
-    private final String resourcePath;
     private final long totalEntries;
     private final long pageSize;
 
-    Pagination(String resourcePath, Optional<Long> optionalPageIndex, Optional<Long> optionalPageSize, long totalEntries) {
-        this.resourcePath = resourcePath;
+    Pagination(Optional<Long> optionalPageIndex, Optional<Long> optionalPageSize, long totalEntries) {
         this.totalEntries = totalEntries;
 
         this.pageIndex = optionalPageIndex.orElse(1L);
@@ -77,11 +75,11 @@ public class Pagination {
     }
 
     public String getNextPageLink() {
-        return String.format("%s?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", resourcePath, getNextPageNumber(), pageSize());
+        return String.format("?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", getNextPageNumber(), pageSize());
     }
 
     public String getPreviousPageLink() {
-        return String.format("%s?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", resourcePath, getPreviousPageNumber(), pageSize());
+        return String.format("?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", getPreviousPageNumber(), pageSize());
     }
 
     public long pageSize() {

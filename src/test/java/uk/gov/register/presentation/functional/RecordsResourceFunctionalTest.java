@@ -60,13 +60,13 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
     @Test
     public void records_hasLinkHeaderForNextAndPreviousPage() {
         Response response = getRequest("/records.json?page-index=1&page-size=1");
-        assertThat(response.getHeaderString("Link"), equalTo("</records?page-index=2&page-size=1>; rel=\"next\""));
+        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\""));
 
         response = getRequest("/records.json?page-index=2&page-size=1");
-        assertThat(response.getHeaderString("Link"), equalTo("</records?page-index=3&page-size=1>; rel=\"next\",</records?page-index=1&page-size=1>; rel=\"previous\""));
+        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\""));
 
         response = getRequest("/records.json?page-index=3&page-size=1");
-        assertThat(response.getHeaderString("Link"), equalTo("</records?page-index=2&page-size=1>; rel=\"previous\""));
+        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\""));
     }
 
     @Test

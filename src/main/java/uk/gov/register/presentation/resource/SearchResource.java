@@ -41,7 +41,7 @@ public class SearchResource {
             return entryResponse(records.stream().findFirst(), viewFactory::getLatestEntryView);
         }
 
-        Pagination pagination = new Pagination(String.format("/%s/%s", key, value), Optional.empty(), Optional.empty(), 0);
+        Pagination pagination = new Pagination(Optional.empty(), Optional.empty(), 0);
         return viewFactory.getRecordsView(records, pagination);
     }
 
