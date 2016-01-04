@@ -55,7 +55,7 @@ public class DataResource {
     @Path("/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView entries(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
-        Pagination pagination = new Pagination("/entries", pageIndex, pageSize, queryDAO.getTotalEntries());
+        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalEntries());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
@@ -67,7 +67,7 @@ public class DataResource {
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
-        Pagination pagination = new Pagination("/records", pageIndex, pageSize, queryDAO.getTotalRecords());
+        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalRecords());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
