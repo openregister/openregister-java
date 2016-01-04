@@ -2,7 +2,7 @@ package uk.gov.mint;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
-import jersey.repackaged.com.google.common.collect.Sets;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.*;
 import uk.gov.register.datatype.Datatype;
