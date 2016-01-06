@@ -82,9 +82,7 @@ learn more about Lambda within this context. This is what we learned:
 
 ## Decision ##
 
-After comparing the lambda we realize that the lambda might not be the right solution for us. There are multiple 
-issues like RDS access in compare to current deployment solution. In any case we have to manage the application, 
-code pipeline and support the infrastructure, The only thing it can reduce ec2 instance which is in comparision not that bad.    
+We will not use AWS Lambda for indexing the mint database.
 
 ## Status ##
 
