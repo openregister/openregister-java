@@ -50,23 +50,31 @@ public class MintApplication extends Application<MintConfiguration> {
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
+        ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
-        LoadHandler loadHandler = new LoadHandler(configuration.getRegister(), jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
+        Loader handler;
+        if (configuration.getCTServer().isPresent()) {
+            handler = new CTHandler(configuration, environment, getName());
+        } else {
+            handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));
+        }
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(loadHandler));
+        jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, handler));
 
+        jersey.register(CTExceptionMapper.class);
         jersey.register(EntryValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
         jersey.register(ThrowableExceptionMapper.class);
 
+
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
-                                jersey.register(new AuthDynamicFeature(
-                                        new BasicCredentialAuthFilter.Builder<User>()
-                                                .setAuthenticator(authenticator)
-                                                .buildAuthFilter()
-                                ))
+                        jersey.register(new AuthDynamicFeature(
+                                new BasicCredentialAuthFilter.Builder<User>()
+                                        .setAuthenticator(authenticator)
+                                        .buildAuthFilter()
+                        ))
                 );
     }
 }

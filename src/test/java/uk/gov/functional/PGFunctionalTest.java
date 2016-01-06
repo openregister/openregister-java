@@ -1,6 +1,7 @@
 package uk.gov.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -21,13 +22,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.*;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-
-public class FunctionalTest {
+public class PGFunctionalTest {
     private static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(8089);
 
     @Rule
     public TestRule ruleChain = RuleChain.
@@ -45,10 +49,15 @@ public class FunctionalTest {
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
+        stubFor(post(urlEqualTo("/add-json"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                ));
+
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
-        send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
-
+        Response r = send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
+        assertThat(r.getStatus(), equalTo(204));
 
         JsonNode storedEntry = canonicalJsonMapper.readFromBytes(tableRecord());
 

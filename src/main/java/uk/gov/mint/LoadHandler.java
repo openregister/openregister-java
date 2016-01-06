@@ -5,36 +5,26 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.gov.store.EntriesUpdateDAO;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LoadHandler {
+public class LoadHandler implements Loader {
     private final CanonicalJsonMapper canonicalJsonMapper;
-    private final String register;
     private final EntriesUpdateDAO entriesUpdateDAO;
-    private final EntryValidator entryValidator;
 
-    public LoadHandler(String register, EntriesUpdateDAO entriesUpdateDAO, EntryValidator entryValidator) {
-        this.register = register;
+    public LoadHandler(EntriesUpdateDAO entriesUpdateDAO) {
         this.entriesUpdateDAO = entriesUpdateDAO;
-        this.entryValidator = entryValidator;
         this.canonicalJsonMapper = new CanonicalJsonMapper();
+
         entriesUpdateDAO.ensureTableExists();
     }
 
-    public void handle(String payload) {
-        processEntries(payload.split("\n"));
-    }
-
-    private void processEntries(String[] entries) {
-        final List<byte[]> entriesAsBytes = Arrays.stream(entries)
-                .map(e -> {
+    @Override
+    public void load(List<JsonNode> entries) {
+        List<byte[]> entriesAsBytes = entries.stream()
+                .map(singleEntry -> {
                     try {
-                        final JsonNode jsonNode = canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
-                        entryValidator.validateEntry(register, jsonNode);
-                        return canonicalJsonMapper.writeToBytes(hashedEntry(jsonNode));
+                        return canonicalJsonMapper.writeToBytes(hashedEntry(singleEntry));
                     } catch (Exception ex) {
                         return ExceptionUtils.rethrow(ex);
                     }
