@@ -31,10 +31,9 @@ public class MintService {
     @Path("/load")
     public void load(String payload) {
         List<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
-        for(JsonNode singleObject : objects) {
+        objects.forEach(singleObject -> {
             entryValidator.validateEntry(register, singleObject);
-        }
-
+        });
         loadHandler.load(objects);
     }
 }
