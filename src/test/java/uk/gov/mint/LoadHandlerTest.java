@@ -2,6 +2,7 @@ package uk.gov.mint;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -16,6 +17,7 @@ import javax.ws.rs.client.*;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,32 +40,32 @@ public class LoadHandlerTest {
 
     @Test
     public void handle_addsTheHashAndThenSavesInTheDatabase() throws Exception {
-        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
+        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO);
 
-        String payload = "{\"register\":\"value1\"}\n{\"register\":\"value2\"}";
+        String payload1 = "{\"register\":\"value1\"}";
+        String payload2 = "{\"register\":\"value2\"}";
+        ObjectMapper om = new ObjectMapper();
+        JsonNode entry1 = om.readTree(payload1);
+        JsonNode entry2 = om.readTree(payload2);
+        List<JsonNode> entries = new ArrayList<JsonNode>();
+        entries.add(entry1);
+        entries.add(entry2);
 
-        String expectedHash1 = Digest.shasum("{\"register\":\"value1\"}");
-        String expectedHash2 = Digest.shasum("{\"register\":\"value2\"}");
+        String expectedHash1 = Digest.shasum(payload1);
+        String expectedHash2 = Digest.shasum(payload2);
 
-        final String entry1 = "{\"entry\":{\"register\":\"value1\"},\"hash\":\"" + expectedHash1 + "\"}";
-        final byte[] entry1Bytes = canonicalise(entry1);
-        final String entry2 = "{\"entry\":{\"register\":\"value2\"},\"hash\":\"" + expectedHash2 + "\"}";
-        final byte[] entry2Bytes = canonicalise(entry2);
+        final String expectedEntry1 = "{\"entry\":{\"register\":\"value1\"},\"hash\":\"" + expectedHash1 + "\"}";
+        final byte[] expectedEntry1Bytes = canonicalise(expectedEntry1);
+        final String expectedEntry2 = "{\"entry\":{\"register\":\"value2\"},\"hash\":\"" + expectedHash2 + "\"}";
+        final byte[] expectedEntry2Bytes = canonicalise(expectedEntry2);
 
-        loadHandler.handle(payload);
+        loadHandler.load(entries);
 
         verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
         final List<byte[]> payloadArray = entriesCaptor.getValue();
         assertThat(payloadArray.size(), equalTo(2));
-        assertThat(payloadArray.get(0), equalTo(entry1Bytes));
-        assertThat(payloadArray.get(1), equalTo(entry2Bytes));
-    }
-
-    @Test(expected = JsonParseException.class)
-    public void handle_throwsJsonParseExceptionWhenTheInputIsNotValidJsonl() {
-        LoadHandler loadHandler = new LoadHandler("register", entriesUpdateDAO, entryValidator);
-        String payload = "{\"register\":\n\"value1\"}";
-        loadHandler.handle(payload);
+        assertThat(payloadArray.get(0), equalTo(expectedEntry1Bytes));
+        assertThat(payloadArray.get(1), equalTo(expectedEntry2Bytes));
     }
 
     private byte[] canonicalise(String nonCanonical) throws IOException {

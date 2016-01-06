@@ -17,8 +17,6 @@ import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class MintApplication extends Application<MintConfiguration> {
@@ -53,16 +51,18 @@ public class MintApplication extends Application<MintConfiguration> {
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
-        Handler handler;
+        ObjectReconstructor objectReconstructor = new ObjectReconstructor();
+
+        Loader handler;
         if (StringUtils.isNotEmpty(configuration.getCTServer())) {
-            handler = new CTHandler(configuration, environment, getName(), entryValidator);
+            handler = new CTHandler(configuration, environment, getName());
         }
         else {
-            handler = new LoadHandler(configuration.getRegister(), jdbi.onDemand(EntriesUpdateDAO.class), entryValidator);
+            handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));
         }
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(handler));
+        jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, handler));
 
         jersey.register(CTExceptionMapper.class);
         jersey.register(EntryValidationExceptionMapper.class);
