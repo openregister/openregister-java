@@ -8,6 +8,7 @@ import uk.gov.mint.auth.MintAuthenticatorFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 public class MintConfiguration extends Configuration {
     @SuppressWarnings("unused")
@@ -53,5 +54,5 @@ public class MintConfiguration extends Configuration {
         return credentials;
     }
 
-    public String getCTServer() { return ctserver; }
+    public Optional<String> getCTServer() { return Optional.ofNullable(ctserver); }
 }

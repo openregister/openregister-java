@@ -10,7 +10,6 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.apache.commons.lang3.StringUtils;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
 import uk.gov.register.FieldsConfiguration;
@@ -54,10 +53,9 @@ public class MintApplication extends Application<MintConfiguration> {
         ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
         Loader handler;
-        if (StringUtils.isNotEmpty(configuration.getCTServer())) {
+        if (configuration.getCTServer().isPresent()) {
             handler = new CTHandler(configuration, environment, getName());
-        }
-        else {
+        } else {
             handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));
         }
 

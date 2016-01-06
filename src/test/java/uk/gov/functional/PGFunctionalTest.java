@@ -41,8 +41,7 @@ public class PGFunctionalTest {
             around(
                     new DropwizardAppRule<>(MintApplication.class,
                             ResourceHelpers.resourceFilePath("test-config.yaml"),
-                            ConfigOverride.config("database.url", postgresConnectionString),
-                            ConfigOverride.config("ctserver", ""))
+                            ConfigOverride.config("database.url", postgresConnectionString))
             );
 
 
@@ -57,7 +56,7 @@ public class PGFunctionalTest {
 
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
-        Response r =  send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
+        Response r = send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
         assertThat(r.getStatus(), equalTo(204));
 
         JsonNode storedEntry = canonicalJsonMapper.readFromBytes(tableRecord());
