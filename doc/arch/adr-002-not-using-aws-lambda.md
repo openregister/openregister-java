@@ -86,7 +86,7 @@ We will not use AWS Lambda for indexing the mint database.
 
 ## Status ##
 
-waiting
+Accepted.
 
 ## Consequences ##
 
