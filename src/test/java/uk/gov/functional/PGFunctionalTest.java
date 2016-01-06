@@ -79,7 +79,7 @@ public class PGFunctionalTest {
 
         response = send("{\"register\":\"  \"}");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Primary key field 'register' must have some valid value. Error entry: '{\"register\":\"  \"}'"));
+        assertThat(response.readEntity(String.class), equalTo("Primary key field 'register' must have a valid value. Error entry: '{\"register\":\"  \"}'"));
     }
 
     @Test

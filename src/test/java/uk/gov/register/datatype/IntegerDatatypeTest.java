@@ -13,11 +13,17 @@ public class IntegerDatatypeTest {
     @Test
     public void isValid_true_whenValueIsAnIntegerValue() {
         assertTrue(integerDatatype.isValid(TextNode.valueOf("5")));
+        assertTrue(integerDatatype.isValid(TextNode.valueOf("0")));
+        assertTrue(integerDatatype.isValid(TextNode.valueOf("1500")));
+        assertTrue(integerDatatype.isValid(TextNode.valueOf("-1500")));
     }
 
     @Test
     public void isValid_false_whenValueIsNotAnIntegerValue() {
         assertFalse(integerDatatype.isValid(TextNode.valueOf("5a")));
+        assertFalse(integerDatatype.isValid(TextNode.valueOf("-0")));
+        assertFalse(integerDatatype.isValid(TextNode.valueOf("007")));
+        assertFalse(integerDatatype.isValid(TextNode.valueOf("-007")));
     }
 
     @Test
