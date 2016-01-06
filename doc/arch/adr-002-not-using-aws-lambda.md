@@ -63,12 +63,11 @@ learn more about Lambda within this context. This is what we learned:
         rollback when required.
 
    - Our databases are on RDS and to accessing RDS from lambda is not
-       easy. We need to provide a public IP to the RDS database to
-       access it from lambda, Read
-       [https://forums.aws.amazon.com/thread.jspa?threadID=166946]
-       (https://forums.aws.amazon.com/thread.jspa?threadID=166946). Apart
-       from this currently there is no connection pooling support
-       [https://forums.aws.amazon.com/thread.jspa?threadID=216000](https://forums.aws.amazon.com/thread.jspa?threadID=216000).
+       easy.  The current way to do it is
+       [to provide a public IP to the RDS database to access it from lambda](https://forums.aws.amazon.com/thread.jspa?threadID=166946).
+       [re:Invent 2015 announced support for accessing VPC resources from lambda](https://aws.amazon.com/blogs/aws/aws-lambda-update-python-vpc-increased-function-duration-scheduling-and-more/)
+       but this does't seem to have actually landed yet.  In addition,
+       [currently there is no connection pooling support](https://forums.aws.amazon.com/thread.jspa?threadID=216000).
 
    - Cost might be high in compare to ec2 instance because pricing of
         lambda function is based on number of requests and the compute
