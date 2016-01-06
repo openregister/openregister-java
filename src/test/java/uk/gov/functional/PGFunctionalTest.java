@@ -27,9 +27,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class FunctionalTest {
+public class PGFunctionalTest {
     private static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
-    private static String ctserver = "http://localhost:8089/add-json";
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8089);
@@ -96,18 +95,6 @@ public class FunctionalTest {
         Response response = send(entry);
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'. Error entry: '" + entry + "'"));
-    }
-
-    //@Test
-    public void checkThatErrorsFromCTServerArePropogatedBack() throws Exception {
-        stubFor(post(urlEqualTo("/add-json"))
-                .willReturn(aResponse()
-                        .withStatus(400)
-                        .withBody("Unable to parse JSON")
-                ));
-
-        Response r =  send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
-        assertThat(r.getStatus(), equalTo(400));
     }
 
     private Response send(String... payload) {
