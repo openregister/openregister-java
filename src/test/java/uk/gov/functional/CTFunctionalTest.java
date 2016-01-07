@@ -24,10 +24,10 @@ import static org.junit.Assert.assertThat;
 
 public class CTFunctionalTest {
     private static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
-    private static String ctserver = "http://localhost:8089/add-json";
+    private static String ctserver = "http://localhost:8090/add-json";
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8089);
+    public WireMockRule wireMockRule = new WireMockRule(8090);
 
     @Rule
     public TestRule ruleChain = RuleChain.
