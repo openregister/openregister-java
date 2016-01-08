@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class Configuration {
+public class Configuration {
     private final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     private final Set<String> registers;

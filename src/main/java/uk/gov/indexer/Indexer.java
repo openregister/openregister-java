@@ -3,9 +3,12 @@ package uk.gov.indexer;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.gov.indexer.ctserver.CTServer;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.IndexedEntriesUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
+import uk.gov.indexer.fetchers.CTFetcher;
+import uk.gov.indexer.fetchers.PGFetcher;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,15 +34,23 @@ public class Indexer {
             DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
 
             destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
+            
+            if (configuration.getProperty(register + ".source").compareTo("ctserver") == 0) {
+                executorService.scheduleAtFixedRate(
+                        new IndexerTask(register, new CTFetcher(new CTServer(configuration.getProperty(register + ".ctserver"))), destinationDBUpdateDAO),
+                        0,
+                        10,
+                        TimeUnit.SECONDS);
+            } else {
+                sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
+                executorService.scheduleAtFixedRate(
+                        new IndexerTask(register, new PGFetcher(sourceDBQueryDAO), destinationDBUpdateDAO),
+                        0,
+                        10,
+                        TimeUnit.SECONDS
+                );
 
-            sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
-            executorService.scheduleAtFixedRate(
-                    new IndexerTask(register, sourceDBQueryDAO, destinationDBUpdateDAO),
-                    0,
-                    10,
-                    TimeUnit.SECONDS
-            );
-
+            }
             configuration.cloudSearchEndPoint(register).ifPresent(
                     endPoint -> executorService.scheduleAtFixedRate(
                             new CloudSearchDataUploadTask(register, endPoint, configuration.cloudSearchWaterMarkEndPoint(register).get(), destDbi.onDemand(IndexedEntriesUpdateDAO.class)),

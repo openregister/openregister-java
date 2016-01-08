@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.Entry;
-import uk.gov.indexer.dao.SourceDBQueryDAO;
+import uk.gov.indexer.fetchers.Fetcher;
 
 import java.util.List;
 
@@ -12,12 +12,12 @@ public class IndexerTask implements Runnable {
     private final Logger LOGGER = LoggerFactory.getLogger(IndexerTask.class);
 
     private final String register;
-    private final SourceDBQueryDAO sourceDBQueryDAO;
     private final DestinationDBUpdateDAO destinationDBUpdateDAO;
+    private final Fetcher fetcher;
 
-    public IndexerTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO) {
+    public IndexerTask(String register, Fetcher fetcher, DestinationDBUpdateDAO destinationDBUpdateDAO) {
         this.register = register;
-        this.sourceDBQueryDAO = sourceDBQueryDAO;
+        this.fetcher = fetcher;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
     }
 
@@ -42,6 +42,6 @@ public class IndexerTask implements Runnable {
 
 
     private List<Entry> fetchNewEntries() {
-        return sourceDBQueryDAO.read(destinationDBUpdateDAO.lastReadSerialNumber());
+        return fetcher.fetch(destinationDBUpdateDAO.lastReadSerialNumber());
     }
 }
