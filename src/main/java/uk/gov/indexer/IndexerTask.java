@@ -1,5 +1,7 @@
 package uk.gov.indexer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.Entry;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
@@ -7,6 +9,8 @@ import uk.gov.indexer.dao.SourceDBQueryDAO;
 import java.util.List;
 
 public class IndexerTask implements Runnable {
+    private final Logger LOGGER = LoggerFactory.getLogger(IndexerTask.class);
+
     private final String register;
     private final SourceDBQueryDAO sourceDBQueryDAO;
     private final DestinationDBUpdateDAO destinationDBUpdateDAO;
@@ -20,9 +24,9 @@ public class IndexerTask implements Runnable {
     @Override
     public void run() {
         try {
-            ConsoleLogger.log("Starting update for: " + register);
+            LOGGER.info("Starting update for: " + register);
             update();
-            ConsoleLogger.log("Finished for register: " + register);
+            LOGGER.info("Finished for register: " + register);
         } catch (Throwable e) {
             e.printStackTrace();
             throw e;

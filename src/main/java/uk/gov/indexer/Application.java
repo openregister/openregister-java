@@ -1,5 +1,8 @@
 package uk.gov.indexer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -7,6 +10,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 public class Application {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+
     public static void main(String[] args) throws InterruptedException {
         Configuration configuration = new Configuration(args);
         Set<String> registers = configuration.getRegisters();
@@ -28,7 +33,7 @@ public class Application {
             public void run() {
                 executorService.shutdown();
                 indexers.forEach(Indexer::stop);
-                ConsoleLogger.log("Shutdown completed...");
+                LOGGER.info("Shutdown completed...");
             }
         });
     }

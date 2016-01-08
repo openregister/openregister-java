@@ -1,5 +1,8 @@
 package uk.gov.indexer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,6 +11,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class Configuration {
+    private final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
+
     private final Set<String> registers;
     private final Properties properties;
     private final Map<String, String> cloudSearchEndPoints;
@@ -35,10 +40,10 @@ class Configuration {
 
     private InputStream configurationPropertiesStream(String fileName) throws IOException {
         if (fileName == null || fileName.trim().equals("")) {
-            ConsoleLogger.log("Configuration properties file not provided, using default application.properties file");
+            LOGGER.info("Configuration properties file not provided, using default application.properties file");
             return Application.class.getResourceAsStream("/application.properties");
         } else {
-            ConsoleLogger.log("Loading properties file: " + fileName);
+            LOGGER.info("Loading properties file: " + fileName);
             return new FileInputStream(new File(fileName));
         }
     }

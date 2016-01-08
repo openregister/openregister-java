@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile postgresClient, jdbi, aws_cloudsearch, stringTemplate
+    compile postgresClient, jdbi, aws_cloudsearch, stringTemplate, logging_api, logging_impl
     testCompile junit, mockito
 }
 

@@ -1,6 +1,8 @@
 package uk.gov.indexer;
 
 import org.skife.jdbi.v2.DBI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.IndexedEntriesUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
@@ -9,6 +11,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Indexer {
+    private final Logger LOGGER = LoggerFactory.getLogger(Indexer.class);
+
     private final Configuration configuration;
     private final String register;
     private DestinationDBUpdateDAO destinationDBUpdateDAO;
@@ -21,7 +25,7 @@ public class Indexer {
 
     public synchronized void start(ScheduledExecutorService executorService) {
         try {
-            ConsoleLogger.log("setting up register " + register);
+            LOGGER.info("setting up register " + register);
 
             DBI destDbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
             DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
@@ -47,7 +51,7 @@ public class Indexer {
 
         } catch (Throwable e) {
             e.printStackTrace();
-            ConsoleLogger.log("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
+            LOGGER.info("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
         }
 
     }
