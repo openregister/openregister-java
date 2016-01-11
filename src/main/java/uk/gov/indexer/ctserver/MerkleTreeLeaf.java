@@ -1,7 +1,5 @@
 package uk.gov.indexer.ctserver;
 
-import java.nio.ByteBuffer;
-
 public class MerkleTreeLeaf {
     private String leaf_input;
     private String extra_data;

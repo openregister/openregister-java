@@ -29,8 +29,8 @@ public class CTServer {
         if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
             throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
         }
-        SignedTreeHead sth = r.readEntity(SignedTreeHead.class);
-        return sth;
+        return r.readEntity(SignedTreeHead.class);
+
     }
 
     public Entries getEntries(int from, int to) {
@@ -46,8 +46,7 @@ public class CTServer {
         if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
             throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
         }
-        Entries entries = r.readEntity(Entries.class);
-        return entries;
+        return r.readEntity(Entries.class);
     }
 
     public AuditProofs getProofByHash(int treeSize, String hash) {
@@ -61,7 +60,6 @@ public class CTServer {
         if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
             throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
         }
-
         return r.readEntity(AuditProofs.class);
     }
 
