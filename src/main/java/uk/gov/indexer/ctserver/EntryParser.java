@@ -35,7 +35,6 @@ public class EntryParser {
 
             Object obj = om.treeToValue(object, Object.class);
             String tempObject = om.writeValueAsString(obj);
-            LOGGER.info(tempObject);
             byte[] allData = tempObject.getBytes(StandardCharsets.UTF_8);
             return new Entry(overrideSerial, allData);
         } catch (Exception e) {
