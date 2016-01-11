@@ -139,7 +139,7 @@ public class ElasticSearchTest {
             elasticSearch.upload(entries);
             fail("must throw exception");
         } catch (RuntimeException e) {
-            assertThat(e.getMessage(), containsString("serial_number is: 2"));
+            assertThat(e.getMessage(), containsString("serial_number is: '2'"));
         }
     }
 }
