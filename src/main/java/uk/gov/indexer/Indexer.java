@@ -34,10 +34,10 @@ public class Indexer {
             DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
 
             destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
-            
-            if (configuration.getProperty(register + ".source").compareTo("ctserver") == 0) {
+
+            if (configuration.getCTServerEndpointForRegister(register).isPresent()) {
                 executorService.scheduleAtFixedRate(
-                        new IndexerTask(register, new CTFetcher(new CTServer(configuration.getProperty(register + ".ctserver"))), destinationDBUpdateDAO),
+                        new IndexerTask(register, new CTFetcher(new CTServer(configuration.getCTServerEndpointForRegister(register).get())), destinationDBUpdateDAO),
                         0,
                         10,
                         TimeUnit.SECONDS);

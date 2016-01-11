@@ -82,4 +82,8 @@ public class Configuration {
     public Optional<String> cloudSearchWaterMarkEndPoint(String register) {
         return Optional.ofNullable(cloudSearchWatermarkEndPoints.get(register));
     }
+
+    public Optional<String> getCTServerEndpointForRegister(String register) {
+        return Optional.ofNullable(properties.getProperty(register + ".ctserver"));
+    }
 }
