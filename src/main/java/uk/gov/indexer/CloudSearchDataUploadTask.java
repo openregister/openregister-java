@@ -25,7 +25,7 @@ public class CloudSearchDataUploadTask implements Runnable {
     public void run() {
         try {
             LOGGER.info("Starting upload to cloudsearch domain for register: " + register);
-            //uploadEntries();
+            uploadEntries();
             LOGGER.info("upload to cloudsearch domain completed for register: " + register);
         } catch (Throwable e) {
             e.printStackTrace();
