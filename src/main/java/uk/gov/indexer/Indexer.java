@@ -31,8 +31,6 @@ public class Indexer {
             LOGGER.info("setting up register " + register);
 
             DBI destDbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
-            DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
-
             destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
             if (configuration.getCTServerEndpointForRegister(register).isPresent()) {
@@ -42,6 +40,7 @@ public class Indexer {
                         10,
                         TimeUnit.SECONDS);
             } else {
+                DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
                 sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
                 executorService.scheduleAtFixedRate(
                         new IndexerTask(register, new PGFetcher(sourceDBQueryDAO), destinationDBUpdateDAO),
