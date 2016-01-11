@@ -21,7 +21,7 @@ public class EntryParserTest {
         inputGarbage.setLeaf_input("non-JSON data");
 
         EntryParser objUnderTest = new EntryParser();
-        objUnderTest.parse(inputGarbage, -1);
+        objUnderTest.parse(inputGarbage, "signature", -1);
         fail("Should have thrown an exception");
     }
 
@@ -31,7 +31,7 @@ public class EntryParserTest {
         inputGarbage.setLeaf_input(validLeafData);
 
         EntryParser objUnderTest = new EntryParser();
-        Entry e = objUnderTest.parse(inputGarbage, -1);
+        Entry e = objUnderTest.parse(inputGarbage, "signature", -1);
 
         assertThat(e.contents, notNullValue());
         assertThat(e.serial_number, equalTo(-1));

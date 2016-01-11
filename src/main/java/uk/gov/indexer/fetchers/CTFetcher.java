@@ -27,7 +27,8 @@ public class CTFetcher implements Fetcher {
             EntryParser entryParser = new EntryParser();
             int counter = from;
             for (MerkleTreeLeaf singleEntry : ctEntries.getEntries()) {
-                entriesToWrite.add(entryParser.parse(singleEntry, ++counter));
+                String signature = ctServer.createHash(singleEntry.getLeaf_input());
+                entriesToWrite.add(entryParser.parse(singleEntry, signature, ++counter));
             }
             return entriesToWrite;
         }
