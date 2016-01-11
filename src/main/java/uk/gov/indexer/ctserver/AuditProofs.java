@@ -2,7 +2,7 @@ package uk.gov.indexer.ctserver;
 
 import java.util.List;
 
-public class Audit {
+public class AuditProofs {
     private int leaf_index;
     private List<String> audit_path;
 
