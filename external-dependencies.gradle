@@ -12,4 +12,5 @@ ext {
     //test dependency
     junit = 'junit:junit:4.12'
     mockito = 'org.mockito:mockito-core:1.9.5'
+    wiremock = 'com.github.tomakehurst:wiremock:2.0.8-beta' // Beta required due to servlet-api conflicts
 }

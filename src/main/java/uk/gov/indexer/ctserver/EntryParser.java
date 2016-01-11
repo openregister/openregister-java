@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.Entry;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -20,14 +19,8 @@ public class EntryParser {
 
     public Entry parse(MerkleTreeLeaf input, int overrideSerial) {
         byte[] rawdata = Base64.getDecoder().decode(input.getLeaf_input());
-        byte[] rawtimestamp = Arrays.copyOfRange(rawdata, 2, 10);
-        long timestamp = bytesToLong(rawtimestamp);
-        LOGGER.info(String.format("Timestamp %d", timestamp));
-
         byte[] rawPayload = Arrays.copyOfRange(rawdata, 15, rawdata.length - 2);
         String payload = new String(rawPayload, StandardCharsets.UTF_8);
-        LOGGER.info(String.format("Payload: '%s'", payload));
-
         String signature = createHash(input.getLeaf_input());
 
         try {
@@ -35,7 +28,7 @@ public class EntryParser {
             JsonNode payloadNode = om.readTree(payload);
 
             // Need to convert to
-            // { entry : <entry>, hash : <somehash> }
+            // { entry : <json_data>, hash : <somehash> }
             ObjectNode object = JsonNodeFactory.instance.objectNode();
             object.put("hash", signature);
             object.set("entry", payloadNode);
@@ -50,17 +43,10 @@ public class EntryParser {
         }
     }
 
-    private long bytesToLong(byte[] bytes) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.put(bytes);
-        buffer.flip(); //need flip
-        return buffer.getLong();
-    }
-
     private String createHash(String input) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.write(0x00);
+            baos.write(0x00); // Null byte prefix (http://tools.ietf.org/html/rfc6962#section-2.1)
             baos.write(Base64.getDecoder().decode(input));
             byte[] rawDataToSign = baos.toByteArray();
 
@@ -71,7 +57,7 @@ public class EntryParser {
             return encodedSignature;
 
         } catch (Exception e) {
-            LOGGER.info(e.toString());
+            LOGGER.error(e.toString());
         }
         return null;
     }
