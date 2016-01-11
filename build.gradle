@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile postgresClient, jdbi, aws_cloudsearch, stringTemplate
-    testCompile junit, mockito
+    compile postgresClient, jdbi, aws_cloudsearch, jersey_client, stringTemplate
+    testCompile junit, mockito, wiremock
 }
 
 jar.baseName = "indexer"

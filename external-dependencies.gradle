@@ -4,8 +4,10 @@ ext {
     jdbi = 'org.jdbi:jdbi:2.63.1'
     stringTemplate= 'org.antlr:stringtemplate:3.2.1'
     aws_cloudsearch = 'com.amazonaws:aws-java-sdk-cloudsearch:1.10.22'
+    jersey_client = 'org.glassfish.jersey.core:jersey-client:2.22.1'
 
     //test dependency
     junit = 'junit:junit:4.12'
     mockito = 'org.mockito:mockito-core:1.9.5'
+    wiremock = 'com.github.tomakehurst:wiremock:2.0.8-beta'
 }
