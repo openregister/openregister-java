@@ -18,21 +18,15 @@ public class CTFetcher implements Fetcher {
 
     @Override
     public List<Entry> fetch(int from) {
-
-        // Step 1 - get the latest entries from the CT server
         SignedTreeHead sth = ctServer.getSignedTreeHead();
-        LOGGER.info(String.format("Current tree size: %d", sth.getTree_size()));
+        LOGGER.debug(String.format("Current tree size: %d", sth.getTree_size()));
 
-        if(sth.getTree_size()-1 > from) {
-            // Step 2 - read from lastRead to TreeSize entries
-            //Entries ctEntries = ctServer.getEntries(lastRead+1, sth.getTree_size()-1);
-            Entries ctEntries = ctServer.getEntries(from, sth.getTree_size()-1);
-
-            // Step 3 - convert to something we can use
+        if (sth.getTree_size() - 1 > from) {
+            Entries ctEntries = ctServer.getEntries(from, sth.getTree_size() - 1);
             List<Entry> entriesToWrite = new ArrayList<>();
             EntryParser entryParser = new EntryParser();
             int counter = from;
-            for(MerkleTreeLeaf singleEntry : ctEntries.getEntries()) {
+            for (MerkleTreeLeaf singleEntry : ctEntries.getEntries()) {
                 entriesToWrite.add(entryParser.parse(singleEntry, ++counter));
             }
             return entriesToWrite;
