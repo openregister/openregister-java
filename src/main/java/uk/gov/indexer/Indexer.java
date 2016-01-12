@@ -59,6 +59,15 @@ public class Indexer {
                     )
             );
 
+            configuration.elasticSerachEndPoint(register).ifPresent(
+                    endPoint -> executorService.scheduleAtFixedRate(
+                            new ElasticSearchDataUploadTask(register, endPoint, destDbi.onDemand(IndexedEntriesUpdateDAO.class)),
+                            0,
+                            5,
+                            TimeUnit.MINUTES
+                    )
+            );
+
         } catch (Throwable e) {
             e.printStackTrace();
             LOGGER.info("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
