@@ -49,7 +49,7 @@ public class CTServer {
         return r.readEntity(Entries.class);
     }
 
-    public AuditProofs getProofByHash(int treeSize, String hash) {
+    public AuditProof getProofByHash(int treeSize, String hash) {
         Client client = ClientBuilder.newClient();
         WebTarget wt = client.target(sthLocation)
                 .path("/ct/v1/get-proof-by-hash")
@@ -60,7 +60,7 @@ public class CTServer {
         if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
             throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
         }
-        return r.readEntity(AuditProofs.class);
+        return r.readEntity(AuditProof.class);
     }
 
     public String createHash(String leaf_data) {
