@@ -34,10 +34,13 @@ public class CTHandler implements Loader {
         entries.forEach(singleEntry -> {
             Response response = wt.request()
                     .post(Entity.entity(singleEntry, MediaType.APPLICATION_JSON), Response.class);
-            if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-                throw new CTException(response.getStatus(), response.readEntity(String.class));
+            try {
+                if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+                    throw new CTException(response.getStatus(), response.readEntity(String.class));
+                }
+            } finally {
+                response.close();
             }
-            response.close();
         });
     }
 }
