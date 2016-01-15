@@ -6,8 +6,6 @@ import org.junit.Test;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import java.io.IOException;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,14 +23,5 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
         Response response = getRequest("address", "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-entries.json\""));
-    }
-
-    @Test
-    public void feed_movedPermanentlyToFeedSoReturns301() throws InterruptedException, IOException {
-        Response response = getRequest("/feed.json");
-
-        assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/entries.json"));
-
     }
 }

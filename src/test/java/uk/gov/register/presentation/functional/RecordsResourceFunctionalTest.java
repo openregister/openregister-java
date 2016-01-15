@@ -9,7 +9,6 @@ import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -46,15 +45,6 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
         Response response = getRequest("address", "/records.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
-    }
-
-    @Test
-    public void current_movedPermanentlyToRecordsSoReturns301() throws InterruptedException, IOException {
-        Response response = getRequest("/current.json");
-
-        assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/records.json"));
-
     }
 
     @Test

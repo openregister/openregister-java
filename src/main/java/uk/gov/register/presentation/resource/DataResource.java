@@ -75,20 +75,6 @@ public class DataResource {
         return viewFactory.getRecordsView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
-    @GET
-    @Path("/feed")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public Response feed(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
-        return create301Response("/entries", pageIndex, pageSize);
-    }
-
-    @GET
-    @Path("/current")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public Response current(@QueryParam("pageIndex") Optional<Long> pageIndex, @QueryParam("pageSize") Optional<Long> pageSize) {
-        return create301Response("/records", pageIndex, pageSize);
-    }
-
     private Optional<String> getFileExtension() {
         String requestURI = requestContext.getHttpServletRequest().getRequestURI();
         if (requestURI.lastIndexOf('.') == -1) {
