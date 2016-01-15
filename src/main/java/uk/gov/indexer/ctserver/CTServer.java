@@ -48,37 +48,4 @@ public class CTServer {
         }
         return r.readEntity(Entries.class);
     }
-
-    public AuditProof getProofByHash(int treeSize, String hash) {
-        Client client = ClientBuilder.newClient();
-        WebTarget wt = client.target(sthLocation)
-                .path("/ct/v1/get-proof-by-hash")
-                .queryParam("tree_size", treeSize)
-                .queryParam("hash", hash);
-
-        Response r = wt.request().get();
-        if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
-        }
-        return r.readEntity(AuditProof.class);
-    }
-
-    public String createHash(String leaf_data) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos.write(0x00); // Null byte prefix (http://tools.ietf.org/html/rfc6962#section-2.1)
-            baos.write(Base64.getDecoder().decode(leaf_data));
-            byte[] rawDataToSign = baos.toByteArray();
-
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(rawDataToSign);
-            byte[] signature = md.digest();
-            String encodedSignature = Base64.getEncoder().encodeToString(signature);
-            return encodedSignature;
-        } catch (Exception e) {
-            LOGGER.error(e.toString());
-        }
-        return null;
-    }
-
 }
