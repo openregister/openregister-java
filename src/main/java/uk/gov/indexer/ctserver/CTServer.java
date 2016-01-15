@@ -7,9 +7,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
-import java.util.Base64;
 
 public class CTServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CTServer.class);
@@ -26,10 +23,17 @@ public class CTServer {
                 .path("/ct/v1/get-sth");
 
         Response r = wt.request().get();
-        if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
+        try {
+            if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+                throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
+            }
+            SignedTreeHead sth = r.readEntity(SignedTreeHead.class);
+            return sth;
+        } finally {
+            if (r != null) {
+                r.close();
+            }
         }
-        return r.readEntity(SignedTreeHead.class);
 
     }
 
@@ -43,9 +47,16 @@ public class CTServer {
                 .queryParam("end", to);
 
         Response r = wt.request().get();
-        if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
+        try {
+            if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+                throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
+            }
+            Entries entries = r.readEntity(Entries.class);
+            return entries;
+        } finally {
+            if (r != null) {
+                r.close();
+            }
         }
-        return r.readEntity(Entries.class);
     }
 }
