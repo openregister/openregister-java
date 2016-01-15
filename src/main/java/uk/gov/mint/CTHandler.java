@@ -3,8 +3,6 @@ package uk.gov.mint;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.gov.MintConfiguration;
 
 import javax.ws.rs.client.Client;
@@ -15,8 +13,6 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class CTHandler implements Loader {
-    private static final Log LOG = LogFactory.getLog(CTHandler.class);
-
     private final String ctserver;
     private final Client client;
     private final CanonicalJsonMapper canonicalJsonMapper;
