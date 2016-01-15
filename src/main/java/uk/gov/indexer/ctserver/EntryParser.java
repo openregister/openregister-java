@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.PackageVersion;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.Entry;
@@ -47,7 +48,7 @@ public class EntryParser {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(payload);
             byte[] signature = md.digest();
-            return Base64.getEncoder().encodeToString(signature);
+            return Hex.encodeHexString(signature);
         }
         catch(Exception e) {
             throw new RuntimeException(e);
