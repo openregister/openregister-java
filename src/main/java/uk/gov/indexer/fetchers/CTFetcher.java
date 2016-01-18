@@ -1,35 +1,38 @@
 package uk.gov.indexer.fetchers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.gov.indexer.ctserver.*;
+import uk.gov.indexer.ctserver.CTServer;
+import uk.gov.indexer.ctserver.EntryParser;
+import uk.gov.indexer.ctserver.SignedTreeHead;
 import uk.gov.indexer.dao.Entry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class CTFetcher implements Fetcher {
-    private final Logger LOGGER = LoggerFactory.getLogger(CTFetcher.class);
     private final CTServer ctServer;
+
+    private final EntryParser entryParser = new EntryParser();
 
     public CTFetcher(CTServer ctServer) {
         this.ctServer = ctServer;
     }
 
     @Override
-    public List<Entry> fetch(int from) {
+    public List<Entry> fetch(int startIndex) {
         SignedTreeHead sth = ctServer.getSignedTreeHead();
-        LOGGER.debug(String.format("Current tree size: %d", sth.getTree_size()));
 
-        if (sth.getTree_size() - 1 > from) {
-            Entries ctEntries = ctServer.getEntries(from, sth.getTree_size() - 1);
-            List<Entry> entriesToWrite = new ArrayList<>();
-            EntryParser entryParser = new EntryParser();
-            int counter = from;
-            for (MerkleTreeLeaf singleEntry : ctEntries.getEntries()) {
-                entriesToWrite.add(entryParser.parse(singleEntry, ++counter));
-            }
-            return entriesToWrite;
+        int lastEntryIndex = sth.tree_size - 1;
+
+        if (lastEntryIndex > startIndex) {
+            AtomicInteger atomicInteger = new AtomicInteger(startIndex);
+            return
+                    ctServer.getEntries(startIndex, lastEntryIndex)
+                            .entries
+                            .stream()
+                            .map(treeLeaf -> entryParser.parse(treeLeaf, atomicInteger.incrementAndGet()))
+                            .collect(Collectors.toList());
         }
 
         return new ArrayList<>();
