@@ -6,11 +6,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CTServerTest {
+    CTServer ctServer = new CTServer("http://localhost:8090");
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8090);
@@ -19,8 +25,8 @@ public class CTServerTest {
     public void exceptionPropagatesForGetSth() {
         stubFor(get(urlEqualTo("/ct/v1/get-sth"))
                 .willReturn(aResponse()
-                        .withStatus(500)
-                        .withBody("Some simulated error")
+                                .withStatus(500)
+                                .withBody("Some simulated error")
                 ));
 
         CTServer objectUnderTest = new CTServer("http://localhost:8090");
@@ -34,12 +40,56 @@ public class CTServerTest {
                 .withQueryParam("start", equalTo("0"))
                 .withQueryParam("end", equalTo("999"))
                 .willReturn(aResponse()
-                        .withStatus(500)
-                        .withBody("Some simulated error")
+                                .withStatus(500)
+                                .withBody("Some simulated error")
                 ));
 
-        CTServer objectUnderTest = new CTServer("http://localhost:8090");
-        objectUnderTest.getEntries(0, 999);
+
+        ctServer.getEntries(0, 999);
         fail("Should have thrown an exception");
+    }
+
+    @Test
+    public void getSignedTreeHead_returnsTheSignedTreeHeadOfTheTree() {
+        stubFor(get(urlEqualTo("/ct/v1/get-sth"))
+                .willReturn(aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON)
+                                .withBody("{ " +
+                                        "\"tree_size\": 5788, " +
+                                        "\"timestamp\": 1452868835667, " +
+                                        "\"sha256_root_hash\": \"sha256roothash\", " +
+                                        "\"tree_head_signature\": \"treeHEadSignature\" " +
+                                        "}")
+                ));
+
+        SignedTreeHead signedTreeHead = ctServer.getSignedTreeHead();
+
+        assertThat(signedTreeHead.timestamp, is(1452868835667l));
+        assertThat(signedTreeHead.tree_size, is(5788));
+
+    }
+
+    @Test
+    public void getEntries_returnsTheListOfEntriesInMerkleTree() {
+        stubFor(get(urlEqualTo("/ct/v1/get-entries?start=2&end=3"))
+                .willReturn(aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON)
+                                .withBody("{ \"entries\": " +
+                                        "[ " +
+                                        "{ \"leaf_input\": \"leaf_input1\", \"extra_data\": \"\" }, " +
+                                        "{ \"leaf_input\": \"leaf_input2\", \"extra_data\": \"\" } " +
+                                        "] " +
+                                        "}")
+                ));
+
+        List<MerkleTreeLeaf> entries = ctServer.getEntries(2, 3).entries;
+
+        assertThat(entries.size(), is(2));
+
+        assertThat(entries.get(0).leaf_input, is("leaf_input1"));
+        assertThat(entries.get(1).leaf_input, is("leaf_input2"));
+
     }
 }

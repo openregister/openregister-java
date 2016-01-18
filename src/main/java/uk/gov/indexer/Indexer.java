@@ -8,8 +8,10 @@ import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.IndexedEntriesUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.fetchers.CTFetcher;
+import uk.gov.indexer.fetchers.Fetcher;
 import uk.gov.indexer.fetchers.PGFetcher;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -33,22 +35,22 @@ public class Indexer {
             DBI destDbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
             destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
-            if (configuration.getCTServerEndpointForRegister(register).isPresent()) {
-                executorService.scheduleAtFixedRate(
-                        new IndexerTask(register, new CTFetcher(new CTServer(configuration.getCTServerEndpointForRegister(register).get())), destinationDBUpdateDAO),
-                        0,
-                        10,
-                        TimeUnit.SECONDS);
-            } else {
-                DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
-                sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
-                executorService.scheduleAtFixedRate(
-                        new IndexerTask(register, new PGFetcher(sourceDBQueryDAO), destinationDBUpdateDAO),
-                        0,
-                        10,
-                        TimeUnit.SECONDS
-                );
-            }
+            Fetcher fetcher = configuration.getCTServerEndpointForRegister(register)
+                    .map(endPoint ->
+                                    (Fetcher) new CTFetcher(new CTServer(endPoint))
+                    ).orElse(
+                            ((Callable<Fetcher>) () -> {
+                                DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
+                                sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
+                                return new PGFetcher(sourceDBQueryDAO);
+                            }).call()
+                    );
+
+            executorService.scheduleAtFixedRate(
+                    new IndexerTask(register, fetcher, destinationDBUpdateDAO),
+                    0,
+                    10,
+                    TimeUnit.SECONDS);
 
             configuration.cloudSearchEndPoint(register).ifPresent(
                     endPoint -> executorService.scheduleAtFixedRate(
