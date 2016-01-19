@@ -6,7 +6,6 @@ import uk.gov.indexer.dao.Entry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -19,23 +18,27 @@ public class CTFetcher implements Fetcher {
     }
 
     @Override
-    public FetchResult fetch(int startIndex) {
+    public FetchResult fetch() {
         SignedTreeHead sth = ctServer.getSignedTreeHead();
 
-        int lastEntryIndex = sth.getTree_size() - 1;
+        EntriesFunction entriesFunction = (from) -> {
+            int lastEntryNumber = sth.getTree_size();
 
-        List<Entry> entries = new ArrayList<>();
-        if (lastEntryIndex > startIndex) {
-            AtomicInteger atomicInteger = new AtomicInteger(startIndex);
-            entries = ctServer.getEntries(startIndex, lastEntryIndex)
-                    .entries
-                    .stream()
-                    .map(treeLeaf -> new CTEntryLeaf(treeLeaf.leaf_input).payload)
-                    .map(payload -> createEntry(atomicInteger.incrementAndGet(), payload))
-                    .collect(Collectors.toList());
-        }
+            if (from < lastEntryNumber) {
 
-        return new FetchResult(sth, entries);
+                AtomicInteger atomicInteger = new AtomicInteger(from);
+
+                return ctServer.getEntries(from, lastEntryNumber - 1 )
+                        .entries
+                        .stream()
+                        .map(treeLeaf -> new CTEntryLeaf(treeLeaf.leaf_input).payload)
+                        .map(payload -> createEntry(atomicInteger.incrementAndGet(), payload))
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        };
+
+        return new FetchResult(sth, entriesFunction);
     }
 
     private Entry createEntry(int serialNumber, byte[] payload) {

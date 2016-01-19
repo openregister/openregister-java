@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
+import uk.gov.indexer.ctserver.SignedTreeHead;
 import uk.gov.indexer.fetchers.FetchResult;
 
 import java.util.List;
@@ -42,14 +43,23 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntriesInBatch(String registerName, FetchResult fetchResult) {
+    public void writeEntriesInBatch(int from, String registerName, FetchResult fetchResult) {
 
-        signedTreeHeadDAO.updateSignedTree(fetchResult.getSignedTreeHead());
+        SignedTreeHead signedTreeHead = fetchResult.getSignedTreeHead();
 
-        List<OrderedEntryIndex> orderedEntryIndex = fetchResult.getEntries().stream().map(Entry::dbEntry).collect(Collectors.toList());
-        indexedEntriesUpdateDAO.writeBatch(orderedEntryIndex);
+        signedTreeHeadDAO.updateSignedTree(signedTreeHead);
 
-        upsertInCurrentKeysTable(registerName, orderedEntryIndex);
+        List<Entry> entries;
+
+        while (!(entries = fetchResult.getEntriesFn().get(from)).isEmpty()) {
+            List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(Entry::dbEntry).collect(Collectors.toList());
+
+            indexedEntriesUpdateDAO.writeBatch(orderedEntryIndex);
+
+            upsertInCurrentKeysTable(registerName, orderedEntryIndex);
+
+            from += entries.size();
+        }
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {

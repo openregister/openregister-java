@@ -32,14 +32,11 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
+        int from = destinationDBUpdateDAO.lastReadSerialNumber();
         FetchResult fetchResult;
-        while ((fetchResult = fetchNewEntries()).hasEntries()) {
-            destinationDBUpdateDAO.writeEntriesInBatch(register, fetchResult);
+        while ((fetchResult = fetcher.fetch()).hasMoreEntries(from)) {
+            destinationDBUpdateDAO.writeEntriesInBatch(from, register, fetchResult);
+            from = destinationDBUpdateDAO.lastReadSerialNumber();
         }
-    }
-
-
-    private FetchResult fetchNewEntries() {
-        return fetcher.fetch(destinationDBUpdateDAO.lastReadSerialNumber());
     }
 }
