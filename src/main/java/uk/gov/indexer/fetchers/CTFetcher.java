@@ -19,23 +19,23 @@ public class CTFetcher implements Fetcher {
     }
 
     @Override
-    public List<Entry> fetch(int startIndex) {
+    public FetchResult fetch(int startIndex) {
         SignedTreeHead sth = ctServer.getSignedTreeHead();
 
-        int lastEntryIndex = sth.tree_size - 1;
+        int lastEntryIndex = sth.getTree_size() - 1;
 
+        List<Entry> entries = new ArrayList<>();
         if (lastEntryIndex > startIndex) {
             AtomicInteger atomicInteger = new AtomicInteger(startIndex);
-            return
-                    ctServer.getEntries(startIndex, lastEntryIndex)
-                            .entries
-                            .stream()
-                            .map(treeLeaf -> new CTEntryLeaf(treeLeaf.leaf_input).payload)
-                            .map(payload -> createEntry(atomicInteger.incrementAndGet(), payload))
-                            .collect(Collectors.toList());
+            entries = ctServer.getEntries(startIndex, lastEntryIndex)
+                    .entries
+                    .stream()
+                    .map(treeLeaf -> new CTEntryLeaf(treeLeaf.leaf_input).payload)
+                    .map(payload -> createEntry(atomicInteger.incrementAndGet(), payload))
+                    .collect(Collectors.toList());
         }
 
-        return new ArrayList<>();
+        return new FetchResult(sth, entries);
     }
 
     private Entry createEntry(int serialNumber, byte[] payload) {

@@ -1,9 +1,6 @@
 package uk.gov.indexer.fetchers;
 
-import uk.gov.indexer.dao.Entry;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
-
-import java.util.List;
 
 public class PGFetcher implements Fetcher {
     private SourceDBQueryDAO sourceDBQueryDAO;
@@ -13,7 +10,7 @@ public class PGFetcher implements Fetcher {
     }
 
     @Override
-    public List<Entry> fetch(int from) {
-        return sourceDBQueryDAO.read(from);
+    public FetchResult fetch(int from) {
+        return new FetchResult(sourceDBQueryDAO.read(from));
     }
 }

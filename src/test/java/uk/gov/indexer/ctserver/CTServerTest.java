@@ -65,8 +65,8 @@ public class CTServerTest {
 
         SignedTreeHead signedTreeHead = ctServer.getSignedTreeHead();
 
-        assertThat(signedTreeHead.timestamp, is(1452868835667l));
-        assertThat(signedTreeHead.tree_size, is(5788));
+        assertThat(signedTreeHead.getTimestamp(), is(1452868835667l));
+        assertThat(signedTreeHead.getTree_size(), is(5788));
 
     }
 
