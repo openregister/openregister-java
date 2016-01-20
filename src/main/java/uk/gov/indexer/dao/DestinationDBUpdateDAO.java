@@ -7,6 +7,8 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.indexer.ctserver.SignedTreeHead;
 import uk.gov.indexer.fetchers.FetchResult;
 
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 
 public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
+    private final Logger logger = LoggerFactory.getLogger(DestinationDBUpdateDAO.class);
+
     private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
     private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;
     private final SignedTreeHeadDAO signedTreeHeadDAO;
@@ -52,6 +56,8 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         List<Entry> entries;
 
         while (!(entries = fetchResult.getEntriesFn().get(from)).isEmpty()) {
+            logger.info(String.format("Register '%s': Writing %s entries from index '%s'in transaction. total entries to write are: '%s'", registerName, entries.size(), from, signedTreeHead.getTree_size()));
+
             List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(Entry::dbEntry).collect(Collectors.toList());
 
             indexedEntriesUpdateDAO.writeBatch(orderedEntryIndex);
@@ -59,6 +65,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
             upsertInCurrentKeysTable(registerName, orderedEntryIndex);
 
             from += entries.size();
+            logger.info(String.format("Register '%s': Written '%s' more entries.", registerName, entries.size()));
         }
     }
 
