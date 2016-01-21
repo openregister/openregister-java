@@ -20,28 +20,28 @@ public class CTEntryLeaf {
     public final byte[] sctExtension;
 
     public CTEntryLeaf(String leafHash) {
-        byte[] decodeBytes = Base64.getDecoder().decode(leafHash);
+        byte[] decodedBytes = Base64.getDecoder().decode(leafHash);
 
-        int decodeBytesLength = decodeBytes.length;
+        int decodeBytesLength = decodedBytes.length;
 
         //first byte is version
-        version = decodeBytes[0];
+        version = decodedBytes[0];
 
         //second byte is leaftype
-        merkleLeafType = decodeBytes[1];
+        merkleLeafType = decodedBytes[1];
 
         //next 8 bytes are timestamp
-        timetamp = Arrays.copyOfRange(decodeBytes, 2, 10);
+        timetamp = Arrays.copyOfRange(decodedBytes, 2, 10);
 
         //bytes at position 10 and 11 are entryType
-        entryType = new byte[]{decodeBytes[10], decodeBytes[11]};
+        entryType = new byte[]{decodedBytes[10], decodedBytes[11]};
 
         //bytes at position 12, 13 and 14 are contentLength
-        contentLength = new byte[]{decodeBytes[12], decodeBytes[13], decodeBytes[14]};
+        contentLength = new byte[]{decodedBytes[12], decodedBytes[13], decodedBytes[14]};
 
         //last two bytes in array are sctExtension so from byte 15 till (bytes array length -2) is payload
-        payload = Arrays.copyOfRange(decodeBytes, 15, decodeBytesLength - 2);
+        payload = Arrays.copyOfRange(decodedBytes, 15, decodeBytesLength - 2);
 
-        sctExtension = new byte[]{decodeBytes[decodeBytesLength - 1], decodeBytes[decodeBytesLength - 2]};
+        sctExtension = new byte[]{decodedBytes[decodeBytesLength - 2], decodedBytes[decodeBytesLength - 1]};
     }
 }
