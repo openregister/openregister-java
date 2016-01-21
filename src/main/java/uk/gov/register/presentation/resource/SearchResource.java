@@ -50,7 +50,7 @@ public class SearchResource {
     @GET
     @Path("/hash/{hash}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    @CacheControl(maxAge = 365, maxAgeUnit = TimeUnit.DAYS)
+    @CacheControl(immutable = true)
     public SingleEntryView findByHash(@PathParam("hash") String hash) {
         Optional<DbEntry> entryO = queryDAO.findEntryByHash(hash);
         return entryResponse(entryO, viewFactory::getSingleEntryView);
@@ -59,7 +59,7 @@ public class SearchResource {
     @GET
     @Path("/entry/{serial}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    @CacheControl(maxAge = 365, maxAgeUnit = TimeUnit.DAYS)
+    @CacheControl(immutable = true)
     public SingleEntryView findBySerial(@PathParam("serial") String serialString) {
         Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
         Optional<DbEntry> entryO = serial.flatMap(queryDAO::findEntryBySerialNumber);
