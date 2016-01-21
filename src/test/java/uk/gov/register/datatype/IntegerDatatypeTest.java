@@ -19,6 +19,11 @@ public class IntegerDatatypeTest {
     }
 
     @Test
+    public void isValid_true_whenValueIsAnEmptyString_becauseAFieldCanHaveOptionalIntegerValue(){
+        assertTrue(integerDatatype.isValid(TextNode.valueOf("")));
+    }
+
+    @Test
     public void isValid_false_whenValueIsNotAnIntegerValue() {
         assertFalse(integerDatatype.isValid(TextNode.valueOf("5a")));
         assertFalse(integerDatatype.isValid(TextNode.valueOf("-0")));
