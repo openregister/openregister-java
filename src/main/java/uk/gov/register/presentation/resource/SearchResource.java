@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import com.google.common.primitives.Ints;
+import io.dropwizard.jersey.caching.CacheControl;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -13,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 
@@ -48,6 +50,7 @@ public class SearchResource {
     @GET
     @Path("/hash/{hash}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @CacheControl(maxAge = 365, maxAgeUnit = TimeUnit.DAYS)
     public SingleEntryView findByHash(@PathParam("hash") String hash) {
         Optional<DbEntry> entryO = queryDAO.findEntryByHash(hash);
         return entryResponse(entryO, viewFactory::getSingleEntryView);
@@ -56,6 +59,7 @@ public class SearchResource {
     @GET
     @Path("/entry/{serial}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @CacheControl(maxAge = 365, maxAgeUnit = TimeUnit.DAYS)
     public SingleEntryView findBySerial(@PathParam("serial") String serialString) {
         Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
         Optional<DbEntry> entryO = serial.flatMap(queryDAO::findEntryBySerialNumber);
