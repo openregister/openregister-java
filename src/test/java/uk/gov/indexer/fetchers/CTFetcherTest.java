@@ -26,8 +26,7 @@ public class CTFetcherTest {
     public void fetch_fetchesListOfEntriesIfAvailable() {
         CTFetcher ctFetcher = new CTFetcher(ctServer);
 
-        SignedTreeHead signedTreeHead = new SignedTreeHead();
-        signedTreeHead.tree_size = 12;
+        SignedTreeHead signedTreeHead = new SignedTreeHead(12, 123l, "", "");
 
         when(ctServer.getSignedTreeHead()).thenReturn(signedTreeHead);
 
@@ -42,10 +41,9 @@ public class CTFetcherTest {
         entries.entries.add(leaf2);
         when(ctServer.getEntries(10, 11)).thenReturn(entries);
 
-        List<Entry> result = ctFetcher.fetch(10);
+        List<Entry> result = ctFetcher.fetch().getEntriesFn().get(10);
 
         assertThat(result.size(), equalTo(2));
-
 
         Entry entry1 = result.get(0);
         assertThat(entry1.serial_number, equalTo(11));
@@ -69,14 +67,13 @@ public class CTFetcherTest {
 
         CTFetcher ctFetcher = new CTFetcher(ctServer);
 
-        SignedTreeHead signedTreeHead = new SignedTreeHead();
-        signedTreeHead.tree_size = 10;
+        SignedTreeHead signedTreeHead = new SignedTreeHead(10, 123l, "", "");
 
         when(ctServer.getSignedTreeHead()).thenReturn(signedTreeHead);
 
-        List<Entry> result = ctFetcher.fetch(10);
+        FetchResult fetchResult = ctFetcher.fetch();
 
-        assertThat(result.size(), equalTo(0));
+        assertThat(fetchResult.getEntriesFn().get(10).size(), equalTo(0));
 
     }
 }
