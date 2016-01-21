@@ -12,4 +12,7 @@ public interface SourceDBQueryDAO extends DBConnectionDAO {
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("SELECT ID,ENTRY FROM " + ENTRIES_TABLE + " WHERE ID > :lastReadSerialNumber ORDER BY ID LIMIT 5000")
     List<Entry> read(@Bind("lastReadSerialNumber") int lastReadSerialNumber);
+
+    @SqlQuery("SELECT MAX(ID) FROM " + ENTRIES_TABLE)
+    int lastEntryID();
 }

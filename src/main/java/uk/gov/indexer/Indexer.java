@@ -7,9 +7,9 @@ import uk.gov.indexer.ctserver.CTServer;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.IndexedEntriesUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
-import uk.gov.indexer.fetchers.CTFetcher;
-import uk.gov.indexer.fetchers.Fetcher;
-import uk.gov.indexer.fetchers.PGFetcher;
+import uk.gov.indexer.fetchers.CTDataSource;
+import uk.gov.indexer.fetchers.DataSource;
+import uk.gov.indexer.fetchers.PGDataSource;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,19 +35,19 @@ public class Indexer {
             DBI destDbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
             destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
-            Fetcher fetcher = configuration.getCTServerEndpointForRegister(register)
+            DataSource dataSource = configuration.getCTServerEndpointForRegister(register)
                     .map(endPoint ->
-                                    (Fetcher) new CTFetcher(new CTServer(endPoint))
+                                    (DataSource) new CTDataSource(new CTServer(endPoint))
                     ).orElse(
-                            ((Callable<Fetcher>) () -> {
+                            ((Callable<DataSource>) () -> {
                                 DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
                                 sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
-                                return new PGFetcher(sourceDBQueryDAO);
+                                return new PGDataSource(sourceDBQueryDAO);
                             }).call()
                     );
 
             executorService.scheduleAtFixedRate(
-                    new IndexerTask(register, fetcher, destinationDBUpdateDAO),
+                    new IndexerTask(register, dataSource, destinationDBUpdateDAO),
                     0,
                     10,
                     TimeUnit.SECONDS);
