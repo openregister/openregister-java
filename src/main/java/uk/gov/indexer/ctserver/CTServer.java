@@ -1,16 +1,13 @@
 package uk.gov.indexer.ctserver;
 
-import com.amazonaws.util.json.Jackson;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import uk.gov.indexer.JsonUtils;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class CTServer {
-    private final ObjectMapper objectMapper = Jackson.getObjectMapper();
 
     private String sthLocation;
 
@@ -38,17 +35,9 @@ public class CTServer {
             if (r.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
                 throw new RuntimeException(String.format("%d: %s", r.getStatus(), r.getEntity()));
             }
-            return readObjectFromStream(responseType, r.readEntity(InputStream.class));
+            return JsonUtils.fromStream(r.readEntity(InputStream.class), responseType);
         } finally {
             r.close();
-        }
-    }
-
-    private <T> T readObjectFromStream(Class<T> responseType, InputStream inputStream) {
-        try {
-            return objectMapper.readValue(inputStream, responseType);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
