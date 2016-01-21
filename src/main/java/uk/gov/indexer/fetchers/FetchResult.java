@@ -4,19 +4,19 @@ import uk.gov.indexer.ctserver.SignedTreeHead;
 
 public class FetchResult {
     private final SignedTreeHead signedTreeHead;
-    private final EntryGetter entriesFn;
+    private final EntryFetcher entryFetcher;
 
-    public FetchResult(SignedTreeHead signedTreeHead, EntryGetter entriesFn) {
+    public FetchResult(SignedTreeHead signedTreeHead, EntryFetcher entryFetcher) {
         this.signedTreeHead = signedTreeHead;
-        this.entriesFn = entriesFn;
+        this.entryFetcher = entryFetcher;
     }
 
     public SignedTreeHead getSignedTreeHead() {
         return signedTreeHead;
     }
 
-    public EntryGetter getEntriesFn() {
-        return entriesFn;
+    public EntryFetcher getEntryFetcher() {
+        return entryFetcher;
     }
 
     public boolean hasMoreEntries(int afterLastReadSerialNumber) {

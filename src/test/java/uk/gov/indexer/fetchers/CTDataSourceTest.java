@@ -18,13 +18,13 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CTFetcherTest {
+public class CTDataSourceTest {
     @Mock
     CTServer ctServer;
 
     @Test
     public void fetch_fetchesListOfEntriesIfAvailable() {
-        CTFetcher ctFetcher = new CTFetcher(ctServer);
+        CTDataSource ctFetcher = new CTDataSource(ctServer);
 
         SignedTreeHead signedTreeHead = new SignedTreeHead(12, 123l, "", "");
 
@@ -41,7 +41,7 @@ public class CTFetcherTest {
         entries.entries.add(leaf2);
         when(ctServer.getEntries(10, 11)).thenReturn(entries);
 
-        List<Entry> result = ctFetcher.fetch().getEntriesFn().get(10);
+        List<Entry> result = ctFetcher.fetchCurrentSnapshot().getEntryFetcher().fetch(10);
 
         assertThat(result.size(), equalTo(2));
 
@@ -65,15 +65,15 @@ public class CTFetcherTest {
     @Test
     public void fetch_returnsEmptyListIfNoEntryAvailable() {
 
-        CTFetcher ctFetcher = new CTFetcher(ctServer);
+        CTDataSource ctFetcher = new CTDataSource(ctServer);
 
         SignedTreeHead signedTreeHead = new SignedTreeHead(10, 123l, "", "");
 
         when(ctServer.getSignedTreeHead()).thenReturn(signedTreeHead);
 
-        FetchResult fetchResult = ctFetcher.fetch();
+        FetchResult fetchResult = ctFetcher.fetchCurrentSnapshot();
 
-        assertThat(fetchResult.getEntriesFn().get(10).size(), equalTo(0));
+        assertThat(fetchResult.getEntryFetcher().fetch(10).size(), equalTo(0));
 
     }
 }

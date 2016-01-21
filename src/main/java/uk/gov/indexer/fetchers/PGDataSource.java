@@ -3,15 +3,15 @@ package uk.gov.indexer.fetchers;
 import uk.gov.indexer.ctserver.SignedTreeHead;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
-public class PGFetcher implements Fetcher {
+public class PGDataSource implements DataSource {
     private SourceDBQueryDAO sourceDBQueryDAO;
 
-    public PGFetcher(SourceDBQueryDAO sourceDBQueryDAO) {
+    public PGDataSource(SourceDBQueryDAO sourceDBQueryDAO) {
         this.sourceDBQueryDAO = sourceDBQueryDAO;
     }
 
     @Override
-    public FetchResult fetch() {
+    public FetchResult fetchCurrentSnapshot() {
         SignedTreeHead tempSignTreeHead = new SignedTreeHead(
                 sourceDBQueryDAO.lastEntryID(),
                 1447421303202l,

@@ -9,9 +9,9 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.indexer.ctserver.CTServer;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
-import uk.gov.indexer.fetchers.CTFetcher;
-import uk.gov.indexer.fetchers.Fetcher;
-import uk.gov.indexer.fetchers.PGFetcher;
+import uk.gov.indexer.fetchers.CTDataSource;
+import uk.gov.indexer.fetchers.DataSource;
+import uk.gov.indexer.fetchers.PGDataSource;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -74,13 +74,13 @@ public class IndexerTaskTest {
             try (Statement statement = connection.createStatement()) {
                 dropReadApiTables(statement);
 
-                Fetcher fetcher = new CTFetcher(new CTServer("http://localhost:8090"));
+                DataSource dataSource = new CTDataSource(new CTServer("http://localhost:8090"));
 
                 DBI destDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer?user=postgres");
 
                 DestinationDBUpdateDAO destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
-                IndexerTask indexerTask = new IndexerTask("food-premises", fetcher, destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask("food-premises", dataSource, destinationDBUpdateDAO);
 
                 indexerTask.run();
 
@@ -120,7 +120,7 @@ public class IndexerTaskTest {
                 DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
 
 
-                IndexerTask indexerTask = new IndexerTask("food-premises", new PGFetcher(sourceDBQueryDAO), destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask("food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
 
                 indexerTask.run();
 

@@ -10,18 +10,18 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class CTFetcher implements Fetcher {
+public class CTDataSource implements DataSource {
     private final CTServer ctServer;
 
-    public CTFetcher(CTServer ctServer) {
+    public CTDataSource(CTServer ctServer) {
         this.ctServer = ctServer;
     }
 
     @Override
-    public FetchResult fetch() {
+    public FetchResult fetchCurrentSnapshot() {
         SignedTreeHead sth = ctServer.getSignedTreeHead();
 
-        EntryGetter entryGetter = (from) -> {
+        EntryFetcher entryFetcher = (from) -> {
             int lastEntryNumber = sth.getTree_size();
 
             if (from < lastEntryNumber) {
@@ -38,7 +38,7 @@ public class CTFetcher implements Fetcher {
             return new ArrayList<>();
         };
 
-        return new FetchResult(sth, entryGetter);
+        return new FetchResult(sth, entryFetcher);
     }
 
     private Entry createEntry(int serialNumber, byte[] payload) {

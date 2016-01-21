@@ -55,7 +55,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         List<Entry> entries;
 
-        while (!(entries = fetchResult.getEntriesFn().get(from)).isEmpty()) {
+        while (!(entries = fetchResult.getEntryFetcher().fetch(from)).isEmpty()) {
             logger.info(String.format("Register '%s': Writing %s entries from index '%s'in transaction. total entries to write are: '%s'", registerName, entries.size(), from, signedTreeHead.getTree_size()));
 
             List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(Entry::dbEntry).collect(Collectors.toList());
