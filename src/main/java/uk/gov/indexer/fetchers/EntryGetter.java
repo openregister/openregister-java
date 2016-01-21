@@ -4,6 +4,6 @@ import uk.gov.indexer.dao.Entry;
 
 import java.util.List;
 
-public interface EntriesFunction{
+public interface EntryGetter {
     List<Entry> get(int from);
 }

@@ -21,7 +21,7 @@ public class CTFetcher implements Fetcher {
     public FetchResult fetch() {
         SignedTreeHead sth = ctServer.getSignedTreeHead();
 
-        EntriesFunction entriesFunction = (from) -> {
+        EntryGetter entryGetter = (from) -> {
             int lastEntryNumber = sth.getTree_size();
 
             if (from < lastEntryNumber) {
@@ -38,7 +38,7 @@ public class CTFetcher implements Fetcher {
             return new ArrayList<>();
         };
 
-        return new FetchResult(sth, entriesFunction);
+        return new FetchResult(sth, entryGetter);
     }
 
     private Entry createEntry(int serialNumber, byte[] payload) {

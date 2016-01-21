@@ -4,9 +4,9 @@ import uk.gov.indexer.ctserver.SignedTreeHead;
 
 public class FetchResult {
     private final SignedTreeHead signedTreeHead;
-    private final EntriesFunction entriesFn;
+    private final EntryGetter entriesFn;
 
-    public FetchResult(SignedTreeHead signedTreeHead, EntriesFunction entriesFn) {
+    public FetchResult(SignedTreeHead signedTreeHead, EntryGetter entriesFn) {
         this.signedTreeHead = signedTreeHead;
         this.entriesFn = entriesFn;
     }
@@ -15,7 +15,7 @@ public class FetchResult {
         return signedTreeHead;
     }
 
-    public EntriesFunction getEntriesFn() {
+    public EntryGetter getEntriesFn() {
         return entriesFn;
     }
 
