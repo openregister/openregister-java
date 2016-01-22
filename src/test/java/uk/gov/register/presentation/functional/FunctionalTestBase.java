@@ -13,12 +13,10 @@ public class FunctionalTestBase {
     public static final String DATABASE_USER = "postgres";
     public static final int APPLICATION_PORT = 9000;
 
-    private static final String TABLE_NAME = "ordered_entry_index";
-
     protected static Client client;
 
     @ClassRule
-    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, DATABASE_USER, TABLE_NAME);
+    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, DATABASE_USER, "ordered_entry_index");
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
