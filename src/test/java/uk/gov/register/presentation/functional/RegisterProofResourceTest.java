@@ -20,7 +20,7 @@ public class RegisterProofResourceTest extends FunctionalTestBase {
 
     @Test
     public void shouldReturnSTHJson() throws JSONException {
-        Response response = getRequest("/register/proof.json");
+        Response response = getRequest("/proof/certificate-transparency.json");
 
         String jsonResponse = response.readEntity(String.class);
 

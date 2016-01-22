@@ -21,7 +21,7 @@ public class RegisterProofResource {
     }
 
     @GET
-    @Path("/register/proof")
+    @Path("/proof/certificate-transparency")
     @Produces(MediaType.APPLICATION_JSON)
     public RegisterProofView getRegisterDetails() throws JsonProcessingException {
         return new RegisterProofView(signedTreeHeadQueryDAO.get());
