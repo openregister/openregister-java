@@ -10,6 +10,9 @@ import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 public class HistoryTest extends FunctionalTestBase {
 
     @BeforeClass
@@ -35,4 +38,11 @@ public class HistoryTest extends FunctionalTestBase {
                 JSONCompareMode.STRICT_ORDER
         );
     }
+
+    @Test
+    public void history_returns406ResponseWhenRequestedForYamlFormat() {
+        Response response = getRequest("/address/145678/history.yaml");
+        assertThat(response.getStatus(), equalTo(406));
+    }
+
 }
