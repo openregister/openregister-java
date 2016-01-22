@@ -32,15 +32,8 @@ import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.representations.CsvWriter;
-import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.representations.TsvWriter;
-import uk.gov.register.presentation.representations.TurtleWriter;
-import uk.gov.register.presentation.representations.YamlWriter;
-import uk.gov.register.presentation.resource.BadRequestExceptionMapper;
-import uk.gov.register.presentation.resource.NotFoundExceptionMapper;
-import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.presentation.resource.ThrowableExceptionMapper;
+import uk.gov.register.presentation.representations.*;
+import uk.gov.register.presentation.resource.*;
 import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 
@@ -116,6 +109,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
             }
         });
 
+
         resourceConfig.packages("uk.gov.register.presentation.resource");
 
         jerseyEnvironment.register(CsvWriter.class);
@@ -123,8 +117,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jerseyEnvironment.register(TurtleWriter.class);
         jerseyEnvironment.register(YamlWriter.class);
 
-        jerseyEnvironment.register(BadRequestExceptionMapper.class);
-        jerseyEnvironment.register(NotFoundExceptionMapper.class);
+        jerseyEnvironment.register(ClientErrorExceptionMapper.class);
         jerseyEnvironment.register(ThrowableExceptionMapper.class);
 
         jerseyEnvironment.register(CacheNoTransformFilterFactory.class);
