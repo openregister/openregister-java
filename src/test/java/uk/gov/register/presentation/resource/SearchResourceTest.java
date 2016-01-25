@@ -58,10 +58,10 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void findByHash_throwsNotFoundWhenHashIsNotFound() {
+    public void findByItemHash_throwsNotFoundWhenHashIsNotFound() {
         when(queryDAO.findEntryByHash("123")).thenReturn(Optional.<DbEntry>empty());
         try {
-            resource.findByHash("123");
+            resource.findByItemHash("123");
             fail("Must fail");
         } catch (NotFoundException e) {
             //success
@@ -126,9 +126,9 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void findByHashSupportsTurtleHtmlAndJson() throws Exception {
-        Method findByHashMethod = SearchResource.class.getDeclaredMethod("findByHash", String.class);
-        List<String> declaredMediaTypes = asList(findByHashMethod.getDeclaredAnnotation(Produces.class).value());
+    public void findByItemHashSupportsTurtleHtmlAndJson() throws Exception {
+        Method findByItemHashMethod = SearchResource.class.getDeclaredMethod("findByItemHash", String.class);
+        List<String> declaredMediaTypes = asList(findByItemHashMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(ExtraMediaType.TEXT_HTML,
                         MediaType.APPLICATION_JSON,
