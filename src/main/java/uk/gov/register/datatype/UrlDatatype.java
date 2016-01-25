@@ -15,11 +15,6 @@ public class UrlDatatype implements Datatype {
     @Override
     public boolean isValid(JsonNode value) {
         String url = value.textValue();
-
-        if(url.equals("")){
-            return true;
-        }
-
         try {
             new URL(url);
             return true;

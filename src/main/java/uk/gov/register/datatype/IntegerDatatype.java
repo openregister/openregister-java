@@ -11,7 +11,7 @@ public class IntegerDatatype implements Datatype {
 
     @Override
     public boolean isValid(JsonNode value) {
-        return value.isTextual() && value.textValue().matches("^-?[1-9][0-9]*|0|$");
+        return value.isTextual() && value.textValue().matches("^-?[1-9][0-9]*|0$");
     }
 
     public String getName() {
