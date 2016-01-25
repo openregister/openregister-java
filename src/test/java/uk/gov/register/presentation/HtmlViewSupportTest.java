@@ -20,25 +20,25 @@ public class HtmlViewSupportTest {
 
     @Test
     public void representationLink_addTheRepresentationSuffixForNonHtmlRepresentation() throws URISyntaxException {
-        when(servletRequest.getRequestURI()).thenReturn("/hash/hashvalue");
+        when(servletRequest.getRequestURI()).thenReturn("/item/hashvalue");
         when(servletRequest.getParameterMap()).thenReturn(Collections.singletonMap("query", new String[]{"value"}));
         String link = HtmlViewSupport.representationLink(servletRequest, "json");
-        assertThat(link, equalTo("/hash/hashvalue.json?query=value"));
+        assertThat(link, equalTo("/item/hashvalue.json?query=value"));
     }
 
     @Test
     public void representationLink_maintainTheSameRepresentationSuffix() throws URISyntaxException {
-        when(servletRequest.getRequestURI()).thenReturn("/hash/hashvalue.csv");
+        when(servletRequest.getRequestURI()).thenReturn("/item/hashvalue.csv");
         when(servletRequest.getParameterMap()).thenReturn(Collections.singletonMap("query", new String[]{"value"}));
         String link = HtmlViewSupport.representationLink(servletRequest, "csv");
-        assertThat(link, equalTo("/hash/hashvalue.csv?query=value"));
+        assertThat(link, equalTo("/item/hashvalue.csv?query=value"));
     }
 
     @Test
     public void representationLink_doNotAddRepresentationSuffixForHTMLRepresentation() throws URISyntaxException {
-        when(servletRequest.getRequestURI()).thenReturn("/hash/hashvalue.json");
+        when(servletRequest.getRequestURI()).thenReturn("/item/hashvalue.json");
         when(servletRequest.getParameterMap()).thenReturn(Collections.singletonMap("query", new String[]{"value"}));
         String link = HtmlViewSupport.representationLink(servletRequest, "html");
-        assertThat(link, equalTo("/hash/hashvalue?query=value"));
+        assertThat(link, equalTo("/item/hashvalue?query=value"));
     }
 }

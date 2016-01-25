@@ -47,11 +47,11 @@ public class SearchResource {
     }
 
     @GET
-    @Path("/hash/{hash}")
+    @Path("/item/{itemHash}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @CacheControl(immutable = true)
-    public SingleEntryView findByHash(@PathParam("hash") String hash) {
-        Optional<DbEntry> entryO = queryDAO.findEntryByHash(hash);
+    public SingleEntryView findByItemHash(@PathParam("itemHash") String itemHash) {
+        Optional<DbEntry> entryO = queryDAO.findEntryByHash(itemHash);
         return entryResponse(entryO, viewFactory::getSingleEntryView);
     }
 
