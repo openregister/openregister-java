@@ -47,19 +47,19 @@ public class SearchResource {
     }
 
     @GET
-    @Path("/item/{itemHash}")
+    @Path("/item/{item-hash}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @CacheControl(immutable = true)
-    public SingleEntryView findByItemHash(@PathParam("itemHash") String itemHash) {
+    public SingleEntryView findByItemHash(@PathParam("item-hash") String itemHash) {
         Optional<DbEntry> entryO = queryDAO.findEntryByHash(itemHash);
         return entryResponse(entryO, viewFactory::getSingleEntryView);
     }
 
     @GET
-    @Path("/entry/{serial}")
+    @Path("/entry/{entry-number}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @CacheControl(immutable = true)
-    public SingleEntryView findBySerial(@PathParam("serial") String serialString) {
+    public SingleEntryView findBySerial(@PathParam("entry-number") String serialString) {
         Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
         Optional<DbEntry> entryO = serial.flatMap(queryDAO::findEntryBySerialNumber);
         return entryResponse(entryO, viewFactory::getSingleEntryView);
