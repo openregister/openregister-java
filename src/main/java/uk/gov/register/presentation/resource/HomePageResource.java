@@ -25,7 +25,7 @@ public class HomePageResource {
     @GET
     @Produces({ExtraMediaType.TEXT_HTML})
     public View home() {
-        return viewFactory.homePageView(recentEntryIndexQueryDAO.getTotalRecords(), recentEntryIndexQueryDAO.getLastUpdatedTime());
+        return viewFactory.homePageView(recentEntryIndexQueryDAO.getTotalRecords(), recentEntryIndexQueryDAO.getTotalEntries(), recentEntryIndexQueryDAO.getLastUpdatedTime());
     }
 
     @GET

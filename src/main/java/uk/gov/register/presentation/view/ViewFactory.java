@@ -79,8 +79,8 @@ public class ViewFactory {
         return new BadRequestExceptionView(requestContext, e);
     }
 
-    public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {
-        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, lastUpdated, registerDomain);
+    public HomePageView homePageView(int totalRecords, int totalEntries, LocalDateTime lastUpdated) {
+        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomain);
     }
 
     public ListVersionView listVersionView(List<Version> versions) throws Exception {

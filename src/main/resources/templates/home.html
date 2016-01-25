@@ -15,6 +15,8 @@
                 <dd><th:block th:include="main.html :: organisation(${custodian}, ${branding})"></th:block></dd>
                 <dt>Total records:</dt>
                 <dd><a href="/records" th:text="${totalRecords}">Total records</a></dd>
+                <dt>Total entries:</dt>
+                <dd><a href="/entries" th:text="${totalEntries}">Total entries</a></dd>
                 <dt>Last updated:</dt>
                 <dd><a href="/entries" th:text="${lastUpdatedTime}">Last updated</a></dd>
             </dl>

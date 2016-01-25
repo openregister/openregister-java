@@ -17,6 +17,7 @@ public class HomePageView extends AttributionView {
 
     private final LocalDateTime lastUpdated;
     private final int totalRecords;
+    private final int totalEntries;
     private final String registerDomain;
 
     public HomePageView(
@@ -24,11 +25,13 @@ public class HomePageView extends AttributionView {
             Optional<GovukOrganisation.Details> custodianBranding,
             RequestContext requestContext,
             int totalRecords,
+            int totalEntries,
             LocalDateTime lastUpdated,
             String registerDomain
     ) {
         super(requestContext, custodian, custodianBranding, "home.html");
         this.totalRecords = totalRecords;
+        this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
         this.registerDomain = registerDomain;
     }
@@ -41,6 +44,11 @@ public class HomePageView extends AttributionView {
     @SuppressWarnings("unused, used from template")
     public int getTotalRecords(){
         return totalRecords;
+    }
+
+    @SuppressWarnings("unused, used from template")
+    public int getTotalEntries() {
+        return totalEntries;
     }
 
     @SuppressWarnings("unused, used from template")
