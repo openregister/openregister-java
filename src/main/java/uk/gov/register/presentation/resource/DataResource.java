@@ -1,7 +1,9 @@
 package uk.gov.register.presentation.resource;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.views.View;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
+import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
@@ -12,13 +14,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Path("/")
 public class DataResource {
@@ -36,6 +39,46 @@ public class DataResource {
 
     @GET
     @Path("/download")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadRegister() {
+        List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
+
+        StreamingOutput stream = output -> {
+            ZipOutputStream zos = new ZipOutputStream(output);
+
+            ZipEntry ze = new ZipEntry("register.txt");
+            zos.putNextEntry(ze);
+            zos.write("This will contain the /register data in JSON".getBytes());
+            zos.closeEntry();
+
+            ze = new ZipEntry("proofs.txt");
+            zos.putNextEntry(ze);
+            zos.write("Contains CT-STH, Quantum:TipFingerprint, etc".getBytes());
+            zos.closeEntry();
+
+            entries.forEach(singleEntry -> {
+                JsonNode entryData = singleEntry.getContent().getContent();
+                ZipEntry singleZipEntry = new ZipEntry(String.format("item/%s.json", singleEntry.getSerialNumber()));
+                try {
+                    zos.putNextEntry(singleZipEntry);
+                    zos.write(entryData.toString().getBytes(StandardCharsets.UTF_8));
+                    zos.closeEntry();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            zos.flush();
+            zos.close();
+        };
+        return Response
+                .ok(stream)
+                .header("Content-Disposition", String.format("attachment; filename=%s.zip", requestContext.getRegisterPrimaryKey()))
+                .header("Content-Transfer-Encoding", "binary")
+                .build();
+    }
+
+    @GET
+    @Path("/download-help")
     @Produces(ExtraMediaType.TEXT_HTML)
     public View download() {
         return viewFactory.thymeleafView("download.html");
@@ -81,7 +124,7 @@ public class DataResource {
             return Optional.empty();
         }
         String[] tokens = requestURI.split("\\.");
-        return Optional.of(tokens[tokens.length-1]);
+        return Optional.of(tokens[tokens.length - 1]);
     }
 
     private void addContentDispositionHeader(String fileName) {
