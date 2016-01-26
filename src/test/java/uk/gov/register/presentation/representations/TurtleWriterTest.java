@@ -46,6 +46,17 @@ public class TurtleWriterTest {
     }
 
     @Test
+    public void rendersEntryIdentifierFromRequestContext() throws Exception {
+        EntryView entry = new EntryView(52, "abcd", "registerName", Collections.emptyMap());
+
+        TestOutputStream entityStream = new TestOutputStream();
+
+        turtleWriter.writeEntriesTo(entityStream, Collections.emptySet(), Collections.singletonList(entry));
+
+        assertThat(entityStream.contents, containsString("<http://widget.openregister.org/entry/52>"));
+    }
+
+    @Test
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
