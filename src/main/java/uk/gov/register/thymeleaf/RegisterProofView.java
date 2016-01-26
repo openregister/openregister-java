@@ -2,7 +2,8 @@ package uk.gov.register.thymeleaf;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.dropwizard.views.View;
-import uk.gov.register.presentation.SignedTreeHead;
+import uk.gov.register.proofs.ct.SignedTreeHead;
+
 
 public class RegisterProofView extends View {
     private final SignedTreeHead signedTreeHead;

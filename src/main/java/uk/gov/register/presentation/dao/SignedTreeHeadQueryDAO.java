@@ -4,7 +4,7 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import uk.gov.register.presentation.SignedTreeHead;
+import uk.gov.register.proofs.ct.SignedTreeHead;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

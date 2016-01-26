@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.proofs.ct;
 
 public class SignedTreeHead {
     public final int tree_size;
