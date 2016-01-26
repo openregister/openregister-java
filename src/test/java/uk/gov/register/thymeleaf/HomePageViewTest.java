@@ -22,7 +22,7 @@ public class HomePageViewTest {
 
     @Test
     public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, null);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, null, ".openregister.org");
 
         String registerText = "foo *bar* [baz](/quux)";
         when(mockRequestContext.getRegister()).thenReturn(new Register("", Sets.newSet(), "", "", registerText));
@@ -36,7 +36,7 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         LocalDateTime localDateTime = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543);
 
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, localDateTime);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, localDateTime, ".openregister.org");
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 Sep 2015"));
     }
