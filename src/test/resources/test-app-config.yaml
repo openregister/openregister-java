@@ -7,6 +7,8 @@ server:
     - type: http
       port: 9001
 
+registerDomain: .test.register.gov.uk
+
 database:
   driverClass: org.postgresql.Driver
   url: PLACEHOLDER

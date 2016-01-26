@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 
-public class PresentationConfiguration extends Configuration implements GovukClientConfiguration {
+public class PresentationConfiguration extends Configuration implements GovukClientConfiguration, RegisterDomainConfiguration {
     @Valid
     @NotNull
     @JsonProperty
@@ -20,6 +20,16 @@ public class PresentationConfiguration extends Configuration implements GovukCli
     @NotNull
     @JsonProperty
     private DataSourceFactory database;
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    private String registerDomain = ".openregister.org";
+
+    @Override
+    public String getRegisterDomain() {
+        return registerDomain;
+    }
 
     public DataSourceFactory getDatabase() {
         return database;

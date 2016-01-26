@@ -31,7 +31,18 @@ public class TurtleWriterTest {
                 return "http://widget.openregister.org/widget/123";
             }
         };
-        turtleWriter = new TurtleWriter(requestContext);
+        turtleWriter = new TurtleWriter(requestContext, () -> ".test.register.gov.uk");
+    }
+
+    @Test
+    public void rendersFieldPrefixFromConfiguration() throws Exception {
+        EntryView entry = new EntryView(52, "abcd", "registerName", Collections.emptyMap());
+
+        TestOutputStream entityStream = new TestOutputStream();
+
+        turtleWriter.writeEntriesTo(entityStream, Collections.emptySet(), Collections.singletonList(entry));
+
+        assertThat(entityStream.contents, containsString("@prefix field: <http://field.test.register.gov.uk/field/>."));
     }
 
     @Test
