@@ -25,7 +25,7 @@ public class TurtleWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration()) {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> ".test.register.gov.uk") {
             @Override
             public String requestUrl() {
                 return "http://widget.openregister.org/widget/123";

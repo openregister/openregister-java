@@ -50,6 +50,10 @@ public class ThymeleafView extends View {
         return requestContext.getRegister();
     }
 
+    public String getRegisterDomain() {
+        return requestContext.getRegisterDomain();
+    }
+
     public ServletContext getServletContext() {
         return requestContext.getServletContext();
     }

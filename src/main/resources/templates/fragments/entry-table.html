@@ -17,7 +17,7 @@
         <tbody>
             <tr th:each="keyValue : ${content}">
                 <td>
-                    <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key)}"
+                    <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key, registerDomain)}"
                        th:text="${keyValue.key}"></a>
                 </td>
 
