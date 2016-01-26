@@ -15,9 +15,9 @@ import java.util.stream.Stream;
 public class DBSupport {
     public static void main(String[] args) throws IOException, SQLException {
         String filePath = args[1];
-        try (Stream<String> lines = Files.lines(new File(filePath).toPath(), Charset.defaultCharset())) {
+        try (Stream<String> lines = Files.lines(new File(filePath).toPath(), Charset.defaultCharset()); Connection connection = createConnection(args[2], "postgres")) {
             List<String> collect = lines.collect(Collectors.toList());
-            publishMessages(createConnection(args[2], "postgres"), args[0], collect);
+            publishMessages(connection, args[0], collect);
         }
     }
 
@@ -42,8 +42,23 @@ public class DBSupport {
         }
     }
 
+    public static void writeSignedTreeHead(int treeSize, long timeStamp, String rootHash, String treeSignature) {
+        try (Connection connection = createConnection(FunctionalTestBase.DATABASE_URL, FunctionalTestBase.DATABASE_USER); Statement statement = connection.createStatement()) {
+            statement.executeUpdate("Delete from sth");
+            try (PreparedStatement preparedStatement = connection.prepareStatement("Insert into sth(tree_size,timestamp,tree_head_signature,sha256_root_hash) values (?,?,?,?)")) {
+                preparedStatement.setInt(1, treeSize);
+                preparedStatement.setLong(2, timeStamp);
+                preparedStatement.setString(3, treeSignature);
+                preparedStatement.setString(4, rootHash);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void publishMessages(Connection connection, String registerName, List<String> messages) throws SQLException {
-        int serial_number=0;
+        int serial_number = 0;
         for (String message : messages) {
             try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
                 insertPreparedStatement.setObject(1, ++serial_number);

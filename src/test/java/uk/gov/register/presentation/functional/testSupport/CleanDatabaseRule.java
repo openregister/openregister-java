@@ -31,6 +31,9 @@ public class CleanDatabaseRule extends ExternalResource {
             connection.prepareStatement("DROP TABLE IF EXISTS TOTAL_RECORDS").execute();
             connection.prepareStatement("CREATE TABLE TOTAL_RECORDS (COUNT INTEGER)").execute();
             connection.prepareStatement("INSERT INTO TOTAL_RECORDS(COUNT) VALUES(0)").execute();
+
+            connection.prepareStatement("DROP TABLE IF EXISTS STH").execute();
+            connection.prepareStatement("create table sth (tree_size integer, timestamp bigint, tree_head_signature varchar, sha256_root_hash varchar)").execute();
         }
     }
 }
