@@ -36,12 +36,17 @@ public class DataResourceTest extends FunctionalTestBase {
         InputStream is = response.readEntity(InputStream.class);
         ZipInputStream zis = new ZipInputStream(is);
         ZipEntry entry = null;
+        boolean foundProofs = false;
         try {
             while ((entry = zis.getNextEntry()) != null) {
+                if(entry.getName().compareTo("proof.json") == 0) {
+                    foundProofs = true;
+                }
                 System.out.println(entry.getName());
             }
         } catch (IOException e) {
             fail("Unexpected IO exception - " + e.getMessage());
         }
+        assertThat(foundProofs, is(equalTo(true)));
     }
 }
