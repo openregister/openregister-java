@@ -29,6 +29,7 @@ public class DataResourceTest extends FunctionalTestBase {
     @Test
     public void download_shouldReturnAZipfile() {
         Response response = getRequest("/download");
+
         assertThat(response.getHeaderString("Content-Type"), equalTo(MediaType.APPLICATION_OCTET_STREAM));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".zip"));

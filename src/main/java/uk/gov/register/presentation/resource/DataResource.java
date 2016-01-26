@@ -1,13 +1,18 @@
 package uk.gov.register.presentation.resource;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.views.View;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import uk.gov.register.presentation.DbEntry;
+import uk.gov.register.presentation.Proofs;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.proofs.ct.SignedTreeHead;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -27,14 +32,16 @@ import java.util.zip.ZipOutputStream;
 public class DataResource {
     protected final RequestContext requestContext;
     private final RecentEntryIndexQueryDAO queryDAO;
+    private final SignedTreeHeadQueryDAO signedTreeHeadQueryDAO;
 
     private final ViewFactory viewFactory;
 
     @Inject
-    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, SignedTreeHeadQueryDAO signedTreeHeadQueryDAO) {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.queryDAO = queryDAO;
+        this.signedTreeHeadQueryDAO = signedTreeHeadQueryDAO;
     }
 
     @GET
@@ -42,6 +49,7 @@ public class DataResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadRegister() {
         List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
+        SignedTreeHead sth = signedTreeHeadQueryDAO.get();
 
         StreamingOutput stream = output -> {
             ZipOutputStream zos = new ZipOutputStream(output);
@@ -51,9 +59,13 @@ public class DataResource {
             zos.write("This will contain the /register data in JSON".getBytes());
             zos.closeEntry();
 
-            ze = new ZipEntry("proofs.txt");
+            ze = new ZipEntry("proof.json");
             zos.putNextEntry(ze);
-            zos.write("Contains CT-STH, Quantum:TipFingerprint, etc".getBytes());
+            Proofs proofs = new Proofs();
+            proofs.setCertificateTransparencySignedTreeHead(sth);
+            ObjectMapper om = new ObjectMapper();
+            om.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+            om.writeValue(zos, proofs);
             zos.closeEntry();
 
             entries.forEach(singleEntry -> {
