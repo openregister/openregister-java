@@ -24,7 +24,7 @@ import java.util.stream.StreamSupport;
 @Produces(ExtraMediaType.TEXT_TTL)
 @Service
 public class TurtleWriter extends RepresentationWriter {
-    private static final String PREFIX_FORMAT = "@prefix field: <http://field%s/field/>.\n\n";
+    private static final String PREFIX_FORMAT = "@prefix field: <http://field.%s/field/>.\n\n";
 
     private final RequestContext requestContext;
     private final String prefix;

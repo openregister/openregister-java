@@ -26,7 +26,7 @@ public class EntryConverterTest {
 
     @Before
     public void setUp() throws Exception {
-        entryConverter = new EntryConverter(new FieldsConfiguration(), () -> ".test.register.gov.uk", requestContext);
+        entryConverter = new EntryConverter(new FieldsConfiguration(), () -> "test.register.gov.uk", requestContext);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class EntryConverterTest {
 
         ListValue fields = (ListValue) entryView.getField("fields").get();
 
-        assertThat(fields, contains(samePropertyValuesAs(new LinkValue("field", ".test.register.gov.uk", "value1")), samePropertyValuesAs(new LinkValue("field", ".test.register.gov.uk", "value2"))));
+        assertThat(fields, contains(samePropertyValuesAs(new LinkValue("field", "test.register.gov.uk", "value1")), samePropertyValuesAs(new LinkValue("field", "test.register.gov.uk", "value2"))));
     }
 
     @Test

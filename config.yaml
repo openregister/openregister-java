@@ -4,7 +4,7 @@ server:
     - type: http
       port: 9092
 
-registerDomain: .openregister.dev:8080
+registerDomain: openregister.dev:8080
 
 database:
   driverClass: org.postgresql.Driver

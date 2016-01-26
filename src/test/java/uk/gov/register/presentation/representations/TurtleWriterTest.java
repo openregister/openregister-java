@@ -25,13 +25,13 @@ public class TurtleWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> ".test.register.gov.uk") {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> "test.register.gov.uk") {
             @Override
             public String requestUrl() {
                 return "http://widget.openregister.org/widget/123";
             }
         };
-        turtleWriter = new TurtleWriter(requestContext, () -> ".test.register.gov.uk");
+        turtleWriter = new TurtleWriter(requestContext, () -> "test.register.gov.uk");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class TurtleWriterTest {
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
-                        "registered-address", new LinkValue("address", ".test.register.gov.uk", "1111111"),
+                        "registered-address", new LinkValue("address", "test.register.gov.uk", "1111111"),
                         "name", new StringValue("foo")
                 );
 
@@ -68,7 +68,7 @@ public class TurtleWriterTest {
     public void rendersLists() throws Exception {
         Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
-                        "link-values", new ListValue(asList(new LinkValue("address", ".test.register.gov.uk", "1111111"), new LinkValue("address", ".test.register.gov.uk", "2222222"))),
+                        "link-values", new ListValue(asList(new LinkValue("address", "test.register.gov.uk", "1111111"), new LinkValue("address", "test.register.gov.uk", "2222222"))),
                         "string-values", new ListValue(asList(new StringValue("value1"), new StringValue("value2"))),
                         "name", new StringValue("foo")
                 );

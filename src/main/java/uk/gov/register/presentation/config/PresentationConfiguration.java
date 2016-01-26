@@ -24,7 +24,7 @@ public class PresentationConfiguration extends Configuration implements GovukCli
     @Valid
     @NotNull
     @JsonProperty
-    private String registerDomain = ".openregister.org";
+    private String registerDomain = "openregister.org";
 
     @Override
     public String getRegisterDomain() {
