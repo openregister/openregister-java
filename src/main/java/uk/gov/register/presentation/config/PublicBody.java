@@ -28,6 +28,6 @@ public class PublicBody {
     @SuppressWarnings("unused, used from html templates")
     @JsonIgnore
     public String getRecordLink(){
-        return new LinkValue("public-body", publicBodyId).link();
+        return new LinkValue("public-body", ".openregister.org", publicBodyId).link();
     }
 }

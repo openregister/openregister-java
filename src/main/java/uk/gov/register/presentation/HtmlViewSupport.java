@@ -21,6 +21,6 @@ public class HtmlViewSupport {
     }
 
     public static String fieldLink(String fieldName) {
-        return new LinkValue("field", fieldName).link();
+        return new LinkValue("field", ".openregister.org", fieldName).link();
     }
 }

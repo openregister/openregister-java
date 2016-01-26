@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
@@ -19,10 +20,14 @@ import static uk.gov.register.presentation.Cardinality.ONE;
 public class EntryConverter {
     private final FieldsConfiguration fieldsConfiguration;
     private final RequestContext requestContext;
+    private final String registerDomain;
 
     @Inject
-    public EntryConverter(FieldsConfiguration fieldsConfiguration, RequestContext requestContext) {
+    public EntryConverter(FieldsConfiguration fieldsConfiguration,
+                          RegisterDomainConfiguration domainConfiguration,
+                          RequestContext requestContext) {
         this.fieldsConfiguration = fieldsConfiguration;
+        this.registerDomain = domainConfiguration.getRegisterDomain();
         this.requestContext = requestContext;
     }
 
@@ -44,7 +49,7 @@ public class EntryConverter {
         return fieldConverter.convert(value);
     }
 
-    private static class FieldConverter {
+    private class FieldConverter {
         private final Field field;
 
         public FieldConverter(Field field) {
@@ -69,11 +74,11 @@ public class EntryConverter {
         private FieldValue convertScalar(JsonNode value) {
             if (field.getDatatype().equals("curie")) {
                 if (value.textValue().contains(":")) {
-                    return new LinkValue.CurieValue(value.textValue());
+                    return new LinkValue.CurieValue(value.textValue(), registerDomain);
                 } 
-                return new LinkValue(field.getRegister().get(), value.textValue());
+                return new LinkValue(field.getRegister().get(), registerDomain, value.textValue());
             } else if (field.getRegister().isPresent()) {
-                return new LinkValue(field.getRegister().get(), value.textValue());
+                return new LinkValue(field.getRegister().get(), registerDomain, value.textValue());
                 //Note: the equals check below must be replaced with the specified datatype, instead of doing string comparision
                 // We should replace this once the datatype register is available
             } else {

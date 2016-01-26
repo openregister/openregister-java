@@ -26,7 +26,7 @@ public class EntryConverterTest {
 
     @Before
     public void setUp() throws Exception {
-        entryConverter = new EntryConverter(new FieldsConfiguration(), requestContext);
+        entryConverter = new EntryConverter(new FieldsConfiguration(), () -> ".test.register.gov.uk", requestContext);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class EntryConverterTest {
 
         EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
 
-        assertThat(((LinkValue) entryView.getField("registry").get()).link(), equalTo("http://public-body.openregister.org/public-body/somevalue"));
+        assertThat(((LinkValue) entryView.getField("registry").get()).link(), equalTo("http://public-body.test.register.gov.uk/public-body/somevalue"));
     }
 
     @SuppressWarnings("unchecked")
@@ -47,7 +47,7 @@ public class EntryConverterTest {
 
         ListValue fields = (ListValue) entryView.getField("fields").get();
 
-        assertThat(fields, contains(samePropertyValuesAs(new LinkValue("field", "value1")), samePropertyValuesAs(new LinkValue("field", "value2"))));
+        assertThat(fields, contains(samePropertyValuesAs(new LinkValue("field", ".test.register.gov.uk", "value1")), samePropertyValuesAs(new LinkValue("field", ".test.register.gov.uk", "value2"))));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class EntryConverterTest {
         LinkValue.CurieValue curieValue = (LinkValue.CurieValue) entryView.getField("business").get();
 
         assertThat(curieValue.getValue(), equalTo("company:12345"));
-        assertThat(curieValue.link(), equalTo("http://company.openregister.org/company/12345"));
+        assertThat(curieValue.link(), equalTo("http://company.test.register.gov.uk/company/12345"));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class EntryConverterTest {
         LinkValue linkValue = (LinkValue) entryView.getField("business").get();
 
         assertThat(linkValue.getValue(), equalTo("12345"));
-        assertThat(linkValue.link(), equalTo("http://company.openregister.org/company/12345"));
+        assertThat(linkValue.link(), equalTo("http://company.test.register.gov.uk/company/12345"));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class EntryConverterTest {
         LinkValue.CurieValue curieValue = (LinkValue.CurieValue) entryView.getField("business").get();
 
         assertThat(curieValue.getValue(), equalTo("sole-trader:12345"));
-        assertThat(curieValue.link(), equalTo("http://sole-trader.openregister.org/sole-trader/12345"));
+        assertThat(curieValue.link(), equalTo("http://sole-trader.test.register.gov.uk/sole-trader/12345"));
     }
 
 }

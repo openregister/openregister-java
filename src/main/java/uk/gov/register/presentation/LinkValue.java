@@ -3,17 +3,17 @@ package uk.gov.register.presentation;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public class LinkValue implements FieldValue {
-    private static final String template = "http://%1$s.openregister.org/%1$s/%2$s";
+    private static final String template = "http://%1$s%2$s/%1$s/%3$s";
     private final String value;
     private final String link;
 
-    public LinkValue(String registerName, String value) {
-        this(registerName, value, value);
+    public LinkValue(String registerName, String registerDomain, String value) {
+        this(registerName, registerDomain, value, value);
     }
 
-    private LinkValue(String registerName, String value, String linkKey){
+    private LinkValue(String registerName, String registerDomain, String value, String linkKey){
         this.value = value;
-        this.link = String.format(template, registerName, linkKey);
+        this.link = String.format(template, registerName, registerDomain, linkKey);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class LinkValue implements FieldValue {
     }
 
     public static class CurieValue extends LinkValue {
-        public CurieValue(String curieValue) {
-            super(curieValue.split(":")[0], curieValue, curieValue.split(":")[1]);
+        public CurieValue(String curieValue, String registerDomain) {
+            super(curieValue.split(":")[0], registerDomain, curieValue, curieValue.split(":")[1]);
         }
     }
 }

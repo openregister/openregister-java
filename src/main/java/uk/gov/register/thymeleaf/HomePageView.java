@@ -47,6 +47,6 @@ public class HomePageView extends AttributionView {
 
     @SuppressWarnings("unused, used from template")
     public String getLinkToRegisterRegister(){
-        return new LinkValue("register", getRegisterId()).link();
+        return new LinkValue("register", ".openregister.org", getRegisterId()).link();
     }
 }
