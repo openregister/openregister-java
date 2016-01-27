@@ -19,8 +19,8 @@ public class CTServer {
         return getResponse(SignedTreeHead.class, "/ct/v1/get-sth");
     }
 
-    public Entries getEntries(int from, int to) {
-        return getResponse(Entries.class, "/ct/v1/get-entries", "start", from, "end", to);
+    public CTEntries getEntries(int from, int to) {
+        return getResponse(CTEntries.class, "/ct/v1/get-entries", "start", from, "end", to);
     }
 
     private <T> T getResponse(Class<T> responseType, String requestPath, Object... queryParamsAndValue) {

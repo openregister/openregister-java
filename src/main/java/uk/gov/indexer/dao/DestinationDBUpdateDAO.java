@@ -30,11 +30,9 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         Handle handle = getHandle();
 
         currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
-
         currentKeysUpdateDAO.ensureRecordTablesInPlace();
 
         indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
-
 
         indexedEntriesUpdateDAO.ensureEntryTablesInPlace();
 
@@ -50,14 +48,6 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         signedTreeHeadDAO = handle.attach(SignedTreeHeadDAO.class);
         signedTreeHeadDAO.ensureTablesExists();
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    private void ignoreOnlyDuplicateColumnPGErrorStateCodeWhichIsThrownWhenTryToAddAColumnInTableWhichAlreadyExists(UnableToExecuteStatementException e) {
-        if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals("42701")) {
-        } else {
-            throw e;
-        }
     }
 
     public int lastReadSerialNumber() {
@@ -102,6 +92,14 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
                     }
                 }
         );
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    private void ignoreOnlyDuplicateColumnPGErrorStateCodeWhichIsThrownWhenTryToAddAColumnInTableWhichAlreadyExists(UnableToExecuteStatementException e) {
+        if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals("42701")) {
+        } else {
+            throw e;
+        }
     }
 
     private String getKey(String registerName, String entry) {

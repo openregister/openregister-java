@@ -1,27 +1,34 @@
 package uk.gov.indexer.ctserver;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Arrays;
 import java.util.Base64;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
+
+@JsonIgnoreProperties({"extra_data"})
 public class CTEntryLeaf {
-    public final byte version;
+    private final byte version;
 
-    public final byte merkleLeafType;
+    private final byte merkleLeafType;
 
-    public final byte[] timetamp;
+    private final byte[] timetamp;
 
-    public final byte[] entryType;
+    private final byte[] entryType;
 
-    public final byte[] contentLength;
+    private final byte[] contentLength;
 
-    public final byte[] payload;
+    private final byte[] payload;
 
-    public final byte[] sctExtension;
+    private final byte[] sctExtension;
 
-    public final String leafInput;
+    private final String leafInput;
 
-    public CTEntryLeaf(String leafInput) {
+    @JsonCreator
+    public CTEntryLeaf(@JsonProperty("leaf_input") String leafInput) {
         this.leafInput = leafInput;
 
         byte[] decodedBytes = Base64.getDecoder().decode(leafInput);
@@ -47,5 +54,13 @@ public class CTEntryLeaf {
         payload = Arrays.copyOfRange(decodedBytes, 15, decodeBytesLength - 2);
 
         sctExtension = new byte[]{decodedBytes[decodeBytesLength - 2], decodedBytes[decodeBytesLength - 1]};
+    }
+
+    public byte[] getPayload() {
+        return payload;
+    }
+
+    public String getLeafInput() {
+        return leafInput;
     }
 }

@@ -72,24 +72,27 @@ public class CTServerTest {
 
     @Test
     public void getEntries_returnsTheListOfEntriesInMerkleTree() {
+        String leaf_input1 = "AAAAAAFSeasJ5IAAAABZeyAib3duZXIiOiAiRm9yZXN0cnkgQ29tbWlzc2lvbiIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiN3N0YW5lcy5nb3YudWsiIH0AAA==";
+        String leaf_input2 = "AAAAAAFSeasJnoAAAABqeyAib3duZXIiOiAiNHAncyBQdWJsaWMgUHJpdmF0ZSBQYXJ0bmVyc2hpcHMgUHJvZ3JhbSIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiNHBzLmdvdi51ayIgfQAA";
+
         stubFor(get(urlEqualTo("/ct/v1/get-entries?start=2&end=3"))
                 .willReturn(aResponse()
                                 .withStatus(200)
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON)
                                 .withBody("{ \"entries\": " +
                                         "[ " +
-                                        "{ \"leaf_input\": \"leaf_input1\", \"extra_data\": \"\" }, " +
-                                        "{ \"leaf_input\": \"leaf_input2\", \"extra_data\": \"\" } " +
+                                        "{ \"leaf_input\": \"" + leaf_input1 + "\", \"extra_data\": \"\" }, " +
+                                        "{ \"leaf_input\": \"" + leaf_input2 + "\", \"extra_data\": \"\" } " +
                                         "] " +
                                         "}")
                 ));
 
-        List<MerkleTreeLeaf> entries = ctServer.getEntries(2, 3).entries;
+        List<CTEntryLeaf> entries = ctServer.getEntries(2, 3).entries;
 
         assertThat(entries.size(), is(2));
 
-        assertThat(entries.get(0).leaf_input, is("leaf_input1"));
-        assertThat(entries.get(1).leaf_input, is("leaf_input2"));
+        assertThat(entries.get(0).getLeafInput(), is(leaf_input1));
+        assertThat(entries.get(1).getLeafInput(), is(leaf_input2));
 
     }
 }
