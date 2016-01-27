@@ -1,12 +1,9 @@
 package uk.gov.register.presentation.resource;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.views.View;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
+import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.DbEntry;
-import uk.gov.register.presentation.Proofs;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -19,14 +16,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.*;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Path("/")
 public class DataResource {
@@ -45,51 +41,21 @@ public class DataResource {
     }
 
     @GET
-    @Path("/download")
+    @Path("/download-register")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadRegister() {
         List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
         SignedTreeHead sth = signedTreeHeadQueryDAO.get();
 
-        StreamingOutput stream = output -> {
-            ZipOutputStream zos = new ZipOutputStream(output);
-
-            ZipEntry ze = new ZipEntry("register.txt");
-            zos.putNextEntry(ze);
-            zos.write("This will contain the /register data in JSON".getBytes());
-            zos.closeEntry();
-
-            ze = new ZipEntry("proof.json");
-            zos.putNextEntry(ze);
-            Proofs proofs = new Proofs(sth);
-            ObjectMapper om = new ObjectMapper();
-            om.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-            om.writeValue(zos, proofs);
-            zos.closeEntry();
-
-            entries.forEach(singleEntry -> {
-                JsonNode entryData = singleEntry.getContent().getContent();
-                ZipEntry singleZipEntry = new ZipEntry(String.format("item/%s.json", singleEntry.getSerialNumber()));
-                try {
-                    zos.putNextEntry(singleZipEntry);
-                    zos.write(entryData.toString().getBytes(StandardCharsets.UTF_8));
-                    zos.closeEntry();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            zos.flush();
-            zos.close();
-        };
         return Response
-                .ok(stream)
+                .ok(new ArchiveCreator().create(entries, sth))
                 .header("Content-Disposition", String.format("attachment; filename=%s.zip", requestContext.getRegisterPrimaryKey()))
                 .header("Content-Transfer-Encoding", "binary")
                 .build();
     }
 
     @GET
-    @Path("/download-help")
+    @Path("/download")
     @Produces(ExtraMediaType.TEXT_HTML)
     public View download() {
         return viewFactory.thymeleafView("download.html");
