@@ -19,8 +19,12 @@ public class CTEntryLeaf {
 
     public final byte[] sctExtension;
 
-    public CTEntryLeaf(String leafHash) {
-        byte[] decodedBytes = Base64.getDecoder().decode(leafHash);
+    public final String leafInput;
+
+    public CTEntryLeaf(String leafInput) {
+        this.leafInput = leafInput;
+
+        byte[] decodedBytes = Base64.getDecoder().decode(leafInput);
 
         int decodeBytesLength = decodedBytes.length;
 
