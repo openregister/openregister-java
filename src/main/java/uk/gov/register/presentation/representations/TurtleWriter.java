@@ -5,6 +5,7 @@ import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.ListValue;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
@@ -23,18 +24,20 @@ import java.util.stream.StreamSupport;
 @Produces(ExtraMediaType.TEXT_TTL)
 @Service
 public class TurtleWriter extends RepresentationWriter {
-    private static final String PREFIX = "@prefix field: <http://field.openregister.org/field/>.\n\n";
+    private static final String PREFIX_FORMAT = "@prefix field: <http://field.%s/field/>.\n\n";
 
     private final RequestContext requestContext;
+    private final String prefix;
 
     @Inject
-    public TurtleWriter(RequestContext requestContext) {
+    public TurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration) {
         this.requestContext = requestContext;
+        this.prefix = String.format(PREFIX_FORMAT, registerDomainConfiguration.getRegisterDomain());
     }
 
     @Override
     protected void writeEntriesTo(OutputStream entityStream, Iterable<String> fields, List<EntryView> entries) throws IOException {
-        entityStream.write(PREFIX.getBytes(StandardCharsets.UTF_8));
+        entityStream.write(prefix.getBytes(StandardCharsets.UTF_8));
         for (EntryView entry : entries) {
             entityStream.write((renderEntry(entry, fields) + "\n").getBytes(StandardCharsets.UTF_8));
         }

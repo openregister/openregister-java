@@ -8,6 +8,7 @@ import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.BadRequestExceptionView;
@@ -27,13 +28,19 @@ public class ViewFactory {
     private final EntryConverter entryConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
+    private final String registerDomain;
 
     @Inject
-    public ViewFactory(RequestContext requestContext, EntryConverter entryConverter, PublicBodiesConfiguration publicBodiesConfiguration, GovukOrganisationClient organisationClient) {
+    public ViewFactory(RequestContext requestContext,
+                       EntryConverter entryConverter,
+                       PublicBodiesConfiguration publicBodiesConfiguration,
+                       GovukOrganisationClient organisationClient,
+                       RegisterDomainConfiguration domainConfiguration) {
         this.requestContext = requestContext;
         this.entryConverter = entryConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
+        this.registerDomain = domainConfiguration.getRegisterDomain();
     }
 
     public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
@@ -73,7 +80,7 @@ public class ViewFactory {
     }
 
     public HomePageView homePageView(int totalRecords, LocalDateTime lastUpdated) {
-        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, lastUpdated);
+        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, lastUpdated, registerDomain);
     }
 
     public ListVersionView listVersionView(List<Version> versions) throws Exception {

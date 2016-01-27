@@ -3,6 +3,7 @@ package uk.gov.register.presentation.resource;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.RegisterNameExtractor;
 import uk.gov.register.presentation.config.Register;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 
 import javax.inject.Inject;
@@ -25,9 +26,12 @@ public class RequestContext {
 
     private final RegistersConfiguration registersConfiguration;
 
+    private final String registerDomain;
+
     @Inject
-    public RequestContext(RegistersConfiguration registersConfiguration) {
+    public RequestContext(RegistersConfiguration registersConfiguration, RegisterDomainConfiguration domainConfiguration) {
         this.registersConfiguration = registersConfiguration;
+        this.registerDomain = domainConfiguration.getRegisterDomain();
     }
 
     public String requestURI() {
@@ -56,5 +60,9 @@ public class RequestContext {
 
     public Register getRegister() {
         return registersConfiguration.getRegister(getRegisterPrimaryKey());
+    }
+
+    public String getRegisterDomain() {
+        return registerDomain;
     }
 }

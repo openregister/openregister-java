@@ -25,20 +25,42 @@ public class TurtleWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration()) {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> "test.register.gov.uk") {
             @Override
             public String requestUrl() {
                 return "http://widget.openregister.org/widget/123";
             }
         };
-        turtleWriter = new TurtleWriter(requestContext);
+        turtleWriter = new TurtleWriter(requestContext, () -> "test.register.gov.uk");
+    }
+
+    @Test
+    public void rendersFieldPrefixFromConfiguration() throws Exception {
+        EntryView entry = new EntryView(52, "abcd", "registerName", Collections.emptyMap());
+
+        TestOutputStream entityStream = new TestOutputStream();
+
+        turtleWriter.writeEntriesTo(entityStream, Collections.emptySet(), Collections.singletonList(entry));
+
+        assertThat(entityStream.contents, containsString("@prefix field: <http://field.test.register.gov.uk/field/>."));
+    }
+
+    @Test
+    public void rendersEntryIdentifierFromRequestContext() throws Exception {
+        EntryView entry = new EntryView(52, "abcd", "registerName", Collections.emptyMap());
+
+        TestOutputStream entityStream = new TestOutputStream();
+
+        turtleWriter.writeEntriesTo(entityStream, Collections.emptySet(), Collections.singletonList(entry));
+
+        assertThat(entityStream.contents, containsString("<http://widget.openregister.org/entry/52>"));
     }
 
     @Test
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
-                        "registered-address", new LinkValue("address", "1111111"),
+                        "registered-address", new LinkValue("address", "test.register.gov.uk", "1111111"),
                         "name", new StringValue("foo")
                 );
 
@@ -49,7 +71,7 @@ public class TurtleWriterTest {
         turtleWriter.writeEntriesTo(entityStream, ImmutableSet.of("company", "registered-address", "name"), Collections.singletonList(entry));
 
 
-        assertThat(entityStream.contents, containsString("field:registered-address <http://address.openregister.org/address/1111111>"));
+        assertThat(entityStream.contents, containsString("field:registered-address <http://address.test.register.gov.uk/address/1111111>"));
         assertThat(entityStream.contents, containsString("field:name \"foo\""));
     }
 
@@ -57,7 +79,7 @@ public class TurtleWriterTest {
     public void rendersLists() throws Exception {
         Map<String, FieldValue> entryMap =
                 ImmutableMap.of(
-                        "link-values", new ListValue(asList(new LinkValue("address", "1111111"), new LinkValue("address", "2222222"))),
+                        "link-values", new ListValue(asList(new LinkValue("address", "test.register.gov.uk", "1111111"), new LinkValue("address", "test.register.gov.uk", "2222222"))),
                         "string-values", new ListValue(asList(new StringValue("value1"), new StringValue("value2"))),
                         "name", new StringValue("foo")
                 );
@@ -69,8 +91,8 @@ public class TurtleWriterTest {
         turtleWriter.writeEntriesTo(entityStream, ImmutableSet.of("link-values", "string-values", "name"), Collections.singletonList(entry));
 
 
-        assertThat(entityStream.contents, containsString("field:link-values <http://address.openregister.org/address/1111111>"));
-        assertThat(entityStream.contents, containsString("field:link-values <http://address.openregister.org/address/2222222>"));
+        assertThat(entityStream.contents, containsString("field:link-values <http://address.test.register.gov.uk/address/1111111>"));
+        assertThat(entityStream.contents, containsString("field:link-values <http://address.test.register.gov.uk/address/2222222>"));
         assertThat(entityStream.contents, containsString("field:string-values \"value1\""));
         assertThat(entityStream.contents, containsString("field:string-values \"value2\""));
         assertThat(entityStream.contents, containsString("field:name \"foo\""));

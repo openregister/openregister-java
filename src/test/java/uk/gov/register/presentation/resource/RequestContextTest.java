@@ -19,7 +19,7 @@ public class RequestContextTest {
 
     @Test
     public void takesRegisterNameFromHttpHost() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration());
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> "");
         requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getHeader("Host")).thenReturn("school.beta.openregister.org");
 
@@ -30,7 +30,7 @@ public class RequestContextTest {
 
     @Test
     public void behavesGracefullyWhenGivenHostWithNoDots() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration());
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> "");
         requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getHeader("Host")).thenReturn("school");
 
