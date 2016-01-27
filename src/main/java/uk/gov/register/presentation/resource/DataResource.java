@@ -104,27 +104,4 @@ public class DataResource {
             requestContext.getHttpServletResponse().setHeader("Link", String.join(",", headerValues));
         }
     }
-
-    private Response create301Response(String path, Optional<Long> pageIndex, Optional<Long> pageSize) {
-        String requestURI = requestContext.requestURI();
-        String representation = requestURI.substring(requestURI.lastIndexOf("/")).replaceAll("[^\\.]+(.*)", "$1");
-
-        UriBuilder builder = UriBuilder
-                .fromUri(requestURI)
-                .replacePath(null)
-                .path(path + representation);
-
-        if (pageIndex.isPresent()) {
-            builder = builder.queryParam(Pagination.INDEX_PARAM, pageIndex.get());
-        }
-        if (pageSize.isPresent()) {
-            builder = builder.queryParam(Pagination.SIZE_PARAM, pageSize.get());
-        }
-
-        return Response
-                .status(Response.Status.MOVED_PERMANENTLY)
-                .location(builder.build())
-                .build();
-    }
-
 }
