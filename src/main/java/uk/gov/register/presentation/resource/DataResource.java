@@ -61,8 +61,7 @@ public class DataResource {
 
             ze = new ZipEntry("proof.json");
             zos.putNextEntry(ze);
-            Proofs proofs = new Proofs();
-            proofs.setCertificateTransparencySignedTreeHead(sth);
+            Proofs proofs = new Proofs(sth);
             ObjectMapper om = new ObjectMapper();
             om.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
             om.writeValue(zos, proofs);
