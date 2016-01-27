@@ -1,12 +1,10 @@
 package uk.gov.register.presentation.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
+import uk.gov.register.presentation.RegisterData;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -16,24 +14,17 @@ import java.util.Objects;
 
 public class RegistersConfiguration {
 
-    private final List<Register> registers;
+    private final List<RegisterData> registers;
 
     @Inject
     public RegistersConfiguration() throws IOException {
         InputStream registersStream = this.getClass().getClassLoader().getResourceAsStream("config/registers.yaml");
         ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
-        List<RegisterData> rawRegisters = yamlObjectMapper.readValue(registersStream, new TypeReference<List<RegisterData>>() {
+        registers = yamlObjectMapper.readValue(registersStream, new TypeReference<List<RegisterData>>() {
         });
-        registers = Lists.transform(rawRegisters, m -> m.entry);
     }
 
-    public Register getRegister(String registerName) {
-        return registers.stream().filter(f -> Objects.equals(f.registerName, registerName)).findFirst().get();
-    }
-
-    @JsonIgnoreProperties({"hash", "last-updated"})
-    private static class RegisterData{
-        @JsonProperty
-        Register entry;
+    public RegisterData getRegisterData(String registerName) {
+        return registers.stream().filter(f -> Objects.equals(f.getRegister().registerName, registerName)).findFirst().get();
     }
 }
