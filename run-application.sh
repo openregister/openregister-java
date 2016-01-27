@@ -11,6 +11,7 @@ psql $db_name -U postgres -c "insert into total_records (count) select 0 where n
 
 psql $db_name -U postgres -c "CREATE TABLE IF NOT EXISTS ordered_entry_index(serial_number INTEGER PRIMARY KEY, entry JSONB)"
 psql $db_name -U postgres -c "CREATE TABLE IF NOT EXISTS total_entries(count INTEGER, last_updated TIMESTAMP WITHOUT TIME ZONE DEFAULT now())"
+psql $db_name -U postgres -c "CREATE TABLE sth (tree_size INTEGER, timestamp BIGINT, tree_head_signature VARCHAR, sha256_root_hash VARCHAR)"
 
 psql $db_name -U postgres -c "insert into total_entries (count) select 0 where not exists (select count from total_entries)"
 
