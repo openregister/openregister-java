@@ -13,6 +13,7 @@ import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.BadRequestExceptionView;
 import uk.gov.register.thymeleaf.HomePageView;
+import uk.gov.register.thymeleaf.RegisterDetailView;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
@@ -81,6 +82,10 @@ public class ViewFactory {
 
     public HomePageView homePageView(int totalRecords, int totalEntries, LocalDateTime lastUpdated) {
         return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomain);
+    }
+
+    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, LocalDateTime lastUpdated) {
+        return new RegisterDetailView(getCustodian(), getBranding(), requestContext, entryConverter, totalRecords, totalEntries, totalItems, lastUpdated);
     }
 
     public ListVersionView listVersionView(List<Version> versions) throws Exception {

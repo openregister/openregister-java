@@ -6,6 +6,7 @@ import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.thymeleaf.RegisterDetailView;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -73,6 +74,13 @@ public class DataResource {
 
         getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
         return viewFactory.getRecordsView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
+    }
+
+    @GET
+    @Path("/register")
+    @Produces({MediaType.APPLICATION_JSON})
+    public RegisterDetailView getRegisterDetail() {
+        return viewFactory.registerDetailView(queryDAO.getTotalRecords(), queryDAO.getTotalEntries(), queryDAO.getTotalEntries(), queryDAO.getLastUpdatedTime());
     }
 
     private Optional<String> getFileExtension() {

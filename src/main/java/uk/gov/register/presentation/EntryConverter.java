@@ -32,11 +32,17 @@ public class EntryConverter {
     }
 
     public EntryView convert(DbEntry dbEntry) {
-        Iterable<Map.Entry<String, JsonNode>> fields = () -> dbEntry.getContent().getContent().fields();
-        Stream<Map.Entry<String, JsonNode>> fieldStream = StreamSupport.stream(fields.spliterator(), false);
-        return new EntryView(
+        return convert(
                 dbEntry.getSerialNumber(),
                 dbEntry.getContent().getHash(),
+                () -> dbEntry.getContent().getContent().fields());
+    }
+
+    public EntryView convert(int serialNumber, String hash, Iterable<Map.Entry<String, JsonNode>> fields) {
+        Stream<Map.Entry<String, JsonNode>> fieldStream = StreamSupport.stream(fields.spliterator(), false);
+        return new EntryView(
+                serialNumber,
+                hash,
                 requestContext.getRegisterPrimaryKey(),
                 fieldStream.collect(Collectors.toMap(Map.Entry::getKey, this::convert))
         );
