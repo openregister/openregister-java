@@ -15,20 +15,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ArchiveCreator {
-    public StreamingOutput create(List<DbEntry> entries, SignedTreeHead sth) {
+    public StreamingOutput create(RegisterDetail registerDetail, List<DbEntry> entries, SignedTreeHead sth) {
         return output -> {
             ZipOutputStream zos = new ZipOutputStream(output);
 
-            ZipEntry ze = new ZipEntry("register.txt");
+            ObjectMapper om = new ObjectMapper();
+            om.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+
+            ZipEntry ze = new ZipEntry("register.json");
             zos.putNextEntry(ze);
-            zos.write("This will contain the /register data in JSON".getBytes());
+            om.writeValue(zos, registerDetail);
             zos.closeEntry();
 
             ze = new ZipEntry("proof.json");
             zos.putNextEntry(ze);
             Proofs proofs = new Proofs(sth);
-            ObjectMapper om = new ObjectMapper();
-            om.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
             om.writeValue(zos, proofs);
             zos.closeEntry();
 

@@ -4,6 +4,7 @@ import io.dropwizard.views.View;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.DbEntry;
+import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -20,7 +21,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,9 +48,11 @@ public class DataResource {
         List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
         SignedTreeHead sth = signedTreeHeadQueryDAO.get();
 
+        RegisterDetail registerDetail = viewFactory.registerDetailView(queryDAO.getTotalRecords(), queryDAO.getTotalEntries(), queryDAO.getTotalEntries(), queryDAO.getLastUpdatedTime()).getRegisterDetail();
+
         return Response
-                .ok(new ArchiveCreator().create(entries, sth))
-                .header("Content-Disposition", String.format("attachment; filename=%s.zip", requestContext.getRegisterPrimaryKey()))
+                .ok(new ArchiveCreator().create(registerDetail, entries, sth))
+                .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", requestContext.getRegisterPrimaryKey(), System.currentTimeMillis()))
                 .header("Content-Transfer-Encoding", "binary")
                 .build();
     }
