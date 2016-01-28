@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -19,7 +21,7 @@ public class CTEntryLeaf {
 
     private final byte[] entryType;
 
-    private final byte[] contentLength;
+    private final int contentLength;
 
     private final byte[] payload;
 
@@ -48,10 +50,10 @@ public class CTEntryLeaf {
         entryType = new byte[]{decodedBytes[10], decodedBytes[11]};
 
         //bytes at position 12, 13 and 14 are contentLength
-        contentLength = new byte[]{decodedBytes[12], decodedBytes[13], decodedBytes[14]};
+        contentLength = new BigInteger(new byte[]{decodedBytes[12], decodedBytes[13], decodedBytes[14]}).intValue();
 
         //last two bytes in array are sctExtension so from byte 15 till (bytes array length -2) is payload
-        payload = Arrays.copyOfRange(decodedBytes, 15, decodeBytesLength - 2);
+        payload = Arrays.copyOfRange(decodedBytes, 15, 15 + contentLength);
 
         sctExtension = new byte[]{decodedBytes[decodeBytesLength - 2], decodedBytes[decodeBytesLength - 1]};
     }
@@ -62,5 +64,16 @@ public class CTEntryLeaf {
 
     public String getLeafInput() {
         return leafInput;
+    }
+
+    public long getTimestamp() {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.put(timetamp);
+        buffer.flip();
+        return buffer.getLong();
+    }
+
+    public int getContentLength() {
+        return contentLength;
     }
 }
