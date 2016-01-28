@@ -7,10 +7,9 @@ import uk.gov.register.proofs.ct.SignedTreeHead;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -59,7 +58,10 @@ public class ArchiveCreator {
                 try {
                     zos.putNextEntry(singleZipEntry);
 
-                    ArchiveEntryData aed = new ArchiveEntryData(singleEntry.getSerialNumber(), singleEntry.getContent().getHash(), 0);
+                    ArchiveEntryData aed = new ArchiveEntryData(
+                            singleEntry.getSerialNumber(),
+                            singleEntry.getContent().getHash(),
+                            getTimestampFromPayload(singleEntry.getLeaf_input()));
                     om.writeValue(zos, aed);
                     zos.closeEntry();
                 } catch (IOException e) {
@@ -69,6 +71,19 @@ public class ArchiveCreator {
             zos.flush();
             zos.close();
         };
+    }
+
+    private long getTimestampFromPayload(String leaf_input) {
+        byte[] rawdata = Base64.getDecoder().decode(leaf_input);
+        byte[] rawtimestamp = Arrays.copyOfRange(rawdata, 2, 10);
+        return bytesToLong(rawtimestamp);
+    }
+
+    private long bytesToLong(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.put(bytes);
+        buffer.flip(); //need flip
+        return buffer.getLong();
     }
 
     public static class ArchiveEntryData {

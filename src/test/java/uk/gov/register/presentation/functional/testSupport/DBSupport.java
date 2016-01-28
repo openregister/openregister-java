@@ -60,9 +60,10 @@ public class DBSupport {
     private static void publishMessages(Connection connection, String registerName, List<String> messages) throws SQLException {
         int serial_number = 0;
         for (String message : messages) {
-            try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
+            try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry,leaf_input) values(?,?,?)")) {
                 insertPreparedStatement.setObject(1, ++serial_number);
                 insertPreparedStatement.setObject(2, jsonbObject(message));
+                insertPreparedStatement.setObject(3, "AAAAAAFSeasHmIAAAABNeyAib3duZXIiOiAiSG9tZSBPZmZpY2UiLCAiZW5kLWRhdGUiOiAiIiwgImdvdmVybm1lbnQtZG9tYWluIjogIjEwMS5nb3YudWsiIH0AAA==");
                 insertPreparedStatement.execute();
             }
 
