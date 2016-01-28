@@ -22,26 +22,26 @@ public abstract class RecentEntryIndexQueryDAO {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index ORDER BY serial_number DESC LIMIT :limit OFFSET :offset")
+    @SqlQuery("SELECT serial_number,entry,leaf_input FROM ordered_entry_index ORDER BY serial_number DESC LIMIT :limit OFFSET :offset")
     public abstract List<DbEntry> getAllEntries(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
     // TODO: This will be okay for small numbers of records
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index ORDER BY serial_number DESC")
+    @SqlQuery("SELECT serial_number,entry,leaf_input FROM ordered_entry_index ORDER BY serial_number DESC")
     public abstract List<DbEntry> getAllEntriesNoPagination();
     
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE (entry @> :content) ORDER BY serial_number DESC")
+    @SqlQuery("SELECT serial_number,entry,leaf_input FROM ordered_entry_index WHERE (entry @> :content) ORDER BY serial_number DESC")
     public abstract List<DbEntry> findAllEntriesByJsonContent(@Bind("content") PGobject json);
 
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
+    @SqlQuery("SELECT serial_number,entry,leaf_input FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
     @SingleValueResult(DbEntry.class)
     public abstract Optional<DbEntry> findEntryByHash(@Bind("hash") String hash);
 
-    @SqlQuery("SELECT serial_number,entry from ordered_entry_index where serial_number = :serial")
+    @SqlQuery("SELECT serial_number,entry,leaf_input from ordered_entry_index where serial_number = :serial")
     @SingleValueResult(DbEntry.class)
     public abstract Optional<DbEntry> findEntryBySerialNumber(@Bind("serial") long serial);
 
-    @SqlQuery("SELECT serial_number,entry FROM (" +
-            "SELECT idx.serial_number, idx.entry FROM ordered_entry_index idx, current_keys ck " +
+    @SqlQuery("SELECT serial_number,entry,leaf_input FROM (" +
+            "SELECT idx.serial_number, idx.entry, idx.leaf_input FROM ordered_entry_index idx, current_keys ck " +
             "WHERE  entry @> :content " +
             "AND idx.serial_number = ck.serial_number " +
             "LIMIT 100" +
@@ -49,7 +49,7 @@ public abstract class RecentEntryIndexQueryDAO {
             "ORDER BY serial_number DESC")
     public abstract List<DbEntry> findLatestEntriesOfRecordsByJsonContent(@Bind("content") PGobject content);
 
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index " +
+    @SqlQuery("SELECT serial_number,entry,leaf_input FROM ordered_entry_index " +
             "WHERE serial_number IN(" +
             "SELECT serial_number FROM current_keys ORDER BY serial_number DESC LIMIT :limit OFFSET :offset" +
             ") ORDER BY serial_number DESC")

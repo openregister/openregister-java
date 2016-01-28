@@ -48,7 +48,11 @@ public class DataResource {
         List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
         SignedTreeHead sth = signedTreeHeadQueryDAO.get();
 
-        RegisterDetail registerDetail = viewFactory.registerDetailView(queryDAO.getTotalRecords(), queryDAO.getTotalEntries(), queryDAO.getTotalEntries(), queryDAO.getLastUpdatedTime()).getRegisterDetail();
+        RegisterDetail registerDetail = viewFactory.registerDetailView(queryDAO.getTotalRecords(),
+                queryDAO.getTotalEntries(),
+                queryDAO.getTotalEntries(),
+                queryDAO.getLastUpdatedTime())
+                .getRegisterDetail();
 
         return Response
                 .ok(new ArchiveCreator().create(registerDetail, entries, sth))

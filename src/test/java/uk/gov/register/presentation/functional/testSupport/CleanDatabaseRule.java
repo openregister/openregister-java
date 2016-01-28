@@ -19,7 +19,7 @@ public class CleanDatabaseRule extends ExternalResource {
     protected void before() throws Throwable {
         try (Connection connection = DriverManager.getConnection(pgUrl, pgUser, "")) {
             connection.prepareStatement("DROP TABLE IF EXISTS " + tableName).execute();
-            connection.prepareStatement("CREATE TABLE " + tableName + " (SERIAL_NUMBER INTEGER PRIMARY KEY, ENTRY JSONB)").execute();
+            connection.prepareStatement("CREATE TABLE " + tableName + " (SERIAL_NUMBER INTEGER PRIMARY KEY, ENTRY JSONB, LEAF_INPUT VARCHAR)").execute();
 
             connection.prepareStatement("DROP TABLE IF EXISTS total_entries").execute();
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS   total_entries   (count INTEGER, last_updated TIMESTAMP WITHOUT TIME ZONE DEFAULT now())").execute();
