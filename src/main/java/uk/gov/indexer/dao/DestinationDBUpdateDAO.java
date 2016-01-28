@@ -3,8 +3,10 @@ package uk.gov.indexer.dao;
 import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
+import org.postgresql.util.PSQLException;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
+import org.skife.jdbi.v2.exceptions.UnableToExecuteStatementException;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 import org.slf4j.Logger;
@@ -28,12 +30,18 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         Handle handle = getHandle();
 
         currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
-
         currentKeysUpdateDAO.ensureRecordTablesInPlace();
 
         indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
 
         indexedEntriesUpdateDAO.ensureEntryTablesInPlace();
+
+        try {
+            indexedEntriesUpdateDAO.addColumnLeafInputInTable();
+        } catch (UnableToExecuteStatementException e) {
+            ignoreOnlyDuplicateColumnPGErrorStateCodeWhichIsThrownWhenTryToAddAColumnInTableWhichAlreadyExists(e);
+        }
+
         if (!indexedEntriesUpdateDAO.indexedEntriesIndexExists()) {
             indexedEntriesUpdateDAO.createIndexedEntriesIndex();
         }
@@ -84,6 +92,14 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
                     }
                 }
         );
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    private void ignoreOnlyDuplicateColumnPGErrorStateCodeWhichIsThrownWhenTryToAddAColumnInTableWhichAlreadyExists(UnableToExecuteStatementException e) {
+        if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals("42701")) {
+        } else {
+            throw e;
+        }
     }
 
     private String getKey(String registerName, String entry) {

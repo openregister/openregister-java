@@ -31,8 +31,7 @@ public class CTDataSource implements DataSource {
                 return ctServer.getEntries(from, lastEntryNumber - 1 )
                         .entries
                         .stream()
-                        .map(treeLeaf -> new CTEntryLeaf(treeLeaf.leaf_input).payload)
-                        .map(payload -> createEntry(atomicInteger.incrementAndGet(), payload))
+                        .map(ctEntryLeaf -> createEntry(atomicInteger.incrementAndGet(), ctEntryLeaf.getPayload(), ctEntryLeaf.getLeafInput()))
                         .collect(Collectors.toList());
             }
             return new ArrayList<>();
@@ -41,14 +40,12 @@ public class CTDataSource implements DataSource {
         return new FetchResult(sth, entryFetcher);
     }
 
-    private Entry createEntry(int serialNumber, byte[] payload) {
+    private Entry createEntry(int serialNumber, byte[] payload, String leafInput) {
         Map<String, Object> object = new HashMap<>();
 
         object.put("hash", SHA256Hash.createHash(payload));
         object.put("entry", JsonUtils.fromBytesToJsonNode(payload));
 
-        return new Entry(serialNumber, JsonUtils.toBytes(object));
+        return new Entry(serialNumber, JsonUtils.toBytes(object), leafInput);
     }
-
-
 }

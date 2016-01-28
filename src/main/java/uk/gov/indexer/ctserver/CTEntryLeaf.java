@@ -1,26 +1,39 @@
 package uk.gov.indexer.ctserver;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Base64;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
+
+@JsonIgnoreProperties({"extra_data"})
 public class CTEntryLeaf {
-    public final byte version;
+    private final byte version;
 
-    public final byte merkleLeafType;
+    private final byte merkleLeafType;
 
-    public final byte[] timetamp;
+    private final byte[] timetamp;
 
-    public final byte[] entryType;
+    private final byte[] entryType;
 
-    public final byte[] contentLength;
+    private final int contentLength;
 
-    public final byte[] payload;
+    private final byte[] payload;
 
-    public final byte[] sctExtension;
+    private final byte[] sctExtension;
 
-    public CTEntryLeaf(String leafHash) {
-        byte[] decodedBytes = Base64.getDecoder().decode(leafHash);
+    private final String leafInput;
+
+    @JsonCreator
+    public CTEntryLeaf(@JsonProperty("leaf_input") String leafInput) {
+        this.leafInput = leafInput;
+
+        byte[] decodedBytes = Base64.getDecoder().decode(leafInput);
 
         int decodeBytesLength = decodedBytes.length;
 
@@ -37,11 +50,30 @@ public class CTEntryLeaf {
         entryType = new byte[]{decodedBytes[10], decodedBytes[11]};
 
         //bytes at position 12, 13 and 14 are contentLength
-        contentLength = new byte[]{decodedBytes[12], decodedBytes[13], decodedBytes[14]};
+        contentLength = new BigInteger(new byte[]{decodedBytes[12], decodedBytes[13], decodedBytes[14]}).intValue();
 
         //last two bytes in array are sctExtension so from byte 15 till (bytes array length -2) is payload
-        payload = Arrays.copyOfRange(decodedBytes, 15, decodeBytesLength - 2);
+        payload = Arrays.copyOfRange(decodedBytes, 15, 15 + contentLength);
 
         sctExtension = new byte[]{decodedBytes[decodeBytesLength - 2], decodedBytes[decodeBytesLength - 1]};
+    }
+
+    public byte[] getPayload() {
+        return payload;
+    }
+
+    public String getLeafInput() {
+        return leafInput;
+    }
+
+    public long getTimestamp() {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.put(timetamp);
+        buffer.flip();
+        return buffer.getLong();
+    }
+
+    public int getContentLength() {
+        return contentLength;
     }
 }

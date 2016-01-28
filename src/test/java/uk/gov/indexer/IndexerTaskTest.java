@@ -20,8 +20,12 @@ import java.sql.Statement;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 
 public class IndexerTaskTest {
+    static final String ROOT_HASH = "JATHxRF5gczvNPP1S1WuhD8jSx2bl+WoTt8bIE3YKvU=";
+    static final String TREE_HEAD_SIGNATURE = "BAMARzBFAiEAkKM3aRUBKhShdCyrGLdd8lYBV52FLrwqjHa5/YuzK7ECIFTlRmNuKLqbVQv0QS8nq0pAUwgbilKOR5piBAIC8LpS";
+
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8090);
 
@@ -34,8 +38,8 @@ public class IndexerTaskTest {
                                 .withBody("{ " +
                                         "\"tree_size\": 5, " +
                                         "\"timestamp\": 1447421303202, " +
-                                        "\"sha256_root_hash\": \"47DEQpj8HBSa+\\/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\", " +
-                                        "\"tree_head_signature\": \"BAMARjBEAiAQnnVGk3koQHBwvUhcLr\\/YVglyvKjfPGNmOknSY6Uk8gIgfcFDQcJUkM2Lhv4dhY6TFX96LfrOIJioQTR00bZcm7Q=\" " +
+                                        "\"sha256_root_hash\": \"" + ROOT_HASH + "\"," +
+                                        "\"tree_head_signature\": \"" + TREE_HEAD_SIGNATURE + "\" " +
                                         "}")
                 ));
 
@@ -44,8 +48,8 @@ public class IndexerTaskTest {
                                 .withStatus(200)
                                 .withBody("{ \"entries\": " +
                                         "[ " +
-                                        "{ \"leaf_input\": \"AAAAAAFSIJm7NoAAAACMeyAiYnVzaW5lc3MiOiAiY29tcGFueTowNzIyODEzMCIsICJlbmQtZGF0ZSI6ICIiLCAiZm9vZC1wcmVtaXNlcyI6ICI3NTkzMzIiLCAiZm9vZC1wcmVtaXNlcy10eXBlcyI6IFsgXSwgIm5hbWUiOiAiQnlyb24iLCAic3RhcnQtZGF0ZSI6ICIiIH0AAA==\", \"extra_data\": \"\" }, " +
-                                        "{ \"leaf_input\": \"AAAAAAFSIJm7NoAAAACMeyAiYnVzaW5lc3MiOiAiY29tcGFueTowNzIyODEzMCIsICJlbmQtZGF0ZSI6ICIiLCAiZm9vZC1wcmVtaXNlcyI6ICI3NTkzMzIiLCAiZm9vZC1wcmVtaXNlcy10eXBlcyI6IFsgXSwgIm5hbWUiOiAiQnlyb24iLCAic3RhcnQtZGF0ZSI6ICIiIH0AAA==\", \"extra_data\": \"\" } " +
+                                        "{ \"leaf_input\": \"AAAAAAFSeasJ5IAAAABZeyAib3duZXIiOiAiRm9yZXN0cnkgQ29tbWlzc2lvbiIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiN3N0YW5lcy5nb3YudWsiIH0AAA==\", \"extra_data\": \"\" }, " +
+                                        "{ \"leaf_input\": \"AAAAAAFSeasJnoAAAABqeyAib3duZXIiOiAiNHAncyBQdWJsaWMgUHJpdmF0ZSBQYXJ0bmVyc2hpcHMgUHJvZ3JhbSIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiNHBzLmdvdi51ayIgfQAA\", \"extra_data\": \"\" } " +
                                         "] " +
                                         "}")
                 ));
@@ -54,8 +58,8 @@ public class IndexerTaskTest {
                                 .withStatus(200)
                                 .withBody("{ \"entries\": " +
                                         "[ " +
-                                        "{ \"leaf_input\": \"AAAAAAFSIJm7NoAAAACMeyAiYnVzaW5lc3MiOiAiY29tcGFueTowNzIyODEzMCIsICJlbmQtZGF0ZSI6ICIiLCAiZm9vZC1wcmVtaXNlcyI6ICI3NTkzMzIiLCAiZm9vZC1wcmVtaXNlcy10eXBlcyI6IFsgXSwgIm5hbWUiOiAiQnlyb24iLCAic3RhcnQtZGF0ZSI6ICIiIH0AAA==\", \"extra_data\": \"\" }, " +
-                                        "{ \"leaf_input\": \"AAAAAAFSIJm7NoAAAACMeyAiYnVzaW5lc3MiOiAiY29tcGFueTowNzIyODEzMCIsICJlbmQtZGF0ZSI6ICIiLCAiZm9vZC1wcmVtaXNlcyI6ICI3NTkzMzIiLCAiZm9vZC1wcmVtaXNlcy10eXBlcyI6IFsgXSwgIm5hbWUiOiAiQnlyb24iLCAic3RhcnQtZGF0ZSI6ICIiIH0AAA==\", \"extra_data\": \"\" } " +
+                                        "{ \"leaf_input\": \"AAAAAAFSeasMBIAAAABheyAib3duZXIiOiAiQWJlcmRlZW5zaGlyZSBDb3VuY2lsIiwgImVuZC1kYXRlIjogIiIsICJnb3Zlcm5tZW50LWRvbWFpbiI6ICJhYmVyZGVlbnNoaXJlLmdvdi51ayIgfQAA\", \"extra_data\": \"\" }, " +
+                                        "{ \"leaf_input\": \"AAAAAAFSeasMWIAAAABteyAib3duZXIiOiAiQWJlcmdhdmVubnkgVG93biBDb3VuY2lsIiwgImVuZC1kYXRlIjogIiIsICJnb3Zlcm5tZW50LWRvbWFpbiI6ICJBYmVyZ2F2ZW5ueVRvd25Db3VuY2lsLmdvdi51ayIgfQAA\", \"extra_data\": \"\" } " +
                                         "] " +
                                         "}")
                 ));
@@ -64,7 +68,7 @@ public class IndexerTaskTest {
                                 .withStatus(200)
                                 .withBody("{ \"entries\": " +
                                         "[ " +
-                                        "{ \"leaf_input\": \"AAAAAAFSIJm7NoAAAACMeyAiYnVzaW5lc3MiOiAiY29tcGFueTowNzIyODEzMCIsICJlbmQtZGF0ZSI6ICIiLCAiZm9vZC1wcmVtaXNlcyI6ICI3NTkzMzIiLCAiZm9vZC1wcmVtaXNlcy10eXBlcyI6IFsgXSwgIm5hbWUiOiAiQnlyb24iLCAic3RhcnQtZGF0ZSI6ICIiIH0AAA==\", \"extra_data\": \"\" } " +
+                                        "{ \"leaf_input\": \"AAAAAAFSeasIN4AAAABdeyAib3duZXIiOiAiVmFsZSBvZiBHbGFtb3JnYW4gQ291bmNpbCIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiMXZhbGUuZ292LnVrIiB9AAA=\", \"extra_data\": \"\" } " +
                                         "] " +
                                         "}")
                 ));
@@ -80,24 +84,13 @@ public class IndexerTaskTest {
 
                 DestinationDBUpdateDAO destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
-                IndexerTask indexerTask = new IndexerTask("food-premises", dataSource, destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask("government-domain", dataSource, destinationDBUpdateDAO);
 
                 indexerTask.run();
 
+                verifyNumberOfEntriesInOrderedEntryIndexTable(statement, 5);
 
-                try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {
-                    resultSet.next();
-                    int count = resultSet.getInt("count");
-                    assertThat(count, CoreMatchers.equalTo(5));
-                }
-
-                try (ResultSet resultSet = statement.executeQuery("select * from sth")) {
-                    resultSet.next();
-                    assertThat(resultSet.getInt("tree_size"), CoreMatchers.equalTo(5));
-                    assertThat(resultSet.getLong("timestamp"), CoreMatchers.equalTo(1447421303202L));
-                    assertThat(resultSet.getString("sha256_root_hash"), CoreMatchers.equalTo("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="));
-                    assertThat(resultSet.getString("tree_head_signature"), CoreMatchers.equalTo("BAMARjBEAiAQnnVGk3koQHBwvUhcLr/YVglyvKjfPGNmOknSY6Uk8gIgfcFDQcJUkM2Lhv4dhY6TFX96LfrOIJioQTR00bZcm7Q="));
-                }
+                verifySTH(statement, 5);
             }
         }
     }
@@ -119,38 +112,43 @@ public class IndexerTaskTest {
 
                 DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
 
-
                 IndexerTask indexerTask = new IndexerTask("food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
 
                 indexerTask.run();
 
-                try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {
-                    resultSet.next();
-                    int count = resultSet.getInt("count");
-                    assertThat(count, CoreMatchers.equalTo(5));
-                }
+                verifyNumberOfEntriesInOrderedEntryIndexTable(statement, 5);
 
-                try (ResultSet resultSet = statement.executeQuery("select * from sth")) {
-                    resultSet.next();
-                    assertThat(resultSet.getInt("tree_size"), CoreMatchers.equalTo(5));
-                }
-
-
+                verifySTH(statement, 5);
 
                 loadFiveEntriesInMintDB();
+
                 indexerTask.run();
 
-                try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {
-                    resultSet.next();
-                    int count = resultSet.getInt("count");
-                    assertThat(count, CoreMatchers.equalTo(10));
-                }
+                verifyNumberOfEntriesInOrderedEntryIndexTable(statement, 10);
 
-                try (ResultSet resultSet = statement.executeQuery("select * from sth")) {
-                    resultSet.next();
-                    assertThat(resultSet.getInt("tree_size"), CoreMatchers.equalTo(10));
-                }
+                verifySTH(statement, 10);
             }
+        }
+    }
+
+    private void verifySTH(Statement statement, int expectedTreeSize) throws SQLException {
+        try (ResultSet resultSet = statement.executeQuery("select * from sth")) {
+            resultSet.next();
+            assertThat(resultSet.getInt("tree_size"), CoreMatchers.equalTo(expectedTreeSize));
+            assertThat(resultSet.getLong("timestamp"), CoreMatchers.equalTo(1447421303202L));
+            assertThat(resultSet.getString("sha256_root_hash"), CoreMatchers.equalTo(ROOT_HASH));
+            assertThat(resultSet.getString("tree_head_signature"), CoreMatchers.equalTo(TREE_HEAD_SIGNATURE));
+        }
+    }
+
+    private void verifyNumberOfEntriesInOrderedEntryIndexTable(Statement statement, int expectedEntries) throws SQLException {
+        try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {
+            resultSet.next();
+            assertThat(resultSet.getInt("count"), CoreMatchers.equalTo(expectedEntries));
+        }
+        try (ResultSet resultSet = statement.executeQuery("select leaf_input from ordered_entry_index where serial_number=" + expectedEntries)) {
+            resultSet.next();
+            assertFalse(resultSet.getString("leaf_input").isEmpty());
         }
     }
 

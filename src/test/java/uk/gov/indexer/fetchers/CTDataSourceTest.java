@@ -30,16 +30,12 @@ public class CTDataSourceTest {
 
         when(ctServer.getSignedTreeHead()).thenReturn(signedTreeHead);
 
-        Entries entries = new Entries();
-        entries.entries = new ArrayList<>();
-        MerkleTreeLeaf leaf1 = new MerkleTreeLeaf();
-        leaf1.leaf_input = "AAAAAAFSRUq/EIAAAABieyAib3duZXIiOiAiVmV0ZXJpbmFyeSBNZWRpY2luZXMgRGlyZWN0b3JhdGUiLCAiZW5kLWRhdGUiOiAiIiwgImdvdmVybm1lbnQtZG9tYWluIjogImFtaS5nb3YudWsiIH0AAA==";
-        entries.entries.add(leaf1);
+        CTEntries ctEntries = new CTEntries();
+        ctEntries.entries = new ArrayList<>();
+        ctEntries.entries.add(new CTEntryLeaf("AAAAAAFSRUq/EIAAAABieyAib3duZXIiOiAiVmV0ZXJpbmFyeSBNZWRpY2luZXMgRGlyZWN0b3JhdGUiLCAiZW5kLWRhdGUiOiAiIiwgImdvdmVybm1lbnQtZG9tYWluIjogImFtaS5nb3YudWsiIH0AAA=="));
 
-        MerkleTreeLeaf leaf2 = new MerkleTreeLeaf();
-        leaf2.leaf_input = "AAAAAAFSRUq/VYAAAABdeyAib3duZXIiOiAiQW5kb3ZlciBUb3duIENvdW5jaWwiLCAiZW5kLWRhdGUiOiAiIiwgImdvdmVybm1lbnQtZG9tYWluIjogImFuZG92ZXItdGMuZ292LnVrIiB9AAA=";
-        entries.entries.add(leaf2);
-        when(ctServer.getEntries(10, 11)).thenReturn(entries);
+        ctEntries.entries.add(new CTEntryLeaf("AAAAAAFSRUq/VYAAAABdeyAib3duZXIiOiAiQW5kb3ZlciBUb3duIENvdW5jaWwiLCAiZW5kLWRhdGUiOiAiIiwgImdvdmVybm1lbnQtZG9tYWluIjogImFuZG92ZXItdGMuZ292LnVrIiB9AAA="));
+        when(ctServer.getEntries(10, 11)).thenReturn(ctEntries);
 
         List<Entry> result = ctFetcher.fetchCurrentSnapshot().getEntryFetcher().fetch(10);
 
