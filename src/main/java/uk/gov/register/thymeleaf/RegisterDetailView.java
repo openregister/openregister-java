@@ -38,7 +38,7 @@ public class RegisterDetailView extends AttributionView {
     @JsonValue
     public RegisterDetail getRegisterDetail() {
         return new RegisterDetail(
-                ".openregister.org",
+                getRegisterDomain(),
                 totalRecords,
                 totalEntries,
                 totalItems,
