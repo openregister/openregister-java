@@ -10,6 +10,7 @@ import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.proofs.ct.SignedTreeHead;
+import uk.gov.register.thymeleaf.RegisterDetailView;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -95,6 +96,13 @@ public class DataResource {
         return viewFactory.getRecordsView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
+    @GET
+    @Path("/register")
+    @Produces({MediaType.APPLICATION_JSON})
+    public RegisterDetailView getRegisterDetail() {
+        return viewFactory.registerDetailView(queryDAO.getTotalRecords(), queryDAO.getTotalEntries(), queryDAO.getTotalEntries(), queryDAO.getLastUpdatedTime());
+    }
+
     private Optional<String> getFileExtension() {
         String requestURI = requestContext.getHttpServletRequest().getRequestURI();
         if (requestURI.lastIndexOf('.') == -1) {
@@ -124,27 +132,4 @@ public class DataResource {
             requestContext.getHttpServletResponse().setHeader("Link", String.join(",", headerValues));
         }
     }
-
-    private Response create301Response(String path, Optional<Long> pageIndex, Optional<Long> pageSize) {
-        String requestURI = requestContext.requestURI();
-        String representation = requestURI.substring(requestURI.lastIndexOf("/")).replaceAll("[^\\.]+(.*)", "$1");
-
-        UriBuilder builder = UriBuilder
-                .fromUri(requestURI)
-                .replacePath(null)
-                .path(path + representation);
-
-        if (pageIndex.isPresent()) {
-            builder = builder.queryParam(Pagination.INDEX_PARAM, pageIndex.get());
-        }
-        if (pageSize.isPresent()) {
-            builder = builder.queryParam(Pagination.SIZE_PARAM, pageSize.get());
-        }
-
-        return Response
-                .status(Response.Status.MOVED_PERMANENTLY)
-                .location(builder.build())
-                .build();
-    }
-
 }

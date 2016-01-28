@@ -2,6 +2,8 @@ package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -48,6 +50,14 @@ public class ThymeleafView extends View {
 
     public Register getRegister() {
         return requestContext.getRegister();
+    }
+
+    public EntryView getRegisterEntryView(EntryConverter entryConverter) {
+        return requestContext.getRegisterData().getEntry(entryConverter);
+    }
+
+    public String getRegisterDomain() {
+        return requestContext.getRegisterDomain();
     }
 
     public ServletContext getServletContext() {

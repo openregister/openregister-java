@@ -20,7 +20,11 @@ public class HtmlViewSupport {
         return uriBuilder.build().toString();
     }
 
-    public static String fieldLink(String fieldName) {
-        return new LinkValue("field", fieldName).link();
+    public static String fieldLink(String fieldName, String registerDomain) {
+        return new LinkValue("field", registerDomain, fieldName).link();
+    }
+
+    public static String publicBodyLink(String fieldName, String registerDomain) {
+        return new LinkValue("public-body", registerDomain, fieldName).link();
     }
 }

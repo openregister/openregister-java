@@ -1,6 +1,6 @@
-@prefix field: <http://field.openregister.org/field/>.
+@prefix field: <http://field.test.register.gov.uk/field/>.
 
 <http://register.beta.openregister.org/entry/1>
- field:fields <http://field.openregister.org/field/field1> ;
- field:register <http://register.openregister.org/register/value1> ;
+ field:fields <http://field.test.register.gov.uk/field/field1> ;
+ field:register <http://register.test.register.gov.uk/register/value1> ;
  field:text "The Entry 1" .

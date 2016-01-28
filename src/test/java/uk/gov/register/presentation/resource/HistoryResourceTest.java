@@ -37,7 +37,7 @@ public class HistoryResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new HistoryResource(new RequestContext(new RegistersConfiguration()) {
+        resource = new HistoryResource(new RequestContext(new RegistersConfiguration(), () -> "") {
             @Override
             public String getRegisterPrimaryKey() {
                 return "school";

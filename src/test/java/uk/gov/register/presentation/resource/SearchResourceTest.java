@@ -43,7 +43,7 @@ public class SearchResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        requestContext = new RequestContext(new RegistersConfiguration()){
+        requestContext = new RequestContext(new RegistersConfiguration(), () -> ""){
             @Override
             public HttpServletResponse getHttpServletResponse() {
                 return servletResponse;

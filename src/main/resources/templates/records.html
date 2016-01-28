@@ -13,9 +13,9 @@
     <table th:if="${#lists.isEmpty(entries) == false}">
         <thead>
             <tr>
-                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(registerId)}" th:text="${registerId}"></a></th>
+                <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(registerId, registerDomain)}" th:text="${registerId}"></a></th>
                 <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-                    <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(fieldName)}" th:text="${fieldName}"></a></th>
+                    <th><a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(fieldName, registerDomain)}" th:text="${fieldName}"></a></th>
                 </th:block>
             </tr>
         </thead>

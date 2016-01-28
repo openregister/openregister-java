@@ -17,17 +17,23 @@ public class HomePageView extends AttributionView {
 
     private final LocalDateTime lastUpdated;
     private final int totalRecords;
+    private final int totalEntries;
+    private final String registerDomain;
 
     public HomePageView(
             PublicBody custodian,
             Optional<GovukOrganisation.Details> custodianBranding,
             RequestContext requestContext,
             int totalRecords,
-            LocalDateTime lastUpdated
+            int totalEntries,
+            LocalDateTime lastUpdated,
+            String registerDomain
     ) {
         super(requestContext, custodian, custodianBranding, "home.html");
         this.totalRecords = totalRecords;
+        this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
+        this.registerDomain = registerDomain;
     }
 
     @SuppressWarnings("unused, used from template")
@@ -41,12 +47,17 @@ public class HomePageView extends AttributionView {
     }
 
     @SuppressWarnings("unused, used from template")
+    public int getTotalEntries() {
+        return totalEntries;
+    }
+
+    @SuppressWarnings("unused, used from template")
     public String getLastUpdatedTime(){
         return DATE_TIME_FORMATTER.format(lastUpdated);
     }
 
     @SuppressWarnings("unused, used from template")
     public String getLinkToRegisterRegister(){
-        return new LinkValue("register", getRegisterId()).link();
+        return new LinkValue("register", registerDomain, getRegisterId()).link();
     }
 }
