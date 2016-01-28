@@ -1,5 +1,7 @@
 package uk.gov.register.presentation.functional.testSupport;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.dropwizard.jackson.Jackson;
 import org.postgresql.util.PGobject;
 import uk.gov.register.presentation.functional.FunctionalTestBase;
 
@@ -60,9 +62,10 @@ public class DBSupport {
     private static void publishMessages(Connection connection, String registerName, List<String> messages) throws SQLException {
         int serial_number = 0;
         for (String message : messages) {
-            try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
+            try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry,leaf_input) values(?,?, ?)")) {
                 insertPreparedStatement.setObject(1, ++serial_number);
                 insertPreparedStatement.setObject(2, jsonbObject(message));
+                insertPreparedStatement.setString(3, CTLeafInputGenerator.createLeafInputFrom(itemData(message), System.currentTimeMillis()));
                 insertPreparedStatement.execute();
             }
 
@@ -84,6 +87,14 @@ public class DBSupport {
     private static boolean isSupersedingAnEntry(Statement statement, String primaryKeyValue) throws SQLException {
         statement.execute(String.format("select serial_number from current_keys where key='%s'", primaryKeyValue));
         return statement.getResultSet().next();
+    }
+
+    private static String itemData(String message) {
+        try {
+            return Jackson.newObjectMapper().readValue(message, JsonNode.class).get("entry").toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static String extractRegisterKey(String registerName, String message) {
