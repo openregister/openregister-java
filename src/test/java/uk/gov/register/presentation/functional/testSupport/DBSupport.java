@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +37,12 @@ public class DBSupport {
         publishMessages("address", messages);
     }
 
-    public static void publishMessages(String registerName, List<String> messages) {
+    public static  void publishMessages(String registerName, List<String> messages) {
+        Map<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m));
+        publishMessages(registerName, messagesWithSerialNumbers);
+    }
+
+    public static void publishMessages(String registerName, Map<Integer, String> messages) {
         try (Connection connection = createConnection(FunctionalTestBase.DATABASE_URL, FunctionalTestBase.DATABASE_USER)) {
             publishMessages(connection, registerName, messages);
         } catch (SQLException e) {
@@ -60,10 +66,17 @@ public class DBSupport {
     }
 
     private static void publishMessages(Connection connection, String registerName, List<String> messages) throws SQLException {
-        int serial_number = 0;
-        for (String message : messages) {
+        Map<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m));
+        publishMessages(connection, registerName, messagesWithSerialNumbers);
+    }
+
+
+    private static void publishMessages(Connection connection, String registerName, Map<Integer, String> messages) throws SQLException {
+        for (Map.Entry<Integer, String> entry : messages.entrySet()) {
+            int serialNumber = entry.getKey();
+            String message = entry.getValue();
             try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry,leaf_input) values(?,?, ?)")) {
-                insertPreparedStatement.setObject(1, ++serial_number);
+                insertPreparedStatement.setObject(1, serialNumber);
                 insertPreparedStatement.setObject(2, jsonbObject(message));
                 insertPreparedStatement.setString(3, CTLeafInputGenerator.createLeafInputFrom(itemData(message), System.currentTimeMillis()));
                 insertPreparedStatement.execute();
@@ -74,9 +87,9 @@ public class DBSupport {
             String primaryKeyValue = extractRegisterKey(registerName, message);
 
             if (isSupersedingAnEntry(statement, primaryKeyValue)) {
-                statement.executeUpdate(String.format("Update current_keys set serial_number=%s where key='%s'", serial_number, primaryKeyValue));
+                statement.executeUpdate(String.format("Update current_keys set serial_number=%s where key='%s'", serialNumber, primaryKeyValue));
             } else {
-                statement.executeUpdate(String.format("Insert into current_keys(serial_number,key) values(%s,'%s')", serial_number, primaryKeyValue));
+                statement.executeUpdate(String.format("Insert into current_keys(serial_number,key) values(%s,'%s')", serialNumber, primaryKeyValue));
                 statement.executeUpdate("Update total_records set count=count+1");
             }
 
