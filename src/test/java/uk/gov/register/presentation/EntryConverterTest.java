@@ -33,7 +33,7 @@ public class EntryConverterTest {
     public void convert_convertsTheDbEntryToEntryView() throws IOException {
         JsonNode jsonNode = MAPPER.readValue("{\"registry\":\"somevalue\"}", JsonNode.class);
 
-        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode), "leaf_input"));
 
         assertThat(((LinkValue) entryView.getField("registry").get()).link(), equalTo("http://public-body.test.register.gov.uk/public-body/somevalue"));
     }
@@ -43,7 +43,7 @@ public class EntryConverterTest {
     public void convert_convertsListValues() throws Exception {
         JsonNode jsonNode = MAPPER.readValue("{\"fields\":[\"value1\",\"value2\"]}", JsonNode.class);
 
-        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode), "leaf_input"));
 
         ListValue fields = (ListValue) entryView.getField("fields").get();
 
@@ -55,7 +55,7 @@ public class EntryConverterTest {
 
         JsonNode jsonNode = MAPPER.readValue("{\"business\":\"company:12345\"}", JsonNode.class);
 
-        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode), "leaf_input"));
 
         LinkValue.CurieValue curieValue = (LinkValue.CurieValue) entryView.getField("business").get();
 
@@ -68,7 +68,7 @@ public class EntryConverterTest {
 
         JsonNode jsonNode = MAPPER.readValue("{\"business\":\"12345\"}", JsonNode.class);
 
-        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode), "leaf_input"));
 
         LinkValue linkValue = (LinkValue) entryView.getField("business").get();
 
@@ -81,7 +81,7 @@ public class EntryConverterTest {
 
         JsonNode jsonNode = MAPPER.readValue("{\"business\":\"sole-trader:12345\"}", JsonNode.class);
 
-        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode)));
+        EntryView entryView = entryConverter.convert(new DbEntry(13, new DbContent("somehash", jsonNode), "leaf_input"));
 
         LinkValue.CurieValue curieValue = (LinkValue.CurieValue) entryView.getField("business").get();
 

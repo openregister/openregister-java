@@ -70,7 +70,7 @@ public class SearchResourceTest {
 
     @Test
     public void findBySerial_findsEntryFromDb() throws Exception {
-        DbEntry abcd = new DbEntry(52, new DbContent("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}")));
+        DbEntry abcd = new DbEntry(52, new DbContent("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}")), "leaf_input");
         when(queryDAO.findEntryBySerialNumber(52)).thenReturn(Optional.of(abcd));
         SingleEntryView expected = mock(SingleEntryView.class);
         when(viewFactory.getSingleEntryView(abcd)).thenReturn(expected);
@@ -82,7 +82,7 @@ public class SearchResourceTest {
 
     @Test
     public void findBySerial_setsHistoryLinkHeader() throws Exception {
-        DbEntry abcd = new DbEntry(52, new DbContent("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}")));
+        DbEntry abcd = new DbEntry(52, new DbContent("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}")), "leaf_input");
         when(queryDAO.findEntryBySerialNumber(52)).thenReturn(Optional.of(abcd));
         SingleEntryView singleEntryView = mock(SingleEntryView.class);
         when(viewFactory.getSingleEntryView(abcd)).thenReturn(singleEntryView);

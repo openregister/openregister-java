@@ -2,10 +2,15 @@ package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
+import uk.gov.register.presentation.ArchiveCreator;
+import uk.gov.register.presentation.DbEntry;
+import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.proofs.ct.SignedTreeHead;
 import uk.gov.register.thymeleaf.RegisterDetailView;
 
 import javax.inject.Inject;
@@ -16,7 +21,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,14 +29,36 @@ import java.util.Optional;
 public class DataResource {
     protected final RequestContext requestContext;
     private final RecentEntryIndexQueryDAO queryDAO;
+    private final SignedTreeHeadQueryDAO signedTreeHeadQueryDAO;
 
     private final ViewFactory viewFactory;
 
     @Inject
-    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, SignedTreeHeadQueryDAO signedTreeHeadQueryDAO) {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.queryDAO = queryDAO;
+        this.signedTreeHeadQueryDAO = signedTreeHeadQueryDAO;
+    }
+
+    @GET
+    @Path("/download-register")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadRegister() {
+        List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
+        SignedTreeHead sth = signedTreeHeadQueryDAO.get();
+
+        RegisterDetail registerDetail = viewFactory.registerDetailView(queryDAO.getTotalRecords(),
+                queryDAO.getTotalEntries(),
+                queryDAO.getTotalEntries(),
+                queryDAO.getLastUpdatedTime())
+                .getRegisterDetail();
+
+        return Response
+                .ok(new ArchiveCreator().create(registerDetail, entries, sth))
+                .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", requestContext.getRegisterPrimaryKey(), System.currentTimeMillis()))
+                .header("Content-Transfer-Encoding", "binary")
+                .build();
     }
 
     @GET
@@ -89,7 +115,7 @@ public class DataResource {
             return Optional.empty();
         }
         String[] tokens = requestURI.split("\\.");
-        return Optional.of(tokens[tokens.length-1]);
+        return Optional.of(tokens[tokens.length - 1]);
     }
 
     private void addContentDispositionHeader(String fileName) {
