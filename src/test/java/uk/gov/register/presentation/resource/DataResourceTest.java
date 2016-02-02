@@ -71,4 +71,11 @@ public class DataResourceTest {
                 ExtraMediaType.TEXT_TTL
         ));
     }
+
+    @Test
+    public void register_supportsJson() throws Exception {
+        Method registerMethod = DataResource.class.getDeclaredMethod("getRegisterDetail");
+        List<String> declaredMediaTypes = asList(registerMethod.getAnnotation(Produces.class).value());
+        assertThat(declaredMediaTypes, hasItems(MediaType.APPLICATION_JSON));
+    }
 }

@@ -3,10 +3,8 @@ package uk.gov.register.presentation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class RegisterDetail {
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu");
 
     private final String domain;
     private final int totalRecords;
@@ -37,7 +35,7 @@ public class RegisterDetail {
 
     @JsonProperty("last-updated")
     public String getLastUpdatedTime(){
-        return DATE_TIME_FORMATTER.format(lastUpdated);
+        return lastUpdated.toString();
     }
 
     @JsonProperty("record")

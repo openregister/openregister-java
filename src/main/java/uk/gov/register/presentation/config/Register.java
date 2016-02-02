@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,7 @@ import java.util.TreeSet;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 
+@JsonIgnoreProperties("phase")
 public class Register {
     final String registerName;
     final Set<String> fields;
