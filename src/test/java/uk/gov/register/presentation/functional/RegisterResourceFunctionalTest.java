@@ -1,10 +1,9 @@
 package uk.gov.register.presentation.functional;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
@@ -15,7 +14,6 @@ import javax.ws.rs.core.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -67,27 +65,17 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
     public void populateRegisterRegisterEntries() throws IOException {
         InputStream registersStream = RegisterResourceFunctionalTest.class.getClassLoader().getResourceAsStream("config/registers.yaml");
         ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
-        ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
-
         List<Map<String, JsonNode>> registersYaml = yamlObjectMapper.readValue(registersStream, new TypeReference<List<Map<String, JsonNode>>>() {
         });
 
-        SortedMap<Integer, String> registerEntries = registersYaml.stream().collect(Collectors.toMap(m -> m.get("serial-number").asInt(), m -> {
-            try {
-                return jsonObjectMapper.writeValueAsString(yamlObjectMapper.convertValue(m, ImportRegister.class));
-            } catch (JsonProcessingException e) {
-                throw new UncheckedIOException(e);
-            }
-        }, (a,b) -> a, TreeMap::new));
+        SortedMap<Integer, String> registerEntries = registersYaml.stream().collect(Collectors.toMap(m -> m.get("serial-number").asInt(),
+                m -> {
+                    ObjectNode rootNode = yamlObjectMapper.createObjectNode();
+                    rootNode.set("hash", m.get("hash"));
+                    rootNode.set("entry", m.get("entry"));
+                    return rootNode.toString();
+                }, (a,b) -> a, TreeMap::new));
 
         DBSupport.publishMessages("register", registerEntries);
-    }
-
-    @JsonIgnoreProperties("serial-number")
-    private static class ImportRegister {
-        public String hash;
-        public JsonNode entry;
-
-        public ImportRegister() {}
     }
 }
