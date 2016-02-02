@@ -6,16 +6,17 @@ import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.organisation.client.GovukOrganisation;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class HomePageView extends AttributionView {
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu");
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu").withZone(ZoneId.of("UTC"));
 
     private final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    private final LocalDateTime lastUpdated;
+    private final Instant lastUpdated;
     private final int totalRecords;
     private final int totalEntries;
     private final String registerDomain;
@@ -26,7 +27,7 @@ public class HomePageView extends AttributionView {
             RequestContext requestContext,
             int totalRecords,
             int totalEntries,
-            LocalDateTime lastUpdated,
+            Instant lastUpdated,
             String registerDomain
     ) {
         super(requestContext, custodian, custodianBranding, "home.html");

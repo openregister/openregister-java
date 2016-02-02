@@ -2,15 +2,17 @@ package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 public class RegisterDetail {
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_INSTANT;
 
     private final String domain;
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
-    private final LocalDateTime lastUpdated;
+    private final Instant lastUpdated;
     private final EntryView entryView;
 
     public RegisterDetail(
@@ -18,7 +20,7 @@ public class RegisterDetail {
             int totalRecords,
             int totalEntries,
             int totalItems,
-            LocalDateTime lastUpdated,
+            Instant lastUpdated,
             EntryView entryView) {
         this.domain = domain;
         this.totalRecords = totalRecords;
@@ -33,6 +35,7 @@ public class RegisterDetail {
         return domain;
     }
 
+    @SuppressWarnings("unused, used from template")
     @JsonProperty("last-updated")
     public String getLastUpdatedTime(){
         return lastUpdated.toString();
@@ -43,16 +46,19 @@ public class RegisterDetail {
         return entryView;
     }
 
+    @SuppressWarnings("unused, used from template")
     @JsonProperty("total-entries")
     public int getTotalEntries() {
         return totalEntries;
     }
 
+    @SuppressWarnings("unused, used from template")
     @JsonProperty("total-items")
     public int getTotalItems() {
         return totalItems;
     }
 
+    @SuppressWarnings("unused, used from template")
     @JsonProperty("total-records")
     public int getTotalRecords(){
         return totalRecords;

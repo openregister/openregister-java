@@ -7,7 +7,7 @@ import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 public class RegisterDetailView extends AttributionView {
@@ -16,7 +16,7 @@ public class RegisterDetailView extends AttributionView {
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
-    private final LocalDateTime lastUpdated;
+    private final Instant lastUpdated;
 
     public RegisterDetailView(
             PublicBody custodian,
@@ -26,7 +26,7 @@ public class RegisterDetailView extends AttributionView {
             int totalRecords,
             int totalEntries,
             int totalItems,
-            LocalDateTime lastUpdated) {
+            Instant lastUpdated) {
         super(requestContext, custodian, custodianBranding, "");
         this.entryConverter = entryConverter;
         this.totalRecords = totalRecords;
