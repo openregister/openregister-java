@@ -16,8 +16,12 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsString;
@@ -35,7 +39,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
         cleanDatabaseRule.before();
 
-        populateAddressRegisterEntries();
+        Long addressRegisterLastUpdatedTime = populateAddressRegisterEntries().get();
         Response addressRegisterResourceResponse = getRequest("address", "/register.json");
         assertThat(addressRegisterResourceResponse.getStatus(), equalTo(200));
 
@@ -43,13 +47,15 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
         assertThat(addressRegisterResourceJsonResponse, containsString("\"total-entries\":5"));
         assertThat(addressRegisterResourceJsonResponse, containsString("\"total-records\":3"));
         assertThat(addressRegisterResourceJsonResponse, containsString("\"total-items\":5"));
+        assertThat(addressRegisterResourceJsonResponse, containsString(String.format("\"last-updated\":\"%s\"",
+                Instant.ofEpochMilli(addressRegisterLastUpdatedTime).toString())));
 
         String registerRegisterEntryJsonResponse = registerRegisterEntryResponse.readEntity(String.class);
         assertThat(addressRegisterResourceJsonResponse, containsString(registerRegisterEntryJsonResponse));
     }
 
-    public void populateAddressRegisterEntries() {
-        DBSupport.publishMessages(ImmutableList.of(
+    public Optional<Long> populateAddressRegisterEntries() {
+        return DBSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
@@ -66,13 +72,13 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
         List<Map<String, JsonNode>> registersYaml = yamlObjectMapper.readValue(registersStream, new TypeReference<List<Map<String, JsonNode>>>() {
         });
 
-        Map<Integer, String> registerEntries = registersYaml.stream().collect(Collectors.toMap(m -> m.get("serial-number").asInt(), m -> {
+        SortedMap<Integer, String> registerEntries = registersYaml.stream().collect(Collectors.toMap(m -> m.get("serial-number").asInt(), m -> {
             try {
                 return jsonObjectMapper.writeValueAsString(yamlObjectMapper.convertValue(m, ImportRegister.class));
             } catch (JsonProcessingException e) {
                 throw new UncheckedIOException(e);
             }
-        }));
+        }, (a,b) -> a, TreeMap::new));
 
         DBSupport.publishMessages("register", registerEntries);
     }
