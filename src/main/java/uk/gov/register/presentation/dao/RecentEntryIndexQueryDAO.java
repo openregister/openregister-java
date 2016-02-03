@@ -42,7 +42,7 @@ public abstract class RecentEntryIndexQueryDAO {
     public abstract Optional<DbEntry> findEntryBySerialNumber(@Bind("serial") long serial);
 
     @SqlQuery("SELECT leaf_input FROM ordered_entry_index ORDER BY serial_number DESC LIMIT 1")
-    public abstract String getLatestTreeInput();
+    public abstract String getLatestLeafInput();
 
     @SqlQuery("SELECT serial_number,entry,leaf_input FROM (" +
             "SELECT idx.serial_number, idx.entry, idx.leaf_input FROM ordered_entry_index idx, current_keys ck " +
@@ -76,7 +76,7 @@ public abstract class RecentEntryIndexQueryDAO {
     }
 
     public Instant getLastUpdatedTime() {
-        return Instant.ofEpochMilli(new CTEntryLeaf(getLatestTreeInput()).getTimestamp());
+        return Instant.ofEpochMilli(new CTEntryLeaf(getLatestLeafInput()).getTimestamp());
     }
 
     private PGobject writePGObject(Object value) throws JsonProcessingException, SQLException {
