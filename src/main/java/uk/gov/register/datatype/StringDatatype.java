@@ -11,10 +11,13 @@ public class StringDatatype implements Datatype {
 
     @Override
     public boolean isValid(JsonNode value) {
-        return value.isTextual();
+        if (value.isTextual() && (value.textValue() != null && !value.textValue().isEmpty())) {
+            return true;
+        }
+        return false;
     }
 
-    public String getName(){
+    public String getName() {
         return datatypeName;
     }
 }
