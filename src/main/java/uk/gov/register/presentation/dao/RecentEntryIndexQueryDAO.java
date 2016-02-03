@@ -11,9 +11,10 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.mapper.EntryMapper;
+import uk.gov.register.proofs.ct.CTEntryLeaf;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,9 @@ public abstract class RecentEntryIndexQueryDAO {
     @SingleValueResult(DbEntry.class)
     public abstract Optional<DbEntry> findEntryBySerialNumber(@Bind("serial") long serial);
 
+    @SqlQuery("SELECT leaf_input FROM ordered_entry_index ORDER BY serial_number DESC LIMIT 1")
+    public abstract String getLatestLeafInput();
+
     @SqlQuery("SELECT serial_number,entry,leaf_input FROM (" +
             "SELECT idx.serial_number, idx.entry, idx.leaf_input FROM ordered_entry_index idx, current_keys ck " +
             "WHERE  entry @> :content " +
@@ -61,9 +65,6 @@ public abstract class RecentEntryIndexQueryDAO {
     @SqlQuery("SELECT count FROM total_records")
     public abstract int getTotalRecords();
 
-    @SqlQuery("SELECT last_updated FROM total_entries")
-    public abstract LocalDateTime getLastUpdatedTime();
-
     public List<DbEntry> findAllEntriesByKeyValue(String key, String value) throws Exception {
         Object entry = ImmutableMap.of("entry", ImmutableMap.of(key, value));
         return findAllEntriesByJsonContent(writePGObject(entry));
@@ -72,6 +73,10 @@ public abstract class RecentEntryIndexQueryDAO {
     public List<DbEntry> findLatestEntriesOfRecordsByKeyValue(String key, String value) throws Exception {
         Object entry = ImmutableMap.of("entry", ImmutableMap.of(key, value));
         return findLatestEntriesOfRecordsByJsonContent(writePGObject(entry));
+    }
+
+    public Instant getLastUpdatedTime() {
+        return Instant.ofEpochMilli(new CTEntryLeaf(getLatestLeafInput()).getTimestamp());
     }
 
     private PGobject writePGObject(Object value) throws JsonProcessingException, SQLException {

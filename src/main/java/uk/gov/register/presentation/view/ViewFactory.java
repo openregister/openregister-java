@@ -18,7 +18,7 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,11 +80,11 @@ public class ViewFactory {
         return new BadRequestExceptionView(requestContext, e);
     }
 
-    public HomePageView homePageView(int totalRecords, int totalEntries, LocalDateTime lastUpdated) {
+    public HomePageView homePageView(int totalRecords, int totalEntries, Instant lastUpdated) {
         return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomain);
     }
 
-    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, LocalDateTime lastUpdated) {
+    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Instant lastUpdated) {
         return new RegisterDetailView(getCustodian(), getBranding(), requestContext, entryConverter, totalRecords, totalEntries, totalItems, lastUpdated);
     }
 
