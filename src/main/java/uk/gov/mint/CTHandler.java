@@ -36,7 +36,7 @@ public class CTHandler implements Loader {
                     .post(Entity.entity(singleEntry, MediaType.APPLICATION_JSON), Response.class);
             try {
                 if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-                    throw new CTException(response.getStatus(), response.readEntity(String.class));
+                    throw new CTException(response.readEntity(String.class));
                 }
             } finally {
                 response.close();

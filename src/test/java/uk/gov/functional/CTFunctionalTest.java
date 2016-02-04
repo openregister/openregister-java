@@ -45,7 +45,7 @@ public class CTFunctionalTest {
     private final JerseyClient jerseyClient = authenticatingClient();
 
     @Test
-    public void checkThatErrorsFromCTServerArePropogatedBack() throws Exception {
+    public void clientErrorFromCTServerIndicatesBugInMint() throws Exception {
         stubFor(post(urlEqualTo("/add-json"))
                 .willReturn(aResponse()
                         .withStatus(400)
@@ -53,7 +53,7 @@ public class CTFunctionalTest {
                 ));
 
         Response r =  send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
-        assertThat(r.getStatus(), equalTo(400));
+        assertThat(r.getStatus(), equalTo(500));
     }
 
     private Response send(String... payload) {
