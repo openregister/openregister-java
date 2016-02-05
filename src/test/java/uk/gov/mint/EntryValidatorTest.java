@@ -108,4 +108,17 @@ public class EntryValidatorTest {
     private JsonNode nodeOf(String jsonString) throws IOException {
         return objectMapper.readValue(jsonString, JsonNode.class);
     }
+
+    @Test
+    public void validateEntry_failsOnEmptyStringField() throws IOException {
+        String jsonString = "{\"register\":\"aregister\",\"fields\":[\"foo\",\"\"]}";
+        JsonNode jsonNode = nodeOf(jsonString);
+        try {
+            entryValidator.validateEntry("register", jsonNode);
+            fail("Must not execute this statement");
+        } catch (EntryValidationException e) {
+            assertThat(e.getMessage(), equalTo("Field 'fields' values must be of type 'string'"));
+            assertThat(e.getEntry().toString(), equalTo(jsonString));
+        }
+    }
 }
