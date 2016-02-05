@@ -1,4 +1,23 @@
 ---
+- serial-number: 59
+  hash: "ed0fa755a6ef0c5d9b7ea5b57ad3d18347944fd7"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "territory"
+    phase: "alpha"
+    register: "territory"
+    text: "A territory"
+- serial-number: 58
+  hash: "335f23800af9a4e94e1d58d3feb790a368ad84bb"
+  entry:
+    cardinality: "1"
+    datatype: "string"
+    field: "uk"
+    phase: "alpha"
+    register: "uk"
+    text: "A constituent unit of the United Kingdom of Great Britain and Northern\
+      \ Ireland or a Crown dependency"
 - serial-number: 57
   hash: "8cf1527a510e3fdf9c4e30a251afa0427f28ac16"
   entry:
