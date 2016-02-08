@@ -20,7 +20,7 @@ public class FetchResult {
     }
 
     public boolean hasMoreEntries(int afterLastReadSerialNumber) {
-        return afterLastReadSerialNumber < (signedTreeHead.getTree_size() - 1);
+        return afterLastReadSerialNumber < signedTreeHead.getTree_size() ;
     }
 }
 

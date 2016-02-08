@@ -86,11 +86,7 @@ public class IndexerTaskTest {
 
                 IndexerTask indexerTask = new IndexerTask("government-domain", dataSource, destinationDBUpdateDAO);
 
-                indexerTask.run();
-
-                verifyNumberOfEntriesInOrderedEntryIndexTable(statement, 5);
-
-                verifySTH(statement, 5);
+                runIndexerAndVerifyResult(statement, indexerTask, 5);
             }
         }
     }
@@ -107,29 +103,36 @@ public class IndexerTaskTest {
                 DBI dbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer?user=postgres");
 
                 SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
-
-                loadFiveEntriesInMintDB();
-
                 DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
-
                 IndexerTask indexerTask = new IndexerTask("food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
 
-                indexerTask.run();
+                loadEntriesInMintDB(1);
 
-                verifyNumberOfEntriesInOrderedEntryIndexTable(statement, 5);
+                runIndexerAndVerifyResult(statement, indexerTask, 1);
 
-                verifySTH(statement, 5);
+                loadEntriesInMintDB(1);
 
-                loadFiveEntriesInMintDB();
+                runIndexerAndVerifyResult(statement, indexerTask, 2);
 
-                indexerTask.run();
+                loadEntriesInMintDB(5);
 
-                verifyNumberOfEntriesInOrderedEntryIndexTable(statement, 10);
+                runIndexerAndVerifyResult(statement, indexerTask, 7);
 
-                verifySTH(statement, 10);
+                loadEntriesInMintDB(1);
+
+                runIndexerAndVerifyResult(statement, indexerTask, 8);
             }
         }
     }
+
+    private void runIndexerAndVerifyResult(Statement statement, IndexerTask indexerTask, int expectedEntries) throws SQLException {
+        indexerTask.run();
+
+        verifyNumberOfEntriesInOrderedEntryIndexTable(statement, expectedEntries);
+
+        verifySTH(statement, expectedEntries);
+    }
+
 
     private void verifySTH(Statement statement, int expectedTreeSize) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery("select * from sth")) {
@@ -152,13 +155,11 @@ public class IndexerTaskTest {
         }
     }
 
-    private void loadFiveEntriesInMintDB() throws SQLException {
+    private void loadEntriesInMintDB(int noOfEntries) throws SQLException {
         try (Statement statement = createConnection().createStatement()) {
-            statement.execute("insert into entries(entry) values('{\"hash\": \"hash1\", \"entry\": {\"food-premises\":\"1\",\"business\":\"company:123\"}}')");
-            statement.execute("insert into entries(entry) values('{\"hash\": \"hash2\", \"entry\": {\"food-premises\":\"2\",\"business\":\"company:124\"}}')");
-            statement.execute("insert into entries(entry) values('{\"hash\": \"hash3\", \"entry\": {\"food-premises\":\"3\",\"business\":\"company:125\"}}')");
-            statement.execute("insert into entries(entry) values('{\"hash\": \"hash4\", \"entry\": {\"food-premises\":\"4\",\"business\":\"company:126\"}}')");
-            statement.execute("insert into entries(entry) values('{\"hash\": \"hash5\", \"entry\": {\"food-premises\":\"5\",\"business\":\"company:127\"}}')");
+            for (int entryNumber = 1; entryNumber <= noOfEntries; entryNumber++) {
+                statement.execute(String.format("insert into entries(entry) values('{\"hash\": \"hash%s\", \"entry\": {\"food-premises\":\"%s\",\"business\":\"company:123\"}}')", entryNumber, entryNumber));
+            }
         }
     }
 
