@@ -1,4 +1,18 @@
 ---
+- serial-number: 23
+  hash: "247cf017d1b91ca8e0cd3abb60712224c6fa2b03"
+  entry:
+    fields:
+    - "country"
+    - "name"
+    - "official-name"
+    - "citizen-names"
+    - "start-date"
+    - "end-date"
+    phase: "alpha"
+    register: "country"
+    registry: "foreign-commonwealth-office"
+    text: "British English-language names and descriptive terms for countries"
 - serial-number: 22
   hash: "2bbd8b62163e2b6e42d8fb59742f33117f54ec02"
   entry:
@@ -233,21 +247,6 @@
     registry: "cabinet-office"
     text: "Datatypes constraining values used by register fields and idenitifying\
       \ ways in which it may be encoded a representation"
-- serial-number: 3
-  hash: "92fdfdad3ffa376074d07ae27344bba7ba3f730a"
-  entry:
-    fields:
-    - "country"
-    - "name"
-    - "official-name"
-    - "citizen-names"
-    - "start-date"
-    - "end-date"
-    - "text"
-    phase: "alpha"
-    register: "country"
-    registry: "foreign-commonwealth-office"
-    text: "Countries of the world recognised by the UK"
 - serial-number: 2
   hash: "7bfde48aa3d06c682dbfe251ae2e1bf4c5415133"
   entry:
