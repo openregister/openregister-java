@@ -15,3 +15,11 @@ database:
   user: postgres
   properties:
     charSet: UTF-8
+
+  #db connection properties
+  initialSize: 1
+  minSize: 1
+  maxSize: 2
+
+  properties:
+    charSet: UTF-8

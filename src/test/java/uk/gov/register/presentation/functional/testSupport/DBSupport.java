@@ -39,13 +39,30 @@ public class DBSupport {
     }
 
     public static Optional<Long> publishMessages(String registerName, List<String> messages) {
-        SortedMap<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m, (a,b) -> a, TreeMap::new));
+        SortedMap<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m, (a, b) -> a, TreeMap::new));
         return publishMessages(registerName, messagesWithSerialNumbers);
     }
 
     public static Optional<Long> publishMessages(String registerName, SortedMap<Integer, String> messages) {
         try (Connection connection = createConnection(FunctionalTestBase.DATABASE_URL, FunctionalTestBase.DATABASE_USER)) {
             return publishMessages(connection, registerName, messages);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void publishMessagesWithoutLeafInput(String registerName, List<String> messages) {
+        try (Connection connection = createConnection(FunctionalTestBase.DATABASE_URL, FunctionalTestBase.DATABASE_USER)) {
+            int serialNumber = 0;
+            for (String message : messages) {
+                try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
+                    insertPreparedStatement.setObject(1, ++serialNumber);
+                    insertPreparedStatement.setObject(2, jsonbObject(message));
+                    insertPreparedStatement.execute();
+                }
+
+                updateOtherTables(connection, registerName, serialNumber, message);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -67,7 +84,7 @@ public class DBSupport {
     }
 
     private static void publishMessages(Connection connection, String registerName, List<String> messages) throws SQLException {
-        SortedMap<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m, (a,b) -> a, TreeMap::new));
+        SortedMap<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m, (a, b) -> a, TreeMap::new));
         publishMessages(connection, registerName, messagesWithSerialNumbers);
     }
 
@@ -85,7 +102,14 @@ public class DBSupport {
                 lastUpdatedTime = Optional.ofNullable(updateTime);
             }
 
-            Statement statement = connection.createStatement();
+            updateOtherTables(connection, registerName, serialNumber, message);
+        }
+
+        return lastUpdatedTime;
+    }
+
+    private static void updateOtherTables(Connection connection, String registerName, int serialNumber, String message) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
 
             String primaryKeyValue = extractRegisterKey(registerName, message);
 
@@ -98,8 +122,6 @@ public class DBSupport {
 
             statement.executeUpdate("Update total_entries set count=count+1");
         }
-
-        return lastUpdatedTime;
     }
 
     private static boolean isSupersedingAnEntry(Statement statement, String primaryKeyValue) throws SQLException {
