@@ -3,16 +3,14 @@ package uk.gov.register.presentation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class RegisterDetail {
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_INSTANT;
-
     private final String domain;
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
-    private final Instant lastUpdated;
+    private final Optional<Instant> lastUpdated;
     private final EntryView entryView;
 
     public RegisterDetail(
@@ -20,7 +18,7 @@ public class RegisterDetail {
             int totalRecords,
             int totalEntries,
             int totalItems,
-            Instant lastUpdated,
+            Optional<Instant> lastUpdated,
             EntryView entryView) {
         this.domain = domain;
         this.totalRecords = totalRecords;
@@ -37,8 +35,8 @@ public class RegisterDetail {
 
     @SuppressWarnings("unused, used from template")
     @JsonProperty("last-updated")
-    public String getLastUpdatedTime(){
-        return lastUpdated.toString();
+    public String getLastUpdatedTime() {
+        return lastUpdated.map(Instant::toString).orElse("");
     }
 
     @JsonProperty("record")
@@ -60,7 +58,7 @@ public class RegisterDetail {
 
     @SuppressWarnings("unused, used from template")
     @JsonProperty("total-records")
-    public int getTotalRecords(){
+    public int getTotalRecords() {
         return totalRecords;
     }
 }

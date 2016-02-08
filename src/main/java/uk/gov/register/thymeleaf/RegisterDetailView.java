@@ -16,7 +16,7 @@ public class RegisterDetailView extends AttributionView {
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
-    private final Instant lastUpdated;
+    private final Optional<Instant> lastUpdated;
 
     public RegisterDetailView(
             PublicBody custodian,
@@ -26,7 +26,7 @@ public class RegisterDetailView extends AttributionView {
             int totalRecords,
             int totalEntries,
             int totalItems,
-            Instant lastUpdated) {
+            Optional<Instant> lastUpdated) {
         super(requestContext, custodian, custodianBranding, "");
         this.entryConverter = entryConverter;
         this.totalRecords = totalRecords;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
+import org.apache.commons.lang3.StringUtils;
 import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -29,7 +30,7 @@ public abstract class RecentEntryIndexQueryDAO {
     // TODO: This will be okay for small numbers of records
     @SqlQuery("SELECT serial_number,entry,leaf_input FROM ordered_entry_index ORDER BY serial_number DESC")
     public abstract List<DbEntry> getAllEntriesNoPagination();
-    
+
     @SqlQuery("SELECT serial_number,entry,leaf_input FROM ordered_entry_index WHERE (entry @> :content) ORDER BY serial_number DESC")
     public abstract List<DbEntry> findAllEntriesByJsonContent(@Bind("content") PGobject json);
 
@@ -75,8 +76,17 @@ public abstract class RecentEntryIndexQueryDAO {
         return findLatestEntriesOfRecordsByJsonContent(writePGObject(entry));
     }
 
-    public Instant getLastUpdatedTime() {
-        return Instant.ofEpochMilli(new CTEntryLeaf(getLatestLeafInput()).getTimestamp());
+    public Optional<Instant> getLastUpdatedTime() {
+        String latestLeafInput = getLatestLeafInput();
+        if (StringUtils.isEmpty(latestLeafInput)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(
+                    Instant.ofEpochMilli(
+                            new CTEntryLeaf(latestLeafInput).getTimestamp()
+                    )
+            );
+        }
     }
 
     private PGobject writePGObject(Object value) throws JsonProcessingException, SQLException {
