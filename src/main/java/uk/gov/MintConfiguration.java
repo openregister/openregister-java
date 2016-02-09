@@ -39,6 +39,10 @@ public class MintConfiguration extends Configuration {
 
     @JsonProperty("jerseyClient")
     public JerseyClientConfiguration getJerseyClientConfiguration() {
+        /* xjson-server can't cope with gzip
+         * https://github.com/google/certificate-transparency/issues/1109
+         */
+        jerseyClientConfiguration.setGzipEnabledForRequests(false);
         return jerseyClientConfiguration;
     }
 
