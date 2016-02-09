@@ -1,7 +1,6 @@
 package uk.gov.register.presentation.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +12,6 @@ import java.util.TreeSet;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 
-@JsonIgnoreProperties("phase")
 public class Register {
     final String registerName;
     final Set<String> fields;
@@ -21,13 +19,17 @@ public class Register {
     final String registry;
     final String text;
 
+    final String phase;
+
     @JsonCreator
     public Register(@JsonProperty("register") String registerName,
                     @JsonProperty("fields") Set<String> fields,
                     @JsonProperty("copyright") String copyright,
                     @JsonProperty("registry") String registry,
-                    @JsonProperty("text") String text) {
+                    @JsonProperty("text") String text,
+                    @JsonProperty("phase") String phase) {
         this.registerName = registerName;
+        this.phase = phase;
         this.fields = new TreeSet<>(fields); // ensure sorted order
         this.copyright = StringUtils.isNotEmpty(copyright) ? Optional.of(copyright) : Optional.empty();
         this.registry = registry;
@@ -44,6 +46,10 @@ public class Register {
 
     public Iterable<String> getFields() {
         return fields;
+    }
+
+    public String getPhase() {
+        return phase;
     }
 
     public String getRegistry() {
