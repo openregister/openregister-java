@@ -28,7 +28,7 @@ public class HomePageViewTest {
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, "openregister.org");
 
         String registerText = "foo *bar* [baz](/quux)";
-        when(mockRequestContext.getRegister()).thenReturn(new Register("", Sets.newSet(), "", "", registerText));
+        when(mockRequestContext.getRegister()).thenReturn(new Register("", Sets.newSet(), "", "", registerText, "alpha"));
 
         String result = homePageView.getRegisterText();
 

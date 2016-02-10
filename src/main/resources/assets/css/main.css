@@ -1190,14 +1190,14 @@ body {
       width: auto;
       float: none; }
 
-.phase-banner {
+.phase-banner-alpha {
   padding: 10px 0 8px 0;
   border-bottom: 1px solid #bfc1c3;
   margin-bottom: 30px; }
   @media (min-width: 641px) {
-    .phase-banner {
+    .phase-banner-alpha {
       padding-bottom: 10px; } }
-  .phase-banner p {
+  .phase-banner-alpha p {
     margin: 0;
     color: #000;
     font-family: "GDS-Logo", sans-serif;
@@ -1206,10 +1206,10 @@ body {
     font-weight: 400;
     text-transform: none; }
     @media (min-width: 641px) {
-      .phase-banner p {
+      .phase-banner-alpha p {
         font-size: 16px;
         line-height: 1.25; } }
-  .phase-banner .phase-tag {
+  .phase-banner-alpha .phase-tag {
     display: -moz-inline-stack;
     display: inline-block;
     vertical-align: top;
@@ -1226,16 +1226,64 @@ body {
     color: #fff;
     background-color: #d53880; }
     @media (min-width: 641px) {
-      .phase-banner .phase-tag {
+      .phase-banner-alpha .phase-tag {
         vertical-align: baseline; } }
     @media (min-width: 641px) {
-      .phase-banner .phase-tag {
+      .phase-banner-alpha .phase-tag {
         font-size: 16px;
         line-height: 1.25; } }
-  .phase-banner span {
+  .phase-banner-alpha span {
     vertical-align: top; }
     @media (min-width: 641px) {
-      .phase-banner span {
+      .phase-banner-alpha span {
+        vertical-align: baseline; } }
+
+.phase-banner-beta {
+  padding: 10px 0 8px 0;
+  border-bottom: 1px solid #bfc1c3;
+  margin-bottom: 30px; }
+  @media (min-width: 641px) {
+    .phase-banner-beta {
+      padding-bottom: 10px; } }
+  .phase-banner-beta p {
+    margin: 0;
+    color: #000;
+    font-family: "GDS-Logo", sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 400;
+    text-transform: none; }
+    @media (min-width: 641px) {
+      .phase-banner-beta p {
+        font-size: 16px;
+        line-height: 1.25; } }
+  .phase-banner-beta .phase-tag {
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 8px 0 0;
+    padding: 2px 5px 0;
+    font-family: "GDS-Logo", sans-serif;
+    font-size: 14px;
+    line-height: 1.14286;
+    font-weight: 700;
+    text-transform: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #f47738; }
+    @media (min-width: 641px) {
+      .phase-banner-beta .phase-tag {
+        vertical-align: baseline; } }
+    @media (min-width: 641px) {
+      .phase-banner-beta .phase-tag {
+        font-size: 16px;
+        line-height: 1.25; } }
+  .phase-banner-beta span {
+    vertical-align: top; }
+    @media (min-width: 641px) {
+      .phase-banner-beta span {
         vertical-align: baseline; } }
 
 @media (min-width: 641px) {
