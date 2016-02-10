@@ -28,7 +28,7 @@
 <div th:fragment="phase" th:if="${register.phase == 'alpha' || register.phase == 'beta'}" th:class="'phase-banner-' + ${register.phase}">
     <p>
         <strong class="phase-tag" th:text="${#strings.toUpperCase(register.phase)}">ALPHA</strong>
-        <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+        <span>This is a new service – your <a href="mailto:data-infrastructure@digital.cabinet-office.gov.uk">feedback</a> will help us to improve it.</span>
     </p>
 </div>
 
