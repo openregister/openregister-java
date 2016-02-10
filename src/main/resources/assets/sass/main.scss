@@ -62,12 +62,12 @@ main {
   @extend %site-width-container;
 }
 
-.alpha-phase-banner {
+.phase-banner-alpha {
   @include phase-banner($state: alpha);
   margin-bottom: $gutter;
 }
 
-.beta-phase-banner {
+.phase-banner-beta {
   @include phase-banner($state: beta);
   margin-bottom: $gutter;
 }
