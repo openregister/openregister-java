@@ -1,4 +1,4 @@
-package uk.gov.register.thymeleaf;
+package uk.gov.register.presentation.view;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

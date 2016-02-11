@@ -11,7 +11,7 @@ import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.proofs.ct.SignedTreeHead;
-import uk.gov.register.thymeleaf.RegisterDetailView;
+import uk.gov.register.presentation.view.RegisterDetailView;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

@@ -2,7 +2,7 @@ package uk.gov.register.presentation.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
-import uk.gov.register.thymeleaf.RegisterProofView;
+import uk.gov.register.presentation.view.RegisterProofView;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
