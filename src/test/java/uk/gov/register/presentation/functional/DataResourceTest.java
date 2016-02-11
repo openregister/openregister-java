@@ -35,7 +35,7 @@ public class DataResourceTest extends FunctionalTestBase {
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".zip"));
         InputStream is = response.readEntity(InputStream.class);
         ZipInputStream zis = new ZipInputStream(is);
-        ZipEntry entry = null;
+        ZipEntry entry;
         boolean foundProofs = false;
         boolean foundRegister = false;
         try {

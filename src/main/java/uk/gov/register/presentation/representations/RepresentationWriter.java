@@ -2,7 +2,6 @@ package uk.gov.register.presentation.representations;
 
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.EntryView;
-import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.SingleEntryView;

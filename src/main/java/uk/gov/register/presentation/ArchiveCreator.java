@@ -53,7 +53,6 @@ public class ArchiveCreator {
             // Add each entry record
             // Keyed by entry, should contain entryNumber, itemHash, timestamp
             entries.forEach(singleEntry -> {
-                JsonNode entryData = singleEntry.getContent().getContent();
                 ZipEntry singleZipEntry = new ZipEntry(String.format("entry/%d.json", singleEntry.getSerialNumber()));
                 try {
                     zos.putNextEntry(singleZipEntry);
