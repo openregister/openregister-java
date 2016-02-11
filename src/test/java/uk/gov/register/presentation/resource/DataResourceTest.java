@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.resource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,13 +37,6 @@ public class DataResourceTest {
 
     @Mock
     SignedTreeHeadQueryDAO signedTreeHeadQueryDAO;
-
-    DataResource dataResource;
-
-    @Before
-    public void setUp() throws Exception {
-        dataResource = new DataResource(viewFactory, requestContext, queryDAO, signedTreeHeadQueryDAO);
-    }
 
     @Test
     public void entries_supportsJsonCsvTsv() throws Exception {

@@ -35,10 +35,6 @@ public class RequestContext {
         this.registerDomain = domainConfiguration.getRegisterDomain();
     }
 
-    public String requestURI() {
-        return getHttpServletRequest().getRequestURI();
-    }
-
     public String requestUrl() {
         return getHttpServletRequest().getRequestURL().toString();
     }
