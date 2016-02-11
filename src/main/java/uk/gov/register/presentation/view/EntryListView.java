@@ -6,7 +6,6 @@ import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.thymeleaf.AttributionView;
 
 import java.util.List;
 import java.util.Optional;

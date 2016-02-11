@@ -5,7 +5,6 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.thymeleaf.AttributionView;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,6 +1,7 @@
-package uk.gov.register.thymeleaf;
+package uk.gov.register.presentation.view;
 
 import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.ws.rs.BadRequestException;
 

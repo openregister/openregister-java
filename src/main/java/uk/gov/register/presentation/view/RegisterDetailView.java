@@ -1,4 +1,4 @@
-package uk.gov.register.thymeleaf;
+package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.organisation.client.GovukOrganisation;

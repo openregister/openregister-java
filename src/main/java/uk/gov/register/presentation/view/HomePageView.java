@@ -1,4 +1,4 @@
-package uk.gov.register.thymeleaf;
+package uk.gov.register.presentation.view;
 
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.LinkValue;

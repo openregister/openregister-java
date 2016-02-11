@@ -11,9 +11,6 @@ import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.thymeleaf.BadRequestExceptionView;
-import uk.gov.register.thymeleaf.HomePageView;
-import uk.gov.register.thymeleaf.RegisterDetailView;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;

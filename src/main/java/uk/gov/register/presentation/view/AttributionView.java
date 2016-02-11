@@ -1,8 +1,9 @@
-package uk.gov.register.thymeleaf;
+package uk.gov.register.presentation.view;
 
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.thymeleaf.ThymeleafView;
 
 import java.util.Optional;
 
