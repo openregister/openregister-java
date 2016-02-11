@@ -8,6 +8,8 @@ import uk.gov.register.presentation.config.RegistersConfiguration;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
@@ -19,7 +21,7 @@ public class RequestContextTest {
 
     @Test
     public void takesRegisterNameFromHttpHost() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> "");
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
         requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getHeader("Host")).thenReturn("school.beta.openregister.org");
 
@@ -30,7 +32,7 @@ public class RequestContextTest {
 
     @Test
     public void behavesGracefullyWhenGivenHostWithNoDots() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> "");
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
         requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getHeader("Host")).thenReturn("school");
 

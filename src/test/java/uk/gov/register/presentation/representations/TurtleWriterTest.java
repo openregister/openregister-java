@@ -14,6 +14,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -25,7 +26,7 @@ public class TurtleWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(), () -> "test.register.gov.uk") {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "test.register.gov.uk") {
             @Override
             public String requestUrl() {
                 return "http://widget.openregister.org/widget/123";

@@ -18,6 +18,7 @@ import uk.gov.register.presentation.view.ViewFactory;
 import javax.ws.rs.NotFoundException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,7 +38,7 @@ public class HistoryResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        resource = new HistoryResource(new RequestContext(new RegistersConfiguration(), () -> "") {
+        resource = new HistoryResource(new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "") {
             @Override
             public String getRegisterPrimaryKey() {
                 return "school";
