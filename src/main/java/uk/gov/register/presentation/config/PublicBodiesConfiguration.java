@@ -3,26 +3,23 @@ package uk.gov.register.presentation.config;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.collect.Lists;
-import io.dropwizard.jackson.Jackson;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class PublicBodiesConfiguration {
 
     private final List<PublicBody> publicBodies;
 
-    public PublicBodiesConfiguration() throws IOException {
-        InputStream publicBodiesStream = this.getClass().getClassLoader().getResourceAsStream("config/public-bodies.yaml");
-        ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
-        List<PublicBodyData> rawPublicBodies = yamlObjectMapper.readValue(publicBodiesStream, new TypeReference<List<PublicBodyData>>() {
-        });
-        publicBodies = Lists.transform(rawPublicBodies, m -> m.entry);
+    public PublicBodiesConfiguration(Optional<String> publicBodiesResourceYamlPath) {
+        publicBodies = new ResourceYamlFileReader().readResource(
+                publicBodiesResourceYamlPath,
+                "config/public-bodies.yaml",
+                new TypeReference<List<PublicBodyData>>() {
+                },
+                publicBodyData -> publicBodyData.entry
+        );
     }
 
     public PublicBody getPublicBody(String publicBodyId) {
@@ -30,7 +27,7 @@ public class PublicBodiesConfiguration {
     }
 
     @JsonIgnoreProperties({"hash", "last-updated"})
-    private static class PublicBodyData{
+    private static class PublicBodyData {
         @JsonProperty
         PublicBody entry;
     }

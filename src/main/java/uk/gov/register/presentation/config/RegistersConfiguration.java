@@ -1,27 +1,26 @@
 package uk.gov.register.presentation.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.dropwizard.jackson.Jackson;
 import uk.gov.register.presentation.RegisterData;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class RegistersConfiguration {
 
     private final List<RegisterData> registers;
 
     @Inject
-    public RegistersConfiguration() throws IOException {
-        InputStream registersStream = this.getClass().getClassLoader().getResourceAsStream("config/registers.yaml");
-        ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
-        registers = yamlObjectMapper.readValue(registersStream, new TypeReference<List<RegisterData>>() {
-        });
+    public RegistersConfiguration(Optional<String> registersResourceYamlPath) {
+        registers = new ResourceYamlFileReader().readResource(
+                registersResourceYamlPath,
+                "config/registers.yaml",
+                new TypeReference<List<RegisterData>>() {
+                },
+                registerData -> registerData
+        );
     }
 
     public RegisterData getRegisterData(String registerName) {

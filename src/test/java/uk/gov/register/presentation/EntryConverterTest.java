@@ -12,6 +12,7 @@ import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -26,7 +27,7 @@ public class EntryConverterTest {
 
     @Before
     public void setUp() throws Exception {
-        entryConverter = new EntryConverter(new FieldsConfiguration(), () -> "test.register.gov.uk", requestContext);
+        entryConverter = new EntryConverter(new FieldsConfiguration(Optional.empty()), () -> "test.register.gov.uk", requestContext);
     }
 
     @Test

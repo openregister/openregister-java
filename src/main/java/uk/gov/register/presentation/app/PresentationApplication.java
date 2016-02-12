@@ -43,6 +43,7 @@ import javax.servlet.DispatcherType;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.util.EnumSet;
+import java.util.Optional;
 
 public class PresentationApplication extends Application<PresentationConfiguration> {
 
@@ -100,9 +101,11 @@ public class PresentationApplication extends Application<PresentationConfigurati
             protected void configure() {
                 bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
                 bind(signedTreeHeadQueryDAO).to(SignedTreeHeadQueryDAO.class);
-                bind(FieldsConfiguration.class).to(FieldsConfiguration.class).in(Singleton.class);
-                bind(PublicBodiesConfiguration.class).to(PublicBodiesConfiguration.class).in(Singleton.class);
-                bind(RegistersConfiguration.class).to(RegistersConfiguration.class).in(Singleton.class);
+
+                bind(new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")))).to(FieldsConfiguration.class);
+                bind(new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")))).to(RegistersConfiguration.class);
+                bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
+
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(EntryConverter.class).to(EntryConverter.class).in(Singleton.class);
