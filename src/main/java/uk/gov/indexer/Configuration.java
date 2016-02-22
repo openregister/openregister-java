@@ -92,4 +92,8 @@ public class Configuration {
     public Optional<String> elasticSerachEndPoint(String register) {
         return Optional.ofNullable(elasticSearchEndPoints.get(register));
     }
+
+    public Optional<String> cloudwatchEnvironmentName() {
+        return Optional.ofNullable(properties.getProperty("cloudwatch.environment.name"));
+    }
 }
