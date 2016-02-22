@@ -19,3 +19,5 @@ database:
 
   properties:
     charSet: UTF-8
+
+enableDownloadResource: true

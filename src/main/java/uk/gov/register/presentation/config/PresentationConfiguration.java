@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 
-public class PresentationConfiguration extends Configuration implements GovukClientConfiguration, RegisterDomainConfiguration {
+public class PresentationConfiguration extends Configuration implements GovukClientConfiguration, RegisterDomainConfiguration, ResourceConfiguration {
     @Valid
     @NotNull
     @JsonProperty
@@ -25,6 +25,10 @@ public class PresentationConfiguration extends Configuration implements GovukCli
     @NotNull
     @JsonProperty
     private String registerDomain = "openregister.org";
+
+    @Valid
+    @JsonProperty
+    private boolean enableDownloadResource = false;
 
     @Override
     public String getRegisterDomain() {
@@ -42,5 +46,10 @@ public class PresentationConfiguration extends Configuration implements GovukCli
     @Override
     public URI getGovukEndpoint() {
         return URI.create("https://www.gov.uk");
+    }
+
+    @Override
+    public boolean getEnableDownloadResource() {
+        return enableDownloadResource;
     }
 }
