@@ -43,7 +43,8 @@ public class DataResource {
 
     @GET
     @Path("/download-register")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
+    @DownloadNotAvailable
     public Response downloadRegister() {
         List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
         SignedTreeHead sth = signedTreeHeadQueryDAO.get();
@@ -59,12 +60,14 @@ public class DataResource {
                 .ok(new ArchiveCreator().create(registerDetail, entries, sth))
                 .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", requestContext.getRegisterPrimaryKey(), System.currentTimeMillis()))
                 .header("Content-Transfer-Encoding", "binary")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)
                 .build();
     }
 
     @GET
     @Path("/download")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @DownloadNotAvailable
     public View download() {
         return viewFactory.thymeleafView("download.html");
     }
@@ -72,6 +75,7 @@ public class DataResource {
     @GET
     @Path("/download.torrent")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @DownloadNotAvailable
     public Response downloadTorrent() {
         return Response
                 .status(Response.Status.NOT_IMPLEMENTED)
