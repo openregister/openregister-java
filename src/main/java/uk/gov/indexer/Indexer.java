@@ -47,7 +47,7 @@ public class Indexer {
                     );
 
             executorService.scheduleAtFixedRate(
-                    new IndexerTask(register, dataSource, destinationDBUpdateDAO),
+                    new IndexerTask(configuration.cloudwatchEnvironmentName(), register, dataSource, destinationDBUpdateDAO),
                     0,
                     10,
                     TimeUnit.SECONDS);

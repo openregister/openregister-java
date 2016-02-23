@@ -55,7 +55,8 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntriesInBatch(int from, String registerName, FetchResult fetchResult) {
+    public long writeEntriesInBatch(int from, String registerName, FetchResult fetchResult) {
+        long entriesWritten = 0;
 
         SignedTreeHead signedTreeHead = fetchResult.getSignedTreeHead();
 
@@ -64,7 +65,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         List<Entry> entries;
 
         while (!(entries = fetchResult.getEntryFetcher().fetch(from)).isEmpty()) {
-            logger.info(String.format("Register '%s': Writing %s entries from index '%s'in transaction. total entries to write are: '%s'", registerName, entries.size(), from, signedTreeHead.getTree_size()));
+            logger.info(String.format("Register '%s': Writing %s entries from index '%s' in transaction. total entries to write are: '%s'", registerName, entries.size(), from, signedTreeHead.getTree_size()));
 
             List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(Entry::dbEntry).collect(Collectors.toList());
 
@@ -73,8 +74,10 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
             upsertInCurrentKeysTable(registerName, orderedEntryIndex);
 
             from += entries.size();
-            logger.info(String.format("Register '%s': Written '%s' more entries.", registerName, entries.size()));
+            logger.info(String.format("Register '%s': Written '%d' more entries.", registerName, entries.size()));
+            entriesWritten += entries.size();
         }
+        return entriesWritten;
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
