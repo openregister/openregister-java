@@ -27,7 +27,7 @@ public class Application {
         indexers.stream().parallel().forEach(indexer -> indexer.start(executorService));
 
         if (configuration.cloudwatchEnvironmentName().isPresent()) {
-            heartbeatThread = new Thread(new CloudWatchUploader(configuration.getProperty("cloudwatch.environment.name")));
+            heartbeatThread = new Thread(new CloudWatchUploader(configuration.cloudwatchEnvironmentName().get()));
             heartbeatThread.start();
         }
 
