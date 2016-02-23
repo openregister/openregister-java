@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -84,7 +85,7 @@ public class IndexerTaskTest {
 
                 DestinationDBUpdateDAO destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
-                IndexerTask indexerTask = new IndexerTask("government-domain", dataSource, destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask(Optional.empty(), "government-domain", dataSource, destinationDBUpdateDAO);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 5);
             }
@@ -104,7 +105,7 @@ public class IndexerTaskTest {
 
                 SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
                 DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
-                IndexerTask indexerTask = new IndexerTask("food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask(Optional.empty(), "food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
 
                 loadEntriesInMintDB(1);
 

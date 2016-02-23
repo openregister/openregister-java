@@ -2,7 +2,7 @@ package uk.gov.indexer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.indexer.monitoring.CloudWatchUploader;
+import uk.gov.indexer.monitoring.CloudwatchProcessHeartbeat;
 
 import java.util.List;
 import java.util.Set;
@@ -27,7 +27,7 @@ public class Application {
         indexers.stream().parallel().forEach(indexer -> indexer.start(executorService));
 
         if (configuration.cloudwatchEnvironmentName().isPresent()) {
-            heartbeatThread = new Thread(new CloudWatchUploader(configuration.cloudwatchEnvironmentName().get()));
+            heartbeatThread = new Thread(new CloudwatchProcessHeartbeat(configuration.cloudwatchEnvironmentName().get()));
             heartbeatThread.start();
         }
 

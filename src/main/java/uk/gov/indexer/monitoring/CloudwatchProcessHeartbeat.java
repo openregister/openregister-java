@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 
-public class CloudWatchUploader implements Runnable {
-    private final Logger LOGGER = LoggerFactory.getLogger(CloudWatchUploader.class);
+public class CloudwatchProcessHeartbeat implements Runnable {
+    private final Logger LOGGER = LoggerFactory.getLogger(CloudwatchProcessHeartbeat.class);
 
     private String environment;
     private final AmazonCloudWatch acw;
 
-    public CloudWatchUploader(String environment) {
+    public CloudwatchProcessHeartbeat(String environment) {
         this.environment = environment;
 
         acw = new AmazonCloudWatchClient();
