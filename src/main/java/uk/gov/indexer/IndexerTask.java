@@ -15,7 +15,7 @@ public class IndexerTask implements Runnable {
     private final String register;
     private final DestinationDBUpdateDAO destinationDBUpdateDAO;
     private final DataSource dataSource;
-    private final CloudwatchRecordsProcessedUpdater cloudwatchUpdater;
+    private final Optional<CloudwatchRecordsProcessedUpdater> cloudwatchUpdater;
 
     public IndexerTask(Optional<String> environment, String register, DataSource dataSource, DestinationDBUpdateDAO destinationDBUpdateDAO) {
         this.register = register;
@@ -23,9 +23,9 @@ public class IndexerTask implements Runnable {
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
 
         if (environment.isPresent()) {
-            this.cloudwatchUpdater = new CloudwatchRecordsProcessedUpdater(environment.get(), register);
+            this.cloudwatchUpdater = Optional.of(new CloudwatchRecordsProcessedUpdater(environment.get(), register));
         } else {
-            this.cloudwatchUpdater = null;
+            this.cloudwatchUpdater = Optional.empty();
         }
     }
 
@@ -51,12 +51,12 @@ public class IndexerTask implements Runnable {
             int lastUpdatedSerialNumber = destinationDBUpdateDAO.lastReadSerialNumber();
             from = lastUpdatedSerialNumber;
 
-            if (cloudwatchUpdater != null) {
-                cloudwatchUpdater.update(lastUpdatedSerialNumber - from);
+            if (cloudwatchUpdater.isPresent()) {
+                cloudwatchUpdater.get().update(lastUpdatedSerialNumber - from);
             }
         }
-        if (noRecordsProcessed) {
-            cloudwatchUpdater.update(0);
+        if (noRecordsProcessed && cloudwatchUpdater.isPresent()) {
+            cloudwatchUpdater.get().update(0);
         }
     }
 }
