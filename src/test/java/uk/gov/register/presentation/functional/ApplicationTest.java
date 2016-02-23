@@ -52,4 +52,23 @@ public class ApplicationTest extends FunctionalTestBase {
         assertThat(contentType, containsString("text/html"));
         assertThat(contentType, containsString("charset=UTF-8"));
     }
+
+    @Test
+    public void appSupportsContentTypeOptions() throws Exception {
+        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/entries")
+                .request()
+                .get();
+
+        assertThat(response.getHeaders().get(HttpHeaders.X_CONTENT_TYPE_OPTIONS), equalTo(ImmutableList.of("nosniff")));
+    }
+
+    @Test
+    public void appSupportsXssProtection() throws Exception {
+        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/entries")
+                .request()
+                .get();
+
+        assertThat(response.getHeaders().get(HttpHeaders.X_XSS_PROTECTION), equalTo(ImmutableList.of("1; mode=block")));
+    }
+
 }
