@@ -47,12 +47,11 @@ public class IndexerTask implements Runnable {
         boolean noRecordsProcessed = true;
         while ((fetchResult = dataSource.fetchCurrentSnapshot()).hasMoreEntries(from)) {
             noRecordsProcessed = false;
-            destinationDBUpdateDAO.writeEntriesInBatch(from, register, fetchResult);
-            int lastUpdatedSerialNumber = destinationDBUpdateDAO.lastReadSerialNumber();
-            from = lastUpdatedSerialNumber;
+            long recordsWritten = destinationDBUpdateDAO.writeEntriesInBatch(from, register, fetchResult);
+            from = destinationDBUpdateDAO.lastReadSerialNumber();
 
             if (cloudwatchUpdater.isPresent()) {
-                cloudwatchUpdater.get().update(lastUpdatedSerialNumber - from);
+                cloudwatchUpdater.get().update(recordsWritten);
             }
         }
         if (noRecordsProcessed && cloudwatchUpdater.isPresent()) {
