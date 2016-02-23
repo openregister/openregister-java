@@ -51,8 +51,8 @@ public class CloudWatchUploader implements Runnable {
         acw.putMetricData(new PutMetricDataRequest()
                 .withNamespace(environment)
                 .withMetricData(Collections.singletonList(new MetricDatum()
-                        .withMetricName("indexer")
-                        .withDimensions(new Dimension().withName("heartbeat").withValue("process"))
+                        .withMetricName("heartbeat")
+                        .withDimensions(new Dimension().withName("application").withValue("indexer"))
                         .withValue(1.0))
                 )
         );
