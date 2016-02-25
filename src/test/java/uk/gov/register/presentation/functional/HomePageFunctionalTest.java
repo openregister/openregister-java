@@ -1,5 +1,8 @@
 package uk.gov.register.presentation.functional;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
@@ -21,6 +24,20 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
         DBSupport.publishMessagesWithoutLeafInput("address", Collections.singletonList("{\"address\":\"1234\"}"));
         Response response = getRequest("/");
         assertThat(response.getStatus(), equalTo(200));
+        cleanDatabaseRule.before();
+    }
+
+    @Test
+    public void homepageHasXhtmlLangTags() throws Throwable {
+        DBSupport.publishMessagesWithoutLeafInput("address", Collections.singletonList("{\"address\":\"1234\"}"));
+        Response response = getRequest("/");
+
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+        Elements htmlElement = doc.select("html");
+        assertThat(htmlElement.size(), equalTo(1));
+        assertThat(htmlElement.first().attr("lang"), equalTo("en"));
+        assertThat(htmlElement.first().attr("xml:lang"), equalTo("en"));
+
         cleanDatabaseRule.before();
     }
 }

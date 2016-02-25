@@ -2,6 +2,9 @@ package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HttpHeaders;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -71,4 +74,16 @@ public class ApplicationTest extends FunctionalTestBase {
         assertThat(response.getHeaders().get(HttpHeaders.X_XSS_PROTECTION), equalTo(ImmutableList.of("1; mode=block")));
     }
 
+    @Test
+    public void app404PageHasXhtmlLangTags() throws Exception {
+        Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/missing_page_to_force_a_404")
+                .request()
+                .get();
+
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+        Elements htmlElement = doc.select("html");
+        assertThat(htmlElement.size(), equalTo(1));
+        assertThat(htmlElement.first().attr("lang"), equalTo("en"));
+        assertThat(htmlElement.first().attr("xml:lang"), equalTo("en"));
+    }
 }
