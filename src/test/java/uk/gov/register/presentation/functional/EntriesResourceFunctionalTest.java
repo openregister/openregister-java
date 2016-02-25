@@ -30,7 +30,7 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void entriesPageHasXhtmlLangTags() throws Throwable {
+    public void entriesPageHasXhtmlLangAttributes() throws Throwable {
         Response response = getRequest("address", "/entries");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));

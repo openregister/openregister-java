@@ -75,7 +75,7 @@ public class ApplicationTest extends FunctionalTestBase {
     }
 
     @Test
-    public void app404PageHasXhtmlLangTags() throws Exception {
+    public void app404PageHasXhtmlLangAttributes() throws Exception {
         Response response = client.target("http://address.openregister.dev:" + APPLICATION_PORT + "/missing_page_to_force_a_404")
                 .request()
                 .get();

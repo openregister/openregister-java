@@ -28,7 +28,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void homepageHasXhtmlLangTags() throws Throwable {
+    public void homepageHasXhtmlLangAttributes() throws Throwable {
         DBSupport.publishMessagesWithoutLeafInput("address", Collections.singletonList("{\"address\":\"1234\"}"));
         Response response = getRequest("/");
 

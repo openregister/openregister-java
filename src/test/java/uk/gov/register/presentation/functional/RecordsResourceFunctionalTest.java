@@ -75,7 +75,7 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void recordsPageHasXhtmlLangTags() {
+    public void recordsPageHasXhtmlLangAttributes() {
         Response response = getRequest("address", "/records");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
