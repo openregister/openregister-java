@@ -28,7 +28,7 @@ dependencies {
         exclude group: 'io.dropwizard'
     }
 
-    testCompile dropwizardTest, junit, jsonAssert
+    testCompile dropwizardTest, jsoup, junit, jsonAssert
 }
 
 jar.baseName = 'presentation'

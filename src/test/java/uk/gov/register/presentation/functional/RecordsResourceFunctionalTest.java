@@ -2,6 +2,9 @@ package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
 import org.json.JSONException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -70,5 +73,17 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
                         "]"
                 , false);
     }
+
+    @Test
+    public void recordsPageHasXhtmlLangAttributes() {
+        Response response = getRequest("address", "/records");
+
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+        Elements htmlElement = doc.select("html");
+        assertThat(htmlElement.size(), equalTo(1));
+        assertThat(htmlElement.first().attr("lang"), equalTo("en"));
+        assertThat(htmlElement.first().attr("xml:lang"), equalTo("en"));
+    }
+
 }
 
