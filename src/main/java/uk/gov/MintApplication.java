@@ -22,8 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MintApplication extends Application<MintConfiguration> {
-    private Thread heartbeatThread;
-
     public static void main(String[] args) {
         try {
             new MintApplication().run(args);
@@ -81,8 +79,10 @@ public class MintApplication extends Application<MintConfiguration> {
                         ))
                 );
 
-        ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
-        cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get(), configuration.getRegister()), 0, 10000, TimeUnit.MILLISECONDS);
+        if (configuration.getCloudWatchEnvironmentName().isPresent()) {
+            ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
+            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get(), configuration.getRegister()), 0, 10000, TimeUnit.MILLISECONDS);
+        }
     }
 }
 
