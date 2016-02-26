@@ -63,7 +63,7 @@ public class MintConfiguration extends Configuration {
         return credentials;
     }
 
-    public Optional<String> getCTServer() {
+    public Optional<String> ctServer() {
         return Optional.ofNullable(ctserver);
     }
 

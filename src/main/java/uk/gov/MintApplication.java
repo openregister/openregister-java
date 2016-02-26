@@ -55,7 +55,7 @@ public class MintApplication extends Application<MintConfiguration> {
         ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
         Loader handler;
-        if (configuration.getCTServer().isPresent()) {
+        if (configuration.ctServer().isPresent()) {
             handler = new CTHandler(configuration, environment, getName());
         } else {
             handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));

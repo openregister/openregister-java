@@ -18,7 +18,7 @@ public class CTHandler implements Loader {
     private final CanonicalJsonMapper canonicalJsonMapper;
 
     public CTHandler(MintConfiguration configuration, Environment environment, final String appName) {
-        this.ctserver = configuration.getCTServer().get();
+        this.ctserver = configuration.ctServer().get();
 
         this.client = new JerseyClientBuilder(environment)
                 .using(configuration.getJerseyClientConfiguration())
