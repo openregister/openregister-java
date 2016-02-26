@@ -79,9 +79,9 @@ public class MintApplication extends Application<MintConfiguration> {
                         ))
                 );
 
-        if (configuration.getCloudWatchEnvironmentName().isPresent()) {
+        if (configuration.cloudWatchEnvironmentName().isPresent()) {
             ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
-            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get(), configuration.getRegister()), 0, 10000, TimeUnit.MILLISECONDS);
+            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getRegister()), 0, 10000, TimeUnit.MILLISECONDS);
         }
     }
 }

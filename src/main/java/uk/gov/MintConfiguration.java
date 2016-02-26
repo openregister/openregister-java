@@ -63,9 +63,11 @@ public class MintConfiguration extends Configuration {
         return credentials;
     }
 
-    public Optional<String> getCTServer() { return Optional.ofNullable(ctserver); }
+    public Optional<String> getCTServer() {
+        return Optional.ofNullable(ctserver);
+    }
 
-    public Optional<String> getCloudWatchEnvironmentName() {
+    public Optional<String> cloudWatchEnvironmentName() {
         return Optional.ofNullable(cloudWatchEnvironmentName);
     }
 }
