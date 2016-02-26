@@ -34,3 +34,6 @@ jerseyClient:
 
 # This is the CT Server write endpoint
 #ctserver: http://ec2-52-48-93-254.eu-west-1.compute.amazonaws.com/ct/v1/add-json
+
+# If set, heartbeat to CloudWatch under this namespace
+#cloudWatchEnvironmentName: local

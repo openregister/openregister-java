@@ -12,6 +12,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
+import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
@@ -19,6 +20,7 @@ import uk.gov.store.EntriesUpdateDAO;
 import java.util.Optional;
 
 public class MintApplication extends Application<MintConfiguration> {
+    private Thread heartbeatThread;
 
     public static void main(String[] args) {
         try {
@@ -76,6 +78,31 @@ public class MintApplication extends Application<MintConfiguration> {
                                         .buildAuthFilter()
                         ))
                 );
+
+        startHeartbeating(configuration);
+    }
+
+    private void startHeartbeating(MintConfiguration configuration) {
+        if (configuration.getCloudWatchEnvironmentName().isPresent()) {
+            heartbeatThread = new Thread(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get()));
+            heartbeatThread.start();
+        } else {
+            heartbeatThread = null;
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                if (heartbeatThread != null) {
+                    heartbeatThread.interrupt();
+                    try {
+                        heartbeatThread.join();
+                    } catch (InterruptedException e) {
+                        // Don't care about being interrupted
+                    }
+                }
+            }
+        });
     }
 }
 

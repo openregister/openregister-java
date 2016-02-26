@@ -46,6 +46,11 @@ public class MintConfiguration extends Configuration {
         return jerseyClientConfiguration;
     }
 
+    @SuppressWarnings("unused")
+    @Valid
+    @JsonProperty
+    private String cloudWatchEnvironmentName;
+
     public DataSourceFactory getDatabase() {
         return database;
     }
@@ -59,4 +64,8 @@ public class MintConfiguration extends Configuration {
     }
 
     public Optional<String> getCTServer() { return Optional.ofNullable(ctserver); }
+
+    public Optional<String> getCloudWatchEnvironmentName() {
+        return Optional.ofNullable(cloudWatchEnvironmentName);
+    }
 }
