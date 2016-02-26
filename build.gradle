@@ -15,7 +15,7 @@ repositories {
 
 //noinspection GroovyAssignabilityCheck
 dependencies {
-    compile dropwizard, apacheCommonsCodec
+    compile dropwizard, apacheCommonsCodec, awsCloudWatch
 
     compile(postgresClient) {
         exclude group: 'org.slf4j'

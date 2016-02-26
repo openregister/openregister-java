@@ -12,14 +12,16 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
+import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MintApplication extends Application<MintConfiguration> {
-
     public static void main(String[] args) {
         try {
             new MintApplication().run(args);
@@ -53,7 +55,7 @@ public class MintApplication extends Application<MintConfiguration> {
         ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
         Loader handler;
-        if (configuration.getCTServer().isPresent()) {
+        if (configuration.ctServer().isPresent()) {
             handler = new CTHandler(configuration, environment, getName());
         } else {
             handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));
@@ -76,6 +78,11 @@ public class MintApplication extends Application<MintConfiguration> {
                                         .buildAuthFilter()
                         ))
                 );
+
+        if (configuration.cloudWatchEnvironmentName().isPresent()) {
+            ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
+            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getRegister()), 0, 10000, TimeUnit.MILLISECONDS);
+        }
     }
 }
 
