@@ -18,6 +18,8 @@ import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MintApplication extends Application<MintConfiguration> {
     private Thread heartbeatThread;
@@ -79,30 +81,8 @@ public class MintApplication extends Application<MintConfiguration> {
                         ))
                 );
 
-        startHeartbeating(configuration);
-    }
-
-    private void startHeartbeating(MintConfiguration configuration) {
-        if (configuration.getCloudWatchEnvironmentName().isPresent()) {
-            heartbeatThread = new Thread(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get(), configuration.getRegister()));
-            heartbeatThread.start();
-        } else {
-            heartbeatThread = null;
-        }
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                if (heartbeatThread != null) {
-                    heartbeatThread.interrupt();
-                    try {
-                        heartbeatThread.join();
-                    } catch (InterruptedException e) {
-                        // Don't care about being interrupted
-                    }
-                }
-            }
-        });
+        ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
+        cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get(), configuration.getRegister()), 0, 10000, TimeUnit.MILLISECONDS);
     }
 }
 

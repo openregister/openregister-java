@@ -27,29 +27,6 @@ public class CloudWatchHeartbeater implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.info("Cloudwatch heartbeat started");
-
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
-                performHeartbeat();
-
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    // Reset the flag so we exit the loop
-                    Thread.currentThread().interrupt();
-                }
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                e.printStackTrace();
-                break;
-            }
-        }
-
-        LOGGER.info("Cloudwatch heartbeat ended");
-    }
-
-    private void performHeartbeat() {
         acw.putMetricData(new PutMetricDataRequest()
                 .withNamespace(environment)
                 .withMetricData(Collections.singletonList(new MetricDatum()
