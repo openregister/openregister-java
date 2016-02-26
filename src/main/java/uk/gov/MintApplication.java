@@ -84,7 +84,7 @@ public class MintApplication extends Application<MintConfiguration> {
 
     private void startHeartbeating(MintConfiguration configuration) {
         if (configuration.getCloudWatchEnvironmentName().isPresent()) {
-            heartbeatThread = new Thread(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get()));
+            heartbeatThread = new Thread(new CloudWatchHeartbeater(configuration.getCloudWatchEnvironmentName().get(), configuration.getRegister()));
             heartbeatThread.start();
         } else {
             heartbeatThread = null;
