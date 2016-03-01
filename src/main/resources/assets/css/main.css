@@ -1183,6 +1183,8 @@ body {
     #global-header .header-wrapper .header-global .header-logo {
       width: auto;
       float: none; }
+  #global-header #logo {
+    background: none; }
 
 .phase-banner-alpha {
   padding: 10px 0 8px 0;
