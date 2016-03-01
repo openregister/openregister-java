@@ -231,7 +231,7 @@ a:active {
 a[rel="external"]:after {
   background-image: url("/assets/external-links/external-link.png");
   background-repeat: no-repeat; }
-  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     a[rel="external"]:after {
       background-image: url("/assets/external-links/external-link-24x24.png");
       background-size: 12px 400px; } }
@@ -260,7 +260,7 @@ a[rel="external"]:hover:after {
 .external-link:after {
   background-image: url("/assets/external-links/external-link-black-12x12.png");
   background-repeat: no-repeat; }
-  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
     .external-link:after {
       background-image: url("/assets/external-links/external-link-black-24x24.png");
       background-size: 12px 400px; } }
@@ -348,8 +348,7 @@ input[type="search"]::-webkit-search-decoration {
    * Extends the .visuallyhidden class to allow the element to be
    * focusable when navigated to via the keyboard
    */ }
-  .visuallyhidden.focusable:active,
-  .visuallyhidden.focusable:focus {
+  .visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {
     clip: auto;
     height: auto;
     margin: 0;
@@ -490,8 +489,7 @@ button:focus,
       line-height: inherit;
       border: none;
       visibility: hidden; }
-    #global-header #logo:hover,
-    #global-header #logo:focus {
+    #global-header #logo:hover, #global-header #logo:focus {
       text-decoration: none;
       border-bottom-color: #fff; }
     #global-header #logo:active {
@@ -555,15 +553,15 @@ button:focus,
       clear: both;
       margin: 2px 0 0 0;
       padding: 0; }
-      .js-enabled #global-header .header-proposition #proposition-link,
-      .js-enabled #global-header .header-proposition #proposition-links {
+      .js-enabled #global-header .header-proposition #proposition-link, .js-enabled
+      #global-header .header-proposition #proposition-links {
         display: none; }
         @media (min-width: 769px) {
-          .js-enabled #global-header .header-proposition #proposition-link,
-          .js-enabled #global-header .header-proposition #proposition-links {
+          .js-enabled #global-header .header-proposition #proposition-link, .js-enabled
+          #global-header .header-proposition #proposition-links {
             display: block; } }
-        .js-enabled #global-header .header-proposition #proposition-link.js-visible,
-        .js-enabled #global-header .header-proposition #proposition-links.js-visible {
+        .js-enabled #global-header .header-proposition #proposition-link.js-visible, .js-enabled
+        #global-header .header-proposition #proposition-links.js-visible {
           display: block; }
       #global-header .header-proposition #proposition-link li,
       #global-header .header-proposition #proposition-links li {
@@ -750,7 +748,7 @@ button:focus,
             overflow: hidden;
             text-indent: -999em;
             background: url("/assets/images/open-government-licence.png") 0 0 no-repeat; }
-            @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+            @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
               #footer .footer-meta .footer-meta-inner .open-government-licence .logo a, #footer .footer-meta .footer-meta-inner .custom-government-licence .logo a {
                 background-image: url("/assets/images/open-government-licence_2x.png");
                 background-size: 41px 17px; } }
@@ -797,7 +795,7 @@ button:focus,
         @media (min-width: 641px) {
           #footer .footer-meta .copyright a {
             background-position: 100% 0%; } }
-        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20/10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 20 / 10), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
           #footer .footer-meta .copyright a {
             background-image: url("/assets/images/govuk-crest-2x.png");
             background-size: 125px 102px; } }
@@ -906,35 +904,34 @@ hr {
 
 .organisation-logo {
   font-family: "GDS-Logo", sans-serif;
-  font-size: 19px;
-  line-height: 1.05263;
-  /* 20px */
+  font-size: 13px;
+  line-height: 1.15385;
   font-weight: 400;
   text-transform: none;
   text-decoration: none;
   color: #0b0c0c;
   display: block;
-  border-left: 2px solid #bbb;
-  background: url("/assets/coa-default-24.gif") no-repeat 8px 0;
+  border-left: 2px solid #2e3133;
+  background: url("/assets/coa-default-18.gif") no-repeat 8px 0;
   height: auto;
   width: auto;
-  padding-top: 30px;
+  padding-top: 23px;
   padding-left: 10px; }
-  @media (max-width: 640px) {
+  @media (min-width: 641px) {
     .organisation-logo {
-      font-size: 13px;
-      line-height: 1.15385;
-      padding-top: 23px;
-      background-image: url("/assets/coa-default-18.gif"); } }
+      font-size: 19px;
+      line-height: 1.05263;
+      padding-top: 30px;
+      background-image: url("/assets/coa-default-24.gif"); } }
   .organisation-logo.single-line {
-    padding: 5px 0 5px 45px;
-    background-position: 8px 50%;
+    padding: 1px 0 1px 31px;
+    background-position: 5px 50%;
     top: 0;
     position: static; }
-    @media (max-width: 640px) {
+    @media (min-width: 641px) {
       .organisation-logo.single-line {
-        padding: 1px 0 1px 31px;
-        background-position: 5px 50%; } }
+        padding: 5px 0 5px 45px;
+        background-position: 8px 50%; } }
   .organisation-logo:visited {
     color: #0b0c0c; }
 
@@ -1019,39 +1016,38 @@ hr {
 .wales-office {
   border-color: #a33038; }
 
-/* Crests */
 .organisation-logo-bis {
-  background: url("/assets/crests/bis_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/bis_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-bis {
-      background-image: url("/assets/crests/bis_crest_13px.png"); } }
+      background-image: url("/assets/crests/bis_crest_18px.png"); } }
 
 .organisation-logo-coastguard {
   padding-top: 38px;
-  background: url("/assets/crests/coastguard_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/coastguard_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-coastguard {
-      background-image: url("/assets/crests/coastguard_13px.png"); } }
+      background-image: url("/assets/crests/coastguard_18px.png"); } }
 
 .organisation-logo-hmrc {
-  background: url("/assets/crests/hmrc_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/hmrc_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-hmrc {
-      background-image: url("/assets/crests/hmrc_crest_13px.png"); } }
+      background-image: url("/assets/crests/hmrc_crest_18px.png"); } }
 
 .organisation-logo-ho {
   padding-top: 38px;
-  background: url("/assets/crests/ho_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/ho_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-ho {
-      background-image: url("/assets/crests/ho_crest_13px.png"); } }
+      background-image: url("/assets/crests/ho_crest_18px.png"); } }
 
 .organisation-logo-mod {
   padding-top: 38px;
-  background: url("/assets/crests/mod_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/mod_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-mod {
-      background-image: url("/assets/crests/mod_crest_13px.png"); } }
+      background-image: url("/assets/crests/mod_crest_18px.png"); } }
 
 .organisation-logo-no-identity {
   padding-top: 2px;
@@ -1059,48 +1055,48 @@ hr {
   background: none; }
 
 .organisation-logo-org {
-  background: url("/assets/crests/org_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/org_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-org {
-      background-image: url("/assets/crests/org_crest_13px.png"); } }
+      background-image: url("/assets/crests/org_crest_18px.png"); } }
 
 .organisation-logo-portcullis {
-  background: url("/assets/crests/portcullis_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/portcullis_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-portcullis {
-      background-image: url("/assets/crests/portcullis_crest_13px.png"); } }
+      background-image: url("/assets/crests/portcullis_18px.png"); } }
 
 .organisation-logo-so {
-  background: url("/assets/crests/so_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/so_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-so {
-      background-image: url("/assets/crests/so_crest_13px.png"); } }
+      background-image: url("/assets/crests/so_crest_18px.png"); } }
 
 .organisation-logo-single-identity {
-  background: url("/assets/crests/org_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/org_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-single-identity {
-      background-image: url("/assets/crests/org_crest_13px.png"); } }
+      background-image: url("/assets/crests/org_crest_18px.png"); } }
 
 .organisation-logo-ukaea {
-  background: url("/assets/crests/ukaea_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/ukaea_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-ukaea {
-      background-image: url("/assets/crests/ukaea_crest_13px.png"); } }
+      background-image: url("/assets/crests/ukaea_crest_18px.png"); } }
 
 .organisation-logo-ukho {
   padding-top: 38px;
-  background: url("/assets/crests/ukho_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/ukho_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-ukho {
-      background-image: url("/assets/crests/ukho_13px.png"); } }
+      background-image: url("/assets/crests/ukho_18px.png"); } }
 
 .organisation-logo-wales {
   padding-top: 38px;
-  background: url("/assets/crests/wales_crest_18px.png") no-repeat 8px 0; }
-  @media (max-width: 640px) {
+  background: url("/assets/crests/wales_crest_13px.png") no-repeat 8px 0; }
+  @media (min-width: 641px) {
     .organisation-logo-wales {
-      background-image: url("/assets/crests/wales_crest_13px.png"); } }
+      background-image: url("/assets/crests/wales_crest_18px.png"); } }
 
 .previous-and-next-navigation {
   display: block; }
@@ -1130,8 +1126,7 @@ hr {
       display: block;
       color: #005ea5;
       text-decoration: none; }
-      .previous-and-next-navigation li a:hover,
-      .previous-and-next-navigation li a:active {
+      .previous-and-next-navigation li a:hover, .previous-and-next-navigation li a:active {
         background-color: #f8f8f8; }
       .previous-and-next-navigation li a .pagination-part-title {
         font-family: "GDS-Logo", sans-serif;
@@ -1172,8 +1167,7 @@ hr {
     .previous-and-next-navigation li.next-page a {
       padding: 0.75em 3em 0.75em 0; }
     @media (max-width: 640px) {
-      .previous-and-next-navigation li.previous-page,
-      .previous-and-next-navigation li.next-page {
+      .previous-and-next-navigation li.previous-page, .previous-and-next-navigation li.next-page {
         float: none;
         width: 100%; }
       .previous-and-next-navigation li.next-page a {
