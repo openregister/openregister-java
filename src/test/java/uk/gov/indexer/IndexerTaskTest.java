@@ -4,6 +4,11 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.indexer.ctserver.CTServer;
@@ -12,6 +17,7 @@ import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.fetchers.CTDataSource;
 import uk.gov.indexer.fetchers.DataSource;
 import uk.gov.indexer.fetchers.PGDataSource;
+import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,12 +29,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 
+@RunWith(MockitoJUnitRunner.class)
 public class IndexerTaskTest {
     static final String ROOT_HASH = "JATHxRF5gczvNPP1S1WuhD8jSx2bl+WoTt8bIE3YKvU=";
     static final String TREE_HEAD_SIGNATURE = "BAMARzBFAiEAkKM3aRUBKhShdCyrGLdd8lYBV52FLrwqjHa5/YuzK7ECIFTlRmNuKLqbVQv0QS8nq0pAUwgbilKOR5piBAIC8LpS";
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8090);
+
+    @Mock
+    CloudwatchRecordsProcessedUpdater cloudwatchRecordsProcessedUpdater;
 
     @SuppressWarnings("ConstantConditions")
     @Test
@@ -85,9 +95,17 @@ public class IndexerTaskTest {
 
                 DestinationDBUpdateDAO destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
-                IndexerTask indexerTask = new IndexerTask(Optional.empty(), "government-domain", dataSource, destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "government-domain", dataSource, destinationDBUpdateDAO);
+                InOrder inOrder = Mockito.inOrder(cloudwatchRecordsProcessedUpdater);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 5);
+
+                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(5);
+
+                //run indexer again when no new entries available, confirms that nothing changes but cloudwatch get notification with 0 entry
+                indexerTask.run();
+
+                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(0);
             }
         }
     }
@@ -105,23 +123,42 @@ public class IndexerTaskTest {
 
                 SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
                 DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
-                IndexerTask indexerTask = new IndexerTask(Optional.empty(), "food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
 
+                InOrder inOrder = Mockito.inOrder(cloudwatchRecordsProcessedUpdater);
+
+                //load 1 entry and confirm the changes
                 loadEntriesInMintDB(1);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 1);
 
+                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
+
+                //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 2);
 
+                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
+
+                //load 5 more entry and confirm the changes
                 loadEntriesInMintDB(5);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 7);
 
+                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(5);
+
+                //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 8);
+
+                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
+
+                //run indexer again when no new entries available, confirms that nothing changes but cloudwatch get notification with 0 entry
+                runIndexerAndVerifyResult(statement, indexerTask, 8);
+
+                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(0);
             }
         }
     }

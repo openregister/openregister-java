@@ -10,6 +10,7 @@ import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.fetchers.CTDataSource;
 import uk.gov.indexer.fetchers.DataSource;
 import uk.gov.indexer.fetchers.PGDataSource;
+import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,10 +48,16 @@ public class Indexer {
                     );
 
             executorService.scheduleAtFixedRate(
-                    new IndexerTask(configuration.cloudwatchEnvironmentName(), register, dataSource, destinationDBUpdateDAO),
+                    new IndexerTask(
+                            configuration.cloudwatchEnvironmentName().map(e -> new CloudwatchRecordsProcessedUpdater(e, register)),
+                            register,
+                            dataSource,
+                            destinationDBUpdateDAO
+                    ),
                     0,
                     10,
-                    TimeUnit.SECONDS);
+                    TimeUnit.SECONDS
+            );
 
             configuration.cloudSearchEndPoint(register).ifPresent(
                     endPoint -> executorService.scheduleAtFixedRate(

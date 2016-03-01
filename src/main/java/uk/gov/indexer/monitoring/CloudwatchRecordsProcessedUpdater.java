@@ -5,14 +5,10 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 
 public class CloudwatchRecordsProcessedUpdater {
-    private final Logger LOGGER = LoggerFactory.getLogger(CloudwatchRecordsProcessedUpdater.class);
-
     private String environment;
     private String register;
     private final AmazonCloudWatch acw;
