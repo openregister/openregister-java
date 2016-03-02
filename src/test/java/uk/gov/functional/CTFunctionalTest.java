@@ -22,8 +22,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class CTFunctionalTest {
-    private static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
+public class CTFunctionalTest extends FunctionalTestBase {
+
     private static String ctserver = "http://localhost:8090/add-json";
 
     @Rule
@@ -32,7 +32,7 @@ public class CTFunctionalTest {
     @Rule
     public TestRule ruleChain = RuleChain.
             outerRule(
-                    new CleanDatabaseRule(postgresConnectionString)
+                    new CleanDatabaseRule(testEntriesDAO)
             ).
             around(
                     new DropwizardAppRule<>(MintApplication.class,
@@ -48,11 +48,11 @@ public class CTFunctionalTest {
     public void clientErrorFromCTServerIndicatesBugInMint() throws Exception {
         stubFor(post(urlEqualTo("/add-json"))
                 .willReturn(aResponse()
-                        .withStatus(400)
-                        .withBody("Unable to parse JSON")
+                                .withStatus(400)
+                                .withBody("Unable to parse JSON")
                 ));
 
-        Response r =  send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
+        Response r = send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
         assertThat(r.getStatus(), equalTo(500));
     }
 
