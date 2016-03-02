@@ -14,24 +14,20 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import uk.gov.MintApplication;
 import uk.gov.mint.CanonicalJsonMapper;
-import uk.gov.store.EntriesUpdateDAO;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.*;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class PGFunctionalTest {
-    private static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint";
-
+public class PGFunctionalTest extends FunctionalTestBase {
     @Rule
     public TestRule ruleChain = RuleChain.
             outerRule(
-                    new CleanDatabaseRule(postgresConnectionString)
+                    new CleanDatabaseRule(testEntriesDAO)
             ).
             around(
                     new DropwizardAppRule<>(MintApplication.class,
@@ -49,7 +45,7 @@ public class PGFunctionalTest {
         Response r = send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
         assertThat(r.getStatus(), equalTo(204));
 
-        JsonNode storedEntry = canonicalJsonMapper.readFromBytes(tableRecord());
+        JsonNode storedEntry = canonicalJsonMapper.readFromBytes(testEntriesDAO.getEntry());
 
         assertThat(storedEntry.get("hash"), notNullValue(JsonNode.class));
 
@@ -97,14 +93,5 @@ public class PGFunctionalTest {
         ClientConfig configuration = new ClientConfig();
         configuration.register(HttpAuthenticationFeature.basic("foo", "bar"));
         return JerseyClientBuilder.createClient(configuration);
-    }
-
-    private byte[] tableRecord() throws SQLException {
-        Connection pgConnection = DriverManager.getConnection(postgresConnectionString, "postgres", "");
-        try (Statement statement = pgConnection.createStatement()) {
-            statement.execute("SELECT ENTRY FROM " + EntriesUpdateDAO.tableName);
-            ResultSet resultSet = statement.getResultSet();
-            return resultSet.next() ? resultSet.getBytes(1) : null;
-        }
     }
 }
