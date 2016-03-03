@@ -2,6 +2,7 @@ package uk.gov.register.presentation.functional.testSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.postgresql.util.PGobject;
 import uk.gov.register.presentation.functional.FunctionalTestBase;
 
@@ -18,20 +19,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DBSupport {
+
+    private static final DataSource pooledDataSource = new DataSource();
+    static {
+        pooledDataSource.setDriverClassName("org.postgresql.Driver");
+        pooledDataSource.setUrl(FunctionalTestBase.DATABASE_URL);
+        pooledDataSource.setUsername(FunctionalTestBase.DATABASE_USER);
+    }
+
     public static void main(String[] args) throws IOException, SQLException {
         String filePath = args[1];
-        try (Stream<String> lines = Files.lines(new File(filePath).toPath(), Charset.defaultCharset()); Connection connection = createConnection(args[2], "postgres")) {
+        DataSource dataSource = new DataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl(args[2]);
+        dataSource.setUsername("postgres");
+
+        try (Stream<String> lines = Files.lines(new File(filePath).toPath(), Charset.defaultCharset()); Connection connection = dataSource.getConnection()) {
             List<String> collect = lines.collect(Collectors.toList());
             publishMessages(connection, args[0], collect);
         }
-    }
-
-    private static Connection createConnection(String databaseUrl, String databaseUser) throws SQLException {
-        org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl(databaseUrl);
-        dataSource.setUsername(databaseUser);
-        return dataSource.getConnection();
     }
 
     public static Optional<Long> publishMessages(List<String> messages) {
@@ -44,7 +50,7 @@ public class DBSupport {
     }
 
     public static Optional<Long> publishMessages(String registerName, SortedMap<Integer, String> messages) {
-        try (Connection connection = createConnection(FunctionalTestBase.DATABASE_URL, FunctionalTestBase.DATABASE_USER)) {
+        try (Connection connection = pooledDataSource.getConnection()) {
             return publishMessages(connection, registerName, messages);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -52,7 +58,7 @@ public class DBSupport {
     }
 
     public static void publishMessagesWithoutLeafInput(String registerName, List<String> messages) {
-        try (Connection connection = createConnection(FunctionalTestBase.DATABASE_URL, FunctionalTestBase.DATABASE_USER)) {
+        try (Connection connection = pooledDataSource.getConnection()) {
             int serialNumber = 0;
             for (String message : messages) {
                 try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
@@ -69,7 +75,7 @@ public class DBSupport {
     }
 
     public static void writeSignedTreeHead(int treeSize, long timeStamp, String rootHash, String treeSignature) {
-        try (Connection connection = createConnection(FunctionalTestBase.DATABASE_URL, FunctionalTestBase.DATABASE_USER); Statement statement = connection.createStatement()) {
+        try (Connection connection = pooledDataSource.getConnection(); Statement statement = connection.createStatement()) {
             statement.executeUpdate("Delete from sth");
             try (PreparedStatement preparedStatement = connection.prepareStatement("Insert into sth(tree_size,timestamp,tree_head_signature,sha256_root_hash) values (?,?,?,?)")) {
                 preparedStatement.setInt(1, treeSize);
