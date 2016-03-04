@@ -15,7 +15,6 @@ import uk.gov.indexer.ctserver.SignedTreeHead;
 import uk.gov.indexer.fetchers.FetchResult;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -81,20 +80,18 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
-        List<String> allKeys = Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry()));
+        currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry())));
+        currentKeysUpdateDAO.writeCurrentKeys(extractNewCurrentKeys(registerName, orderedEntryIndexes));
+    }
 
-        Set<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(allKeys);
-
-        orderedEntryIndexes.forEach(e -> {
-                    String key = getKey(registerName, e.getEntry());
-                    if (existingKeys.contains(key)) {
-                        currentKeysUpdateDAO.updateSerialNumber(e.getSerial_number(), key);
-                    } else {
-                        currentKeysUpdateDAO.insertNewKey(e.getSerial_number(), key);
-                        existingKeys.add(key);
-                    }
-                }
-        );
+    private Iterable<CurrentKey> extractNewCurrentKeys(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
+        return orderedEntryIndexes
+                .stream()
+                .collect(Collectors.toMap(e -> getKey(registerName, e.getEntry()), OrderedEntryIndex::getSerial_number))
+                .entrySet()
+                .stream()
+                .map(e -> new CurrentKey(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
