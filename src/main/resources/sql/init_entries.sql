@@ -2,7 +2,9 @@ group DAO;
 
 ensureEntryTablesInPlace() ::= <<
 
-CREATE TABLE IF NOT EXISTS   ordered_entry_index   (serial_number INTEGER PRIMARY KEY, entry JSONB, leaf_input VARCHAR);
+CREATE TABLE IF NOT EXISTS   ordered_entry_index   (serial_number INTEGER PRIMARY KEY, entry JSONB);
+
+ALTER TABLE ordered_entry_index DROP COLUMN IF EXISTS leaf_input;
 
 CREATE TABLE IF NOT EXISTS   total_entries   (count INTEGER, last_updated TIMESTAMP WITHOUT TIME ZONE DEFAULT now());
 

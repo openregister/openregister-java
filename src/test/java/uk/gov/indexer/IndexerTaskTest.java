@@ -27,7 +27,6 @@ import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IndexerTaskTest {
@@ -186,10 +185,6 @@ public class IndexerTaskTest {
         try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {
             resultSet.next();
             assertThat(resultSet.getInt("count"), CoreMatchers.equalTo(expectedEntries));
-        }
-        try (ResultSet resultSet = statement.executeQuery("select leaf_input from ordered_entry_index where serial_number=" + expectedEntries)) {
-            resultSet.next();
-            assertFalse(resultSet.getString("leaf_input").isEmpty());
         }
     }
 
