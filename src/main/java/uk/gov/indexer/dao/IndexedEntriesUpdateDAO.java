@@ -34,6 +34,9 @@ public interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     @SqlQuery("SELECT * FROM " + INDEXED_ENTRIES_TABLE + " WHERE serial_number > :serial_number ORDER BY serial_number LIMIT 5000")
     List<OrderedEntryIndex> fetchEntriesAfter(@Bind("serial_number") int watermark);
 
+    @SqlUpdate("update total_entries set count=count+:entriesWritten, last_updated=now()")
+    void updateTotalEntries(@Bind("entriesWritten") long entriesWritten);
+
     class OrderedEntryIndexMapper implements ResultSetMapper<OrderedEntryIndex> {
         @Override
         public OrderedEntryIndex map(int index, ResultSet r, StatementContext ctx) throws SQLException {
