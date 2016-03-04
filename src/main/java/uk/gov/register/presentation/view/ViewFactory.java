@@ -77,11 +77,11 @@ public class ViewFactory {
         return new BadRequestExceptionView(requestContext, e);
     }
 
-    public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
+    public HomePageView homePageView(int totalRecords, int totalEntries, Instant lastUpdated) {
         return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomain);
     }
 
-    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Optional<Instant> lastUpdated) {
+    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Instant lastUpdated) {
         return new RegisterDetailView(getCustodian(), getBranding(), requestContext, entryConverter, totalRecords, totalEntries, totalItems, lastUpdated);
     }
 

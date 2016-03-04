@@ -10,9 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
-import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -21,6 +23,7 @@ import java.util.stream.Stream;
 public class DBSupport {
 
     private static final DataSource pooledDataSource = new DataSource();
+
     static {
         pooledDataSource.setDriverClassName("org.postgresql.Driver");
         pooledDataSource.setUrl(FunctionalTestBase.DATABASE_URL);
@@ -40,18 +43,18 @@ public class DBSupport {
         }
     }
 
-    public static Optional<Long> publishMessages(List<String> messages) {
-        return publishMessages("address", messages);
+    public static void publishMessages(List<String> messages) {
+        publishMessages("address", messages);
     }
 
-    public static Optional<Long> publishMessages(String registerName, List<String> messages) {
+    public static void publishMessages(String registerName, List<String> messages) {
         SortedMap<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m, (a, b) -> a, TreeMap::new));
-        return publishMessages(registerName, messagesWithSerialNumbers);
+        publishMessages(registerName, messagesWithSerialNumbers);
     }
 
-    public static Optional<Long> publishMessages(String registerName, SortedMap<Integer, String> messages) {
+    public static void publishMessages(String registerName, SortedMap<Integer, String> messages) {
         try (Connection connection = pooledDataSource.getConnection()) {
-            return publishMessages(connection, registerName, messages);
+            publishMessages(connection, registerName, messages);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -94,24 +97,19 @@ public class DBSupport {
         publishMessages(connection, registerName, messagesWithSerialNumbers);
     }
 
-    private static Optional<Long> publishMessages(Connection connection, String registerName, SortedMap<Integer, String> messages) throws SQLException {
-        Optional<Long> lastUpdatedTime = Optional.empty();
+    private static void publishMessages(Connection connection, String registerName, SortedMap<Integer, String> messages) throws SQLException {
         for (SortedMap.Entry<Integer, String> entry : messages.entrySet()) {
             int serialNumber = entry.getKey();
             String message = entry.getValue();
             try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry,leaf_input) values(?,?, ?)")) {
-                Long updateTime;
                 insertPreparedStatement.setObject(1, serialNumber);
                 insertPreparedStatement.setObject(2, jsonbObject(message));
-                insertPreparedStatement.setString(3, CTLeafInputGenerator.createLeafInputFrom(itemData(message), updateTime = System.currentTimeMillis()));
+                insertPreparedStatement.setString(3, CTLeafInputGenerator.createLeafInputFrom(itemData(message), System.currentTimeMillis()));
                 insertPreparedStatement.execute();
-                lastUpdatedTime = Optional.ofNullable(updateTime);
             }
 
             updateOtherTables(connection, registerName, serialNumber, message);
         }
-
-        return lastUpdatedTime;
     }
 
     private static void updateOtherTables(Connection connection, String registerName, int serialNumber, String message) throws SQLException {

@@ -11,15 +11,9 @@ import org.junit.Test;
 import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsString;
@@ -37,7 +31,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
         cleanDatabaseRule.before();
 
-        Long addressRegisterLastUpdatedTime = populateAddressRegisterEntries().get();
+        populateAddressRegisterEntries();
         Response addressRegisterResourceResponse = getRequest("address", "/register.json");
         assertThat(addressRegisterResourceResponse.getStatus(), equalTo(200));
 
@@ -45,15 +39,14 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
         assertThat(addressRegisterResourceJsonResponse, containsString("\"total-entries\":5"));
         assertThat(addressRegisterResourceJsonResponse, containsString("\"total-records\":3"));
         assertThat(addressRegisterResourceJsonResponse, containsString("\"total-items\":5"));
-        assertThat(addressRegisterResourceJsonResponse, containsString(String.format("\"last-updated\":\"%s\"",
-                Instant.ofEpochMilli(addressRegisterLastUpdatedTime).toString())));
+        assertThat(addressRegisterResourceJsonResponse, containsString("\"last-updated\":"));
 
         String registerRegisterEntryJsonResponse = registerRegisterEntryResponse.readEntity(String.class);
         assertThat(addressRegisterResourceJsonResponse, containsString(registerRegisterEntryJsonResponse));
     }
 
-    public Optional<Long> populateAddressRegisterEntries() {
-        return DBSupport.publishMessages(ImmutableList.of(
+    public void populateAddressRegisterEntries() {
+        DBSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
