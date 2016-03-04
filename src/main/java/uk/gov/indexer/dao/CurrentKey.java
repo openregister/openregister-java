@@ -18,4 +18,9 @@ public class CurrentKey {
     public String getKey() {
         return key;
     }
+
+    @Override
+    public String toString() {
+        return String.format("{%s,%s}", serial_number, key);
+    }
 }
