@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
-import org.apache.commons.lang3.StringUtils;
+import io.dropwizard.java8.jdbi.args.InstantMapper;
 import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -12,7 +12,6 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.mapper.EntryMapper;
-import uk.gov.register.proofs.ct.CTEntryLeaf;
 
 import java.sql.SQLException;
 import java.time.Instant;
@@ -42,9 +41,6 @@ public abstract class RecentEntryIndexQueryDAO {
     @SingleValueResult(DbEntry.class)
     public abstract Optional<DbEntry> findEntryBySerialNumber(@Bind("serial") long serial);
 
-    @SqlQuery("SELECT leaf_input FROM ordered_entry_index ORDER BY serial_number DESC LIMIT 1")
-    public abstract String getLatestLeafInput();
-
     @SqlQuery("SELECT serial_number,entry,leaf_input FROM (" +
             "SELECT idx.serial_number, idx.entry, idx.leaf_input FROM ordered_entry_index idx, current_keys ck " +
             "WHERE  entry @> :content " +
@@ -63,6 +59,10 @@ public abstract class RecentEntryIndexQueryDAO {
     @SqlQuery("SELECT count FROM total_entries")
     public abstract int getTotalEntries();
 
+    @RegisterMapper(InstantMapper.class)
+    @SqlQuery("select last_updated from total_entries")
+    public abstract Instant getLastUpdatedTime();
+
     @SqlQuery("SELECT count FROM total_records")
     public abstract int getTotalRecords();
 
@@ -74,19 +74,6 @@ public abstract class RecentEntryIndexQueryDAO {
     public List<DbEntry> findLatestEntriesOfRecordsByKeyValue(String key, String value) throws Exception {
         Object entry = ImmutableMap.of("entry", ImmutableMap.of(key, value));
         return findLatestEntriesOfRecordsByJsonContent(writePGObject(entry));
-    }
-
-    public Optional<Instant> getLastUpdatedTime() {
-        String latestLeafInput = getLatestLeafInput();
-        if (StringUtils.isEmpty(latestLeafInput)) {
-            return Optional.empty();
-        } else {
-            return Optional.of(
-                    Instant.ofEpochMilli(
-                            new CTEntryLeaf(latestLeafInput).getTimestamp()
-                    )
-            );
-        }
     }
 
     private PGobject writePGObject(Object value) throws JsonProcessingException, SQLException {

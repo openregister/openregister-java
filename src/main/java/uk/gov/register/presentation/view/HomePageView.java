@@ -16,7 +16,7 @@ public class HomePageView extends AttributionView {
 
     private final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    private final Optional<Instant> lastUpdated;
+    private final Instant lastUpdated;
     private final int totalRecords;
     private final int totalEntries;
     private final String registerDomain;
@@ -27,7 +27,7 @@ public class HomePageView extends AttributionView {
             RequestContext requestContext,
             int totalRecords,
             int totalEntries,
-            Optional<Instant> lastUpdated,
+            Instant lastUpdated,
             String registerDomain
     ) {
         super(requestContext, custodian, custodianBranding, "home.html");
@@ -54,7 +54,7 @@ public class HomePageView extends AttributionView {
 
     @SuppressWarnings("unused, used from template")
     public String getLastUpdatedTime() {
-        return lastUpdated.map(DATE_TIME_FORMATTER::format).orElse("");
+        return DATE_TIME_FORMATTER.format(lastUpdated);
     }
 
     @SuppressWarnings("unused, used from template")
