@@ -36,6 +36,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
         cleanDatabaseRule.before();
 
         populateAddressRegisterEntries();
+
         Response addressRegisterResourceResponse = getRequest("address", "/register.json");
         assertThat(addressRegisterResourceResponse.getStatus(), equalTo(200));
 
