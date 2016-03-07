@@ -12,7 +12,6 @@ server:
     port: 4568
 
 register: register
-#ctserver: ctserver
 
 credentials:
   user: foo
