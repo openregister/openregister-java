@@ -12,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.indexer.ctserver.CTServer;
+import uk.gov.indexer.dao.CurrentKey;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.fetchers.CTDataSource;
@@ -23,6 +24,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -130,6 +133,7 @@ public class IndexerTaskTest {
                 loadEntriesInMintDB(1);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 1);
+                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{1,fp_1}]"));
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
@@ -137,6 +141,7 @@ public class IndexerTaskTest {
                 loadEntriesInMintDB(1);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 2);
+                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{2,fp_1}]"));
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
@@ -144,6 +149,7 @@ public class IndexerTaskTest {
                 loadEntriesInMintDB(5);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 7);
+                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {3,fp_1}, {4,fp_2}, {5,fp_3}, {6,fp_4}]"));
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(5);
 
@@ -151,6 +157,7 @@ public class IndexerTaskTest {
                 loadEntriesInMintDB(1);
 
                 runIndexerAndVerifyResult(statement, indexerTask, 8);
+                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {4,fp_2}, {5,fp_3}, {6,fp_4}, {8,fp_1}]"));
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
@@ -160,6 +167,42 @@ public class IndexerTaskTest {
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(0);
             }
         }
+    }
+
+
+    @Test
+    public void confirmThatCurrentkeyTableLoadsOnlyLatestRecord() throws SQLException {
+        try (Connection connection = createConnection()) {
+            try (Statement statement = connection.createStatement()) {
+
+                recreateEntriesTable(statement);
+                dropReadApiTables(statement);
+
+                DBI dbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer?user=postgres");
+
+                SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
+                DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
+                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
+
+                loadEntriesInMintDB(2);
+                loadEntriesInMintDB(2);
+
+                indexerTask.run();
+
+                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{3,fp_1}, {4,fp_2}]"));
+
+            }
+        }
+    }
+
+    private List<CurrentKey> currentKeys(Statement statement) throws SQLException {
+        List<CurrentKey> currentKeys = new ArrayList<>();
+        try (ResultSet resultSet = statement.executeQuery("select * from current_keys")) {
+            while (resultSet.next()) {
+                currentKeys.add(new CurrentKey(resultSet.getString("key"), resultSet.getInt("serial_number")));
+            }
+        }
+        return currentKeys;
     }
 
     private void runIndexerAndVerifyResult(Statement statement, IndexerTask indexerTask, int expectedEntries) throws SQLException {
@@ -191,7 +234,7 @@ public class IndexerTaskTest {
     private void loadEntriesInMintDB(int noOfEntries) throws SQLException {
         try (Statement statement = createConnection().createStatement()) {
             for (int entryNumber = 1; entryNumber <= noOfEntries; entryNumber++) {
-                statement.execute(String.format("insert into entries(entry) values('{\"hash\": \"hash%s\", \"entry\": {\"food-premises\":\"%s\",\"business\":\"company:123\"}}')", entryNumber, entryNumber));
+                statement.execute(String.format("insert into entries(entry) values('{\"hash\": \"hash%s\", \"entry\": {\"food-premises\":\"fp_%s\",\"business\":\"company:123\"}}')", entryNumber, entryNumber));
             }
         }
     }

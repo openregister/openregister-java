@@ -12,8 +12,9 @@ import org.slf4j.LoggerFactory;
 import uk.gov.indexer.ctserver.SignedTreeHead;
 import uk.gov.indexer.fetchers.FetchResult;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -73,20 +74,18 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
-        List<String> allKeys = Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry()));
+        currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry())));
+        currentKeysUpdateDAO.writeCurrentKeys(extractCurrentKeys(registerName, orderedEntryIndexes));
+    }
 
-        Set<String> existingKeys = currentKeysUpdateDAO.getExistingKeys(allKeys);
-
-        orderedEntryIndexes.forEach(e -> {
-                    String key = getKey(registerName, e.getEntry());
-                    if (existingKeys.contains(key)) {
-                        currentKeysUpdateDAO.updateSerialNumber(e.getSerial_number(), key);
-                    } else {
-                        currentKeysUpdateDAO.insertNewKey(e.getSerial_number(), key);
-                        existingKeys.add(key);
-                    }
-                }
-        );
+    private Iterable<CurrentKey> extractCurrentKeys(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
+        Map<String, Integer> currentKeys = new HashMap<>();
+        orderedEntryIndexes.forEach(e1 -> currentKeys.put(getKey(registerName, e1.getEntry()), e1.getSerial_number()));
+        return currentKeys
+                .entrySet()
+                .stream()
+                .map(e -> new CurrentKey(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
     }
 
     private String getKey(String registerName, String entry) {
