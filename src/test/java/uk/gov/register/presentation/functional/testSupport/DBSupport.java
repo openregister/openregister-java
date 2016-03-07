@@ -58,23 +58,6 @@ public class DBSupport {
         }
     }
 
-    public static void publishMessagesWithoutLeafInput(String registerName, List<String> messages) {
-        try (Connection connection = pooledDataSource.getConnection()) {
-            int serialNumber = 0;
-            for (String message : messages) {
-                try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
-                    insertPreparedStatement.setObject(1, ++serialNumber);
-                    insertPreparedStatement.setObject(2, jsonbObject(message));
-                    insertPreparedStatement.execute();
-                }
-
-                updateOtherTables(connection, registerName, serialNumber, message);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static void writeSignedTreeHead(int treeSize, long timeStamp, String rootHash, String treeSignature) {
         try (Connection connection = pooledDataSource.getConnection(); Statement statement = connection.createStatement()) {
             statement.executeUpdate("Delete from sth");
