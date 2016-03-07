@@ -14,9 +14,9 @@
                 <dt>Provided by:</dt>
                 <dd><th:block th:include="main.html :: organisation(${custodian}, ${branding})"></th:block></dd>
                 <dt>Total records:</dt>
-                <dd><a href="/records" th:utext="${totalRecords + '&lt;span class=&quot;visuallyhidden&quot;&gt; records&lt;/span&gt;'}">Total records</a></dd>
+                <dd><a href="/records"><th:block th:text="${totalRecords}">Total</th:block><span class="visuallyhidden"> records</span></a></dd>
                 <dt>Total entries:</dt>
-                <dd><a href="/entries" th:utext="${totalEntries + '&lt;span class=&quot;visuallyhidden&quot;&gt; entries&lt;/span&gt;'}">Total entries</a></dd>
+                <dd><a href="/entries"><th:block th:text="${totalEntries}">Total</th:block><span class="visuallyhidden"> entries</span></a></dd>
                 <dt>Last updated:</dt>
                 <dd th:text="${lastUpdatedTime}">Last updated</dd>
             </dl>
