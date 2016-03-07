@@ -3,18 +3,18 @@ package uk.gov.register.presentation;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import uk.gov.register.proofs.ct.SignedTreeHead;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ArchiveCreator {
-    public StreamingOutput create(RegisterDetail registerDetail, List<DbEntry> entries, SignedTreeHead sth) {
+    public StreamingOutput create(RegisterDetail registerDetail, List<DbEntry> entries) {
         return output -> {
             ZipOutputStream zos = new ZipOutputStream(output);
 
@@ -24,12 +24,6 @@ public class ArchiveCreator {
             ZipEntry ze = new ZipEntry("register.json");
             zos.putNextEntry(ze);
             om.writeValue(zos, registerDetail);
-            zos.closeEntry();
-
-            ze = new ZipEntry("proof.json");
-            zos.putNextEntry(ze);
-            Proofs proofs = new Proofs(sth);
-            om.writeValue(zos, proofs);
             zos.closeEntry();
 
             // Add each item
@@ -69,13 +63,6 @@ public class ArchiveCreator {
             zos.flush();
             zos.close();
         };
-    }
-
-    private long bytesToLong(byte[] bytes) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.put(bytes);
-        buffer.flip(); //need flip
-        return buffer.getLong();
     }
 
     public static class ArchiveEntryData {

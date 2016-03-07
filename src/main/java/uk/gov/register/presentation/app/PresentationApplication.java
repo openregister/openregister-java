@@ -34,7 +34,6 @@ import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
 import uk.gov.register.presentation.representations.*;
 import uk.gov.register.presentation.resource.*;
 import uk.gov.register.presentation.view.ViewFactory;
@@ -81,7 +80,6 @@ public class PresentationApplication extends Application<PresentationConfigurati
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
         RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
-        SignedTreeHeadQueryDAO signedTreeHeadQueryDAO = jdbi.onDemand(SignedTreeHeadQueryDAO.class);
 
         JerseyEnvironment jerseyEnvironment = environment.jersey();
         DropwizardResourceConfig resourceConfig = jerseyEnvironment.getResourceConfig();
@@ -102,7 +100,6 @@ public class PresentationApplication extends Application<PresentationConfigurati
             @Override
             protected void configure() {
                 bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
-                bind(signedTreeHeadQueryDAO).to(SignedTreeHeadQueryDAO.class);
 
                 bind(new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")))).to(FieldsConfiguration.class);
                 bind(new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")))).to(RegistersConfiguration.class);

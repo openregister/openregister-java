@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ViewFactory;
 
@@ -34,9 +33,6 @@ public class DataResourceTest {
 
     @Mock
     ViewFactory viewFactory;
-
-    @Mock
-    SignedTreeHeadQueryDAO signedTreeHeadQueryDAO;
 
     @Test
     public void entries_supportsJsonCsvTsv() throws Exception {
