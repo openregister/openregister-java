@@ -59,8 +59,7 @@ public class ArchiveCreator {
 
                     ArchiveEntryData aed = new ArchiveEntryData(
                             singleEntry.getSerialNumber(),
-                            singleEntry.getContent().getHash(),
-                            getTimestampFromPayload(singleEntry.getLeaf_input()));
+                            singleEntry.getContent().getHash());
                     om.writeValue(zos, aed);
                     zos.closeEntry();
                 } catch (IOException e) {
@@ -70,12 +69,6 @@ public class ArchiveCreator {
             zos.flush();
             zos.close();
         };
-    }
-
-    private long getTimestampFromPayload(String leaf_input) {
-        byte[] rawdata = Base64.getDecoder().decode(leaf_input);
-        byte[] rawtimestamp = Arrays.copyOfRange(rawdata, 2, 10);
-        return bytesToLong(rawtimestamp);
     }
 
     private long bytesToLong(byte[] bytes) {
@@ -88,12 +81,10 @@ public class ArchiveCreator {
     public static class ArchiveEntryData {
         public int entryNumber;
         public String itemHash;
-        public long timestamp;
 
-        public ArchiveEntryData(int entryNumber, String itemHash, long timestamp) {
+        public ArchiveEntryData(int entryNumber, String itemHash) {
             this.entryNumber = entryNumber;
             this.itemHash = itemHash;
-            this.timestamp = timestamp;
         }
     }
 }

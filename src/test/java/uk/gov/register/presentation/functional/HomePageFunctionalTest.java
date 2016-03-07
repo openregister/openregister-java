@@ -20,16 +20,8 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void homePageIsAvailableWhenLatestEntryHasNullLeafInput() throws Throwable {
-        DBSupport.publishMessagesWithoutLeafInput("address", Collections.singletonList("{\"address\":\"1234\"}"));
-        Response response = getRequest("/");
-        assertThat(response.getStatus(), equalTo(200));
-        cleanDatabaseRule.before();
-    }
-
-    @Test
     public void homepageHasXhtmlLangAttributes() throws Throwable {
-        DBSupport.publishMessagesWithoutLeafInput("address", Collections.singletonList("{\"address\":\"1234\"}"));
+        DBSupport.publishMessages("address", Collections.singletonList("{\"address\":\"1234\"}"));
         Response response = getRequest("/");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));

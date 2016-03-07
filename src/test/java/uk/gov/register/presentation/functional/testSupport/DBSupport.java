@@ -1,7 +1,5 @@
 package uk.gov.register.presentation.functional.testSupport;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.dropwizard.jackson.Jackson;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.postgresql.util.PGobject;
 import uk.gov.register.presentation.functional.FunctionalTestBase;
@@ -60,23 +58,6 @@ public class DBSupport {
         }
     }
 
-    public static void publishMessagesWithoutLeafInput(String registerName, List<String> messages) {
-        try (Connection connection = pooledDataSource.getConnection()) {
-            int serialNumber = 0;
-            for (String message : messages) {
-                try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
-                    insertPreparedStatement.setObject(1, ++serialNumber);
-                    insertPreparedStatement.setObject(2, jsonbObject(message));
-                    insertPreparedStatement.execute();
-                }
-
-                updateOtherTables(connection, registerName, serialNumber, message);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static void writeSignedTreeHead(int treeSize, long timeStamp, String rootHash, String treeSignature) {
         try (Connection connection = pooledDataSource.getConnection(); Statement statement = connection.createStatement()) {
             statement.executeUpdate("Delete from sth");
@@ -101,10 +82,9 @@ public class DBSupport {
         for (SortedMap.Entry<Integer, String> entry : messages.entrySet()) {
             int serialNumber = entry.getKey();
             String message = entry.getValue();
-            try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry,leaf_input) values(?,?, ?)")) {
+            try (PreparedStatement insertPreparedStatement = connection.prepareStatement("Insert into ordered_entry_index(serial_number,entry) values(?,?)")) {
                 insertPreparedStatement.setObject(1, serialNumber);
                 insertPreparedStatement.setObject(2, jsonbObject(message));
-                insertPreparedStatement.setString(3, CTLeafInputGenerator.createLeafInputFrom(itemData(message), System.currentTimeMillis()));
                 insertPreparedStatement.execute();
             }
 
@@ -131,14 +111,6 @@ public class DBSupport {
     private static boolean isSupersedingAnEntry(Statement statement, String primaryKeyValue) throws SQLException {
         statement.execute(String.format("select serial_number from current_keys where key='%s'", primaryKeyValue));
         return statement.getResultSet().next();
-    }
-
-    private static String itemData(String message) {
-        try {
-            return Jackson.newObjectMapper().readValue(message, JsonNode.class).get("entry").toString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private static String extractRegisterKey(String registerName, String message) {
