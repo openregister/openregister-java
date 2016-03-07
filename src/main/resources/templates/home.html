@@ -14,11 +14,11 @@
                 <dt>Provided by:</dt>
                 <dd><th:block th:include="main.html :: organisation(${custodian}, ${branding})"></th:block></dd>
                 <dt>Total records:</dt>
-                <dd><a href="/records" th:text="${totalRecords}">Total records</a></dd>
+                <dd><a href="/records" th:utext="${totalRecords + '&lt;span class=&quot;visuallyhidden&quot;&gt; records&lt;/span&gt;'}">Total records</a></dd>
                 <dt>Total entries:</dt>
-                <dd><a href="/entries" th:text="${totalEntries}">Total entries</a></dd>
+                <dd><a href="/entries" th:utext="${totalEntries + '&lt;span class=&quot;visuallyhidden&quot;&gt; entries&lt;/span&gt;'}">Total entries</a></dd>
                 <dt>Last updated:</dt>
-                <dd><a href="/entries" th:text="${lastUpdatedTime}">Last updated</a></dd>
+                <dd th:text="${lastUpdatedTime}">Last updated</dd>
             </dl>
         </div>
     </div>
