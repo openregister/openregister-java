@@ -15,7 +15,7 @@ public class ObjectReconstructor {
     }
 
     public List<JsonNode> reconstruct(String[] jsonObjectsAsStrings) {
-        List<JsonNode> reconstructedObjects = Arrays.stream(jsonObjectsAsStrings)
+        return Arrays.stream(jsonObjectsAsStrings)
                 .map(e -> {
                     try {
                         return canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
@@ -24,7 +24,5 @@ public class ObjectReconstructor {
                     }
                 })
                 .collect(Collectors.toList());
-
-        return reconstructedObjects;
     }
 }

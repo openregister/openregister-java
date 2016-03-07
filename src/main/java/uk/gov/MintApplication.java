@@ -54,17 +54,11 @@ public class MintApplication extends Application<MintConfiguration> {
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
         ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
-        Loader handler;
-        if (configuration.ctServer().isPresent()) {
-            handler = new CTHandler(configuration, environment, getName());
-        } else {
-            handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));
-        }
+        Loader handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));
 
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, handler));
 
-        jersey.register(CTExceptionMapper.class);
         jersey.register(EntryValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
         jersey.register(ThrowableExceptionMapper.class);

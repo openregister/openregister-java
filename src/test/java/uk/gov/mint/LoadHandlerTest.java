@@ -1,6 +1,5 @@
 package uk.gov.mint;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -13,8 +12,6 @@ import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
 
-import javax.ws.rs.client.*;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -23,9 +20,8 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoadHandlerTest {
@@ -47,7 +43,7 @@ public class LoadHandlerTest {
         ObjectMapper om = new ObjectMapper();
         JsonNode entry1 = om.readTree(payload1);
         JsonNode entry2 = om.readTree(payload2);
-        List<JsonNode> entries = new ArrayList<JsonNode>();
+        List<JsonNode> entries = new ArrayList<>();
         entries.add(entry1);
         entries.add(entry2);
 
