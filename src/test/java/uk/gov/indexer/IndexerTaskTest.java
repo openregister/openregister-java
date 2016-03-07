@@ -134,6 +134,7 @@ public class IndexerTaskTest {
 
                 runIndexerAndVerifyResult(statement, indexerTask, 1);
                 assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{1,fp_1}]"));
+                assertNoOfRecordsAndEntries(statement, 1, 1);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
@@ -142,6 +143,7 @@ public class IndexerTaskTest {
 
                 runIndexerAndVerifyResult(statement, indexerTask, 2);
                 assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{2,fp_1}]"));
+                assertNoOfRecordsAndEntries(statement, 2, 1);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
@@ -150,6 +152,7 @@ public class IndexerTaskTest {
 
                 runIndexerAndVerifyResult(statement, indexerTask, 7);
                 assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {3,fp_1}, {4,fp_2}, {5,fp_3}, {6,fp_4}]"));
+                assertNoOfRecordsAndEntries(statement, 7, 5);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(5);
 
@@ -158,6 +161,7 @@ public class IndexerTaskTest {
 
                 runIndexerAndVerifyResult(statement, indexerTask, 8);
                 assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {4,fp_2}, {5,fp_3}, {6,fp_4}, {8,fp_1}]"));
+                assertNoOfRecordsAndEntries(statement, 8, 5);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
@@ -168,7 +172,6 @@ public class IndexerTaskTest {
             }
         }
     }
-
 
     @Test
     public void confirmThatCurrentkeyTableLoadsOnlyLatestRecord() throws SQLException {
@@ -228,6 +231,18 @@ public class IndexerTaskTest {
         try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {
             resultSet.next();
             assertThat(resultSet.getInt("count"), CoreMatchers.equalTo(expectedEntries));
+        }
+    }
+
+    private void assertNoOfRecordsAndEntries(Statement statement, int entries, int records) throws SQLException {
+        try (ResultSet resultSet = statement.executeQuery("select count from total_entries")) {
+            resultSet.next();
+            assertThat(resultSet.getInt("count"), CoreMatchers.equalTo(entries));
+        }
+
+        try (ResultSet resultSet = statement.executeQuery("select count from total_records")) {
+            resultSet.next();
+            assertThat(resultSet.getInt("count"), CoreMatchers.equalTo(records));
         }
     }
 

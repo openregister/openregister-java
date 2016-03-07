@@ -70,15 +70,21 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
             logger.info(String.format("Register '%s': Written '%d' more entries.", registerName, entries.size()));
             entriesWritten += entries.size();
         }
+        indexedEntriesUpdateDAO.updateTotalEntries(entriesWritten);
         return entriesWritten;
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
-        currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry())));
-        currentKeysUpdateDAO.writeCurrentKeys(extractCurrentKeys(registerName, orderedEntryIndexes));
+        int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry())));
+
+        List<CurrentKey> currentKeys = extractCurrentKeys(registerName, orderedEntryIndexes);
+
+        currentKeysUpdateDAO.writeCurrentKeys(currentKeys);
+
+        currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
     }
 
-    private Iterable<CurrentKey> extractCurrentKeys(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
+    private List<CurrentKey> extractCurrentKeys(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
         Map<String, Integer> currentKeys = new HashMap<>();
         orderedEntryIndexes.forEach(e1 -> currentKeys.put(getKey(registerName, e1.getEntry()), e1.getSerial_number()));
         return currentKeys

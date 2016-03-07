@@ -1,5 +1,6 @@
 package uk.gov.indexer.dao;
 
+import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
@@ -15,9 +16,12 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
     void ensureRecordTablesInPlace();
 
     @SqlUpdate("delete from " + CURRENT_KEYS_TABLE + " where key in (<keys>)")
-    void removeRecordWithKeys(@BindIn("keys") Iterable<String> allKeys);
+    int removeRecordWithKeys(@BindIn("keys") Iterable<String> allKeys);
 
     @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(serial_number, key) values(:serial_number, :key)")
     void writeCurrentKeys(@BindBean Iterable<CurrentKey> values);
+
+    @SqlUpdate("update total_records set count=count+:noOfNewRecords")
+    void updateTotalRecords(@Bind("noOfNewRecords") int noOfNewRecords);
 }
 
