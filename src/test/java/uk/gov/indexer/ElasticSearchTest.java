@@ -107,9 +107,9 @@ public class ElasticSearchTest {
         );
 
         List<OrderedEntryIndex> entries = Arrays.asList(
-                new OrderedEntryIndex(1, "{\"hash\":\"hashValue1\", \"entry\":{\"register\":\"foo1\", \"text\":\"textValue1\"}}", "leaf_input_value"),
-                new OrderedEntryIndex(2, "{\"hash\":\"hashValue2\", \"entry\":{\"register\":\"foo2\", \"text\":\"textValue2\"}}", "leaf_input_value"),
-                new OrderedEntryIndex(3, "{\"hash\":\"hashValue3\", \"entry\":{\"register\":\"foo1\", \"text\":\"updatetextValue\"}}", "leaf_input_value")
+                new OrderedEntryIndex(1, "{\"hash\":\"hashValue1\", \"entry\":{\"register\":\"foo1\", \"text\":\"textValue1\"}}"),
+                new OrderedEntryIndex(2, "{\"hash\":\"hashValue2\", \"entry\":{\"register\":\"foo2\", \"text\":\"textValue2\"}}"),
+                new OrderedEntryIndex(3, "{\"hash\":\"hashValue3\", \"entry\":{\"register\":\"foo1\", \"text\":\"updatetextValue\"}}")
         );
 
         elasticSearch.upload(entries);
@@ -131,8 +131,8 @@ public class ElasticSearchTest {
         );
 
         List<OrderedEntryIndex> entries = Arrays.asList(
-                new OrderedEntryIndex(1, "{\"hash\":\"hashValue1\", \"entry\":{\"register\":\"foo1\", \"text\":\"textValue1\"}}", "leaf_input_value"),
-                new OrderedEntryIndex(2, "{\"hash\":\"hashValue2\", \"entry\":{\"register\":\"foo2\", \"text\":\"textValue2\"}}", "leaf_input_value")
+                new OrderedEntryIndex(1, "{\"hash\":\"hashValue1\", \"entry\":{\"register\":\"foo1\", \"text\":\"textValue1\"}}"),
+                new OrderedEntryIndex(2, "{\"hash\":\"hashValue2\", \"entry\":{\"register\":\"foo2\", \"text\":\"textValue2\"}}")
         );
 
         try {
