@@ -16,7 +16,6 @@ import java.util.zip.ZipInputStream;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class DataResourceTest extends FunctionalTestBase {
     @BeforeClass
@@ -36,7 +35,7 @@ public class DataResourceTest extends FunctionalTestBase {
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".zip"));
         InputStream is = response.readEntity(InputStream.class);
-        assertTrue(getEntries(is).contains("register.json"));
+        assertThat(getEntries(is), hasItem("register.json"));
     }
 
     private List<String> getEntries(InputStream inputStream) throws IOException {
