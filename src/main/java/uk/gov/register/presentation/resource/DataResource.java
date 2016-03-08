@@ -6,11 +6,9 @@ import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.dao.SignedTreeHeadQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
-import uk.gov.register.proofs.ct.SignedTreeHead;
 import uk.gov.register.presentation.view.RegisterDetailView;
 
 import javax.inject.Inject;
@@ -29,16 +27,14 @@ import java.util.Optional;
 public class DataResource {
     protected final RequestContext requestContext;
     private final RecentEntryIndexQueryDAO queryDAO;
-    private final SignedTreeHeadQueryDAO signedTreeHeadQueryDAO;
 
     private final ViewFactory viewFactory;
 
     @Inject
-    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, SignedTreeHeadQueryDAO signedTreeHeadQueryDAO) {
+    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.queryDAO = queryDAO;
-        this.signedTreeHeadQueryDAO = signedTreeHeadQueryDAO;
     }
 
     @GET
@@ -47,7 +43,6 @@ public class DataResource {
     @DownloadNotAvailable
     public Response downloadRegister() {
         List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
-        SignedTreeHead sth = signedTreeHeadQueryDAO.get();
 
         RegisterDetail registerDetail = viewFactory.registerDetailView(
                 queryDAO.getTotalRecords(),
@@ -57,7 +52,7 @@ public class DataResource {
         ).getRegisterDetail();
 
         return Response
-                .ok(new ArchiveCreator().create(registerDetail, entries, sth))
+                .ok(new ArchiveCreator().create(registerDetail, entries))
                 .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", requestContext.getRegisterPrimaryKey(), System.currentTimeMillis()))
                 .header("Content-Transfer-Encoding", "binary")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)

@@ -34,9 +34,6 @@ public class CleanDatabaseRule extends ExternalResource {
                 statement.execute("DROP TABLE IF EXISTS TOTAL_RECORDS");
                 statement.execute("CREATE TABLE TOTAL_RECORDS (COUNT INTEGER)");
                 statement.execute("INSERT INTO TOTAL_RECORDS(COUNT) VALUES(0)");
-
-                statement.execute("DROP TABLE IF EXISTS STH");
-                statement.execute("create table sth (tree_size integer, timestamp bigint, tree_head_signature varchar, sha256_root_hash varchar)");
             }
         }
     }

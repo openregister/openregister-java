@@ -58,21 +58,6 @@ public class DBSupport {
         }
     }
 
-    public static void writeSignedTreeHead(int treeSize, long timeStamp, String rootHash, String treeSignature) {
-        try (Connection connection = pooledDataSource.getConnection(); Statement statement = connection.createStatement()) {
-            statement.executeUpdate("Delete from sth");
-            try (PreparedStatement preparedStatement = connection.prepareStatement("Insert into sth(tree_size,timestamp,tree_head_signature,sha256_root_hash) values (?,?,?,?)")) {
-                preparedStatement.setInt(1, treeSize);
-                preparedStatement.setLong(2, timeStamp);
-                preparedStatement.setString(3, treeSignature);
-                preparedStatement.setString(4, rootHash);
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private static void publishMessages(Connection connection, String registerName, List<String> messages) throws SQLException {
         SortedMap<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m, (a, b) -> a, TreeMap::new));
         publishMessages(connection, registerName, messagesWithSerialNumbers);
