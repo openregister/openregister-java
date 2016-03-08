@@ -86,6 +86,8 @@ test {
     }
     doLast {
         loadSchoolDataForConformance.execute()
+        createConformanceTestVenv.execute()
+        installConformanceTestDeps.execute()
         conformanceTest.execute()
     }
     testLogging {
@@ -96,8 +98,20 @@ test {
     }
 }
 
+clean.doFirst {
+    delete "${rootDir}/.venv/"
+}
+
+task createConformanceTestVenv(type: Exec) {
+    commandLine 'pyvenv','.venv'
+}
+
+task installConformanceTestDeps(type: Exec) {
+    commandLine '.venv/bin/pip', 'install', '-r', 'requirements.txt'
+}
+
 task conformanceTest(type: Exec) {
-    commandLine 'openregister-conformance', '--no-https', 'http://address.openregister.dev:9000'
+    commandLine '.venv/bin/openregister-conformance', '--no-https', 'http://address.openregister.dev:9000'
 }
 
 assemble {
