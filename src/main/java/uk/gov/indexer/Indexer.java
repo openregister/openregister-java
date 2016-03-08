@@ -3,16 +3,11 @@ package uk.gov.indexer;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.indexer.ctserver.CTServer;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.IndexedEntriesUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
-import uk.gov.indexer.fetchers.CTDataSource;
-import uk.gov.indexer.fetchers.DataSource;
-import uk.gov.indexer.fetchers.PGDataSource;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -36,22 +31,15 @@ public class Indexer {
             DBI destDbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
             destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
-            DataSource dataSource = configuration.getCTServerEndpointForRegister(register)
-                    .map(endPoint ->
-                                    (DataSource) new CTDataSource(new CTServer(endPoint))
-                    ).orElse(
-                            ((Callable<DataSource>) () -> {
-                                DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
-                                sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
-                                return new PGDataSource(sourceDBQueryDAO);
-                            }).call()
-                    );
+            DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
+            sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
+
 
             executorService.scheduleAtFixedRate(
                     new IndexerTask(
                             configuration.cloudwatchEnvironmentName().map(e -> new CloudwatchRecordsProcessedUpdater(e, register)),
                             register,
-                            dataSource,
+                            sourceDBQueryDAO,
                             destinationDBUpdateDAO
                     ),
                     0,
@@ -68,7 +56,7 @@ public class Indexer {
                     )
             );
 
-            configuration.elasticSerachEndPoint(register).ifPresent(
+            configuration.elasticSearchEndPoint(register).ifPresent(
                     endPoint -> executorService.scheduleAtFixedRate(
                             new ElasticSearchDataUploadTask(register, endPoint, destDbi.onDemand(IndexedEntriesUpdateDAO.class)),
                             0,

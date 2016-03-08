@@ -21,7 +21,7 @@ public class CloudwatchRecordsProcessedUpdater {
         acw.setEndpoint("https://monitoring.eu-west-1.amazonaws.com");
     }
 
-    public void update(long recordsProcessed) {
+    public void update(int recordsProcessed) {
         acw.putMetricData(new PutMetricDataRequest()
                 .withNamespace(environment)
                 .withMetricData(Collections.singletonList(new MetricDatum()

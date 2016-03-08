@@ -11,13 +11,9 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.indexer.ctserver.CTServer;
 import uk.gov.indexer.dao.CurrentKey;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
-import uk.gov.indexer.fetchers.CTDataSource;
-import uk.gov.indexer.fetchers.DataSource;
-import uk.gov.indexer.fetchers.PGDataSource;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
 import java.sql.Connection;
@@ -28,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,76 +39,6 @@ public class IndexerTaskTest {
 
     @SuppressWarnings("ConstantConditions")
     @Test
-    public void readEntriesFromMintCTServerAndWriteToReadApi() throws InterruptedException, SQLException {
-        stubFor(get(urlEqualTo("/ct/v1/get-sth"))
-                .willReturn(aResponse()
-                                .withStatus(200)
-                                .withBody("{ " +
-                                        "\"tree_size\": 5, " +
-                                        "\"timestamp\": 1447421303202, " +
-                                        "\"sha256_root_hash\": \"" + ROOT_HASH + "\"," +
-                                        "\"tree_head_signature\": \"" + TREE_HEAD_SIGNATURE + "\" " +
-                                        "}")
-                ));
-
-        stubFor(get(urlEqualTo("/ct/v1/get-entries?start=0&end=4"))
-                .willReturn(aResponse()
-                                .withStatus(200)
-                                .withBody("{ \"entries\": " +
-                                        "[ " +
-                                        "{ \"leaf_input\": \"AAAAAAFSeasJ5IAAAABZeyAib3duZXIiOiAiRm9yZXN0cnkgQ29tbWlzc2lvbiIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiN3N0YW5lcy5nb3YudWsiIH0AAA==\", \"extra_data\": \"\" }, " +
-                                        "{ \"leaf_input\": \"AAAAAAFSeasJnoAAAABqeyAib3duZXIiOiAiNHAncyBQdWJsaWMgUHJpdmF0ZSBQYXJ0bmVyc2hpcHMgUHJvZ3JhbSIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiNHBzLmdvdi51ayIgfQAA\", \"extra_data\": \"\" } " +
-                                        "] " +
-                                        "}")
-                ));
-        stubFor(get(urlEqualTo("/ct/v1/get-entries?start=2&end=4"))
-                .willReturn(aResponse()
-                                .withStatus(200)
-                                .withBody("{ \"entries\": " +
-                                        "[ " +
-                                        "{ \"leaf_input\": \"AAAAAAFSeasMBIAAAABheyAib3duZXIiOiAiQWJlcmRlZW5zaGlyZSBDb3VuY2lsIiwgImVuZC1kYXRlIjogIiIsICJnb3Zlcm5tZW50LWRvbWFpbiI6ICJhYmVyZGVlbnNoaXJlLmdvdi51ayIgfQAA\", \"extra_data\": \"\" }, " +
-                                        "{ \"leaf_input\": \"AAAAAAFSeasMWIAAAABteyAib3duZXIiOiAiQWJlcmdhdmVubnkgVG93biBDb3VuY2lsIiwgImVuZC1kYXRlIjogIiIsICJnb3Zlcm5tZW50LWRvbWFpbiI6ICJBYmVyZ2F2ZW5ueVRvd25Db3VuY2lsLmdvdi51ayIgfQAA\", \"extra_data\": \"\" } " +
-                                        "] " +
-                                        "}")
-                ));
-        stubFor(get(urlEqualTo("/ct/v1/get-entries?start=4&end=4"))
-                .willReturn(aResponse()
-                                .withStatus(200)
-                                .withBody("{ \"entries\": " +
-                                        "[ " +
-                                        "{ \"leaf_input\": \"AAAAAAFSeasIN4AAAABdeyAib3duZXIiOiAiVmFsZSBvZiBHbGFtb3JnYW4gQ291bmNpbCIsICJlbmQtZGF0ZSI6ICIiLCAiZ292ZXJubWVudC1kb21haW4iOiAiMXZhbGUuZ292LnVrIiB9AAA=\", \"extra_data\": \"\" } " +
-                                        "] " +
-                                        "}")
-                ));
-
-
-        try (Connection connection = createConnection()) {
-            try (Statement statement = connection.createStatement()) {
-                dropReadApiTables(statement);
-
-                DataSource dataSource = new CTDataSource(new CTServer("http://localhost:8090"));
-
-                DBI destDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer?user=postgres");
-
-                DestinationDBUpdateDAO destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
-
-                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "government-domain", dataSource, destinationDBUpdateDAO);
-                InOrder inOrder = Mockito.inOrder(cloudwatchRecordsProcessedUpdater);
-
-                runIndexerAndVerifyResult(statement, indexerTask, 5);
-
-                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(5);
-
-                //run indexer again when no new entries available, confirms that nothing changes but cloudwatch get notification with 0 entry
-                indexerTask.run();
-
-                inOrder.verify(cloudwatchRecordsProcessedUpdater).update(0);
-            }
-        }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Test
     public void readEntriesFromMintPostgresDBAndWriteToReadApi() throws InterruptedException, SQLException {
         try (Connection connection = createConnection()) {
             try (Statement statement = connection.createStatement()) {
@@ -125,7 +50,7 @@ public class IndexerTaskTest {
 
                 SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
                 DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
-                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 InOrder inOrder = Mockito.inOrder(cloudwatchRecordsProcessedUpdater);
 
@@ -185,7 +110,7 @@ public class IndexerTaskTest {
 
                 SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
                 DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
-                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", new PGDataSource(sourceDBQueryDAO), destinationDBUpdateDAO);
+                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 loadEntriesInMintDB(2);
                 loadEntriesInMintDB(2);
@@ -212,20 +137,8 @@ public class IndexerTaskTest {
         indexerTask.run();
 
         verifyNumberOfEntriesInOrderedEntryIndexTable(statement, expectedEntries);
-
-        verifySTH(statement, expectedEntries);
     }
 
-
-    private void verifySTH(Statement statement, int expectedTreeSize) throws SQLException {
-        try (ResultSet resultSet = statement.executeQuery("select * from sth")) {
-            resultSet.next();
-            assertThat(resultSet.getInt("tree_size"), CoreMatchers.equalTo(expectedTreeSize));
-            assertThat(resultSet.getLong("timestamp"), CoreMatchers.equalTo(1447421303202L));
-            assertThat(resultSet.getString("sha256_root_hash"), CoreMatchers.equalTo(ROOT_HASH));
-            assertThat(resultSet.getString("tree_head_signature"), CoreMatchers.equalTo(TREE_HEAD_SIGNATURE));
-        }
-    }
 
     private void verifyNumberOfEntriesInOrderedEntryIndexTable(Statement statement, int expectedEntries) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {

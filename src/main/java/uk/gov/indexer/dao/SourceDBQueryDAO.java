@@ -17,9 +17,6 @@ public interface SourceDBQueryDAO extends DBConnectionDAO {
     @SqlQuery("SELECT ID,ENTRY FROM " + ENTRIES_TABLE + " WHERE ID > :lastReadSerialNumber ORDER BY ID LIMIT 5000")
     List<Entry> read(@Bind("lastReadSerialNumber") int lastReadSerialNumber);
 
-    @SqlQuery("SELECT MAX(ID) FROM " + ENTRIES_TABLE)
-    int lastEntryID();
-
     class EntryMapper implements ResultSetMapper<Entry> {
         @Override
         public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
