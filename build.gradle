@@ -99,7 +99,7 @@ test {
 }
 
 task conformanceTest(type: Exec) {
-    commandLine 'openregister-conformance', 'http://address.openregister.dev:9000'
+    commandLine 'openregister-conformance', '--no-https', 'http://address.openregister.dev:9000'
 }
 
 assemble {
