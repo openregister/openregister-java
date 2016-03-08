@@ -38,22 +38,26 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        int from = destinationDBUpdateDAO.lastReadSerialNumber();
-        List<Entry> newEntries;
-        boolean noRecordsProcessed = true;
-        while ((newEntries = sourceDBQueryDAO.read(from)).size() > 0) {
-            noRecordsProcessed = false;
-            destinationDBUpdateDAO.writeEntriesInBatch(register, newEntries);
-            from = destinationDBUpdateDAO.lastReadSerialNumber();
+        List<Entry> entries = fetchNewEntries();
 
-            final int totalEntriesWritten = newEntries.size();
-            LOGGER.info(String.format("Register '%s': Written %s entries after index '%s'.", register, totalEntriesWritten, from));
-
-            cloudwatchUpdater.ifPresent(cwu -> cwu.update(totalEntriesWritten));
+        if (entries.isEmpty()) {
+            updateCloudWatch(0);
+        } else {
+            do {
+                destinationDBUpdateDAO.writeEntriesInBatch(register, entries);
+                LOGGER.info(String.format("Register '%s': Written %s entries from index '%s'.", register, entries.size(), entries.get(0).serial_number));
+                updateCloudWatch(entries.size());
+            } while (!(entries = fetchNewEntries()).isEmpty());
         }
 
-        if (noRecordsProcessed && cloudwatchUpdater.isPresent()) {
-            cloudwatchUpdater.get().update(0);
-        }
     }
+
+    private void updateCloudWatch(final int totalEntriesWritten) {
+        cloudwatchUpdater.ifPresent(cwu -> cwu.update(totalEntriesWritten));
+    }
+
+    private List<Entry> fetchNewEntries() {
+        return sourceDBQueryDAO.read(destinationDBUpdateDAO.lastReadSerialNumber());
+    }
+
 }
