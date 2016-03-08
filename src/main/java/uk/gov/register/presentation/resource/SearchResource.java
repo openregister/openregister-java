@@ -35,14 +35,12 @@ public class SearchResource {
     @Path("/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public ThymeleafView find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
-
-        List<DbEntry> records = queryDAO.findLatestEntriesOfRecordsByKeyValue(key, value);
-
         if (key.equals(requestContext.getRegisterPrimaryKey())) {
-            return entryResponse(records.stream().findFirst(), viewFactory::getLatestEntryView);
+            return entryResponse(queryDAO.findRecordByPrimaryKey(value), viewFactory::getLatestEntryView);
         }
 
-        Pagination pagination = new Pagination(Optional.empty(), Optional.empty(), 0);
+        List<DbEntry> records = queryDAO.findLatestEntriesOfRecordsByKeyValue(key, value);
+        Pagination pagination = new Pagination(Optional.empty(), Optional.empty(), records.size());
         return viewFactory.getRecordsView(records, pagination);
     }
 
