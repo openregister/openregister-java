@@ -1,5 +1,3 @@
-import uk.gov.register.presentation.functional.testSupport.CleanDatabaseRule
-
 apply plugin: 'java'
 apply plugin: 'idea'
 apply from: 'external-dependencies.gradle'
@@ -150,13 +148,19 @@ task(loadSchoolData, type: JavaExec) {
 }
 
 task(loadSchoolDataForConformance, type: JavaExec) {
-    String url = "jdbc:postgresql://localhost:5432/ft_presentation"
-
-
-    new CleanDatabaseRule(url, "postgres").before()
-
+    doFirst{
+        dropSchema.execute()
+        createSchema.execute()
+    }
     main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
-
-    args = ["school", "school-data.jsonl", url]
+    args = ["school", "school-data.jsonl", "jdbc:postgresql://localhost:5432/ft_presentation"]
 }
+
+task(dropSchema, type: Exec) {
+    executable "$projectDir/drop_schema.sh"
+}
+
+task(createSchema, type: Exec) {
+    executable "$projectDir/create_schema.sh"}
+
