@@ -16,7 +16,7 @@ public class FunctionalTestBase {
     protected static Client client;
 
     @ClassRule
-    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, DATABASE_USER, "ordered_entry_index");
+    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(DATABASE_URL, DATABASE_USER);
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {

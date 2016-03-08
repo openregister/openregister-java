@@ -1,3 +1,5 @@
+import uk.gov.register.presentation.functional.testSupport.CleanDatabaseRule
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply from: 'external-dependencies.gradle'
@@ -84,12 +86,20 @@ test {
     doFirst {
         waitForApplicationToStart()
     }
+    doLast {
+        loadSchoolDataForConformance.execute()
+        conformanceTest.execute()
+    }
     testLogging {
         exceptionFormat = 'full'
     }
     afterTest { desc, result ->
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
+}
+
+task conformanceTest(type: Exec) {
+    commandLine 'openregister-conformance', 'http://address.openregister.dev:9000'
 }
 
 assemble {
@@ -137,4 +147,16 @@ task(loadSchoolData, type: JavaExec) {
     main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
     args = ["school", "school-data.jsonl", "jdbc:postgresql://localhost:5432/school"]
+}
+
+task(loadSchoolDataForConformance, type: JavaExec) {
+    String url = "jdbc:postgresql://localhost:5432/ft_presentation"
+
+
+    new CleanDatabaseRule(url, "postgres").before()
+
+    main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
+    classpath = sourceSets.test.runtimeClasspath
+
+    args = ["school", "school-data.jsonl", url]
 }
