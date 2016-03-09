@@ -32,7 +32,7 @@ public class IndexerTask implements Runnable {
             update();
             LOGGER.info("Finished for register: " + register);
         } catch (Throwable e) {
-            e.printStackTrace();
+            LOGGER.error(ExceptionFormatter.formatExceptionAsString(e));
             throw e;
         }
     }
