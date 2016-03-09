@@ -2,6 +2,8 @@ package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
 import org.json.JSONException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -42,4 +44,14 @@ public class FindEntityTest extends FunctionalTestBase {
                 "\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}"
                 , response.readEntity(String.class), false);
     }
+
+    @Test
+    public void find_returnsTheCorrectTotalRecordsInPaginationHeader(){
+        Response response = getRequest("/name/ellis");
+
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+
+        assertThat(doc.body().getElementById("main").getElementsByAttributeValue("class", "column-two-thirds").first().text(), equalTo("2 records"));
+    }
+
 }

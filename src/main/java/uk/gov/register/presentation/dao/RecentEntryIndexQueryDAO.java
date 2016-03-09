@@ -41,6 +41,10 @@ public abstract class RecentEntryIndexQueryDAO {
     @SingleValueResult(DbEntry.class)
     public abstract Optional<DbEntry> findEntryBySerialNumber(@Bind("serial") long serial);
 
+    @SqlQuery("SELECT serial_number,entry from ordered_entry_index where serial_number = (select serial_number from current_keys where key=:key)")
+    @SingleValueResult(DbEntry.class)
+    public abstract Optional<DbEntry> findRecordByPrimaryKey(@Bind("key") String primaryKey);
+
     @SqlQuery("SELECT serial_number,entry FROM (" +
             "SELECT idx.serial_number, idx.entry FROM ordered_entry_index idx, current_keys ck " +
             "WHERE  entry @> :content " +
