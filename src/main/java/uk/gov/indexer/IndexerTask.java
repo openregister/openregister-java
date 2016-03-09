@@ -46,15 +46,15 @@ public class IndexerTask implements Runnable {
             do {
                 int totalNewEntries = entries.size();
 
-                LOGGER.info(String.format("Register '%s': Found '%s' new entries.", register, totalNewEntries));
+                LOGGER.info(String.format("Register '%s': Found '%d' new entries.", register, totalNewEntries));
 
                 destinationDBUpdateDAO.writeEntriesInBatch(register, entries);
 
-                LOGGER.info(String.format("Register '%s': Copied '%s' entries in database from index '%s'.", register, totalNewEntries, entries.get(0).serial_number));
+                LOGGER.info(String.format("Register '%s': Copied '%d' entries in database from index '%d'.", register, totalNewEntries, entries.get(0).serial_number));
 
                 updateCloudWatch(totalNewEntries);
 
-                LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%s' entries processed.", register, totalNewEntries));
+                LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%d' entries processed.", register, totalNewEntries));
             } while (!(entries = fetchNewEntries()).isEmpty());
         }
 
