@@ -66,8 +66,8 @@ public class Indexer {
             );
 
         } catch (Throwable e) {
-            e.printStackTrace();
             LOGGER.info("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
+            LOGGER.error(ExceptionFormatter.formatExceptionAsString(e));
         }
 
     }
