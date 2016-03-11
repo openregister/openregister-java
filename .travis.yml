@@ -5,6 +5,12 @@ jdk:
 services: 
 addons:
   postgresql: '9.4'
+  apt:
+    sources:
+    - deadsnakes
+    packages:
+    - python3.5
+    - python3.5-venv
 cache:
   directories:
   - $HOME/.gradle/caches

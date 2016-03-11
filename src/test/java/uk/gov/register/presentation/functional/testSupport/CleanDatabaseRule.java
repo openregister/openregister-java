@@ -8,12 +8,10 @@ import java.sql.Statement;
 
 public class CleanDatabaseRule extends ExternalResource {
     private final String pgUser;
-    private final String tableName;
     private final String pgUrl;
 
-    public CleanDatabaseRule(String pgUrl, String pgUser, String tableName) {
+    public CleanDatabaseRule(String pgUrl, String pgUser) {
         this.pgUser = pgUser;
-        this.tableName = tableName;
         this.pgUrl = pgUrl;
     }
 
@@ -21,8 +19,8 @@ public class CleanDatabaseRule extends ExternalResource {
     public void before() throws Throwable {
         try (Connection connection = DriverManager.getConnection(pgUrl, pgUser, "")) {
             try(Statement statement = connection.createStatement()){
-                statement.execute("DROP TABLE IF EXISTS " + tableName);
-                statement.execute("CREATE TABLE " + tableName + " (SERIAL_NUMBER INTEGER PRIMARY KEY, ENTRY JSONB)");
+                statement.execute("DROP TABLE IF EXISTS ordered_entry_index");
+                statement.execute("CREATE TABLE ordered_entry_index (SERIAL_NUMBER INTEGER PRIMARY KEY, ENTRY JSONB)");
 
                 statement.execute("DROP TABLE IF EXISTS total_entries");
                 statement.execute("CREATE TABLE IF NOT EXISTS   total_entries   (count INTEGER, last_updated TIMESTAMP WITHOUT TIME ZONE DEFAULT now())");
@@ -37,4 +35,5 @@ public class CleanDatabaseRule extends ExternalResource {
             }
         }
     }
+
 }

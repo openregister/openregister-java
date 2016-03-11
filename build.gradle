@@ -84,12 +84,34 @@ test {
     doFirst {
         waitForApplicationToStart()
     }
+    doLast {
+        loadSchoolDataForConformance.execute()
+        createConformanceTestVenv.execute()
+        installConformanceTestDeps.execute()
+        conformanceTest.execute()
+    }
     testLogging {
         exceptionFormat = 'full'
     }
     afterTest { desc, result ->
         println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
+}
+
+clean.doFirst {
+    delete "${rootDir}/.venv/"
+}
+
+task createConformanceTestVenv(type: Exec) {
+    commandLine 'pyvenv-3.5','.venv'
+}
+
+task installConformanceTestDeps(type: Exec) {
+    commandLine '.venv/bin/pip', 'install', '-r', 'requirements.txt'
+}
+
+task conformanceTest(type: Exec) {
+    commandLine '.venv/bin/openregister-conformance', '--no-https', 'http://address.openregister.dev:9000'
 }
 
 assemble {
@@ -137,4 +159,18 @@ task(loadSchoolData, type: JavaExec) {
     main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
     args = ["school", "school-data.jsonl", "jdbc:postgresql://localhost:5432/school"]
+}
+
+task(loadSchoolDataForConformance, type: JavaExec) {
+    doFirst{
+        exec{
+            executable "$projectDir/drop_schema.sh" args 'ft_presentation'
+        }
+        exec{
+            executable "$projectDir/create_schema.sh" args 'ft_presentation'
+        }
+    }
+    main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
+    classpath = sourceSets.test.runtimeClasspath
+    args = ["school", "school-data.jsonl", "jdbc:postgresql://localhost:5432/ft_presentation"]
 }

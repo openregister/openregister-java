@@ -8,6 +8,8 @@ A presentation layer for registers.
 
 - Java 1.8+
 - Postgres DB 9.4
+- Python 3 (and in particular the `pyvenv` script needs to be on your
+  path)
 
 # Build and Run project
 
