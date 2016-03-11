@@ -2,8 +2,6 @@
 
 db_name=$1
 
-createdb $db_name
-
 psql $db_name -U postgres -q -S -c "
 
 CREATE TABLE IF NOT EXISTS current_keys(key VARCHAR PRIMARY KEY, serial_number INTEGER UNIQUE);
