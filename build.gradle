@@ -103,7 +103,7 @@ clean.doFirst {
 }
 
 task createConformanceTestVenv(type: Exec) {
-    commandLine 'pyvenv','.venv'
+    commandLine 'pyvenv-3.5','.venv'
 }
 
 task installConformanceTestDeps(type: Exec) {
