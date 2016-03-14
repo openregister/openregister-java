@@ -10,8 +10,7 @@ import org.junit.Test;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,9 +29,9 @@ public class ApplicationTest extends FunctionalTestBase {
         MultivaluedMap<String, Object> headers = response.getHeaders();
 
         assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN), equalTo(ImmutableList.of(origin)));
-        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS), equalTo(ImmutableList.of("true")));
+        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS), is(nullValue()));
         assertNotNull(headers.get(HttpHeaders.ACCESS_CONTROL_MAX_AGE));
-        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS), equalTo(ImmutableList.of("OPTIONS,GET,PUT,POST,DELETE,HEAD")));
+        assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS), equalTo(ImmutableList.of("GET,HEAD")));
         assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS), equalTo(ImmutableList.of("X-Requested-With,Content-Type,Accept,Origin")));
     }
 
