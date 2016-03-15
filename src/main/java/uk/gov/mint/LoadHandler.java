@@ -22,13 +22,7 @@ public class LoadHandler implements Loader {
     @Override
     public void load(List<JsonNode> entries) {
         List<byte[]> entriesAsBytes = entries.stream()
-                .map(singleEntry -> {
-                    try {
-                        return canonicalJsonMapper.writeToBytes(hashedEntry(singleEntry));
-                    } catch (Exception ex) {
-                        return ExceptionUtils.rethrow(ex);
-                    }
-                })
+                .map(singleEntry -> canonicalJsonMapper.writeToBytes(hashedEntry(singleEntry)))
                 .collect(Collectors.toList());
         entriesUpdateDAO.add(entriesAsBytes);
     }
