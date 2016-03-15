@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import uk.gov.MintApplication;
+import uk.gov.functional.db.TestDBItem;
 import uk.gov.mint.CanonicalJsonMapper;
 
 import javax.ws.rs.client.Entity;
@@ -22,12 +24,13 @@ import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static uk.gov.functional.TestDBSupport.*;
 
-public class PGFunctionalTest extends FunctionalTestBase {
+public class PGFunctionalTest {
     @Rule
     public TestRule ruleChain = RuleChain.
             outerRule(
-                    new CleanDatabaseRule(testEntriesDAO)
+                    new CleanDatabaseRule()
             ).
             around(
                     new DropwizardAppRule<>(MintApplication.class,
@@ -42,7 +45,8 @@ public class PGFunctionalTest extends FunctionalTestBase {
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
-        Response r = send("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}");
+        String inputItem = "{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}";
+        Response r = send(inputItem);
         assertThat(r.getStatus(), equalTo(204));
 
         JsonNode storedEntry = canonicalJsonMapper.readFromBytes(testEntriesDAO.getEntry());
@@ -54,6 +58,14 @@ public class PGFunctionalTest extends FunctionalTestBase {
 
         assertThat(entryNode.get("register").textValue(), equalTo("ft_mint_test"));
         assertThat(entryNode.get("text").textValue(), equalTo("SomeText"));
+
+
+        TestDBItem storedItem = testItemDAO.getItem();
+        assertThat(storedItem.contents, equalTo(inputItem.getBytes()));
+        assertThat(storedItem.sha256hex, equalTo(DigestUtils.sha256Hex(inputItem.getBytes())));
+
+        String hex = testEntryDAO.getHex();
+        assertThat(hex, equalTo(storedItem.sha256hex));
     }
 
     @Test
