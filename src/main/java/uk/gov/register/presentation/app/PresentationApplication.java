@@ -25,10 +25,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
-import uk.gov.register.presentation.ContentSecurityPolicyFilter;
-import uk.gov.register.presentation.ContentTypeOptionsFilter;
-import uk.gov.register.presentation.EntryConverter;
-import uk.gov.register.presentation.XssProtectionFilter;
+import uk.gov.register.presentation.*;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
@@ -133,6 +130,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jerseyEnvironment.register(ContentSecurityPolicyFilter.class);
         jerseyEnvironment.register(ContentTypeOptionsFilter.class);
         jerseyEnvironment.register(XssProtectionFilter.class);
+
+        environment.getApplicationContext().setErrorHandler(new AssetsBundleCustomErrorHandler(environment));
     }
 
     private void setCorsPreflight(MutableServletContextHandler applicationContext) {
