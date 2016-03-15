@@ -1,7 +1,6 @@
 package uk.gov.mint;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -17,15 +16,23 @@ public class CanonicalJsonMapper {
         objectMapper.getFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
     }
 
-    public JsonNode readFromBytes(byte[] body) throws IOException {
-        return objectMapper.readValue(body, JsonNode.class);
+    public JsonNode readFromBytes(byte[] body) {
+        try {
+            return objectMapper.readValue(body, JsonNode.class);
+        } catch (IOException e) {
+            return ExceptionUtils.rethrow(e);
+        }
     }
 
-    public byte[] writeToBytes(JsonNode jsonNode) throws JsonProcessingException {
-        // Method from http://stackoverflow.com/questions/18952571/jackson-jsonnode-to-string-with-sorted-keys
-        Object obj = objectMapper.treeToValue(jsonNode, Object.class);
-        // for some reason, writeValueAsString(obj).getBytes() doesn't re-escape unicode, but writeValueAsBytes does
-        // our canonical form requires raw unescaped unicode, so we need this version
-        return objectMapper.writeValueAsString(obj).getBytes();
+    public byte[] writeToBytes(JsonNode jsonNode) {
+        try {
+            // Method from http://stackoverflow.com/questions/18952571/jackson-jsonnode-to-string-with-sorted-keys
+            Object obj = objectMapper.treeToValue(jsonNode, Object.class);
+            // for some reason, writeValueAsString(obj).getBytes() doesn't re-escape unicode, but writeValueAsBytes does
+            // our canonical form requires raw unescaped unicode, so we need this version
+            return objectMapper.writeValueAsString(obj).getBytes();
+        } catch (IOException e) {
+            return ExceptionUtils.rethrow(e);
+        }
     }
 }

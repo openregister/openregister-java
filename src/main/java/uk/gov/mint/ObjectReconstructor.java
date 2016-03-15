@@ -16,13 +16,7 @@ public class ObjectReconstructor {
 
     public List<JsonNode> reconstruct(String[] jsonObjectsAsStrings) {
         return Arrays.stream(jsonObjectsAsStrings)
-                .map(e -> {
-                    try {
-                        return canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8));
-                    } catch (Exception ex) {
-                        return ExceptionUtils.rethrow(ex);
-                    }
-                })
+                .map(e -> canonicalJsonMapper.readFromBytes(e.getBytes(StandardCharsets.UTF_8)))
                 .collect(Collectors.toList());
     }
 }
