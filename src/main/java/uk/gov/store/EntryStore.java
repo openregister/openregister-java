@@ -9,6 +9,7 @@ import uk.gov.mint.DataReplicationTask;
 import uk.gov.mint.Item;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class EntryStore implements GetHandle {
@@ -24,23 +25,26 @@ public abstract class EntryStore implements GetHandle {
     }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void load(List<Item> items){
-        itemDAO.insertInBatch(items);
+    public void load(List<Item> items) {
         entryDAO.insertInBatch(Lists.transform(items, Item::getSha256hex));
+        itemDAO.insertInBatch(extractNewItems(items));
+    }
+
+    private Set<Item> extractNewItems(List<Item> items) {
+        List<String> existingItemHex = itemDAO.existingItemHex(Lists.transform(items, Item::getSha256hex));
+
+        return items.stream().filter(i -> !existingItemHex.contains(i.getSha256hex())).collect(Collectors.toSet());
     }
 
     //TODO: methods below are specific to migration which must be deleted after migration is completed
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void migrate(List<DataReplicationTask.MigratedEntry> migratedEntries) {
-        List<Item> items = Lists.transform(migratedEntries, DataReplicationTask.MigratedEntry::getItem);
-
-        List<String> existingItemHex = itemDAO.existingItemHex(Lists.transform(items, Item::getSha256hex));
-
-        List<Item> newItems = items.stream().filter(i -> !existingItemHex.contains(i.getSha256hex())).collect(Collectors.toList());
-
-        itemDAO.insertInBatch(newItems);
         entryDAO.insertMigratedEntries(migratedEntries);
         entryDAO.updateSequenceNumber(migratedEntries.get(migratedEntries.size() - 1).getId());
+
+        List<Item> items = Lists.transform(migratedEntries, DataReplicationTask.MigratedEntry::getItem);
+
+        itemDAO.insertInBatch(extractNewItems(items));
     }
 
     public int lastMigratedID() {

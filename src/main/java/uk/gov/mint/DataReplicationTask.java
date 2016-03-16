@@ -32,10 +32,6 @@ public class DataReplicationTask implements Runnable {
             this.item = new Item(oldSchemaEntry.entry.get("entry"));
         }
 
-        public String getSha256hex() {
-            return item.getSha256hex();
-        }
-
         public Item getItem() {
             return item;
         }

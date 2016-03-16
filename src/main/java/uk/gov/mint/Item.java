@@ -30,4 +30,20 @@ public class Item {
     public byte[] getCanonicalContent() {
         return canonicalContent;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Item item = (Item) o;
+
+        return !(sha256hex != null ? !sha256hex.equals(item.sha256hex) : item.sha256hex != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return sha256hex != null ? sha256hex.hashCode() : 0;
+    }
 }

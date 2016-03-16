@@ -8,14 +8,15 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public interface TestItemDAO {
-    @SqlUpdate("drop table item")
+    @SqlUpdate("drop table if exists item")
     void dropTable();
 
     @RegisterMapper(ItemMapper.class)
     @SqlQuery("select * from item")
-    TestDBItem getItem();
+    List<TestDBItem> getItems();
 
     class ItemMapper implements ResultSetMapper<TestDBItem> {
         @Override
