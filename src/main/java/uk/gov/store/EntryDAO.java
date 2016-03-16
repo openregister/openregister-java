@@ -16,9 +16,9 @@ interface EntryDAO {
     void insertInBatch(@Bind("sha256hex") List<String> entries);
 
     //Todo: methods below are temporary for migration purpose, must delete after migration
-    @SqlBatch("insert into entry(entry_number, sha256hex) values(:me.id, :me.item.sha256hex)")
-    void insertMigratedEntries(@BindBean("me") List<DataReplicationTask.MigratedEntry> migratedEntries);
+    @SqlBatch("insert into entry(entry_number, sha256hex) values(:id, :sha256hex)")
+    void insertMigratedEntries(@BindBean List<DataReplicationTask.MigratedEntry> migratedEntries);
 
-    @SqlUpdate("select setval('entry_entry_number_sequence', :lastIdMigrated)")
+    @SqlUpdate("select setval('entry_entry_number_seq', :lastIdMigrated)")
     void updateSequenceNumber(@Bind("lastIdMigrated") int lastIdMigrated);
 }

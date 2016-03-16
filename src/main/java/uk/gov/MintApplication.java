@@ -61,7 +61,7 @@ public class MintApplication extends Application<MintConfiguration> {
         //Todo: <delete after migration> scheduled task below is specific for data migration which will be deleted after migration is complete
         boolean migrationInProcess = false;
         EntryStore entryStore = jdbi.open().attach(EntryStore.class);
-        if (entriesUpdateDAO.maxId() != entryStore.lastMigratedID()) {
+        if (entriesUpdateDAO.maxId() > entryStore.lastMigratedID()) {
             migrationInProcess = true;
             ScheduledExecutorService dataReplicationExecutorService = environment.lifecycle().scheduledExecutorService("data-replication").threads(1).build();
             dataReplicationExecutorService.scheduleAtFixedRate(new DataReplicationTask(entriesUpdateDAO, entryStore), 0, 5, TimeUnit.MINUTES);

@@ -36,6 +36,10 @@ public class DataReplicationTask implements Runnable {
             return item;
         }
 
+        public String getSha256hex(){
+            return item.getSha256hex();
+        }
+
         public int getId() {
             return id;
         }
