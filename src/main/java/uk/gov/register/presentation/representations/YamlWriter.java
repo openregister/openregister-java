@@ -3,18 +3,18 @@ package uk.gov.register.presentation.representations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.dropwizard.jackson.Jackson;
-import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.EntryView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+@Provider
 @Produces(ExtraMediaType.TEXT_YAML)
-@Service
 public class YamlWriter extends RepresentationWriter {
     private final ObjectMapper objectMapper;
 
