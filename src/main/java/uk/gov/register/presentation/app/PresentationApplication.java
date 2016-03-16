@@ -25,17 +25,14 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
-import uk.gov.register.presentation.ContentSecurityPolicyFilter;
-import uk.gov.register.presentation.ContentTypeOptionsFilter;
 import uk.gov.register.presentation.EntryConverter;
-import uk.gov.register.presentation.XssProtectionFilter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.representations.*;
-import uk.gov.register.presentation.resource.*;
+import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 
@@ -114,25 +111,11 @@ public class PresentationApplication extends Application<PresentationConfigurati
             }
         });
 
-
-        resourceConfig.packages("uk.gov.register.presentation.resource");
-
-        jerseyEnvironment.register(CsvWriter.class);
-        jerseyEnvironment.register(TsvWriter.class);
-        jerseyEnvironment.register(TurtleWriter.class);
-        jerseyEnvironment.register(YamlWriter.class);
-
-        jerseyEnvironment.register(ClientErrorExceptionMapper.class);
-        jerseyEnvironment.register(ThrowableExceptionMapper.class);
-
-        jerseyEnvironment.register(CacheNoTransformFilterFactory.class);
+        resourceConfig.packages("uk.gov.register.presentation.representations","uk.gov.register.presentation.resource");
 
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 
         setCorsPreflight(applicationContext);
-        jerseyEnvironment.register(ContentSecurityPolicyFilter.class);
-        jerseyEnvironment.register(ContentTypeOptionsFilter.class);
-        jerseyEnvironment.register(XssProtectionFilter.class);
     }
 
     private void setCorsPreflight(MutableServletContextHandler applicationContext) {

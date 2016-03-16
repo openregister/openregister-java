@@ -6,6 +6,7 @@ import uk.gov.register.presentation.ListValue;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Provider
 @Produces(ExtraMediaType.TEXT_TSV)
 public class TsvWriter extends RepresentationWriter {
     @Override

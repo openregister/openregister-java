@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.representations;
 
-import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
@@ -11,6 +10,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-@Service
 public class TurtleWriter extends RepresentationWriter {
     private static final String PREFIX_FORMAT = "@prefix field: <http://field.%s/field/>.\n\n";
 
