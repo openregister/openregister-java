@@ -62,6 +62,7 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         wc.setVariable("register", rd.getRegister());
         wc.setVariable("friendlyRegisterName", StringUtils.capitalize(registerName) + " register");
 
+        response.setHeader("Content-Type", "text/html; charset=UTF-8");
         engine.process("404.html", wc, response.getWriter());
     }
 }
