@@ -5,10 +5,9 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.servlet.ServletContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
+import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.thymeleaf.ThymeleafResourceResolver;
@@ -20,25 +19,31 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class AssetsBundleCustomErrorHandler extends ErrorHandler {
-    private final Logger LOGGER = LoggerFactory.getLogger(AssetsBundleCustomErrorHandler.class);
-    private Environment environment;
+    private final Environment environment;
+    private final TemplateEngine engine;
 
     public AssetsBundleCustomErrorHandler(Environment environment) {
         this.environment = environment;
+
+        TemplateResolver templateResolver = new TemplateResolver();
+        String baseDirForTemplates = System.getProperty("baseDirForTemplates");
+        if (baseDirForTemplates != null) {
+            templateResolver.setResourceResolver(new FileResourceResolver());
+            templateResolver.setPrefix(baseDirForTemplates + "/templates/");
+        } else {
+            templateResolver.setResourceResolver(new ThymeleafResourceResolver());
+            templateResolver.setPrefix("/templates/");
+        }
+        templateResolver.setTemplateMode("HTML5");
+        templateResolver.setCacheable(false);
+        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        engine = new TemplateEngine();
+        engine.setTemplateResolver(templateResolver);
     }
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
         baseRequest.setHandled(true);
-
-        TemplateResolver templateResolver = new TemplateResolver();
-        templateResolver.setResourceResolver(new ThymeleafResourceResolver());
-        templateResolver.setPrefix("/templates/");
-        templateResolver.setTemplateMode("HTML5");
-        templateResolver.setCacheable(false);
-        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        TemplateEngine engine = new TemplateEngine();
-        engine.setTemplateResolver(templateResolver);
 
         ServletContext sc = baseRequest.getContext();
         ServiceLocator sl = ((ServletContainer) environment.getJerseyServletContainer()).getApplicationHandler().getServiceLocator();
