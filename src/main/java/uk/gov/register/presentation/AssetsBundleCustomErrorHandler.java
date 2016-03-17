@@ -1,6 +1,7 @@
 package uk.gov.register.presentation;
 
 import io.dropwizard.setup.Environment;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -47,15 +48,15 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
 
         ServletContext sc = baseRequest.getContext();
         ServiceLocator sl = ((ServletContainer) environment.getJerseyServletContainer()).getApplicationHandler().getServiceLocator();
-        assert (sl != null);
         RegistersConfiguration rc = sl.getService(RegistersConfiguration.class);
-        assert (rc != null);
-        RegisterData rd = rc.getRegisterData(RegisterNameExtractor.extractRegisterName(request.getHeader("Host")));
-        assert (rd != null);
+        String registerId = RegisterNameExtractor.extractRegisterName(request.getHeader("Host"));
+        RegisterData rd = rc.getRegisterData(registerId);
+        String registerName = registerId.replace('-',' ');
 
         WebContext wc = new WebContext(request, response, sc,
                 request.getLocale());
         wc.setVariable("register", rd.getRegister());
+        wc.setVariable("friendlyRegisterName", StringUtils.capitalize(registerName) + " register");
 
         engine.process("404.html", wc, response.getWriter());
     }
