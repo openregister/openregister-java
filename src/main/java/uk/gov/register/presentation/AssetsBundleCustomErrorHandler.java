@@ -44,6 +44,10 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (response.getStatus() != HttpServletResponse.SC_NOT_FOUND) {
+            return;
+        }
+
         baseRequest.setHandled(true);
 
         ServletContext sc = baseRequest.getContext();
@@ -51,7 +55,7 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         RegistersConfiguration rc = sl.getService(RegistersConfiguration.class);
         String registerId = RegisterNameExtractor.extractRegisterName(request.getHeader("Host"));
         RegisterData rd = rc.getRegisterData(registerId);
-        String registerName = registerId.replace('-',' ');
+        String registerName = registerId.replace('-', ' ');
 
         WebContext wc = new WebContext(request, response, sc,
                 request.getLocale());
