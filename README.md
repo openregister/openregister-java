@@ -6,7 +6,7 @@ A repository to replicate registers data from master db to presentation app data
 # Requirements
 
 - Java 1.8+
-- Postgres DB 9.4
+- Postgres DB 9.4+
 
 # Build and Run project
 
