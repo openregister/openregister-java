@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Set;
 
-@JsonIgnoreProperties({"phase", "text", "registry", "copyright"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Register {
     final String registerName;
     final Set<String> fields;
