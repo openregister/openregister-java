@@ -1,2 +1,2 @@
-entry,copyright,fields,phase,register,registry,text
-1,,field1,,value1,,The Entry 1
+entry,register,text,registry,phase,copyright,fields
+1,value1,The Entry 1,,,,field1

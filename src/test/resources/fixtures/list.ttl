@@ -1,11 +1,11 @@
 @prefix field: <http://field.test.register.gov.uk/field/>.
 
 <http://register.beta.openregister.org/entry/2>
- field:fields <http://field.test.register.gov.uk/field/field1> ;
- field:fields <http://field.test.register.gov.uk/field/field2> ;
  field:register <http://register.test.register.gov.uk/register/value2> ;
- field:text "The Entry 2" .
-<http://register.beta.openregister.org/entry/1>
+ field:text "The Entry 2" ;
  field:fields <http://field.test.register.gov.uk/field/field1> ;
+ field:fields <http://field.test.register.gov.uk/field/field2> .
+<http://register.beta.openregister.org/entry/1>
  field:register <http://register.test.register.gov.uk/register/value1> ;
- field:text "The Entry 1" .
+ field:text "The Entry 1" ;
+ field:fields <http://field.test.register.gov.uk/field/field1> .

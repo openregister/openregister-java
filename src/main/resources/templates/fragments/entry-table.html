@@ -15,19 +15,20 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="keyValue : ${content}">
+            <th:block th:each="field : ${register.fields}">
+                <tr th:if="${content.containsKey(field)}">
                 <td>
-                    <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(keyValue.key, registerDomain)}"
-                       th:text="${keyValue.key}"></a>
+                    <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(field, registerDomain)}"
+                       th:text="${field}"></a>
                 </td>
 
-                <td th:if="${keyValue.value.isLink()}">
-                    <a th:href="${keyValue.value.link()}" th:text="${keyValue.value.value}"></a>
+                <td th:if="${content.get(field).isLink()}">
+                    <a th:href="${content.get(field).link()}" th:text="${content.get(field).value}"></a>
                 </td>
 
-                <td th:if="${keyValue.value.isList()}" class="field-list field-list-in-table">
+                <td th:if="${content.get(field).isList()}" class="field-list field-list-in-table">
                     <ul>
-                        <th:block th:each="fieldValue : ${keyValue.value}">
+                        <th:block th:each="fieldValue : ${content.get(field)}">
                             <li th:if="${fieldValue.isLink()}">
                                 <a th:href="${fieldValue.link()}" th:text="${fieldValue.value}"></a>
                             </li>
@@ -36,8 +37,9 @@
                     </ul>
                 </td>
 
-                <td th:unless="${keyValue.value.isLink() || keyValue.value.isList()}" th:text="${keyValue.value.value}"></td>
-            </tr>
+                <td th:unless="${content.get(field).isLink() || content.get(field).isList()}" th:text="${content.get(field).value}"></td>
+                </tr>
+            </th:block>
         </tbody>
     </table>
 </div>
