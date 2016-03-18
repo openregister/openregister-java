@@ -11,6 +11,8 @@ ext {
             "io.dropwizard:dropwizard-logging:${dropwizard_version}"
     ]
 
+    stringTemplate= 'org.antlr:stringtemplate:3.2.1'
+
     postgresClient = 'org.postgresql:postgresql:9.4-1200-jdbc41'
     apacheCommonsCodec = 'commons-codec:commons-codec:1.9'
     awsCloudWatch = 'com.amazonaws:aws-java-sdk-cloudwatch:1.10.54'

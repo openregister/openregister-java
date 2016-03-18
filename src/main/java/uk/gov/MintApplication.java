@@ -16,6 +16,7 @@ import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
 import uk.gov.store.EntriesUpdateDAO;
+import uk.gov.store.EntryStore;
 
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -54,8 +55,19 @@ public class MintApplication extends Application<MintConfiguration> {
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
         ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
-        Loader handler = new LoadHandler(jdbi.onDemand(EntriesUpdateDAO.class));
+        EntriesUpdateDAO entriesUpdateDAO = jdbi.onDemand(EntriesUpdateDAO.class);
+        entriesUpdateDAO.ensureTableExists();
 
+        //Todo: <delete after migration> scheduled task below is specific for data migration which will be deleted after migration is complete
+        boolean migrationInProcess = false;
+        EntryStore entryStore = jdbi.open().attach(EntryStore.class);
+        if (entriesUpdateDAO.maxId() > entryStore.lastMigratedID()) {
+            migrationInProcess = true;
+            ScheduledExecutorService dataReplicationExecutorService = environment.lifecycle().scheduledExecutorService("data-replication").threads(1).build();
+            dataReplicationExecutorService.scheduleAtFixedRate(new DataReplicationTask(entriesUpdateDAO, entryStore), 0, 5, TimeUnit.MINUTES);
+        }
+
+        Loader handler = new LoadHandler(entriesUpdateDAO, entryStore, migrationInProcess);
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, handler));
 
