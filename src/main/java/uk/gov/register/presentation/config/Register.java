@@ -5,16 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 
 public class Register {
     final String registerName;
-    final Set<String> fields;
+    final List<String> fields;
     final Optional<String> copyright;
     final String registry;
     final String text;
@@ -23,14 +22,14 @@ public class Register {
 
     @JsonCreator
     public Register(@JsonProperty("register") String registerName,
-                    @JsonProperty("fields") Set<String> fields,
+                    @JsonProperty("fields") List<String> fields,
                     @JsonProperty("copyright") String copyright,
                     @JsonProperty("registry") String registry,
                     @JsonProperty("text") String text,
                     @JsonProperty("phase") String phase) {
         this.registerName = registerName;
         this.phase = phase;
-        this.fields = new TreeSet<>(fields); // ensure sorted order
+        this.fields = fields;
         this.copyright = StringUtils.isNotEmpty(copyright) ? Optional.of(copyright) : Optional.empty();
         this.registry = registry;
         this.text = text;
