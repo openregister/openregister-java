@@ -1,5 +1,64 @@
 ---
-- hash: "401c9ad49aed68eed0083341b13c8e8d4a09c0dd"
+- serial-number: 23
+  hash: "247cf017d1b91ca8e0cd3abb60712224c6fa2b03"
+  entry:
+    fields:
+    - "country"
+    - "name"
+    - "official-name"
+    - "citizen-names"
+    - "start-date"
+    - "end-date"
+    phase: "alpha"
+    register: "country"
+    registry: "foreign-commonwealth-office"
+    text: "British English-language names and descriptive terms for countries"
+- serial-number: 22
+  hash: "2bbd8b62163e2b6e42d8fb59742f33117f54ec02"
+  entry:
+    fields:
+    - "uk"
+    - "name"
+    - "official-name"
+    - "start-date"
+    - "end-date"
+    - "citizen-names"
+    phase: "alpha"
+    register: "uk"
+    registry: "cabinet-office"
+    text: "UK and Crown dependencies"
+- serial-number: 21
+  hash: "77ba68854b715e6a764c5c53c07611c25614efc0"
+  entry:
+    fields:
+    - "territory"
+    - "name"
+    - "official-name"
+    - "start-date"
+    - "end-date"
+    - "citizen-names"
+    phase: "alpha"
+    register: "territory"
+    registry: "foreign-commonwealth-office"
+    text: "British English-language names and descriptive terms for territories"
+- serial-number: 20
+  hash: "bb9e892b5b04d171f1d8af9f449d46b2d4b8940e"
+  entry:
+    fields:
+    - "food-premises"
+    - "name"
+    - "business"
+    - "food-premises-types"
+    - "local-authority"
+    - "premises"
+    - "start-date"
+    - "end-date"
+    phase: "alpha"
+    register: "food-premises"
+    registry: "food-standards-agency"
+    text: "Premises which prepare and serve food"
+- serial-number: 18
+  hash: "401c9ad49aed68eed0083341b13c8e8d4a09c0dd"
   entry:
     fields:
     - "school"
@@ -17,7 +76,8 @@
     register: "school"
     registry: "department-for-education"
     text: "Primary, secondary and special needs schools in England and Wales"
-- hash: "f5902bb26bceb5fa4368e2be5db65c4ba139ed41"
+- serial-number: 17
+  hash: "f5902bb26bceb5fa4368e2be5db65c4ba139ed41"
   entry:
     fields:
     - "registry"
@@ -25,7 +85,8 @@
     register: "registry"
     registry: "cabinet-office"
     text: "Bodies responsible for the maintainance of one or more registers"
-- hash: "b51e90b4e68186503c8cb1b25ba672ef5c170bb0"
+- serial-number: 16
+  hash: "b51e90b4e68186503c8cb1b25ba672ef5c170bb0"
   entry:
     fields:
     - "register"
@@ -38,7 +99,8 @@
     register: "register"
     registry: "cabinet-office"
     text: "Registers maintained by HM Government"
-- hash: "701b682581fd06b346fb8d2126c378ee2cf369fc"
+- serial-number: 15
+  hash: "701b682581fd06b346fb8d2126c378ee2cf369fc"
   entry:
     fields:
     - "public-body"
@@ -53,7 +115,8 @@
     register: "public-body"
     registry: "cabinet-office"
     text: "Ministerial Departments and agencies sponsored by HM Government"
-- hash: "ac5f75e97b1e254c928c198501b49ceab901fb66"
+- serial-number: 14
+  hash: "ac5f75e97b1e254c928c198501b49ceab901fb66"
   entry:
     fields:
     - "premises"
@@ -64,7 +127,8 @@
     register: "premises"
     registry: "valuation-office-agency"
     text: "Commercial properties eligable for business rates in England and Wales"
-- hash: "5093cb53ea680811db8a581e195b2d110d1ad134"
+- serial-number: 13
+  hash: "5093cb53ea680811db8a581e195b2d110d1ad134"
   entry:
     copyright: "Contains National Statistics data © [Crown copyright and database\
       \ right 2013](http://www.nationalarchives.gov.uk/doc/open-government-licence/),\
@@ -77,7 +141,8 @@
     register: "postcode"
     registry: "office-for-national-statistics"
     text: "Postal codes which may appear in a UK address"
-- hash: "daa3c58b45aab258addeb6f4a3abde7a4e090522"
+- serial-number: 12
+  hash: "daa3c58b45aab258addeb6f4a3abde7a4e090522"
   entry:
     fields:
     - "location"
@@ -87,7 +152,8 @@
     registry: "cabinet-office"
     text: "Geographic locations of places found in government data which may be published\
       \ under an open government licence"
-- hash: "a3ffa841bf05ca17c5daad6c6386a9feef134d53"
+- serial-number: 11
+  hash: "a3ffa841bf05ca17c5daad6c6386a9feef134d53"
   entry:
     fields:
     - "local-authority"
@@ -101,7 +167,8 @@
     register: "local-authority"
     registry: "department-for-communities-and-local-government"
     text: "Local authorities in England"
-- hash: "688d38ec38e1546936c893ead2b862b8447736ed"
+- serial-number: 10
+  hash: "688d38ec38e1546936c893ead2b862b8447736ed"
   entry:
     fields:
     - "industry"
@@ -114,7 +181,8 @@
     text: "Standard Industry Codes (SIC) used to classify business establishments\
       \ and other standard units by the type of economic activity in which they are\
       \ engaged"
-- hash: "464f4889f731a40ab1769a396b570ffa3ec0d74c"
+- serial-number: 9
+  hash: "464f4889f731a40ab1769a396b570ffa3ec0d74c"
   entry:
     fields:
     - "government-domain"
@@ -124,20 +192,8 @@
     register: "government-domain"
     registry: "government-digital-service"
     text: "Internet domain names used by HM Government"
-- hash: "fef4f20d2288f031d77e03b50393d6ec92a6cab7"
-  entry:
-    fields:
-    - "food-premises"
-    - "name"
-    - "business"
-    - "food-premises-types"
-    - "start-date"
-    - "end-date"
-    phase: "alpha"
-    register: "food-premises"
-    registry: "food-standards-agency"
-    text: "Premises which prepare and serve food"
-- hash: "8425ee369e87e8dbeb217af0d7217251ba32ab1c"
+- serial-number: 7
+  hash: "8425ee369e87e8dbeb217af0d7217251ba32ab1c"
   entry:
     fields:
     - "food-premises-type"
@@ -146,7 +202,8 @@
     register: "food-premises-type"
     registry: "food-standards-agency"
     text: "Types of premises which prepare and serve food"
-- hash: "9db376033a0136dac33746cc30154978e5496828"
+- serial-number: 6
+  hash: "9db376033a0136dac33746cc30154978e5496828"
   entry:
     fields:
     - "food-premises-rating"
@@ -164,7 +221,8 @@
     register: "food-premises-rating"
     registry: "food-standards-agency"
     text: "Food hygiene inspection ratings"
-- hash: "572bef0ffc666e39421fda821e2f899bb4061dd7"
+- serial-number: 5
+  hash: "572bef0ffc666e39421fda821e2f899bb4061dd7"
   entry:
     fields:
     - "field"
@@ -177,7 +235,8 @@
     register: "field"
     registry: "cabinet-office"
     text: "Field names which may appear in a register"
-- hash: "ab933e49accfac1bf4b57752bcce5843e54f5f44"
+- serial-number: 4
+  hash: "ab933e49accfac1bf4b57752bcce5843e54f5f44"
   entry:
     fields:
     - "datatype"
@@ -188,21 +247,8 @@
     registry: "cabinet-office"
     text: "Datatypes constraining values used by register fields and idenitifying\
       \ ways in which it may be encoded a representation"
-- hash: "92fdfdad3ffa376074d07ae27344bba7ba3f730a"
-  entry:
-    fields:
-    - "country"
-    - "name"
-    - "official-name"
-    - "citizen-names"
-    - "start-date"
-    - "end-date"
-    - "text"
-    phase: "alpha"
-    register: "country"
-    registry: "foreign-commonwealth-office"
-    text: "Countries of the world recognised by the UK"
-- hash: "7bfde48aa3d06c682dbfe251ae2e1bf4c5415133"
+- serial-number: 2
+  hash: "7bfde48aa3d06c682dbfe251ae2e1bf4c5415133"
   entry:
     fields:
     - "company"
@@ -216,7 +262,8 @@
     register: "company"
     registry: "companies-house"
     text: "Companies in England and Wales"
-- hash: "d7863fe1f7237401b12b84a61aaab46b74f26ed8"
+- serial-number: 1
+  hash: "d7863fe1f7237401b12b84a61aaab46b74f26ed8"
   entry:
     copyright: "Contains Ordnance Survey data © Crown copyright & database right 2015\
       \ Contains Royal Mail data © Royal Mail copyright & database right 2015"
