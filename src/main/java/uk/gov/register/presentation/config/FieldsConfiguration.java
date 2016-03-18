@@ -21,7 +21,7 @@ public class FieldsConfiguration {
         return fields.stream().filter(f -> Objects.equals(f.fieldName, fieldName)).findFirst().get();
     }
 
-    @JsonIgnoreProperties({"hash", "last-updated", "serial-number"})
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private static class FieldData {
         @JsonProperty
         Field entry;

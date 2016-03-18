@@ -1,6 +1,7 @@
 package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,7 @@ import uk.gov.register.presentation.config.Register;
 
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterData {
     final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
