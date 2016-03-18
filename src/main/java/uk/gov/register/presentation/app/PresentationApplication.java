@@ -25,6 +25,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
+import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
@@ -116,6 +117,8 @@ public class PresentationApplication extends Application<PresentationConfigurati
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 
         setCorsPreflight(applicationContext);
+
+        environment.getApplicationContext().setErrorHandler(new AssetsBundleCustomErrorHandler(environment));
     }
 
     private void setCorsPreflight(MutableServletContextHandler applicationContext) {
