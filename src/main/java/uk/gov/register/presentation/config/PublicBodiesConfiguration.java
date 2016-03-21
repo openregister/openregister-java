@@ -26,7 +26,7 @@ public class PublicBodiesConfiguration {
         return publicBodies.stream().filter(f -> Objects.equals(f.getPublicBodyId(), publicBodyId)).findFirst().get();
     }
 
-    @JsonIgnoreProperties({"hash", "last-updated"})
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private static class PublicBodyData {
         @JsonProperty
         PublicBody entry;

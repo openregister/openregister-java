@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"text","crest","website","parent-bodies","official-colour","public-body-type"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PublicBody {
     private final String name;
     private final String publicBodyId;
