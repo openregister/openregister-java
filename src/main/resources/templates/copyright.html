@@ -1,4 +1,4 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<p th:fragment="copyright" class="registry-copyright" th:if="${register.copyright.present}" th:text="${register.copyright.get()}">Copyright text</p>
+<div th:fragment="copyright" class="registry-copyright" th:if="${renderedCopyrightText.present}" th:utext="${renderedCopyrightText.get()}">Copyright text</div>
 </html>
