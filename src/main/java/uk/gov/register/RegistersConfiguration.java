@@ -46,7 +46,7 @@ public class RegistersConfiguration {
         return registers.stream().filter(f -> Objects.equals(f.registerName, registerName)).findFirst().get();
     }
 
-    @JsonIgnoreProperties({"hash", "last-updated"})
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private static class RegisterData {
         @JsonProperty
         Register entry;

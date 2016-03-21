@@ -9,7 +9,7 @@ import uk.gov.register.datatype.DatatypeFactory;
 
 import java.util.Optional;
 
-@JsonIgnoreProperties({"phase", "text"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
     final String fieldName;
     final Datatype datatype;
