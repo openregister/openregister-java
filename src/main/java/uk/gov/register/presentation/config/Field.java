@@ -8,7 +8,7 @@ import uk.gov.register.presentation.Cardinality;
 
 import java.util.Optional;
 
-@JsonIgnoreProperties({"phase"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
     final String fieldName;
     final String datatype;
