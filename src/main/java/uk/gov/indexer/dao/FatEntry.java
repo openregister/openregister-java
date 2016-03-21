@@ -2,6 +2,7 @@ package uk.gov.indexer.dao;
 
 import java.nio.charset.StandardCharsets;
 
+@Deprecated
 public class FatEntry {
     public final int serial_number;
     public final byte[] contents;
