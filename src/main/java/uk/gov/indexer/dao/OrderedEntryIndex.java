@@ -4,6 +4,7 @@ import org.postgresql.util.PGobject;
 
 import java.sql.SQLException;
 
+@Deprecated
 public class OrderedEntryIndex {
     private final int serial_number;
     private final String entry;
