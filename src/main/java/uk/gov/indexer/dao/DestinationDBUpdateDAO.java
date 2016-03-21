@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
     private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
     private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;
+    private final EntryUpdateDAO entryUpdateDAO;
+    private final ItemUpdateDAO itemUpdateDAO;
 
     public DestinationDBUpdateDAO() {
         Handle handle = getHandle();
@@ -25,26 +27,43 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         currentKeysUpdateDAO.ensureRecordTablesInPlace();
 
         indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
-
         indexedEntriesUpdateDAO.ensureEntryTablesInPlace();
 
         if (!indexedEntriesUpdateDAO.indexedEntriesIndexExists()) {
             indexedEntriesUpdateDAO.createIndexedEntriesIndex();
         }
+
+        entryUpdateDAO = handle.attach(EntryUpdateDAO.class);
+        entryUpdateDAO.ensureEntryTableInPlace();
+
+        itemUpdateDAO = handle.attach(ItemUpdateDAO.class);
+        itemUpdateDAO.ensureItemTableInPlace();
     }
 
     public int lastReadSerialNumber() {
         return indexedEntriesUpdateDAO.lastReadSerialNumber();
     }
 
+    public int lastReadEntryNumber() {
+        return entryUpdateDAO.lastReadEntryNumber();
+    }
+
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntriesInBatch(String registerName, List<Entry> entries) {
-        List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(Entry::dbEntry).collect(Collectors.toList());
+    public void writeEntriesInBatch(String registerName, List<FatEntry> entries) {
+        List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(FatEntry::dbEntry).collect(Collectors.toList());
 
         indexedEntriesUpdateDAO.writeBatch(orderedEntryIndex);
 
         upsertInCurrentKeysTable(registerName, orderedEntryIndex);
         indexedEntriesUpdateDAO.updateTotalEntries(orderedEntryIndex.size());
+    }
+
+    public void writeEntriesAndItemsInBatch(String registerName, List<Entry> entries, List<Item> items) {
+        List<String> existingItemHexValues = itemUpdateDAO.getExistingItemHexValues(Lists.transform(items, Item::getItemHash));
+        List<Item> newItems = items.stream().filter(i -> !existingItemHexValues.contains(i)).collect(Collectors.toList());
+
+        entryUpdateDAO.writeBatch(entries);
+        itemUpdateDAO.writeBatch(newItems);
     }
 
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
