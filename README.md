@@ -11,7 +11,7 @@ A repository to replicate registers data from master db to presentation app data
 # Build and Run project
 
 - Install and run postgres db
-- Create database mint `createdb test_indexer` to run functional_tests
+- Create databases `createdb test_indexer_mint` and `createdb test_indexer_presentation` to run functional_tests
 - Checkout project 
 - Use command `./gradlew cleanIdea idea` to generate the idea project files
 - Build project using command `./gradlew clean build`

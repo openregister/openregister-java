@@ -29,9 +29,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IndexerTaskTest {
-    static final String ROOT_HASH = "JATHxRF5gczvNPP1S1WuhD8jSx2bl+WoTt8bIE3YKvU=";
-    static final String TREE_HEAD_SIGNATURE = "BAMARzBFAiEAkKM3aRUBKhShdCyrGLdd8lYBV52FLrwqjHa5/YuzK7ECIFTlRmNuKLqbVQv0QS8nq0pAUwgbilKOR5piBAIC8LpS";
-
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8090);
 
@@ -41,16 +38,17 @@ public class IndexerTaskTest {
     @SuppressWarnings("ConstantConditions")
     @Test
     public void readEntriesFromMintPostgresDBAndWriteToReadApi() throws InterruptedException, SQLException {
-        try (Connection connection = createConnection()) {
-            try (Statement statement = connection.createStatement()) {
+        try (Connection mintConnection = createMintConnection(); Connection presentationConnection = createPresentationConnection()) {
+            try (Statement mintStatement = mintConnection.createStatement(); Statement presentationStatement = presentationConnection.createStatement()) {
 
-                recreateEntriesTable(statement);
-                dropReadApiTables(statement);
+                recreateEntriesTable(mintStatement);
+                dropReadApiTables(presentationStatement);
 
-                DBI dbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer?user=postgres");
+                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_mint?user=postgres");
+                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
 
-                SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
+                SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
+                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
                 IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 InOrder inOrder = Mockito.inOrder(cloudwatchRecordsProcessedUpdater);
@@ -58,41 +56,41 @@ public class IndexerTaskTest {
                 //load 1 entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(statement, indexerTask, 1, 1);
-                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{1,fp_1}]"));
-                assertNoOfRecordsAndEntries(statement, 1, 1);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 1, 1);
+                assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{1,fp_1}]"));
+                assertNoOfRecordsAndEntries(presentationStatement, 1, 1);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
                 //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(statement, indexerTask, 2, 1);
-                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{2,fp_1}]"));
-                assertNoOfRecordsAndEntries(statement, 2, 1);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 2, 1);
+                assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{2,fp_1}]"));
+                assertNoOfRecordsAndEntries(presentationStatement, 2, 1);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
                 //load 5 more entry and confirm the changes
                 loadEntriesInMintDB(5);
 
-                runIndexerAndVerifyResult(statement, indexerTask, 7, 5);
-                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {3,fp_1}, {4,fp_2}, {5,fp_3}, {6,fp_4}]"));
-                assertNoOfRecordsAndEntries(statement, 7, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 7, 5);
+                assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {3,fp_1}, {4,fp_2}, {5,fp_3}, {6,fp_4}]"));
+                assertNoOfRecordsAndEntries(presentationStatement, 7, 5);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(5);
 
                 //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(statement, indexerTask, 8, 5);
-                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {4,fp_2}, {5,fp_3}, {6,fp_4}, {8,fp_1}]"));
-                assertNoOfRecordsAndEntries(statement, 8, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8, 5);
+                assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {4,fp_2}, {5,fp_3}, {6,fp_4}, {8,fp_1}]"));
+                assertNoOfRecordsAndEntries(presentationStatement, 8, 5);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
                 //run indexer again when no new entries available, confirms that nothing changes but cloudwatch get notification with 0 entry
-                runIndexerAndVerifyResult(statement, indexerTask, 8, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8, 5);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(0);
             }
@@ -101,7 +99,7 @@ public class IndexerTaskTest {
 
     @Test
     public void confirmThatCurrentkeyTableLoadsOnlyLatestRecord() throws SQLException {
-        try (Connection connection = createConnection()) {
+        try (Connection connection = createPresentationConnection()) {
             try (Statement statement = connection.createStatement()) {
 
                 recreateEntriesTable(statement);
@@ -125,7 +123,7 @@ public class IndexerTaskTest {
 
     @Test
     public void confirmThatCurrentkeyTableLoadsOnlyLatestRecordFromEntryAndItem() throws SQLException {
-        try (Connection connection = createConnection()) {
+        try (Connection connection = createPresentationConnection()) {
             try (Statement statement = connection.createStatement()) {
 
                 recreateEntriesTable(statement);
@@ -196,7 +194,7 @@ public class IndexerTaskTest {
     }
 
     private void loadEntriesInMintDB(int noOfEntries) throws SQLException {
-        try (Statement statement = createConnection().createStatement()) {
+        try (Statement statement = createMintConnection().createStatement()) {
             for (int entryNumber = 1; entryNumber <= noOfEntries; entryNumber++) {
                 statement.execute(String.format("insert into entries(entry) values('{\"hash\": \"hash%s\", \"entry\": {\"food-premises\":\"fp_%s\",\"business\":\"company:123\"}}')", entryNumber, entryNumber));
             }
@@ -206,7 +204,7 @@ public class IndexerTaskTest {
     }
 
     private void loadEntriesAndItemsInMintDB(int noOfEntries) throws SQLException {
-        try (Statement statement = createConnection().createStatement()) {
+        try (Statement statement = createMintConnection().createStatement()) {
             for (int entryNumber = 1; entryNumber <= noOfEntries; entryNumber++) {
                 statement.execute(String.format("insert into entry(sha256hex) values('hash%s')", entryNumber));
 
@@ -244,9 +242,16 @@ public class IndexerTaskTest {
         statement.execute("drop table if exists indexed_item");
     }
 
-    private Connection createConnection() throws SQLException {
+    private Connection createMintConnection() throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setDatabaseName("test_indexer");
+        dataSource.setDatabaseName("test_indexer_mint");
+        dataSource.setUser("postgres");
+        return dataSource.getConnection();
+    }
+
+    private Connection createPresentationConnection() throws SQLException {
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setDatabaseName("test_indexer_presentation");
         dataSource.setUser("postgres");
         return dataSource.getConnection();
     }

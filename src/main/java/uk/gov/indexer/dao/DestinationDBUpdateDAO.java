@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -46,6 +47,10 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         return entryUpdateDAO.lastReadEntryNumber();
     }
 
+    public boolean isMigrationComplete() {
+        return lastReadEntryNumber() > lastReadSerialNumber();
+    }
+
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void writeEntriesInBatch(String registerName, List<FatEntry> entries) {
         List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(FatEntry::dbEntry).collect(Collectors.toList());
@@ -58,8 +63,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void writeEntriesAndItemsInBatch(String registerName, List<Entry> entries, List<Item> items) {
-        List<String> existingItemHexValues = itemUpdateDAO.getExistingItemHexValues(Lists.transform(items, Item::getItemHash));
-        List<Item> newItems = items.stream().filter(i -> !existingItemHexValues.contains(i.getItemHash())).collect(Collectors.toList());
+        Set<Item> newItems = extractNewItems(items);
 
         entryUpdateDAO.writeBatch(entries);
         if (!newItems.isEmpty()) {
@@ -88,5 +92,10 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         currentKeysUpdateDAO.writeCurrentKeys(currentKeys);
         currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
+    }
+
+    private Set<Item> extractNewItems(List<Item> items) {
+        List<String> existingItemHexValues = itemUpdateDAO.getExistingItemHexValues(Lists.transform(items, Item::getItemHash));
+        return items.stream().filter(i -> !existingItemHexValues.contains(i.getItemHash())).collect(Collectors.toSet());
     }
 }

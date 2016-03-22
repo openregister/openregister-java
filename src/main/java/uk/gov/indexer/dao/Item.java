@@ -28,6 +28,21 @@ public class Item {
         return pgObject(new String(content, StandardCharsets.UTF_8));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Item item = (Item) o;
+
+        return !(itemHash != null ? !itemHash.equals(item.itemHash) : item.itemHash != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return itemHash != null ? itemHash.hashCode() : 0;
+    }
+
     private PGobject pgObject(String itemContent) {
         try {
             PGobject pGobject = new PGobject();

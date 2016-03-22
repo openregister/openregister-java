@@ -12,7 +12,7 @@ import java.util.List;
 @UseStringTemplate3StatementLocator("/sql/init_item.sql")
 public interface ItemUpdateDAO extends DBConnectionDAO {
 
-    String ITEM_TABLE = "indexed_item";
+    String ITEM_TABLE = "item";
 
     @SqlUpdate
     void ensureItemTableInPlace();

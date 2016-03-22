@@ -50,7 +50,7 @@ public class IndexerTask implements Runnable {
         List<FatEntry> fatEntries = fetchNewFatEntries();
 
         if (fatEntries.isEmpty()) {
-            if (!isMigrationComplete()) {
+            if (!destinationDBUpdateDAO.isMigrationComplete()) {
                 updateCloudWatch(0);
             }
         } else {
@@ -74,7 +74,7 @@ public class IndexerTask implements Runnable {
         List<Entry> entries = fetchNewEntries();
 
         if (entries.isEmpty()) {
-            if (isMigrationComplete()) {
+            if (destinationDBUpdateDAO.isMigrationComplete()) {
                 updateCloudWatch(0);
             }
         } else {
@@ -86,7 +86,7 @@ public class IndexerTask implements Runnable {
                 destinationDBUpdateDAO.writeEntriesAndItemsInBatch(register, entries, items);
                 LOGGER.info(String.format("Register '%s': Copied '%d' entries in entry from index '%d'.", register, totalNewEntries, entries.get(0).getEntryNumber()));
 
-                if (isMigrationComplete()) {
+                if (destinationDBUpdateDAO.isMigrationComplete()) {
                     updateCloudWatch(totalNewEntries);
                     LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%d' entries processed.", register, totalNewEntries));
                 }
@@ -114,9 +114,5 @@ public class IndexerTask implements Runnable {
 
     private List<Item> fetchItemsByHex(List<String> itemHexValues) {
         return sourceDBQueryDAO.readItems(itemHexValues);
-    }
-
-    private boolean isMigrationComplete() {
-        return destinationDBUpdateDAO.lastReadEntryNumber() > destinationDBUpdateDAO.lastReadSerialNumber();
     }
 }

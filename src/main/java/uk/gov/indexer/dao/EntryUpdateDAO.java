@@ -9,7 +9,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 @UseStringTemplate3StatementLocator("/sql/init_entry.sql")
 public interface EntryUpdateDAO extends DBConnectionDAO {
 
-    String ENTRY_TABLE = "indexed_entry";
+    String ENTRY_TABLE = "entry";
 
     @SqlUpdate
     void ensureEntryTableInPlace();
