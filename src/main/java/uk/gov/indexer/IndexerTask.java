@@ -106,6 +106,9 @@ public class IndexerTask implements Runnable {
     }
 
     private List<Entry> fetchNewEntries() {
+        if (!sourceDBQueryDAO.entryTableExists()) {
+            return Collections.emptyList();
+        }
         return sourceDBQueryDAO.readEntries(destinationDBUpdateDAO.lastReadEntryNumber());
     }
 
