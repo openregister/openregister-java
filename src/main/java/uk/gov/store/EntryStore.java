@@ -1,5 +1,7 @@
 package uk.gov.store;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -8,9 +10,7 @@ import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 import uk.gov.mint.DataReplicationTask;
 import uk.gov.mint.Item;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public abstract class EntryStore implements GetHandle {
     private final EntryDAO entryDAO;
@@ -25,24 +25,28 @@ public abstract class EntryStore implements GetHandle {
     }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void load(List<Item> items) {
-        entryDAO.insertInBatch(Lists.transform(items, Item::getSha256hex));
+    public void load(Iterable<Item> items) {
+        entryDAO.insertInBatch(Iterables.transform(items, Item::getSha256hex));
         itemDAO.insertInBatch(extractNewItems(items));
     }
 
-    private Set<Item> extractNewItems(List<Item> items) {
-        List<String> existingItemHex = itemDAO.existingItemHex(Lists.transform(items, Item::getSha256hex));
-
-        return items.stream().filter(i -> !existingItemHex.contains(i.getSha256hex())).collect(Collectors.toSet());
+    private Set<Item> extractNewItems(Iterable<Item> items) {
+        Iterable<String> existingItemHex = itemDAO.existingItemHex(Lists.newArrayList(Iterables.transform(items, Item::getSha256hex)));
+        return ImmutableSet.copyOf(
+                Iterables.filter(
+                        items,
+                        item -> !Iterables.contains(existingItemHex, item.getSha256hex())
+                )
+        );
     }
 
     //TODO: methods below are specific to migration which must be deleted after migration is completed
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void migrate(List<DataReplicationTask.MigratedEntry> migratedEntries) {
+    public void migrate(Iterable<DataReplicationTask.MigratedEntry> migratedEntries) {
         entryDAO.insertMigratedEntries(migratedEntries);
-        entryDAO.updateSequenceNumber(migratedEntries.get(migratedEntries.size() - 1).getId());
+        entryDAO.updateSequenceNumber(Iterables.getLast(migratedEntries).getId());
 
-        List<Item> items = Lists.transform(migratedEntries, DataReplicationTask.MigratedEntry::getItem);
+        Iterable<Item> items = Iterables.transform(migratedEntries, DataReplicationTask.MigratedEntry::getItem);
 
         itemDAO.insertInBatch(extractNewItems(items));
     }

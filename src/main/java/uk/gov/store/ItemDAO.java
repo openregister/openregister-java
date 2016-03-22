@@ -8,8 +8,6 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 import org.skife.jdbi.v2.unstable.BindIn;
 import uk.gov.mint.Item;
 
-import java.util.List;
-
 @UseStringTemplate3StatementLocator("/sql/item.sql")
 interface ItemDAO {
 
@@ -20,5 +18,5 @@ interface ItemDAO {
     void insertInBatch(@BindBean Iterable<Item> items);
 
     @SqlQuery
-    List<String> existingItemHex(@BindIn("listOfHexValues") Iterable<String> listOfHexValues);
+    Iterable<String> existingItemHex(@BindIn("listOfHexValues") Iterable<String> listOfHexValues);
 }

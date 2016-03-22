@@ -2,6 +2,8 @@ package uk.gov.mint;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -57,7 +59,7 @@ public class LoadHandlerTest {
 
         verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
         verifyNoMoreInteractions(entryStore);
-        final List<byte[]> payloadArray = entriesCaptor.getValue();
+        final List<byte[]> payloadArray = Lists.newArrayList(entriesCaptor.getValue());
         assertThat(payloadArray.size(), equalTo(2));
         assertThat(payloadArray.get(0), equalTo(expectedEntry1Bytes));
         assertThat(payloadArray.get(1), equalTo(expectedEntry2Bytes));
@@ -75,10 +77,10 @@ public class LoadHandlerTest {
 
         verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
         verify(entryStore).load(itemsCaptor.capture());
-        List<Item> items = itemsCaptor.getValue();
-        assertThat(items.size(), equalTo(2));
-        assertThat(items.get(0).getCanonicalContent(), equalTo(payload1.getBytes()));
-        assertThat(items.get(1).getCanonicalContent(), equalTo(payload2.getBytes()));
+        Iterable<Item> items = itemsCaptor.getValue();
+        assertThat(Iterables.size(items), equalTo(2));
+        assertThat(Iterables.get(items, 0).getCanonicalContent(), equalTo(payload1.getBytes()));
+        assertThat(Iterables.getLast(items).getCanonicalContent(), equalTo(payload2.getBytes()));
     }
 
 

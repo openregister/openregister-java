@@ -1,11 +1,9 @@
 package uk.gov.mint;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 import uk.gov.store.EntriesUpdateDAO;
 import uk.gov.store.EntryStore;
 import uk.gov.store.OldSchemaEntry;
-
-import java.util.List;
 
 public class DataReplicationTask implements Runnable {
     private EntriesUpdateDAO entriesUpdateDAO;
@@ -18,8 +16,8 @@ public class DataReplicationTask implements Runnable {
 
     @Override
     public void run() {
-        for (List<OldSchemaEntry> entries; !(entries = entriesUpdateDAO.read(lastReadID())).isEmpty(); ) {
-            entryStore.migrate(Lists.transform(entries, MigratedEntry::new));
+        for (Iterable<OldSchemaEntry> entries; !Iterables.isEmpty(entries = entriesUpdateDAO.read(lastReadID())); ) {
+            entryStore.migrate(Iterables.transform(entries, MigratedEntry::new));
         }
     }
 
