@@ -57,10 +57,10 @@
         <div class="footer-meta">
             <div class="footer-meta-inner">
 
-                <div th:if="${register.copyright.present}" class="custom-government-licence">
-                    <p class="registry-copyright" th:text="${register.copyright.get()}">Copyright text</p>
+                <div th:if="${renderedCopyrightText.present}" class="custom-government-licence">
+                    <div th:replace="copyright.html::copyright">Copyright text</div>
                 </div>
-                <div th:unless="${register.copyright.present}" class="open-government-licence">
+                <div th:unless="${renderedCopyrightText.present}" class="open-government-licence">
                     <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
                                        rel="license">Open Government Licence</a></p>
 

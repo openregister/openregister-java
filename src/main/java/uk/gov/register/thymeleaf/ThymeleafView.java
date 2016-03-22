@@ -2,6 +2,7 @@ package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
+import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.config.Register;
@@ -11,10 +12,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 public class ThymeleafView extends View {
     protected final RequestContext requestContext;
     private String thymeleafTemplateName;
+    protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
     public ThymeleafView(RequestContext requestContext, String templateName) {
         super(templateName, StandardCharsets.UTF_8);
@@ -50,6 +53,12 @@ public class ThymeleafView extends View {
 
     public Register getRegister() {
         return requestContext.getRegister();
+    }
+
+    public Optional<String> getRenderedCopyrightText() {
+        return getRegister().getCopyright().map(
+                markdownProcessor::markdown
+        );
     }
 
     public EntryView getRegisterEntryView(EntryConverter entryConverter) {

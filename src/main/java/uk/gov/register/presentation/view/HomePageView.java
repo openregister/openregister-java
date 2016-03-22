@@ -1,10 +1,9 @@
 package uk.gov.register.presentation.view;
 
-import org.markdownj.MarkdownProcessor;
+import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.organisation.client.GovukOrganisation;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -13,8 +12,6 @@ import java.util.Optional;
 
 public class HomePageView extends AttributionView {
     private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu").withZone(ZoneId.of("UTC"));
-
-    private final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
     private final Instant lastUpdated;
     private final int totalRecords;
