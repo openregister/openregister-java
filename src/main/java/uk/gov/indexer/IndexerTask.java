@@ -42,10 +42,17 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
+        updateFatEntries();
+        updateEntries();
+    }
+
+    private void updateFatEntries() {
         List<FatEntry> fatEntries = fetchNewFatEntries();
 
         if (fatEntries.isEmpty()) {
-            updateCloudWatch(0);
+            if (!isMigrationComplete()) {
+                updateCloudWatch(0);
+            }
         } else {
             do {
                 int totalNewEntries = fatEntries.size();
@@ -61,17 +68,28 @@ public class IndexerTask implements Runnable {
                 LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%d' entries processed.", register, totalNewEntries));
             } while (!(fatEntries = fetchNewFatEntries()).isEmpty());
         }
+    }
 
+    private void updateEntries() {
         List<Entry> entries = fetchNewEntries();
 
-        if (!entries.isEmpty()) {
+        if (entries.isEmpty()) {
+            if (isMigrationComplete()) {
+                updateCloudWatch(0);
+            }
+        } else {
             do {
                 int totalNewEntries = entries.size();
                 List<Item> items = fetchItemsByHex(Lists.transform(entries, Entry::getItemHash));
-
                 LOGGER.info(String.format("Register '%s': Found '%d' new entries in entry table.", register, totalNewEntries));
 
                 destinationDBUpdateDAO.writeEntriesAndItemsInBatch(register, entries, items);
+                LOGGER.info(String.format("Register '%s': Copied '%d' entries in entry from index '%d'.", register, totalNewEntries, entries.get(0).getEntryNumber()));
+
+                if (isMigrationComplete()) {
+                    updateCloudWatch(totalNewEntries);
+                    LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%d' entries processed.", register, totalNewEntries));
+                }
             } while (!(entries = fetchNewEntries()).isEmpty());
         }
     }
@@ -93,5 +111,9 @@ public class IndexerTask implements Runnable {
 
     private List<Item> fetchItemsByHex(List<String> itemHexValues) {
         return sourceDBQueryDAO.readItems(itemHexValues);
+    }
+
+    private boolean isMigrationComplete() {
+        return destinationDBUpdateDAO.lastReadEntryNumber() > destinationDBUpdateDAO.lastReadSerialNumber();
     }
 }
