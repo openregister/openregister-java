@@ -31,6 +31,7 @@ import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
+import uk.gov.register.presentation.dao.ItemDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -78,6 +79,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
         RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
+        ItemDAO itemDAO = jdbi.onDemand(ItemDAO.class);
 
         JerseyEnvironment jerseyEnvironment = environment.jersey();
         DropwizardResourceConfig resourceConfig = jerseyEnvironment.getResourceConfig();
@@ -98,7 +100,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
             @Override
             protected void configure() {
                 bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
-
+                bind(itemDAO).to(ItemDAO.class);
                 bind(new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")))).to(FieldsConfiguration.class);
                 bind(new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")))).to(RegistersConfiguration.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
@@ -112,7 +114,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
             }
         });
 
-        resourceConfig.packages("uk.gov.register.presentation.representations","uk.gov.register.presentation.resource");
+        resourceConfig.packages("uk.gov.register.presentation.representations", "uk.gov.register.presentation.resource");
 
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 

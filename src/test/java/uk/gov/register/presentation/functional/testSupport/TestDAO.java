@@ -9,6 +9,9 @@ public class TestDAO {
     public final TestTotalEntryDAO testTotalEntryDAO;
     public final TestTotalRecordDAO testTotalRecordDAO;
 
+    public final TestItemDAO testItemDAO;
+    public final TestEntryDAO testEntryDAO;
+
     private TestDAO(String databaseName, String user) {
         String postgresConnectionString = String.format("jdbc:postgresql://localhost:5432/%s?user=%s", databaseName, user);
         DBI dbi = new DBI(postgresConnectionString);
@@ -17,6 +20,8 @@ public class TestDAO {
         this.testCurrentKeyDAO = handle.attach(TestCurrentKeyDAO.class);
         this.testTotalEntryDAO = handle.attach(TestTotalEntryDAO.class);
         this.testTotalRecordDAO = handle.attach(TestTotalRecordDAO.class);
+        this.testItemDAO = handle.attach(TestItemDAO.class);
+        this.testEntryDAO = handle.attach(TestEntryDAO.class);
     }
 
     public static TestDAO get(String databaseName, String user) {
