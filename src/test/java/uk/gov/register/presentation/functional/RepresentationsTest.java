@@ -28,7 +28,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
     @BeforeClass
     public static void publishTestMessages() {
-        DBSupport.publishMessages(REGISTER_NAME, ImmutableList.of(
+        dbSupport.publishMessages(REGISTER_NAME, ImmutableList.of(
                 "{\"hash\":\"someHash1\",\"entry\":{\"text\":\"The Entry 1\", \"register\":\"value1\", \"fields\":[\"field1\"]}}",
                 "{\"hash\":\"someHash2\",\"entry\":{\"text\":\"The Entry 2\", \"register\":\"value2\", \"fields\":[\"field1\",\"field2\"]}}"
         ));

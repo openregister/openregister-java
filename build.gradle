@@ -158,7 +158,7 @@ task(run, type: JavaExec) {
 task(loadSchoolData, type: JavaExec) {
     main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
-    args = ["school", "school-data.jsonl", "jdbc:postgresql://localhost:5432/school"]
+    args = ["school", "school-data.jsonl", "school"]
 }
 
 task(loadSchoolDataForConformance, type: JavaExec) {
@@ -172,5 +172,5 @@ task(loadSchoolDataForConformance, type: JavaExec) {
     }
     main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
-    args = ["school", "school-data.jsonl", "jdbc:postgresql://localhost:5432/ft_presentation"]
+    args = ["school", "school-data.jsonl", "ft_presentation"]
 }

@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class RecordsResourceFunctionalTest extends FunctionalTestBase {
     @BeforeClass
     public static void publishTestMessages() {
-        DBSupport.publishMessages(ImmutableList.of(
+        dbSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
