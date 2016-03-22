@@ -11,7 +11,6 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public interface EntriesUpdateDAO {
     String tableName = "entries";
@@ -21,7 +20,7 @@ public interface EntriesUpdateDAO {
 
     @SqlBatch("INSERT INTO " + tableName + "(ENTRY) values(:messages)")
     @BatchChunkSize(1000)
-    void add(@Bind("messages") List<byte[]> messages);
+    void add(@Bind("messages") Iterable<byte[]> messages);
 
     //methods below are temporary purpose to copy all data from entries table to entry and item tables
     @SqlQuery("select max(id) from entries")
@@ -29,7 +28,7 @@ public interface EntriesUpdateDAO {
 
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("SELECT ID,ENTRY FROM " + tableName + " WHERE ID > :lastReadSerialNumber ORDER BY ID LIMIT 5000")
-    List<OldSchemaEntry> read(@Bind("lastReadSerialNumber") int lastReadSerialNumber);
+    Iterable<OldSchemaEntry> read(@Bind("lastReadSerialNumber") int lastReadSerialNumber);
 
     class EntryMapper implements ResultSetMapper<OldSchemaEntry> {
         @Override

@@ -38,12 +38,12 @@ public class Item {
 
         Item item = (Item) o;
 
-        return !(sha256hex != null ? !sha256hex.equals(item.sha256hex) : item.sha256hex != null);
+        return sha256hex.equals(item.sha256hex);
 
     }
 
     @Override
     public int hashCode() {
-        return sha256hex != null ? sha256hex.hashCode() : 0;
+        return sha256hex.hashCode();
     }
 }

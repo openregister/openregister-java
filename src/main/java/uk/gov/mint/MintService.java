@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import java.util.List;
 
 @Path("/")
 public class MintService {
@@ -30,7 +29,7 @@ public class MintService {
     @PermitAll
     @Path("/load")
     public void load(String payload) {
-        List<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
+        Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
         objects.forEach(singleObject -> entryValidator.validateEntry(register, singleObject));
         loadHandler.load(objects);
     }

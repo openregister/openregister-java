@@ -3,12 +3,9 @@ package uk.gov.mint;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 import uk.gov.store.EntriesUpdateDAO;
 import uk.gov.store.EntryStore;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class LoadHandler implements Loader {
     private final CanonicalJsonMapper canonicalJsonMapper;
@@ -24,14 +21,13 @@ public class LoadHandler implements Loader {
     }
 
     @Override
-    public void load(List<JsonNode> items) {
-        List<byte[]> entriesAsBytes = items.stream()
-                .map(singleEntry -> canonicalJsonMapper.writeToBytes(hashedEntry(singleEntry)))
-                .collect(Collectors.toList());
+    public void load(Iterable<JsonNode> items) {
+        Iterable<byte[]> entriesAsBytes = Iterables.transform(items, item -> canonicalJsonMapper.writeToBytes(hashedEntry(item)));
+
         entriesUpdateDAO.add(entriesAsBytes);
 
         if (!migrationInProcess) {
-            entryStore.load(Lists.transform(items, Item::new));
+            entryStore.load(Iterables.transform(items, Item::new));
         }
     }
 
