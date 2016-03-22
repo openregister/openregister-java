@@ -59,7 +59,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void writeEntriesAndItemsInBatch(String registerName, List<Entry> entries, List<Item> items) {
         List<String> existingItemHexValues = itemUpdateDAO.getExistingItemHexValues(Lists.transform(items, Item::getItemHash));
-        List<Item> newItems = items.stream().filter(i -> existingItemHexValues.contains(i)).collect(Collectors.toList());
+        List<Item> newItems = items.stream().filter(i -> !existingItemHexValues.contains(i.getItemHash())).collect(Collectors.toList());
 
         entryUpdateDAO.writeBatch(entries);
         if (!newItems.isEmpty()) {

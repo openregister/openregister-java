@@ -18,6 +18,9 @@ public interface SourceDBQueryDAO extends DBConnectionDAO {
     String ENTRY_TABLE = "entry";
     String ITEM_TABLE = "item";
 
+    @SqlQuery("SELECT 1 FROM pg_tables WHERE tablename = '" + ENTRIES_TABLE + "'")
+    boolean entriesTableExists();
+
     @RegisterMapper(FatEntryMapper.class)
     @SqlQuery("SELECT ID,ENTRY FROM " + ENTRIES_TABLE + " WHERE ID > :lastReadSerialNumber ORDER BY ID LIMIT 5000")
     List<FatEntry> read(@Bind("lastReadSerialNumber") int lastReadSerialNumber);

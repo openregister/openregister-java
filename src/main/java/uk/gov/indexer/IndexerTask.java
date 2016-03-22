@@ -10,6 +10,7 @@ import uk.gov.indexer.dao.Item;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,6 +81,9 @@ public class IndexerTask implements Runnable {
     }
 
     private List<FatEntry> fetchNewFatEntries() {
+        if (!sourceDBQueryDAO.entriesTableExists()) {
+            return Collections.emptyList();
+        }
         return sourceDBQueryDAO.read(destinationDBUpdateDAO.lastReadSerialNumber());
     }
 
