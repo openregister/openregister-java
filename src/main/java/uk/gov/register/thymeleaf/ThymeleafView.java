@@ -17,7 +17,7 @@ import java.util.Optional;
 public class ThymeleafView extends View {
     protected final RequestContext requestContext;
     private String thymeleafTemplateName;
-    private final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
+    protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
     public ThymeleafView(RequestContext requestContext, String templateName) {
         super(templateName, StandardCharsets.UTF_8);
