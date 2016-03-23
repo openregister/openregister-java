@@ -8,7 +8,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
-import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -52,7 +51,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
     }
 
     public void populateAddressRegisterEntries() {
-        DBSupport.publishMessages(ImmutableList.of(
+        dbSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
@@ -75,7 +74,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
                     return rootNode.toString();
                 }, (a, b) -> a, TreeMap::new));
 
-        DBSupport.publishMessages("register", registerEntries);
+        dbSupport.publishMessages("register", registerEntries);
     }
 
     private void verifyStringIsAnISODate(String lastUpdated) {

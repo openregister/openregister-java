@@ -4,7 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Test;
-import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
 import java.util.Collections;
@@ -23,7 +22,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
     @Test
     public void homepageHasXhtmlLangAttributes() throws Throwable {
         cleanDatabaseRule.before();
-        DBSupport.publishMessages("address", Collections.singletonList("{\"address\":\"1234\"}"));
+        dbSupport.publishMessages("address", Collections.singletonList("{\"address\":\"1234\"}"));
         Response response = getRequest("/");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
@@ -39,7 +38,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
         // assumes that registers.yaml has a `postcode` entry with a copyright field containing markdown links
         // might be good to find a way to specify this in the test
         cleanDatabaseRule.before();
-        DBSupport.publishMessages("postcode", Collections.singletonList("{\"postcode\":\"1234\"}"));
+        dbSupport.publishMessages("postcode", Collections.singletonList("{\"postcode\":\"1234\"}"));
 
         Response response = getRequest("postcode", "/");
         Document doc = Jsoup.parse(response.readEntity(String.class));
@@ -54,7 +53,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
         // assumes that registers.yaml has a `postcode` entry with a copyright field containing markdown links
         // might be good to find a way to specify this in the test
         cleanDatabaseRule.before();
-        DBSupport.publishMessages("postcode", Collections.singletonList("{\"postcode\":\"1234\"}"));
+        dbSupport.publishMessages("postcode", Collections.singletonList("{\"postcode\":\"1234\"}"));
 
         Response response = getRequest("postcode", "/");
         Document doc = Jsoup.parse(response.readEntity(String.class));

@@ -17,7 +17,7 @@ public class HistoryTest extends FunctionalTestBase {
 
     @BeforeClass
     public static void publishTestMessages() {
-        DBSupport.publishMessages(ImmutableList.of(
+        dbSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"address\":\"145678\", \"name\":\"ellis\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"address\":\"12345\", \"name\":\"ellis\"}}",
                 "{\"hash\":\"hash3\",\"entry\":{\"address\":\"6789\", \"name\":\"presley\"}}",
