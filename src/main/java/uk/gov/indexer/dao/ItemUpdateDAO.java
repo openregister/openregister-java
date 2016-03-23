@@ -20,7 +20,7 @@ public interface ItemUpdateDAO extends DBConnectionDAO {
     @SqlUpdate
     void ensureItemIndexInPlace();
 
-    @SqlBatch("INSERT INTO " + ITEM_TABLE + "(sha256hex, content) VALUES(:itemHash, :jsonContent)")
+    @SqlBatch("INSERT INTO " + ITEM_TABLE + "(sha256hex, content) VALUES(:sha256hex, :jsonContent)")
     void writeBatch(@BindBean Iterable<Item> items);
 
     @SqlQuery("SELECT sha256hex FROM " + ITEM_TABLE + " WHERE sha256hex IN (<item_hex_values>)")

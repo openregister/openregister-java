@@ -25,7 +25,7 @@ public class CurrentKeyTransformer {
         Map<String, Integer> currentKeys = new HashMap<>();
         entries.forEach(e -> currentKeys.put(
                 getKey(registerName,
-                        items.stream().collect(Collectors.toMap(i -> i.getItemHash(), i -> i.getContent()))
+                        items.stream().collect(Collectors.toMap(i -> i.getSha256hex(), i -> i.getContent()))
                                 .get(e.getItemHash())),
                 e.getEntryNumber()));
         return currentKeys

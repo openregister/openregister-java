@@ -34,6 +34,10 @@ public class ElasticSearchDataUploadTask implements Runnable {
     }
 
     private void uploadEntries() {
+        if (!indexedEntriesUpdateDAO.indexedEntriesTableExists()) {
+            return;
+        }
+
         List<OrderedEntryIndex> entries;
         int currentWatermark = elasticsearch.currentWaterMark();
         while (!(entries = indexedEntriesUpdateDAO.fetchEntriesAfter(currentWatermark)).isEmpty()) {

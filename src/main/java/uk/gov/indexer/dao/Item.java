@@ -7,16 +7,16 @@ import java.sql.SQLException;
 
 public class Item {
 
-    private final String itemHash;
+    private final String sha256hex;
     private final byte[] content;
 
-    public Item(String itemHash, byte[] content) {
-        this.itemHash = itemHash;
+    public Item(String sha256hex, byte[] content) {
+        this.sha256hex = sha256hex;
         this.content = content;
     }
 
-    public String getItemHash() {
-        return itemHash;
+    public String getSha256hex() {
+        return sha256hex;
     }
 
     public byte[] getContent() {
@@ -35,12 +35,12 @@ public class Item {
 
         Item item = (Item) o;
 
-        return !(itemHash != null ? !itemHash.equals(item.itemHash) : item.itemHash != null);
+        return !(sha256hex != null ? !sha256hex.equals(item.sha256hex) : item.sha256hex != null);
     }
 
     @Override
     public int hashCode() {
-        return itemHash != null ? itemHash.hashCode() : 0;
+        return sha256hex != null ? sha256hex.hashCode() : 0;
     }
 
     private PGobject pgObject(String itemContent) {

@@ -95,7 +95,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     private Set<Item> extractNewItems(List<Item> items) {
-        List<String> existingItemHexValues = itemUpdateDAO.getExistingItemHexValues(Lists.transform(items, Item::getItemHash));
-        return items.stream().filter(i -> !existingItemHexValues.contains(i.getItemHash())).collect(Collectors.toSet());
+        List<String> existingItemHexValues = itemUpdateDAO.getExistingItemHexValues(Lists.transform(items, Item::getSha256hex));
+        return items.stream().filter(i -> !existingItemHexValues.contains(i.getSha256hex())).collect(Collectors.toSet());
     }
 }

@@ -34,6 +34,10 @@ public class CloudSearchDataUploadTask implements Runnable {
     }
 
     private void uploadEntries() {
+        if (!indexedEntriesUpdateDAO.indexedEntriesTableExists()) {
+            return;
+        }
+        
         List<OrderedEntryIndex> entries;
         int currentWatermark = cloudSearch.currentWaterMark();
         while (!(entries = indexedEntriesUpdateDAO.fetchEntriesAfter(currentWatermark)).isEmpty()) {

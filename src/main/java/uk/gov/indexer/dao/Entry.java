@@ -22,6 +22,7 @@ public class Entry {
         return itemHash;
     }
 
+    @SuppressWarnings("unused, used by DAO")
     public Timestamp getTimestamp() {
         return timestamp;
     }

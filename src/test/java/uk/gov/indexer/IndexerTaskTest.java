@@ -99,16 +99,17 @@ public class IndexerTaskTest {
 
     @Test
     public void confirmThatCurrentkeyTableLoadsOnlyLatestRecord() throws SQLException {
-        try (Connection connection = createPresentationConnection()) {
-            try (Statement statement = connection.createStatement()) {
+        try (Connection mintConnection = createMintConnection(); Connection presentationConnection = createPresentationConnection()) {
+            try (Statement mintStatement = mintConnection.createStatement(); Statement presentationStatement = presentationConnection.createStatement()) {
 
-                recreateEntriesTable(statement);
-                dropReadApiTables(statement);
+                recreateEntriesTable(mintStatement);
+                dropReadApiTables(presentationStatement);
 
-                DBI dbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer?user=postgres");
+                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_mint?user=postgres");
+                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
 
-                SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
+                SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
+                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
                 IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 loadEntriesInMintDB(2);
@@ -116,23 +117,24 @@ public class IndexerTaskTest {
 
                 indexerTask.run();
 
-                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{3,fp_1}, {4,fp_2}]"));
+                assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{3,fp_1}, {4,fp_2}]"));
             }
         }
     }
 
     @Test
     public void confirmThatCurrentkeyTableLoadsOnlyLatestRecordFromEntryAndItem() throws SQLException {
-        try (Connection connection = createPresentationConnection()) {
-            try (Statement statement = connection.createStatement()) {
+        try (Connection mintConnection = createMintConnection(); Connection presentationConnection = createPresentationConnection()) {
+            try (Statement mintStatement = mintConnection.createStatement(); Statement presentationStatement = presentationConnection.createStatement()) {
 
-                recreateEntriesTable(statement);
-                dropReadApiTables(statement);
+                recreateEntriesTable(mintStatement);
+                dropReadApiTables(presentationStatement);
 
-                DBI dbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer?user=postgres");
+                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_mint?user=postgres");
+                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
 
-                SourceDBQueryDAO sourceDBQueryDAO = dbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO destinationDBUpdateDAO = dbi.open().attach(DestinationDBUpdateDAO.class);
+                SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
+                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
                 IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 loadEntriesAndItemsInMintDB(2);
@@ -140,7 +142,7 @@ public class IndexerTaskTest {
 
                 indexerTask.run();
 
-                assertThat(currentKeys(statement).toString(), CoreMatchers.equalTo("[{3,fp_1}, {4,fp_2}]"));
+                assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{3,fp_1}, {4,fp_2}]"));
             }
         }
     }
@@ -238,8 +240,8 @@ public class IndexerTaskTest {
         statement.execute("drop table if exists current_keys");
         statement.execute("drop table if exists total_entries");
         statement.execute("drop table if exists total_records");
-        statement.execute("drop table if exists indexed_entry");
-        statement.execute("drop table if exists indexed_item");
+        statement.execute("drop table if exists entry");
+        statement.execute("drop table if exists item");
     }
 
     private Connection createMintConnection() throws SQLException {
