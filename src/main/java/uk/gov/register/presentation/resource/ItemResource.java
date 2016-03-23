@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import io.dropwizard.jersey.caching.CacheControl;
 import org.postgresql.util.PSQLException;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.ItemDAO;
@@ -26,6 +27,7 @@ public class ItemResource {
     @GET
     @Path("/{sha256hash: sha-256:.*}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+    @CacheControl(immutable = true)
     public ItemView getItemBySHA256Hash(@PathParam("sha256hash") String sha256Hash) {
         Optional<Item> item;
         try {

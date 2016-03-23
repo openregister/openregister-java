@@ -44,6 +44,7 @@ public class SearchResource {
         return viewFactory.getRecordsView(records, pagination);
     }
 
+    @Deprecated
     @GET
     @Path("/item/{item-hash}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
