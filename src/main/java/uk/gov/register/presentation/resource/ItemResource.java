@@ -3,7 +3,9 @@ package uk.gov.register.presentation.resource;
 import org.postgresql.util.PSQLException;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.ItemDAO;
+import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ItemView;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -12,16 +14,18 @@ import java.util.Optional;
 
 @Path("/item")
 public class ItemResource {
+    private final ViewFactory viewFactory;
     private final ItemDAO itemDAO;
 
     @Inject
-    public ItemResource(ItemDAO itemDAO) {
+    public ItemResource(ViewFactory viewFactory, ItemDAO itemDAO) {
+        this.viewFactory = viewFactory;
         this.itemDAO = itemDAO;
     }
 
     @GET
     @Path("/{sha256hash: sha-256:.*}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
     public ItemView getItemBySHA256Hash(@PathParam("sha256hash") String sha256Hash) {
         Optional<Item> item;
         try {
@@ -33,6 +37,6 @@ public class ItemResource {
             }
             throw e;
         }
-        return item.map(ItemView::new).orElseThrow(NotFoundException::new);
+        return item.map(viewFactory::getItemView).orElseThrow(NotFoundException::new);
     }
 }

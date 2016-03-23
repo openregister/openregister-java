@@ -48,7 +48,7 @@ public class EntryConverter {
         );
     }
 
-    private FieldValue convert(Map.Entry<String, JsonNode> mapEntry) {
+    public FieldValue convert(Map.Entry<String, JsonNode> mapEntry) {
         String fieldName = mapEntry.getKey();
         JsonNode value = mapEntry.getValue();
         FieldConverter fieldConverter = new FieldConverter(fieldsConfiguration.getField(fieldName));

@@ -29,7 +29,7 @@ public class ItemResourceTest extends FunctionalTestBase {
     public void getItemBySha256Hash() throws JSONException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = getRequest("/item/sha-256:" + sha256Hex);
+        Response response = getRequest(String.format("/item/sha-256:%s.json", sha256Hex));
 
         assertThat(response.getStatus(), equalTo(200));
 

@@ -9,6 +9,7 @@ import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
@@ -87,6 +88,10 @@ public class ViewFactory {
 
     public ListVersionView listVersionView(List<Version> versions) throws Exception {
         return new ListVersionView(requestContext, getCustodian(), getBranding(), versions);
+    }
+
+    public ItemView getItemView(Item item){
+        return new ItemView(requestContext, getCustodian(), getBranding(), entryConverter, item);
     }
 
     private PublicBody getCustodian() {
