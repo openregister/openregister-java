@@ -39,9 +39,7 @@ public class ItemResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void return404ResponseWhenItemNotExist() throws JSONException {
-        String sha256Hex = DigestUtils.sha256Hex(item1);
-
-        Response response = getRequest("/item/sha256:" + sha256Hex);
+        Response response = getRequest("/item/sha-256:notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }

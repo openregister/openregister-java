@@ -44,16 +44,6 @@ public class SearchResource {
         return viewFactory.getRecordsView(records, pagination);
     }
 
-    @Deprecated
-    @GET
-    @Path("/item/{item-hash}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    @CacheControl(immutable = true)
-    public SingleEntryView findByItemHash(@PathParam("item-hash") String itemHash) {
-        Optional<DbEntry> entryO = queryDAO.findEntryByHash(itemHash);
-        return entryResponse(entryO, viewFactory::getSingleEntryView);
-    }
-
     @GET
     @Path("/entry/{entry-number}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
