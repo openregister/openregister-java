@@ -1,16 +1,12 @@
 package uk.gov.indexer;
 
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
-import uk.gov.indexer.dao.Entry;
 import uk.gov.indexer.dao.FatEntry;
-import uk.gov.indexer.dao.Item;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,54 +38,23 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        updateFatEntries();
-        updateEntries();
-    }
+        List<FatEntry> entries = fetchNewEntries();
 
-    private void updateFatEntries() {
-        List<FatEntry> fatEntries = fetchNewFatEntries();
-
-        if (fatEntries.isEmpty()) {
-            if (!destinationDBUpdateDAO.isMigrationComplete()) {
-                updateCloudWatch(0);
-            }
+        if (entries.isEmpty()) {
+            updateCloudWatch(0);
         } else {
             do {
-                int totalNewEntries = fatEntries.size();
+                int totalNewEntries = entries.size();
 
                 LOGGER.info(String.format("Register '%s': Found '%d' new entries in entries table.", register, totalNewEntries));
 
-                destinationDBUpdateDAO.writeEntriesInBatch(register, fatEntries);
+                destinationDBUpdateDAO.writeEntriesInBatch(register, entries);
 
-                LOGGER.info(String.format("Register '%s': Copied '%d' entries in ordered_entry_index from index '%d'.", register, totalNewEntries, fatEntries.get(0).serial_number));
+                LOGGER.info(String.format("Register '%s': Copied '%d' entries in ordered_entry_index from index '%d'.", register, totalNewEntries, entries.get(0).serial_number));
 
                 updateCloudWatch(totalNewEntries);
 
                 LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%d' entries processed.", register, totalNewEntries));
-            } while (!(fatEntries = fetchNewFatEntries()).isEmpty());
-        }
-    }
-
-    private void updateEntries() {
-        List<Entry> entries = fetchNewEntries();
-
-        if (entries.isEmpty()) {
-            if (destinationDBUpdateDAO.isMigrationComplete()) {
-                updateCloudWatch(0);
-            }
-        } else {
-            do {
-                int totalNewEntries = entries.size();
-                List<Item> items = fetchItemsByHex(Lists.transform(entries, Entry::getItemHash));
-                LOGGER.info(String.format("Register '%s': Found '%d' new entries in entry table.", register, totalNewEntries));
-
-                destinationDBUpdateDAO.writeEntriesAndItemsInBatch(register, entries, items);
-                LOGGER.info(String.format("Register '%s': Copied '%d' entries in entry from index '%d'.", register, totalNewEntries, entries.get(0).getEntryNumber()));
-
-                if (destinationDBUpdateDAO.isMigrationComplete()) {
-                    updateCloudWatch(totalNewEntries);
-                    LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%d' entries processed.", register, totalNewEntries));
-                }
             } while (!(entries = fetchNewEntries()).isEmpty());
         }
     }
@@ -98,21 +63,7 @@ public class IndexerTask implements Runnable {
         cloudwatchUpdater.ifPresent(cwu -> cwu.update(totalEntriesWritten));
     }
 
-    private List<FatEntry> fetchNewFatEntries() {
-        if (!sourceDBQueryDAO.entriesTableExists()) {
-            return Collections.emptyList();
-        }
+    private List<FatEntry> fetchNewEntries() {
         return sourceDBQueryDAO.read(destinationDBUpdateDAO.lastReadSerialNumber());
-    }
-
-    private List<Entry> fetchNewEntries() {
-        if (!sourceDBQueryDAO.entryTableExists()) {
-            return Collections.emptyList();
-        }
-        return sourceDBQueryDAO.readEntries(destinationDBUpdateDAO.lastReadEntryNumber());
-    }
-
-    private List<Item> fetchItemsByHex(List<String> itemHexValues) {
-        return sourceDBQueryDAO.readItems(itemHexValues);
     }
 }

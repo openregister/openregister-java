@@ -18,9 +18,6 @@ public interface IndexedEntriesUpdateDAO extends DBConnectionDAO {
     @SqlUpdate
     void ensureEntryTablesInPlace();
 
-    @SqlQuery("SELECT 1 FROM pg_tables WHERE tablename='" + INDEXED_ENTRIES_TABLE + "'")
-    boolean indexedEntriesTableExists();
-
     @SqlUpdate("CREATE INDEX " + INDEXED_ENTRIES_INDEX + " ON " + INDEXED_ENTRIES_TABLE + " USING gin(entry jsonb_path_ops)")
     void createIndexedEntriesIndex();
 

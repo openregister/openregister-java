@@ -1,12 +1,16 @@
 package uk.gov.indexer.dao;
 
+import com.amazonaws.util.json.Jackson;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,10 +51,6 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         return entryUpdateDAO.lastReadEntryNumber();
     }
 
-    public boolean isMigrationComplete() {
-        return lastReadEntryNumber() > lastReadSerialNumber();
-    }
-
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void writeEntriesInBatch(String registerName, List<FatEntry> entries) {
         List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(FatEntry::dbEntry).collect(Collectors.toList());
@@ -62,36 +62,36 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
     }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntriesAndItemsInBatch(String registerName, List<Entry> entries, List<Item> items) {
+    public void writeEntriesAndItemsInBatch(List<Entry> entries, List<Item> items) {
         Set<Item> newItems = extractNewItems(items);
 
         entryUpdateDAO.writeBatch(entries);
         if (!newItems.isEmpty()) {
             itemUpdateDAO.writeBatch(newItems);
         }
-
-        if (lastReadEntryNumber() > lastReadSerialNumber()) {
-            upsertInCurrentKeysTable(registerName, entries, items);
-            indexedEntriesUpdateDAO.updateTotalEntries(entries.size());
-        }
     }
 
-    // TODO: Remove once migration to new schema complete
     private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
-        List<CurrentKey> currentKeys = CurrentKeyTransformer.extractCurrentKeys(registerName, orderedEntryIndexes);
-        upsertInCurrentKeysTable(currentKeys);
-    }
-
-    private void upsertInCurrentKeysTable(String registerName, List<Entry> entries, List<Item> items) {
-        List<CurrentKey> currentKeys = CurrentKeyTransformer.extractCurrentKeys(registerName, entries, items);
-        upsertInCurrentKeysTable(currentKeys);
-    }
-
-    private void upsertInCurrentKeysTable(List<CurrentKey> currentKeys) {
-        int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(currentKeys, ck -> ck.getKey()));
+        int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry())));
+        List<CurrentKey> currentKeys = extractCurrentKeys(registerName, orderedEntryIndexes);
 
         currentKeysUpdateDAO.writeCurrentKeys(currentKeys);
         currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
+    }
+
+    private List<CurrentKey> extractCurrentKeys(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
+        Map<String, Integer> currentKeys = new HashMap<>();
+        orderedEntryIndexes.forEach(e1 -> currentKeys.put(getKey(registerName, e1.getEntry()), e1.getSerial_number()));
+        return currentKeys
+                .entrySet()
+                .stream()
+                .map(e -> new CurrentKey(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    private String getKey(String registerName, String entry) {
+        JsonNode jsonNode = Jackson.jsonNodeOf(entry);
+        return jsonNode.get("entry").get(registerName).textValue();
     }
 
     private Set<Item> extractNewItems(List<Item> items) {

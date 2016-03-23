@@ -56,7 +56,7 @@ public class IndexerTaskTest {
                 //load 1 entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(presentationStatement, indexerTask, 1, 1);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 1);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{1,fp_1}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 1, 1);
 
@@ -65,7 +65,7 @@ public class IndexerTaskTest {
                 //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(presentationStatement, indexerTask, 2, 1);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 2);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{2,fp_1}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 2, 1);
 
@@ -74,7 +74,7 @@ public class IndexerTaskTest {
                 //load 5 more entry and confirm the changes
                 loadEntriesInMintDB(5);
 
-                runIndexerAndVerifyResult(presentationStatement, indexerTask, 7, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 7);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {3,fp_1}, {4,fp_2}, {5,fp_3}, {6,fp_4}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 7, 5);
 
@@ -83,14 +83,14 @@ public class IndexerTaskTest {
                 //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {4,fp_2}, {5,fp_3}, {6,fp_4}, {8,fp_1}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 8, 5);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
                 //run indexer again when no new entries available, confirms that nothing changes but cloudwatch get notification with 0 entry
-                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(0);
             }
@@ -122,31 +122,6 @@ public class IndexerTaskTest {
         }
     }
 
-    @Test
-    public void confirmThatCurrentkeyTableLoadsOnlyLatestRecordFromEntryAndItem() throws SQLException {
-        try (Connection mintConnection = createMintConnection(); Connection presentationConnection = createPresentationConnection()) {
-            try (Statement mintStatement = mintConnection.createStatement(); Statement presentationStatement = presentationConnection.createStatement()) {
-
-                recreateEntriesTable(mintStatement);
-                dropReadApiTables(presentationStatement);
-
-                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_mint?user=postgres");
-                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
-
-                SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
-                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
-
-                loadEntriesAndItemsInMintDB(2);
-                loadEntriesAndItemsInMintDB(2);
-
-                indexerTask.run();
-
-                assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{3,fp_1}, {4,fp_2}]"));
-            }
-        }
-    }
-
     private List<CurrentKey> currentKeys(Statement statement) throws SQLException {
         List<CurrentKey> currentKeys = new ArrayList<>();
         try (ResultSet resultSet = statement.executeQuery("select * from current_keys")) {
@@ -157,29 +132,15 @@ public class IndexerTaskTest {
         return currentKeys;
     }
 
-    private void runIndexerAndVerifyResult(Statement statement, IndexerTask indexerTask, int expectedEntries, int expectedItems) throws SQLException {
+    private void runIndexerAndVerifyResult(Statement statement, IndexerTask indexerTask, int expectedEntries) throws SQLException {
         indexerTask.run();
-
         verifyNumberOfEntriesInOrderedEntryIndexTable(statement, expectedEntries);
-        verifyNumberInEntryAndItemTables(statement, expectedEntries, expectedItems);
     }
-
 
     private void verifyNumberOfEntriesInOrderedEntryIndexTable(Statement statement, int expectedEntries) throws SQLException {
         try (ResultSet resultSet = statement.executeQuery("select count(*) from ordered_entry_index")) {
             resultSet.next();
             assertThat(resultSet.getInt("count"), CoreMatchers.equalTo(expectedEntries));
-        }
-    }
-
-    private void verifyNumberInEntryAndItemTables(Statement statement, int expectedEntries, int expectedItems) throws SQLException {
-        try (ResultSet entries = statement.executeQuery("select count(*) from entry")) {
-            entries.next();
-            assertThat(entries.getInt("count"), CoreMatchers.equalTo(expectedEntries));
-        }
-        try (ResultSet items = statement.executeQuery("select count(*) from item")) {
-            items.next();
-            assertThat(items.getInt("count"), CoreMatchers.equalTo(expectedItems));
         }
     }
 
@@ -201,37 +162,11 @@ public class IndexerTaskTest {
                 statement.execute(String.format("insert into entries(entry) values('{\"hash\": \"hash%s\", \"entry\": {\"food-premises\":\"fp_%s\",\"business\":\"company:123\"}}')", entryNumber, entryNumber));
             }
         }
-
-        loadEntriesAndItemsInMintDB(noOfEntries);
-    }
-
-    private void loadEntriesAndItemsInMintDB(int noOfEntries) throws SQLException {
-        try (Statement statement = createMintConnection().createStatement()) {
-            for (int entryNumber = 1; entryNumber <= noOfEntries; entryNumber++) {
-                statement.execute(String.format("insert into entry(sha256hex) values('hash%s')", entryNumber));
-
-                try (ResultSet resultSet = statement.executeQuery(String.format("select count(*) from item where sha256hex = 'hash%s'", entryNumber))) {
-                    resultSet.next();
-                    if (resultSet.getInt("count") == 0) {
-                        statement.execute(String.format("insert into item(sha256hex, content) values('hash%s', '{\"food-premises\":\"fp_%s\",\"business\":\"company:123\"}')", entryNumber, entryNumber));
-                    }
-                }
-            }
-        }
     }
 
     private void recreateEntriesTable(Statement statement) throws SQLException {
         statement.execute("drop table if exists entries");
         statement.execute("create table if not exists entries (id serial primary key, entry bytea)");
-
-        recreateEntryAndItemTables(statement);
-    }
-
-    private void recreateEntryAndItemTables(Statement statement) throws SQLException {
-        statement.execute("drop table if exists entry");
-        statement.execute("drop table if exists item");
-        statement.execute("create table if not exists entry (entry_number serial primary key, sha256hex varchar, timestamp timestamp default now())");
-        statement.execute("create table if not exists item (sha256hex varchar primary key, content bytea)");
     }
 
     private void dropReadApiTables(Statement statement) throws SQLException {
@@ -240,8 +175,6 @@ public class IndexerTaskTest {
         statement.execute("drop table if exists current_keys");
         statement.execute("drop table if exists total_entries");
         statement.execute("drop table if exists total_records");
-        statement.execute("drop table if exists entry");
-        statement.execute("drop table if exists item");
     }
 
     private Connection createMintConnection() throws SQLException {
