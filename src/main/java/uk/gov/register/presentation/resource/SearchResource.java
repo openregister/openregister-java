@@ -1,7 +1,5 @@
 package uk.gov.register.presentation.resource;
 
-import com.google.common.primitives.Ints;
-import io.dropwizard.jersey.caching.CacheControl;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -42,16 +40,6 @@ public class SearchResource {
         List<DbEntry> records = queryDAO.findLatestEntriesOfRecordsByKeyValue(key, value);
         Pagination pagination = new Pagination(Optional.empty(), Optional.empty(), records.size());
         return viewFactory.getRecordsView(records, pagination);
-    }
-
-    @GET
-    @Path("/entry/{entry-number}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    @CacheControl(immutable = true)
-    public SingleEntryView findBySerial(@PathParam("entry-number") String serialString) {
-        Optional<Integer> serial = Optional.ofNullable(Ints.tryParse(serialString));
-        Optional<DbEntry> entryO = serial.flatMap(queryDAO::findEntryBySerialNumber);
-        return entryResponse(entryO, viewFactory::getSingleEntryView);
     }
 
     private SingleEntryView entryResponse(Optional<DbEntry> optionalEntry, Function<DbEntry, SingleEntryView> convertToEntryView) {

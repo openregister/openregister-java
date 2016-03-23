@@ -9,6 +9,7 @@ import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -101,5 +102,9 @@ public class ViewFactory {
     private Optional<GovukOrganisation.Details> getBranding() {
         Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(requestContext.getRegister().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
+    }
+
+    public NewEntryView getNewEntryView(Entry entry) {
+        return new NewEntryView(requestContext, getCustodian(), getBranding(), entry);
     }
 }

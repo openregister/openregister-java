@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -29,6 +30,12 @@ public class ThrowableExceptionMapper implements ExceptionMapper<Throwable> {
         if (exception instanceof ClientErrorException) {
             throw (ClientErrorException) exception;
         }
+
+        if (exception instanceof ParamException.PathParamException) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
+                    .entity(viewFactory.thymeleafView("404.html"))
+                    .build();        }
 
         LOGGER.warn("Uncaught exception: {}", exception);
 
