@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ItemResourceTest extends FunctionalTestBase {
+public class ItemResourceFunctionalTest extends FunctionalTestBase {
     static String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
     static String item2 = "{\"address\":\"145678\",\"name\":\"ellis\"}";
 
@@ -26,7 +26,7 @@ public class ItemResourceTest extends FunctionalTestBase {
     }
 
     @Test
-    public void getItemBySha256Hash() throws JSONException {
+    public void jsonRepresentationOfAnItem() throws JSONException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
         Response response = getRequest(String.format("/item/sha-256:%s.json", sha256Hex));
