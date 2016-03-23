@@ -9,16 +9,13 @@ import org.skife.jdbi.v2.unstable.BindIn;
 
 import java.util.List;
 
-@UseStringTemplate3StatementLocator("/sql/init_item.sql")
+@UseStringTemplate3StatementLocator
 public interface ItemUpdateDAO extends DBConnectionDAO {
 
     String ITEM_TABLE = "item";
 
-    @SqlUpdate
+    @SqlUpdate("CREATE TABLE IF NOT EXISTS item (sha256hex VARCHAR PRIMARY KEY, content JSONB)")
     void ensureItemTableInPlace();
-
-    @SqlUpdate
-    void ensureItemIndexInPlace();
 
     @SqlBatch("INSERT INTO " + ITEM_TABLE + "(sha256hex, content) VALUES(:sha256hex, :jsonContent)")
     void writeBatch(@BindBean Iterable<Item> items);

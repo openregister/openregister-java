@@ -39,7 +39,6 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
 
         itemUpdateDAO = handle.attach(ItemUpdateDAO.class);
         itemUpdateDAO.ensureItemTableInPlace();
-        itemUpdateDAO.ensureItemIndexInPlace();
     }
 
     // TODO: Remove once migration to new schema complete
