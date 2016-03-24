@@ -47,6 +47,17 @@ public class Indexer {
                     TimeUnit.SECONDS
             );
 
+            executorService.scheduleAtFixedRate(
+                    new IndexEntryItemTask(
+                            register,
+                            sourceDBQueryDAO,
+                            destinationDBUpdateDAO
+                    ),
+                    0,
+                    10,
+                    TimeUnit.SECONDS
+            );
+
             configuration.cloudSearchEndPoint(register).ifPresent(
                     endPoint -> executorService.scheduleAtFixedRate(
                             new CloudSearchDataUploadTask(register, endPoint, configuration.cloudSearchWaterMarkEndPoint(register).get(), destDbi.onDemand(IndexedEntriesUpdateDAO.class)),

@@ -10,7 +10,8 @@ cache:
   - $HOME/.gradle/caches
   - $HOME/.gradle/wrapper
 before_script:
-- psql -c 'create database test_indexer;' -U postgres
+- psql -c 'create database test_indexer_mint;' -U postgres
+- psql -c 'create database test_indexer_presentation;' -U postgres
 script:
 - ./gradlew clean build
 deploy:

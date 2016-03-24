@@ -1,17 +1,29 @@
 package uk.gov.indexer.dao;
 
-import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 
 public class Entry {
-    public final int serial_number;
-    public final byte[] contents;
 
-    public Entry(int serial_number, byte[] contents) {
-        this.serial_number = serial_number;
-        this.contents = contents;
+    private final int entryNumber;
+    private final String itemHash;
+    private final Timestamp timestamp;
+
+    public Entry(int entryNumber, String itemHash, Timestamp timestamp) {
+        this.entryNumber = entryNumber;
+        this.itemHash = itemHash;
+        this.timestamp = timestamp;
     }
 
-    public OrderedEntryIndex dbEntry() {
-        return new OrderedEntryIndex(serial_number, new String(contents, StandardCharsets.UTF_8));
+    public int getEntryNumber() {
+        return entryNumber;
+    }
+
+    public String getItemHash() {
+        return itemHash;
+    }
+
+    @SuppressWarnings("unused, used by DAO")
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 }

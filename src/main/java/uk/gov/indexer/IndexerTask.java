@@ -3,7 +3,7 @@ package uk.gov.indexer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
-import uk.gov.indexer.dao.Entry;
+import uk.gov.indexer.dao.FatEntry;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
@@ -38,7 +38,7 @@ public class IndexerTask implements Runnable {
     }
 
     protected void update() {
-        List<Entry> entries = fetchNewEntries();
+        List<FatEntry> entries = fetchNewEntries();
 
         if (entries.isEmpty()) {
             updateCloudWatch(0);
@@ -46,26 +46,24 @@ public class IndexerTask implements Runnable {
             do {
                 int totalNewEntries = entries.size();
 
-                LOGGER.info(String.format("Register '%s': Found '%d' new entries.", register, totalNewEntries));
+                LOGGER.info(String.format("Register '%s': Found '%d' new entries in entries table.", register, totalNewEntries));
 
                 destinationDBUpdateDAO.writeEntriesInBatch(register, entries);
 
-                LOGGER.info(String.format("Register '%s': Copied '%d' entries in database from index '%d'.", register, totalNewEntries, entries.get(0).serial_number));
+                LOGGER.info(String.format("Register '%s': Copied '%d' entries in ordered_entry_index from index '%d'.", register, totalNewEntries, entries.get(0).serial_number));
 
                 updateCloudWatch(totalNewEntries);
 
                 LOGGER.info(String.format("Register '%s': Notified Cloudwatch about '%d' entries processed.", register, totalNewEntries));
             } while (!(entries = fetchNewEntries()).isEmpty());
         }
-
     }
 
     private void updateCloudWatch(final int totalEntriesWritten) {
         cloudwatchUpdater.ifPresent(cwu -> cwu.update(totalEntriesWritten));
     }
 
-    private List<Entry> fetchNewEntries() {
+    private List<FatEntry> fetchNewEntries() {
         return sourceDBQueryDAO.read(destinationDBUpdateDAO.lastReadSerialNumber());
     }
-
 }
