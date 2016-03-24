@@ -58,17 +58,6 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void findByItemHash_throwsNotFoundWhenHashIsNotFound() {
-        when(queryDAO.findEntryByHash("123")).thenReturn(Optional.<DbEntry>empty());
-        try {
-            resource.findByItemHash("123");
-            fail("Must fail");
-        } catch (NotFoundException e) {
-            //success
-        }
-    }
-
-    @Test
     public void findBySerial_findsEntryFromDb() throws Exception {
         DbEntry abcd = new DbEntry(52, new DbContent("abcd", Jackson.newObjectMapper().readTree("{\"school\":\"9001\",\"address\":\"1234\"}")));
         when(queryDAO.findEntryBySerialNumber(52)).thenReturn(Optional.of(abcd));
@@ -119,16 +108,6 @@ public class SearchResourceTest {
     public void findSupportsTurtleHtmlAndJson() throws Exception {
         Method searchMethod = SearchResource.class.getDeclaredMethod("find", String.class, String.class);
         List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
-        assertThat(declaredMediaTypes,
-                hasItems(ExtraMediaType.TEXT_HTML,
-                        MediaType.APPLICATION_JSON,
-                        ExtraMediaType.TEXT_TTL));
-    }
-
-    @Test
-    public void findByItemHashSupportsTurtleHtmlAndJson() throws Exception {
-        Method findByItemHashMethod = SearchResource.class.getDeclaredMethod("findByItemHash", String.class);
-        List<String> declaredMediaTypes = asList(findByItemHashMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(ExtraMediaType.TEXT_HTML,
                         MediaType.APPLICATION_JSON,

@@ -1,5 +1,10 @@
 package uk.gov.register.presentation.functional.testSupport;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Throwables;
+import io.dropwizard.jackson.Jackson;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -40,7 +45,19 @@ public class DBSupport {
     public void publishMessages(String registerName, SortedMap<Integer, String> messages) {
         for (SortedMap.Entry<Integer, String> entry : messages.entrySet()) {
             testDAO.testEntryIndexDAO.insert(entry.getKey(), entry.getValue());
+            insertIntoItemAndEntryTables(entry.getKey(), entry.getValue());
             updateOtherTables(registerName, entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void insertIntoItemAndEntryTables(int serialNumber, String entry) {
+        try {
+            String item = Jackson.newObjectMapper().readValue(entry, JsonNode.class).get("entry").toString();
+            String sha256 = DigestUtils.sha256Hex(item);
+            testDAO.testEntryDAO.insert(serialNumber, sha256);
+            testDAO.testItemDAO.insertIfNotExist(sha256, item);
+        } catch (Exception e) {
+            Throwables.propagate(e);
         }
     }
 

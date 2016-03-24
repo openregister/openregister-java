@@ -15,11 +15,15 @@ public class CleanDatabaseRule extends ExternalResource {
         testDAO.testCurrentKeyDAO.dropTable();
         testDAO.testTotalEntryDAO.dropTable();
         testDAO.testTotalRecordDAO.dropTable();
+        testDAO.testItemDAO.dropTable();
+        testDAO.testEntryDAO.dropTable();
 
         testDAO.testEntryIndexDAO.createTable();
         testDAO.testCurrentKeyDAO.createTable();
         testDAO.testTotalEntryDAO.createTable();
         testDAO.testTotalRecordDAO.createTable();
+        testDAO.testItemDAO.createTable();
+        testDAO.testEntryDAO.createTable();
     }
 
 }

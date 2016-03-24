@@ -18,4 +18,8 @@ CREATE TABLE IF NOT EXISTS total_entries(count INTEGER, last_updated TIMESTAMP W
 
 insert into total_entries (count) select 0 where not exists (select count from total_entries);
 
+create table if not exists item (sha256hex varchar primary key, content jsonb);
+
+create table if not exists entry (entry_number integer primary key, sha256hex varchar, timestamp timestamp without time zone default now());
+
 "

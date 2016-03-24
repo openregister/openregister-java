@@ -22,7 +22,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
     @Test
     public void homepageHasXhtmlLangAttributes() throws Throwable {
         cleanDatabaseRule.before();
-        dbSupport.publishMessages("address", Collections.singletonList("{\"address\":\"1234\"}"));
+        dbSupport.publishMessages("address", Collections.singletonList("{\"hash\":\"hash1\",\"entry\":{\"address\":\"1234\"}}"));
         Response response = getRequest("/");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
@@ -38,7 +38,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
         // assumes that registers.yaml has a `postcode` entry with a copyright field containing markdown links
         // might be good to find a way to specify this in the test
         cleanDatabaseRule.before();
-        dbSupport.publishMessages("postcode", Collections.singletonList("{\"postcode\":\"1234\"}"));
+        dbSupport.publishMessages("postcode", Collections.singletonList("{\"hash\":\"hash1\",\"entry\":{\"postcode\":\"1234\"}}"));
 
         Response response = getRequest("postcode", "/");
         Document doc = Jsoup.parse(response.readEntity(String.class));
@@ -53,7 +53,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
         // assumes that registers.yaml has a `postcode` entry with a copyright field containing markdown links
         // might be good to find a way to specify this in the test
         cleanDatabaseRule.before();
-        dbSupport.publishMessages("postcode", Collections.singletonList("{\"postcode\":\"1234\"}"));
+        dbSupport.publishMessages("postcode", Collections.singletonList("{\"hash\":\"hash1\",\"entry\":{\"postcode\":\"1234\"}}"));
 
         Response response = getRequest("postcode", "/");
         Document doc = Jsoup.parse(response.readEntity(String.class));
