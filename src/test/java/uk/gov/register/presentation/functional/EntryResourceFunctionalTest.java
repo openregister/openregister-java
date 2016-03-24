@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,6 +45,17 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
         assertThat(res.get("item-hash").textValue(), equalTo("sha-256:" + sha256Hex));
         assertThat(res.get("entry-timestamp").textValue(), containsString(LocalDate.now().toString()));
     }
+
+    @Test
+    public void entryView_itemHashIsRenderedAsALink(){
+        String sha256Hex = DigestUtils.sha256Hex(item1);
+
+        Response response = getRequest("/entry/1");
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+        String text = doc.getElementsByTag("table").select("a[href=/item/sha-256:" +sha256Hex +"]").first().text();
+        assertThat(text, equalTo("sha-256:" + sha256Hex));
+    }
+
 
     @Test
     public void return404ResponseWhenEntryNotExist() {

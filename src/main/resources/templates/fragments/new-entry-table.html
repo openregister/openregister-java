@@ -21,7 +21,9 @@
         </tr>
         <tr>
             <td th:text="item-hash"></td>
-            <td th:text="${entry.sha256hex}"></td>
+            <td>
+                <a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a>
+            </td>
         </tr>
         <tr>
             <td th:text="timestamp"></td>
