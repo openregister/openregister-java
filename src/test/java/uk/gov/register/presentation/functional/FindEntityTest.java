@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -15,8 +15,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class FindEntityTest extends FunctionalTestBase {
 
-    @BeforeClass
-    public static void publishTestMessages() {
+    @Before
+    public void publishTestMessages() {
         dbSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",

@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -17,8 +17,8 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DataResourceTest extends FunctionalTestBase {
-    @BeforeClass
-    public static void publishTestMessages() {
+    @Before
+    public void publishTestMessages() {
         dbSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",

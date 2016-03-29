@@ -3,12 +3,11 @@ package uk.gov.register.presentation.functional;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -26,8 +25,8 @@ public class RepresentationsTest extends FunctionalTestBase {
     private final String expectedSingleEntry;
     private final String expectedListOfEntries;
 
-    @BeforeClass
-    public static void publishTestMessages() {
+    @Before
+    public void publishTestMessages() {
         dbSupport.publishMessages(REGISTER_NAME, ImmutableList.of(
                 "{\"hash\":\"someHash1\",\"entry\":{\"text\":\"The Entry 1\", \"register\":\"value1\", \"fields\":[\"field1\"]}}",
                 "{\"hash\":\"someHash2\",\"entry\":{\"text\":\"The Entry 2\", \"register\":\"value2\", \"fields\":[\"field1\",\"field2\"]}}"

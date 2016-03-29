@@ -18,7 +18,6 @@ public class ItemResourceFunctionalTest extends FunctionalTestBase {
 
     @Before
     public void publishTestMessages() throws Throwable {
-        cleanDatabaseRule.before();
         dbSupport.publishMessages(ImmutableList.of(
                 String.format("{\"hash\":\"hash1\",\"entry\":%s}", item1),
                 String.format("{\"hash\":\"hash2\",\"entry\":%s}", item2)
