@@ -19,12 +19,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class EntryResourceFunctionalTest extends FunctionalTestBase {
-    static String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
-    static String item2 = "{\"address\":\"145678\",\"name\":\"ellis\"}";
+    private String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
+    private String item2 = "{\"address\":\"145678\",\"name\":\"ellis\"}";
 
     @Before
     public void publishTestMessages() throws Throwable {
-        cleanDatabaseRule.before();
         dbSupport.publishMessages(ImmutableList.of(
                 String.format("{\"hash\":\"hash1\",\"entry\":%s}", item1),
                 String.format("{\"hash\":\"hash2\",\"entry\":%s}", item2)
