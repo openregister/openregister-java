@@ -91,7 +91,7 @@ public class ViewFactory {
         return new ListVersionView(requestContext, getCustodian(), getBranding(), versions);
     }
 
-    public ItemView getItemView(Item item){
+    public ItemView getItemView(Item item) {
         return new ItemView(requestContext, getCustodian(), getBranding(), entryConverter, item);
     }
 
@@ -106,5 +106,9 @@ public class ViewFactory {
 
     public NewEntryView getNewEntryView(Entry entry) {
         return new NewEntryView(requestContext, getCustodian(), getBranding(), entry);
+    }
+
+    public NewEntryListView getNewEntriesView(List<Entry> entries) {
+        return new NewEntryListView(requestContext, getCustodian(), getBranding(), entries);
     }
 }

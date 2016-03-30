@@ -8,9 +8,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
+import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.presentation.DbContent;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.config.RegistersConfiguration;
+import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -41,16 +43,23 @@ public class EntryResourceTest {
     @Mock
     private HttpServletResponse servletResponse;
 
-    EntryDAO entryDAO = entryNumber -> {
-        throw new RuntimeException(new PSQLException("", new PSQLState("42P01")));
+    private EntryDAO entryDAO = new EntryDAO() {
+        @Override
+        public Optional<Entry> findByEntryNumber(@Bind("entry_number") int entryNumber) {
+            throw new RuntimeException(new PSQLException("", new PSQLState("42P01")));
+        }
+
+        @Override
+        public List<Entry> getAll() {
+            return null;
+        }
     };
 
-    RequestContext requestContext;
-    EntryResource resource;
+    private EntryResource resource;
 
     @Before
     public void setUp() throws Exception {
-        requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "") {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "") {
             @Override
             public HttpServletResponse getHttpServletResponse() {
                 return servletResponse;

@@ -1,15 +1,14 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
-import org.glassfish.jersey.media.multipart.ContentDisposition;
 import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
-import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.presentation.view.RegisterDetailView;
+import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -19,21 +18,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Path("/")
-public class DataResource {
-    protected final RequestContext requestContext;
-    private final RecentEntryIndexQueryDAO queryDAO;
-
-    private final ViewFactory viewFactory;
+public class DataResource extends ResourceCommon{
+    protected final RecentEntryIndexQueryDAO queryDAO;
+    protected final ViewFactory viewFactory;
 
     @Inject
     public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+        super(requestContext);
         this.viewFactory = viewFactory;
-        this.requestContext = requestContext;
         this.queryDAO = queryDAO;
     }
 
@@ -79,18 +75,6 @@ public class DataResource {
     }
 
     @GET
-    @Path("/entries")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView entries(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalEntries());
-
-        setNextAndPreviousPageLinkHeader(pagination);
-
-        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-        return viewFactory.getEntriesView(queryDAO.getAllEntries(pagination.pageSize(), pagination.offset()), pagination);
-    }
-
-    @GET
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
@@ -108,34 +92,5 @@ public class DataResource {
     public RegisterDetailView getRegisterDetail() {
         return viewFactory.registerDetailView(queryDAO.getTotalRecords(), queryDAO.getTotalEntries(), queryDAO.getTotalEntries(), queryDAO.getLastUpdatedTime());
     }
-
-    private Optional<String> getFileExtension() {
-        String requestURI = requestContext.getHttpServletRequest().getRequestURI();
-        if (requestURI.lastIndexOf('.') == -1) {
-            return Optional.empty();
-        }
-        String[] tokens = requestURI.split("\\.");
-        return Optional.of(tokens[tokens.length - 1]);
-    }
-
-    private void addContentDispositionHeader(String fileName) {
-        ContentDisposition contentDisposition = ContentDisposition.type("attachment").fileName(fileName).build();
-        requestContext.getHttpServletResponse().addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-    }
-
-    private void setNextAndPreviousPageLinkHeader(Pagination pagination) {
-        List<String> headerValues = new ArrayList<>();
-
-        if (pagination.hasNextPage()) {
-            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getNextPageLink(), "next"));
-        }
-
-        if (pagination.hasPreviousPage()) {
-            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getPreviousPageLink(), "previous"));
-        }
-
-        if (!headerValues.isEmpty()) {
-            requestContext.getHttpServletResponse().setHeader("Link", String.join(",", headerValues));
-        }
-    }
 }
+

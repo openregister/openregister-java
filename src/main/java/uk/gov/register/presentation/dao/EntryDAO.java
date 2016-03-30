@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 public interface EntryDAO {
@@ -16,6 +17,10 @@ public interface EntryDAO {
     @RegisterMapper(NewEntryMapper.class)
     @SingleValueResult(Entry.class)
     Optional<Entry> findByEntryNumber(@Bind("entry_number") int entryNumber);
+
+    @SqlQuery("select * from entry limit 100")
+    @RegisterMapper(NewEntryMapper.class)
+    List<Entry> getAll();
 
     class NewEntryMapper implements ResultSetMapper<Entry> {
         @Override
