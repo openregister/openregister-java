@@ -16,7 +16,10 @@ public class Application {
         Configuration configuration = new Configuration(args);
         Set<String> registers = configuration.getRegisters();
 
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool((int) registers.stream().filter(r -> configuration.cloudSearchEndPoint(r).isPresent() || configuration.elasticSearchEndPoint(r).isPresent()).count() + registers.size());
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(
+                (int) registers.stream().filter(r -> configuration.cloudSearchEndPoint(r).isPresent() || configuration.elasticSearchEndPoint(r).isPresent()).count() +
+                        2 * registers.size()
+        );
 
         List<Indexer> indexers = registers.stream().map(r -> new Indexer(configuration, r)).collect(Collectors.toList());
 
