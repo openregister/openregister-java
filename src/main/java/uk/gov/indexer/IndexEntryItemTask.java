@@ -1,5 +1,6 @@
 package uk.gov.indexer;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class IndexEntryItemTask implements Runnable {
             update();
             LOGGER.info("Finished entry/item for register: " + register);
         } catch (Throwable e) {
-            LOGGER.error(ExceptionFormatter.formatExceptionAsString(e));
+            LOGGER.error(Throwables.getStackTraceAsString(e));
             throw e;
         }
     }

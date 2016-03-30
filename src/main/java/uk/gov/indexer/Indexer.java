@@ -1,5 +1,6 @@
 package uk.gov.indexer;
 
+import com.google.common.base.Throwables;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class Indexer {
 
         } catch (Throwable e) {
             LOGGER.info("Error occurred while setting indexer for register: " + register + ". Error is -> " + e.getMessage());
-            LOGGER.error(ExceptionFormatter.formatExceptionAsString(e));
+            LOGGER.error(Throwables.getStackTraceAsString(e));
         }
 
     }
