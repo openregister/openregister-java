@@ -3,10 +3,7 @@ package uk.gov.indexer;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.indexer.dao.DestinationDBUpdateDAO;
-import uk.gov.indexer.dao.Entry;
-import uk.gov.indexer.dao.Item;
-import uk.gov.indexer.dao.SourceDBQueryDAO;
+import uk.gov.indexer.dao.*;
 
 import java.util.List;
 
@@ -14,10 +11,10 @@ public class IndexEntryItemTask implements Runnable {
     private final Logger LOGGER = LoggerFactory.getLogger(IndexEntryItemTask.class);
 
     private final String register;
-    private final DestinationDBUpdateDAO destinationDBUpdateDAO;
+    private final DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO;
     private final SourceDBQueryDAO sourceDBQueryDAO;
 
-    public IndexEntryItemTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO) {
+    public IndexEntryItemTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO) {
         this.register = register;
         this.sourceDBQueryDAO = sourceDBQueryDAO;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
