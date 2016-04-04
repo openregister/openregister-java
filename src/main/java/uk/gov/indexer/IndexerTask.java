@@ -1,5 +1,6 @@
 package uk.gov.indexer;
 
+import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
@@ -32,7 +33,7 @@ public class IndexerTask implements Runnable {
             update();
             LOGGER.info("Finished for register: " + register);
         } catch (Throwable e) {
-            LOGGER.error(ExceptionFormatter.formatExceptionAsString(e));
+            LOGGER.error(Throwables.getStackTraceAsString(e));
             throw e;
         }
     }

@@ -1,5 +1,6 @@
 package uk.gov.indexer;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class CloudSearchDataUploadTask implements Runnable {
             uploadEntries();
             LOGGER.info("upload to cloudsearch domain completed for register: " + register);
         } catch (Throwable e) {
-            LOGGER.error(ExceptionFormatter.formatExceptionAsString(e));
+            LOGGER.error(Throwables.getStackTraceAsString(e));
             throw e;
         }
     }
