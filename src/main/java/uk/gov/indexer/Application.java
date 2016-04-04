@@ -16,7 +16,7 @@ public class Application {
         Configuration configuration = new Configuration(args);
         Set<String> registers = configuration.getRegisters();
 
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool((int) registers.stream().filter(r -> configuration.cloudSearchEndPoint(r).isPresent() || configuration.elasticSearchEndPoint(r).isPresent()).count() + registers.size());
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(getCorePoolSize(configuration, registers));
 
         List<Indexer> indexers = registers.stream().map(r -> new Indexer(configuration, r)).collect(Collectors.toList());
 
@@ -25,6 +25,14 @@ public class Application {
         indexers.stream().parallel().forEach(indexer -> indexer.start(executorService));
 
         Thread.currentThread().join();
+    }
+
+    private static int getCorePoolSize(Configuration configuration, Set<String> registers) {
+        long searchProviderThreadCount = registers
+                .stream()
+                .filter(r -> configuration.cloudSearchEndPoint(r).isPresent() || configuration.elasticSearchEndPoint(r).isPresent())
+                .count();
+        return (int) (searchProviderThreadCount + 2 * registers.size());
     }
 
     private static void addShutdownHook(final ScheduledExecutorService executorService, List<Indexer> indexers) {

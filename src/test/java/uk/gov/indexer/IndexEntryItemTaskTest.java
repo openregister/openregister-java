@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.indexer.dao.DestinationDBUpdateDAO;
+import uk.gov.indexer.dao.DestinationDBUpdateDAO_NewSchema;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class IndexEntryItemTaskTest {
                 DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
 
                 SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
+                DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO_NewSchema.class);
                 IndexEntryItemTask indexEntryItemTask = new IndexEntryItemTask("food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 //load 1 entry and confirm the changes
