@@ -2,11 +2,10 @@ package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
 import org.json.JSONException;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
-import uk.gov.register.presentation.functional.testSupport.DBSupport;
 
 import javax.ws.rs.core.Response;
 
@@ -15,8 +14,8 @@ import static org.junit.Assert.assertThat;
 
 public class HistoryTest extends FunctionalTestBase {
 
-    @BeforeClass
-    public static void publishTestMessages() {
+    @Before
+    public void publishTestMessages() {
         dbSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"address\":\"145678\", \"name\":\"ellis\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"address\":\"12345\", \"name\":\"ellis\"}}",

@@ -1,9 +1,10 @@
 package uk.gov.register.presentation.functional;
 
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import uk.gov.register.presentation.functional.testSupport.*;
+import uk.gov.register.presentation.functional.testSupport.DBSupport;
+import uk.gov.register.presentation.functional.testSupport.TestDAO;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
@@ -16,14 +17,28 @@ public class FunctionalTestBase {
     protected static final TestDAO testDAO = TestDAO.get("ft_presentation", "postgres");
     protected static final DBSupport dbSupport = new DBSupport(testDAO);
 
-    @ClassRule
-    public static CleanDatabaseRule cleanDatabaseRule = new CleanDatabaseRule(testDAO);
-
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 
         client = new JerseyClientBuilder().property("jersey.config.client.followRedirects", false).build();
+    }
+
+    @Before
+    public void resetSchema() {
+        testDAO.testEntryIndexDAO.dropTable();
+        testDAO.testCurrentKeyDAO.dropTable();
+        testDAO.testTotalEntryDAO.dropTable();
+        testDAO.testTotalRecordDAO.dropTable();
+        testDAO.testItemDAO.dropTable();
+        testDAO.testEntryDAO.dropTable();
+
+        testDAO.testEntryIndexDAO.createTable();
+        testDAO.testCurrentKeyDAO.createTable();
+        testDAO.testTotalEntryDAO.createTable();
+        testDAO.testTotalRecordDAO.createTable();
+        testDAO.testItemDAO.createTable();
+        testDAO.testEntryDAO.createTable();
     }
 
     Response getRequest(String path) {
