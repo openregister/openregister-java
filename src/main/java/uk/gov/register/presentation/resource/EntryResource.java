@@ -3,12 +3,11 @@ package uk.gov.register.presentation.resource;
 import io.dropwizard.jersey.caching.CacheControl;
 import org.postgresql.util.PSQLException;
 import uk.gov.register.presentation.DbEntry;
-import uk.gov.register.presentation.dao.Item;
-import uk.gov.register.presentation.dao.ItemDAO;
+import uk.gov.register.presentation.dao.Entry;
+import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.AttributionView;
-import uk.gov.register.presentation.view.ItemView;
 import uk.gov.register.presentation.view.SingleEntryView;
 import uk.gov.register.presentation.view.ViewFactory;
 
@@ -18,54 +17,43 @@ import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 import java.util.function.Function;
 
-@Path("/item")
-public class ItemResource {
+@Path("/entry")
+public class EntryResource {
+
+    private final EntryDAO entryDAO;
     private final ViewFactory viewFactory;
-    private final ItemDAO itemDAO;
     private final RecentEntryIndexQueryDAO queryDAO;
     private final RequestContext requestContext;
     private static final String POSTGRES_TABLE_NOT_EXIST_ERROR_CODE = "42P01";
 
+
     @Inject
-    public ItemResource(ViewFactory viewFactory, RequestContext requestContext, ItemDAO itemDAO, RecentEntryIndexQueryDAO queryDAO) {
+    public EntryResource(EntryDAO entryDAO, ViewFactory viewFactory, RecentEntryIndexQueryDAO queryDAO, RequestContext requestContext) {
+        this.entryDAO = entryDAO;
         this.viewFactory = viewFactory;
-        this.itemDAO = itemDAO;
         this.queryDAO = queryDAO;
         this.requestContext = requestContext;
     }
 
     @GET
-    @Path("/{item-hash}")
+    @Path("/{entry-number}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
     @CacheControl(immutable = true)
-    public AttributionView getItemByHex(@PathParam("item-hash") String itemHash) {
-        String sha256Regex = "(sha-256:)(.*)";
-        if(itemHash.matches(sha256Regex)){
-            return getItemBySHA256(itemHash.replaceAll(sha256Regex, "$2"));
-        }else{
-            return getItemByHash(itemHash);
-        }
-
-    }
-
-    @Deprecated
-    private SingleEntryView getItemByHash(String itemHash) {
-        Optional<DbEntry> entryO = queryDAO.findEntryByHash(itemHash);
-        return entryResponse(entryO, viewFactory::getSingleEntryView);
-    }
-
-    private ItemView getItemBySHA256(String sha256Hash) {
-        Optional<Item> item;
+    public AttributionView findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         try {
-            item = itemDAO.getItemBySHA256(sha256Hash);
+            Optional<Entry> entry = entryDAO.findByEntryNumber(entryNumber);
+            return entry.map(viewFactory::getNewEntryView).orElseThrow(NotFoundException::new);
         } catch (Throwable e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof PSQLException && ((PSQLException) cause).getSQLState().equals(POSTGRES_TABLE_NOT_EXIST_ERROR_CODE)) {
-                throw new NotFoundException();
+            if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals(POSTGRES_TABLE_NOT_EXIST_ERROR_CODE)) {
+                return findBySerial(Optional.of(entryNumber));
             }
             throw e;
         }
-        return item.map(viewFactory::getItemView).orElseThrow(NotFoundException::new);
+    }
+
+    private SingleEntryView findBySerial(Optional<Integer> serial) {
+        Optional<DbEntry> entryO = serial.flatMap(queryDAO::findEntryBySerialNumber);
+        return entryResponse(entryO, viewFactory::getSingleEntryView);
     }
 
     private SingleEntryView entryResponse(Optional<DbEntry> optionalEntry, Function<DbEntry, SingleEntryView> convertToEntryView) {

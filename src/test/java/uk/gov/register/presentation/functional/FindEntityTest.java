@@ -33,19 +33,6 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void findByEntryNumber_shouldReturnEntryForTheGivenEntryNumber() throws Exception {
-        Response response = getRequest("/entry/2.json");
-
-        assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaderString("Link"), equalTo("</address/6789/history>;rel=\"version-history\""));
-        JSONAssert.assertEquals("{" +
-                "\"serial-number\":2," +
-                "\"hash\":\"hash2\"," +
-                "\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}"
-                , response.readEntity(String.class), false);
-    }
-
-    @Test
     public void findByItemHash_shouldReturnEntryForTheGivenItemHash() throws Exception {
         Response response = getRequest("/item/hash2.json");
 
