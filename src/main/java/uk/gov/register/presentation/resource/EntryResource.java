@@ -24,6 +24,7 @@ public class EntryResource {
     private final ViewFactory viewFactory;
     private final RecentEntryIndexQueryDAO queryDAO;
     private final RequestContext requestContext;
+    private static final String POSTGRES_TABLE_NOT_EXIST_ERROR_CODE = "42P01";
 
 
     @Inject
@@ -43,7 +44,7 @@ public class EntryResource {
             Optional<Entry> entry = entryDAO.findByEntryNumber(entryNumber);
             return entry.map(viewFactory::getNewEntryView).orElseThrow(NotFoundException::new);
         } catch (Throwable e) {
-            if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals("42P01")) {
+            if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals(POSTGRES_TABLE_NOT_EXIST_ERROR_CODE)) {
                 return findBySerial(Optional.of(entryNumber));
             }
             throw e;

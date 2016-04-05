@@ -3,8 +3,8 @@ package uk.gov.register.presentation.functional;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -52,6 +52,7 @@ public class RepresentationsTest extends FunctionalTestBase {
     }
 
     @Ignore
+    @Test
     public void representationIsSupportedForSingleEntryView() {
         Response response = getRequest(REGISTER_NAME, "/entry/1." + extension);
 

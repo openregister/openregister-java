@@ -24,7 +24,7 @@ public class ItemResource {
     private final ItemDAO itemDAO;
     private final RecentEntryIndexQueryDAO queryDAO;
     private final RequestContext requestContext;
-
+    private static final String POSTGRES_TABLE_NOT_EXIST_ERROR_CODE = "42P01";
 
     @Inject
     public ItemResource(ViewFactory viewFactory, RequestContext requestContext, ItemDAO itemDAO, RecentEntryIndexQueryDAO queryDAO) {
@@ -60,7 +60,7 @@ public class ItemResource {
             item = itemDAO.getItemBySHA256(sha256Hash);
         } catch (Throwable e) {
             Throwable cause = e.getCause();
-            if (cause instanceof PSQLException && ((PSQLException) cause).getSQLState().equals("42P01")) {
+            if (cause instanceof PSQLException && ((PSQLException) cause).getSQLState().equals(POSTGRES_TABLE_NOT_EXIST_ERROR_CODE)) {
                 throw new NotFoundException();
             }
             throw e;

@@ -12,21 +12,20 @@ import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.time.LocalDate;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertTrue;
 
 public class EntryResourceFunctionalTest extends FunctionalTestBase {
-    private String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
-    private String item2 = "{\"address\":\"145678\",\"name\":\"ellis\"}";
+    private static final String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
 
     @Before
     public void publishTestMessages() throws Throwable {
         dbSupport.publishMessages(ImmutableList.of(
                 String.format("{\"hash\":\"hash1\",\"entry\":%s}", item1),
-                String.format("{\"hash\":\"hash2\",\"entry\":%s}", item2)
+                String.format("{\"hash\":\"hash2\",\"entry\":%s}", "{\"address\":\"145678\",\"name\":\"ellis\"}")
         ));
     }
 
@@ -37,12 +36,13 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
         Response response = getRequest("/entry/1.json");
 
         assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaders().get("cache-control").toString(), equalTo("[no-transform, max-age=31536000]"));
+        assertThat(response.getHeaders().get("cache-control"), contains("no-transform, max-age=31536000"));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
         assertThat(res.get("entry-number").textValue(), equalTo("1"));
         assertThat(res.get("item-hash").textValue(), equalTo("sha-256:" + sha256Hex));
-        assertThat(res.get("entry-timestamp").textValue(), containsString(LocalDate.now().toString()));
+        assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
     }
 
     @Test
