@@ -18,9 +18,9 @@ public interface EntryDAO {
     @SingleValueResult(Entry.class)
     Optional<Entry> findByEntryNumber(@Bind("entry_number") int entryNumber);
 
-    @SqlQuery("select * from entry limit 100")
+    @SqlQuery("select * from entry ORDER BY entry_number desc limit :limit offset :offset")
     @RegisterMapper(NewEntryMapper.class)
-    List<Entry> getEntries();
+    List<Entry> getEntries(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
     class NewEntryMapper implements ResultSetMapper<Entry> {
         @Override

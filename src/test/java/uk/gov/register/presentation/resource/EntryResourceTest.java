@@ -50,7 +50,7 @@ public class EntryResourceTest {
         }
 
         @Override
-        public List<Entry> getEntries() {
+        public List<Entry> getEntries(long limit, long offset) {
             return null;
         }
     };

@@ -7,7 +7,7 @@
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
     <div class="grid-row">
-        <div class="column-two-thirds"><br/></div>
+        <div class="column-two-thirds" th:include="pagination.html::pagination-top('entries')"></div>
         <div class="column-third" th:include="main.html :: attribution"></div>
     </div>
 
@@ -27,6 +27,8 @@
         </tr>
         </tbody>
     </table>
+
+    <nav th:replace="pagination.html::pagination-bottom"></nav>
 
     <div th:include="data-formats.html::data-formats"></div>
 </main>

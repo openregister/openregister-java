@@ -51,16 +51,6 @@ public class ViewFactory {
         return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian(), getBranding(), "latest-entry-of-record.html");
     }
 
-    public EntryListView getEntriesView(List<DbEntry> allDbEntries, Pagination pagination) {
-        return new EntryListView(requestContext,
-                allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
-                pagination,
-                getCustodian(),
-                getBranding(),
-                "entries.html"
-        );
-    }
-
     public EntryListView getRecordsView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
@@ -87,7 +77,7 @@ public class ViewFactory {
         return new RegisterDetailView(getCustodian(), getBranding(), requestContext, entryConverter, totalRecords, totalEntries, totalItems, lastUpdated);
     }
 
-    public ListVersionView listVersionView(List<Version> versions) throws Exception {
+    public ListVersionView listVersionView(List<Version> versions) {
         return new ListVersionView(requestContext, getCustodian(), getBranding(), versions);
     }
 
@@ -108,7 +98,7 @@ public class ViewFactory {
         return new NewEntryView(requestContext, getCustodian(), getBranding(), entry);
     }
 
-    public NewEntryListView getNewEntriesView(List<Entry> entries) {
-        return new NewEntryListView(requestContext, getCustodian(), getBranding(), entries);
+    public NewEntryListView getNewEntriesView(List<Entry> entries, Pagination pagination) {
+        return new NewEntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
     }
 }

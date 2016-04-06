@@ -53,26 +53,12 @@ public class EntryResource extends ResourceCommon {
     @Path("/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public AttributionView entries(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
-        try {
-            getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-            return viewFactory.getNewEntriesView(entryDAO.getEntries());
-        } catch (Throwable e) {
-            //Todo: this is required to support the old resource response till the migration is not completed
-            if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals(POSTGRES_TABLE_NOT_EXIST_ERROR_CODE)) {
-                return __getAllEntries(pageIndex, pageSize);
-            }
-            throw e;
-        }
-    }
-
-    @Deprecated
-    private EntryListView __getAllEntries(Optional<Long> pageIndex, Optional<Long> pageSize) {
         Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalEntries());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
         getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-        return viewFactory.getEntriesView(queryDAO.getAllEntries(pagination.pageSize(), pagination.offset()), pagination);
+        return viewFactory.getNewEntriesView(entryDAO.getEntries(pagination.pageSize(), pagination.offset()), pagination);
     }
 
     @Deprecated
