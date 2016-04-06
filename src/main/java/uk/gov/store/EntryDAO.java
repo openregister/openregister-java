@@ -4,7 +4,10 @@ import org.skife.jdbi.v2.sqlobject.*;
 import uk.gov.mint.DataReplicationTask;
 
 interface EntryDAO {
-    @SqlUpdate("create table if not exists entry (entry_number serial primary key, sha256hex varchar, timestamp timestamp default now());")
+    @SqlUpdate(
+            "create table if not exists entry (entry_number serial primary key, sha256hex varchar, timestamp timestamp default (now() at time zone 'utc'));" +
+                    "alter table entry alter column timestamp set default (now() at time zone 'utc');"
+    )
     void ensureSchema();
 
     @SqlQuery("select max(entry_number) from entry")
