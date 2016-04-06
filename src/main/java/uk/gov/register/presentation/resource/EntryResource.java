@@ -55,7 +55,7 @@ public class EntryResource extends ResourceCommon {
     public AttributionView entries(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
         try {
             getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-            return viewFactory.getNewEntriesView(entryDAO.getAll());
+            return viewFactory.getNewEntriesView(entryDAO.getEntries());
         } catch (Throwable e) {
             //Todo: this is required to support the old resource response till the migration is not completed
             if (e.getCause() instanceof PSQLException && ((PSQLException) e.getCause()).getSQLState().equals(POSTGRES_TABLE_NOT_EXIST_ERROR_CODE)) {

@@ -20,7 +20,7 @@ public interface EntryDAO {
 
     @SqlQuery("select * from entry limit 100")
     @RegisterMapper(NewEntryMapper.class)
-    List<Entry> getAll();
+    List<Entry> getEntries();
 
     class NewEntryMapper implements ResultSetMapper<Entry> {
         @Override

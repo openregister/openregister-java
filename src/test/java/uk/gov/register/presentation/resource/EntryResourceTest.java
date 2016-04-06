@@ -50,7 +50,7 @@ public class EntryResourceTest {
         }
 
         @Override
-        public List<Entry> getAll() {
+        public List<Entry> getEntries() {
             return null;
         }
     };
