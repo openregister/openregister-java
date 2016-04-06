@@ -1,4 +1,5 @@
--e git+https://github.com/openregister/conformance-test.git@3989d561f8a4c8ce9d0b8a690005be7facc3bfae#egg=openregister_conformance-master
+-e git+https://github.com/openregister/conformance-test.git@3c8cbd9ab8d382eaabf105ff7efa84bb44cd0bf0#egg=openregister_conformance-master
 py==1.4.31
 pytest==2.9.0
 requests==2.9.1
+jsonschema==2.5.1
