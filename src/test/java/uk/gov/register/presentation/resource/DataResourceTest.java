@@ -35,19 +35,6 @@ public class DataResourceTest {
     ViewFactory viewFactory;
 
     @Test
-    public void entries_supportsJsonCsvTsv() throws Exception {
-        Method feedMethod = DataResource.class.getDeclaredMethod("entries", Optional.class, Optional.class);
-        List<String> declaredMediaTypes = asList(feedMethod.getAnnotation(Produces.class).value());
-        assertThat(declaredMediaTypes, hasItems(
-                MediaType.APPLICATION_JSON,
-                ExtraMediaType.TEXT_HTML,
-                ExtraMediaType.TEXT_CSV,
-                ExtraMediaType.TEXT_TSV,
-                ExtraMediaType.TEXT_TTL
-        ));
-    }
-
-    @Test
     public void records_supportsJsonCsvTsvHtmlAndTurtle() throws Exception {
         Method allMethod = DataResource.class.getDeclaredMethod("records", Optional.class, Optional.class);
         List<String> declaredMediaTypes = asList(allMethod.getAnnotation(Produces.class).value());
