@@ -1,7 +1,6 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.JsonNode;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.FieldValue;
@@ -12,8 +11,6 @@ import uk.gov.register.presentation.resource.RequestContext;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class ItemView extends AttributionView {
     private EntryConverter itemConverter;
@@ -27,7 +24,6 @@ public class ItemView extends AttributionView {
 
     @JsonValue
     public Map<String, FieldValue> getContent() {
-        Stream<Map.Entry<String, JsonNode>> fieldStream = StreamSupport.stream(((Iterable<Map.Entry<String, JsonNode>>) item.content::fields).spliterator(), false);
-        return fieldStream.collect(Collectors.toMap(Map.Entry::getKey, itemConverter::convert));
+        return item.getFieldsStream().collect(Collectors.toMap(Map.Entry::getKey, itemConverter::convert));
     }
 }

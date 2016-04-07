@@ -34,6 +34,7 @@ import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.ItemDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ViewFactory;
@@ -82,6 +83,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
         RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
         ItemDAO itemDAO = jdbi.onDemand(ItemDAO.class);
         EntryDAO entryDAO = jdbi.onDemand(EntryDAO.class);
+        RecordDAO recordDAO = jdbi.onDemand(RecordDAO.class);
 
         JerseyEnvironment jerseyEnvironment = environment.jersey();
         DropwizardResourceConfig resourceConfig = jerseyEnvironment.getResourceConfig();
@@ -104,6 +106,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
                 bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
                 bind(itemDAO).to(ItemDAO.class);
                 bind(entryDAO).to(EntryDAO.class);
+                bind(recordDAO).to(RecordDAO.class);
                 bind(new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")))).to(FieldsConfiguration.class);
                 bind(new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")))).to(RegistersConfiguration.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
