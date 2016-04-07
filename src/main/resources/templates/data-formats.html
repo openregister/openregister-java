@@ -10,5 +10,10 @@
         <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'ttl')}">ttl</a>
     </p>
 </div>
+<div th:fragment="new-data-formats">
+    <p class="data-representations">This data is available as:
+        <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'json')}">json</a>
+    </p>
+</div>
 </html>
 
