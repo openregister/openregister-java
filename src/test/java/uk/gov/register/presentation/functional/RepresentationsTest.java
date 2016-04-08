@@ -43,6 +43,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 //                {"csv", "text/csv;charset=UTF-8", fixture("fixtures/single.csv"), fixture("fixtures/list.csv")},
 //                {"tsv", "text/tab-separated-values;charset=UTF-8", fixture("fixtures/single.tsv"), fixture("fixtures/list.tsv")},
 //                {"ttl", "text/turtle;charset=UTF-8", fixture("fixtures/single.ttl"), fixture("fixtures/list.ttl")},
+                {"json", "application/json", fixture("fixtures/single.json"), fixture("fixtures/list.json")},
                 {"yaml", "text/yaml;charset=UTF-8", fixture("fixtures/single.yaml"), fixture("fixtures/list.yaml")}
         });
     }
