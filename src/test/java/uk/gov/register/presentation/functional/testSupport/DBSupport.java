@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
 import org.apache.commons.codec.digest.DigestUtils;
+import uk.gov.register.presentation.functional.TestEntry;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -42,6 +44,19 @@ public class DBSupport {
         publishMessages(registerName, messagesWithSerialNumbers);
     }
 
+    public void publishEntries(String registerName, List<TestEntry> testEntries) {
+        for (TestEntry testEntry : testEntries) {
+            String oldEntry = String.format(
+                    "{\"hash\":\"%s\",\"entry\":%s}",
+                    DigestUtils.sha256Hex(testEntry.itemJson),
+                    testEntry.itemJson);
+            testDAO.testEntryIndexDAO.insert(testEntry.entryNumber,
+                    oldEntry);
+            insertIntoItemAndEntryTables(testEntry.entryNumber, testEntry.itemJson, testEntry.entryTimestamp);
+            updateOtherTables(registerName, testEntry.entryNumber, testEntry.itemJson);
+        }
+    }
+
     public void publishMessages(String registerName, SortedMap<Integer, String> messages) {
         for (SortedMap.Entry<Integer, String> entry : messages.entrySet()) {
             testDAO.testEntryIndexDAO.insert(entry.getKey(), entry.getValue());
@@ -56,6 +71,16 @@ public class DBSupport {
             String sha256 = DigestUtils.sha256Hex(item);
             testDAO.testEntryDAO.insert(serialNumber, sha256);
             testDAO.testItemDAO.insertIfNotExist(sha256, item);
+        } catch (Exception e) {
+            Throwables.propagate(e);
+        }
+    }
+
+    private void insertIntoItemAndEntryTables(int serialNumber, String itemJson, Instant timestamp) {
+        try {
+            String sha256 = DigestUtils.sha256Hex(itemJson);
+            testDAO.testEntryDAO.insertWithExplicitTimestamp(serialNumber, sha256, timestamp);
+            testDAO.testItemDAO.insertIfNotExist(sha256, itemJson);
         } catch (Exception e) {
             Throwables.propagate(e);
         }

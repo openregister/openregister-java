@@ -1,0 +1,1 @@
+{"value2":{"entry-number":"2","item-hash":"sha-256:someHash2","entry-timestamp":"2016-01-01T00:00:00Z","register":"value2","fields":["field1","field2"],"text":"The Entry 2"},"value1":{"entry-number":"1","item-hash":"sha-256:someHash1","entry-timestamp":"2016-01-01T00:00:00Z","register":"value1","fields":["field1"],"text":"The Entry 1"}}
