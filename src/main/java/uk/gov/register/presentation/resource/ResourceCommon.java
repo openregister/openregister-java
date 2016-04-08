@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//TODO: temporary class to reuse same functionality required, this will be refactored once the old resource code id deleted
+//TODO: temporary class to reuse same functionality required, this will be refactored once the old resource code is deleted
 class ResourceCommon{
 
     protected final RequestContext requestContext;
