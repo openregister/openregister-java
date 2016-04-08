@@ -1,6 +1,9 @@
 package uk.gov.mint;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +13,8 @@ import javax.ws.rs.core.Context;
 
 @Path("/")
 public class MintService {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final String register;
     private final ObjectReconstructor objectReconstructor;
     private final EntryValidator entryValidator;
@@ -29,8 +34,13 @@ public class MintService {
     @PermitAll
     @Path("/load")
     public void load(String payload) {
-        Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
-        objects.forEach(singleObject -> entryValidator.validateEntry(register, singleObject));
-        loadHandler.load(objects);
+        try {
+            Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
+            objects.forEach(singleObject -> entryValidator.validateEntry(register, singleObject));
+            loadHandler.load(objects);
+        } catch (Throwable t) {
+            logger.error(Throwables.getStackTraceAsString(t));
+            throw t;
+        }
     }
 }
