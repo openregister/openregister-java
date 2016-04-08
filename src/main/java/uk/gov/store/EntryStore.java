@@ -7,7 +7,6 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
-import uk.gov.mint.DataReplicationTask;
 import uk.gov.mint.Item;
 
 import java.util.Set;
@@ -38,21 +37,6 @@ public abstract class EntryStore implements GetHandle {
                         item -> !Iterables.contains(existingItemHex, item.getSha256hex())
                 )
         );
-    }
-
-    //TODO: methods below are specific to migration which must be deleted after migration is completed
-    @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void migrate(Iterable<DataReplicationTask.MigratedEntry> migratedEntries) {
-        entryDAO.insertMigratedEntries(migratedEntries);
-        entryDAO.updateSequenceNumber(Iterables.getLast(migratedEntries).getId());
-
-        Iterable<Item> items = Iterables.transform(migratedEntries, DataReplicationTask.MigratedEntry::getItem);
-
-        itemDAO.insertInBatch(extractNewItems(items));
-    }
-
-    public int lastMigratedID() {
-        return entryDAO.maxID();
     }
 }
 

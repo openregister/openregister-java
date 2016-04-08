@@ -11,12 +11,10 @@ public class LoadHandler implements Loader {
     private final CanonicalJsonMapper canonicalJsonMapper;
     private final EntriesUpdateDAO entriesUpdateDAO;
     private EntryStore entryStore;
-    private boolean migrationInProcess;
 
-    public LoadHandler(EntriesUpdateDAO entriesUpdateDAO, EntryStore entryStore, boolean migrationInProcess) {
+    public LoadHandler(EntriesUpdateDAO entriesUpdateDAO, EntryStore entryStore) {
         this.entriesUpdateDAO = entriesUpdateDAO;
         this.entryStore = entryStore;
-        this.migrationInProcess = migrationInProcess;
         this.canonicalJsonMapper = new CanonicalJsonMapper();
     }
 
@@ -25,10 +23,7 @@ public class LoadHandler implements Loader {
         Iterable<byte[]> entriesAsBytes = Iterables.transform(items, item -> canonicalJsonMapper.writeToBytes(hashedEntry(item)));
 
         entriesUpdateDAO.add(entriesAsBytes);
-
-        if (!migrationInProcess) {
-            entryStore.load(Iterables.transform(items, Item::new));
-        }
+        entryStore.load(Iterables.transform(items, Item::new));
     }
 
     private ObjectNode hashedEntry(JsonNode entryJsonNode) {
