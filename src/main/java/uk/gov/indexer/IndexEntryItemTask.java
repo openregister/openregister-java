@@ -1,7 +1,6 @@
 package uk.gov.indexer;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.*;
@@ -34,25 +33,21 @@ public class IndexEntryItemTask implements Runnable {
     }
 
     protected void update() {
-        List<Entry> entries = fetchNewEntries();
+        List<Record> records = fetchNewRecords();
 
-        if (!entries.isEmpty()) {
+        if (!records.isEmpty()) {
             do {
-                int totalNewEntries = entries.size();
-                List<Item> items = fetchItemsByHex(Lists.transform(entries, Entry::getItemHash));
-                LOGGER.info(String.format("Register '%s': Found '%d' new entries in entry table.", register, totalNewEntries));
+                int totalNewRecords = records.size();
+                LOGGER.info(String.format("Register '%s': Found '%d' new entries in entry table.", register, totalNewRecords));
 
-                destinationDBUpdateDAO.writeEntriesAndItemsInBatch(entries, items);
-                LOGGER.info(String.format("Register '%s': Copied '%d' entries in entry from index '%d'.", register, totalNewEntries, entries.get(0).getEntryNumber()));
-            } while (!(entries = fetchNewEntries()).isEmpty());
+                destinationDBUpdateDAO.writeEntriesAndItemsInBatch(records);
+
+                LOGGER.info(String.format("Register '%s': Copied '%d' entries in entry from index '%d'.", register, totalNewRecords, records.get(0).entry.getEntryNumber()));
+            } while (!(records = fetchNewRecords()).isEmpty());
         }
     }
 
-    private List<Entry> fetchNewEntries() {
-        return sourceDBQueryDAO.readEntries(destinationDBUpdateDAO.lastReadEntryNumber());
-    }
-
-    private List<Item> fetchItemsByHex(List<String> itemHexValues) {
-        return sourceDBQueryDAO.readItems(itemHexValues);
+    private List<Record> fetchNewRecords() {
+        return sourceDBQueryDAO.readRecords(destinationDBUpdateDAO.lastReadEntryNumber());
     }
 }
