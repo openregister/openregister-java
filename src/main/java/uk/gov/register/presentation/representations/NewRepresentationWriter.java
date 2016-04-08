@@ -1,8 +1,10 @@
 package uk.gov.register.presentation.representations;
 
 import io.dropwizard.views.View;
+import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.presentation.view.ItemView;
 import uk.gov.register.presentation.view.NewEntryView;
 
 import javax.ws.rs.WebApplicationException;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Map;
 
 public abstract class NewRepresentationWriter implements MessageBodyWriter<View> {
     @Context
@@ -27,7 +30,8 @@ public abstract class NewRepresentationWriter implements MessageBodyWriter<View>
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return NewEntryView.class.isAssignableFrom(type);
+        return NewEntryView.class.isAssignableFrom(type) ||
+                ItemView.class.isAssignableFrom(type);
     }
 
     @Override
@@ -35,7 +39,12 @@ public abstract class NewRepresentationWriter implements MessageBodyWriter<View>
         if (view instanceof NewEntryView) {
             writeEntryTo(entityStream, requestContext.getRegister().getFields(), ((NewEntryView) view).getEntry());
         }
+        if (view instanceof ItemView) {
+            writeItemTo(entityStream, ((ItemView) view).getContent());
+        }
     }
+
+    protected abstract void writeItemTo(OutputStream entityStream, Map<String, FieldValue> content) throws IOException;
 
     protected abstract void writeEntryTo(OutputStream entityStream, Iterable<String> fields, Entry entry) throws IOException, WebApplicationException;
 }

@@ -46,21 +46,23 @@ public class RepresentationsTest extends FunctionalTestBase {
 //                {"csv", "text/csv;charset=UTF-8", fixture("fixtures/single.csv"), fixture("fixtures/list.csv")},
 //                {"tsv", "text/tab-separated-values;charset=UTF-8", fixture("fixtures/single.tsv"), fixture("fixtures/list.tsv")},
 //                {"ttl", "text/turtle;charset=UTF-8", fixture("fixtures/single.ttl"), fixture("fixtures/list.ttl")},
-                {"json", "application/json", fixture("fixtures/item.json"), fixture("fixtures/entry.json"), fixture("fixtures/list.json")},
-                {"yaml", "text/yaml;charset=UTF-8", null, fixture("fixtures/entry.yaml"), fixture("fixtures/list.yaml")}
+                {"json", "application/json"},
+                {"yaml", "text/yaml;charset=UTF-8"}
         });
     }
 
-    public RepresentationsTest(String extension, String expectedContentType, String expectedItemValue, String expectedEntryValue, String expectedRecordsValue) {
+    public RepresentationsTest(String extension, String expectedContentType) {
         this.extension = extension;
         this.expectedContentType = expectedContentType;
-        this.expectedItemValue = expectedItemValue;
-        this.expectedEntryValue = expectedEntryValue;
-        this.expectedRecordsValue = expectedRecordsValue;
+        this.expectedItemValue = fixture("fixtures/item." + extension);
+        this.expectedEntryValue = fixture("fixtures/entry." + extension);
+        this.expectedRecordsValue = fixture("fixtures/list." + extension);
     }
 
     @Test
     public void representationIsSupportedForEntryResource() {
+        assumeThat(expectedEntryValue, notNullValue());
+
         Response response = getRequest(REGISTER_NAME, "/entry/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
@@ -82,6 +84,8 @@ public class RepresentationsTest extends FunctionalTestBase {
     @Test
     @Ignore("/records doesn't yet support the new yaml format")
     public void representationIsSupportedForRecordsResource() {
+        assumeThat(expectedRecordsValue, notNullValue());
+
         Response response = getRequest(REGISTER_NAME, "/records." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
@@ -92,8 +96,8 @@ public class RepresentationsTest extends FunctionalTestBase {
     private static String fixture(String resourceName) {
         try {
             return Resources.toString(Resources.getResource(resourceName), Charsets.UTF_8);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
+        } catch (IOException | IllegalArgumentException e) {
+            return null;
         }
     }
 }
