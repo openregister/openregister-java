@@ -15,12 +15,9 @@ public class Item {
         this.content = content;
     }
 
+    @SuppressWarnings("unused, used by DAO")
     public String getSha256hex() {
         return sha256hex;
-    }
-
-    public byte[] getContent() {
-        return content;
     }
 
     @SuppressWarnings("unused, used by DAO")
