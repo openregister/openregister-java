@@ -40,8 +40,8 @@ public class LoadHandlerTest {
     ObjectMapper om = new ObjectMapper();
 
     @Test
-    public void handle_addsTheHashAndThenSavesOnlyInTheEntriesTable_whenMigrationIsRunning() throws Exception {
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, entryStore, true);
+    public void handle_addsTheEntriesInEntryAndItemTable() throws IOException {
+        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, entryStore);
 
         String payload1 = "{\"register\":\"value1\"}";
         String payload2 = "{\"register\":\"value2\"}";
@@ -58,29 +58,16 @@ public class LoadHandlerTest {
         loadHandler.load(entries);
 
         verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
-        verifyNoMoreInteractions(entryStore);
-        final List<byte[]> payloadArray = Lists.newArrayList(entriesCaptor.getValue());
-        assertThat(payloadArray.size(), equalTo(2));
-        assertThat(payloadArray.get(0), equalTo(expectedEntry1Bytes));
-        assertThat(payloadArray.get(1), equalTo(expectedEntry2Bytes));
-    }
-
-    @Test
-    public void handle_addsTheEntriesInEntryAndItemTable_whenNoMigrationIsRunning() throws IOException {
-        LoadHandler loadHandler = new LoadHandler(entriesUpdateDAO, entryStore, false);
-
-        String payload1 = "{\"register\":\"value1\"}";
-        String payload2 = "{\"register\":\"value2\"}";
-        List<JsonNode> entries = Arrays.asList(om.readTree(payload1), om.readTree(payload2));
-
-        loadHandler.load(entries);
-
-        verify(entriesUpdateDAO, times(1)).add(entriesCaptor.capture());
         verify(entryStore).load(itemsCaptor.capture());
         Iterable<Item> items = itemsCaptor.getValue();
         assertThat(Iterables.size(items), equalTo(2));
         assertThat(Iterables.get(items, 0).getCanonicalContent(), equalTo(payload1.getBytes()));
         assertThat(Iterables.getLast(items).getCanonicalContent(), equalTo(payload2.getBytes()));
+
+        final List<byte[]> payloadArray = Lists.newArrayList(entriesCaptor.getValue());
+        assertThat(payloadArray.size(), equalTo(2));
+        assertThat(payloadArray.get(0), equalTo(expectedEntry1Bytes));
+        assertThat(payloadArray.get(1), equalTo(expectedEntry2Bytes));
     }
 
 

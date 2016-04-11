@@ -58,16 +58,8 @@ public class MintApplication extends Application<MintConfiguration> {
         EntriesUpdateDAO entriesUpdateDAO = jdbi.onDemand(EntriesUpdateDAO.class);
         entriesUpdateDAO.ensureTableExists();
 
-        //Todo: <delete after migration> scheduled task below is specific for data migration which will be deleted after migration is complete
-        boolean migrationInProcess = false;
-        EntryStore entryStore = jdbi.open().attach(EntryStore.class);
-        if (entriesUpdateDAO.maxId() > entryStore.lastMigratedID()) {
-            migrationInProcess = true;
-            ScheduledExecutorService dataReplicationExecutorService = environment.lifecycle().scheduledExecutorService("data-replication").threads(1).build();
-            dataReplicationExecutorService.scheduleAtFixedRate(new DataReplicationTask(entriesUpdateDAO, entryStore), 0, 5, TimeUnit.MINUTES);
-        }
 
-        Loader handler = new LoadHandler(entriesUpdateDAO, entryStore, migrationInProcess);
+        Loader handler = new LoadHandler(entriesUpdateDAO, jdbi.open().attach(EntryStore.class));
         JerseyEnvironment jersey = environment.jersey();
         jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, handler));
 
