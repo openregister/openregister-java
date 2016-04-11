@@ -29,6 +29,7 @@ public class RepresentationsTest extends FunctionalTestBase {
     private final String expectedItemValue;
     private final String expectedEntryValue;
     private final String expectedRecordsValue;
+    private final String expectedEntriesValue;
 
     @Before
     public void publishTestMessages() {
@@ -57,6 +58,7 @@ public class RepresentationsTest extends FunctionalTestBase {
         this.expectedItemValue = fixture("fixtures/item." + extension);
         this.expectedEntryValue = fixture("fixtures/entry." + extension);
         this.expectedRecordsValue = fixture("fixtures/list." + extension);
+        this.expectedEntriesValue = fixture("fixtures/entries." + extension);
     }
 
     @Test
@@ -91,6 +93,17 @@ public class RepresentationsTest extends FunctionalTestBase {
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
         assertThat(response.readEntity(String.class), equalTo(expectedRecordsValue));
+    }
+
+    @Test
+    public void representationIsSupportedForEntriesResource() {
+        assumeThat(expectedEntriesValue, notNullValue());
+
+        Response response = getRequest(REGISTER_NAME, "/entries." + extension);
+
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
+        assertThat(response.readEntity(String.class), equalTo(expectedEntriesValue));
     }
 
     private static String fixture(String resourceName) {

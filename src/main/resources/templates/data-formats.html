@@ -12,7 +12,8 @@
 </div>
 <div th:fragment="new-data-formats">
     <p class="data-representations">This data is available as:
-        <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'json')}">json</a>
+        <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'json')}">json</a> and
+        <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@representationLink(#httpServletRequest, 'yaml')}">yaml</a>
     </p>
 </div>
 </html>
