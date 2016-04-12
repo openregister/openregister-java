@@ -1,5 +1,5 @@
 jsonschema==2.5.1
--e git+https://github.com/openregister/conformance-test.git@84c91ce005903f25ba85961c255967ec4526067b#egg=openregister_conformance-master
+-e git+https://github.com/openregister/conformance-test.git@eb3ae6535b09dcd091d7be262402c33ad232d76a#egg=openregister_conformance-master
 py==1.4.31
 pytest==2.9.0
 PyYAML==3.11
