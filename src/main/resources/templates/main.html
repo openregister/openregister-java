@@ -41,8 +41,8 @@
 </div>
 
 <th:block th:fragment="organisation(organisation, branding)">
-    <a th:if="${branding.present}" th:href="${@uk.gov.register.presentation.HtmlViewSupport@publicBodyLink(organisation.publicBodyId, registerDomain)}" th:utext="${#strings.replace(branding.get().logoFormattedName,'\r\n','&lt;br/&gt;')}" class="organisation-logo" th:classappend="|organisation-logo-${branding.get().logoClassName} ${branding.get().colourClassName}|">Cabinet Office</a>
-    <a th:unless="${branding.present}" th:href="${@uk.gov.register.presentation.HtmlViewSupport@publicBodyLink(organisation.publicBodyId, registerDomain)}" th:text="${organisation.name}" class="organisation-logo organisation-logo-no-identity">Cabinet Office</a>
+    <span th:if="${branding.present}" th:utext="${#strings.replace(branding.get().logoFormattedName,'\r\n','&lt;br/&gt;')}" class="organisation-logo" th:classappend="|organisation-logo-${branding.get().logoClassName} ${branding.get().colourClassName}|">Cabinet Office</span>
+    <span th:unless="${branding.present}" th:text="${organisation.name}" class="organisation-logo organisation-logo-no-identity">Cabinet Office</span>
 </th:block>
 
 <div th:fragment="attribution">
