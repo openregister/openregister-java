@@ -23,9 +23,6 @@ public abstract class RecentEntryIndexQueryDAO {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index ORDER BY serial_number DESC LIMIT :limit OFFSET :offset")
-    public abstract List<DbEntry> getAllEntries(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
-
     // TODO: This will be okay for small numbers of records
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index ORDER BY serial_number DESC")
     public abstract List<DbEntry> getAllEntriesNoPagination();
