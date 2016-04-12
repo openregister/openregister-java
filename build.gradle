@@ -111,7 +111,7 @@ task installConformanceTestDeps(type: Exec) {
 }
 
 task conformanceTest(type: Exec) {
-    commandLine '.venv/bin/openregister-conformance', '--no-https', 'http://address.openregister.dev:9000'
+    commandLine '.venv/bin/openregister-conformance', '--no-https', 'http://school.openregister.dev:9000'
 }
 
 assemble {
