@@ -28,7 +28,7 @@ public class RecordResource {
 
     @GET
     @Path("/record/{record-key}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV})
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         return recordDAO
                 .findBy(key)
@@ -38,7 +38,7 @@ public class RecordResource {
 
     @GET
     @Path("/record/{record-key}/entries")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV})
     public NewEntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
         List<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
         if (allEntries.isEmpty()) {
