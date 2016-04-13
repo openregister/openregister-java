@@ -5,25 +5,20 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.ZoneId;
-import java.util.TimeZone;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
+import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 public class Entry {
-    private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    static {
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")));
-    }
-
     @JsonProperty("entry-number")
     public final String entryNumber;
 
     private final String sha256hex;
 
-    private final Timestamp timestamp;
+    private final Instant timestamp;
 
-    public Entry(String entryNumber, String sha256hex, Timestamp timestamp) {
+    public Entry(String entryNumber, String sha256hex, Instant timestamp) {
         this.entryNumber = entryNumber;
         this.sha256hex = sha256hex;
         this.timestamp = timestamp;
@@ -36,7 +31,8 @@ public class Entry {
 
     @JsonProperty("entry-timestamp")
     public String getTimestamp() {
-        return simpleDateFormat.format(timestamp);
+        // http://openregister.github.io/specification/#timestamp-datatype only allows seconds, not fractions thereof
+        return ISO_INSTANT.format(timestamp.truncatedTo(ChronoUnit.SECONDS));
     }
 
     public static CsvSchema csvSchema() {
