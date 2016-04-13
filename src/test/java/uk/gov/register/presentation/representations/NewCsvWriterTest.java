@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
+import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.view.ItemView;
 import uk.gov.register.presentation.view.NewEntryListView;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.when;
 public class NewCsvWriterTest {
 
     NewCsvWriter csvWriter = new NewCsvWriter();
+    Register register = new Register("register1", ImmutableList.of("key1", "key2", "key3", "key4"),
+            "copyright", "registry1", "text1", "phase1");
 
     @Test
     public void writes_NewEntryListView_to_output_stream() throws IOException {
@@ -51,6 +54,7 @@ public class NewCsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("val\nue4")
         ));
+        when(itemView.getRegister()).thenReturn(register);
         when(itemView.csvSchema()).thenCallRealMethod();
 
         NewCsvWriter csvWriter = new NewCsvWriter();
@@ -78,6 +82,7 @@ public class NewCsvWriterTest {
                         new StringValue("value5"),
                         new StringValue("value6"))
                 )));
+        when(itemView.getRegister()).thenReturn(register);
         when(itemView.csvSchema()).thenCallRealMethod();
 
         NewCsvWriter csvWriter = new NewCsvWriter();
@@ -86,7 +91,7 @@ public class NewCsvWriterTest {
         csvWriter.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedCsv, is("key1,key2\r\nvalue1;value2;value3,value4;value5;value6\r\n"));
+        assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1;value2;value3,value4;value5;value6,,\r\n"));
     }
 
     @Test
@@ -99,6 +104,7 @@ public class NewCsvWriterTest {
                 "key3", new StringValue(""),
                 "key4", new StringValue("")
         ));
+        when(itemView.getRegister()).thenReturn(register);
         when(itemView.csvSchema()).thenCallRealMethod();
 
         NewCsvWriter csvWriter = new NewCsvWriter();
