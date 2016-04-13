@@ -16,13 +16,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class RecordResourceFunctionalTest extends FunctionalTestBase {
+    private final static String item0 = "{\"address\":\"6789\",\"name\":\"elvis\"}";
     private final static String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
 
     @Before
     public void publishTestMessages() throws Throwable {
         dbSupport.publishMessages(ImmutableList.of(
-                String.format("{\"hash\":\"hash1\",\"entry\":%s}", item1),
-                String.format("{\"hash\":\"hash2\",\"entry\":%s}", "{\"address\":\"145678\",\"name\":\"ellis\"}")
+                "{\"hash\":\"hash0\",\"entry\":" + item0 + "}",
+                "{\"hash\":\"hash1\",\"entry\":" + item1 + "}",
+                "{\"hash\":\"hash2\",\"entry\":{\"address\":\"145678\",\"name\":\"ellis\"}}"
         ));
     }
 
@@ -35,7 +37,7 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
         assertThat(response.getStatus(), equalTo(200));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
-        assertThat(res.get("entry-number").textValue(), equalTo("1"));
+        assertThat(res.get("entry-number").textValue(), equalTo("2"));
         assertThat(res.get("item-hash").textValue(), equalTo("sha-256:" + sha256Hex));
         assertThat(res.get("address").textValue(), equalTo("6789"));
         assertThat(res.get("name").textValue(), equalTo("presley"));
@@ -43,7 +45,35 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void return404ResponseWhenRecordNotExist() {
+    public void recordResource_return404ResponseWhenRecordNotExist() {
         assertThat(getRequest("/record/5001.json").getStatus(), equalTo(404));
     }
+
+    @Test
+    public void historyResource_returnsHistoryOfARecord() throws IOException {
+        Response response = getRequest("/record/6789/entries.json");
+
+        assertThat(response.getStatus(), equalTo(200));
+
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        assertThat(res.isArray(), equalTo(true));
+
+        JsonNode firstEntry = res.get(0);
+        assertThat(firstEntry.get("entry-number").textValue(), equalTo("1"));
+        assertThat(firstEntry.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item0)));
+        assertTrue(firstEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+
+        JsonNode secondEntry = res.get(1);
+        assertThat(secondEntry.get("entry-number").textValue(), equalTo("2"));
+        assertThat(secondEntry.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
+        assertTrue(secondEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+
+    }
+
+    @Test
+    public void historyResource_return404ResponseWhenRecordNotExist() {
+        assertThat(getRequest("/record/5001/entries.json").getStatus(), equalTo(404));
+    }
+
 }
