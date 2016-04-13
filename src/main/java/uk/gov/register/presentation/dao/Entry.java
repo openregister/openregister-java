@@ -1,6 +1,9 @@
 package uk.gov.register.presentation.dao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -34,5 +37,11 @@ public class Entry {
     @JsonProperty("entry-timestamp")
     public String getTimestamp() {
         return simpleDateFormat.format(timestamp);
+    }
+
+    public static CsvSchema csvSchema() {
+        CsvMapper csvMapper = new CsvMapper();
+        csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
+        return csvMapper.schemaFor(Entry.class);
     }
 }

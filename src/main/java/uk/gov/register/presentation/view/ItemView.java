@@ -31,10 +31,6 @@ public class ItemView extends AttributionView implements RepresentationView {
 
     @Override
     public CsvSchema csvSchema() {
-        CsvSchema.Builder schemaBuilder = new CsvSchema.Builder() ;
-        for (String value : getRegister().getFields()) {
-            schemaBuilder.addColumn(value, CsvSchema.ColumnType.STRING);
-        }
-        return schemaBuilder.build();
+        return Item.csvSchema(getRegister().getFields());
     }
 }

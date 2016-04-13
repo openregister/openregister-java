@@ -28,8 +28,10 @@ public class RepresentationsTest extends FunctionalTestBase {
     private final String expectedContentType;
     private final String expectedItemValue;
     private final String expectedEntryValue;
+    private final String expectedRecordValue;
     private final String expectedRecordsValue;
     private final String expectedEntriesValue;
+    private final String expectedRecordEntriesValue;
 
     @Before
     public void publishTestMessages() {
@@ -57,8 +59,10 @@ public class RepresentationsTest extends FunctionalTestBase {
         this.expectedContentType = expectedContentType;
         this.expectedItemValue = fixture("fixtures/item." + extension);
         this.expectedEntryValue = fixture("fixtures/entry." + extension);
+        this.expectedRecordValue = fixture("fixtures/record." + extension);
         this.expectedRecordsValue = fixture("fixtures/list." + extension);
         this.expectedEntriesValue = fixture("fixtures/entries." + extension);
+        this.expectedRecordEntriesValue = fixture("fixtures/record-entries." + extension);
     }
 
     @Test
@@ -84,6 +88,17 @@ public class RepresentationsTest extends FunctionalTestBase {
     }
 
     @Test
+    public void representationIsSupportedForRecordResource() {
+        assumeThat(expectedRecordValue, notNullValue());
+
+        Response response = getRequest(REGISTER_NAME, "/record/value1." + extension);
+
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
+        assertThat(response.readEntity(String.class), equalTo(expectedRecordValue));
+    }
+
+    @Test
     @Ignore("/records doesn't yet support the new yaml format")
     public void representationIsSupportedForRecordsResource() {
         assumeThat(expectedRecordsValue, notNullValue());
@@ -104,6 +119,17 @@ public class RepresentationsTest extends FunctionalTestBase {
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
         assertThat(response.readEntity(String.class), equalTo(expectedEntriesValue));
+    }
+
+    @Test
+    public void representationIsSupportedForRecordEntriesResource(){
+        assumeThat(expectedRecordEntriesValue, notNullValue());
+
+        Response response = getRequest(REGISTER_NAME, "/record/value1/entries." + extension);
+
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
+        assertThat(response.readEntity(String.class), equalTo(expectedRecordEntriesValue));
     }
 
     private static String fixture(String resourceName) {
