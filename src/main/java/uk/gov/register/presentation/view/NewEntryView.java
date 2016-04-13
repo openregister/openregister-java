@@ -1,8 +1,6 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.config.PublicBody;
@@ -27,8 +25,6 @@ public class NewEntryView extends AttributionView implements RepresentationView 
 
     @Override
     public CsvSchema csvSchema() {
-        CsvMapper csvMapper = new CsvMapper();
-        csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
-        return csvMapper.schemaFor(Entry.class);
+        return Entry.csvSchema();
     }
 }
