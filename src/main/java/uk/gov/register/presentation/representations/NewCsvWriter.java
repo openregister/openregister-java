@@ -1,8 +1,6 @@
 package uk.gov.register.presentation.representations;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.dropwizard.jackson.Jackson;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
@@ -16,17 +14,18 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 @Provider
-@Produces(ExtraMediaType.TEXT_YAML)
-public class NewYamlWriter extends NewRepresentationWriter {
-    private final ObjectMapper objectMapper;
+@Produces(ExtraMediaType.TEXT_CSV)
+public class NewCsvWriter extends NewRepresentationWriter {
+    private final CsvMapper objectMapper;
 
     @Inject
-    public NewYamlWriter() {
-        objectMapper = Jackson.newObjectMapper(new YAMLFactory());
+    public NewCsvWriter() {
+        objectMapper = new CsvMapper();
     }
 
     @Override
     public void writeTo(RepresentationView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        objectMapper.writeValue(entityStream, view);
+        objectMapper.writerFor(type).with(view.csvSchema().withLineSeparator("\r\n").withHeader())
+                .writeValue(entityStream, view);
     }
 }

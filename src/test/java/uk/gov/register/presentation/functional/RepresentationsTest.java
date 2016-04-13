@@ -44,7 +44,7 @@ public class RepresentationsTest extends FunctionalTestBase {
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-//                {"csv", "text/csv;charset=UTF-8", fixture("fixtures/single.csv"), fixture("fixtures/list.csv")},
+                {"csv", "text/csv;charset=UTF-8"},
 //                {"tsv", "text/tab-separated-values;charset=UTF-8", fixture("fixtures/single.tsv"), fixture("fixtures/list.tsv")},
 //                {"ttl", "text/turtle;charset=UTF-8", fixture("fixtures/single.ttl"), fixture("fixtures/list.ttl")},
                 {"json", "application/json"},
