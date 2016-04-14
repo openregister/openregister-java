@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.gov.store.EntryStore;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
@@ -18,13 +19,13 @@ public class MintService {
     private final String register;
     private final ObjectReconstructor objectReconstructor;
     private final EntryValidator entryValidator;
-    private final Loader loadHandler;
+    private final EntryStore entryStore;
 
-    public MintService(String register, ObjectReconstructor objectReconstructor, EntryValidator entryValidator, Loader loadHandler) {
+    public MintService(String register, ObjectReconstructor objectReconstructor, EntryValidator entryValidator, EntryStore entryStore) {
         this.register = register;
         this.objectReconstructor = objectReconstructor;
         this.entryValidator = entryValidator;
-        this.loadHandler = loadHandler;
+        this.entryStore = entryStore;
     }
 
     @Context
@@ -37,7 +38,7 @@ public class MintService {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
             objects.forEach(singleObject -> entryValidator.validateEntry(register, singleObject));
-            loadHandler.load(objects);
+            entryStore.load(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));
             throw t;

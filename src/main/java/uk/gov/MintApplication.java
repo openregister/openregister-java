@@ -15,7 +15,6 @@ import uk.gov.mint.*;
 import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.RegistersConfiguration;
-import uk.gov.store.EntriesUpdateDAO;
 import uk.gov.store.EntryStore;
 
 import java.util.Optional;
@@ -55,13 +54,8 @@ public class MintApplication extends Application<MintConfiguration> {
         EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
         ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
-        EntriesUpdateDAO entriesUpdateDAO = jdbi.onDemand(EntriesUpdateDAO.class);
-        entriesUpdateDAO.ensureTableExists();
-
-
-        Loader handler = new LoadHandler(entriesUpdateDAO, jdbi.open().attach(EntryStore.class));
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, handler));
+        jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, jdbi.open().attach(EntryStore.class)));
 
         jersey.register(EntryValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
