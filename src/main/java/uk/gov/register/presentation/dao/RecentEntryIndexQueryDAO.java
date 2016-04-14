@@ -57,7 +57,7 @@ public abstract class RecentEntryIndexQueryDAO {
     public abstract int getTotalEntries();
 
     @RegisterMapper(InstantMapper.class)
-    @SqlQuery("select last_updated from total_entries")
+    @SqlQuery("SELECT timestamp FROM entry ORDER BY entry_number DESC LIMIT 1")
     public abstract Instant getLastUpdatedTime();
 
     @SqlQuery("SELECT count FROM total_records")

@@ -51,7 +51,11 @@ public class HomePageView extends AttributionView {
 
     @SuppressWarnings("unused, used from template")
     public String getLastUpdatedTime() {
-        return DATE_TIME_FORMATTER.format(lastUpdated);
+        // lastUpdated can be null in an empty register (ie no entries)
+        if (lastUpdated != null) {
+            return DATE_TIME_FORMATTER.format(lastUpdated);
+        }
+        return null;
     }
 
     @SuppressWarnings("unused, used from template")
