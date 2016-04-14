@@ -28,6 +28,10 @@ public class RecordResource extends ResourceCommon{
     @Path("/record/{record-key}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
+        requestContext.
+                getHttpServletResponse().
+                setHeader("Link", String.format("</record/%s/entries>;rel=\"version-history\"", key));
+
         return recordDAO
                 .findByPrimaryKey(key)
                 .map(record -> viewFactory.getRecordView(record))
