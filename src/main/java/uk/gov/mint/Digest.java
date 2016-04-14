@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 //TODO: Copied from alpha register to generate hash, We need to figure out what hashing technique is required
-class Digest {
+public class Digest {
     public static String shasum(String raw) {
         try {
             String head = "blob " + raw.getBytes(StandardCharsets.UTF_8).length + "\0";
