@@ -9,7 +9,7 @@ import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.Record;
 
 import java.io.IOException;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -19,7 +19,7 @@ public class RecordViewTest {
     public void recordJsonRepresentation_isFlatJsonOfEntryAndItemContent() throws IOException, JSONException {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-        Record record = new Record(new Entry("1", "ab", new Timestamp(1459241964336L)), new Item("ab", objectMapper.readTree("{\"a\":\"b\"}")));
+        Record record = new Record(new Entry("1", "ab", Instant.ofEpochMilli(1459241964336L)), new Item("ab", objectMapper.readTree("{\"a\":\"b\"}")));
         RecordView recordView = new RecordView(null, null, null, null, record);
 
         String result = objectMapper.writeValueAsString(recordView);

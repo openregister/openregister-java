@@ -48,7 +48,7 @@ public abstract class RecordDAO {
                         new Entry(
                                 r.getString("entry_number"),
                                 r.getString("sha256hex"),
-                                r.getTimestamp("timestamp")
+                                r.getTimestamp("timestamp").toInstant()
                         ),
                         new Item(
                                 r.getString("sha256hex"),
