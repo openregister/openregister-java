@@ -1,7 +1,8 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
-import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.dao.EntryDAO;
+import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ViewFactory;
 
@@ -14,18 +15,20 @@ import javax.ws.rs.core.MediaType;
 @Path("/")
 public class HomePageResource {
     private final ViewFactory viewFactory;
-    private final RecentEntryIndexQueryDAO recentEntryIndexQueryDAO;
+    private final RecordDAO recordDAO;
+    private EntryDAO entryDAO;
 
     @Inject
-    public HomePageResource(ViewFactory viewFactory, RecentEntryIndexQueryDAO recentEntryIndexQueryDAO) {
+    public HomePageResource(ViewFactory viewFactory, RecordDAO recordDAO, EntryDAO entryDAO) {
         this.viewFactory = viewFactory;
-        this.recentEntryIndexQueryDAO = recentEntryIndexQueryDAO;
+        this.recordDAO = recordDAO;
+        this.entryDAO = entryDAO;
     }
 
     @GET
     @Produces({ExtraMediaType.TEXT_HTML})
     public View home() {
-        return viewFactory.homePageView(recentEntryIndexQueryDAO.getTotalRecords(), recentEntryIndexQueryDAO.getTotalEntries(), recentEntryIndexQueryDAO.getLastUpdatedTime());
+        return viewFactory.homePageView(recordDAO.getTotalRecords(), entryDAO.getTotalEntries(), entryDAO.getLastUpdatedTime());
     }
 
     @GET

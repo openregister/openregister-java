@@ -23,6 +23,9 @@ public abstract class RecordDAO {
 
     private static final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
+    @SqlQuery("SELECT count FROM total_records")
+    public abstract int getTotalRecords();
+
     @SqlQuery("select entry_number, timestamp, e.sha256hex as sha256hex, content from entry e, item i where e.sha256hex=i.sha256hex and e.entry_number = (select serial_number from current_keys where current_keys.key=:key)")
     @SingleValueResult(Record.class)
     @RegisterMapper(RecordMapper.class)
