@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RecordsViewTest {
+public class RecordListViewTest {
     @Mock
     RequestContext requestContext;
 
@@ -45,9 +45,9 @@ public class RecordsViewTest {
                 )
         );
         when(requestContext.getRegisterPrimaryKey()).thenReturn("address");
-        RecordsView recordsView = new RecordsView(requestContext, null, null, new EntryConverter(new FieldsConfiguration(Optional.empty()), () -> "openregister.dev", requestContext), records);
+        RecordListView recordListView = new RecordListView(requestContext, null, null, new EntryConverter(new FieldsConfiguration(Optional.empty()), () -> "openregister.dev", requestContext), records);
 
-        Map<String, RecordView> result = recordsView.getRecords();
+        Map<String, RecordView> result = recordListView.getRecords();
         assertThat(result.size(), equalTo(2));
 
 

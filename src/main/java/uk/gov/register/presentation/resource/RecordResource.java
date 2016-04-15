@@ -5,7 +5,7 @@ import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.NewEntryListView;
 import uk.gov.register.presentation.view.RecordView;
-import uk.gov.register.presentation.view.RecordsView;
+import uk.gov.register.presentation.view.RecordListView;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
@@ -54,7 +54,7 @@ public class RecordResource {
     @GET
     @Path("/records/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV})
-    public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
+    public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         return viewFactory.getRecordsView(recordDAO.findMax100RecordsByKeyValue(key, value));
     }
 

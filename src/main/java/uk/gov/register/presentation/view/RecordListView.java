@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class RecordsView extends AttributionView {
+public class RecordListView extends AttributionView {
     private EntryConverter itemConverter;
     private List<Record> records;
 
-    public RecordsView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, EntryConverter itemConverter, List<Record> records) {
+    public RecordListView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, EntryConverter itemConverter, List<Record> records) {
         super(requestContext, custodian, custodianBranding, "new-records.html");
         this.itemConverter = itemConverter;
         this.records = records;
