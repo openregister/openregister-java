@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.view;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
@@ -9,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
+import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.Record;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -43,9 +45,9 @@ public class RecordsViewTest {
                 )
         );
         when(requestContext.getRegisterPrimaryKey()).thenReturn("address");
-        RecordsView recordsView = new RecordsView(requestContext, null, null, records);
+        RecordsView recordsView = new RecordsView(requestContext, null, null, new EntryConverter(new FieldsConfiguration(Optional.empty()), () -> "openregister.dev", requestContext), records);
 
-        Map<String, JsonNode> result = recordsView.getJson();
+        Map<String, RecordView> result = recordsView.getRecords();
         assertThat(result.size(), equalTo(2));
 
 
@@ -57,7 +59,7 @@ public class RecordsViewTest {
                         "\"address\":\"123\"," +
                         "\"street\":\"foo\"" +
                         "}",
-                result.get("123").toString(),
+                Jackson.newObjectMapper().writeValueAsString(result.get("123")),
                 false
         );
 
@@ -69,7 +71,7 @@ public class RecordsViewTest {
                         "\"address\":\"456\"," +
                         "\"street\":\"bar\"" +
                         "}",
-                result.get("456").toString(),
+                Jackson.newObjectMapper().writeValueAsString(result.get("456")),
                 false
         );
     }

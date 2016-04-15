@@ -87,5 +87,12 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
         assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"ellis\",\"address\":\"12345\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "name", "ellis", "address", "12345")));
     }
 
+    @Test
+    public void oldFacetedResourceRedirectsToNewResource(){
+        Response response = getRequest("/name/ellis.json");
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getHeaders().get("Location").get(0), equalTo("http://address.beta.openregister.org/records/name/ellis"));
+    }
+
 }
 

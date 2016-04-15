@@ -1,8 +1,8 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.JsonNode;
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -13,20 +13,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RecordsView extends AttributionView {
+    private EntryConverter itemConverter;
     private List<Record> records;
 
-    public RecordsView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, List<Record> records) {
+    public RecordsView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, EntryConverter itemConverter, List<Record> records) {
         super(requestContext, custodian, custodianBranding, "new-records.html");
+        this.itemConverter = itemConverter;
         this.records = records;
     }
 
     @JsonValue
-    public Map<String, JsonNode> getJson() {
+    public Map<String, RecordView> getRecords() {
         return records
                 .stream()
-                .map(Record::json)
+                .map(r -> new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, r))
                 .collect(
-                        Collectors.toMap(r -> r.get(requestContext.getRegisterPrimaryKey()).textValue(), r -> r)
+                        Collectors.toMap(RecordView::getPrimaryKey, r -> r)
                 );
     }
 }

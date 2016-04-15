@@ -1,9 +1,6 @@
 package uk.gov.register.presentation.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import io.dropwizard.jackson.Jackson;
 
 import java.util.Iterator;
 
@@ -24,12 +21,5 @@ public class Record {
             schemaBuilder.addColumn(iterator.next().getName(), CsvSchema.ColumnType.STRING);
         }
         return schemaBuilder.build();
-    }
-
-    public ObjectNode json() {
-        ObjectMapper objectMapper = Jackson.newObjectMapper();
-        ObjectNode jsonNodes = objectMapper.convertValue(entry, ObjectNode.class);
-        jsonNodes.setAll((ObjectNode) item.content.deepCopy());
-        return jsonNodes;
     }
 }
