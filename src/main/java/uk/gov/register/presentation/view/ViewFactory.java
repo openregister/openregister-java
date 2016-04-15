@@ -62,6 +62,10 @@ public class ViewFactory {
         );
     }
 
+    public RecordsView getRecordsView(List<Record> records) {
+        return new RecordsView(requestContext, getCustodian(), getBranding(), records);
+    }
+
     public ThymeleafView thymeleafView(String templateName) {
         return new ThymeleafView(requestContext, templateName);
     }

@@ -1,6 +1,8 @@
 package uk.gov.register.presentation.functional;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,6 +13,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -62,18 +65,6 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void fetchAllRecordsForAKeyValueCombinatiion() throws JSONException {
-        Response response = getRequest("/name/ellis.json");
-        String jsonResponse = response.readEntity(String.class);
-        JSONAssert.assertEquals(jsonResponse,
-                "[" +
-                        "{\"serial-number\":5,\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"6789\"}}," +
-                        "{\"serial-number\":1,\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}" +
-                        "]"
-                , false);
-    }
-
-    @Test
     public void recordsPageHasXhtmlLangAttributes() {
         Response response = getRequest("address", "/records");
 
@@ -82,6 +73,18 @@ public class RecordsResourceFunctionalTest extends FunctionalTestBase {
         assertThat(htmlElement.size(), equalTo(1));
         assertThat(htmlElement.first().attr("lang"), equalTo("en"));
         assertThat(htmlElement.first().attr("xml:lang"), equalTo("en"));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void fetchAllRecordsForAKeyValueCombinatiion() throws JSONException {
+        Response response = getRequest("/records/name/ellis.json");
+        Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
+
+        assertThat(responseMap.size(), equalTo(2));
+
+        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.of("entry-number", "5", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"ellis\",\"address\":\"6789\"}"), "entry-timestamp", responseMap.get("6789").get("entry-timestamp"), "name", "ellis", "address", "6789")));
+        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"ellis\",\"address\":\"12345\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "name", "ellis", "address", "12345")));
     }
 
 }

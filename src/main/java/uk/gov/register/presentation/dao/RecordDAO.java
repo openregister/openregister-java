@@ -29,19 +29,26 @@ public abstract class RecordDAO {
     @SqlQuery("select entry_number, timestamp, e.sha256hex as sha256hex, content from entry e, item i where e.sha256hex=i.sha256hex and e.entry_number = (select serial_number from current_keys where current_keys.key=:key)")
     @SingleValueResult(Record.class)
     @RegisterMapper(RecordMapper.class)
-    public abstract Optional<Record> findBy(@Bind("key") String key);
+    public abstract Optional<Record> findByPrimaryKey(@Bind("key") String key);
+
 
     @SqlQuery(" select entry_number, timestamp, sha256hex from entry where sha256hex in (select sha256hex from item where (content @> :contentPGobject))")
     @RegisterMapper(NewEntryMapper.class)
-    public abstract List<Entry> findAllEntriesOfRecordBy(@Bind("contentPGobject") PGobject content);
+    public abstract List<Entry> __findAllEntriesOfRecordBy(@Bind("contentPGobject") PGobject content);
+
+
+    @SqlQuery("select entry_number, timestamp, entry.sha256hex as sha256hex, content from item, entry, current_keys where current_keys.serial_number = entry.entry_number and item.content @> :contentPGobject and item.sha256hex=entry.sha256hex limit 100")
+    @RegisterMapper(RecordMapper.class)
+    public abstract List<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content);
 
     public List<Entry> findAllEntriesOfRecordBy(String key, String value) {
-        try {
-            return findAllEntriesOfRecordBy(writePGObject(ImmutableMap.of(key, value)));
-        } catch (Throwable t) {
-            throw Throwables.propagate(t);
-        }
+        return __findAllEntriesOfRecordBy(writePGObject(key, value));
     }
+
+    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
+        return __findMax100RecordsByKeyValue(writePGObject(key, value));
+    }
+
 
     public static class RecordMapper implements ResultSetMapper<Record> {
         @Override
@@ -64,10 +71,14 @@ public abstract class RecordDAO {
         }
     }
 
-    private PGobject writePGObject(Object value) throws JsonProcessingException, SQLException {
-        PGobject json = new PGobject();
-        json.setType("jsonb");
-        json.setValue(objectMapper.writeValueAsString(value));
-        return json;
+    private PGobject writePGObject(String key, String value) {
+        try {
+            PGobject json = new PGobject();
+            json.setType("jsonb");
+            json.setValue(objectMapper.writeValueAsString(ImmutableMap.of(key, value)));
+            return json;
+        } catch (SQLException | JsonProcessingException e) {
+            throw Throwables.propagate(e);
+        }
     }
 }
