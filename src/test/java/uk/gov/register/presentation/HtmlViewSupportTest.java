@@ -33,12 +33,4 @@ public class HtmlViewSupportTest {
         String link = HtmlViewSupport.representationLink(servletRequest, "csv");
         assertThat(link, equalTo("/item/hashvalue.csv?query=value"));
     }
-
-    @Test
-    public void representationLink_doNotAddRepresentationSuffixForHTMLRepresentation() throws URISyntaxException {
-        when(servletRequest.getRequestURI()).thenReturn("/item/hashvalue.json");
-        when(servletRequest.getParameterMap()).thenReturn(Collections.singletonMap("query", new String[]{"value"}));
-        String link = HtmlViewSupport.representationLink(servletRequest, "html");
-        assertThat(link, equalTo("/item/hashvalue?query=value"));
-    }
 }

@@ -7,8 +7,7 @@ import java.util.Map;
 @SuppressWarnings("unused, methods of this class are used from html")
 public class HtmlViewSupport {
     public static String representationLink(HttpServletRequest httpServletRequest, String representation) {
-        String representationUrlSuffix = representation.equals("html") ? "" : "." + representation;
-        String requestPath = httpServletRequest.getRequestURI().replaceAll("([^\\.]+)(\\.[a-z]+)?", "$1" + representationUrlSuffix);
+        String requestPath = httpServletRequest.getRequestURI().replaceAll("([^\\.]+)(\\.[a-z]+)?", "$1." + representation);
 
         UriBuilder uriBuilder = UriBuilder.fromPath(requestPath);
 
