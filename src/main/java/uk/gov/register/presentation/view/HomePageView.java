@@ -11,7 +11,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class HomePageView extends AttributionView {
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMMM uuuu").withZone(ZoneId.of("UTC"));
+    /* Formatter for friendly (ie human-readable) dates
+       based on guidance at https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#dates
+     */
+    private final static DateTimeFormatter FRIENDLY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMMM uuuu").withZone(ZoneId.of("UTC"));
 
     private final Instant lastUpdated;
     private final int totalRecords;
@@ -53,7 +56,7 @@ public class HomePageView extends AttributionView {
     public String getLastUpdatedTime() {
         // lastUpdated can be null in an empty register (ie no entries)
         if (lastUpdated != null) {
-            return DATE_TIME_FORMATTER.format(lastUpdated);
+            return FRIENDLY_DATE_TIME_FORMATTER.format(lastUpdated);
         }
         return null;
     }
