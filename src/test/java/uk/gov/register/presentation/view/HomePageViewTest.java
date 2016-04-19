@@ -40,6 +40,6 @@ public class HomePageViewTest {
 
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, "openregister.org");
 
-        assertThat(homePageView.getLastUpdatedTime(), equalTo("11 Sep 2015"));
+        assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
 }

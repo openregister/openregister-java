@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class HomePageView extends AttributionView {
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM uuuu").withZone(ZoneId.of("UTC"));
+    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMMM uuuu").withZone(ZoneId.of("UTC"));
 
     private final Instant lastUpdated;
     private final int totalRecords;
