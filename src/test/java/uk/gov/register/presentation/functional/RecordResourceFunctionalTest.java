@@ -75,5 +75,4 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
     public void historyResource_return404ResponseWhenRecordNotExist() {
         assertThat(getRequest("/record/5001/entries.json").getStatus(), equalTo(404));
     }
-
 }

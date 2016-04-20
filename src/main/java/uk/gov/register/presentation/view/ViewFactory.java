@@ -62,6 +62,10 @@ public class ViewFactory {
         );
     }
 
+    public RecordListView getNewRecordsView(List<Record> records, Pagination pagination) {
+        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, entryConverter, records);
+    }
+
     public ThymeleafView thymeleafView(String templateName) {
         return new ThymeleafView(requestContext, templateName);
     }

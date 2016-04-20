@@ -1,12 +1,12 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Item;
+import uk.gov.register.presentation.representations.CsvRepresentation;
 import uk.gov.register.presentation.representations.RepresentationView;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -30,7 +30,7 @@ public class ItemView extends AttributionView implements RepresentationView {
     }
 
     @Override
-    public CsvSchema csvSchema() {
-        return Item.csvSchema(getRegister().getFields());
+    public CsvRepresentation<Map> csvRepresentation() {
+        return new CsvRepresentation<>(Item.csvSchema(getRegister().getFields()), getContent());
     }
 }

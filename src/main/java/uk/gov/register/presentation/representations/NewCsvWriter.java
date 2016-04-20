@@ -25,7 +25,10 @@ public class NewCsvWriter extends NewRepresentationWriter {
 
     @Override
     public void writeTo(RepresentationView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        objectMapper.writerFor(type).with(view.csvSchema().withLineSeparator("\r\n").withHeader())
-                .writeValue(entityStream, view);
+        CsvRepresentation csvRepresentation = view.csvRepresentation();
+
+        objectMapper.writerFor(csvRepresentation.contentType)
+                .with(csvRepresentation.csvSchema.withLineSeparator("\r\n").withHeader())
+                .writeValue(entityStream, csvRepresentation.contents);
     }
 }

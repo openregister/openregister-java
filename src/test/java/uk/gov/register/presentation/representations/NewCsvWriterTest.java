@@ -55,7 +55,7 @@ public class NewCsvWriterTest {
                 "key4", new StringValue("val\nue4")
         ));
         when(itemView.getRegister()).thenReturn(register);
-        when(itemView.csvSchema()).thenCallRealMethod();
+        when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -82,7 +82,7 @@ public class NewCsvWriterTest {
                         new StringValue("value6"))
                 )));
         when(itemView.getRegister()).thenReturn(register);
-        when(itemView.csvSchema()).thenCallRealMethod();
+        when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -103,7 +103,7 @@ public class NewCsvWriterTest {
                 "key4", new StringValue("")
         ));
         when(itemView.getRegister()).thenReturn(register);
-        when(itemView.csvSchema()).thenCallRealMethod();
+        when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
