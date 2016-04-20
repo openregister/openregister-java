@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import uk.gov.register.presentation.dao.Entry;
+import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.NewEntryListView;
@@ -55,7 +56,10 @@ public class RecordResource {
     @Path("/records/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV})
     public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
-        return viewFactory.getRecordsView(recordDAO.findMax100RecordsByKeyValue(key, value));
+        List<Record> records = recordDAO.findMax100RecordsByKeyValue(key, value);
+        Pagination pagination
+                = new Pagination(Optional.empty(), Optional.empty(), records.size());
+        return viewFactory.getNewRecordsView(records, pagination);
     }
 
 }

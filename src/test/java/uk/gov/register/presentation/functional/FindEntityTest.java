@@ -47,7 +47,7 @@ public class FindEntityTest extends FunctionalTestBase {
 
     @Test
     public void find_returnsTheCorrectTotalRecordsInPaginationHeader(){
-        Response response = getRequest("/name/ellis");
+        Response response = getRequest("/records/name/ellis");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
 
