@@ -54,7 +54,7 @@ public class RecordResource {
 
     @GET
     @Path("/records/{key}/{value}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
     public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = recordDAO.findMax100RecordsByKeyValue(key, value);
         Pagination pagination

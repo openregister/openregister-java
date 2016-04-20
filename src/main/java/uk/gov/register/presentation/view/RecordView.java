@@ -1,16 +1,15 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Record;
+import uk.gov.register.presentation.representations.CsvRepresentation;
 import uk.gov.register.presentation.representations.RepresentationView;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -35,7 +34,7 @@ public class RecordView extends AttributionView implements RepresentationView {
 
     @SuppressWarnings("unused, used to create the json representation of this class")
     @JsonValue
-    public ObjectNode getRecordJson() throws JsonProcessingException {
+    public ObjectNode getRecordJson() {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         ObjectNode jsonNodes = objectMapper.convertValue(record.entry, ObjectNode.class);
         jsonNodes.setAll((ObjectNode) record.item.content.deepCopy());
@@ -52,7 +51,7 @@ public class RecordView extends AttributionView implements RepresentationView {
     }
 
     @Override
-    public CsvSchema csvSchema() {
-        return Record.csvSchema(getRegister().getFields());
+    public CsvRepresentation<ObjectNode> csvRepresentation() {
+        return new CsvRepresentation<>(Record.csvSchema(getRegister().getFields()), getRecordJson());
     }
 }
