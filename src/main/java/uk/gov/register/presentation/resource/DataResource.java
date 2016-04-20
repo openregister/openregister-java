@@ -4,7 +4,9 @@ import io.dropwizard.views.View;
 import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.RegisterDetail;
+import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.RegisterDetailView;
@@ -22,15 +24,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("/")
-public class DataResource extends ResourceCommon{
-    protected final RecentEntryIndexQueryDAO queryDAO;
+public class DataResource extends ResourceCommon {
     protected final ViewFactory viewFactory;
+    private final RecentEntryIndexQueryDAO queryDAO;
+    private RecordDAO recordDAO;
+    private final EntryDAO entryDAO;
 
     @Inject
-    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO) {
+    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, RecordDAO recordDAO, EntryDAO entryDAO) {
         super(requestContext);
         this.viewFactory = viewFactory;
         this.queryDAO = queryDAO;
+        this.recordDAO = recordDAO;
+        this.entryDAO = entryDAO;
     }
 
     @GET
@@ -40,11 +46,14 @@ public class DataResource extends ResourceCommon{
     public Response downloadRegister() {
         List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
 
+        int totalEntries = entryDAO.getTotalEntries();
+        int totalRecords = recordDAO.getTotalRecords();
+
         RegisterDetail registerDetail = viewFactory.registerDetailView(
-                queryDAO.getTotalRecords(),
-                queryDAO.getTotalEntries(),
-                queryDAO.getTotalEntries(),
-                queryDAO.getLastUpdatedTime()
+                totalRecords,
+                totalEntries,
+                totalEntries,
+                entryDAO.getLastUpdatedTime()
         ).getRegisterDetail();
 
         return Response
@@ -78,7 +87,7 @@ public class DataResource extends ResourceCommon{
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, queryDAO.getTotalRecords());
+        Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
@@ -90,7 +99,7 @@ public class DataResource extends ResourceCommon{
     @Path("/register")
     @Produces({MediaType.APPLICATION_JSON})
     public RegisterDetailView getRegisterDetail() {
-        return viewFactory.registerDetailView(queryDAO.getTotalRecords(), queryDAO.getTotalEntries(), queryDAO.getTotalEntries(), queryDAO.getLastUpdatedTime());
+        return viewFactory.registerDetailView(recordDAO.getTotalRecords(), entryDAO.getTotalEntries(), entryDAO.getTotalEntries(), entryDAO.getLastUpdatedTime());
     }
 }
 

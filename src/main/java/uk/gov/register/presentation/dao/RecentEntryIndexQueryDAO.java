@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.java8.jdbi.args.InstantMapper;
 import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -14,7 +13,6 @@ import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.mapper.EntryMapper;
 
 import java.sql.SQLException;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,16 +50,6 @@ public abstract class RecentEntryIndexQueryDAO {
             "SELECT serial_number FROM current_keys ORDER BY serial_number DESC LIMIT :limit OFFSET :offset" +
             ") ORDER BY serial_number DESC")
     public abstract List<DbEntry> getLatestEntriesOfRecords(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
-
-    @SqlQuery("SELECT count FROM total_entries")
-    public abstract int getTotalEntries();
-
-    @RegisterMapper(InstantMapper.class)
-    @SqlQuery("SELECT timestamp FROM entry ORDER BY entry_number DESC LIMIT 1")
-    public abstract Instant getLastUpdatedTime();
-
-    @SqlQuery("SELECT count FROM total_records")
-    public abstract int getTotalRecords();
 
     public List<DbEntry> findAllEntriesByKeyValue(String key, String value) throws Exception {
         Object entry = ImmutableMap.of("entry", ImmutableMap.of(key, value));
