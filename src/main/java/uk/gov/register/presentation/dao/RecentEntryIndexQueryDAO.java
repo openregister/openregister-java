@@ -1,36 +1,18 @@
 package uk.gov.register.presentation.dao;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import io.dropwizard.jackson.Jackson;
-import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
-import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.mapper.EntryMapper;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @RegisterMapper(EntryMapper.class)
 public abstract class RecentEntryIndexQueryDAO {
-
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-
     // TODO: This will be okay for small numbers of records
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index ORDER BY serial_number DESC")
     public abstract List<DbEntry> getAllEntriesNoPagination();
-
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE (entry @> :content) ORDER BY serial_number DESC")
-    public abstract List<DbEntry> findAllEntriesByJsonContent(@Bind("content") PGobject json);
-
-    @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index WHERE (entry #>> ARRAY['hash']) = :hash")
-    @SingleValueResult(DbEntry.class)
-    public abstract Optional<DbEntry> findEntryByHash(@Bind("hash") String hash);
 
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index " +
             "WHERE serial_number IN(" +
@@ -38,15 +20,4 @@ public abstract class RecentEntryIndexQueryDAO {
             ") ORDER BY serial_number DESC")
     public abstract List<DbEntry> getLatestEntriesOfRecords(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
-    public List<DbEntry> findAllEntriesByKeyValue(String key, String value) throws Exception {
-        Object entry = ImmutableMap.of("entry", ImmutableMap.of(key, value));
-        return findAllEntriesByJsonContent(writePGObject(entry));
-    }
-
-    private PGobject writePGObject(Object value) throws JsonProcessingException, SQLException {
-        PGobject json = new PGobject();
-        json.setType("jsonb");
-        json.setValue(objectMapper.writeValueAsString(value));
-        return json;
-    }
 }

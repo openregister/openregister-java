@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
 
@@ -30,19 +29,6 @@ public class FindEntityTest extends FunctionalTestBase {
 
         assertThat(response.getStatus(), equalTo(301));
         assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/record/12345"));
-    }
-
-    @Test
-    public void findByItemHash_shouldReturnEntryForTheGivenItemHash() throws Exception {
-        Response response = getRequest("/item/hash2.json");
-
-        assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaderString("Link"), equalTo("</address/6789/history>;rel=\"version-history\""));
-        JSONAssert.assertEquals("{" +
-                "\"serial-number\":2," +
-                "\"hash\":\"hash2\"," +
-                "\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}"
-                , response.readEntity(String.class), false);
     }
 
     @Test

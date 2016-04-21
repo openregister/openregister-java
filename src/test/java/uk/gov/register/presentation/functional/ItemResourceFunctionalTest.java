@@ -43,14 +43,11 @@ public class ItemResourceFunctionalTest extends FunctionalTestBase {
         assertThat(response.getStatus(), equalTo(404));
     }
 
-    //Note: tests below are valid till migration is in progress, delete after migration and respective code in ItemResource
     @Test
-    public void return404ResponseWhenItemTableNotExist() {
-        testDAO.testItemDAO.dropTable();
-        String sha256Hex = DigestUtils.sha256Hex(item1);
-
-        Response response = getRequest("/item/sha-256:" + sha256Hex);
+    public void return404ResponseWhenItemHexIsNotInProperFormat() throws JSONException {
+        Response response = getRequest("/item/notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }
+
 }
