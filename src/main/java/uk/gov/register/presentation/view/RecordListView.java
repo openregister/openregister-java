@@ -29,13 +29,12 @@ public class RecordListView extends AttributionView implements RepresentationVie
     }
 
     @JsonValue
-    public Map<String, RecordView> getRecords() {
-        return records
-                .stream()
-                .map(r -> new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, r))
-                .collect(
-                        Collectors.toMap(RecordView::getPrimaryKey, r -> r)
-                );
+    public Map<String, RecordView> recordsJson() {
+        return getRecords().stream().collect(Collectors.toMap(RecordView::getPrimaryKey, r -> r));
+    }
+
+    public List<RecordView> getRecords() {
+        return records.stream().map(r -> new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, r)).collect(Collectors.toList());
     }
 
     public Pagination getPagination() {
@@ -44,7 +43,7 @@ public class RecordListView extends AttributionView implements RepresentationVie
 
     @Override
     public CsvRepresentation<Collection<RecordView>> csvRepresentation() {
-        return new CsvRepresentation<>(Record.csvSchema(getRegister().getFields()), getRecords().values());
+        return new CsvRepresentation<>(Record.csvSchema(getRegister().getFields()), getRecords());
     }
 
 }

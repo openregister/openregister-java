@@ -47,7 +47,7 @@ public class RecordListViewTest {
         when(requestContext.getRegisterPrimaryKey()).thenReturn("address");
         RecordListView recordListView = new RecordListView(requestContext, null, null, null, new EntryConverter(new FieldsConfiguration(Optional.empty()), () -> "openregister.dev", requestContext), records);
 
-        Map<String, RecordView> result = recordListView.getRecords();
+        Map<String, RecordView> result = recordListView.recordsJson();
         assertThat(result.size(), equalTo(2));
 
 
