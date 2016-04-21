@@ -31,11 +31,13 @@ public abstract class RecordDAO {
     @RegisterMapper(RecordMapper.class)
     public abstract Optional<Record> findByPrimaryKey(@Bind("key") String key);
 
+    @SqlQuery("select entry_number, timestamp, entry.sha256hex as sha256hex, content from item, entry, current_keys where current_keys.serial_number = entry.entry_number and item.sha256hex=entry.sha256hex order by entry.entry_number desc limit :limit offset :offset")
+    @RegisterMapper(RecordMapper.class)
+    public abstract List<Record> getRecords(@Bind("limit") long limit, @Bind("offset") long offset);
 
     @SqlQuery(" select entry_number, timestamp, sha256hex from entry where sha256hex in (select sha256hex from item where (content @> :contentPGobject))")
     @RegisterMapper(NewEntryMapper.class)
     public abstract List<Entry> __findAllEntriesOfRecordBy(@Bind("contentPGobject") PGobject content);
-
 
     @SqlQuery("select entry_number, timestamp, entry.sha256hex as sha256hex, content from item, entry, current_keys where current_keys.serial_number = entry.entry_number and item.content @> :contentPGobject and item.sha256hex=entry.sha256hex limit 100")
     @RegisterMapper(RecordMapper.class)

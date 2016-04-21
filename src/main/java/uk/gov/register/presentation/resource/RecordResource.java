@@ -4,10 +4,7 @@ import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.NewEntryListView;
-import uk.gov.register.presentation.view.RecordView;
-import uk.gov.register.presentation.view.RecordListView;
-import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.presentation.view.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -16,15 +13,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("/")
-public class RecordResource {
+public class RecordResource extends ResourceCommon{
     private ViewFactory viewFactory;
-    private RequestContext requestContext;
     private RecordDAO recordDAO;
 
     @Inject
     public RecordResource(ViewFactory viewFactory, RequestContext requestContext, RecordDAO recordDAO) {
+        super(requestContext);
         this.viewFactory = viewFactory;
-        this.requestContext = requestContext;
         this.recordDAO = recordDAO;
     }
 
@@ -60,6 +56,19 @@ public class RecordResource {
         Pagination pagination
                 = new Pagination(Optional.empty(), Optional.empty(), records.size());
         return viewFactory.getNewRecordsView(records, pagination);
+    }
+
+    //TODO: change this resource to /records once e-petitions merges the PR https://github.com/alphagov/e-petitions/pull/457
+    @GET
+    @Path("/_records")
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
+        Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
+
+        setNextAndPreviousPageLinkHeader(pagination);
+
+        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-newrecords." + ext));
+        return viewFactory.getNewRecordsView(recordDAO.getRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
 }
