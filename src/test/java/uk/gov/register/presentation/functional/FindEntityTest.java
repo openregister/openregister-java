@@ -28,8 +28,8 @@ public class FindEntityTest extends FunctionalTestBase {
     public void find_shouldReturnEntryWithThPrimaryKey_whenSearchForPrimaryKey() throws JSONException {
         Response response = getRequest("/address/12345.json");
 
-        assertThat(response.getHeaderString("Link"), equalTo("</address/12345/history>;rel=\"version-history\""));
-        JSONAssert.assertEquals("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}", response.readEntity(String.class), false);
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/record/12345"));
     }
 
     @Test

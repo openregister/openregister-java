@@ -32,19 +32,6 @@ public abstract class RecentEntryIndexQueryDAO {
     @SingleValueResult(DbEntry.class)
     public abstract Optional<DbEntry> findEntryByHash(@Bind("hash") String hash);
 
-    @SqlQuery("SELECT serial_number,entry from ordered_entry_index where serial_number = (select serial_number from current_keys where key=:key)")
-    @SingleValueResult(DbEntry.class)
-    public abstract Optional<DbEntry> findRecordByPrimaryKey(@Bind("key") String primaryKey);
-
-    @SqlQuery("SELECT serial_number,entry FROM (" +
-            "SELECT idx.serial_number, idx.entry FROM ordered_entry_index idx, current_keys ck " +
-            "WHERE  entry @> :content " +
-            "AND idx.serial_number = ck.serial_number " +
-            "LIMIT 100" +
-            ") q_result " +
-            "ORDER BY serial_number DESC")
-    public abstract List<DbEntry> findLatestEntriesOfRecordsByJsonContent(@Bind("content") PGobject content);
-
     @SqlQuery("SELECT serial_number,entry FROM ordered_entry_index " +
             "WHERE serial_number IN(" +
             "SELECT serial_number FROM current_keys ORDER BY serial_number DESC LIMIT :limit OFFSET :offset" +
@@ -54,11 +41,6 @@ public abstract class RecentEntryIndexQueryDAO {
     public List<DbEntry> findAllEntriesByKeyValue(String key, String value) throws Exception {
         Object entry = ImmutableMap.of("entry", ImmutableMap.of(key, value));
         return findAllEntriesByJsonContent(writePGObject(entry));
-    }
-
-    public List<DbEntry> findLatestEntriesOfRecordsByKeyValue(String key, String value) throws Exception {
-        Object entry = ImmutableMap.of("entry", ImmutableMap.of(key, value));
-        return findLatestEntriesOfRecordsByJsonContent(writePGObject(entry));
     }
 
     private PGobject writePGObject(Object value) throws JsonProcessingException, SQLException {
