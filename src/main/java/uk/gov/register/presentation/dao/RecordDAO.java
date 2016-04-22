@@ -43,6 +43,11 @@ public abstract class RecordDAO {
     @RegisterMapper(RecordMapper.class)
     public abstract List<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content);
 
+    // TODO: This will be okay for small numbers of records
+    @SqlQuery("select entry_number, timestamp, entry.sha256hex as sha256hex, content from item, entry where item.sha256hex=entry.sha256hex ORDER BY entry_number DESC")
+    @RegisterMapper(RecordMapper.class)
+    public abstract List<Record> getAllEntriesNoPagination();
+
     public List<Entry> findAllEntriesOfRecordBy(String key, String value) {
         return __findAllEntriesOfRecordBy(writePGObject(key, value));
     }
@@ -50,7 +55,6 @@ public abstract class RecordDAO {
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
         return __findMax100RecordsByKeyValue(writePGObject(key, value));
     }
-
 
     public static class RecordMapper implements ResultSetMapper<Record> {
         @Override

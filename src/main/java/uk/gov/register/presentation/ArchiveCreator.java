@@ -1,77 +1,78 @@
 package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
+import io.dropwizard.jackson.Jackson;
+import uk.gov.register.presentation.dao.Record;
 
 import javax.ws.rs.core.StreamingOutput;
+import java.io.Closeable;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
+import java.io.OutputStream;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ArchiveCreator {
-    public StreamingOutput create(RegisterDetail registerDetail, List<DbEntry> entries) {
+
+    public StreamingOutput create(RegisterDetail registerDetail, List<Record> records) {
         return output -> {
-            ZipOutputStream zos = new ZipOutputStream(output);
+            try (ZipEntryWriter zipEntryWriter = new ZipEntryWriter(output)) {
 
-            ObjectMapper om = new ObjectMapper();
-            om.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+                zipEntryWriter.writeEntry("register.json", registerDetail);
 
-            ZipEntry ze = new ZipEntry("register.json");
-            zos.putNextEntry(ze);
-            om.writeValue(zos, registerDetail);
-            zos.closeEntry();
+                records.stream()
+                        .collect(Collectors.toMap(e -> e.entry.getSha256hex(), e -> e))
+                        .forEach((hash, d) -> {
+                                    zipEntryWriter.writeEntry(String.format("item/%s.json", hash), d.item.content);
 
-            // Add each item
-            // Prevent duplicate files being added
-            Set<String> itemHashesAdded = new HashSet<>();
-            entries.forEach(singleEntry -> {
-                if (!itemHashesAdded.contains(singleEntry.getContent().getHash())) {
-                    JsonNode entryData = singleEntry.getContent().getContent();
-                    ZipEntry singleZipEntry = new ZipEntry(String.format("item/%s.json", singleEntry.getContent().getHash()));
-                    try {
-                        zos.putNextEntry(singleZipEntry);
-                        zos.write(entryData.toString().getBytes(StandardCharsets.UTF_8));
-                        zos.closeEntry();
-                        itemHashesAdded.add(singleEntry.getContent().getHash());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-
-            // Add each entry record
-            // Keyed by entry, should contain entryNumber, itemHash, timestamp
-            entries.forEach(singleEntry -> {
-                ZipEntry singleZipEntry = new ZipEntry(String.format("entry/%d.json", singleEntry.getSerialNumber()));
-                try {
-                    zos.putNextEntry(singleZipEntry);
-
-                    ArchiveEntryData aed = new ArchiveEntryData(
-                            singleEntry.getSerialNumber(),
-                            singleEntry.getContent().getHash());
-                    om.writeValue(zos, aed);
-                    zos.closeEntry();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            zos.flush();
-            zos.close();
+                                    zipEntryWriter.writeEntry(String.format("entry/%s.json", d.entry.entryNumber), new ArchiveEntryData(d.entry.entryNumber, d.entry.getSha256hex(), d.entry.getTimestamp()));
+                                }
+                        );
+            }
         };
     }
 
-    public static class ArchiveEntryData {
-        public int entryNumber;
-        public String itemHash;
+    private static class ZipEntryWriter implements Closeable {
 
-        public ArchiveEntryData(int entryNumber, String itemHash) {
+        private final ZipOutputStream zipOutputStream;
+        private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+
+        public ZipEntryWriter(OutputStream outputStream) {
+            zipOutputStream = new ZipOutputStream(outputStream);
+            objectMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+        }
+
+        private void writeEntry(String entryName, Object value) {
+            try {
+                ZipEntry ze = new ZipEntry(entryName);
+                zipOutputStream.putNextEntry(ze);
+                objectMapper.writeValue(zipOutputStream, value);
+                zipOutputStream.closeEntry();
+            } catch (IOException e) {
+                Throwables.propagate(e);
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            zipOutputStream.flush();
+            zipOutputStream.close();
+        }
+    }
+
+    private static class ArchiveEntryData {
+        public final String entryNumber;
+        public final String itemHash;
+        public final String timestamp;
+
+        public ArchiveEntryData(String entryNumber, String itemHash, String timestamp) {
             this.entryNumber = entryNumber;
             this.itemHash = itemHash;
+            this.timestamp = timestamp;
         }
     }
 }
+
