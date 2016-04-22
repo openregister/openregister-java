@@ -3,7 +3,6 @@ package uk.gov.register.presentation.view;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
-import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
@@ -20,7 +19,6 @@ import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ViewFactory {
@@ -41,16 +39,6 @@ public class ViewFactory {
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomain = domainConfiguration.getRegisterDomain();
-    }
-
-    public EntryListView getRecordsView(List<DbEntry> allDbEntries, Pagination pagination) {
-        return new EntryListView(requestContext,
-                allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
-                pagination,
-                getCustodian(),
-                getBranding(),
-                "records.html"
-        );
     }
 
     public RecordListView getNewRecordsView(List<Record> records, Pagination pagination) {

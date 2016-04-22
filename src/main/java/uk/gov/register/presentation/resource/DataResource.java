@@ -5,14 +5,12 @@ import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.*;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -80,18 +78,6 @@ public class DataResource extends ResourceCommon {
                 .status(Response.Status.NOT_IMPLEMENTED)
                 .entity(viewFactory.thymeleafView("not-implemented.html"))
                 .build();
-    }
-
-    @GET
-    @Path("/records")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
-
-        setNextAndPreviousPageLinkHeader(pagination);
-
-        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
-        return viewFactory.getRecordsView(queryDAO.getLatestEntriesOfRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 }
 

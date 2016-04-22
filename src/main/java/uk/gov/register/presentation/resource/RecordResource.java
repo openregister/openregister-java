@@ -62,16 +62,15 @@ public class RecordResource extends ResourceCommon{
         return viewFactory.getNewRecordsView(records, pagination);
     }
 
-    //TODO: change this resource to /records once e-petitions merges the PR https://github.com/alphagov/e-petitions/pull/457
     @GET
-    @Path("/_records")
+    @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
     public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
         Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 
         setNextAndPreviousPageLinkHeader(pagination);
 
-        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-newrecords." + ext));
+        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
         return viewFactory.getNewRecordsView(recordDAO.getRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
