@@ -27,9 +27,4 @@ public class YamlWriter extends RepresentationWriter {
     protected void writeEntriesTo(OutputStream entityStream, Iterable<String> fields, List<EntryView> entries) throws IOException, WebApplicationException {
         objectMapper.writeValue(entityStream, entries);
     }
-
-    @Override
-    protected void writeEntryTo(OutputStream entityStream, Iterable<String> fields, EntryView entry) throws IOException {
-        objectMapper.writeValue(entityStream, entry);
-    }
 }
