@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
 
@@ -28,21 +27,8 @@ public class FindEntityTest extends FunctionalTestBase {
     public void find_shouldReturnEntryWithThPrimaryKey_whenSearchForPrimaryKey() throws JSONException {
         Response response = getRequest("/address/12345.json");
 
-        assertThat(response.getHeaderString("Link"), equalTo("</address/12345/history>;rel=\"version-history\""));
-        JSONAssert.assertEquals("{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}", response.readEntity(String.class), false);
-    }
-
-    @Test
-    public void findByItemHash_shouldReturnEntryForTheGivenItemHash() throws Exception {
-        Response response = getRequest("/item/hash2.json");
-
-        assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaderString("Link"), equalTo("</address/6789/history>;rel=\"version-history\""));
-        JSONAssert.assertEquals("{" +
-                "\"serial-number\":2," +
-                "\"hash\":\"hash2\"," +
-                "\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}"
-                , response.readEntity(String.class), false);
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getHeaderString("Location"), equalTo("http://address.beta.openregister.org/record/12345"));
     }
 
     @Test

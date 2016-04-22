@@ -6,9 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.presentation.config.RegistersConfiguration;
-import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
@@ -23,10 +21,6 @@ import static org.hamcrest.Matchers.hasItems;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SearchResourceTest {
-    @Mock
-    RecentEntryIndexQueryDAO queryDAO;
-    @Mock
-    private ViewFactory viewFactory;
     @Mock
     private HttpServletResponse servletResponse;
 
@@ -46,7 +40,7 @@ public class SearchResourceTest {
                 return "school";
             }
         };
-        resource = new SearchResource(viewFactory, requestContext, queryDAO);
+        resource = new SearchResource(requestContext);
     }
 
     @Test

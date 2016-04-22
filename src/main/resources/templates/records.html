@@ -21,7 +21,7 @@
         </thead>
         <tbody>
         <tr th:each="entry : ${entries}">
-            <td><a th:href="${'/' + registerId + '/' + entry.primaryKey()}" th:text="${entry.primaryKey()}"></a></td>
+            <td><a th:href="${'/record/' + entry.primaryKey()}" th:text="${entry.primaryKey()}"></a></td>
             <th:block th:each="fieldName : ${register.nonPrimaryFields}">
                 <td th:if="${entry.getField(fieldName).present}" class="field-list field-list-in-table">
                     <ul th:if="${entry.getField(fieldName).get().isList()}">
