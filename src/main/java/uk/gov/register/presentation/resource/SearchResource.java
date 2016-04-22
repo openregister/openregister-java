@@ -9,7 +9,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 
 @Path("/")
@@ -27,9 +30,14 @@ public class SearchResource {
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public Object find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
         String redirectUrl = key.equals(requestContext.getRegisterPrimaryKey()) ?
-                String.format("/record/%s", value) :
-                String.format("/records/%s/%s", key, value);
+                String.format("/record/%s", encodeUrlValue(value)) :
+                String.format("/records/%s/%s", key, encodeUrlValue(value));
 
         return Response.status(301).location(URI.create(redirectUrl)).build();
     }
+
+    private String encodeUrlValue(String value) throws UnsupportedEncodingException {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+    }
+
 }
