@@ -36,6 +36,8 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(response.getStatus(), equalTo(200));
 
+        assertThat(response.getHeaderString("Link"), equalTo("</record/6789/entries>;rel=\"version-history\""));
+
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
         assertThat(res.get("entry-number").textValue(), equalTo("2"));
         assertThat(res.get("item-hash").textValue(), equalTo("sha-256:" + sha256Hex));
