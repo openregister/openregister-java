@@ -5,7 +5,6 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.EntryConverter;
-import uk.gov.register.presentation.Version;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.config.RegisterDomainConfiguration;
@@ -44,14 +43,6 @@ public class ViewFactory {
         this.registerDomain = domainConfiguration.getRegisterDomain();
     }
 
-    public SingleEntryView getSingleEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian(), getBranding());
-    }
-
-    public SingleEntryView getLatestEntryView(DbEntry dbEntry) {
-        return new SingleEntryView(requestContext, entryConverter.convert(dbEntry), getCustodian(), getBranding(), "latest-entry-of-record.html");
-    }
-
     public EntryListView getRecordsView(List<DbEntry> allDbEntries, Pagination pagination) {
         return new EntryListView(requestContext,
                 allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
@@ -80,10 +71,6 @@ public class ViewFactory {
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Instant lastUpdated) {
         return new RegisterDetailView(getCustodian(), getBranding(), requestContext, entryConverter, totalRecords, totalEntries, totalItems, lastUpdated);
-    }
-
-    public ListVersionView listVersionView(List<Version> versions) {
-        return new ListVersionView(requestContext, getCustodian(), getBranding(), versions);
     }
 
     public ItemView getItemView(Item item) {
