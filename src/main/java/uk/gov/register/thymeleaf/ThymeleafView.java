@@ -3,8 +3,6 @@ package uk.gov.register.thymeleaf;
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
-import uk.gov.register.presentation.EntryConverter;
-import uk.gov.register.presentation.EntryView;
 import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -59,10 +57,6 @@ public class ThymeleafView extends View {
         return getRegister().getCopyright().map(
                 markdownProcessor::markdown
         );
-    }
-
-    public EntryView getRegisterEntryView(EntryConverter entryConverter) {
-        return requestContext.getRegisterData().getEntry(entryConverter);
     }
 
     public String getRegisterDomain() {

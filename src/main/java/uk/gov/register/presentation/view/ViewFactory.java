@@ -70,7 +70,7 @@ public class ViewFactory {
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Instant lastUpdated) {
-        return new RegisterDetailView(getCustodian(), getBranding(), requestContext, entryConverter, totalRecords, totalEntries, totalItems, lastUpdated);
+        return new RegisterDetailView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, totalItems, lastUpdated);
     }
 
     public ItemView getItemView(Item item) {

@@ -2,6 +2,7 @@ package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -12,18 +13,12 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterData {
-    final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
+    private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
-    final String entryNumber;
-    final String itemHash;
-    final String entryTimestamp;
-    final Map<String, JsonNode> data;
+    private final Map<String, JsonNode> data;
 
     @JsonCreator
     public RegisterData(Map<String, JsonNode> data) {
-        this.entryNumber = data.remove("entry-number").textValue();
-        this.itemHash = data.remove("item-hash").textValue();
-        this.entryTimestamp = data.remove("entry-timestamp").textValue();
         this.data = data;
     }
 
@@ -31,7 +26,9 @@ public class RegisterData {
         return yamlObjectMapper.convertValue(data, Register.class);
     }
 
-    public EntryView getEntry(EntryConverter entryConverter) {
-        return entryConverter.convert(Integer.parseInt(entryNumber), itemHash, data.entrySet());
+    @SuppressWarnings("unused, used to serialize in register json")
+    @JsonValue
+    private Map<String, JsonNode> getRegisterData() {
+        return data;
     }
 }
