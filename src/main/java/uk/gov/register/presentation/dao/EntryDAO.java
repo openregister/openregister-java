@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,5 +27,10 @@ public interface EntryDAO {
 
     @SqlQuery("SELECT count FROM total_entries")
     int getTotalEntries();
+
+    //Note: This is fine for small data registers like country
+    @RegisterMapper(NewEntryMapper.class)
+    @SqlQuery("SELECT * from entry order by entry_number desc")
+    Collection<Entry> getAllEntriesNoPagination();
 }
 

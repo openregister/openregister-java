@@ -4,28 +4,29 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
-import uk.gov.register.presentation.dao.Record;
+import uk.gov.register.presentation.dao.Entry;
+import uk.gov.register.presentation.dao.Item;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ArchiveCreator {
 
-    public StreamingOutput create(RegisterDetail registerDetail, List<Record> records) {
+    public StreamingOutput create(RegisterDetail registerDetail, Collection<Entry> entries, Collection<Item> items) {
         return output -> {
             try (ZipEntryWriter zipEntryWriter = new ZipEntryWriter(output)) {
 
                 zipEntryWriter.writeEntry("register.json", registerDetail);
 
-                records.stream().map(r -> r.item).distinct().forEach(item ->
+                items.forEach(item ->
                         zipEntryWriter.writeEntry(String.format("item/%s.json", item.sha256hex), item.content)
                 );
-                records.stream().map(r -> r.entry).forEach(entry ->
+                entries.forEach(entry ->
                         zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.entryNumber), new ArchiveEntryData(entry.entryNumber, entry.getSha256hex(), entry.getTimestamp()))
                 );
             }
