@@ -8,26 +8,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 class ResourceYamlFileReader {
     private final Logger logger = LoggerFactory.getLogger(ResourceYamlFileReader.class);
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
-    @FunctionalInterface
-    interface RawDataConverter<R, S> {
-        S convert(R t);
-    }
-
-    public <M, T> List<T> readResource(Optional<String> resourceYamlPath,
-                                              String defaultResourceYamlFilePath,
-                                              TypeReference<List<M>> typeReference,
-                                              RawDataConverter<M, T> rawDataConverter) {
+    public <N, T> Collection<N> readResource(Optional<String> resourceYamlPath,
+                                             String defaultResourceYamlFilePath,
+                                             TypeReference<Map<String, N>> typeReference) {
         try {
             InputStream fieldsStream = new ResourceYamlFileReader().getStreamFromFile(resourceYamlPath, defaultResourceYamlFilePath);
-            return yamlObjectMapper.<List<M>>readValue(fieldsStream, typeReference).stream().map(rawDataConverter::convert).collect(Collectors.toList());
+            return yamlObjectMapper.<Map<String, N>>readValue(fieldsStream, typeReference).values();
         } catch (IOException e) {
             throw new RuntimeException("Error loading resource configuration file.", e);
         }
