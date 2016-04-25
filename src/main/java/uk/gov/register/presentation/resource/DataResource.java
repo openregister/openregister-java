@@ -3,10 +3,7 @@ package uk.gov.register.presentation.resource;
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.RegisterDetail;
-import uk.gov.register.presentation.dao.EntryDAO;
-import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
-import uk.gov.register.presentation.dao.Record;
-import uk.gov.register.presentation.dao.RecordDAO;
+import uk.gov.register.presentation.dao.*;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
@@ -19,23 +16,25 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 @Path("/")
 public class DataResource extends ResourceCommon {
     protected final ViewFactory viewFactory;
     private final RecentEntryIndexQueryDAO queryDAO;
-    private RecordDAO recordDAO;
+    private final ItemDAO itemDAO;
+    private final RecordDAO recordDAO;
     private final EntryDAO entryDAO;
 
     @Inject
-    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, RecordDAO recordDAO, EntryDAO entryDAO) {
+    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, RecordDAO recordDAO, EntryDAO entryDAO, ItemDAO itemDAO) {
         super(requestContext);
         this.viewFactory = viewFactory;
         this.queryDAO = queryDAO;
         this.recordDAO = recordDAO;
         this.entryDAO = entryDAO;
+        this.itemDAO = itemDAO;
     }
 
     @GET
@@ -43,7 +42,8 @@ public class DataResource extends ResourceCommon {
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Response downloadRegister() {
-        List<Record> records = recordDAO.getAllEntriesNoPagination();
+        Collection<Entry> entries = entryDAO.getAllEntriesNoPagination();
+        Collection<Item> items = itemDAO.getAllItemsNoPagination();
 
         int totalEntries = entryDAO.getTotalEntries();
         int totalRecords = recordDAO.getTotalRecords();
@@ -56,7 +56,7 @@ public class DataResource extends ResourceCommon {
         ).getRegisterDetail();
 
         return Response
-                .ok(new ArchiveCreator().create(registerDetail, records))
+                .ok(new ArchiveCreator().create(registerDetail, entries, items))
                 .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", requestContext.getRegisterPrimaryKey(), System.currentTimeMillis()))
                 .header("Content-Transfer-Encoding", "binary")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)

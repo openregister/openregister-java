@@ -13,6 +13,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Optional;
 
 public interface ItemDAO {
@@ -21,6 +22,11 @@ public interface ItemDAO {
     @SingleValueResult(Item.class)
     @RegisterMapper(ItemMapper.class)
     Optional<Item> getItemBySHA256(@Bind("sha256hex") String sha256Hash);
+
+    //Note: This is fine for small data registers like country
+    @SqlQuery("select * from item")
+    @RegisterMapper(ItemMapper.class)
+    Collection<Item> getAllItemsNoPagination();
 
     class ItemMapper implements ResultSetMapper<Item> {
 
