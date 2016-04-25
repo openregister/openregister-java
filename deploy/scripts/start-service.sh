@@ -7,8 +7,8 @@ ENV=$(aws ec2 describe-tags --filters Name=resource-id,Values=$INSTANCE_ID Name=
 CONFIG_BUCKET=openregister.${ENV}.config
 
 aws s3 cp s3://${CONFIG_BUCKET}/${REGISTER_NAME}/presentation/config.yaml /srv/presentation --region eu-west-1
-aws s3 cp s3://${CONFIG_BUCKET}/registers.yaml /srv/presentation --region eu-west-1
-aws s3 cp s3://${CONFIG_BUCKET}/fields.yaml /srv/presentation --region eu-west-1
+aws s3 cp s3://${CONFIG_BUCKET}/new-registers.yaml /srv/presentation --region eu-west-1
+aws s3 cp s3://${CONFIG_BUCKET}/new-fields.yaml /srv/presentation --region eu-west-1
 
 docker run --name=presentationApp -d -p 80:8080 --volume /srv/presentation:/srv/presentation \
     jstepien/openjdk8 java -Dfile.encoding=utf-8 -DregistersYaml=/srv/presentation/new-registers.yaml -DfieldsYaml=/srv/presentation/new-fields.yaml \
