@@ -2,10 +2,10 @@ package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
 import uk.gov.register.presentation.ArchiveCreator;
-import uk.gov.register.presentation.DbEntry;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
+import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.EntryListView;
@@ -43,7 +43,7 @@ public class DataResource extends ResourceCommon {
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Response downloadRegister() {
-        List<DbEntry> entries = queryDAO.getAllEntriesNoPagination();
+        List<Record> records = recordDAO.getAllEntriesNoPagination();
 
         int totalEntries = entryDAO.getTotalEntries();
         int totalRecords = recordDAO.getTotalRecords();
@@ -56,7 +56,7 @@ public class DataResource extends ResourceCommon {
         ).getRegisterDetail();
 
         return Response
-                .ok(new ArchiveCreator().create(registerDetail, entries))
+                .ok(new ArchiveCreator().create(registerDetail, records))
                 .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", requestContext.getRegisterPrimaryKey(), System.currentTimeMillis()))
                 .header("Content-Transfer-Encoding", "binary")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)
