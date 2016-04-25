@@ -22,7 +22,9 @@ public class DataResourceTest extends FunctionalTestBase {
         dbSupport.publishMessages(ImmutableList.of(
                 "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
                 "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"
+                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"foo\",\"address\":\"12345\"}}",
+                "{\"hash\":\"hash4\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
+                "{\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}"
         ));
     }
 

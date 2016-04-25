@@ -11,7 +11,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -23,14 +22,12 @@ public class ArchiveCreator {
 
                 zipEntryWriter.writeEntry("register.json", registerDetail);
 
-                records.stream()
-                        .collect(Collectors.toMap(e -> e.entry.getSha256hex(), e -> e))
-                        .forEach((hash, d) -> {
-                                    zipEntryWriter.writeEntry(String.format("item/%s.json", hash), d.item.content);
-
-                                    zipEntryWriter.writeEntry(String.format("entry/%s.json", d.entry.entryNumber), new ArchiveEntryData(d.entry.entryNumber, d.entry.getSha256hex(), d.entry.getTimestamp()));
-                                }
-                        );
+                records.stream().map(r -> r.item).distinct().forEach(item ->
+                        zipEntryWriter.writeEntry(String.format("item/%s.json", item.sha256hex), item.content)
+                );
+                records.stream().map(r -> r.entry).forEach(entry ->
+                        zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.entryNumber), new ArchiveEntryData(entry.entryNumber, entry.getSha256hex(), entry.getTimestamp()))
+                );
             }
         };
     }
