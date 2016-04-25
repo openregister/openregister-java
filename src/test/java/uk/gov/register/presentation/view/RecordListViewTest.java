@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
-import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
@@ -45,7 +45,7 @@ public class RecordListViewTest {
                 )
         );
         when(requestContext.getRegisterPrimaryKey()).thenReturn("address");
-        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new EntryConverter(new FieldsConfiguration(Optional.empty()), () -> "openregister.dev", requestContext), records);
+        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty()), () -> "openregister.dev"), records);
 
         Map<String, RecordView> result = recordListView.recordsJson();
         assertThat(result.size(), equalTo(2));

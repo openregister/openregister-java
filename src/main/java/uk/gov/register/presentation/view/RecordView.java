@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Record;
@@ -18,10 +18,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RecordView extends AttributionView implements RepresentationView {
-    private EntryConverter itemConverter;
+    private ItemConverter itemConverter;
     private final Record record;
 
-    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, EntryConverter itemConverter, Record record) {
+    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record) {
         super(requestContext, custodian, custodianBranding, "record.html");
         this.itemConverter = itemConverter;
         this.record = record;

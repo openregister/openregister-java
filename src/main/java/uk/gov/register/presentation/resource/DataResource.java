@@ -15,21 +15,19 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-import java.util.Optional;
 
 @Path("/")
-public class DataResource extends ResourceCommon {
+public class DataResource {
     protected final ViewFactory viewFactory;
-    private final RecentEntryIndexQueryDAO queryDAO;
     private final ItemDAO itemDAO;
-    private final RecordDAO recordDAO;
+    private RequestContext requestContext;
+    private RecordDAO recordDAO;
     private final EntryDAO entryDAO;
 
     @Inject
-    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecentEntryIndexQueryDAO queryDAO, RecordDAO recordDAO, EntryDAO entryDAO, ItemDAO itemDAO) {
-        super(requestContext);
+    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecordDAO recordDAO, EntryDAO entryDAO, ItemDAO itemDAO) {
         this.viewFactory = viewFactory;
-        this.queryDAO = queryDAO;
+        this.requestContext = requestContext;
         this.recordDAO = recordDAO;
         this.entryDAO = entryDAO;
         this.itemDAO = itemDAO;

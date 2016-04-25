@@ -2,7 +2,7 @@ package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Item;
@@ -15,10 +15,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ItemView extends AttributionView implements RepresentationView {
-    private EntryConverter itemConverter;
+    private ItemConverter itemConverter;
     private Item item;
 
-    public ItemView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> branding, EntryConverter itemConverter, Item item) {
+    public ItemView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Item item) {
         super(requestContext, custodian, branding, "item.html");
         this.itemConverter = itemConverter;
         this.item = item;
