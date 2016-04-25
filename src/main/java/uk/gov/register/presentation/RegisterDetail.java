@@ -13,7 +13,7 @@ public class RegisterDetail {
     private final int totalEntries;
     private final int totalItems;
     private final Instant lastUpdated;
-    private final EntryView entryView;
+    private RegisterData registerData;
 
     public RegisterDetail(
             String domain,
@@ -21,13 +21,13 @@ public class RegisterDetail {
             int totalEntries,
             int totalItems,
             Instant lastUpdated,
-            EntryView entryView) {
+            RegisterData registerData) {
         this.domain = domain;
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.totalItems = totalItems;
         this.lastUpdated = lastUpdated;
-        this.entryView = entryView;
+        this.registerData = registerData;
     }
 
     @JsonProperty("domain")
@@ -41,9 +41,10 @@ public class RegisterDetail {
         return dateTimeFormatter.format(lastUpdated);
     }
 
-    @JsonProperty("record")
-    public EntryView getEntry() {
-        return entryView;
+    @SuppressWarnings("unused, used to serialize in register json")
+    @JsonProperty("register-record")
+    public RegisterData getRegisterData() {
+        return registerData;
     }
 
     @SuppressWarnings("unused, used from template")

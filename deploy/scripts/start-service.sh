@@ -11,5 +11,5 @@ aws s3 cp s3://${CONFIG_BUCKET}/registers.yaml /srv/presentation --region eu-wes
 aws s3 cp s3://${CONFIG_BUCKET}/fields.yaml /srv/presentation --region eu-west-1
 
 docker run --name=presentationApp -d -p 80:8080 --volume /srv/presentation:/srv/presentation \
-    jstepien/openjdk8 java -Dfile.encoding=utf-8 -DregistersYaml=/srv/presentation/registers.yaml -DfieldsYaml=/srv/presentation/fields.yaml \
+    jstepien/openjdk8 java -Dfile.encoding=utf-8 -DregistersYaml=/srv/presentation/new-registers.yaml -DfieldsYaml=/srv/presentation/new-fields.yaml \
     -jar /srv/presentation/presentation.jar server /srv/presentation/config.yaml

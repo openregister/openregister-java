@@ -1,18 +1,18 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.commons.lang3.NotImplementedException;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.presentation.EntryConverter;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.config.PublicBody;
+import uk.gov.register.presentation.representations.CsvRepresentation;
+import uk.gov.register.presentation.representations.RepresentationView;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.time.Instant;
 import java.util.Optional;
 
-public class RegisterDetailView extends AttributionView {
-    private final EntryConverter entryConverter;
-
+public class RegisterDetailView extends AttributionView implements RepresentationView<RegisterDetail> {
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
@@ -22,13 +22,11 @@ public class RegisterDetailView extends AttributionView {
             PublicBody custodian,
             Optional<GovukOrganisation.Details> custodianBranding,
             RequestContext requestContext,
-            EntryConverter entryConverter,
             int totalRecords,
             int totalEntries,
             int totalItems,
             Instant lastUpdated) {
         super(requestContext, custodian, custodianBranding, "");
-        this.entryConverter = entryConverter;
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.totalItems = totalItems;
@@ -43,6 +41,12 @@ public class RegisterDetailView extends AttributionView {
                 totalEntries,
                 totalItems,
                 lastUpdated,
-                getRegisterEntryView(entryConverter));
+                requestContext.getRegisterData()
+        );
+    }
+
+    @Override
+    public CsvRepresentation<RegisterDetail> csvRepresentation() {
+        throw new NotImplementedException("Not implemented");
     }
 }

@@ -1,34 +1,23 @@
 package uk.gov.register.presentation.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class PublicBodiesConfiguration {
 
-    private final List<PublicBody> publicBodies;
+    private final Collection<PublicBody> publicBodies;
 
     public PublicBodiesConfiguration(Optional<String> publicBodiesResourceYamlPath) {
         publicBodies = new ResourceYamlFileReader().readResource(
                 publicBodiesResourceYamlPath,
                 "config/public-bodies.yaml",
-                new TypeReference<List<PublicBodyData>>() {
-                },
-                publicBodyData -> publicBodyData.entry
+                new TypeReference<Map<String, PublicBody>>() {
+                }
         );
     }
 
     public PublicBody getPublicBody(String publicBodyId) {
         return publicBodies.stream().filter(f -> Objects.equals(f.getPublicBodyId(), publicBodyId)).findFirst().get();
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class PublicBodyData {
-        @JsonProperty
-        PublicBody entry;
     }
 }

@@ -2,7 +2,7 @@ package uk.gov.register.presentation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -13,30 +13,22 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterData {
-    final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
+    private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
-    final int serialNumber;
-    final String hash;
-    final String timestamp;
-    final Map<String, JsonNode> data;
+    private final Map<String, JsonNode> data;
 
     @JsonCreator
-    public RegisterData(
-            @JsonProperty("serial-number") int serialNumber,
-            @JsonProperty("hash") String hash,
-            @JsonProperty("last-updated") String timestamp,
-            @JsonProperty("entry") Map<String, JsonNode> data) {
-        this.serialNumber = serialNumber;
-        this.hash = hash;
-        this.timestamp = timestamp;
+    public RegisterData(Map<String, JsonNode> data) {
         this.data = data;
     }
 
     public Register getRegister() {
-        return  yamlObjectMapper.convertValue(data, Register.class);
+        return yamlObjectMapper.convertValue(data, Register.class);
     }
 
-    public EntryView getEntry(EntryConverter entryConverter) {
-        return entryConverter.convert(serialNumber, hash, data.entrySet());
+    @SuppressWarnings("unused, used to serialize in register json")
+    @JsonValue
+    private Map<String, JsonNode> getRegisterData() {
+        return data;
     }
 }
