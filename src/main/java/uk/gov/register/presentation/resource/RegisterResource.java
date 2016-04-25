@@ -2,6 +2,7 @@ package uk.gov.register.presentation.resource;
 
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.RecordDAO;
+import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.RegisterDetailView;
 import uk.gov.register.presentation.view.ViewFactory;
 
@@ -26,7 +27,7 @@ public class RegisterResource {
 
     @GET
     @Path("/register")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML})
     public RegisterDetailView getRegisterDetail() {
         return viewFactory.registerDetailView(
                 recordDAO.getTotalRecords(),
