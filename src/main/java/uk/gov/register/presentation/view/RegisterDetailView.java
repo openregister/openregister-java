@@ -2,6 +2,7 @@ package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.jena.rdf.model.Model;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.config.PublicBody;
@@ -48,5 +49,10 @@ public class RegisterDetailView extends AttributionView implements Representatio
     @Override
     public CsvRepresentation<RegisterDetail> csvRepresentation() {
         throw new NotImplementedException("Not implemented");
+    }
+
+    @Override
+    public Model turtleRepresentation() {
+        throw new NotImplementedException("Not implented");
     }
 }

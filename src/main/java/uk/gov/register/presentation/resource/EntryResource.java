@@ -27,7 +27,7 @@ public class EntryResource extends ResourceCommon {
 
     @GET
     @Path("/entry/{entry-number}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @CacheControl(immutable = true)
     public AttributionView findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = entryDAO.findByEntryNumber(entryNumber);

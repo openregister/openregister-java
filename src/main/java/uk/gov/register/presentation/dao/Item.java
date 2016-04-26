@@ -16,6 +16,10 @@ public class Item {
         this.content = content;
     }
 
+    public String getSha256hex() {
+        return "sha-256:" + sha256hex;
+    }
+
     public Stream<Map.Entry<String, JsonNode>> getFieldsStream() {
         return StreamSupport.stream(((Iterable<Map.Entry<String, JsonNode>>) content::fields).spliterator(), false);
     }

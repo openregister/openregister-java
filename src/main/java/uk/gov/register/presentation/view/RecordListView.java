@@ -1,6 +1,8 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.config.PublicBody;
@@ -44,6 +46,13 @@ public class RecordListView extends AttributionView implements RepresentationVie
     @Override
     public CsvRepresentation<Collection<RecordView>> csvRepresentation() {
         return new CsvRepresentation<>(Record.csvSchema(getRegister().getFields()), getRecords());
+    }
+
+    @Override
+    public Model turtleRepresentation() {
+        Model model = ModelFactory.createDefaultModel();
+        getRecords().stream().forEach(r -> model.add(r.turtleRepresentation()));
+        return model;
     }
 
 }

@@ -1,6 +1,8 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Entry;
@@ -11,6 +13,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class NewEntryListView extends AttributionView implements RepresentationView {
     private Pagination pagination;
@@ -35,5 +38,14 @@ public class NewEntryListView extends AttributionView implements RepresentationV
     @Override
     public CsvRepresentation<List<Entry>> csvRepresentation() {
         return new CsvRepresentation<>(Entry.csvSchema(), getEntries());
+    }
+
+    @Override
+    public Model turtleRepresentation() {
+        Model model = ModelFactory.createDefaultModel();
+        for (NewEntryView entryView : entries.stream().map(e -> new NewEntryView(requestContext, getCustodian(), getBranding(), e)).collect(Collectors.toList())) {
+            model.add(entryView.turtleRepresentation());
+        }
+        return model;
     }
 }
