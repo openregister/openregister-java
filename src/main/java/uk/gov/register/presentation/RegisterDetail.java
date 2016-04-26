@@ -3,11 +3,8 @@ package uk.gov.register.presentation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 
 public class RegisterDetail {
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
-
     private final String domain;
     private final int totalRecords;
     private final int totalEntries;
@@ -38,7 +35,7 @@ public class RegisterDetail {
     @SuppressWarnings("unused, used from template")
     @JsonProperty("last-updated")
     public String getLastUpdatedTime() {
-        return dateTimeFormatter.format(lastUpdated);
+        return ISODateFormatter.format(lastUpdated);
     }
 
     @SuppressWarnings("unused, used to serialize in register json")
