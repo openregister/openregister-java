@@ -9,9 +9,9 @@ CONFIG_BUCKET=openregister.${ENV}.config
 
 aws s3 cp s3://${CONFIG_BUCKET}/${REGISTER_NAME}/mint/mint-config.yaml /srv/mint --region eu-west-1
 
-aws s3 cp s3://${CONFIG_BUCKET}/registers.yaml /srv/mint --region eu-west-1
-aws s3 cp s3://${CONFIG_BUCKET}/fields.yaml /srv/mint --region eu-west-1
+aws s3 cp s3://${CONFIG_BUCKET}/new-registers.yaml /srv/mint --region eu-west-1
+aws s3 cp s3://${CONFIG_BUCKET}/new-fields.yaml /srv/mint --region eu-west-1
 
 docker run -d --name=mintApp -p 4567:4567 \
     --volume /srv/mint:/srv/mint \
-    jstepien/openjdk8 java -Dfile.encoding=UTF-8 -DregistersYaml=/srv/mint/registers.yaml -DfieldsYaml=/srv/mint/fields.yaml -jar /srv/mint/mint.jar server /srv/mint/mint-config.yaml
+    jstepien/openjdk8 java -Dfile.encoding=UTF-8 -DregistersYaml=/srv/mint/new-registers.yaml -DfieldsYaml=/srv/mint/new-fields.yaml -jar /srv/mint/mint.jar server /srv/mint/mint-config.yaml
