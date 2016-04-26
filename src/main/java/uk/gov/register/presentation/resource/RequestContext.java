@@ -43,6 +43,10 @@ public class RequestContext {
         return RegisterNameExtractor.extractRegisterName(httpServletRequest.getHeader("Host"));
     }
 
+    public String getScheme() {
+        return httpServletRequest.getScheme();
+    }
+
     public HttpServletRequest getHttpServletRequest() {
         return httpServletRequest;
     }
