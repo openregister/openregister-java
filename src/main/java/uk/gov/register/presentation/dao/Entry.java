@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import uk.gov.register.presentation.ISODateFormatter;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-
-import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 public class Entry {
     @JsonProperty("entry-number")
@@ -31,8 +29,7 @@ public class Entry {
 
     @JsonProperty("entry-timestamp")
     public String getTimestamp() {
-        // http://openregister.github.io/specification/#timestamp-datatype only allows seconds, not fractions thereof
-        return ISO_INSTANT.format(timestamp.truncatedTo(ChronoUnit.SECONDS));
+        return ISODateFormatter.format(timestamp);
     }
 
     public static CsvSchema csvSchema() {
