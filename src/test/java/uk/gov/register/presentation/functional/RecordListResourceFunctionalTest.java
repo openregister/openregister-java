@@ -9,7 +9,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -34,7 +33,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
     @SuppressWarnings("unchecked")
     @Test
     public void newRecords_shouldReturnAllCurrentVersionsOnly() throws Exception {
-        Response response = getRequest("/_records.json");
+        Response response = getRequest("/records.json");
 
         Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
 
@@ -47,26 +46,26 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void newRecords_setsAppropriateFilenameForDownload() {
-        Response response = getRequest("address", "/_records.json");
+        Response response = getRequest("address", "/records.json");
         assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-newrecords.json\""));
+        assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
     }
 
     @Test
     public void newRecords_hasLinkHeaderForNextAndPreviousPage() {
-        Response response = getRequest("/_records.json?page-index=1&page-size=1");
+        Response response = getRequest("/records.json?page-index=1&page-size=1");
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\""));
 
-        response = getRequest("/_records.json?page-index=2&page-size=1");
+        response = getRequest("/records.json?page-index=2&page-size=1");
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\""));
 
-        response = getRequest("/_records.json?page-index=3&page-size=1");
+        response = getRequest("/records.json?page-index=3&page-size=1");
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\""));
     }
 
     @Test
     public void newRecordsPageHasXhtmlLangAttributes() {
-        Response response = getRequest("address", "/_records");
+        Response response = getRequest("address", "/records");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
@@ -95,50 +94,5 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
         assertThat(response.getStatus(), equalTo(301));
         assertThat(response.getHeaders().get("Location").get(0), equalTo("http://address.beta.openregister.org/records/name/ellis"));
     }
-
-    @Test
-    public void oldRecords_shouldReturnAllCurrentVersionsOnly() throws Exception {
-        Response response = getRequest("/records.json");
-
-        String jsonResponse = response.readEntity(String.class);
-        JSONAssert.assertEquals(jsonResponse,
-                "[" +
-                        "{\"serial-number\":5,\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"6789\"}}," +
-                        "{\"serial-number\":4,\"hash\":\"hash4\",\"entry\":{\"name\":\"updatedEllisName\",\"address\":\"145678\"}}," +
-                        "{\"serial-number\":1,\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}" +
-                        "]"
-                , false);
-    }
-
-    @Test
-    public void oldRecords_setsAppropriateFilenameForDownload() {
-        Response response = getRequest("address", "/records.json");
-        assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
-    }
-
-    @Test
-    public void oldRecords_hasLinkHeaderForNextAndPreviousPage() {
-        Response response = getRequest("/records.json?page-index=1&page-size=1");
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\""));
-
-        response = getRequest("/records.json?page-index=2&page-size=1");
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\""));
-
-        response = getRequest("/records.json?page-index=3&page-size=1");
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\""));
-    }
-
-    @Test
-    public void oldRecordsPageHasXhtmlLangAttributes() {
-        Response response = getRequest("address", "/records");
-
-        Document doc = Jsoup.parse(response.readEntity(String.class));
-        Elements htmlElement = doc.select("html");
-        assertThat(htmlElement.size(), equalTo(1));
-        assertThat(htmlElement.first().attr("lang"), equalTo("en"));
-        assertThat(htmlElement.first().attr("xml:lang"), equalTo("en"));
-    }
-
 }
 

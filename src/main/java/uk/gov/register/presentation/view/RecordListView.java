@@ -2,7 +2,7 @@ package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.representations.CsvRepresentation;
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 
 public class RecordListView extends AttributionView implements RepresentationView {
     private Pagination pagination;
-    private EntryConverter itemConverter;
+    private ItemConverter itemConverter;
     private List<Record> records;
 
-    public RecordListView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Pagination pagination, EntryConverter itemConverter, List<Record> records) {
+    public RecordListView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Pagination pagination, ItemConverter itemConverter, List<Record> records) {
         super(requestContext, custodian, custodianBranding, "new-records.html");
         this.pagination = pagination;
         this.itemConverter = itemConverter;

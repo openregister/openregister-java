@@ -6,46 +6,22 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.RegisterDomainConfiguration;
-import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static uk.gov.register.presentation.Cardinality.ONE;
 
 @Service
-public class EntryConverter {
+public class ItemConverter {
     private final FieldsConfiguration fieldsConfiguration;
-    private final RequestContext requestContext;
     private final String registerDomain;
 
     @Inject
-    public EntryConverter(FieldsConfiguration fieldsConfiguration,
-                          RegisterDomainConfiguration domainConfiguration,
-                          RequestContext requestContext) {
+    public ItemConverter(FieldsConfiguration fieldsConfiguration,
+                         RegisterDomainConfiguration domainConfiguration) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registerDomain = domainConfiguration.getRegisterDomain();
-        this.requestContext = requestContext;
-    }
-
-    public EntryView convert(DbEntry dbEntry) {
-        return convert(
-                dbEntry.getSerialNumber(),
-                dbEntry.getContent().getHash(),
-                () -> dbEntry.getContent().getContent().fields());
-    }
-
-    public EntryView convert(int serialNumber, String hash, Iterable<Map.Entry<String, JsonNode>> fields) {
-        Stream<Map.Entry<String, JsonNode>> fieldStream = StreamSupport.stream(fields.spliterator(), false);
-        return new EntryView(
-                serialNumber,
-                hash,
-                requestContext.getRegisterPrimaryKey(),
-                fieldStream.collect(Collectors.toMap(Map.Entry::getKey, this::convert))
-        );
     }
 
     public FieldValue convert(Map.Entry<String, JsonNode> mapEntry) {

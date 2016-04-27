@@ -35,10 +35,6 @@ public class RequestContext {
         this.registerDomain = domainConfiguration.getRegisterDomain();
     }
 
-    public String requestUrl() {
-        return getHttpServletRequest().getRequestURL().toString();
-    }
-
     public String getRegisterPrimaryKey() {
         return RegisterNameExtractor.extractRegisterName(httpServletRequest.getHeader("Host"));
     }

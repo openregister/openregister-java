@@ -26,14 +26,13 @@ import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
-import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.PresentationConfiguration;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.ItemDAO;
-import uk.gov.register.presentation.dao.RecentEntryIndexQueryDAO;
 import uk.gov.register.presentation.dao.RecordDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -80,7 +79,6 @@ public class PresentationApplication extends Application<PresentationConfigurati
     public void run(PresentationConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
-        RecentEntryIndexQueryDAO queryDAO = jdbi.onDemand(RecentEntryIndexQueryDAO.class);
         ItemDAO itemDAO = jdbi.onDemand(ItemDAO.class);
         EntryDAO entryDAO = jdbi.onDemand(EntryDAO.class);
         RecordDAO recordDAO = jdbi.onDemand(RecordDAO.class);
@@ -103,7 +101,6 @@ public class PresentationApplication extends Application<PresentationConfigurati
         jerseyEnvironment.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(queryDAO).to(RecentEntryIndexQueryDAO.class);
                 bind(itemDAO).to(ItemDAO.class);
                 bind(entryDAO).to(EntryDAO.class);
                 bind(recordDAO).to(RecordDAO.class);
@@ -113,7 +110,7 @@ public class PresentationApplication extends Application<PresentationConfigurati
 
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
-                bind(EntryConverter.class).to(EntryConverter.class).in(Singleton.class);
+                bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
                 bind(configuration);
                 bind(client).to(Client.class);

@@ -3,8 +3,7 @@ package uk.gov.register.presentation.view;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
-import uk.gov.register.presentation.DbEntry;
-import uk.gov.register.presentation.EntryConverter;
+import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.config.RegisterDomainConfiguration;
@@ -20,41 +19,30 @@ import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ViewFactory {
     private final RequestContext requestContext;
-    private final EntryConverter entryConverter;
+    private final ItemConverter itemConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
     private final String registerDomain;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
-                       EntryConverter entryConverter,
+                       ItemConverter itemConverter,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration domainConfiguration) {
         this.requestContext = requestContext;
-        this.entryConverter = entryConverter;
+        this.itemConverter = itemConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomain = domainConfiguration.getRegisterDomain();
     }
 
-    public EntryListView getRecordsView(List<DbEntry> allDbEntries, Pagination pagination) {
-        return new EntryListView(requestContext,
-                allDbEntries.stream().map(entryConverter::convert).collect(Collectors.toList()),
-                pagination,
-                getCustodian(),
-                getBranding(),
-                "records.html"
-        );
-    }
-
     public RecordListView getNewRecordsView(List<Record> records, Pagination pagination) {
-        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, entryConverter, records);
+        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records);
     }
 
     public ThymeleafView thymeleafView(String templateName) {
@@ -74,7 +62,7 @@ public class ViewFactory {
     }
 
     public ItemView getItemView(Item item) {
-        return new ItemView(requestContext, getCustodian(), getBranding(), entryConverter, item);
+        return new ItemView(requestContext, getCustodian(), getBranding(), itemConverter, item);
     }
 
     private PublicBody getCustodian() {
@@ -95,6 +83,6 @@ public class ViewFactory {
     }
 
     public RecordView getRecordView(Record record) {
-        return new RecordView(requestContext, getCustodian(), getBranding(), entryConverter, record);
+        return new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, record);
     }
 }

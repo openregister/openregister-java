@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -99,7 +98,6 @@ public class RepresentationsTest extends FunctionalTestBase {
     }
 
     @Test
-    @Ignore("/records doesn't yet support the new yaml format")
     public void representationIsSupportedForRecordsResource() {
         assumeThat(expectedRecordsValue, notNullValue());
 
