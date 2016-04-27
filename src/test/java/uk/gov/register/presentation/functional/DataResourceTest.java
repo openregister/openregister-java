@@ -1,6 +1,6 @@
 package uk.gov.register.presentation.functional;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,17 +15,20 @@ import java.util.zip.ZipInputStream;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class DataResourceTest extends FunctionalTestBase {
     @Before
     public void publishTestMessages() {
-        dbSupport.publishMessages(ImmutableList.of(
-                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
-                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"foo\",\"address\":\"12345\"}}",
-                "{\"hash\":\"hash4\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
-                "{\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}"
-        ));
+        dbSupport.publishEntries(
+                Lists.newArrayList(
+                        anEntry(1, "{\"name\":\"ellis\",\"address\":\"12345\"}"),
+                        anEntry(2, "{\"name\":\"presley\",\"address\":\"6789\"}"),
+                        anEntry(3, "{\"name\":\"foo\",\"address\":\"12345\"}"),
+                        anEntry(4, "{\"name\":\"ellis\",\"address\":\"145678\"}"),
+                        anEntry(5, "{\"name\":\"ellis\",\"address\":\"12345\"}")
+                )
+        );
     }
 
     @Test

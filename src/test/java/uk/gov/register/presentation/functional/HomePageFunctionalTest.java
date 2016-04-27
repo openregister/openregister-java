@@ -11,6 +11,7 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.presentation.functional.TestEntry.*;
 
 public class HomePageFunctionalTest extends FunctionalTestBase {
     @Test
@@ -21,7 +22,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void homepageHasXhtmlLangAttributes() throws Throwable {
-        dbSupport.publishMessages("address", Collections.singletonList("{\"hash\":\"hash1\",\"entry\":{\"address\":\"1234\"}}"));
+        dbSupport.publishEntries("address", Collections.singletonList(anEntry(1, "{\"address\":\"1234\"}")));
         Response response = getRequest("/");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
@@ -36,7 +37,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
     public void homepageHasCopyrightInMainBodyRenderedAsMarkdown() throws Throwable {
         // assumes that registers.yaml has a `postcode` entry with a copyright field containing markdown links
         // might be good to find a way to specify this in the test
-        dbSupport.publishMessages("postcode", Collections.singletonList("{\"hash\":\"hash1\",\"entry\":{\"postcode\":\"1234\"}}"));
+        dbSupport.publishEntries("postcode", Collections.singletonList(anEntry(1, "{\"postcode\":\"1234\"}")));
 
         Response response = getRequest("postcode", "/");
         Document doc = Jsoup.parse(response.readEntity(String.class));
@@ -50,7 +51,7 @@ public class HomePageFunctionalTest extends FunctionalTestBase {
     public void homepageHasCopyrightInFooterRenderedAsMarkdown() throws Throwable {
         // assumes that registers.yaml has a `postcode` entry with a copyright field containing markdown links
         // might be good to find a way to specify this in the test
-        dbSupport.publishMessages("postcode", Collections.singletonList("{\"hash\":\"hash1\",\"entry\":{\"postcode\":\"1234\"}}"));
+        dbSupport.publishEntries("postcode", Collections.singletonList(anEntry(1, "{\"postcode\":\"1234\"}")));
 
         Response response = getRequest("postcode", "/");
         Document doc = Jsoup.parse(response.readEntity(String.class));

@@ -17,16 +17,17 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class RecordListResourceFunctionalTest extends FunctionalTestBase {
     @Before
     public void publishTestMessages() {
-        dbSupport.publishMessages(ImmutableList.of(
-                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
-                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
-                "{\"hash\":\"hash4\",\"entry\":{\"name\":\"updatedEllisName\",\"address\":\"145678\"}}",
-                "{\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"6789\"}}"
+        dbSupport.publishEntries(ImmutableList.of(
+                anEntry(1,"{\"name\":\"ellis\",\"address\":\"12345\"}"),
+                anEntry(2,"{\"name\":\"presley\",\"address\":\"6789\"}"),
+                anEntry(3,"{\"name\":\"ellis\",\"address\":\"145678\"}"),
+                anEntry(4,"{\"name\":\"updatedEllisName\",\"address\":\"145678\"}"),
+                anEntry(5,"{\"name\":\"ellis\",\"address\":\"6789\"}")
         ));
     }
 

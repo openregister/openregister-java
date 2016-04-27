@@ -11,16 +11,17 @@ import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class ItemResourceFunctionalTest extends FunctionalTestBase {
-    static String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
-    static String item2 = "{\"address\":\"145678\",\"name\":\"ellis\"}";
+    private static String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
+    private static String item2 = "{\"address\":\"145678\",\"name\":\"ellis\"}";
 
     @Before
     public void publishTestMessages() throws Throwable {
-        dbSupport.publishMessages(ImmutableList.of(
-                String.format("{\"hash\":\"hash1\",\"entry\":%s}", item1),
-                String.format("{\"hash\":\"hash2\",\"entry\":%s}", item2)
+        dbSupport.publishEntries(ImmutableList.of(
+                anEntry(1, item1),
+                anEntry(2, item2)
         ));
     }
 

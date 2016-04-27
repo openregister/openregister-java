@@ -12,9 +12,6 @@ public interface TestEntryDAO {
     @SqlUpdate("create table if not exists entry (entry_number integer primary key, sha256hex varchar, timestamp timestamp without time zone default now())")
     void createTable();
 
-    @SqlUpdate("insert into entry(entry_number, sha256hex) values(:entry_number, :sha256hex)")
-    void insert(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256);
-
     @SqlUpdate("insert into entry(entry_number, sha256hex, timestamp) values(:entry_number, :sha256hex, :timestamp)")
-    void insertWithExplicitTimestamp(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256, @Bind("timestamp") Instant timestamp);
+    void insert(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256, @Bind("timestamp") Instant timestamp);
 }

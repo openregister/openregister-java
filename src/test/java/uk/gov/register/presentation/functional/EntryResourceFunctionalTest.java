@@ -17,15 +17,17 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertTrue;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class EntryResourceFunctionalTest extends FunctionalTestBase {
     private static final String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";
+    private static final String item2 = "{\"address\":\"6789\",\"name\":\"presley\"}";
 
     @Before
     public void publishTestMessages() throws Throwable {
-        dbSupport.publishMessages(ImmutableList.of(
-                String.format("{\"hash\":\"hash1\",\"entry\":%s}", item1),
-                String.format("{\"hash\":\"hash2\",\"entry\":%s}", "{\"address\":\"145678\",\"name\":\"ellis\"}")
+        dbSupport.publishEntries(ImmutableList.of(
+                anEntry(1, item1),
+                anEntry(2, item2)
         ));
     }
 
@@ -46,12 +48,12 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void entryView_itemHashIsRenderedAsALink(){
+    public void entryView_itemHashIsRenderedAsALink() {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
         Response response = getRequest("/entry/1");
         Document doc = Jsoup.parse(response.readEntity(String.class));
-        String text = doc.getElementsByTag("table").select("a[href=/item/sha-256:" +sha256Hex +"]").first().text();
+        String text = doc.getElementsByTag("table").select("a[href=/item/sha-256:" + sha256Hex + "]").first().text();
         assertThat(text, equalTo("sha-256:" + sha256Hex));
     }
 

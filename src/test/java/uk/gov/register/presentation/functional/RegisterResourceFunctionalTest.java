@@ -1,28 +1,25 @@
 package uk.gov.register.presentation.functional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Ignore;
 import org.junit.Test;
+import uk.gov.register.presentation.config.ResourceYamlFileReader;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 
 public class RegisterResourceFunctionalTest extends FunctionalTestBase {
@@ -53,30 +50,39 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
     }
 
     public void populateAddressRegisterEntries() {
-        dbSupport.publishMessages(ImmutableList.of(
-                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
-                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}",
-                "{\"hash\":\"hash4\",\"entry\":{\"name\":\"updatedEllisName\",\"address\":\"145678\"}}",
-                "{\"hash\":\"hash5\",\"entry\":{\"name\":\"ellis\",\"address\":\"6789\"}}"
+        dbSupport.publishEntries(ImmutableList.of(
+                anEntry(1, "{\"name\":\"ellis\",\"address\":\"12345\"}"),
+                anEntry(1, "{\"name\":\"presley\",\"address\":\"6789\"}"),
+                anEntry(1, "{\"name\":\"ellis\",\"address\":\"145678\"}"),
+                anEntry(1, "{\"name\":\"updatedEllisName\",\"address\":\"145678\"}"),
+                anEntry(1, "{\"name\":\"ellis\",\"address\":\"6789\"}")
         ));
     }
 
     public void populateRegisterRegisterEntries() throws IOException {
-        InputStream registersStream = RegisterResourceFunctionalTest.class.getClassLoader().getResourceAsStream("config/registers.yaml");
-        ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
-        List<Map<String, JsonNode>> registersYaml = yamlObjectMapper.readValue(registersStream, new TypeReference<List<Map<String, JsonNode>>>() {
-        });
+        Collection<Map> registers = new ResourceYamlFileReader().readResource(
+                Optional.empty(),
+                "config/registers.yaml",
+                new TypeReference<Map<String, Map>>() {
+                }
+        );
 
-        SortedMap<Integer, String> registerEntries = registersYaml.stream().collect(Collectors.toMap(m -> m.get("serial-number").asInt(),
-                m -> {
-                    ObjectNode rootNode = yamlObjectMapper.createObjectNode();
-                    rootNode.set("hash", m.get("hash"));
-                    rootNode.set("entry", m.get("entry"));
-                    return rootNode.toString();
-                }, (a, b) -> a, TreeMap::new));
+        List<TestEntry> registerEntries = registers.stream().map(r -> {
+            int entryNumber = Integer.parseInt(r.remove("entry-number").toString());
+            r.remove("entry-timestamp");
+            r.remove("item-hash");
+            return anEntry(entryNumber, writeToString(r));
+        }).collect(Collectors.toList());
 
-        dbSupport.publishMessages("register", registerEntries);
+        dbSupport.publishEntries("register", registerEntries);
+    }
+
+    private String writeToString(Map map) {
+        try {
+            return Jackson.newObjectMapper().writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     private void verifyStringIsAnISODate(String lastUpdated) {

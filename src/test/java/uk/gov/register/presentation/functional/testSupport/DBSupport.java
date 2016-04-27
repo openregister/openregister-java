@@ -1,8 +1,6 @@
 package uk.gov.register.presentation.functional.testSupport;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Throwables;
-import io.dropwizard.jackson.Jackson;
 import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.presentation.functional.TestEntry;
 
@@ -13,10 +11,11 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class DBSupport {
     public static void main(String[] args) throws IOException, SQLException {
@@ -24,8 +23,8 @@ public class DBSupport {
 
         DBSupport dbSupport = new DBSupport(TestDAO.get(args[2], "postgres"));
         try (Stream<String> lines = Files.lines(new File(filePath).toPath(), Charset.defaultCharset())) {
-            List<String> collect = lines.collect(Collectors.toList());
-            dbSupport.publishMessages(args[0], collect);
+            AtomicInteger index = new AtomicInteger(0);
+            dbSupport.publishEntries(args[0], lines.map(l -> anEntry(index.incrementAndGet(), l)).collect(Collectors.toList()));
         }
     }
 
@@ -35,51 +34,21 @@ public class DBSupport {
         this.testDAO = testDAO;
     }
 
-    public void publishMessages(List<String> messages) {
-        publishMessages("address", messages);
-    }
-
-    public void publishMessages(String registerName, List<String> messages) {
-        SortedMap<Integer, String> messagesWithSerialNumbers = messages.stream().collect(Collectors.toMap(m -> messages.indexOf(m) + 1, m -> m, (a, b) -> a, TreeMap::new));
-        publishMessages(registerName, messagesWithSerialNumbers);
+    public void publishEntries(List<TestEntry> testEntries) {
+        publishEntries("address", testEntries);
     }
 
     public void publishEntries(String registerName, List<TestEntry> testEntries) {
         for (TestEntry testEntry : testEntries) {
-            String oldEntry = String.format(
-                    "{\"hash\":\"%s\",\"entry\":%s}",
-                    DigestUtils.sha256Hex(testEntry.itemJson),
-                    testEntry.itemJson);
-            testDAO.testEntryIndexDAO.insert(testEntry.entryNumber,
-                    oldEntry);
             insertIntoItemAndEntryTables(testEntry.entryNumber, testEntry.itemJson, testEntry.entryTimestamp);
             updateOtherTables(registerName, testEntry.entryNumber, testEntry.itemJson);
-        }
-    }
-
-    public void publishMessages(String registerName, SortedMap<Integer, String> messages) {
-        for (SortedMap.Entry<Integer, String> entry : messages.entrySet()) {
-            testDAO.testEntryIndexDAO.insert(entry.getKey(), entry.getValue());
-            insertIntoItemAndEntryTables(entry.getKey(), entry.getValue());
-            updateOtherTables(registerName, entry.getKey(), entry.getValue());
-        }
-    }
-
-    private void insertIntoItemAndEntryTables(int serialNumber, String entry) {
-        try {
-            String item = Jackson.newObjectMapper().readValue(entry, JsonNode.class).get("entry").toString();
-            String sha256 = DigestUtils.sha256Hex(item);
-            testDAO.testEntryDAO.insert(serialNumber, sha256);
-            testDAO.testItemDAO.insertIfNotExist(sha256, item);
-        } catch (Exception e) {
-            Throwables.propagate(e);
         }
     }
 
     private void insertIntoItemAndEntryTables(int serialNumber, String itemJson, Instant timestamp) {
         try {
             String sha256 = DigestUtils.sha256Hex(itemJson);
-            testDAO.testEntryDAO.insertWithExplicitTimestamp(serialNumber, sha256, timestamp);
+            testDAO.testEntryDAO.insert(serialNumber, sha256, timestamp);
             testDAO.testItemDAO.insertIfNotExist(sha256, itemJson);
         } catch (Exception e) {
             Throwables.propagate(e);

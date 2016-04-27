@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class EntriesResourceFunctionalTest extends FunctionalTestBase {
     @Test
@@ -51,9 +52,9 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
         String item1 = "{\"address\":\"1234\",\"name\":\"elvis\"}";
         String item2 = "{\"address\":\"6789\",\"name\":\"presley\"}";
 
-        dbSupport.publishMessages("address", Lists.newArrayList(
-                "{\"hash\":\"hash1\", \"entry\": " + item1 + "}",
-                "{\"hash\":\"hash2\", \"entry\": " + item2 + "}"
+        dbSupport.publishEntries("address", Lists.newArrayList(
+                anEntry(1, item1),
+                anEntry(2, item2)
         ));
 
         Response response = getRequest("/entries.json");
