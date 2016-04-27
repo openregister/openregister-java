@@ -1,7 +1,6 @@
 package uk.gov.register.presentation.view;
 
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -63,6 +62,10 @@ public class HomePageView extends AttributionView {
 
     @SuppressWarnings("unused, used from template")
     public String getLinkToRegisterRegister() {
-        return new LinkValue("register", registerDomain, getRegisterId()).link();
+        return String.format("%1$s://register.%2$s/record/%3$s",
+                requestContext.getScheme(),
+                registerDomain,
+                getRegisterId()
+        );
     }
 }

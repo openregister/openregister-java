@@ -42,4 +42,17 @@ public class HomePageViewTest {
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
+
+    @Test
+    public void getLinkToRegisterRegister_returnsTheLinkOfRegisterRegister(){
+        Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
+
+        when(mockRequestContext.getRegisterPrimaryKey()).thenReturn("school");
+        when(mockRequestContext.getScheme()).thenReturn("https");
+
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, "openregister.org");
+
+        assertThat(homePageView.getLinkToRegisterRegister(), equalTo("https://register.openregister.org/record/school"));
+    }
+
 }
