@@ -105,7 +105,7 @@ public class RepresentationsTest extends FunctionalTestBase {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedRecordsValue.replaceAll("^(.*)(\n)$", "$1")));
+        assertThat(response.readEntity(String.class), equalTo(expectedRecordsValue));
     }
 
     @Test
