@@ -5,7 +5,7 @@ import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -15,13 +15,13 @@ import static uk.gov.register.presentation.Cardinality.ONE;
 @Service
 public class ItemConverter {
     private final FieldsConfiguration fieldsConfiguration;
-    private final String registerDomain;
+    private final RequestContext requestContext;
 
     @Inject
     public ItemConverter(FieldsConfiguration fieldsConfiguration,
-                         RegisterDomainConfiguration domainConfiguration) {
+                         RequestContext requestContext) {
         this.fieldsConfiguration = fieldsConfiguration;
-        this.registerDomain = domainConfiguration.getRegisterDomain();
+        this.requestContext = requestContext;
     }
 
     public FieldValue convert(Map.Entry<String, JsonNode> mapEntry) {
@@ -56,11 +56,11 @@ public class ItemConverter {
         private FieldValue convertScalar(JsonNode value) {
             if (field.getDatatype().equals("curie")) {
                 if (value.textValue().contains(":")) {
-                    return new LinkValue.CurieValue(value.textValue(), registerDomain);
+                    return new LinkValue.CurieValue(value.textValue(), requestContext.getRegisterDomain(), requestContext.getScheme());
                 } 
-                return new LinkValue(field.getRegister().get(), registerDomain, value.textValue());
+                return new LinkValue(field.getRegister().get(), requestContext.getRegisterDomain(), requestContext.getScheme(), value.textValue());
             } else if (field.getRegister().isPresent()) {
-                return new LinkValue(field.getRegister().get(), registerDomain, value.textValue());
+                return new LinkValue(field.getRegister().get(), requestContext.getRegisterDomain(), requestContext.getScheme(), value.textValue());
                 //Note: the equals check below must be replaced with the specified datatype, instead of doing string comparision
                 // We should replace this once the datatype register is available
             } else {
