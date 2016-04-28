@@ -18,7 +18,7 @@
             <th:block th:each="field : ${register.fields}">
                 <tr th:if="${content.containsKey(field)}">
                 <td>
-                    <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(field, registerDomain)}"
+                    <a th:href="${@uk.gov.register.presentation.HtmlViewSupport@fieldLink(field, registerDomain, scheme)}"
                        th:text="${field}"></a>
                 </td>
 

@@ -63,7 +63,7 @@ public class HomePageView extends AttributionView {
     @SuppressWarnings("unused, used from template")
     public String getLinkToRegisterRegister() {
         return String.format("%1$s://register.%2$s/record/%3$s",
-                requestContext.getScheme(),
+                getScheme(),
                 registerDomain,
                 getRegisterId()
         );

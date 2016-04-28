@@ -74,4 +74,9 @@ public class ThymeleafView extends View {
     public HttpServletRequest getHttpServletRequest() {
         return requestContext.getHttpServletRequest();
     }
+
+    @SuppressWarnings("unused, used by templates")
+    public String getScheme() {
+        return requestContext.getScheme();
+    }
 }
