@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RecordView extends AttributionView implements RepresentationView {
+    private static final String RECORD_PREFIX = "//%1$s.%2$s/record/";
+
     private ItemConverter itemConverter;
     private final Record record;
 
@@ -87,6 +89,11 @@ public class RecordView extends AttributionView implements RepresentationView {
     }
 
     private URI recordUri(String primaryKey) {
-        return UriBuilder.fromUri(getHttpServletRequest().getRequestURI()).replacePath(null).path("record").path(primaryKey).build();
+        String path = String.format(RECORD_PREFIX, getRegisterId(), getRegisterDomain());
+        return uriWithScheme(path).path(primaryKey).build();
+    }
+
+    private UriBuilder uriWithScheme(String path) {
+        return UriBuilder.fromPath(path).scheme(requestContext.getScheme());
     }
 }

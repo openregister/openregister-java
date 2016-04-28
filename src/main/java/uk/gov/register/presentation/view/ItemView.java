@@ -23,8 +23,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ItemView extends AttributionView implements RepresentationView {
-
-    public static String ITEM_FIELD_PREFIX = "//field.%s/record/";
+    private static final String ITEM_FIELD_PREFIX = "//field.%s/record/";
+    public static final String ITEM_PREFIX = "//%1$s.%2$s/item/";
 
     private ItemConverter itemConverter;
     private Item item;
@@ -61,12 +61,17 @@ public class ItemView extends AttributionView implements RepresentationView {
     }
 
     public URI itemUri() {
-        return UriBuilder.fromUri(getHttpServletRequest().getRequestURI()).replacePath(null).path("item").path(item.getSha256hex()).build();
+        String path = String.format(ITEM_PREFIX, getRegisterId(), getRegisterDomain());
+        return uriWithScheme(path).path(item.getSha256hex()).build();
     }
 
     private URI fieldUri() {
         String path = String.format(ITEM_FIELD_PREFIX, getRegisterDomain());
-        return UriBuilder.fromPath(path).scheme(UriBuilder.fromPath(getHttpServletRequest().getRequestURI()).build().getScheme()).build();
+        return uriWithScheme(path).build();
+    }
+
+    private UriBuilder uriWithScheme(String path) {
+        return UriBuilder.fromPath(path).scheme(requestContext.getScheme());
     }
 
     private static class FieldRenderer {
@@ -85,21 +90,21 @@ public class ItemView extends AttributionView implements RepresentationView {
                 renderList((ListValue) value, resource);
             }
             else {
-                resource.addProperty(fieldProperty, renderScalar(value));
+                renderScalar(value, resource);
             }
         }
 
         private void renderList(ListValue listValue, Resource resource) {
             for (FieldValue value : listValue) {
-                resource.addProperty(fieldProperty, renderScalar(value));
+                renderScalar(value, resource);
             }
         }
 
-        private String renderScalar(FieldValue value) {
+        private void renderScalar(FieldValue value, Resource resource) {
             if (value.isLink()) {
-                return ((LinkValue) value).link();
+                resource.addProperty(fieldProperty, resource.getModel().createResource(((LinkValue) value).link()));
             } else {
-                return value.getValue();
+                resource.addProperty(fieldProperty, value.getValue());
             }
         }
     }

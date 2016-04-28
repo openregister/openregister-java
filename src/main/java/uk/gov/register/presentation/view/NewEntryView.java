@@ -17,6 +17,7 @@ import java.util.Optional;
 
 public class NewEntryView extends AttributionView implements RepresentationView<Entry> {
     private static final String SPEC_PREFIX = "https://openregister.github.io/specification/#";
+    private static final String ENTRY_PREFIX = "//%1$s.%2$s/entry/";
 
     private Entry entry;
 
@@ -45,17 +46,23 @@ public class NewEntryView extends AttributionView implements RepresentationView<
         model.createResource(entryUri().toString())
                 .addProperty(entryNumberProperty, entry.entryNumber)
                 .addProperty(entryTimestampProperty, entry.getTimestamp())
-                .addProperty(itemProperty, itemUri().toString());
+                .addProperty(itemProperty, model.createResource(itemUri().toString()));
 
         model.setNsPrefix("register-metadata", SPEC_PREFIX);
         return model;
     }
 
     public URI entryUri() {
-        return UriBuilder.fromUri(getHttpServletRequest().getRequestURI()).replacePath(null).path("entry").path(entry.entryNumber).build();
+        String path = String.format(ENTRY_PREFIX, getRegisterId(), getRegisterDomain());
+        return uriWithScheme(path).path(entry.entryNumber).build();
     }
 
-    private URI itemUri() {
-        return UriBuilder.fromUri(getHttpServletRequest().getRequestURI()).replacePath(null).path("item").path(entry.getSha256hex()).build();
+    public URI itemUri() {
+        String path = String.format(ItemView.ITEM_PREFIX, getRegisterId(), getRegisterDomain());
+        return uriWithScheme(path).path(entry.getSha256hex()).build();
+    }
+
+    private UriBuilder uriWithScheme(String path) {
+        return UriBuilder.fromPath(path).scheme(requestContext.getScheme());
     }
 }
