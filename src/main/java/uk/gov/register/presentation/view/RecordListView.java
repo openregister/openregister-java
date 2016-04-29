@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class RecordListView extends CsvView {
+public class RecordListView extends CsvRepresentationView {
     private Pagination pagination;
     private ItemConverter itemConverter;
     private List<Record> records;

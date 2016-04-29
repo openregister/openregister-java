@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ItemView extends CsvView {
+public class ItemView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private Item item;
 

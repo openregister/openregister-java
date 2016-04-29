@@ -11,7 +11,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 import java.util.List;
 import java.util.Optional;
 
-public class NewEntryListView extends CsvView {
+public class NewEntryListView extends CsvRepresentationView {
     private Pagination pagination;
     private List<Entry> entries;
 

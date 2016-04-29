@@ -9,7 +9,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Optional;
 
-public class NewEntryView extends CsvView<Entry> {
+public class NewEntryView extends CsvRepresentationView<Entry> {
     private Entry entry;
 
     public NewEntryView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Entry entry) {

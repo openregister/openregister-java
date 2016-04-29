@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.representations;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import uk.gov.register.presentation.view.CsvView;
+import uk.gov.register.presentation.view.CsvRepresentationView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TSV)
-public class NewTsvWriter extends NewRepresentationWriter<CsvView> {
+public class NewTsvWriter extends NewRepresentationWriter<CsvRepresentationView> {
     private final CsvMapper objectMapper;
 
     @Inject
@@ -25,7 +25,7 @@ public class NewTsvWriter extends NewRepresentationWriter<CsvView> {
     }
 
     @Override
-    public void writeTo(CsvView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+    public void writeTo(CsvRepresentationView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         CsvRepresentation csvRepresentation = view.csvRepresentation();
         objectMapper.writerFor(csvRepresentation.contentType)
                 .with(csvRepresentation.csvSchema.withColumnSeparator('\t').withHeader().withoutQuoteChar())
