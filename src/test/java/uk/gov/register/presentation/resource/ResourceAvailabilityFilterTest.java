@@ -4,6 +4,7 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
 import uk.gov.register.presentation.config.ResourceConfiguration;
+import uk.gov.register.presentation.filter.ResourceAvailabilityFilter;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.ws.rs.GET;

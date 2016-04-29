@@ -117,7 +117,10 @@ public class PresentationApplication extends Application<PresentationConfigurati
             }
         });
 
-        resourceConfig.packages("uk.gov.register.presentation.representations", "uk.gov.register.presentation.resource");
+        resourceConfig.packages(
+                "uk.gov.register.presentation.filter",
+                "uk.gov.register.presentation.representations",
+                "uk.gov.register.presentation.resource");
 
         MutableServletContextHandler applicationContext = environment.getApplicationContext();
 
