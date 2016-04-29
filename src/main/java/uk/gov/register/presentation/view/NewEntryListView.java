@@ -5,14 +5,13 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.representations.CsvRepresentation;
-import uk.gov.register.presentation.representations.RepresentationView;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.List;
 import java.util.Optional;
 
-public class NewEntryListView extends AttributionView implements RepresentationView {
+public class NewEntryListView extends CsvRepresentationView {
     private Pagination pagination;
     private List<Entry> entries;
 

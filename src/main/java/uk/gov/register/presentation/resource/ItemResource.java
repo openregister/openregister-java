@@ -24,7 +24,7 @@ public class ItemResource {
 
     @GET
     @Path("/{item-hash}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @CacheControl(immutable = true)
     public AttributionView getItemByHex(@PathParam("item-hash") String itemHash) {
         String sha256Regex = "(sha-256:)(.*)";

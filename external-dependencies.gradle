@@ -17,6 +17,8 @@ ext {
 
     jacksonCsv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:${jackson_version}"
 
+    jena = "org.apache.jena:jena-core:3.0.1"
+
     jerseyMedia = "org.glassfish.jersey.media:jersey-media-multipart:${jersey_version}"
 
     markdown = 'org.markdownj:markdownj-core:0.4'

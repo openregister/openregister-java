@@ -3,6 +3,7 @@ package uk.gov.register.presentation.representations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.views.View;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
@@ -17,7 +18,7 @@ import java.lang.reflect.Type;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_YAML)
-public class NewYamlWriter extends NewRepresentationWriter {
+public class NewYamlWriter extends NewRepresentationWriter<View> {
     private final ObjectMapper objectMapper;
 
     @Inject
@@ -26,7 +27,7 @@ public class NewYamlWriter extends NewRepresentationWriter {
     }
 
     @Override
-    public void writeTo(RepresentationView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+    public void writeTo(View view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         objectMapper.writeValue(entityStream, view);
     }
 }

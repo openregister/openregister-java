@@ -7,14 +7,13 @@ import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.representations.CsvRepresentation;
-import uk.gov.register.presentation.representations.RepresentationView;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ItemView extends AttributionView implements RepresentationView {
+public class ItemView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private Item item;
 
@@ -32,5 +31,9 @@ public class ItemView extends AttributionView implements RepresentationView {
     @Override
     public CsvRepresentation<Map> csvRepresentation() {
         return new CsvRepresentation<>(Item.csvSchema(getRegister().getFields()), getContent());
+    }
+
+    public String getSha256hex() {
+        return item.getSha256hex();
     }
 }

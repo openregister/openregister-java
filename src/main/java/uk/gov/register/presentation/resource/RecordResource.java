@@ -26,7 +26,7 @@ public class RecordResource extends ResourceCommon{
 
     @GET
     @Path("/record/{record-key}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         requestContext.
                 getHttpServletResponse().
@@ -40,7 +40,7 @@ public class RecordResource extends ResourceCommon{
 
     @GET
     @Path("/record/{record-key}/entries")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public NewEntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
         List<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
         if (allEntries.isEmpty()) {
@@ -54,7 +54,7 @@ public class RecordResource extends ResourceCommon{
 
     @GET
     @Path("/records/{key}/{value}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = recordDAO.findMax100RecordsByKeyValue(key, value);
         Pagination pagination
@@ -64,7 +64,7 @@ public class RecordResource extends ResourceCommon{
 
     @GET
     @Path("/records")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
         Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 

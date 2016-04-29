@@ -10,14 +10,13 @@ import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.representations.CsvRepresentation;
-import uk.gov.register.presentation.representations.RepresentationView;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class RecordView extends AttributionView implements RepresentationView {
+public class RecordView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private final Record record;
 
@@ -27,7 +26,6 @@ public class RecordView extends AttributionView implements RepresentationView {
         this.record = record;
     }
 
-    @SuppressWarnings("unused, used from html templates")
     public String getPrimaryKey() {
         return record.item.content.get(requestContext.getRegisterPrimaryKey()).textValue();
     }
@@ -48,6 +46,10 @@ public class RecordView extends AttributionView implements RepresentationView {
     @SuppressWarnings("unused, used from html templates")
     public Optional<FieldValue> getField(String fieldName) {
         return Optional.ofNullable(getContent().get(fieldName));
+    }
+
+    public Record getRecord() {
+        return record;
     }
 
     @Override

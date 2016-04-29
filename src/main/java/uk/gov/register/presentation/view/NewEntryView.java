@@ -5,12 +5,11 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.config.PublicBody;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.representations.CsvRepresentation;
-import uk.gov.register.presentation.representations.RepresentationView;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Optional;
 
-public class NewEntryView extends AttributionView implements RepresentationView<Entry> {
+public class NewEntryView extends CsvRepresentationView<Entry> {
     private Entry entry;
 
     public NewEntryView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Entry entry) {
