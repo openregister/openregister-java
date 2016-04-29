@@ -13,6 +13,8 @@ import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
+import uk.gov.register.presentation.representations.turtle.EntryTurtleWriter;
+import uk.gov.register.presentation.representations.turtle.ItemTurtleWiter;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ItemView;
 import uk.gov.register.presentation.view.NewEntryView;
@@ -30,11 +32,10 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class NewTurtleWriterTest {
+public class TurtleRepresentationWriterTest {
     private RequestContext requestContext;
-    private ItemConverter entryConverter;
+    private ItemConverter itemConverter;
     private ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
-    private NewTurtleWriter writer = new NewTurtleWriter();
 
     private Map<String, Field> fieldsConfigurationMap = ImmutableMap.of(
             "address", new Field("address", "curie", "address", Cardinality.ONE, ""),
@@ -64,7 +65,7 @@ public class NewTurtleWriterTest {
             }
         });
 
-        entryConverter = new ItemConverter(fieldsConfiguration, requestContext);
+        itemConverter = new ItemConverter(fieldsConfiguration, requestContext);
     }
 
     @Test
@@ -75,10 +76,11 @@ public class NewTurtleWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(requestContext, null, null, entryConverter, new Item("hash", objectMapper.valueToTree(map)));
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
+        ItemTurtleWiter writer = new ItemTurtleWiter(requestContext);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -91,6 +93,7 @@ public class NewTurtleWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
+        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext);
         writer.writeTo(entryView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -106,10 +109,11 @@ public class NewTurtleWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, entryConverter, new Item("hash", objectMapper.valueToTree(map)));
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
+        ItemTurtleWiter writer = new ItemTurtleWiter(requestContext);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -127,10 +131,11 @@ public class NewTurtleWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, entryConverter, new Item("hash", objectMapper.valueToTree(map)));
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
+        ItemTurtleWiter writer = new ItemTurtleWiter(requestContext);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
