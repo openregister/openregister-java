@@ -4,17 +4,21 @@ import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.indexer.dao.*;
+import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
 import java.util.List;
+import java.util.Optional;
 
 public class IndexEntryItemTask implements Runnable {
     private final Logger LOGGER = LoggerFactory.getLogger(IndexEntryItemTask.class);
 
+    private Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater;
     private final String register;
     private final DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO;
     private final SourceDBQueryDAO sourceDBQueryDAO;
 
-    public IndexEntryItemTask(String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO) {
+    public IndexEntryItemTask(Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater, String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO) {
+        this.cloudwatchRecordsProcessedUpdater = cloudwatchRecordsProcessedUpdater;
         this.register = register;
         this.sourceDBQueryDAO = sourceDBQueryDAO;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
@@ -35,16 +39,24 @@ public class IndexEntryItemTask implements Runnable {
     protected void update() {
         List<Record> records = fetchNewRecords();
 
-        if (!records.isEmpty()) {
+        if (records.isEmpty()) {
+            updateCloudWatch(0);
+        } else {
             do {
                 int totalNewRecords = records.size();
                 LOGGER.info(String.format("Register '%s': Found '%d' new entries in entry table.", register, totalNewRecords));
 
-                destinationDBUpdateDAO.writeEntriesAndItemsInBatch(records);
+                destinationDBUpdateDAO.writeEntriesAndItemsInBatch(register, records);
+
+                updateCloudWatch(totalNewRecords);
 
                 LOGGER.info(String.format("Register '%s': Copied '%d' entries in entry from index '%d'.", register, totalNewRecords, records.get(0).entry.getEntryNumber()));
             } while (!(records = fetchNewRecords()).isEmpty());
         }
+    }
+
+    private void updateCloudWatch(final int totalEntriesWritten) {
+        cloudwatchRecordsProcessedUpdater.ifPresent(cwu -> cwu.update(totalEntriesWritten));
     }
 
     private List<Record> fetchNewRecords() {

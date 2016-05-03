@@ -15,7 +15,6 @@ public class Configuration {
 
     private final Set<String> registers;
     private final Properties properties;
-    private final Map<String, String> elasticSearchEndPoints;
     private final Map<String, String> cloudSearchEndPoints;
     private final Map<String, String> cloudSearchWatermarkEndPoints;
 
@@ -24,7 +23,6 @@ public class Configuration {
             this.properties = new Properties();
             properties.load(configurationPropertiesStream(createConfigurationMap(args).get("config.file")));
             this.registers = extractConfiguredRegisters();
-            this.elasticSearchEndPoints = createSearchEndPoints(".elasticsearch.endpoint");
             this.cloudSearchEndPoints = createSearchEndPoints(".cloudsearch.search.endpoint");
             this.cloudSearchWatermarkEndPoints = createSearchEndPoints(".cloudsearch.highwatermark.endpoint");
         } catch (IOException e) {
@@ -83,10 +81,6 @@ public class Configuration {
 
     public Optional<String> cloudSearchWaterMarkEndPoint(String register) {
         return Optional.ofNullable(cloudSearchWatermarkEndPoints.get(register));
-    }
-
-    public Optional<String> elasticSearchEndPoint(String register) {
-        return Optional.ofNullable(elasticSearchEndPoints.get(register));
     }
 
     public Optional<String> cloudwatchEnvironmentName() {

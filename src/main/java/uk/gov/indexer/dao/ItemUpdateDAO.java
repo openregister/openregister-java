@@ -14,6 +14,6 @@ interface ItemUpdateDAO extends DBConnectionDAO {
             "CREATE INDEX IF NOT EXISTS item_content_gin ON item USING gin(content jsonb_path_ops);")
     void ensureItemTableInPlace();
 
-    @SqlBatch("insert into " + ITEM_TABLE + "(sha256hex, content) values(:sha256hex, :jsonContent) on conflict do nothing")
+    @SqlBatch("insert into " + ITEM_TABLE + "(sha256hex, content) values(:sha256hex, :contentPgObject) on conflict do nothing")
     void writeBatch(@BindBean Iterable<Item> items);
 }

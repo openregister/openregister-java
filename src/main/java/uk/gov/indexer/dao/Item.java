@@ -1,6 +1,9 @@
 package uk.gov.indexer.dao;
 
+import com.amazonaws.util.json.Jackson;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.postgresql.util.PGobject;
+import uk.gov.indexer.JsonUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
@@ -21,7 +24,7 @@ public class Item {
     }
 
     @SuppressWarnings("unused, used by DAO")
-    public PGobject getJsonContent() {
+    public PGobject getContentPgObject() {
         return pgObject(new String(content, StandardCharsets.UTF_8));
     }
 
@@ -38,6 +41,14 @@ public class Item {
     @Override
     public int hashCode() {
         return sha256hex != null ? sha256hex.hashCode() : 0;
+    }
+
+    public String getKey(String registerName) {
+        return Jackson.jsonNodeOf(new String(content, StandardCharsets.UTF_8)).get(registerName).textValue();
+    }
+
+    public JsonNode getContent(){
+        return JsonUtils.fromBytesToJsonNode(content);
     }
 
     private PGobject pgObject(String itemContent) {

@@ -8,7 +8,7 @@ public class Entry {
     private final String itemHash;
     private final Timestamp timestamp;
 
-    public Entry(int entryNumber, String itemHash, Timestamp timestamp) {
+    Entry(int entryNumber, String itemHash, Timestamp timestamp) {
         this.entryNumber = entryNumber;
         this.itemHash = itemHash;
         this.timestamp = timestamp;
@@ -18,6 +18,7 @@ public class Entry {
         return entryNumber;
     }
 
+    @SuppressWarnings("unused, used by DAO")
     public String getItemHash() {
         return itemHash;
     }

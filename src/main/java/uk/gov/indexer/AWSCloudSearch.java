@@ -10,7 +10,7 @@ import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-import uk.gov.indexer.dao.OrderedEntryIndex;
+import uk.gov.indexer.dao.Record;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -63,8 +63,8 @@ public class AWSCloudSearch {
 
     }
 
-    public void upload(List<OrderedEntryIndex> entries) {
-        byte[] bytes = Jackson.toJsonString(Lists.transform(entries, this::entryDocument)).getBytes(StandardCharsets.UTF_8);
+    public void upload(List<Record> records) {
+        byte[] bytes = Jackson.toJsonString(Lists.transform(records, this::entryDocument)).getBytes(StandardCharsets.UTF_8);
 
         UploadDocumentsResult uploadDocumentsResult = cloudSearchData.uploadDocuments(createUploadDocumentsRequest(bytes));
 
@@ -81,11 +81,10 @@ public class AWSCloudSearch {
         return uploadDocumentsRequest;
     }
 
-    private CloudSearchDocument entryDocument(OrderedEntryIndex e) {
-        JsonNode jsonNode = Jackson.jsonNodeOf(e.getEntry());
+    private CloudSearchDocument entryDocument(Record record) {
         CloudSearchDocument cloudSearchDocument = new CloudSearchDocument();
-        cloudSearchDocument.setID(jsonNode.get("entry").get(registerName).textValue());
-        cloudSearchDocument.setFields(jsonNode.get("entry"));
+        cloudSearchDocument.setID(record.item.getKey(registerName));
+        cloudSearchDocument.setFields(record.item.getContent());
         return cloudSearchDocument;
     }
 

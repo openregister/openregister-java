@@ -30,9 +30,9 @@ public class Application {
     private static int getCorePoolSize(Configuration configuration, Set<String> registers) {
         long searchProviderThreadCount = registers
                 .stream()
-                .filter(r -> configuration.cloudSearchEndPoint(r).isPresent() || configuration.elasticSearchEndPoint(r).isPresent())
+                .filter(r -> configuration.cloudSearchEndPoint(r).isPresent())
                 .count();
-        return (int) (searchProviderThreadCount + 2 * registers.size());
+        return (int) (searchProviderThreadCount + registers.size());
     }
 
     private static void addShutdownHook(final ScheduledExecutorService executorService, List<Indexer> indexers) {
