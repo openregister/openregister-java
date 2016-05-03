@@ -4,7 +4,7 @@ import com.google.common.base.Throwables;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.indexer.dao.DestinationDBUpdateDAO_NewSchema;
+import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.EntryUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
@@ -17,7 +17,7 @@ public class Indexer {
 
     private final Configuration configuration;
     private final String register;
-    private DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO_NewSchema;
+    private DestinationDBUpdateDAO destinationDBUpdateDAO;
     private SourceDBQueryDAO sourceDBQueryDAO;
 
     public Indexer(Configuration configuration, String register) {
@@ -30,17 +30,17 @@ public class Indexer {
             LOGGER.info("setting up register " + register);
 
             DBI destDbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
-            destinationDBUpdateDAO_NewSchema = destDbi.open().attach(DestinationDBUpdateDAO_NewSchema.class);
+            destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
 
             DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
             sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);
 
             executorService.scheduleAtFixedRate(
-                    new IndexEntryItemTask(
+                    new IndexerTask(
                             configuration.cloudwatchEnvironmentName().map(e -> new CloudwatchRecordsProcessedUpdater(e, register)),
                             register,
                             sourceDBQueryDAO,
-                            destinationDBUpdateDAO_NewSchema
+                            destinationDBUpdateDAO
                     ),
                     0,
                     10,
@@ -63,8 +63,8 @@ public class Indexer {
     }
 
     public synchronized void stop() {
-        if (destinationDBUpdateDAO_NewSchema != null) {
-            destinationDBUpdateDAO_NewSchema.close();
+        if (destinationDBUpdateDAO != null) {
+            destinationDBUpdateDAO.close();
         }
         if (sourceDBQueryDAO != null) {
             sourceDBQueryDAO.close();

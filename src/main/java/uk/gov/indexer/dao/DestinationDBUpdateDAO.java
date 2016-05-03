@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class DestinationDBUpdateDAO_NewSchema implements GetHandle, DBConnectionDAO {
+public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
 
     private final EntryUpdateDAO entryUpdateDAO;
     private final ItemUpdateDAO itemUpdateDAO;
     private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
 
-    public DestinationDBUpdateDAO_NewSchema() {
+    public DestinationDBUpdateDAO() {
         Handle handle = getHandle();
         entryUpdateDAO = handle.attach(EntryUpdateDAO.class);
         entryUpdateDAO.ensureEntrySchemaInPlace();

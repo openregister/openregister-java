@@ -12,7 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.indexer.dao.CurrentKey;
-import uk.gov.indexer.dao.DestinationDBUpdateDAO_NewSchema;
+import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
@@ -27,7 +27,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IndexEntryItemTaskTest {
+public class IndexerTaskTest {
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8090);
 
@@ -47,8 +47,8 @@ public class IndexEntryItemTaskTest {
                 DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
 
                 SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO_NewSchema.class);
-                IndexEntryItemTask indexEntryItemTask = new IndexEntryItemTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
+                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
+                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
 
                 InOrder inOrder = Mockito.inOrder(cloudwatchRecordsProcessedUpdater);
@@ -56,7 +56,7 @@ public class IndexEntryItemTaskTest {
                 //load 1 entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(presentationStatement, indexEntryItemTask, 1, 1);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 1, 1);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{1,fp_1}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 1, 1);
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
@@ -64,7 +64,7 @@ public class IndexEntryItemTaskTest {
                 //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(presentationStatement, indexEntryItemTask, 2, 1);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 2, 1);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{2,fp_1}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 2, 1);
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
@@ -72,7 +72,7 @@ public class IndexEntryItemTaskTest {
                 //load 5 more entry and confirm the changes
                 loadEntriesInMintDB(5);
 
-                runIndexerAndVerifyResult(presentationStatement, indexEntryItemTask, 7, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 7, 5);
 
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {3,fp_1}, {4,fp_2}, {5,fp_3}, {6,fp_4}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 7, 5);
@@ -81,14 +81,14 @@ public class IndexEntryItemTaskTest {
                 //load 1 more entry and confirm the changes
                 loadEntriesInMintDB(1);
 
-                runIndexerAndVerifyResult(presentationStatement, indexEntryItemTask, 8, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8, 5);
 
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{7,fp_5}, {4,fp_2}, {5,fp_3}, {6,fp_4}, {8,fp_1}]"));
                 assertNoOfRecordsAndEntries(presentationStatement, 8, 5);
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
                 //run indexer again when no new entries available, confirms that nothing changes but cloudwatch get notification with 0 entry
-                runIndexerAndVerifyResult(presentationStatement, indexEntryItemTask, 8, 5);
+                runIndexerAndVerifyResult(presentationStatement, indexerTask, 8, 5);
 
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(0);
             }
@@ -107,13 +107,13 @@ public class IndexEntryItemTaskTest {
                 DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
 
                 SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO_NewSchema.class);
-                IndexEntryItemTask indexEntryItemTask = new IndexEntryItemTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
+                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
+                IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 loadEntriesInMintDB(2);
                 loadEntriesInMintDB(2);
 
-                indexEntryItemTask.run();
+                indexerTask.run();
 
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{3,fp_1}, {4,fp_2}]"));
             }
@@ -142,7 +142,7 @@ public class IndexEntryItemTaskTest {
         }
     }
 
-    private void runIndexerAndVerifyResult(Statement statement, IndexEntryItemTask indexerEntryItemTask, int expectedEntries, int expectedItems) throws SQLException {
+    private void runIndexerAndVerifyResult(Statement statement, IndexerTask indexerEntryItemTask, int expectedEntries, int expectedItems) throws SQLException {
         indexerEntryItemTask.run();
 
         try (ResultSet entries = statement.executeQuery("select count(*) from entry")) {

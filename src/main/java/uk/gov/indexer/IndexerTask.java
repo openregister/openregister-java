@@ -9,15 +9,15 @@ import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 import java.util.List;
 import java.util.Optional;
 
-public class IndexEntryItemTask implements Runnable {
-    private final Logger LOGGER = LoggerFactory.getLogger(IndexEntryItemTask.class);
+public class IndexerTask implements Runnable {
+    private final Logger LOGGER = LoggerFactory.getLogger(IndexerTask.class);
 
     private Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater;
     private final String register;
-    private final DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO;
+    private final DestinationDBUpdateDAO destinationDBUpdateDAO;
     private final SourceDBQueryDAO sourceDBQueryDAO;
 
-    public IndexEntryItemTask(Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater, String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO_NewSchema destinationDBUpdateDAO) {
+    public IndexerTask(Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater, String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO) {
         this.cloudwatchRecordsProcessedUpdater = cloudwatchRecordsProcessedUpdater;
         this.register = register;
         this.sourceDBQueryDAO = sourceDBQueryDAO;
