@@ -2,11 +2,9 @@ package uk.gov.register.presentation.functional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
-import org.junit.Ignore;
 import org.junit.Test;
 import uk.gov.register.presentation.config.ResourceYamlFileReader;
 
@@ -14,7 +12,10 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -25,41 +26,44 @@ import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
-    @Ignore("Needs to update registers.yaml with new records resource")
     public void registerJsonShouldContainEntryView() throws Throwable {
         populateRegisterRegisterEntries();
-        Response registerRegisterEntryResponse = getRequest("register", "/record/address.json");
-        assertThat(registerRegisterEntryResponse.getStatus(), equalTo(200));
+        Response addressRecordInRegisterRegisterResponse = getRequest("register", "/record/address.json");
+        assertThat(addressRecordInRegisterRegisterResponse.getStatus(), equalTo(200));
+        Map addressRecordMapInRegisterRegister = addressRecordInRegisterRegisterResponse.readEntity(Map.class);
+        verifyStringIsAnISODate(addressRecordMapInRegisterRegister.remove("entry-timestamp").toString());
 
         resetSchema();
 
         populateAddressRegisterEntries();
 
-        Response addressRegisterResourceResponse = getRequest("address", "/register.json");
-        assertThat(addressRegisterResourceResponse.getStatus(), equalTo(200));
+        Response registerResourceFromAddressRegisterResponse = getRequest("address", "/register.json");
+        assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
-        JsonNode registerJson = addressRegisterResourceResponse.readEntity(JsonNode.class);
+        Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
 
-        assertThat(registerJson.get("total-entries").intValue(), equalTo(5));
-        assertThat(registerJson.get("total-records").intValue(), equalTo(3));
-        assertThat(registerJson.get("total-items").intValue(), equalTo(5));
-        verifyStringIsAnISODate(registerJson.get("last-updated").textValue());
+        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(5));
+        assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(3));
+        assertThat(registerResourceMapFromAddressRegister.get("total-items"), equalTo(5));
+        verifyStringIsAnISODate(registerResourceMapFromAddressRegister.get("last-updated").toString());
 
-        JsonNode registerRecordJson = registerRegisterEntryResponse.readEntity(JsonNode.class);
-        assertThat(registerJson.get("record"), equalTo(registerRecordJson));
+        Map registerRecordMapFromAddressRegister = (Map)registerResourceMapFromAddressRegister.get("register-record");
+        verifyStringIsAnISODate(registerRecordMapFromAddressRegister.remove("entry-timestamp").toString());
+
+        assertThat(registerRecordMapFromAddressRegister.toString(), equalTo(addressRecordMapInRegisterRegister.toString()));
     }
 
-    public void populateAddressRegisterEntries() {
+    private void populateAddressRegisterEntries() {
         dbSupport.publishEntries(ImmutableList.of(
                 anEntry(1, "{\"name\":\"ellis\",\"address\":\"12345\"}"),
-                anEntry(1, "{\"name\":\"presley\",\"address\":\"6789\"}"),
-                anEntry(1, "{\"name\":\"ellis\",\"address\":\"145678\"}"),
-                anEntry(1, "{\"name\":\"updatedEllisName\",\"address\":\"145678\"}"),
-                anEntry(1, "{\"name\":\"ellis\",\"address\":\"6789\"}")
+                anEntry(2, "{\"name\":\"presley\",\"address\":\"6789\"}"),
+                anEntry(3, "{\"name\":\"ellis\",\"address\":\"145678\"}"),
+                anEntry(4, "{\"name\":\"updatedEllisName\",\"address\":\"145678\"}"),
+                anEntry(5, "{\"name\":\"ellis\",\"address\":\"6789\"}")
         ));
     }
 
-    public void populateRegisterRegisterEntries() throws IOException {
+    private void populateRegisterRegisterEntries() throws IOException {
         Collection<Map> registers = new ResourceYamlFileReader().readResource(
                 Optional.empty(),
                 "config/registers.yaml",

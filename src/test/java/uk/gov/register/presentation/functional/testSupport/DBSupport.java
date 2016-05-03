@@ -1,7 +1,5 @@
 package uk.gov.register.presentation.functional.testSupport;
 
-import com.google.common.base.Throwables;
-import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.presentation.functional.TestEntry;
 
 import java.io.File;
@@ -9,7 +7,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -39,20 +36,15 @@ public class DBSupport {
     }
 
     public void publishEntries(String registerName, List<TestEntry> testEntries) {
-        for (TestEntry testEntry : testEntries) {
-            insertIntoItemAndEntryTables(testEntry.entryNumber, testEntry.itemJson, testEntry.entryTimestamp);
+        testEntries.forEach(testEntry -> {
+            insertIntoItemAndEntryTables(testEntry);
             updateOtherTables(registerName, testEntry.entryNumber, testEntry.itemJson);
-        }
+        });
     }
 
-    private void insertIntoItemAndEntryTables(int serialNumber, String itemJson, Instant timestamp) {
-        try {
-            String sha256 = DigestUtils.sha256Hex(itemJson);
-            testDAO.testEntryDAO.insert(serialNumber, sha256, timestamp);
-            testDAO.testItemDAO.insertIfNotExist(sha256, itemJson);
-        } catch (Exception e) {
-            Throwables.propagate(e);
-        }
+    private void insertIntoItemAndEntryTables(TestEntry testEntry) {
+        testDAO.testEntryDAO.insert(testEntry.entryNumber, testEntry.sha256hex, testEntry.entryTimestamp);
+        testDAO.testItemDAO.insertIfNotExist(testEntry.sha256hex, testEntry.itemJson);
     }
 
     private void updateOtherTables(String registerName, int serialNumber, String message) {

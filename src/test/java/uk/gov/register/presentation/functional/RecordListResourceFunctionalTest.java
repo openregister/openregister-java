@@ -40,9 +40,9 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(responseMap.size(), equalTo(3));
 
-        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.of("entry-number", "5", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"ellis\",\"address\":\"6789\"}"), "entry-timestamp", responseMap.get("6789").get("entry-timestamp"), "name", "ellis", "address", "6789")));
-        assertThat(responseMap.get("145678"), equalTo(ImmutableMap.of("entry-number", "4", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"updatedEllisName\",\"address\":\"145678\"}"), "entry-timestamp", responseMap.get("145678").get("entry-timestamp"), "name", "updatedEllisName", "address", "145678")));
-        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"ellis\",\"address\":\"12345\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "name", "ellis", "address", "12345")));
+        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.of("entry-number", "5", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"name\":\"ellis\"}"), "entry-timestamp", responseMap.get("6789").get("entry-timestamp"), "name", "ellis", "address", "6789")));
+        assertThat(responseMap.get("145678"), equalTo(ImmutableMap.of("entry-number", "4", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"145678\",\"name\":\"updatedEllisName\"}"), "entry-timestamp", responseMap.get("145678").get("entry-timestamp"), "name", "updatedEllisName", "address", "145678")));
+        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"name\":\"ellis\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "name", "ellis", "address", "12345")));
     }
 
     @Test
@@ -83,8 +83,8 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(responseMap.size(), equalTo(2));
 
-        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.of("entry-number", "5", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"ellis\",\"address\":\"6789\"}"), "entry-timestamp", responseMap.get("6789").get("entry-timestamp"), "name", "ellis", "address", "6789")));
-        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"name\":\"ellis\",\"address\":\"12345\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "name", "ellis", "address", "12345")));
+        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.of("entry-number", "5", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"name\":\"ellis\"}"), "entry-timestamp", responseMap.get("6789").get("entry-timestamp"), "name", "ellis", "address", "6789")));
+        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"name\":\"ellis\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "name", "ellis", "address", "12345")));
     }
 
 
