@@ -9,17 +9,17 @@ import uk.gov.register.datatype.Datatype;
 
 import java.util.Set;
 
-public class EntryValidator {
+public class ItemValidator {
 
     private final FieldsConfiguration fieldsConfiguration;
     private final RegistersConfiguration registersConfiguration;
 
-    public EntryValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration) {
+    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;
     }
 
-    public void validateEntry(String registerName, JsonNode inputEntry) throws EntryValidationException {
+    public void validateItem(String registerName, JsonNode inputEntry) throws ItemValidationException {
         Register register = registersConfiguration.getRegister(registerName);
 
         validateFields(inputEntry, register);
@@ -29,13 +29,13 @@ public class EntryValidator {
         validateFieldsValue(inputEntry);
     }
 
-    private void validatePrimaryKeyExists(JsonNode inputEntry, String registerName) throws EntryValidationException {
+    private void validatePrimaryKeyExists(JsonNode inputEntry, String registerName) throws ItemValidationException {
         JsonNode primaryKeyNode = inputEntry.get(registerName);
         throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerName + "'");
         validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerName + "' must have a valid value");
     }
 
-    private void validateFields(JsonNode inputEntry, Register register) throws EntryValidationException {
+    private void validateFields(JsonNode inputEntry, Register register) throws ItemValidationException {
         Set<String> unknownFields = Sets.newHashSet(
                 Iterators.filter(inputEntry.fieldNames(), fieldName -> !register.containsField(fieldName))
         );
@@ -43,7 +43,7 @@ public class EntryValidator {
         throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
     }
 
-    private void validateFieldsValue(JsonNode inputEntry) throws EntryValidationException {
+    private void validateFieldsValue(JsonNode inputEntry) throws ItemValidationException {
         inputEntry.fieldNames().forEachRemaining(fieldName -> {
             Field field = fieldsConfiguration.getField(fieldName);
 
@@ -70,7 +70,7 @@ public class EntryValidator {
 
     private void throwEntryValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
         if (condition) {
-            throw new EntryValidationException(errorMessage, inputJsonEntry);
+            throw new ItemValidationException(errorMessage, inputJsonEntry);
         }
     }
 }
