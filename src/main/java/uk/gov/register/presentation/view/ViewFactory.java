@@ -10,6 +10,7 @@ import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.Record;
+import uk.gov.register.presentation.resource.NewPagination;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
@@ -17,6 +18,7 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,6 +77,10 @@ public class ViewFactory {
 
     public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
         return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records);
+    }
+
+    public EntryListView getEntriesView(Collection<Entry> entries, NewPagination newPagination) {
+        return new EntryListView(requestContext, newPagination, getCustodian(), getBranding(), entries, "entries.html");
     }
 
     private PublicBody getCustodian() {

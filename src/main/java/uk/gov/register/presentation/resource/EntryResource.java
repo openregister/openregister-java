@@ -5,11 +5,15 @@ import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.AttributionView;
+import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Path("/")
@@ -37,12 +41,33 @@ public class EntryResource extends ResourceCommon {
     @GET
     @Path("/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public AttributionView entries(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, entryDAO.getTotalEntries());
+    public EntryListView entries(@QueryParam("start") Optional<Integer> optionalStart, @QueryParam("limit") Optional<Integer> optionalLimit) {
+        int totalEntries = entryDAO.getTotalEntries();
+        NewPagination newPagination = new NewPagination(optionalStart, optionalLimit, totalEntries);
 
-        setNextAndPreviousPageLinkHeader(pagination);
+        Collection<Entry> entries = entryDAO.getEntries(newPagination.start, newPagination.limit);
 
         getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-        return viewFactory.getEntryListView(entryDAO.getEntries(pagination.pageSize(), pagination.offset()), pagination);
+
+        setNextAndPreviousPageLinkHeader(newPagination);
+
+        return viewFactory.getEntriesView(entries, newPagination);
+    }
+
+    private void setNextAndPreviousPageLinkHeader(NewPagination pagination) {
+        List<String> headerValues = new ArrayList<>();
+
+        if (pagination.hasNextPage()) {
+            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getNextPageLink(), "next"));
+        }
+
+        if (pagination.hasPreviousPage()) {
+            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getPreviousPageLink(), "previous"));
+        }
+
+        if (!headerValues.isEmpty()) {
+            requestContext.getHttpServletResponse().setHeader("Link", String.join(",", headerValues));
+        }
     }
 }
+

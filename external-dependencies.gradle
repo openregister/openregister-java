@@ -15,6 +15,9 @@ ext {
     dropwizard_module_java8      = "io.dropwizard.modules:dropwizard-java8:${dropwizard_java8_version}"
     dropwizard_module_java8_jdbi = "io.dropwizard.modules:dropwizard-java8-jdbi:${dropwizard_java8_version}"
 
+    //required for UseStringTemplate3StatementLocator annotation used by jdbi
+    stringTemplate = "org.antlr:stringtemplate:3.2.1"
+
     jacksonCsv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:${jackson_version}"
 
     jena = "org.apache.jena:jena-core:3.0.1"

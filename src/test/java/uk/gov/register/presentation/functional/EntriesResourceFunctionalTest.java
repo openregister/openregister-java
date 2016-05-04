@@ -64,15 +64,55 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
 
         JsonNode entry1 = jsonNodes.get(0);
         assertThat(Iterators.size(entry1.fields()), equalTo(3));
-        assertThat(entry1.get("entry-number").textValue(), equalTo("2"));
-        assertThat(entry1.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item2)));
+        assertThat(entry1.get("entry-number").textValue(), equalTo("1"));
+        assertThat(entry1.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
         verifyStringIsADateSpecifiedInSpecification(entry1.get("entry-timestamp").textValue());
 
         JsonNode entry2 = jsonNodes.get(1);
         assertThat(Iterators.size(entry2.fields()), equalTo(3));
-        assertThat(entry2.get("entry-number").textValue(), equalTo("1"));
-        assertThat(entry2.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
+        assertThat(entry2.get("entry-number").textValue(), equalTo("2"));
+        assertThat(entry2.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item2)));
         verifyStringIsADateSpecifiedInSpecification(entry2.get("entry-timestamp").textValue());
+    }
+
+    @Test
+    public void paginationSupport(){
+        String item1 = "{\"address\":\"1234\",\"name\":\"elvis\"}";
+        String item2 = "{\"address\":\"6789\",\"name\":\"presley\"}";
+        String item3 = "{\"address\":\"567\",\"name\":\"john\"}";
+
+        dbSupport.publishEntries("address", Lists.newArrayList(
+                anEntry(1, item1),
+                anEntry(2, item2),
+                anEntry(3, item3)
+        ));
+
+        Response response = getRequest("/entries.json?start=1&limit=2");
+        ArrayNode jsonNodes = response.readEntity(ArrayNode.class);
+        assertThat(jsonNodes.size(), equalTo(2));
+        assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("1"));
+        assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("2"));
+        assertThat(response.getHeaderString("Link"), equalTo("<?start=3&limit=2>; rel=\"next\""));
+
+        response = getRequest("/entries.json?start=2&limit=2");
+        jsonNodes = response.readEntity(ArrayNode.class);
+        assertThat(jsonNodes.size(), equalTo(2));
+        assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("2"));
+        assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("3"));
+        assertThat(response.getHeaderString("Link"), equalTo("<?start=0&limit=2>; rel=\"previous\""));
+
+        response = getRequest("/entries.json?start=2&limit=3");
+        jsonNodes = response.readEntity(ArrayNode.class);
+        assertThat(jsonNodes.size(), equalTo(2));
+        assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("2"));
+        assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("3"));
+        assertThat(response.getHeaderString("Link"), equalTo("<?start=-1&limit=3>; rel=\"previous\""));
+
+        response = getRequest("/entries.json?start=2&limit=1");
+        jsonNodes = response.readEntity(ArrayNode.class);
+        assertThat(jsonNodes.size(), equalTo(1));
+        assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("2"));
+        assertThat(response.getHeaderString("Link"), equalTo("<?start=3&limit=1>; rel=\"next\",<?start=1&limit=1>; rel=\"previous\""));
     }
 
     private void verifyStringIsADateSpecifiedInSpecification(String dateTimeString) {
