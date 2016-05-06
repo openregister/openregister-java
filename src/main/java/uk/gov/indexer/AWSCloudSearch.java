@@ -42,6 +42,7 @@ public class AWSCloudSearch {
         SearchRequest searchRequest = new SearchRequest();
         //TODO: must search by id- remove temporary workaround i.e. kept extra field 'document_type' in document
         searchRequest.setQuery("watermark");
+        //TODO: this should be renamed to entry_number as there is no concept of serial_number now
         searchRequest.setReturn("serial_number");
         SearchResult searchResult = cloudSearchWatermark.search(searchRequest);
 
