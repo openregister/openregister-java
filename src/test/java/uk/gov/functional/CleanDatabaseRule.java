@@ -7,7 +7,6 @@ import static uk.gov.functional.TestDBSupport.*;
 public class CleanDatabaseRule extends ExternalResource {
     @Override
     protected void before() {
-        testEntriesDAO.dropTable();
         testEntryDAO.dropTable();
         testItemDAO.dropTable();
     }

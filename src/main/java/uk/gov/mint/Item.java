@@ -27,6 +27,7 @@ public class Item {
         return sha256hex;
     }
 
+    @SuppressWarnings("unused, used by DAO")
     public byte[] getCanonicalContent() {
         return canonicalContent;
     }

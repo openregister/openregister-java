@@ -18,13 +18,13 @@ public class MintService {
 
     private final String register;
     private final ObjectReconstructor objectReconstructor;
-    private final EntryValidator entryValidator;
+    private final ItemValidator itemValidator;
     private final EntryStore entryStore;
 
-    public MintService(String register, ObjectReconstructor objectReconstructor, EntryValidator entryValidator, EntryStore entryStore) {
+    public MintService(String register, ObjectReconstructor objectReconstructor, ItemValidator itemValidator, EntryStore entryStore) {
         this.register = register;
         this.objectReconstructor = objectReconstructor;
-        this.entryValidator = entryValidator;
+        this.itemValidator = itemValidator;
         this.entryStore = entryStore;
     }
 
@@ -37,7 +37,7 @@ public class MintService {
     public void load(String payload) {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
-            objects.forEach(singleObject -> entryValidator.validateEntry(register, singleObject));
+            objects.forEach(singleObject -> itemValidator.validateItem(register, singleObject));
             entryStore.load(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));

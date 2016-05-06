@@ -1,6 +1,5 @@
 package uk.gov.functional;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -22,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static uk.gov.functional.TestDBSupport.*;
@@ -46,22 +44,9 @@ public class PGFunctionalTest {
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
-        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-
         String inputItem = "{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}";
         Response r = send(inputItem);
         assertThat(r.getStatus(), equalTo(204));
-
-        JsonNode storedEntry = canonicalJsonMapper.readFromBytes(testEntriesDAO.getEntry());
-
-        assertThat(storedEntry.get("hash"), notNullValue(JsonNode.class));
-
-        JsonNode entryNode = storedEntry.get("entry");
-        assertThat(entryNode, notNullValue(JsonNode.class));
-
-        assertThat(entryNode.get("register").textValue(), equalTo("ft_mint_test"));
-        assertThat(entryNode.get("text").textValue(), equalTo("SomeText"));
-
 
         TestDBItem storedItem = testItemDAO.getItems().get(0);
         assertThat(storedItem.contents, equalTo(inputItem.getBytes()));

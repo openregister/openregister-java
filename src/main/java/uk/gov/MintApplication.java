@@ -51,13 +51,13 @@ public class MintApplication extends Application<MintConfiguration> {
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
-        EntryValidator entryValidator = new EntryValidator(registersConfiguration, fieldsConfiguration);
+        ItemValidator itemValidator = new ItemValidator(registersConfiguration, fieldsConfiguration);
         ObjectReconstructor objectReconstructor = new ObjectReconstructor();
 
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(configuration.getRegister(), objectReconstructor, entryValidator, jdbi.open().attach(EntryStore.class)));
+        jersey.register(new MintService(configuration.getRegister(), objectReconstructor, itemValidator, jdbi.open().attach(EntryStore.class)));
 
-        jersey.register(EntryValidationExceptionMapper.class);
+        jersey.register(ItemValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
         jersey.register(ThrowableExceptionMapper.class);
 
