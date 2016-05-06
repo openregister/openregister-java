@@ -14,6 +14,7 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class RecordResourceFunctionalTest extends FunctionalTestBase {
     private final static String item0 = "{\"address\":\"6789\",\"name\":\"elvis\"}";
@@ -21,10 +22,10 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
 
     @Before
     public void publishTestMessages() throws Throwable {
-        dbSupport.publishMessages(ImmutableList.of(
-                "{\"hash\":\"hash0\",\"entry\":" + item0 + "}",
-                "{\"hash\":\"hash1\",\"entry\":" + item1 + "}",
-                "{\"hash\":\"hash2\",\"entry\":{\"address\":\"145678\",\"name\":\"ellis\"}}"
+        dbSupport.publishEntries(ImmutableList.of(
+                anEntry(1, item0),
+                anEntry(2, item1),
+                anEntry(3, "{\"address\":\"145678\",\"name\":\"ellis\"}")
         ));
     }
 

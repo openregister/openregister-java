@@ -4,7 +4,7 @@ db_name=school
 
 sh create_schema.sh $db_name
 
-if [ `psql $db_name -U postgres -A -t -c "select count(*) from ordered_entry_index"` -eq 0 ]; then
+if [ `psql $db_name -U postgres -A -t -c "select count(*) from item"` -eq 0 ]; then
     ./gradlew loadSchoolData
 fi
 

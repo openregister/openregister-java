@@ -19,10 +19,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 @RunWith(Parameterized.class)
 public class RepresentationsTest extends FunctionalTestBase {
-    public static final String REGISTER_NAME = "register";
+    private static final String REGISTER_NAME = "register";
     private final String extension;
     private final String expectedContentType;
     private final String expectedItemValue;
@@ -35,9 +36,9 @@ public class RepresentationsTest extends FunctionalTestBase {
     @Before
     public void publishTestMessages() {
         dbSupport.publishEntries(REGISTER_NAME, ImmutableList.of(
-                new TestEntry(1, "{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}",
+                anEntry(1, "{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}",
                         Instant.parse("2016-03-01T01:02:03Z")),
-                new TestEntry(2, "{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}",
+                anEntry(2, "{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}",
                         Instant.parse("2016-03-02T02:03:04Z"))
         ));
     }

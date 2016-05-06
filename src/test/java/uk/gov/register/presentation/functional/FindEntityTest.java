@@ -11,15 +11,16 @@ import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 public class FindEntityTest extends FunctionalTestBase {
 
     @Before
     public void publishTestMessages() {
-        dbSupport.publishMessages(ImmutableList.of(
-                "{\"hash\":\"hash1\",\"entry\":{\"name\":\"ellis\",\"address\":\"12345\"}}",
-                "{\"hash\":\"hash2\",\"entry\":{\"name\":\"presley\",\"address\":\"6789\"}}",
-                "{\"hash\":\"hash3\",\"entry\":{\"name\":\"ellis\",\"address\":\"145678\"}}"
+        dbSupport.publishEntries(ImmutableList.of(
+                anEntry(1, "{\"name\":\"ellis\",\"address\":\"12345\"}"),
+                anEntry(2, "{\"name\":\"presley\",\"address\":\"6789\"}"),
+                anEntry(3, "{\"name\":\"ellis\",\"address\":\"145678\"}")
         ));
     }
 
@@ -32,7 +33,7 @@ public class FindEntityTest extends FunctionalTestBase {
     }
 
     @Test
-    public void find_returnsTheCorrectTotalRecordsInPaginationHeader(){
+    public void find_returnsTheCorrectTotalRecordsInPaginationHeader() {
         Response response = getRequest("/records/name/ellis");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));

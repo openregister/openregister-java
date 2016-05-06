@@ -5,7 +5,6 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
 public class TestDAO {
-    public final TestOrderedEntryIndexDAO testEntryIndexDAO;
     public final TestCurrentKeyDAO testCurrentKeyDAO;
     public final TestTotalEntryDAO testTotalEntryDAO;
     public final TestTotalRecordDAO testTotalRecordDAO;
@@ -18,7 +17,6 @@ public class TestDAO {
         DBI dbi = new DBI(postgresConnectionString);
         dbi.registerArgumentFactory(new InstantArgumentFactory());
         Handle handle = dbi.open();
-        this.testEntryIndexDAO = handle.attach(TestOrderedEntryIndexDAO.class);
         this.testCurrentKeyDAO = handle.attach(TestCurrentKeyDAO.class);
         this.testTotalEntryDAO = handle.attach(TestTotalEntryDAO.class);
         this.testTotalRecordDAO = handle.attach(TestTotalRecordDAO.class);

@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-class ResourceYamlFileReader {
+public class ResourceYamlFileReader {
     private final Logger logger = LoggerFactory.getLogger(ResourceYamlFileReader.class);
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
