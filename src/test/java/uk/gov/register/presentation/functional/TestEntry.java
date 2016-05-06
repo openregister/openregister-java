@@ -9,11 +9,9 @@ import java.io.IOException;
 import java.time.Instant;
 
 public class TestEntry {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    static {
-        objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-    }
+    private static final ObjectMapper objectMapper = new ObjectMapper() {{
+        configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+    }};
 
     public final int entryNumber;
     public final String itemJson;

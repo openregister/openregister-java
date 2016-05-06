@@ -9,7 +9,7 @@ public interface TestEntryDAO {
     @SqlUpdate("drop table if exists entry")
     void dropTable();
 
-    @SqlUpdate("create table if not exists entry (entry_number integer primary key, sha256hex varchar, timestamp timestamp without time zone default now())")
+    @SqlUpdate("create table if not exists entry (entry_number integer primary key, sha256hex varchar, timestamp timestamp without time zone)")
     void createTable();
 
     @SqlUpdate("insert into entry(entry_number, sha256hex, timestamp) values(:entry_number, :sha256hex, :timestamp)")
