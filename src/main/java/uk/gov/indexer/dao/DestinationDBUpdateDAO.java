@@ -1,7 +1,6 @@
 package uk.gov.indexer.dao;
 
-import com.amazonaws.util.json.Jackson;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -13,62 +12,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
+
+    private final EntryUpdateDAO entryUpdateDAO;
+    private final ItemUpdateDAO itemUpdateDAO;
     private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
-    private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;
 
     public DestinationDBUpdateDAO() {
         Handle handle = getHandle();
+        entryUpdateDAO = handle.attach(EntryUpdateDAO.class);
+        entryUpdateDAO.ensureEntrySchemaInPlace();
+
+        itemUpdateDAO = handle.attach(ItemUpdateDAO.class);
+        itemUpdateDAO.ensureItemTableInPlace();
 
         currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
         currentKeysUpdateDAO.ensureRecordTablesInPlace();
 
-        indexedEntriesUpdateDAO = handle.attach(IndexedEntriesUpdateDAO.class);
-        indexedEntriesUpdateDAO.ensureEntryTablesInPlace();
-
-        if (!indexedEntriesUpdateDAO.indexedEntriesIndexExists()) {
-            indexedEntriesUpdateDAO.createIndexedEntriesIndex();
-        }
     }
 
-    // TODO: Remove once migration to new schema complete
-    public int lastReadSerialNumber() {
-        return indexedEntriesUpdateDAO.lastReadSerialNumber();
+    public int lastReadEntryNumber() {
+        return entryUpdateDAO.lastReadEntryNumber();
     }
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void writeEntriesInBatch(String registerName, List<FatEntry> entries) {
-        List<OrderedEntryIndex> orderedEntryIndex = entries.stream().map(FatEntry::dbEntry).collect(Collectors.toList());
+    public void writeEntriesAndItemsInBatch(String registerName, List<Record> records) {
+        entryUpdateDAO.writeBatch(Iterables.transform(records, record -> record.entry));
+        itemUpdateDAO.writeBatch(Iterables.transform(records, record -> record.item));
 
-        indexedEntriesUpdateDAO.writeBatch(orderedEntryIndex);
+        upsertInCurrentKeysTable(registerName, records);
 
-        upsertInCurrentKeysTable(registerName, orderedEntryIndex);
-        indexedEntriesUpdateDAO.updateTotalEntries(orderedEntryIndex.size());
+        entryUpdateDAO.updateTotalEntries(records.size());
     }
 
-    private void upsertInCurrentKeysTable(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
-        int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(orderedEntryIndexes, e -> getKey(registerName, e.getEntry())));
-        List<CurrentKey> currentKeys = extractCurrentKeys(registerName, orderedEntryIndexes);
+    private void upsertInCurrentKeysTable(String registerName, List<Record> records) {
+        int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(records, r -> r.item.getKey(registerName)));
+        List<CurrentKey> currentKeys = extractCurrentKeys(registerName, records);
 
         currentKeysUpdateDAO.writeCurrentKeys(currentKeys);
         currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
     }
 
-    private List<CurrentKey> extractCurrentKeys(String registerName, List<OrderedEntryIndex> orderedEntryIndexes) {
+    private List<CurrentKey> extractCurrentKeys(String registerName, List<Record> records) {
         Map<String, Integer> currentKeys = new HashMap<>();
-        orderedEntryIndexes.forEach(e1 -> currentKeys.put(getKey(registerName, e1.getEntry()), e1.getSerial_number()));
+        records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntryNumber()));
         return currentKeys
                 .entrySet()
                 .stream()
                 .map(e -> new CurrentKey(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
-
-    private String getKey(String registerName, String entry) {
-        JsonNode jsonNode = Jackson.jsonNodeOf(entry);
-        return jsonNode.get("entry").get(registerName).textValue();
-    }
-
-
 }

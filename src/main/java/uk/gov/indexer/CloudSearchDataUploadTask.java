@@ -4,8 +4,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.indexer.dao.IndexedEntriesUpdateDAO;
-import uk.gov.indexer.dao.OrderedEntryIndex;
+import uk.gov.indexer.dao.EntryUpdateDAO;
+import uk.gov.indexer.dao.Record;
 
 import java.util.List;
 
@@ -14,11 +14,11 @@ public class CloudSearchDataUploadTask implements Runnable {
 
     private final AWSCloudSearch cloudSearch;
     private final String register;
-    private final IndexedEntriesUpdateDAO indexedEntriesUpdateDAO;
+    private EntryUpdateDAO entryUpdateDAO;
 
-    public CloudSearchDataUploadTask(String register, String searchDomainEndPoint, String searchDomainWaterMarkEndPoint, IndexedEntriesUpdateDAO indexedEntriesUpdateDAO) {
+    public CloudSearchDataUploadTask(String register, String searchDomainEndPoint, String searchDomainWaterMarkEndPoint, EntryUpdateDAO entryUpdateDAO) {
         this.register = register;
-        this.indexedEntriesUpdateDAO = indexedEntriesUpdateDAO;
+        this.entryUpdateDAO = entryUpdateDAO;
         this.cloudSearch = new AWSCloudSearch(register, searchDomainEndPoint, searchDomainWaterMarkEndPoint);
     }
 
@@ -35,11 +35,11 @@ public class CloudSearchDataUploadTask implements Runnable {
     }
 
     private void uploadEntries() {
-        List<OrderedEntryIndex> entries;
+        List<Record> records;
         int currentWatermark = cloudSearch.currentWaterMark();
-        while (!(entries = indexedEntriesUpdateDAO.fetchEntriesAfter(currentWatermark)).isEmpty()) {
-            cloudSearch.upload(entries);
-            currentWatermark = Iterables.getLast(entries).getSerial_number();
+        while (!(records = entryUpdateDAO.fetchRecordsAfter(currentWatermark)).isEmpty()) {
+            cloudSearch.upload(records);
+            currentWatermark = Iterables.getLast(records).entry.getEntryNumber();
             cloudSearch.resetWatermark(currentWatermark);
         }
     }
