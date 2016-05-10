@@ -38,7 +38,6 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
         Response response = getRequest("/entry/1.json");
 
         assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaders().get("cache-control"), contains("no-transform, max-age=31536000"));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
 

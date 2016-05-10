@@ -32,7 +32,6 @@ public class ItemResourceFunctionalTest extends FunctionalTestBase {
         Response response = getRequest(String.format("/item/sha-256:%s.json", sha256Hex));
 
         assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaders().get("cache-control").toString(), equalTo("[no-transform, max-age=31536000]"));
 
         JSONAssert.assertEquals(item1, response.readEntity(String.class), false);
     }
