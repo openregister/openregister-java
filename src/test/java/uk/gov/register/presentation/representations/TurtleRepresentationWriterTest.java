@@ -17,7 +17,7 @@ import uk.gov.register.presentation.representations.turtle.EntryTurtleWriter;
 import uk.gov.register.presentation.representations.turtle.ItemTurtleWiter;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ItemView;
-import uk.gov.register.presentation.view.NewEntryView;
+import uk.gov.register.presentation.view.EntryView;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -89,7 +89,7 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        NewEntryView entryView = new NewEntryView(requestContext, null, null, new Entry("52", "hash", Instant.now()));
+        EntryView entryView = new EntryView(requestContext, null, null, new Entry("52", "hash", Instant.now()));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

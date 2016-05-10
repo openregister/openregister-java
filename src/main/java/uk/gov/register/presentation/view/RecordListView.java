@@ -21,7 +21,7 @@ public class RecordListView extends CsvRepresentationView {
     private List<Record> records;
 
     public RecordListView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Pagination pagination, ItemConverter itemConverter, List<Record> records) {
-        super(requestContext, custodian, custodianBranding, "new-records.html");
+        super(requestContext, custodian, custodianBranding, "records.html");
         this.pagination = pagination;
         this.itemConverter = itemConverter;
         this.records = records;

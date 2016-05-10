@@ -5,7 +5,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.presentation.view.NewEntryView;
+import uk.gov.register.presentation.view.EntryView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
@@ -13,7 +13,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class EntryTurtleWriter extends TurtleRepresentationWriter<NewEntryView> {
+public class EntryTurtleWriter extends TurtleRepresentationWriter<EntryView> {
 
     @Inject
     public EntryTurtleWriter(RequestContext requestContext) {
@@ -21,16 +21,16 @@ public class EntryTurtleWriter extends TurtleRepresentationWriter<NewEntryView> 
     }
 
     @Override
-    protected Model rdfModelFor(NewEntryView newEntryView) {
+    protected Model rdfModelFor(EntryView entryView) {
         Model model = ModelFactory.createDefaultModel();
         Property entryNumberProperty = model.createProperty(SPEC_PREFIX + "entry-number-field");
         Property entryTimestampProperty = model.createProperty(SPEC_PREFIX + "entry-timestamp-field");
         Property itemProperty = model.createProperty(SPEC_PREFIX + "item-resource");
 
-        model.createResource(entryUri(newEntryView.getEntry().entryNumber).toString())
-                .addProperty(entryNumberProperty, newEntryView.getEntry().entryNumber)
-                .addProperty(entryTimestampProperty, newEntryView.getEntry().getTimestamp())
-                .addProperty(itemProperty, model.createResource(itemUri(newEntryView.getEntry().getSha256hex()).toString()));
+        model.createResource(entryUri(entryView.getEntry().entryNumber).toString())
+                .addProperty(entryNumberProperty, entryView.getEntry().entryNumber)
+                .addProperty(entryTimestampProperty, entryView.getEntry().getTimestamp())
+                .addProperty(itemProperty, model.createResource(itemUri(entryView.getEntry().getSha256hex()).toString()));
 
         model.setNsPrefix("register-metadata", SPEC_PREFIX);
         return model;

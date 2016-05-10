@@ -9,7 +9,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public abstract class NewRepresentationWriter<T extends View> implements MessageBodyWriter<T> {
+public abstract class RepresentationWriter<T extends View> implements MessageBodyWriter<T> {
     @Context
     protected RequestContext requestContext;
 

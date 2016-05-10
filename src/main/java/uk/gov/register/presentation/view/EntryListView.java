@@ -11,12 +11,12 @@ import uk.gov.register.presentation.resource.RequestContext;
 import java.util.List;
 import java.util.Optional;
 
-public class NewEntryListView extends CsvRepresentationView {
+public class EntryListView extends CsvRepresentationView {
     private Pagination pagination;
     private List<Entry> entries;
 
-    public NewEntryListView(RequestContext requestContext, Pagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, List<Entry> entries) {
-        super(requestContext, custodian, custodianBranding, "new-entries.html");
+    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, List<Entry> entries) {
+        super(requestContext, custodian, custodianBranding, "entries.html");
         this.pagination = pagination;
         this.entries = entries;
     }

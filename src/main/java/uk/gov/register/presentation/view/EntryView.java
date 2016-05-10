@@ -9,11 +9,11 @@ import uk.gov.register.presentation.resource.RequestContext;
 
 import java.util.Optional;
 
-public class NewEntryView extends CsvRepresentationView<Entry> {
+public class EntryView extends CsvRepresentationView<Entry> {
     private Entry entry;
 
-    public NewEntryView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Entry entry) {
-        super(requestContext, custodian, custodianBranding, "new-entry.html");
+    public EntryView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Entry entry) {
+        super(requestContext, custodian, custodianBranding, "entry.html");
         this.entry = entry;
     }
 

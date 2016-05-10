@@ -31,7 +31,7 @@ public class EntryResource extends ResourceCommon {
     @CacheControl(immutable = true)
     public AttributionView findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = entryDAO.findByEntryNumber(entryNumber);
-        return entry.map(viewFactory::getNewEntryView).orElseThrow(NotFoundException::new);
+        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
     }
 
     @GET
@@ -43,6 +43,6 @@ public class EntryResource extends ResourceCommon {
         setNextAndPreviousPageLinkHeader(pagination);
 
         getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-        return viewFactory.getNewEntriesView(entryDAO.getEntries(pagination.pageSize(), pagination.offset()), pagination);
+        return viewFactory.getEntryListView(entryDAO.getEntries(pagination.pageSize(), pagination.offset()), pagination);
     }
 }

@@ -41,10 +41,6 @@ public class ViewFactory {
         this.registerDomain = domainConfiguration.getRegisterDomain();
     }
 
-    public RecordListView getNewRecordsView(List<Record> records, Pagination pagination) {
-        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records);
-    }
-
     public ThymeleafView thymeleafView(String templateName) {
         return new ThymeleafView(requestContext, templateName);
     }
@@ -65,6 +61,22 @@ public class ViewFactory {
         return new ItemView(requestContext, getCustodian(), getBranding(), itemConverter, item);
     }
 
+    public EntryView getEntryView(Entry entry) {
+        return new EntryView(requestContext, getCustodian(), getBranding(), entry);
+    }
+
+    public EntryListView getEntryListView(List<Entry> entries, Pagination pagination) {
+        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
+    }
+
+    public RecordView getRecordView(Record record) {
+        return new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, record);
+    }
+
+    public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
+        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records);
+    }
+
     private PublicBody getCustodian() {
         return publicBodiesConfiguration.getPublicBody(requestContext.getRegister().getRegistry());
     }
@@ -72,17 +84,5 @@ public class ViewFactory {
     private Optional<GovukOrganisation.Details> getBranding() {
         Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(requestContext.getRegister().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
-    }
-
-    public NewEntryView getNewEntryView(Entry entry) {
-        return new NewEntryView(requestContext, getCustodian(), getBranding(), entry);
-    }
-
-    public NewEntryListView getNewEntriesView(List<Entry> entries, Pagination pagination) {
-        return new NewEntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
-    }
-
-    public RecordView getRecordView(Record record) {
-        return new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, record);
     }
 }
