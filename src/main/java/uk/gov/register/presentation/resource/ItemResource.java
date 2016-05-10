@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.resource;
 
-import io.dropwizard.jersey.caching.CacheControl;
 import uk.gov.register.presentation.dao.ItemDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.AttributionView;
@@ -25,7 +24,6 @@ public class ItemResource {
     @GET
     @Path("/{item-hash}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    @CacheControl(immutable = true)
     public AttributionView getItemByHex(@PathParam("item-hash") String itemHash) {
         String sha256Regex = "(sha-256:)(.*)";
         if (itemHash.matches(sha256Regex)) {
