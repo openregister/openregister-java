@@ -41,12 +41,12 @@ public class RecordResource extends ResourceCommon{
     @GET
     @Path("/record/{record-key}/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public NewEntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
+    public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
         List<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
-        return viewFactory.getNewEntriesView(
+        return viewFactory.getEntryListView(
                 allEntries,
                 new Pagination(Optional.of(1L), Optional.of((long) allEntries.size()), allEntries.size())
         );
@@ -59,7 +59,7 @@ public class RecordResource extends ResourceCommon{
         List<Record> records = recordDAO.findMax100RecordsByKeyValue(key, value);
         Pagination pagination
                 = new Pagination(Optional.empty(), Optional.empty(), records.size());
-        return viewFactory.getNewRecordsView(records, pagination);
+        return viewFactory.getRecordListView(records, pagination);
     }
 
     @GET
@@ -71,7 +71,7 @@ public class RecordResource extends ResourceCommon{
         setNextAndPreviousPageLinkHeader(pagination);
 
         getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
-        return viewFactory.getNewRecordsView(recordDAO.getRecords(pagination.pageSize(), pagination.offset()), pagination);
+        return viewFactory.getRecordListView(recordDAO.getRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
 }

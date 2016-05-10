@@ -18,11 +18,11 @@ import java.lang.reflect.Type;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_YAML)
-public class NewYamlWriter extends NewRepresentationWriter<View> {
+public class YamlWriter extends RepresentationWriter<View> {
     private final ObjectMapper objectMapper;
 
     @Inject
-    public NewYamlWriter() {
+    public YamlWriter() {
         objectMapper = Jackson.newObjectMapper(new YAMLFactory());
     }
 

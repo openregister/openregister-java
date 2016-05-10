@@ -13,12 +13,12 @@ import java.util.Optional;
 
 public interface EntryDAO {
     @SqlQuery("select * from entry where entry_number=:entry_number")
-    @RegisterMapper(NewEntryMapper.class)
+    @RegisterMapper(EntryMapper.class)
     @SingleValueResult(Entry.class)
     Optional<Entry> findByEntryNumber(@Bind("entry_number") int entryNumber);
 
     @SqlQuery("select * from entry ORDER BY entry_number desc limit :limit offset :offset")
-    @RegisterMapper(NewEntryMapper.class)
+    @RegisterMapper(EntryMapper.class)
     List<Entry> getEntries(@Bind("limit") long maxNumberToFetch, @Bind("offset") long offset);
 
     @RegisterMapper(InstantMapper.class)
@@ -29,7 +29,7 @@ public interface EntryDAO {
     int getTotalEntries();
 
     //Note: This is fine for small data registers like country
-    @RegisterMapper(NewEntryMapper.class)
+    @RegisterMapper(EntryMapper.class)
     @SqlQuery("SELECT * from entry order by entry_number desc")
     Collection<Entry> getAllEntriesNoPagination();
 }

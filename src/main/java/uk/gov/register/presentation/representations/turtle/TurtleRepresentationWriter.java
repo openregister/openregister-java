@@ -2,7 +2,7 @@ package uk.gov.register.presentation.representations.turtle;
 
 import io.dropwizard.views.View;
 import org.apache.jena.rdf.model.Model;
-import uk.gov.register.presentation.representations.NewRepresentationWriter;
+import uk.gov.register.presentation.representations.RepresentationWriter;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.ws.rs.WebApplicationException;
@@ -15,7 +15,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.net.URI;
 
-public abstract class TurtleRepresentationWriter<T extends View> extends NewRepresentationWriter<T> {
+public abstract class TurtleRepresentationWriter<T extends View> extends RepresentationWriter<T> {
     protected static final String SPEC_PREFIX = "https://openregister.github.io/specification/#";
     protected static final String ITEM_FIELD_PREFIX = "//field.%s/record/";
     protected static final String ENTRY_PREFIX = "//%1$s.%2$s/entry/";

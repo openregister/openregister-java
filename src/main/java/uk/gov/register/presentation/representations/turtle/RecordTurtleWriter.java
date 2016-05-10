@@ -5,7 +5,7 @@ import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ItemView;
-import uk.gov.register.presentation.view.NewEntryView;
+import uk.gov.register.presentation.view.EntryView;
 import uk.gov.register.presentation.view.RecordView;
 
 import javax.inject.Inject;
@@ -27,7 +27,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
     @Override
     protected Model rdfModelFor(RecordView view) {
-        NewEntryView entryView = new NewEntryView(requestContext, view.getCustodian(), view.getBranding(), view.getRecord().entry);
+        EntryView entryView = new EntryView(requestContext, view.getCustodian(), view.getBranding(), view.getRecord().entry);
         ItemView itemView = new ItemView(requestContext, view.getCustodian(), view.getBranding(), itemConverter, view.getRecord().item);
 
         Model recordModel = ModelFactory.createDefaultModel();
