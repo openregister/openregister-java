@@ -11,22 +11,23 @@ import uk.gov.register.presentation.view.ViewFactory;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Path("/")
-public class EntryResource extends ResourceCommon {
+public class EntryResource {
 
     private final EntryDAO entryDAO;
     private final ViewFactory viewFactory;
+    private final RequestContext requestContext;
+    private final HttpServletResponseAdapter httpServletResponseAdapter;
 
     @Inject
     public EntryResource(EntryDAO entryDAO, ViewFactory viewFactory, RequestContext requestContext) {
-        super(requestContext);
         this.entryDAO = entryDAO;
         this.viewFactory = viewFactory;
+        this.requestContext = requestContext;
+        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
     }
 
     @GET
@@ -47,26 +48,22 @@ public class EntryResource extends ResourceCommon {
 
         Collection<Entry> entries = entryDAO.getEntries(newPagination.start, newPagination.limit);
 
-        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext));
-
-        setNextAndPreviousPageLinkHeader(newPagination);
+        setHeaders(newPagination);
 
         return viewFactory.getEntriesView(entries, newPagination);
     }
 
-    private void setNextAndPreviousPageLinkHeader(NewPagination pagination) {
-        List<String> headerValues = new ArrayList<>();
+    private void setHeaders(NewPagination newPagination) {
+        requestContext.resourceExtension().ifPresent(
+                ext -> httpServletResponseAdapter.addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext)
+        );
 
-        if (pagination.hasNextPage()) {
-            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getNextPageLink(), "next"));
+        if (newPagination.hasNextPage()) {
+            httpServletResponseAdapter.addLinkHeader("next", newPagination.getNextPageLink());
         }
 
-        if (pagination.hasPreviousPage()) {
-            headerValues.add(String.format("<%s>; rel=\"%s\"", pagination.getPreviousPageLink(), "previous"));
-        }
-
-        if (!headerValues.isEmpty()) {
-            requestContext.getHttpServletResponse().setHeader("Link", String.join(",", headerValues));
+        if (newPagination.hasPreviousPage()) {
+            httpServletResponseAdapter.addLinkHeader("previous", newPagination.getPreviousPageLink());
         }
     }
 }

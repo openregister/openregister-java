@@ -13,28 +13,29 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("/")
-public class RecordResource extends ResourceCommon{
-    private ViewFactory viewFactory;
-    private RecordDAO recordDAO;
+public class RecordResource {
+    private final HttpServletResponseAdapter httpServletResponseAdapter;
+    private final RequestContext requestContext;
+    private final ViewFactory viewFactory;
+    private final RecordDAO recordDAO;
 
     @Inject
     public RecordResource(ViewFactory viewFactory, RequestContext requestContext, RecordDAO recordDAO) {
-        super(requestContext);
         this.viewFactory = viewFactory;
         this.recordDAO = recordDAO;
+        this.requestContext = requestContext;
+        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
     }
 
     @GET
     @Path("/record/{record-key}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
-        requestContext.
-                getHttpServletResponse().
-                setHeader("Link", String.format("</record/%s/entries>;rel=\"version-history\"", key));
+        httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
         return recordDAO
                 .findByPrimaryKey(key)
-                .map(record -> viewFactory.getRecordView(record))
+                .map(viewFactory::getRecordView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -68,9 +69,18 @@ public class RecordResource extends ResourceCommon{
     public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
         Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 
-        setNextAndPreviousPageLinkHeader(pagination);
+        requestContext.resourceExtension().ifPresent(
+                ext -> httpServletResponseAdapter.addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext)
+        );
 
-        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
+        if (pagination.hasNextPage()) {
+            httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
+        }
+
+        if (pagination.hasPreviousPage()) {
+            httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
+        }
+
         return viewFactory.getRecordListView(recordDAO.getRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
