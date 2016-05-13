@@ -8,9 +8,11 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
+import uk.gov.mint.Entry;
 import uk.gov.mint.Item;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class EntryStore implements GetHandle {
     private final EntryDAO entryDAO;
@@ -26,9 +28,13 @@ public abstract class EntryStore implements GetHandle {
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void load(Iterable<JsonNode> itemNodes) {
+        AtomicInteger currentEntryNumber = new AtomicInteger(entryDAO.currentEntryNumber());
         Iterable<Item> items = Iterables.transform(itemNodes, Item::new);
-        entryDAO.insertInBatch(Iterables.transform(items, Item::getSha256hex));
+        Iterable<Entry> entries = Iterables.transform(items, item -> new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex()));
+
+        entryDAO.insertInBatch(entries);
         itemDAO.insertInBatch(extractNewItems(items));
+        entryDAO.setEntryNumber(currentEntryNumber.get());
     }
 
     private Set<Item> extractNewItems(Iterable<Item> items) {
