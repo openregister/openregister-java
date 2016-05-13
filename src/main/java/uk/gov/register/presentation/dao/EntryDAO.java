@@ -5,13 +5,11 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
-import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
-@UseStringTemplate3StatementLocator
 public interface EntryDAO {
     @SqlQuery("select * from entry where entry_number=:entry_number")
     @RegisterMapper(EntryMapper.class)
