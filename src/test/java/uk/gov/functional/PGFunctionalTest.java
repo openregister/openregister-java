@@ -108,6 +108,36 @@ public class PGFunctionalTest {
     }
 
     @Test
+    public void loadTwoNewItems_withOneItemPreexistsInDatabase_addsTwoRowsInEntryAndOnlyOneRowInItemTable() {
+        String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
+        Response r = send(item1);
+        assertThat(r.getStatus(), equalTo(204));
+
+        String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
+
+        r = send(item1 + "\n" + item2);
+
+        assertThat(r.getStatus(), equalTo(204));
+
+        String canonicalItem1 = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item1.getBytes())));
+        String canonicalItem2 = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item2.getBytes())));
+
+        List<String> entries = testEntryDAO.getAllHex();
+        assertThat(entries.size(), equalTo(3));
+        assertThat(entries.get(0), equalTo(DigestUtils.sha256Hex(canonicalItem1)));
+        assertThat(entries.get(1), equalTo(DigestUtils.sha256Hex(canonicalItem1)));
+        assertThat(entries.get(2), equalTo(DigestUtils.sha256Hex(canonicalItem2)));
+
+        List<TestDBItem> items = testItemDAO.getItems();
+        assertThat(items.size(), equalTo(2));
+        assertThat(items.get(0).sha256hex, equalTo(DigestUtils.sha256Hex(canonicalItem1)));
+        assertThat(items.get(0).contents, equalTo(canonicalItem1.getBytes()));
+
+        assertThat(items.get(1).sha256hex, equalTo(DigestUtils.sha256Hex(canonicalItem2)));
+        assertThat(items.get(1).contents, equalTo(canonicalItem2.getBytes()));
+    }
+
+    @Test
     public void validation_FailsToLoadEntryWhenNonEmptyPrimaryKeyFieldIsNotExist() {
         Response response = send("{}");
         assertThat(response.getStatus(), equalTo(400));
