@@ -1,9 +1,7 @@
 package uk.gov.store;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
@@ -33,18 +31,12 @@ public abstract class EntryStore implements GetHandle {
         Iterable<Entry> entries = Iterables.transform(items, item -> new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex()));
 
         entryDAO.insertInBatch(entries);
-        itemDAO.insertInBatch(extractNewItems(items));
+        itemDAO.insertInBatch(items);
+
         entryDAO.setEntryNumber(currentEntryNumber.get());
     }
 
-    private Set<Item> extractNewItems(Iterable<Item> items) {
-        Iterable<String> existingItemHex = itemDAO.existingItemHex(Lists.newArrayList(Iterables.transform(items, Item::getSha256hex)));
-        return ImmutableSet.copyOf(
-                Iterables.filter(
-                        items,
-                        item -> !Iterables.contains(existingItemHex, item.getSha256hex())
-                )
-        );
-    }
+
+
 }
 
