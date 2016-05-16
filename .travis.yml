@@ -1,15 +1,26 @@
-sudo: false
+sudo: required
 language: java
 jdk:
 - oraclejdk8
 services: 
 addons:
-  postgresql: '9.4'
+  postgresql: '9.5'
 cache:
   directories:
   - $HOME/.gradle/caches
   - $HOME/.gradle/wrapper
 before_script:
+- sudo /etc/init.d/postgresql stop
+- sudo apt-get -y remove --purge postgresql-9.1 postgresql-9.2 postgresql-9.3 postgresql-9.4
+- sudo apt-get -y autoremove
+- sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7FCC7D46ACCC4CF8
+- sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main 9.5" >> /etc/apt/sources.list.d/postgresql.list'
+- sudo apt-get update
+- sudo apt-get -y install postgresql-9.5
+- sudo sh -c 'echo "local all postgres trust" > /etc/postgresql/9.5/main/pg_hba.conf'
+- sudo sh -c 'echo -n "host all all 127.0.0.1/32 trust" >> /etc/postgresql/9.5/main/pg_hba.conf'
+- sudo /etc/init.d/postgresql restart
+- psql --version
 - psql -c 'create database test_mint;' -U postgres
 - psql -c 'create database ft_mint;' -U postgres
 script:
