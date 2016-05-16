@@ -1,14 +1,20 @@
 package uk.gov.store;
 
 import org.skife.jdbi.v2.sqlobject.*;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import uk.gov.mint.Entry;
 
+@UseStringTemplate3StatementLocator("/sql/entry.sql")
 interface EntryDAO {
-    @SqlUpdate(
-            "create table if not exists entry (entry_number serial primary key, sha256hex varchar, timestamp timestamp default (now() at time zone 'utc'));" +
-                    "alter table entry alter column timestamp set default (now() at time zone 'utc');"
-    )
+    @SqlUpdate
     void ensureSchema();
 
-    @SqlBatch("insert into entry(sha256hex) values(:sha256hex)")
-    void insertInBatch(@Bind("sha256hex") Iterable<String> entries);
+    @SqlBatch("insert into entry(entry_number, sha256hex) values(:entry_number, :sha256hex)")
+    void insertInBatch(@BindBean Iterable<Entry> entries);
+
+    @SqlQuery("select value from current_entry_number")
+    int currentEntryNumber();
+
+    @SqlUpdate("update current_entry_number set value=:entry_number")
+    void setEntryNumber(@Bind("entry_number") int currentEntryNumber);
 }

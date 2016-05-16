@@ -15,6 +15,7 @@ import org.junit.rules.TestRule;
 import uk.gov.MintApplication;
 import uk.gov.functional.db.TestDBItem;
 import uk.gov.mint.CanonicalJsonMapper;
+import uk.gov.mint.Entry;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -52,8 +53,8 @@ public class PGFunctionalTest {
         assertThat(storedItem.contents, equalTo(inputItem.getBytes()));
         assertThat(storedItem.sha256hex, equalTo(DigestUtils.sha256Hex(inputItem.getBytes())));
 
-        String hex = testEntryDAO.getAllHex().get(0);
-        assertThat(hex, equalTo(storedItem.sha256hex));
+        Entry entry = testEntryDAO.getAllEntries().get(0);
+        assertThat(entry, equalTo(new Entry(1, storedItem.sha256hex)));
     }
 
     @Test
@@ -68,10 +69,10 @@ public class PGFunctionalTest {
         String canonicalItem1 = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item1.getBytes())));
         String canonicalItem2 = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item2.getBytes())));
 
-        List<String> entries = testEntryDAO.getAllHex();
+        List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries.size(), equalTo(2));
-        assertThat(entries.get(0), equalTo(DigestUtils.sha256Hex(canonicalItem1)));
-        assertThat(entries.get(1), equalTo(DigestUtils.sha256Hex(canonicalItem2)));
+        assertThat(entries.get(0), equalTo(new Entry(1, DigestUtils.sha256Hex(canonicalItem1))));
+        assertThat(entries.get(1), equalTo(new Entry(2, DigestUtils.sha256Hex(canonicalItem2))));
 
         List<TestDBItem> items = testItemDAO.getItems();
         assertThat(items.size(), equalTo(2));
@@ -94,10 +95,10 @@ public class PGFunctionalTest {
 
         String canonicalItem = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item1.getBytes())));
 
-        List<String> entries = testEntryDAO.getAllHex();
+        List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries.size(), equalTo(2));
-        assertThat(entries.get(0), equalTo(DigestUtils.sha256Hex(canonicalItem)));
-        assertThat(entries.get(1), equalTo(DigestUtils.sha256Hex(canonicalItem)));
+        assertThat(entries.get(0), equalTo(new Entry(1, DigestUtils.sha256Hex(canonicalItem))));
+        assertThat(entries.get(1), equalTo(new Entry(2, DigestUtils.sha256Hex(canonicalItem))));
 
         List<TestDBItem> items = testItemDAO.getItems();
         assertThat(items.size(), equalTo(1));
