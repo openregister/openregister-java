@@ -39,6 +39,6 @@ deploy:
   key: presentation-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
   bundle_type: zip
   application: presentation-app
-  deployment_group: preview
+  deployment_group: test
   region: eu-west-1
   on: *2
