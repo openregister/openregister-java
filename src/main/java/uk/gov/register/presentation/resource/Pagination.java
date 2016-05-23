@@ -5,7 +5,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 
-public class Pagination {
+public class Pagination implements IPagination {
     public static final long ENTRY_LIMIT = 100;
     public static final String INDEX_PARAM = "page-index";
     public static final String SIZE_PARAM = "page-size";
@@ -41,51 +41,63 @@ public class Pagination {
         return (pageIndex - 1) * pageSize;
     }
 
+    @Override
     public long getTotalEntries() {
         return totalEntries;
     }
 
+    @Override
     public boolean isSinglePage() {
         return pageIndex == 1 && pageSize >= totalEntries;
     }
 
+    @Override
     public long getFirstEntryNumberOnThisPage() {
         return offset() + 1;
     }
 
+    @Override
     public long getLastEntryNumberOnThisPage() {
         long lastEntryNumber = pageIndex * pageSize;
         return lastEntryNumber > totalEntries ? totalEntries : lastEntryNumber;
     }
 
+    @Override
     public boolean hasNextPage() {
         return totalEntries - (pageIndex * pageSize()) > 0;
     }
 
+    @Override
     public boolean hasPreviousPage() {
         return pageIndex > 1;
     }
 
+    @Override
     public long getNextPageNumber() {
         return pageIndex + 1;
     }
 
+    @Override
     public long getPreviousPageNumber() {
         return pageIndex - 1;
     }
 
+    @Override
     public String getNextPageLink() {
         return String.format("?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", getNextPageNumber(), pageSize());
     }
 
+    @Override
     public String getPreviousPageLink() {
         return String.format("?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", getPreviousPageNumber(), pageSize());
     }
 
+    @Override
     public long pageSize() {
         return pageSize;
     }
 
+    @Override
     public long getTotalPages() {
         return Math.round(Math.ceil(((double) totalEntries) / pageSize()));
 

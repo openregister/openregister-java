@@ -10,7 +10,7 @@ import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.Record;
-import uk.gov.register.presentation.resource.NewPagination;
+import uk.gov.register.presentation.resource.IPagination;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
@@ -67,7 +67,11 @@ public class ViewFactory {
         return new EntryView(requestContext, getCustodian(), getBranding(), entry);
     }
 
-    public EntryListView getEntryListView(List<Entry> entries, Pagination pagination) {
+    public EntryListView getEntryListView(List<Entry> entries, IPagination pagination) {
+        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
+    }
+
+    public EntryListView getEntriesView(Collection<Entry> entries, IPagination pagination) {
         return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
     }
 
@@ -77,10 +81,6 @@ public class ViewFactory {
 
     public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
         return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records);
-    }
-
-    public EntryListView getEntriesView(Collection<Entry> entries, NewPagination newPagination) {
-        return new EntryListView(requestContext, newPagination, getCustodian(), getBranding(), entries, "entries.html");
     }
 
     private PublicBody getCustodian() {

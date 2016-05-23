@@ -1,8 +1,10 @@
 package uk.gov.register.presentation.resource;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import java.util.Optional;
 
-public class NewPagination {
+public class NewPagination implements IPagination {
     public final int start;
     public final int limit;
 
@@ -14,28 +16,38 @@ public class NewPagination {
         this.totalEntries = totalEntries;
     }
 
-    @SuppressWarnings("unused, used by html")
-    public int getTotalEntries() {
+    @Override
+    public long getTotalEntries() {
         return totalEntries;
     }
 
+    @Override
     public boolean hasNextPage() {
         return start + limit - 1 < totalEntries;
     }
 
+    @Override
     public boolean hasPreviousPage() {
         return start > 1;
     }
 
+    @Override
     public String getPreviousPageLink() {
         return String.format("?start=%s&limit=%s", start - limit, limit);
     }
 
+    @Override
+    public long pageSize() {
+        throw new NotImplementedException("not implemented");
+    }
+
+    @Override
     public String getNextPageLink() {
         return String.format("?start=%s&limit=%s", start + limit, limit);
     }
 
-    public int getTotalPages() {
+    @Override
+    public long getTotalPages() {
         if (start < 1) {
             int actualStart = (start - 1) % limit;
             int totalPages = (int) Math.ceil((double) (totalEntries - actualStart + 1) / limit);
@@ -47,23 +59,28 @@ public class NewPagination {
         }
     }
 
-    public int getFirstEntryNumberOnThisPage() {
+    @Override
+    public long getFirstEntryNumberOnThisPage() {
         return start > 0 ? start : 1;
     }
 
-    public int getLastEntryNumberOnThisPage() {
+    @Override
+    public long getLastEntryNumberOnThisPage() {
         int lastEntryNumber = start + limit - 1;
         return lastEntryNumber > totalEntries ? totalEntries : lastEntryNumber;
     }
 
-    public int getPreviousPageNumber() {
+    @Override
+    public long getPreviousPageNumber() {
         return (int) Math.ceil(((double) start - 1) / limit);
     }
 
-    public int getNextPageNumber() {
+    @Override
+    public long getNextPageNumber() {
         return getPreviousPageNumber() + 2;
     }
 
+    @Override
     public boolean isSinglePage() {
         if (start > 1)
             return false;
