@@ -17,7 +17,7 @@ public class NewPagination implements IPagination {
     }
 
     @Override
-    public long getTotalEntries() {
+    public int getTotalEntries() {
         return totalEntries;
     }
 
@@ -37,7 +37,7 @@ public class NewPagination implements IPagination {
     }
 
     @Override
-    public long pageSize() {
+    public int pageSize() {
         throw new NotImplementedException("not implemented");
     }
 
@@ -47,7 +47,7 @@ public class NewPagination implements IPagination {
     }
 
     @Override
-    public long getTotalPages() {
+    public int getTotalPages() {
         if (start < 1) {
             int actualStart = (start - 1) % limit;
             int totalPages = (int) Math.ceil((double) (totalEntries - actualStart + 1) / limit);
@@ -60,23 +60,23 @@ public class NewPagination implements IPagination {
     }
 
     @Override
-    public long getFirstEntryNumberOnThisPage() {
+    public int getFirstEntryNumberOnThisPage() {
         return start > 0 ? start : 1;
     }
 
     @Override
-    public long getLastEntryNumberOnThisPage() {
+    public int getLastEntryNumberOnThisPage() {
         int lastEntryNumber = start + limit - 1;
         return lastEntryNumber > totalEntries ? totalEntries : lastEntryNumber;
     }
 
     @Override
-    public long getPreviousPageNumber() {
+    public int getPreviousPageNumber() {
         return (int) Math.ceil(((double) start - 1) / limit);
     }
 
     @Override
-    public long getNextPageNumber() {
+    public int getNextPageNumber() {
         return getPreviousPageNumber() + 2;
     }
 

@@ -44,47 +44,47 @@ public class NewPaginationTest {
 
     @Test
     public void getTotalPages_returnsTheNumberOfPages() {
-        assertThat(new NewPagination(Optional.of(50), Optional.of(10), 120).getTotalPages(), equalTo(13L));
-        assertThat(new NewPagination(Optional.of(4), Optional.of(4), 16).getTotalPages(), equalTo(5L));
-        assertThat(new NewPagination(Optional.of(4), Optional.of(4), 15).getTotalPages(), equalTo(4L));
-        assertThat(new NewPagination(Optional.of(5), Optional.of(100), 1000).getTotalPages(), equalTo(11L));
-        assertThat(new NewPagination(Optional.of(1), Optional.of(100), 1000).getTotalPages(), equalTo(10L));
-        assertThat(new NewPagination(Optional.of(101), Optional.of(100), 1000).getTotalPages(), equalTo(10L));
+        assertThat(new NewPagination(Optional.of(50), Optional.of(10), 120).getTotalPages(), equalTo(13));
+        assertThat(new NewPagination(Optional.of(4), Optional.of(4), 16).getTotalPages(), equalTo(5));
+        assertThat(new NewPagination(Optional.of(4), Optional.of(4), 15).getTotalPages(), equalTo(4));
+        assertThat(new NewPagination(Optional.of(5), Optional.of(100), 1000).getTotalPages(), equalTo(11));
+        assertThat(new NewPagination(Optional.of(1), Optional.of(100), 1000).getTotalPages(), equalTo(10));
+        assertThat(new NewPagination(Optional.of(101), Optional.of(100), 1000).getTotalPages(), equalTo(10));
 
 
-        assertThat(new NewPagination(Optional.of(-1), Optional.of(4), 15).getTotalPages(), equalTo(5L));
-        assertThat(new NewPagination(Optional.of(-2), Optional.of(4), 15).getTotalPages(), equalTo(5L));
-        assertThat(new NewPagination(Optional.of(-3), Optional.of(4), 15).getTotalPages(), equalTo(4L));
-        assertThat(new NewPagination(Optional.of(-2), Optional.of(4), 16).getTotalPages(), equalTo(5L));
-        assertThat(new NewPagination(Optional.of(-7), Optional.of(4), 15).getTotalPages(), equalTo(4L));
+        assertThat(new NewPagination(Optional.of(-1), Optional.of(4), 15).getTotalPages(), equalTo(5));
+        assertThat(new NewPagination(Optional.of(-2), Optional.of(4), 15).getTotalPages(), equalTo(5));
+        assertThat(new NewPagination(Optional.of(-3), Optional.of(4), 15).getTotalPages(), equalTo(4));
+        assertThat(new NewPagination(Optional.of(-2), Optional.of(4), 16).getTotalPages(), equalTo(5));
+        assertThat(new NewPagination(Optional.of(-7), Optional.of(4), 15).getTotalPages(), equalTo(4));
 
     }
 
     @Test
     public void getFirstEntryNumberOnThisPage_returnsTheFirstEntryNumber() {
-        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(11L));
-        assertThat(new NewPagination(Optional.of(1), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(1L));
-        assertThat(new NewPagination(Optional.of(-1), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(1L));
-        assertThat(new NewPagination(Optional.of(0), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(1L));
+        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(11));
+        assertThat(new NewPagination(Optional.of(1), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(1));
+        assertThat(new NewPagination(Optional.of(-1), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(1));
+        assertThat(new NewPagination(Optional.of(0), Optional.of(100), 100).getFirstEntryNumberOnThisPage(), equalTo(1));
     }
 
     @Test
     public void getLastEntryNumberOnThisPage_returnsTheLastEntryNumber() {
-        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 90).getLastEntryNumberOnThisPage(), equalTo(90L));
-        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 120).getLastEntryNumberOnThisPage(), equalTo(110L));
+        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 90).getLastEntryNumberOnThisPage(), equalTo(90));
+        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 120).getLastEntryNumberOnThisPage(), equalTo(110));
     }
 
     @Test
     public void getPreviousPageNumber_returnsThePreviousPageNumber() {
-        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 100).getPreviousPageNumber(), equalTo(1L));
-        assertThat(new NewPagination(Optional.of(102), Optional.of(100), 120).getPreviousPageNumber(), equalTo(2L));
+        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 100).getPreviousPageNumber(), equalTo(1));
+        assertThat(new NewPagination(Optional.of(102), Optional.of(100), 120).getPreviousPageNumber(), equalTo(2));
     }
 
     @Test
     public void getNextPageNumber_returnsTheNextPageNumber() {
-        assertThat(new NewPagination(Optional.of(-1), Optional.of(100), 100).getNextPageNumber(), equalTo(2L));
-        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 100).getNextPageNumber(), equalTo(3L));
-        assertThat(new NewPagination(Optional.of(121), Optional.of(100), 250).getNextPageNumber(), equalTo(4L));
+        assertThat(new NewPagination(Optional.of(-1), Optional.of(100), 100).getNextPageNumber(), equalTo(2));
+        assertThat(new NewPagination(Optional.of(11), Optional.of(100), 100).getNextPageNumber(), equalTo(3));
+        assertThat(new NewPagination(Optional.of(121), Optional.of(100), 250).getNextPageNumber(), equalTo(4));
     }
 
     @Test

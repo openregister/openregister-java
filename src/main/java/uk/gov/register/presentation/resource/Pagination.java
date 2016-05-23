@@ -6,18 +6,18 @@ import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 
 public class Pagination implements IPagination {
-    public static final long ENTRY_LIMIT = 100;
+    public static final int ENTRY_LIMIT = 100;
     public static final String INDEX_PARAM = "page-index";
     public static final String SIZE_PARAM = "page-size";
 
-    private final long pageIndex;
-    private final long totalEntries;
-    private final long pageSize;
+    private final int pageIndex;
+    private final int totalEntries;
+    private final int pageSize;
 
-    Pagination(Optional<Long> optionalPageIndex, Optional<Long> optionalPageSize, long totalEntries) {
+    Pagination(Optional<Integer> optionalPageIndex, Optional<Integer> optionalPageSize, int totalEntries) {
         this.totalEntries = totalEntries;
 
-        this.pageIndex = optionalPageIndex.orElse(1L);
+        this.pageIndex = optionalPageIndex.orElse(1);
         this.pageSize = optionalPageSize.orElse(ENTRY_LIMIT);
 
         if (this.pageSize <= 0) {
@@ -37,12 +37,12 @@ public class Pagination implements IPagination {
         }
     }
 
-    long offset() {
+    int offset() {
         return (pageIndex - 1) * pageSize;
     }
 
     @Override
-    public long getTotalEntries() {
+    public int getTotalEntries() {
         return totalEntries;
     }
 
@@ -52,13 +52,13 @@ public class Pagination implements IPagination {
     }
 
     @Override
-    public long getFirstEntryNumberOnThisPage() {
+    public int getFirstEntryNumberOnThisPage() {
         return offset() + 1;
     }
 
     @Override
-    public long getLastEntryNumberOnThisPage() {
-        long lastEntryNumber = pageIndex * pageSize;
+    public int getLastEntryNumberOnThisPage() {
+        int lastEntryNumber = pageIndex * pageSize;
         return lastEntryNumber > totalEntries ? totalEntries : lastEntryNumber;
     }
 
@@ -73,12 +73,12 @@ public class Pagination implements IPagination {
     }
 
     @Override
-    public long getNextPageNumber() {
+    public int getNextPageNumber() {
         return pageIndex + 1;
     }
 
     @Override
-    public long getPreviousPageNumber() {
+    public int getPreviousPageNumber() {
         return pageIndex - 1;
     }
 
@@ -93,13 +93,13 @@ public class Pagination implements IPagination {
     }
 
     @Override
-    public long pageSize() {
+    public int pageSize() {
         return pageSize;
     }
 
     @Override
-    public long getTotalPages() {
-        return Math.round(Math.ceil(((double) totalEntries) / pageSize()));
+    public int getTotalPages() {
+        return (int) Math.round(Math.ceil(((double) totalEntries) / pageSize()));
 
     }
 }

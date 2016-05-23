@@ -1,27 +1,27 @@
 package uk.gov.register.presentation.resource;
 
 public interface IPagination {
-    long getTotalEntries();
+    int getTotalEntries();
 
     boolean isSinglePage();
 
-    long getFirstEntryNumberOnThisPage();
+    int getFirstEntryNumberOnThisPage();
 
-    long getLastEntryNumberOnThisPage();
+    int getLastEntryNumberOnThisPage();
 
     boolean hasNextPage();
 
     boolean hasPreviousPage();
 
-    long getNextPageNumber();
+    int getNextPageNumber();
 
-    long getPreviousPageNumber();
+    int getPreviousPageNumber();
 
     String getNextPageLink();
 
     String getPreviousPageLink();
 
-    long pageSize();
+    int pageSize();
 
-    long getTotalPages();
+    int getTotalPages();
 }

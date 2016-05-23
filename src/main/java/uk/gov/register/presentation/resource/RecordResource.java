@@ -49,7 +49,7 @@ public class RecordResource {
         }
         return viewFactory.getEntryListView(
                 allEntries,
-                new Pagination(Optional.of(1L), Optional.of((long) allEntries.size()), allEntries.size())
+                new Pagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
         );
     }
 
@@ -66,7 +66,7 @@ public class RecordResource {
     @GET
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
+    public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Integer> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Integer> pageSize) {
         Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 
         requestContext.resourceExtension().ifPresent(
