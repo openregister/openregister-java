@@ -48,7 +48,7 @@ public class NewPagination implements IPagination {
         } else {
             if ((start - 1) % limit != 0)
                 return (totalEntries / limit) + 1;
-            return totalEntries / limit;
+            return (int) Math.ceil((double) totalEntries / limit);
         }
     }
 
