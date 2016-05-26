@@ -16,6 +16,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,13 +38,13 @@ public abstract class RecordDAO {
 
     @SqlQuery(" select entry_number, timestamp, sha256hex from entry where sha256hex in (select sha256hex from item where (content @> :contentPGobject))")
     @RegisterMapper(EntryMapper.class)
-    public abstract List<Entry> __findAllEntriesOfRecordBy(@Bind("contentPGobject") PGobject content);
+    public abstract Collection<Entry> __findAllEntriesOfRecordBy(@Bind("contentPGobject") PGobject content);
 
     @SqlQuery("select entry_number, timestamp, entry.sha256hex as sha256hex, content from item, entry, current_keys where current_keys.serial_number = entry.entry_number and item.content @> :contentPGobject and item.sha256hex=entry.sha256hex limit 100")
     @RegisterMapper(RecordMapper.class)
     public abstract List<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content);
 
-    public List<Entry> findAllEntriesOfRecordBy(String key, String value) {
+    public Collection<Entry> findAllEntriesOfRecordBy(String key, String value) {
         return __findAllEntriesOfRecordBy(writePGObject(key, value));
     }
 

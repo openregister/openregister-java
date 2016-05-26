@@ -1,7 +1,5 @@
 package uk.gov.register.presentation.resource;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import java.util.Optional;
 
 public class NewPagination implements IPagination {
@@ -34,11 +32,6 @@ public class NewPagination implements IPagination {
     @Override
     public String getPreviousPageLink() {
         return String.format("?start=%s&limit=%s", start - limit, limit);
-    }
-
-    @Override
-    public int pageSize() {
-        throw new NotImplementedException("not implemented");
     }
 
     @Override

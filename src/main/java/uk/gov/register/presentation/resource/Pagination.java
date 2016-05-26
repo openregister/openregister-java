@@ -92,7 +92,6 @@ public class Pagination implements IPagination {
         return String.format("?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", getPreviousPageNumber(), pageSize());
     }
 
-    @Override
     public int pageSize() {
         return pageSize;
     }

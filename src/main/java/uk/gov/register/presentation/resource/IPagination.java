@@ -21,7 +21,5 @@ public interface IPagination {
 
     String getPreviousPageLink();
 
-    int pageSize();
-
     int getTotalPages();
 }

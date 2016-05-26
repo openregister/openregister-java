@@ -9,6 +9,7 @@ import uk.gov.register.presentation.view.*;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,11 +44,11 @@ public class RecordResource {
     @Path("/record/{record-key}/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
-        List<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
+        Collection<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
-        return viewFactory.getEntryListView(
+        return viewFactory.getEntriesView(
                 allEntries,
                 new Pagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
         );

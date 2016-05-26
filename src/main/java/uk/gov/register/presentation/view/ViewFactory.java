@@ -67,10 +67,6 @@ public class ViewFactory {
         return new EntryView(requestContext, getCustodian(), getBranding(), entry);
     }
 
-    public EntryListView getEntryListView(List<Entry> entries, IPagination pagination) {
-        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
-    }
-
     public EntryListView getEntriesView(Collection<Entry> entries, IPagination pagination) {
         return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
     }
