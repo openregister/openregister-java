@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
+import java.util.Optional;
 
 @Service
 public class RequestContext {
@@ -65,5 +66,14 @@ public class RequestContext {
 
     public String getRegisterDomain() {
         return registerDomain;
+    }
+
+    public Optional<String> resourceExtension() {
+        String requestURI = httpServletRequest.getRequestURI();
+        if (requestURI.lastIndexOf('.') == -1) {
+            return Optional.empty();
+        }
+        String[] tokens = requestURI.split("\\.");
+        return Optional.of(tokens[tokens.length - 1]);
     }
 }

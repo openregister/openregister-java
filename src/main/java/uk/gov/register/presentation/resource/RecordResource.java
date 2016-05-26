@@ -9,32 +9,34 @@ import uk.gov.register.presentation.view.*;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Path("/")
-public class RecordResource extends ResourceCommon{
-    private ViewFactory viewFactory;
-    private RecordDAO recordDAO;
+public class RecordResource {
+    private final HttpServletResponseAdapter httpServletResponseAdapter;
+    private final RequestContext requestContext;
+    private final ViewFactory viewFactory;
+    private final RecordDAO recordDAO;
 
     @Inject
     public RecordResource(ViewFactory viewFactory, RequestContext requestContext, RecordDAO recordDAO) {
-        super(requestContext);
         this.viewFactory = viewFactory;
         this.recordDAO = recordDAO;
+        this.requestContext = requestContext;
+        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
     }
 
     @GET
     @Path("/record/{record-key}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
-        requestContext.
-                getHttpServletResponse().
-                setHeader("Link", String.format("</record/%s/entries>;rel=\"version-history\"", key));
+        httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
         return recordDAO
                 .findByPrimaryKey(key)
-                .map(record -> viewFactory.getRecordView(record))
+                .map(viewFactory::getRecordView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -42,13 +44,13 @@ public class RecordResource extends ResourceCommon{
     @Path("/record/{record-key}/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
-        List<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
+        Collection<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
-        return viewFactory.getEntryListView(
+        return viewFactory.getEntriesView(
                 allEntries,
-                new Pagination(Optional.of(1L), Optional.of((long) allEntries.size()), allEntries.size())
+                new Pagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
         );
     }
 
@@ -65,12 +67,21 @@ public class RecordResource extends ResourceCommon{
     @GET
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Long> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Long> pageSize) {
+    public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Integer> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Integer> pageSize) {
         Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 
-        setNextAndPreviousPageLinkHeader(pagination);
+        requestContext.resourceExtension().ifPresent(
+                ext -> httpServletResponseAdapter.addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext)
+        );
 
-        getFileExtension().ifPresent(ext -> addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext));
+        if (pagination.hasNextPage()) {
+            httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
+        }
+
+        if (pagination.hasPreviousPage()) {
+            httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
+        }
+
         return viewFactory.getRecordListView(recordDAO.getRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 

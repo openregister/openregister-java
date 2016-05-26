@@ -40,4 +40,23 @@ public class RequestContextTest {
 
         assertThat(registerPrimaryKey, equalTo("school"));
     }
+
+    @Test
+    public void resourceExtension_returnsTheResourceExtensionIfExists() {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
+        requestContext.httpServletRequest = httpServletRequest;
+        when(httpServletRequest.getRequestURI()).thenReturn("/foo/bar.json");
+
+        assertThat(requestContext.resourceExtension(), equalTo(Optional.of("json")));
+    }
+
+    @Test
+    public void resourceExtension_returnsEmptyIfResourceExtensionIsNotExists() {
+        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
+        requestContext.httpServletRequest = httpServletRequest;
+        when(httpServletRequest.getRequestURI()).thenReturn("/foo/bar");
+
+        assertThat(requestContext.resourceExtension(), equalTo(Optional.empty()));
+    }
+
 }
