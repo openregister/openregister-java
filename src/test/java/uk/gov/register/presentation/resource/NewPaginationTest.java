@@ -44,6 +44,8 @@ public class NewPaginationTest {
 
     @Test
     public void getTotalPages_returnsTheNumberOfPages() {
+        assertThat(new NewPagination(Optional.of(1), Optional.of(100), 204).getTotalPages(), equalTo(3));
+
         assertThat(new NewPagination(Optional.of(50), Optional.of(10), 120).getTotalPages(), equalTo(13));
         assertThat(new NewPagination(Optional.of(4), Optional.of(4), 16).getTotalPages(), equalTo(5));
         assertThat(new NewPagination(Optional.of(4), Optional.of(4), 15).getTotalPages(), equalTo(4));
