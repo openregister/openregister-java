@@ -41,15 +41,9 @@ public class NewPagination implements IPagination {
 
     @Override
     public int getTotalPages() {
-        if (start < 1) {
-            int actualStart = (start - 1) % limit;
-            int totalPages = (int) Math.ceil((double) (totalEntries - actualStart + 1) / limit);
-            return totalPages + (actualStart / limit);
-        } else {
-            if ((start - 1) % limit != 0)
-                return (totalEntries / limit) + 1;
-            return (int) Math.ceil((double) totalEntries / limit);
-        }
+        int totalPages = getCeilValueOfQuotient(start - 1, limit);
+        totalPages += getCeilValueOfQuotient(totalEntries - start + 1, limit);
+        return totalPages;
     }
 
     @Override
@@ -65,7 +59,7 @@ public class NewPagination implements IPagination {
 
     @Override
     public int getPreviousPageNumber() {
-        return (int) Math.ceil(((double) start - 1) / limit);
+        return getCeilValueOfQuotient(start - 1, limit);
     }
 
     @Override
@@ -80,4 +74,9 @@ public class NewPagination implements IPagination {
         else
             return start + limit - 1 >= totalEntries;
     }
+
+    private int getCeilValueOfQuotient(int dividend, int divisor) {
+        return (int) Math.ceil(((double) dividend) / divisor);
+    }
+
 }
