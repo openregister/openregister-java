@@ -14,11 +14,20 @@ import java.util.Optional;
 public class EntryListView extends CsvRepresentationView {
     private IPagination pagination;
     private Collection<Entry> entries;
+    private final Optional<String> recordKey;
 
     public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries) {
         super(requestContext, custodian, custodianBranding, "entries.html");
         this.pagination = pagination;
         this.entries = entries;
+        this.recordKey = Optional.empty();
+    }
+
+    public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, String recordKey) {
+        super(requestContext, custodian, custodianBranding, "entries.html");
+        this.pagination = pagination;
+        this.entries = entries;
+        this.recordKey = Optional.of(recordKey);
     }
 
     @JsonValue
@@ -30,6 +39,9 @@ public class EntryListView extends CsvRepresentationView {
     public IPagination getPagination() {
         return pagination;
     }
+
+    @SuppressWarnings("unused, used from templates")
+    public Optional<String> getRecordKey() { return recordKey; }
 
     @Override
     public CsvRepresentation<Collection<Entry>> csvRepresentation() {

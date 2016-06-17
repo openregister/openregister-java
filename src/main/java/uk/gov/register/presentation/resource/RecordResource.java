@@ -48,8 +48,8 @@ public class RecordResource {
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
-        return viewFactory.getEntriesView(
-                allEntries,
+        return viewFactory.getRecordEntriesView(
+                key, allEntries,
                 new Pagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
         );
     }

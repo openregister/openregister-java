@@ -7,7 +7,10 @@
 <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
     <div class="grid-row">
-        <div class="column-two-thirds" th:include="pagination.html::pagination-top('entries')"></div>
+        <div class="column-two-thirds">
+            <div th:include="pagination.html::pagination-top('entries')"></div>
+            <div th:if="${recordKey.present}">Part of <a th:href="${'/record/' + recordKey.get()}" th:text="${'Record: ' + recordKey.get()}">Record: GM</a></div>
+        </div>
         <div class="column-third" th:include="main.html :: attribution"></div>
     </div>
 

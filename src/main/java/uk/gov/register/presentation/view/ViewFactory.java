@@ -71,6 +71,10 @@ public class ViewFactory {
         return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
     }
 
+    public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, IPagination pagination) {
+        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, recordKey);
+    }
+
     public RecordView getRecordView(Record record) {
         return new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, record);
     }
