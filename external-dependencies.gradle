@@ -1,8 +1,8 @@
 ext {
-    dropwizard_version = '0.9.1'
+    dropwizard_version = '0.9.3'
     dropwizard_java8_version = '0.9.0-1'
-    jersey_version = '2.22.1' // based on dropwizard 0.9.1's jersey version
-    jackson_version = '2.6.3' // based on dropwizard 0.9.1's jackson version
+    jersey_version = '2.22.1'
+    jackson_version = '2.6.7'
 
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
