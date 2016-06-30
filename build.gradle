@@ -11,6 +11,9 @@ group 'presentation'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://dl.bintray.com/openregister/openregister'
+    }
 }
 
 //noinspection GroovyAssignabilityCheck
@@ -19,7 +22,7 @@ configurations {
     compile.exclude module: 'slf4j-simple' // dropwizard uses logback, not slf4j-simple
 }
 dependencies {
-    compile dropwizard, jacksonCsv, jena, jerseyMedia, markdown, postgresClient, thymeleaf
+    compile dropwizard, jacksonCsv, jena, jerseyMedia, markdown, postgresClient, thymeleaf, verifiableLog
 
     compile(dropwizard_module_java8) {
         exclude group: 'io.dropwizard'
