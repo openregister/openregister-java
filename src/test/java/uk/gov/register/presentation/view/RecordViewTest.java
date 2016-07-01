@@ -26,10 +26,9 @@ public class RecordViewTest {
 
         assertThat(result, equalTo("{" +
                 "\"entry-number\":\"1\"," +
-                "\"item-hash\":\"sha-256:ab\"," +
                 "\"entry-timestamp\":\"2016-03-29T08:59:24Z\"," +
+                "\"item-hash\":\"sha-256:ab\"," +
                 "\"a\":\"b\"" +
                 "}"));
     }
-
 }
