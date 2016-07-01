@@ -41,7 +41,7 @@ public class CsvWriterTest {
                 outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedCsv, is("entry-number,item-hash,entry-timestamp\r\n1,sha-256:1234abcd,2014-05-13T16:53:20Z\r\n"));
+        assertThat(generatedCsv, is("entry-number,entry-timestamp,item-hash\r\n1,2014-05-13T16:53:20Z,sha-256:1234abcd\r\n"));
     }
 
     @Test

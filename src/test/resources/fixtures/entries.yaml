@@ -1,7 +1,7 @@
 ---
 - entry-number: "1"
-  item-hash: "sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18"
   entry-timestamp: "2016-03-01T01:02:03Z"
+  item-hash: "sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18"
 - entry-number: "2"
-  item-hash: "sha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7"
   entry-timestamp: "2016-03-02T02:03:04Z"
+  item-hash: "sha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7"
