@@ -20,6 +20,12 @@ dependencies {
 
 jar.baseName = "indexer"
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 jar {
     doFirst {
         from {
