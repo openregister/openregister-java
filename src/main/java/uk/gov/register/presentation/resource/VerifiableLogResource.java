@@ -4,6 +4,7 @@ import uk.gov.register.presentation.RegisterProof;
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.EntryMerkleLeafStore;
 import uk.gov.verifiablelog.VerifiableLog;
+import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -18,10 +19,12 @@ import java.security.NoSuchAlgorithmException;
 public class VerifiableLogResource {
 
     private final EntryDAO entryDAO;
+    private final MemoizationStore memoizationStore;
 
     @Inject
-    public VerifiableLogResource(EntryDAO entryDAO) {
+    public VerifiableLogResource(EntryDAO entryDAO, MemoizationStore memoizationStore) {
         this.entryDAO = entryDAO;
+        this.memoizationStore = memoizationStore;
     }
 
     @GET
@@ -39,7 +42,7 @@ public class VerifiableLogResource {
     }
 
     private VerifiableLog createVerifiableLog(EntryDAO entryDAO) throws NoSuchAlgorithmException {
-        return new VerifiableLog(MessageDigest.getInstance("SHA-256"), new EntryMerkleLeafStore(entryDAO));
+        return new VerifiableLog(MessageDigest.getInstance("SHA-256"), new EntryMerkleLeafStore(entryDAO), memoizationStore);
     }
 
     private String bytesToString(byte[] bytes) {
