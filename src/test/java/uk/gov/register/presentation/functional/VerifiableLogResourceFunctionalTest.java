@@ -1,9 +1,12 @@
 package uk.gov.register.presentation.functional;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.time.Instant;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -21,20 +24,17 @@ public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
     private static final TestEntry entry3 = anEntry(3, item3, Instant.parse("2016-07-01T11:22:10.00Z"));
 
     @Test
-    public void shouldReturnRegisterProof() {
-        dbSupport.publishEntries(ImmutableList.of(entry1));
+    public void shouldReturnRegisterProof() throws IOException {
+        addEntryAndAssertRootHash(entry1, "d3d33f57b033d18ad11e14b28ef6f33487410c98548d1759c772370dfeb6db11");
+        addEntryAndAssertRootHash(entry2, "e869291e3017a7b1dd6b16af0b556d75378bef59486f1a7f53586b3ca86aed09");
+        addEntryAndAssertRootHash(entry3, "6b85b168f7c5f0587fc22ff4ba6937e61b33f6e89b70eed53d78d895d35dc9c3");
+    }
+
+    private void addEntryAndAssertRootHash(TestEntry entry, String expectedRootHash) throws IOException {
+        dbSupport.publishEntries(ImmutableList.of(entry));
         Response response = getRequest("/proof/register/merkle:sha-256");
         assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.readEntity(String.class), equalTo("d3d33f57b033d18ad11e14b28ef6f33487410c98548d1759c772370dfeb6db11"));
-
-        dbSupport.publishEntries(ImmutableList.of(entry2));
-        response = getRequest("/proof/register/merkle:sha-256");
-        assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.readEntity(String.class), equalTo("e869291e3017a7b1dd6b16af0b556d75378bef59486f1a7f53586b3ca86aed09"));
-
-        dbSupport.publishEntries(ImmutableList.of(entry3));
-        response = getRequest("/proof/register/merkle:sha-256");
-        assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.readEntity(String.class), equalTo("6b85b168f7c5f0587fc22ff4ba6937e61b33f6e89b70eed53d78d895d35dc9c3"));
+        JsonNode jsonResult = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+        assertThat(jsonResult.get("root-hash").textValue(), equalTo(expectedRootHash));
     }
 }

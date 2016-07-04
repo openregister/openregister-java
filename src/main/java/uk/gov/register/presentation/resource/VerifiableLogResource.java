@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import uk.gov.register.presentation.RegisterProof;
 import uk.gov.register.presentation.dao.EntryDAO;
 import uk.gov.register.presentation.dao.EntryMerkleLeafStore;
 import uk.gov.verifiablelog.VerifiableLog;
@@ -25,12 +26,13 @@ public class VerifiableLogResource {
 
     @GET
     @Path("/register/merkle:sha-256")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String registerProof() throws NoSuchAlgorithmException {
+    @Produces(MediaType.APPLICATION_JSON)
+    public RegisterProof registerProof() throws NoSuchAlgorithmException {
         try {
             entryDAO.begin();
             VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
-            return bytesToString(verifiableLog.currentRoot());
+            String rootHash = bytesToString(verifiableLog.currentRoot());
+            return new RegisterProof(rootHash);
         } finally {
             entryDAO.rollback();
         }
