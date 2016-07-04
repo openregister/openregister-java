@@ -13,13 +13,13 @@ public class RegisterProof {
         this.rootHash = rootHash;
     }
 
-    @SuppressWarnings("unused, used from template")
+    @SuppressWarnings("unused, used as jsonproperty")
     @JsonProperty("proof-identifier")
     public String getProofIdentifier() {
         return proofIdentifier;
     }
 
-    @SuppressWarnings("unused, used from template")
+    @SuppressWarnings("unused, used as jsonproperty")
     @JsonProperty("root-hash")
     public String getRootHash() {
         return rootHash;
