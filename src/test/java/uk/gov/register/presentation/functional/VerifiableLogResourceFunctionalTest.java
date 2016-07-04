@@ -35,6 +35,7 @@ public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
         Response response = getRequest("/proof/register/merkle:sha-256");
         assertThat(response.getStatus(), equalTo(200));
         JsonNode jsonResult = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+        assertThat(jsonResult.get("proof-identifier").textValue(), equalTo("merkle:sha-256"));
         assertThat(jsonResult.get("root-hash").textValue(), equalTo(expectedRootHash));
     }
 }
