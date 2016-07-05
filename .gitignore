@@ -16,4 +16,5 @@ build/*
 **/.gradletasknamecache
 
 deploy/mint.jar
+deploy/indexer.jar
 deployable_bundle

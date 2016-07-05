@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /srv/mint
+    destination: /srv/openregister-java
 hooks:
   ApplicationStop:
     - location: scripts/stop-service.sh
@@ -20,4 +20,3 @@ hooks:
     - location: scripts/validate.sh
       timeout: 10
       runas: root
-

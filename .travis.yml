@@ -21,29 +21,7 @@ before_script:
 - sudo sh -c 'echo -n "host all all 127.0.0.1/32 trust" >> /etc/postgresql/9.5/main/pg_hba.conf'
 - sudo /etc/init.d/postgresql restart
 - psql --version
-- psql -c 'create database test_mint;' -U postgres
-- psql -c 'create database ft_mint;' -U postgres
+- psql -c 'create database test_openregister_java;' -U postgres
+- psql -c 'create database ft_openregister_java;' -U postgres
 script:
 - ./gradlew clean build
-deploy:
-- provider: s3
-  access_key_id: AKIAI5JSOOUBYFGE7NEA
-  secret_access_key: &1
-    secure: uu91bjTS8qUEZolcoUWUcJuUubEBzizthlPaahLSyRJ6eY5xq4oHfx7a2BzADlxNaXiJN5FuljKRrBZHR7VyDoCT3gJLWv2nDouVSHyKfzCCcACYFtgMNmSzHuKpf1czj7eo+C8cFCEIHnnQbbyFK7V+eKy3O4MJN7aFfVfC8VzVs8xWZX8kh5J3+Yf9D++5Zgats9H+nxyQQQ+ueWLbjU9iTPxFa+JzJFwXnk0LW25NTWzdi9csia9gpo24H2M87NimWS6B/bVjnc7+gnUpznWlvm23PmQ1Vex22na4APIS+bdBWkGOZBz1XyvgcWp9ca79QViWk9e5ZJk09wnoEhXuPSnpBG7FYJE/jzVAsAtHdmsY2WHiAgixRJXFBqGnnrzJclCMCvsoR1iY37qhvk9qhq7aHwz8msEyf8RqsqOcfQY0m/sGF0U2T61/c0aXyxxk0dsBpqOMhdLSUBhtYQmerxT7oI2kSws6kH4AFgHEt68BYh9GRv71OccFyNb2wZkQz69D/igcWirJouYB1nzLzJUxLJE2PlKhPytFvyirvXm+97OWHZsl5D07ukDL74YN7ss+8vEZdNn1JlrzMNH6HfyZmPqXykl5q+OCSjsE99lc2baIDxqfKMbqgZvN/KBlFBFmpGem7YeGvfy9CZXOubc2ODT+5IvOokMiu1w=
-  local_dir: deployable_bundle
-  bucket: mint.app.artifacts
-  region: eu-west-1
-  skip_cleanup: true
-  on: &2
-    branch: master
-    condition: $DEPLOY=true
-- provider: codedeploy
-  access_key_id: AKIAI5JSOOUBYFGE7NEA
-  secret_access_key: *1
-  bucket: mint.app.artifacts
-  key: mint-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
-  bundle_type: zip
-  application: mint-app
-  deployment_group: test
-  region: eu-west-1
-  on: *2

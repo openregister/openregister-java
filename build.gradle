@@ -3,11 +3,11 @@ apply plugin: 'java'
 apply from: 'external-dependencies.gradle'
 apply from: 'idea-config.gradle'
 
+group 'openregister'
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
 }
-
-group 'mint'
 
 repositories {
     mavenCentral()
@@ -16,17 +16,22 @@ repositories {
 //noinspection GroovyAssignabilityCheck
 dependencies {
     compile dropwizard, stringTemplate, apacheCommonsCodec, awsCloudWatch
+    compile jdbi, aws_cloudsearch, jersey_client, logging_api, logging_impl
 
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }
 
-
     testCompile junit, mockito, dropwizardTest, wiremock
 }
 
+jar.baseName = "openregister-java"
 
-jar.baseName = "mint"
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
 
 jar {
     doFirst {
@@ -42,7 +47,7 @@ jar {
 
         manifest {
             attributes(
-                    "Main-Class": "uk.gov.MintApplication",
+                    "Main-Class": "uk.gov.RegisterApplication",
                     "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
             )
         }
@@ -51,22 +56,16 @@ jar {
 
 assemble {
     doLast {
-        new File("deploy/mint.jar").bytes = new File("build/libs/mint.jar").bytes
+        new File("deploy/openregister-java.jar").bytes = new File("build/libs/openregister-java.jar").bytes
         createDeployableBundle.execute()
     }
 }
 
 task createDeployableBundle(type: Zip) {
     Map env = System.getenv()
-    baseName("mint-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
+    baseName("openregister-java-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
     from('deploy/')
     include('*')
     include('scripts/*')
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
-}
-
-test {
-    testLogging {
-        exceptionFormat = 'full'
-    }
 }
