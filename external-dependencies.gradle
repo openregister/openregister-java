@@ -18,8 +18,6 @@ ext {
     awsCloudWatch = 'com.amazonaws:aws-java-sdk-cloudwatch:1.10.54'
     jdbi = 'org.jdbi:jdbi:2.63.1'
     jersey_client = 'org.glassfish.jersey.core:jersey-client:2.22.1'
-    logging_api = 'org.slf4j:slf4j-api:1.7.7'
-    logging_impl = 'org.slf4j:slf4j-simple:1.7.7'
 
     // test dependencies
     dropwizardTest = "io.dropwizard:dropwizard-testing:${dropwizard_version}"

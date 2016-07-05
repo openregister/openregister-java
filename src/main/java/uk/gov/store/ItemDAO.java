@@ -5,7 +5,7 @@ import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import uk.gov.mint.Item;
 
-interface ItemDAO {
+public interface ItemDAO {
 
     @SqlUpdate("create table if not exists item (sha256hex varchar primary key, content bytea)")
     void ensureSchema();

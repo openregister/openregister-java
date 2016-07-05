@@ -5,7 +5,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 import uk.gov.mint.Entry;
 
 @UseStringTemplate3StatementLocator("/sql/entry.sql")
-interface EntryDAO {
+public interface EntryDAO {
     @SqlUpdate
     void ensureSchema();
 

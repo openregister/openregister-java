@@ -12,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-import uk.gov.MintApplication;
+import uk.gov.RegisterApplication;
 import uk.gov.functional.db.TestDBItem;
 import uk.gov.mint.CanonicalJsonMapper;
 import uk.gov.mint.Entry;
@@ -34,7 +34,7 @@ public class PGFunctionalTest {
                     new CleanDatabaseRule()
             ).
             around(
-                    new DropwizardAppRule<>(MintApplication.class,
+                    new DropwizardAppRule<>(RegisterApplication.class,
                             ResourceHelpers.resourceFilePath("test-config.yaml"),
                             ConfigOverride.config("database.url", postgresConnectionString))
             );

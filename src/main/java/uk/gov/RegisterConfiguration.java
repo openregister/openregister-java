@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-public class MintConfiguration extends Configuration {
+public class RegisterConfiguration extends Configuration {
     @SuppressWarnings("unused")
     @Valid
     @NotNull

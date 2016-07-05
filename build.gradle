@@ -16,7 +16,7 @@ repositories {
 //noinspection GroovyAssignabilityCheck
 dependencies {
     compile dropwizard, stringTemplate, apacheCommonsCodec, awsCloudWatch
-    compile jdbi, aws_cloudsearch, jersey_client, logging_api, logging_impl
+    compile jdbi, aws_cloudsearch, jersey_client
 
     compile(postgresClient) {
         exclude group: 'org.slf4j'

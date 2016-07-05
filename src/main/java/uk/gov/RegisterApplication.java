@@ -21,10 +21,10 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MintApplication extends Application<MintConfiguration> {
+public class RegisterApplication extends Application<RegisterConfiguration> {
     public static void main(String[] args) {
         try {
-            new MintApplication().run(args);
+            new RegisterApplication().run(args);
         } catch (Exception e) {
             Throwables.propagate(e);
         }
@@ -36,7 +36,7 @@ public class MintApplication extends Application<MintConfiguration> {
     }
 
     @Override
-    public void initialize(Bootstrap<MintConfiguration> bootstrap) {
+    public void initialize(Bootstrap<RegisterConfiguration> bootstrap) {
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
                         new EnvironmentVariableSubstitutor(false)
@@ -44,7 +44,7 @@ public class MintApplication extends Application<MintConfiguration> {
     }
 
     @Override
-    public void run(MintConfiguration configuration, Environment environment) throws Exception {
+    public void run(RegisterConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 

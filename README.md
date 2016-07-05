@@ -12,7 +12,7 @@ A java implementation of a register
 
 - Install and run postgres db
 - Create database `createdb openregister_java` to use application locally.
-- Create database `createdb ft_openregister_java` to run functional tests.
+- Create database `createdb ft_openregister_java` and `createdb ft_openregister_java_presentation` to run functional tests.
 - Checkout project 
 - Use command `./gradlew cleanIdea idea` to generate the idea project files
 - Build project using command `./gradlew clean build` 

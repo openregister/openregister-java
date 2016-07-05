@@ -15,6 +15,5 @@ build/*
 
 **/.gradletasknamecache
 
-deploy/mint.jar
-deploy/indexer.jar
+deploy/openregister-java.jar
 deployable_bundle

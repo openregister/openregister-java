@@ -39,12 +39,11 @@ public class IndexerTaskTest {
     public void readEntriesFromMintPostgresDBAndWriteToReadApi() throws InterruptedException, SQLException {
         try (Connection mintConnection = createMintConnection(); Connection presentationConnection = createPresentationConnection()) {
             try (Statement mintStatement = mintConnection.createStatement(); Statement presentationStatement = presentationConnection.createStatement()) {
+                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java?user=postgres");
+                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_presentation?user=postgres");
 
-                recreateMintTables(mintStatement);
+                recreateMintTables(mintStatement, mintDbi);
                 dropReadApiTables(presentationStatement);
-
-                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_mint?user=postgres");
-                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
 
                 SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
                 DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
@@ -54,7 +53,7 @@ public class IndexerTaskTest {
                 InOrder inOrder = Mockito.inOrder(cloudwatchRecordsProcessedUpdater);
 
                 //load 1 entry and confirm the changes
-                loadEntriesInMintDB(1);
+                loadEntriesInMintDB(1, 0);
 
                 runIndexerAndVerifyResult(presentationStatement, indexerTask, 1, 1);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{1,fp_1}]"));
@@ -62,7 +61,7 @@ public class IndexerTaskTest {
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
                 //load 1 more entry and confirm the changes
-                loadEntriesInMintDB(1);
+                loadEntriesInMintDB(1, 1);
 
                 runIndexerAndVerifyResult(presentationStatement, indexerTask, 2, 1);
                 assertThat(currentKeys(presentationStatement).toString(), CoreMatchers.equalTo("[{2,fp_1}]"));
@@ -70,7 +69,7 @@ public class IndexerTaskTest {
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(1);
 
                 //load 5 more entry and confirm the changes
-                loadEntriesInMintDB(5);
+                loadEntriesInMintDB(5, 2);
 
                 runIndexerAndVerifyResult(presentationStatement, indexerTask, 7, 5);
 
@@ -79,7 +78,7 @@ public class IndexerTaskTest {
                 inOrder.verify(cloudwatchRecordsProcessedUpdater).update(5);
 
                 //load 1 more entry and confirm the changes
-                loadEntriesInMintDB(1);
+                loadEntriesInMintDB(1, 7);
 
                 runIndexerAndVerifyResult(presentationStatement, indexerTask, 8, 5);
 
@@ -100,18 +99,18 @@ public class IndexerTaskTest {
         try (Connection mintConnection = createMintConnection(); Connection presentationConnection = createPresentationConnection()) {
             try (Statement mintStatement = mintConnection.createStatement(); Statement presentationStatement = presentationConnection.createStatement()) {
 
-                recreateMintTables(mintStatement);
-                dropReadApiTables(presentationStatement);
+                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java?user=postgres");
+                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_presentation?user=postgres");
 
-                DBI mintDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_mint?user=postgres");
-                DBI presentationDbi = new DBI("jdbc:postgresql://localhost:5432/test_indexer_presentation?user=postgres");
+                recreateMintTables(mintStatement, mintDbi);
+                dropReadApiTables(presentationStatement);
 
                 SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
                 DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
                 IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
-                loadEntriesInMintDB(2);
-                loadEntriesInMintDB(2);
+                loadEntriesInMintDB(2, 0);
+                loadEntriesInMintDB(2, 2);
 
                 indexerTask.run();
 
@@ -155,10 +154,10 @@ public class IndexerTaskTest {
         }
     }
 
-    private void loadEntriesInMintDB(int noOfEntries) throws SQLException {
+    private void loadEntriesInMintDB(int noOfEntries, int currentEntryNumber) throws SQLException {
         try (Statement statement = createMintConnection().createStatement()) {
             for (int entryNumber = 1; entryNumber <= noOfEntries; entryNumber++) {
-                statement.execute(String.format("insert into entry(sha256hex) values('hash%s')", entryNumber));
+                statement.execute(String.format("insert into entry(entry_number,sha256hex) values(%d,'hash%s')", currentEntryNumber + entryNumber, entryNumber));
 
                 try (ResultSet resultSet = statement.executeQuery(String.format("select count(*) from item where sha256hex = 'hash%s'", entryNumber))) {
                     resultSet.next();
@@ -170,12 +169,12 @@ public class IndexerTaskTest {
         }
     }
 
-    private void recreateMintTables(Statement statement) throws SQLException {
+    private void recreateMintTables(Statement statement, DBI mintDbi) throws SQLException {
         statement.execute("drop table if exists entry");
         statement.execute("drop table if exists item");
 
-        statement.execute("create table if not exists entry (entry_number serial primary key, sha256hex varchar, timestamp timestamp default now())");
-        statement.execute("create table if not exists item (sha256hex varchar primary key, content bytea)");
+        mintDbi.open().attach(uk.gov.store.EntryDAO.class).ensureSchema();
+        mintDbi.open().attach(uk.gov.store.ItemDAO.class).ensureSchema();
     }
 
     private void dropReadApiTables(Statement statement) throws SQLException {
@@ -188,14 +187,14 @@ public class IndexerTaskTest {
 
     private Connection createMintConnection() throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setDatabaseName("test_indexer_mint");
+        dataSource.setDatabaseName("ft_openregister_java");
         dataSource.setUser("postgres");
         return dataSource.getConnection();
     }
 
     private Connection createPresentationConnection() throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setDatabaseName("test_indexer_presentation");
+        dataSource.setDatabaseName("ft_openregister_java_presentation");
         dataSource.setUser("postgres");
         return dataSource.getConnection();
     }
