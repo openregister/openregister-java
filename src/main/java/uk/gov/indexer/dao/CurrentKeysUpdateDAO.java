@@ -8,7 +8,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 import org.skife.jdbi.v2.unstable.BindIn;
 
 @UseStringTemplate3StatementLocator("/sql/init_records.sql")
-interface CurrentKeysUpdateDAO extends DBConnectionDAO {
+public interface CurrentKeysUpdateDAO {
 
     String CURRENT_KEYS_TABLE = "current_keys";
 
@@ -18,7 +18,7 @@ interface CurrentKeysUpdateDAO extends DBConnectionDAO {
     @SqlUpdate("delete from " + CURRENT_KEYS_TABLE + " where key in (<keys>)")
     int removeRecordWithKeys(@BindIn("keys") Iterable<String> allKeys);
 
-    @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(serial_number, key) values(:serial_number, :key)")
+    @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(entry_number, key) values(:entry_number, :key)")
     void writeCurrentKeys(@BindBean Iterable<CurrentKey> values);
 
     @SqlUpdate("update total_records set count=count+:noOfNewRecords")

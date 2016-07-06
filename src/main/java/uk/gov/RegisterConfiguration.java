@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import uk.gov.mint.auth.MintAuthenticatorFactory;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-public class RegisterConfiguration extends Configuration {
+public class RegisterConfiguration extends Configuration implements RegisterNameConfiguration {
     @SuppressWarnings("unused")
     @Valid
     @NotNull

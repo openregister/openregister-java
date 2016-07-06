@@ -14,6 +14,7 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import uk.gov.RegisterApplication;
 import uk.gov.functional.db.TestDBItem;
+import uk.gov.functional.db.TestRecord;
 import uk.gov.mint.CanonicalJsonMapper;
 import uk.gov.mint.Entry;
 import uk.gov.mint.Item;
@@ -29,6 +30,7 @@ import static org.junit.Assert.assertThat;
 import static uk.gov.functional.TestDBSupport.postgresConnectionString;
 import static uk.gov.functional.TestDBSupport.testEntryDAO;
 import static uk.gov.functional.TestDBSupport.testItemDAO;
+import static uk.gov.functional.TestDBSupport.testRecordDAO;
 
 public class PGFunctionalTest {
     @Rule
@@ -49,7 +51,7 @@ public class PGFunctionalTest {
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
-        JsonNode inputItem = canonicalJsonMapper.readFromBytes("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}".getBytes());
+        JsonNode inputItem = canonicalJsonMapper.readFromBytes("{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}".getBytes());
         Response r = send(inputItem.toString());
         assertThat(r.getStatus(), equalTo(204));
 
@@ -59,6 +61,10 @@ public class PGFunctionalTest {
 
         Entry entry = testEntryDAO.getAllEntries().get(0);
         assertThat(entry, equalTo(new Entry(1, storedItem.sha256hex)));
+
+        TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
+        assertThat(record.getEntryNumber(), equalTo(1));
+        assertThat(record.getPrimaryKey(), equalTo("ft_openregister_test"));
     }
 
     @Test
@@ -89,6 +95,13 @@ public class PGFunctionalTest {
                 )
         );
 
+        TestRecord record1 = testRecordDAO.getRecord("register1");
+        assertThat(record1.getEntryNumber(), equalTo(1));
+        assertThat(record1.getPrimaryKey(), equalTo("register1"));
+        TestRecord record2 = testRecordDAO.getRecord("register2");
+        assertThat(record2.getEntryNumber(), equalTo(2));
+        assertThat(record2.getPrimaryKey(), equalTo("register2"));
+
     }
 
     @Test
@@ -116,6 +129,11 @@ public class PGFunctionalTest {
                         new TestDBItem(canonicalItem)
                 )
         );
+
+
+        TestRecord record = testRecordDAO.getRecord("register1");
+        assertThat(record.getEntryNumber(), equalTo(2));
+        assertThat(record.getPrimaryKey(), equalTo("register1"));
     }
 
     @Test
@@ -149,6 +167,15 @@ public class PGFunctionalTest {
                         new TestDBItem(canonicalItem2)
                 )
         );
+
+
+        TestRecord record1 = testRecordDAO.getRecord("register1");
+        assertThat(record1.getEntryNumber(), equalTo(2));
+        assertThat(record1.getPrimaryKey(), equalTo("register1"));
+        TestRecord record2 = testRecordDAO.getRecord("register2");
+        assertThat(record2.getEntryNumber(), equalTo(3));
+        assertThat(record2.getPrimaryKey(), equalTo("register2"));
+
     }
 
     @Test

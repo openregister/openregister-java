@@ -32,6 +32,10 @@ public class Item {
         return data;
     }
 
+    public String getKey(String key) {
+        return content.get(key).textValue();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

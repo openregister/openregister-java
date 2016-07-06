@@ -1,17 +1,17 @@
 package uk.gov.indexer.dao;
 
 public class CurrentKey {
-    public final int serial_number;
+    public final int entry_number;
     public final String key;
 
-    public CurrentKey(String key, int serial_number) {
-        this.serial_number = serial_number;
+    public CurrentKey(String key, int entry_number) {
+        this.entry_number = entry_number;
         this.key = key;
     }
 
     @SuppressWarnings("unused, used by DAO")
-    public int getSerial_number() {
-        return serial_number;
+    public int getEntry_number() {
+        return entry_number;
     }
 
     @SuppressWarnings("unused, used by DAO")
@@ -21,6 +21,6 @@ public class CurrentKey {
 
     @Override
     public String toString() {
-        return String.format("{%s,%s}", serial_number, key);
+        return String.format("{%s,%s}", entry_number, key);
     }
 }

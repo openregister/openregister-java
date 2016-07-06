@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.*;
 import uk.gov.register.datatype.Datatype;
 
+import javax.inject.Inject;
 import java.util.Set;
 
 public class ItemValidator {
@@ -14,6 +15,7 @@ public class ItemValidator {
     private final FieldsConfiguration fieldsConfiguration;
     private final RegistersConfiguration registersConfiguration;
 
+    @Inject
     public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;

@@ -2,7 +2,7 @@ group DAO;
 
 ensureRecordTablesInPlace() ::= <<
 
-CREATE TABLE IF NOT EXISTS  current_keys  (KEY VARCHAR PRIMARY KEY, SERIAL_NUMBER INTEGER UNIQUE);
+CREATE TABLE IF NOT EXISTS  current_keys  (key VARCHAR PRIMARY KEY, entry_number INTEGER UNIQUE);
 
 CREATE TABLE IF NOT EXISTS  total_records  (COUNT INTEGER);
 

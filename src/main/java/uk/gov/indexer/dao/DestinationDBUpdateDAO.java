@@ -2,27 +2,25 @@ package uk.gov.indexer.dao;
 
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.TransactionIsolationLevel;
-import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
+import uk.gov.register.FatEntry;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionDAO {
+public abstract class DestinationDBUpdateDAO implements GetHandle {
     protected final CurrentKeysUpdateDAO currentKeysUpdateDAO;
 
     protected DestinationDBUpdateDAO() {
         Handle handle = getHandle();
-
-        currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
+        this.currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
         currentKeysUpdateDAO.ensureRecordTablesInPlace();
+
     }
 
-    @Transaction(TransactionIsolationLevel.SERIALIZABLE)
-    public void upsertInCurrentKeysTable(String registerName, List<Record> records) {
+    public void upsertInCurrentKeysTable(String registerName, List<FatEntry> records) {
         int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(records, r -> r.item.getKey(registerName)));
         List<CurrentKey> currentKeys = extractCurrentKeys(registerName, records);
 
@@ -30,9 +28,9 @@ public abstract class DestinationDBUpdateDAO implements GetHandle, DBConnectionD
         currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
     }
 
-    private List<CurrentKey> extractCurrentKeys(String registerName, List<Record> records) {
+    private List<CurrentKey> extractCurrentKeys(String registerName, List<FatEntry> records) {
         Map<String, Integer> currentKeys = new HashMap<>();
-        records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntryNumber()));
+        records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntry_number()));
         return currentKeys
                 .entrySet()
                 .stream()

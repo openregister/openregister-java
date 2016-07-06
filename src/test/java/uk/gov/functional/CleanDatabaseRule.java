@@ -9,6 +9,7 @@ public class CleanDatabaseRule extends ExternalResource {
     protected void before() {
         testEntryDAO.dropTable();
         testItemDAO.dropTable();
+        testRecordDAO.dropTable();
     }
 }
 

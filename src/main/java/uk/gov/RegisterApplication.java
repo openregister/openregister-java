@@ -10,7 +10,9 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.mint.*;
 import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.FieldsConfiguration;
@@ -48,19 +50,32 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
+        EntryStore entryStore = jdbi.open().attach(EntryStore.class);
+
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
-        ItemValidator itemValidator = new ItemValidator(registersConfiguration, fieldsConfiguration);
-        ObjectReconstructor objectReconstructor = new ObjectReconstructor();
-
         JerseyEnvironment jersey = environment.jersey();
-        jersey.register(new MintService(configuration.getRegister(), objectReconstructor, itemValidator, jdbi.open().attach(EntryStore.class)));
+
+        jersey.register(new AbstractBinder() {
+            @Override
+            protected void configure() {
+                bind(entryStore).to(EntryStore.class);
+                bind(fieldsConfiguration).to(FieldsConfiguration.class);
+                bind(registersConfiguration).to(RegistersConfiguration.class);
+
+                bind(DestinationDBUpdateDAO.class).to(DestinationDBUpdateDAO.class);
+                bind(ItemValidator.class).to(ItemValidator.class);
+                bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
+                bind(EntryStore.class).to(EntryStore.class);
+                bind(configuration);
+            }
+        });
 
         jersey.register(ItemValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
         jersey.register(ThrowableExceptionMapper.class);
-
+        jersey.register(MintService.class);
 
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
