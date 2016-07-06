@@ -7,9 +7,10 @@ import uk.gov.mint.Item;
 
 public interface ItemDAO {
 
-    @SqlUpdate("create table if not exists item (sha256hex varchar primary key, content bytea)")
+    @SqlUpdate("CREATE TABLE IF NOT EXISTS item (sha256hex VARCHAR PRIMARY KEY, content JSONB);" +
+            "CREATE INDEX IF NOT EXISTS item_content_gin ON item USING gin(content jsonb_path_ops);")
     void ensureSchema();
 
-    @SqlBatch("insert into item(sha256hex, content) values(:sha256hex, :canonicalContent) on conflict do nothing")
+    @SqlBatch("insert into item(sha256hex, content) values(:sha256hex, :content) on conflict do nothing")
     void insertInBatch(@BindBean Iterable<Item> items);
 }

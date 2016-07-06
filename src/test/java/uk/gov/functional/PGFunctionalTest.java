@@ -1,9 +1,9 @@
 package uk.gov.functional;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -16,6 +16,7 @@ import uk.gov.RegisterApplication;
 import uk.gov.functional.db.TestDBItem;
 import uk.gov.mint.CanonicalJsonMapper;
 import uk.gov.mint.Entry;
+import uk.gov.mint.Item;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -25,7 +26,9 @@ import java.util.List;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static uk.gov.functional.TestDBSupport.*;
+import static uk.gov.functional.TestDBSupport.postgresConnectionString;
+import static uk.gov.functional.TestDBSupport.testEntryDAO;
+import static uk.gov.functional.TestDBSupport.testItemDAO;
 
 public class PGFunctionalTest {
     @Rule
@@ -46,13 +49,13 @@ public class PGFunctionalTest {
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
-        String inputItem = "{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}";
-        Response r = send(inputItem);
+        JsonNode inputItem = canonicalJsonMapper.readFromBytes("{\"register\":\"ft_mint_test\",\"text\":\"SomeText\"}".getBytes());
+        Response r = send(inputItem.toString());
         assertThat(r.getStatus(), equalTo(204));
 
         TestDBItem storedItem = testItemDAO.getItems().get(0);
-        assertThat(storedItem.contents, equalTo(inputItem.getBytes()));
-        assertThat(storedItem.sha256hex, equalTo(DigestUtils.sha256Hex(inputItem.getBytes())));
+        assertThat(storedItem.contents, equalTo(inputItem));
+        assertThat(storedItem.sha256hex, equalTo(Item.itemHash(inputItem)));
 
         Entry entry = testEntryDAO.getAllEntries().get(0);
         assertThat(entry, equalTo(new Entry(1, storedItem.sha256hex)));
@@ -67,22 +70,22 @@ public class PGFunctionalTest {
 
         assertThat(r.getStatus(), equalTo(204));
 
-        String canonicalItem1 = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item1.getBytes())));
-        String canonicalItem2 = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item2.getBytes())));
+        JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
+        JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries,
                 contains(
-                        new Entry(1, DigestUtils.sha256Hex(canonicalItem1)),
-                        new Entry(2, DigestUtils.sha256Hex(canonicalItem2))
+                        new Entry(1, Item.itemHash(canonicalItem1)),
+                        new Entry(2, Item.itemHash(canonicalItem2))
                 )
         );
 
         List<TestDBItem> items = testItemDAO.getItems();
         assertThat(items,
                 contains(
-                        new TestDBItem(canonicalItem1.getBytes()),
-                        new TestDBItem(canonicalItem2.getBytes())
+                        new TestDBItem(canonicalItem1),
+                        new TestDBItem(canonicalItem2)
                 )
         );
 
@@ -97,20 +100,20 @@ public class PGFunctionalTest {
 
         assertThat(r.getStatus(), equalTo(204));
 
-        String canonicalItem = new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item1.getBytes())));
+        JsonNode canonicalItem = canonicalJsonMapper.readFromBytes(item1.getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries,
                 contains(
-                        new Entry(1, DigestUtils.sha256Hex(canonicalItem)),
-                        new Entry(2, DigestUtils.sha256Hex(canonicalItem))
+                        new Entry(1, Item.itemHash(canonicalItem)),
+                        new Entry(2, Item.itemHash(canonicalItem))
                 )
         );
 
         List<TestDBItem> items = testItemDAO.getItems();
         assertThat(items,
                 contains(
-                        new TestDBItem(canonicalItem.getBytes())
+                        new TestDBItem(canonicalItem)
                 )
         );
     }
@@ -127,15 +130,15 @@ public class PGFunctionalTest {
 
         assertThat(r.getStatus(), equalTo(204));
 
-        byte[] canonicalItem1 = canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item1.getBytes()));
-        byte[] canonicalItem2 = canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(item2.getBytes()));
+        JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
+        JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries,
                 contains(
-                        new Entry(1, DigestUtils.sha256Hex(canonicalItem1)),
-                        new Entry(2, DigestUtils.sha256Hex(canonicalItem1)),
-                        new Entry(3, DigestUtils.sha256Hex(canonicalItem2))
+                        new Entry(1, Item.itemHash(canonicalItem1)),
+                        new Entry(2, Item.itemHash(canonicalItem1)),
+                        new Entry(3, Item.itemHash(canonicalItem2))
                 )
         );
 
