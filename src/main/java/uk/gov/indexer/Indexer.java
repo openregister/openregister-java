@@ -4,8 +4,8 @@ import com.google.common.base.Throwables;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.indexer.dao.EntryUpdateDAO;
+import uk.gov.indexer.dao.ExtendedDestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
@@ -17,7 +17,7 @@ public class Indexer {
 
     private final Configuration configuration;
     private final String register;
-    private DestinationDBUpdateDAO destinationDBUpdateDAO;
+    private ExtendedDestinationDBUpdateDAO destinationDBUpdateDAO;
     private SourceDBQueryDAO sourceDBQueryDAO;
 
     public Indexer(Configuration configuration, String register) {
@@ -30,7 +30,7 @@ public class Indexer {
             LOGGER.info("setting up register " + register);
 
             DBI destDbi = new DBI(configuration.getProperty(register + ".destination.postgres.db.connectionString"));
-            destinationDBUpdateDAO = destDbi.open().attach(DestinationDBUpdateDAO.class);
+            destinationDBUpdateDAO = destDbi.open().attach(ExtendedDestinationDBUpdateDAO.class);
 
             DBI sourceDbi = new DBI(configuration.getProperty(register + ".source.postgres.db.connectionString"));
             sourceDBQueryDAO = sourceDbi.onDemand(SourceDBQueryDAO.class);

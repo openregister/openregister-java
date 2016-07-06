@@ -12,7 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.indexer.dao.CurrentKey;
-import uk.gov.indexer.dao.DestinationDBUpdateDAO;
+import uk.gov.indexer.dao.ExtendedDestinationDBUpdateDAO;
 import uk.gov.indexer.dao.SourceDBQueryDAO;
 import uk.gov.indexer.monitoring.CloudwatchRecordsProcessedUpdater;
 
@@ -46,7 +46,7 @@ public class IndexerTaskTest {
                 dropReadApiTables(presentationStatement);
 
                 SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
+                ExtendedDestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(ExtendedDestinationDBUpdateDAO.class);
                 IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
 
@@ -106,7 +106,7 @@ public class IndexerTaskTest {
                 dropReadApiTables(presentationStatement);
 
                 SourceDBQueryDAO sourceDBQueryDAO = mintDbi.open().attach(SourceDBQueryDAO.class);
-                DestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(DestinationDBUpdateDAO.class);
+                ExtendedDestinationDBUpdateDAO destinationDBUpdateDAO = presentationDbi.open().attach(ExtendedDestinationDBUpdateDAO.class);
                 IndexerTask indexerTask = new IndexerTask(Optional.of(cloudwatchRecordsProcessedUpdater), "food-premises", sourceDBQueryDAO, destinationDBUpdateDAO);
 
                 loadEntriesInMintDB(2, 0);

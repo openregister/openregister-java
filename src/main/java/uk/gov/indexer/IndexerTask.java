@@ -14,10 +14,10 @@ public class IndexerTask implements Runnable {
 
     private Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater;
     private final String register;
-    private final DestinationDBUpdateDAO destinationDBUpdateDAO;
+    private final ExtendedDestinationDBUpdateDAO destinationDBUpdateDAO;
     private final SourceDBQueryDAO sourceDBQueryDAO;
 
-    public IndexerTask(Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater, String register, SourceDBQueryDAO sourceDBQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO) {
+    public IndexerTask(Optional<CloudwatchRecordsProcessedUpdater> cloudwatchRecordsProcessedUpdater, String register, SourceDBQueryDAO sourceDBQueryDAO, ExtendedDestinationDBUpdateDAO destinationDBUpdateDAO) {
         this.cloudwatchRecordsProcessedUpdater = cloudwatchRecordsProcessedUpdater;
         this.register = register;
         this.sourceDBQueryDAO = sourceDBQueryDAO;
@@ -46,7 +46,7 @@ public class IndexerTask implements Runnable {
                 int totalNewRecords = records.size();
                 LOGGER.info(String.format("Register '%s': Found '%d' new entries in entry table.", register, totalNewRecords));
 
-                destinationDBUpdateDAO.writeEntriesAndItemsInBatch(register, records);
+                destinationDBUpdateDAO.upsertInCurrentKeysTable(register, records);
 
                 updateCloudWatch(totalNewRecords);
 
