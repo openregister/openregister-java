@@ -7,8 +7,7 @@ import uk.gov.functional.db.TestItemDAO;
 import uk.gov.functional.db.TestRecordDAO;
 
 public class TestDBSupport {
-    // FIXME: this shouldn't be ft_mint any more
-    public static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_mint?user=postgres";
+    public static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_openregister_java?user=postgres";
     public static final TestEntryDAO testEntryDAO;
     public static final TestItemDAO testItemDAO;
     public static final TestRecordDAO testRecordDAO;
