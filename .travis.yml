@@ -9,6 +9,7 @@ cache:
   directories:
   - $HOME/.gradle/caches
   - $HOME/.gradle/wrapper
+  - $HOME/.m2
 before_script:
 - sudo /etc/init.d/postgresql stop
 - sudo apt-get -y remove --purge postgresql-9.1 postgresql-9.2 postgresql-9.3 postgresql-9.4
