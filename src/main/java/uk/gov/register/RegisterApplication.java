@@ -1,4 +1,4 @@
-package uk.gov;
+package uk.gov.register;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -30,7 +30,6 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
 import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.organisation.client.GovukOrganisationClient;
-import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;

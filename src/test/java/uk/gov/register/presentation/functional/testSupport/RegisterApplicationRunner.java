@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.functional.testSupport;
 
 import io.dropwizard.testing.ResourceHelpers;
-import uk.gov.RegisterApplication;
+import uk.gov.register.RegisterApplication;
 
 public class RegisterApplicationRunner {
     public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/ft_openregister_java";

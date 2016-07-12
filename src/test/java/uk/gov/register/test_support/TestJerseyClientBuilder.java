@@ -5,7 +5,7 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import uk.gov.RegisterApplication;
+import uk.gov.register.RegisterApplication;
 
 import javax.ws.rs.client.Client;
 

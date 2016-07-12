@@ -1,4 +1,4 @@
-package uk.gov;
+package uk.gov.register;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
