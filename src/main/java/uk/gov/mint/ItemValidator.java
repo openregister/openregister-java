@@ -1,7 +1,6 @@
 package uk.gov.mint;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.Cardinality;
@@ -12,7 +11,6 @@ import uk.gov.register.presentation.config.Register;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 
 import javax.inject.Inject;
-import java.util.HashSet;
 import java.util.Set;
 
 public class ItemValidator {
