@@ -43,7 +43,7 @@ public class PGFunctionalTest {
             ConfigOverride.config("jerseyClient.timeout", "3000ms"));
     @Rule
     public TestRule ruleChain = RuleChain.
-            outerRule(new CleanDatabaseRule()).
+            outerRule(new WipeDatabaseRule()).
             around(appRule);
 
 
