@@ -7,12 +7,6 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import java.sql.SQLException;
 
 public abstract class TestItemDAO {
-    @SqlUpdate("drop table if exists item")
-    public abstract void dropTable();
-
-    @SqlUpdate("create table if not exists item (sha256hex varchar primary key, content jsonb)")
-    public abstract void createTable();
-
     @SqlUpdate("delete from item where sha256hex=:sha256hex; insert into item(sha256hex, content) values(:sha256hex, :content)")
     public abstract void __insertIfNotExist(@Bind("sha256hex") String sha256, @Bind("content") PGobject item);
 
