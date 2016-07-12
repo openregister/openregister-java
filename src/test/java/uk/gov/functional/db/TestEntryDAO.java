@@ -12,6 +12,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface TestEntryDAO {
+    @SqlUpdate("drop table if exists entry;" +
+            "drop table if exists current_entry_number")
+    void dropTable();
+
     @SqlUpdate("delete from entry;" +
             "delete from current_entry_number;" +
             "insert into current_entry_number values(0);")

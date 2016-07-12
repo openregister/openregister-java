@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface TestItemDAO {
+    @SqlUpdate("drop table if exists item")
+    void dropTable();
+
     @SqlUpdate("delete from item")
     void wipeData();
 
