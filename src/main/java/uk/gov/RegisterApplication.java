@@ -101,7 +101,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegistersConfiguration mintRegistersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         uk.gov.register.presentation.config.RegistersConfiguration registersConfiguration = new uk.gov.register.presentation.config.RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
-        uk.gov.register.presentation.config.FieldsConfiguration fieldsConfiguration = new uk.gov.register.presentation.config.FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
@@ -126,7 +125,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(entryDAO).to(EntryQueryDAO.class);
                 bind(recordDAO).to(RecordQueryDAO.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
-                bind(fieldsConfiguration).to(uk.gov.register.presentation.config.FieldsConfiguration.class);
                 bind(mintRegistersConfiguration).to(RegistersConfiguration.class);
                 bind(registersConfiguration).to(uk.gov.register.presentation.config.RegistersConfiguration.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
