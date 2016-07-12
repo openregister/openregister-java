@@ -27,7 +27,6 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.mint.*;
 import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.organisation.client.GovukOrganisationClient;
@@ -127,7 +126,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
-                bind(DestinationDBUpdateDAO.class).to(DestinationDBUpdateDAO.class);
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
 
