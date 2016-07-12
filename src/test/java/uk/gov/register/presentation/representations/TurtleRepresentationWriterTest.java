@@ -8,8 +8,8 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.Cardinality;
+import uk.gov.register.Field;
 import uk.gov.register.presentation.*;
-import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.Entry;
@@ -17,8 +17,8 @@ import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.representations.turtle.EntryTurtleWriter;
 import uk.gov.register.presentation.representations.turtle.ItemTurtleWiter;
 import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.presentation.view.ItemView;
 import uk.gov.register.presentation.view.EntryView;
+import uk.gov.register.presentation.view.ItemView;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +29,7 @@ import java.util.Optional;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

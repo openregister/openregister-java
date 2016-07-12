@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.Cardinality;
-import uk.gov.register.presentation.config.Field;
+import uk.gov.register.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -55,7 +55,7 @@ public class ItemConverter {
         }
 
         private FieldValue convertScalar(JsonNode value) {
-            if (field.getDatatype().equals("curie")) {
+            if (field.getDatatype().getName().equals("curie")) {
                 if (value.textValue().contains(":")) {
                     return new LinkValue.CurieValue(value.textValue(), requestContext.getRegisterDomain(), requestContext.getScheme());
                 } 

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.*;
 
+import uk.gov.register.Field;
+
 public class FieldsConfiguration {
 
     private final Collection<Field> fields;
