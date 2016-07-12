@@ -30,7 +30,7 @@ public class FunctionalTestBase {
 
     protected static Client client;
 
-    protected static final TestDAO testDAO = TestDAO.get("ft_presentation", "postgres");
+    protected static final TestDAO testDAO = TestDAO.get("ft_openregister_java", "postgres");
     protected static final DBSupport dbSupport = new DBSupport(testDAO);
     protected static Client authenticatingClient;
     @Rule
