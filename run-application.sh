@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-db_name=school
+db_name=openregister_java
 
 sh create_schema.sh $db_name
 
