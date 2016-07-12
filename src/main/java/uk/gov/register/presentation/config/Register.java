@@ -37,6 +37,10 @@ public class Register {
         this.text = text;
     }
 
+    public String getRegisterName() {
+        return registerName;
+    }
+
     public Optional<String> getCopyright() {
         return copyright;
     }

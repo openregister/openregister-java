@@ -4,10 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.*;
+import uk.gov.register.Cardinality;
+import uk.gov.register.Field;
+import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.datatype.Datatype;
+import uk.gov.register.presentation.config.Register;
+import uk.gov.register.presentation.config.RegistersConfiguration;
 
 import javax.inject.Inject;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ItemValidator {
@@ -22,7 +27,7 @@ public class ItemValidator {
     }
 
     public void validateItem(String registerName, JsonNode inputEntry) throws ItemValidationException {
-        Register register = registersConfiguration.getRegister(registerName);
+        Register register = registersConfiguration.getRegisterData(registerName).getRegister();
 
         validateFields(inputEntry, register);
 
@@ -38,9 +43,9 @@ public class ItemValidator {
     }
 
     private void validateFields(JsonNode inputEntry, Register register) throws ItemValidationException {
-        Set<String> unknownFields = Sets.newHashSet(
-                Iterators.filter(inputEntry.fieldNames(), fieldName -> !register.containsField(fieldName))
-        );
+        Set<String> inputFieldNames = Sets.newHashSet(inputEntry.fieldNames());
+        Set<String> expectedFieldNames = Sets.newHashSet(register.getFields());
+        Set<String> unknownFields = Sets.difference(inputFieldNames, expectedFieldNames);
 
         throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
     }

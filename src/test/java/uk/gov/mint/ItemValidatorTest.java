@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.RegistersConfiguration;
+import uk.gov.register.presentation.config.RegistersConfiguration;
 
 import java.io.IOException;
 import java.util.Optional;

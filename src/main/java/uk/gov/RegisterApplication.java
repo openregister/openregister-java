@@ -32,10 +32,10 @@ import uk.gov.mint.*;
 import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.RegistersConfiguration;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.register.presentation.dao.ItemQueryDAO;
 import uk.gov.register.presentation.dao.RecordQueryDAO;
@@ -98,8 +98,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         EntryQueryDAO entryDAO = jdbi.onDemand(EntryQueryDAO.class);
         RecordQueryDAO recordDAO = jdbi.onDemand(RecordQueryDAO.class);
 
-        RegistersConfiguration mintRegistersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
-        uk.gov.register.presentation.config.RegistersConfiguration registersConfiguration = new uk.gov.register.presentation.config.RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
+        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
 
         JerseyEnvironment jersey = environment.jersey();
@@ -125,8 +124,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(entryDAO).to(EntryQueryDAO.class);
                 bind(recordDAO).to(RecordQueryDAO.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
-                bind(mintRegistersConfiguration).to(RegistersConfiguration.class);
-                bind(registersConfiguration).to(uk.gov.register.presentation.config.RegistersConfiguration.class);
+                bind(registersConfiguration).to(RegistersConfiguration.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(DestinationDBUpdateDAO.class).to(DestinationDBUpdateDAO.class);
