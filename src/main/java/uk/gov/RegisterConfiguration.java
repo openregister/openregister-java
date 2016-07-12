@@ -2,20 +2,36 @@ package uk.gov;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import uk.gov.mint.auth.MintAuthenticatorFactory;
+import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.presentation.config.ResourceConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.Optional;
 
-public class RegisterConfiguration extends Configuration implements RegisterNameConfiguration {
+public class RegisterConfiguration extends Configuration
+        implements RegisterNameConfiguration, RegisterDomainConfiguration, ResourceConfiguration, GovukClientConfiguration {
+    @Valid
+    @NotNull
+    @JsonProperty
+    private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
+
     @SuppressWarnings("unused")
     @Valid
     @NotNull
     @JsonProperty
     private DataSourceFactory database;
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    private String registerDomain = "openregister.org";
 
     @Valid
     @JsonProperty
@@ -32,6 +48,15 @@ public class RegisterConfiguration extends Configuration implements RegisterName
     @JsonProperty
     private String cloudWatchEnvironmentName;
 
+    @Override
+    public String getRegisterDomain() {
+        return registerDomain;
+    }
+
+    @Valid
+    @JsonProperty
+    private boolean enableDownloadResource = false;
+
     public DataSourceFactory getDatabase() {
         return database;
     }
@@ -46,5 +71,19 @@ public class RegisterConfiguration extends Configuration implements RegisterName
 
     public Optional<String> cloudWatchEnvironmentName() {
         return Optional.ofNullable(cloudWatchEnvironmentName);
+    }
+
+    public JerseyClientConfiguration getJerseyClientConfiguration() {
+        return jerseyClient;
+    }
+
+    @Override
+    public URI getGovukEndpoint() {
+        return URI.create("https://www.gov.uk");
+    }
+
+    @Override
+    public boolean getEnableDownloadResource() {
+        return enableDownloadResource;
     }
 }

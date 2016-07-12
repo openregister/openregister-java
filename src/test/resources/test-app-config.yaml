@@ -1,0 +1,32 @@
+server:
+  registerDefaultExceptionMappers: false
+  applicationConnectors:
+    - type: http
+      port: 9000
+  adminConnectors:
+    - type: http
+      port: 9001
+
+register: address
+registerDomain: test.register.gov.uk
+
+credentials:
+  user: foo
+  password: bar
+
+database:
+  driverClass: org.postgresql.Driver
+  url: PLACEHOLDER
+  user: postgres
+  properties:
+    charSet: UTF-8
+
+  #db connection properties
+  initialSize: 1
+  minSize: 1
+  maxSize: 2
+
+  properties:
+    charSet: UTF-8
+
+enableDownloadResource: true

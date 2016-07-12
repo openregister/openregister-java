@@ -1,3 +1,4 @@
+apply from: 'idea-run-config.gradle'
 
 idea.project.ipr.withXml { provider ->
     def vcsConfig = provider.asNode().component.find { it.'@name' == 'VcsDirectoryMappings' }

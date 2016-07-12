@@ -13,14 +13,13 @@ database:
     charSet: UTF-8
 
 server:
-  applicationConnectors:
-    - type: http
-      port: 4567
+  registerDefaultExceptionMappers: false
   adminConnectors:
     - type: http
-      port: 9091
+      port: 9092
 
-register: field
+registerDomain: openregister.dev:8080
 
-# If set, heartbeat to CloudWatch under this namespace
-#cloudWatchEnvironmentName: local
+register: school
+
+enableDownloadResource: true

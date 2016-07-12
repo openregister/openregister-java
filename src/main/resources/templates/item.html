@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head th:include="main.html::head"></head>
+<body>
+<header th:replace="main.html::header"></header>
+<main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <p></p>
+        </div>
+        <div class="column-third" th:include="main.html :: attribution"></div>
+    </div>
+
+    <div th:include="fragments/item-table.html :: item-table (content = ${content})"></div>
+
+    <div th:include="data-formats.html::data-formats"></div>
+
+    <div th:replace="copyright.html::copyright"></div>
+
+</main>
+<footer th:replace="main.html::footer"></footer>
+</body>
+</html>

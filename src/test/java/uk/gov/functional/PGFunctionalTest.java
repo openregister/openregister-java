@@ -1,6 +1,7 @@
 package uk.gov.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -13,16 +14,19 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import uk.gov.RegisterApplication;
+import uk.gov.RegisterConfiguration;
 import uk.gov.functional.db.TestDBItem;
 import uk.gov.functional.db.TestRecord;
 import uk.gov.mint.CanonicalJsonMapper;
 import uk.gov.mint.Entry;
 import uk.gov.mint.Item;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -33,19 +37,16 @@ import static uk.gov.functional.TestDBSupport.testItemDAO;
 import static uk.gov.functional.TestDBSupport.testRecordDAO;
 
 public class PGFunctionalTest {
+    private final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,
+            ResourceHelpers.resourceFilePath("test-config.yaml"),
+            ConfigOverride.config("database.url", postgresConnectionString),
+            ConfigOverride.config("jerseyClient.timeout", "3000ms"));
     @Rule
     public TestRule ruleChain = RuleChain.
-            outerRule(
-                    new CleanDatabaseRule()
-            ).
-            around(
-                    new DropwizardAppRule<>(RegisterApplication.class,
-                            ResourceHelpers.resourceFilePath("test-config.yaml"),
-                            ConfigOverride.config("database.url", postgresConnectionString))
-            );
+            outerRule(new CleanDatabaseRule()).
+            around(appRule);
 
 
-    private final JerseyClient jerseyClient = authenticatingClient();
     private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
 
@@ -65,6 +66,20 @@ public class PGFunctionalTest {
         TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
         assertThat(record.getEntryNumber(), equalTo(1));
         assertThat(record.getPrimaryKey(), equalTo("ft_openregister_test"));
+
+        Client client = testClient();
+        Response response = client.target(String.format("http://localhost:%d/record/ft_openregister_test.json", appRule.getLocalPort()))
+                .request().header("Host","address.test.register.gov.uk").get();
+
+        assertThat(response.getStatus(), equalTo(200));
+        Map actualJson = response.readEntity(Map.class);
+        actualJson.remove("entry-timestamp"); // ignore the timestamp as we can't do exact match
+        assertThat(actualJson, equalTo(ImmutableMap.of(
+                "entry-number", "1",
+                "item-hash", "sha-256:"+storedItem.sha256hex,
+                "register", "ft_openregister_test",
+                "text", "SomeText"
+        )));
     }
 
     @Test
@@ -205,7 +220,7 @@ public class PGFunctionalTest {
     }
 
     private Response send(String... payload) {
-        return jerseyClient.target("http://localhost:4568/load")
+        return authenticatingClient().target("http://localhost:4568/load")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(String.join("\n", payload)));
 
@@ -215,5 +230,11 @@ public class PGFunctionalTest {
         ClientConfig configuration = new ClientConfig();
         configuration.register(HttpAuthenticationFeature.basic("foo", "bar"));
         return JerseyClientBuilder.createClient(configuration);
+    }
+
+    private Client testClient() {
+        return new io.dropwizard.client.JerseyClientBuilder(appRule.getEnvironment())
+                .using(appRule.getConfiguration().getJerseyClientConfiguration())
+                .build("test client");
     }
 }

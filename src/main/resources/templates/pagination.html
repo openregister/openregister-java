@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<div th:fragment="pagination-top(records_or_entries_string)" >
+    <th:block th:if="${pagination.singlePage}" th:text="${pagination.totalEntries + ' ' + records_or_entries_string}">
+        100 records or entries
+    </th:block >
+    <th:block th:unless="${pagination.singlePage}"
+              th:text="${pagination.firstEntryNumberOnThisPage + '-' + pagination.lastEntryNumberOnThisPage +' of ' + pagination.totalEntries + ' ' + records_or_entries_string}">
+        1-100 of 1000 records or entries
+    </th:block>
+</div>
+
+<!-- Based on govuk-component's pagination code: http://govuk-component-guide.herokuapp.com/components/previous_and_next_navigation -->
+<nav th:fragment="pagination-bottom" class="previous-and-next-navigation" role="navigation" aria-label="Pagination">
+    <ul class="group">
+        <li th:if="${pagination.hasPreviousPage()}" class="previous-page">
+            <a th:href="${pagination.previousPageLink}" rel="previous">
+                <span class="pagination-part-title">Previous page</span>
+                <span class="pagination-label" th:text="${pagination.previousPageNumber + ' of ' + pagination.totalPages}"></span>
+            </a>
+        </li>
+        <li th:if="${pagination.hasNextPage()}" class="next-page">
+            <a th:href="${pagination.nextPageLink}" rel="next">
+                <span class="pagination-part-title">Next page</span>
+                <span class="pagination-label" th:text="${pagination.nextPageNumber + ' of ' + pagination.totalPages}"></span>
+            </a>
+        </li>
+    </ul>
+</nav>
+</html>

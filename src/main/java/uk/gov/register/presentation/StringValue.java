@@ -1,0 +1,28 @@
+package uk.gov.register.presentation;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import javax.validation.constraints.NotNull;
+
+public class StringValue implements FieldValue {
+    @NotNull
+    public final String value;
+
+    public StringValue(@NotNull String value) {
+        this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    public boolean isLink() {
+        return false;
+    }
+
+    public boolean isList() {
+        return false;
+    }
+}

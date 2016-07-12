@@ -16,9 +16,9 @@ class ResourceYamlFileReader {
     private final Logger logger = LoggerFactory.getLogger(ResourceYamlFileReader.class);
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
-    public <N, T> Collection<N> readResource(Optional<String> resourceYamlPath,
-                                             String defaultResourceYamlFilePath,
-                                             TypeReference<Map<String, N>> typeReference) {
+    public <N> Collection<N> readResource(Optional<String> resourceYamlPath,
+                                          String defaultResourceYamlFilePath,
+                                          TypeReference<Map<String, N>> typeReference) {
         try {
             InputStream fieldsStream = new ResourceYamlFileReader().getStreamFromFile(resourceYamlPath, defaultResourceYamlFilePath);
             return yamlObjectMapper.<Map<String, N>>readValue(fieldsStream, typeReference).values();
