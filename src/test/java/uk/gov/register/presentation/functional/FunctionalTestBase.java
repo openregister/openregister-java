@@ -19,11 +19,7 @@ import uk.gov.register.presentation.functional.testSupport.TestDAO;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 public class FunctionalTestBase {
     public static final int APPLICATION_PORT = 9000;
@@ -68,11 +64,6 @@ public class FunctionalTestBase {
 
     Response getRequest(String registerName, String path) {
         String hostHeader = registerName + ".beta.openregister.org";
-        try {
-            Files.write(Paths.get("/tmp/test.log"), ("requesting " + path + " with Host header: " + hostHeader).getBytes(), StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         return client.target(String.format("http://%s:%d%s", hostHeader, app.getLocalPort(), path)).request().get();
     }
 
