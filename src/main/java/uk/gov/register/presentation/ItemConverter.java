@@ -3,6 +3,7 @@ package uk.gov.register.presentation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
+import uk.gov.register.Cardinality;
 import uk.gov.register.presentation.config.Field;
 import uk.gov.register.presentation.config.FieldsConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -10,7 +11,7 @@ import uk.gov.register.presentation.resource.RequestContext;
 import javax.inject.Inject;
 import java.util.Map;
 
-import static uk.gov.register.presentation.Cardinality.ONE;
+import static uk.gov.register.Cardinality.ONE;
 
 @Service
 public class ItemConverter {
