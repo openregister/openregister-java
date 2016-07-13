@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -23,7 +22,6 @@ import static org.junit.Assume.assumeThat;
 import static uk.gov.register.presentation.functional.TestEntry.anEntry;
 
 @RunWith(Parameterized.class)
-@Ignore("this test requires the app to be deployed as a register register rather than an address register")
 public class RepresentationsTest extends FunctionalTestBase {
     private static final String REGISTER_NAME = "register";
     private final String extension;
