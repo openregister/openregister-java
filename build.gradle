@@ -80,10 +80,20 @@ test {
         // conformanceTest.execute()
     }
     testLogging {
-        exceptionFormat = 'full'
-    }
-    afterTest { desc, result ->
-        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+        events "passed", "skipped", "failed", "standardError"
+        showCauses true
+        showExceptions true
+        showStackTraces true
+        exceptionFormat "full"
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
     }
 }
 
