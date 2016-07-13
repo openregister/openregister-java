@@ -1,44 +1,43 @@
 package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.RegisterDetail;
-import uk.gov.register.presentation.config.PublicBody;
-import uk.gov.register.presentation.resource.RequestContext;
 
 import java.time.Instant;
-import java.util.Optional;
 
-public class RegisterDetailView extends AttributionView {
+public class RegisterDetailView {
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
     private final Instant lastUpdated;
+    private final RegisterData registerData;
+    private final String registerDomain;
 
     public RegisterDetailView(
-            PublicBody custodian,
-            Optional<GovukOrganisation.Details> custodianBranding,
-            RequestContext requestContext,
             int totalRecords,
             int totalEntries,
             int totalItems,
-            Instant lastUpdated) {
-        super(requestContext, custodian, custodianBranding, "");
+            Instant lastUpdated,
+            RegisterData registerData,
+            String registerDomain) {
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.totalItems = totalItems;
         this.lastUpdated = lastUpdated;
+        this.registerData = registerData;
+        this.registerDomain = registerDomain;
     }
 
     @JsonValue
     public RegisterDetail getRegisterDetail() {
         return new RegisterDetail(
-                getRegisterDomain(),
+                registerDomain,
                 totalRecords,
                 totalEntries,
                 totalItems,
                 lastUpdated,
-                requestContext.getRegisterData()
+                registerData
         );
     }
 }
