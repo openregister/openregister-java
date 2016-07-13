@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head th:fragment="head">
+    <meta charset="UTF-8"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
+
+    <!-- Size for iPad and iPad mini (high resolution) -->
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/assets/images/apple-touch-icon-152x152.png"/>
+    <!-- Size for iPhone and iPod touch (high resolution) -->
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="/assets/images/apple-touch-icon-120x120.png"/>
+    <!-- Size for iPad 2 and iPad mini (standard resolution) -->
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="/assets/images/apple-touch-icon-76x76.png"/>
+    <!-- Default non-defined size, also used for Android 2.1+ devices -->
+    <link rel="apple-touch-icon-precomposed" href="/assets/images/apple-touch-icon-60x60.png"/>
+
+    <title th:text="${friendlyRegisterName}"></title>
+    <link rel="stylesheet" href="/assets/css/main.css"/>
+
+</head>
+
+<header th:fragment="header" id="global-header">
+    <div class="header-wrapper">
+        <div class="header-global">
+            <div class="header-logo">
+                <!--/* TODO should this be an <h1>? */-->
+                <a id="logo" class="content" href="/"
+                   th:text="${friendlyRegisterName}"></a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div th:fragment="phase" th:if="${register.phase == 'alpha' || register.phase == 'beta'}" th:class="'phase-banner-' + ${register.phase}">
+    <p>
+        <strong class="phase-tag" th:text="${#strings.toUpperCase(register.phase)}">ALPHA</strong>
+        <span>This is a new service – your <a href="mailto:data-infrastructure@digital.cabinet-office.gov.uk">feedback</a> will help us to improve it.</span>
+    </p>
+</div>
+
+<th:block th:fragment="organisation(organisation, branding)">
+    <span th:if="${branding.present}" th:utext="${#strings.replace(branding.get().logoFormattedName,'\r\n','&lt;br/&gt;')}" class="organisation-logo" th:classappend="|organisation-logo-${branding.get().logoClassName} ${branding.get().colourClassName}|">Cabinet Office</span>
+    <span th:unless="${branding.present}" th:text="${organisation.name}" class="organisation-logo organisation-logo-no-identity">Cabinet Office</span>
+</th:block>
+
+<div th:fragment="attribution">
+    <div class="organisation">
+        <span class="provided-by">Provided by:</span>
+        <th:block th:include="main.html::organisation(${custodian}, ${branding})"></th:block>
+    </div>
+</div>
+
+<footer th:fragment="footer" id="footer" class="group" role="contentinfo">
+    <div class="footer-wrapper">
+        <div class="footer-meta">
+            <div class="footer-meta-inner">
+
+                <div th:if="${renderedCopyrightText.present}" class="custom-government-licence">
+                    <div th:replace="copyright.html::copyright">Copyright text</div>
+                </div>
+                <div th:unless="${renderedCopyrightText.present}" class="open-government-licence">
+                    <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+                                       rel="license">Open Government Licence</a></p>
+
+                    <p>All content is available under the <a
+                            href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+                            rel="license">Open
+                        Government Licence v3.0</a>, except where otherwise stated</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">©
+                    Crown copyright</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="/assets/js/details.polyfill.js"/>
+</footer>
+
+</html>

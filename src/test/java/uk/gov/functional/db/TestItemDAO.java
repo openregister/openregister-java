@@ -16,6 +16,9 @@ public interface TestItemDAO {
     @SqlUpdate("drop table if exists item")
     void dropTable();
 
+    @SqlUpdate("delete from item")
+    void wipeData();
+
     @RegisterMapper(ItemMapper.class)
     @SqlQuery("select * from item")
     List<TestDBItem> getItems();

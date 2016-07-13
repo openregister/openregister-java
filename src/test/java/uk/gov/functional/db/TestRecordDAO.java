@@ -14,6 +14,11 @@ public interface TestRecordDAO {
     @SqlUpdate("drop table if exists current_keys")
     void dropTable();
 
+    @SqlUpdate("delete from current_keys;" +
+            "delete from total_records;" +
+            "insert into total_records values(0)")
+    void wipeData();
+
     @RegisterMapper(RecordMapper.class)
     @SqlQuery("select key,entry_number from current_keys where key = :primaryKey")
     TestRecord getRecord(@Bind("primaryKey") String primaryKey);

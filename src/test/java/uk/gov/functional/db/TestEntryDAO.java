@@ -16,6 +16,11 @@ public interface TestEntryDAO {
             "drop table if exists current_entry_number")
     void dropTable();
 
+    @SqlUpdate("delete from entry;" +
+            "delete from current_entry_number;" +
+            "insert into current_entry_number values(0);")
+    void wipeData();
+
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select entry_number,sha256hex from entry")
     List<Entry> getAllEntries();

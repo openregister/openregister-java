@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head th:include="main.html::head"></head>
+<body>
+<header th:replace="main.html::header"></header>
+<main id="main" role="main">
+    <div th:replace="main.html::phase"></div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <div class="homepage-intro" th:utext="${registerText}">The register of UK government registers.</div>
+
+            <dl class="primary-metadata">
+                <dt>Provided by:</dt>
+                <dd><th:block th:include="main.html :: organisation(${custodian}, ${branding})"></th:block></dd>
+                <dt>Total records:</dt>
+                <dd><a href="/records"><th:block th:text="${totalRecords}">Total</th:block><span class="visuallyhidden"> records</span></a></dd>
+                <dt>Total entries:</dt>
+                <dd><a href="/entries"><th:block th:text="${totalEntries}">Total</th:block><span class="visuallyhidden"> entries</span></a></dd>
+                <dt>Last updated:</dt>
+                <dd th:text="${lastUpdatedTime}">Last updated</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="technical-information">
+    <div class="grid-row">
+        <div class="column-two-thirds">
+        <h2 class="heading-large">Technical information</h2>
+            <p>Registers are made up of entries containing fields of data. To build services on top of these registers you can access the data in a variety of formats.</p>
+            <h3>Fields in this register:</h3>
+            <div class="field-list"> <ul><li th:each="field : ${register.fields}" th:text="${field}"></li></ul> </div>
+
+            <div><a th:href="${linkToRegisterRegister}">View this record in the register of registers</a></div>
+        </div>
+        <div class="column-third">
+            <ul>
+                <li><a href="http://www.openregister.org/">About registers</a></li>
+                <li><a href="http://openregister.github.io/specification/">Register specification</a></li>
+                <li><a href="/download">Download all entries</a></li>
+            </ul>
+        </div>
+    </div>    
+    </div>
+    <details>
+        <summary>Check the register fingerprint</summary>
+        <div class="fingerprint-container">
+            <span class="fingerprint-explanation"><a href="https://gdstechnology.blog.gov.uk/2015/10/13/guaranteeing-the-integrity-of-a-register/">See how the fingerprint works</a></span>
+            <pre class="fingerprint"><code>{
+  "tree_size": 9803348,
+  "timestamp": 1447421303202,
+  "sha256_root_hash": "JATHxRF5gczvNPP1S1WuhD8jSx2bl+WoTt8bIE3YKvU=",
+  "tree_head_signature":
+  "BAMARzBFAiEAkKM3aRUBKhShdCyrGLdd8lYBV52FLrwqjHa5/YuzK7ECIFTlRmNuKLqbVQv0QS8nq0pAUwgbilKOR5piBAIC8LpS"
+}</code></pre>
+        </div>
+    </details>
+
+    <div th:replace="copyright.html::copyright">Copyright text</div>
+
+        
+
+</main>
+
+<footer th:replace="main.html::footer"></footer>
+
+</body>
+</html>

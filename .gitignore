@@ -15,5 +15,12 @@ build/*
 
 **/.gradletasknamecache
 
+stdout.txt
+stderr.txt
+
+deploy/config.yaml
 deploy/openregister-java.jar
 deployable_bundle
+
+.venv
+.cache
