@@ -32,6 +32,7 @@ import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
@@ -98,6 +99,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
+        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegister());
 
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
@@ -123,6 +125,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(recordDAO).to(RecordQueryDAO.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
+                bind(registerData).to(RegisterData.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(ItemValidator.class).to(ItemValidator.class);

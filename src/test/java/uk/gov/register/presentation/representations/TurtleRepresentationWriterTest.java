@@ -23,6 +23,8 @@ import uk.gov.register.presentation.view.ItemView;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,7 +49,7 @@ public class TurtleRepresentationWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "test.register.gov.uk") {
+        requestContext = new RequestContext(new RegisterData(Collections.emptyMap()), () -> "test.register.gov.uk") {
             @Override
             public String getScheme() { return "http"; }
             @Override
