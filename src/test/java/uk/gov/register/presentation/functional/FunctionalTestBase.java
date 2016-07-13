@@ -42,6 +42,7 @@ public class FunctionalTestBase {
         InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
         customDnsResolver.add("address.beta.openregister.org", InetAddress.getLoopbackAddress());
         customDnsResolver.add("postcode.beta.openregister.org", InetAddress.getLoopbackAddress());
+        customDnsResolver.add("register.beta.openregister.org", InetAddress.getLoopbackAddress());
         customDnsResolver.add("localhost", InetAddress.getLoopbackAddress());
         return new io.dropwizard.client.JerseyClientBuilder(app.getEnvironment())
                 .using(app.getConfiguration().getJerseyClientConfiguration())
