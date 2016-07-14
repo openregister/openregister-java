@@ -1,6 +1,6 @@
 package uk.gov.register.presentation.filter;
 
-import uk.gov.register.presentation.config.ResourceConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.presentation.resource.DownloadNotAvailable;
 import uk.gov.register.presentation.view.ViewFactory;
 

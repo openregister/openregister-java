@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.config;
+package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import uk.gov.register.presentation.RegisterData;

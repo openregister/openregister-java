@@ -3,7 +3,7 @@ package uk.gov.register.presentation.resource;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
-import uk.gov.register.presentation.config.ResourceConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.presentation.filter.ResourceAvailabilityFilter;
 import uk.gov.register.presentation.view.ViewFactory;
 

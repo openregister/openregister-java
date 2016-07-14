@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.dropwizard.jackson.Jackson;
-import uk.gov.register.presentation.config.Register;
+import uk.gov.register.configuration.Register;
 
 import java.util.Map;
 

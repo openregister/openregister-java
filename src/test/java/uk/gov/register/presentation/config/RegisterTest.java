@@ -3,6 +3,7 @@ package uk.gov.register.presentation.config;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
+import uk.gov.register.configuration.Register;
 
 import static org.junit.Assert.assertThat;
 

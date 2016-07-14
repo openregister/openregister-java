@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.config;
+package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

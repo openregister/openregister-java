@@ -7,8 +7,8 @@ import uk.gov.register.Cardinality;
 import uk.gov.register.Field;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.datatype.Datatype;
-import uk.gov.register.presentation.config.Register;
-import uk.gov.register.presentation.config.RegistersConfiguration;
+import uk.gov.register.configuration.Register;
+import uk.gov.register.configuration.RegistersConfiguration;
 
 import javax.inject.Inject;
 import java.util.Set;
