@@ -56,7 +56,7 @@ public class RequestContextTest {
 
         httpServletRequest = Mockito.mock(HttpServletRequest.class);
         resultRequestContext.httpServletRequest = httpServletRequest;
-        
+
         return resultRequestContext;
     }
 }
