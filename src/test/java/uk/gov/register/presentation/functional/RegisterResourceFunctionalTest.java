@@ -6,7 +6,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
-import uk.gov.register.presentation.config.ResourceYamlFileReader;
+import uk.gov.register.configuration.ResourceYamlFileReader;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
