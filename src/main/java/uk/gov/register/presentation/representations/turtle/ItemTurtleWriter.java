@@ -8,7 +8,7 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.ListValue;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ItemView;

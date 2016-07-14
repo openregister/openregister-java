@@ -4,7 +4,7 @@ import org.apache.jena.rdf.model.*;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ItemView;

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.Register;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.servlet.ServletContext;

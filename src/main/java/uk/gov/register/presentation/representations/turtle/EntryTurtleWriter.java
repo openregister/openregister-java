@@ -4,7 +4,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.EntryView;

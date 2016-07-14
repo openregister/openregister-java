@@ -6,7 +6,7 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.register.Cardinality;
 import uk.gov.register.Field;
 import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.inject.Inject;
