@@ -33,7 +33,7 @@ import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.config.PublicBodiesConfiguration;
+import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.register.presentation.dao.ItemQueryDAO;
