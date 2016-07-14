@@ -7,7 +7,9 @@ import io.dropwizard.jackson.Jackson;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.PublicBody;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.representations.CsvRepresentation;
 import uk.gov.register.presentation.resource.RequestContext;
@@ -17,17 +19,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RecordView extends CsvRepresentationView {
+    private final String registerPrimaryKey;
     private ItemConverter itemConverter;
     private final Record record;
 
-    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record) {
-        super(requestContext, custodian, custodianBranding, "record.html");
+    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
+        super(requestContext, custodian, custodianBranding, "record.html", registerDomainConfiguration, registerData);
         this.itemConverter = itemConverter;
         this.record = record;
+        this.registerPrimaryKey = registerData.getRegister().getRegisterName();
     }
 
     public String getPrimaryKey() {
-        return record.item.content.get(requestContext.getRegisterPrimaryKey()).textValue();
+        return record.item.content.get(registerPrimaryKey).textValue();
     }
 
     @SuppressWarnings("unused, used to create the json representation of this class")

@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Record;
 import uk.gov.register.presentation.dao.RecordQueryDAO;
@@ -19,13 +20,15 @@ public class RecordResource {
     private final RequestContext requestContext;
     private final ViewFactory viewFactory;
     private final RecordQueryDAO recordDAO;
+    private final String registerPrimaryKey;
 
     @Inject
-    public RecordResource(ViewFactory viewFactory, RequestContext requestContext, RecordQueryDAO recordDAO) {
+    public RecordResource(ViewFactory viewFactory, RequestContext requestContext, RecordQueryDAO recordDAO, RegisterNameConfiguration registerNameConfiguration) {
         this.viewFactory = viewFactory;
         this.recordDAO = recordDAO;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
+        registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
     @GET
@@ -44,7 +47,7 @@ public class RecordResource {
     @Path("/record/{record-key}/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
-        Collection<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(requestContext.getRegisterPrimaryKey(), key);
+        Collection<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(registerPrimaryKey, key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
@@ -71,7 +74,7 @@ public class RecordResource {
         Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 
         requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-records." + ext)
+                ext -> httpServletResponseAdapter.addContentDispositionHeader(registerPrimaryKey + "-records." + ext)
         );
 
         if (pagination.hasNextPage()) {

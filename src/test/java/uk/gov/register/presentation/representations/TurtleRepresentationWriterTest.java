@@ -5,17 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import uk.gov.register.Cardinality;
 import uk.gov.register.Field;
 import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.presentation.*;
-import uk.gov.register.presentation.config.RegistersConfiguration;
+import uk.gov.register.presentation.FieldValue;
+import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.presentation.LinkValue;
+import uk.gov.register.presentation.ListValue;
+import uk.gov.register.presentation.StringValue;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.representations.turtle.EntryTurtleWriter;
-import uk.gov.register.presentation.representations.turtle.ItemTurtleWiter;
+import uk.gov.register.presentation.representations.turtle.ItemTurtleWriter;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.EntryView;
 import uk.gov.register.presentation.view.ItemView;
@@ -23,10 +24,7 @@ import uk.gov.register.presentation.view.ItemView;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -49,26 +47,20 @@ public class TurtleRepresentationWriterTest {
 
     @Before
     public void setUp() throws Exception {
-        requestContext = new RequestContext(new RegisterData(Collections.emptyMap()), () -> "test.register.gov.uk") {
+        requestContext = new RequestContext() {
             @Override
             public String getScheme() { return "http"; }
-            @Override
-            public String getRegisterPrimaryKey() { return "address"; }
         };
 
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
-        when(fieldsConfiguration.getField(anyString())).thenAnswer(new Answer<Field>() {
-            @Override
-            public Field answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                String fieldName = (String) args[0];
-                Field field = fieldsConfigurationMap.containsKey(fieldName)
-                        ? fieldsConfigurationMap.get(fieldName) : new Field(fieldName, "", "", Cardinality.ONE, "");
-                return field;
-            }
+        when(fieldsConfiguration.getField(anyString())).thenAnswer(invocation -> {
+            Object[] args = invocation.getArguments();
+            String fieldName = (String) args[0];
+            return fieldsConfigurationMap.containsKey(fieldName)
+                    ? fieldsConfigurationMap.get(fieldName) : new Field(fieldName, "", "", Cardinality.ONE, "");
         });
 
-        itemConverter = new ItemConverter(fieldsConfiguration, requestContext);
+        itemConverter = new ItemConverter(fieldsConfiguration, requestContext, () -> "test.register.gov.uk");
     }
 
     @Test
@@ -79,11 +71,11 @@ public class TurtleRepresentationWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)));
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWiter writer = new ItemTurtleWiter(requestContext);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -92,11 +84,11 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        EntryView entryView = new EntryView(requestContext, null, null, new Entry("52", "hash", Instant.now()));
+        EntryView entryView = new EntryView(requestContext, null, null, new Entry("52", "hash", Instant.now()), () -> "test.register.gov.uk", null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext);
+        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
         writer.writeTo(entryView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -112,11 +104,11 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)));
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWiter writer = new ItemTurtleWiter(requestContext);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -134,11 +126,11 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)));
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWiter writer = new ItemTurtleWiter(requestContext);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);

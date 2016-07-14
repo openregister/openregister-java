@@ -1,16 +1,17 @@
 package uk.gov.register.presentation.view;
 
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.config.Register;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -24,10 +25,13 @@ public class HomePageViewTest {
 
     @Test
     public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, "openregister.org");
-
         String registerText = "foo *bar* [baz](/quux)";
-        when(mockRequestContext.getRegister()).thenReturn(new Register("", Collections.emptyList(), "", "", registerText, "alpha"));
+        RegisterData registerData = new RegisterData(ImmutableMap.of(
+                "register", new TextNode("widget"),
+                "phase", new TextNode("alpha"),
+                "text", new TextNode(registerText)
+        ));
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, () -> "test.register.gov.uk", registerData);
 
         String result = homePageView.getRegisterText();
 
@@ -38,7 +42,7 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
 
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, "openregister.org");
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", null);
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
@@ -47,12 +51,14 @@ public class HomePageViewTest {
     public void getLinkToRegisterRegister_returnsTheLinkOfRegisterRegister(){
         Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
 
-        when(mockRequestContext.getRegisterPrimaryKey()).thenReturn("school");
         when(mockRequestContext.getScheme()).thenReturn("https");
 
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, "openregister.org");
+        RegisterData registerData = new RegisterData(ImmutableMap.of(
+                "register", new TextNode("school")
+        ));
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", registerData);
 
-        assertThat(homePageView.getLinkToRegisterRegister(), equalTo("https://register.openregister.org/record/school"));
+        assertThat(homePageView.getLinkToRegisterRegister(), equalTo("https://register.test.register.gov.uk/record/school"));
     }
 
 }

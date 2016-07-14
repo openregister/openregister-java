@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -19,17 +20,19 @@ import java.nio.charset.StandardCharsets;
 public class SearchResource {
 
     protected final RequestContext requestContext;
+    private final String registerPrimaryKey;
 
     @Inject
-    public SearchResource(RequestContext requestContext) {
+    public SearchResource(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration) {
         this.requestContext = requestContext;
+        registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
     @GET
     @Path("/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public Object find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
-        String redirectUrl = key.equals(requestContext.getRegisterPrimaryKey()) ?
+        String redirectUrl = key.equals(registerPrimaryKey) ?
                 String.format("/record/%s", encodeUrlValue(value)) :
                 String.format("/records/%s/%s", key, encodeUrlValue(value));
 

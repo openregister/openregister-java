@@ -1,7 +1,9 @@
 package uk.gov.register.presentation.view;
 
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.PublicBody;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.time.Instant;
@@ -27,13 +29,12 @@ public class HomePageView extends AttributionView {
             int totalRecords,
             int totalEntries,
             Instant lastUpdated,
-            String registerDomain
-    ) {
-        super(requestContext, custodian, custodianBranding, "home.html");
+            RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
+        super(requestContext, custodian, custodianBranding, "home.html", registerDomainConfiguration, registerData);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
-        this.registerDomain = registerDomain;
+        this.registerDomain = registerDomainConfiguration.getRegisterDomain();
     }
 
     @SuppressWarnings("unused, used from template")

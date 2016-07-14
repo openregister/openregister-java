@@ -1,5 +1,6 @@
 package uk.gov.register.presentation.resource;
 
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.register.presentation.representations.ExtraMediaType;
@@ -20,13 +21,15 @@ public class EntryResource {
     private final ViewFactory viewFactory;
     private final RequestContext requestContext;
     private final HttpServletResponseAdapter httpServletResponseAdapter;
+    private final String registerPrimaryKey;
 
     @Inject
-    public EntryResource(EntryQueryDAO entryDAO, ViewFactory viewFactory, RequestContext requestContext) {
+    public EntryResource(EntryQueryDAO entryDAO, ViewFactory viewFactory, RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration) {
         this.entryDAO = entryDAO;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
+        this.registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
     @GET
@@ -53,7 +56,7 @@ public class EntryResource {
 
     private void setHeaders(NewPagination newPagination) {
         requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addContentDispositionHeader(requestContext.getRegisterPrimaryKey() + "-entries." + ext)
+                ext -> httpServletResponseAdapter.addContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
         );
 
         if (newPagination.hasNextPage()) {

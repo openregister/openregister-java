@@ -3,7 +3,9 @@ package uk.gov.register.thymeleaf;
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.Register;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -14,12 +16,16 @@ import java.util.Optional;
 
 public class ThymeleafView extends View {
     protected final RequestContext requestContext;
+    private final RegisterData registerData;
+    private final String registerDomain;
     private String thymeleafTemplateName;
     protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    public ThymeleafView(RequestContext requestContext, String templateName) {
+    public ThymeleafView(RequestContext requestContext, String templateName, RegisterData registerData, RegisterDomainConfiguration registerDomainConfiguration) {
         super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
+        this.registerData = registerData;
+        this.registerDomain = registerDomainConfiguration.getRegisterDomain();
     }
 
     @Override
@@ -46,11 +52,11 @@ public class ThymeleafView extends View {
     }
 
     public String getRegisterId() {
-        return requestContext.getRegisterPrimaryKey();
+        return registerData.getRegister().getRegisterName();
     }
 
     public Register getRegister() {
-        return requestContext.getRegister();
+        return registerData.getRegister();
     }
 
     public Optional<String> getRenderedCopyrightText() {
@@ -60,7 +66,7 @@ public class ThymeleafView extends View {
     }
 
     public String getRegisterDomain() {
-        return requestContext.getRegisterDomain();
+        return registerDomain;
     }
 
     public ServletContext getServletContext() {

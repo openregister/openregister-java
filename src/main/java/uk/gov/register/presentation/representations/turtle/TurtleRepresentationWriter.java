@@ -2,6 +2,8 @@ package uk.gov.register.presentation.representations.turtle;
 
 import io.dropwizard.views.View;
 import org.apache.jena.rdf.model.Model;
+import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.representations.RepresentationWriter;
 import uk.gov.register.presentation.resource.RequestContext;
 
@@ -21,9 +23,13 @@ public abstract class TurtleRepresentationWriter<T extends View> extends Represe
     protected static final String ENTRY_PREFIX = "//%1$s.%2$s/entry/";
     protected static final String ITEM_PREFIX = "//%1$s.%2$s/item/";
     private static final String RECORD_PREFIX = "//%1$s.%2$s/record/";
+    private String registerDomain;
+    private String registerPrimaryKey;
 
-    protected TurtleRepresentationWriter(RequestContext requestContext) {
+    protected TurtleRepresentationWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterNameConfiguration registerNameConfiguration) {
         this.requestContext = requestContext;
+        this.registerDomain = registerDomainConfiguration.getRegisterDomain();
+        this.registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
     @Override
@@ -34,22 +40,22 @@ public abstract class TurtleRepresentationWriter<T extends View> extends Represe
     protected abstract Model rdfModelFor(T view);
 
     protected URI entryUri(String entryNumber) {
-        String path = String.format(ENTRY_PREFIX, requestContext.getRegisterPrimaryKey(), requestContext.getRegisterDomain());
+        String path = String.format(ENTRY_PREFIX, registerPrimaryKey, registerDomain);
         return uriWithScheme(path).path(entryNumber).build();
     }
 
     protected URI itemUri(String itemHash) {
-        String path = String.format(ITEM_PREFIX, requestContext.getRegisterPrimaryKey(), requestContext.getRegisterDomain());
+        String path = String.format(ITEM_PREFIX, registerPrimaryKey, registerDomain);
         return uriWithScheme(path).path(itemHash).build();
     }
 
     protected URI recordUri(String primaryKey) {
-        String path = String.format(RECORD_PREFIX, requestContext.getRegisterPrimaryKey(), requestContext.getRegisterDomain());
+        String path = String.format(RECORD_PREFIX, registerPrimaryKey, registerDomain);
         return uriWithScheme(path).path(primaryKey).build();
     }
 
     protected URI fieldUri() {
-        String path = String.format(ITEM_FIELD_PREFIX, requestContext.getRegisterDomain());
+        String path = String.format(ITEM_FIELD_PREFIX, registerDomain);
         return uriWithScheme(path).build();
     }
 

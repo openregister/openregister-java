@@ -1,5 +1,7 @@
 package uk.gov.register.presentation.view;
 
+import uk.gov.register.presentation.RegisterData;
+import uk.gov.register.presentation.config.RegisterDomainConfiguration;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
@@ -8,8 +10,8 @@ import javax.ws.rs.BadRequestException;
 public class BadRequestExceptionView extends ThymeleafView {
     private final BadRequestException exception;
 
-    public BadRequestExceptionView(RequestContext requestContext, BadRequestException exception) {
-        super(requestContext, "400.html");
+    public BadRequestExceptionView(RequestContext requestContext, BadRequestException exception, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
+        super(requestContext, "400.html", registerData, registerDomainConfiguration);
         this.exception = exception;
     }
 
