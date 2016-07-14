@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.config;
+package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,7 +19,6 @@ public class Register {
     final Optional<String> copyright;
     final String registry;
     final String text;
-
     final String phase;
 
     @JsonCreator

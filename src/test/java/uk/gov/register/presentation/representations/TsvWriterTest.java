@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
-import uk.gov.register.presentation.config.Register;
+import uk.gov.register.configuration.Register;
 import uk.gov.register.presentation.view.ItemView;
 
 import java.io.ByteArrayOutputStream;
