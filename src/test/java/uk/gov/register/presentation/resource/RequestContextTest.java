@@ -1,13 +1,18 @@
 package uk.gov.register.presentation.resource;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.config.RegistersConfiguration;
+import uk.gov.register.presentation.RegisterData;
 
 import javax.servlet.http.HttpServletRequest;
-
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,32 +24,20 @@ public class RequestContextTest {
     @Mock
     private HttpServletRequest httpServletRequest;
 
-    @Test
-    public void takesRegisterNameFromHttpHost() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
-        requestContext.httpServletRequest = httpServletRequest;
-        when(httpServletRequest.getHeader("Host")).thenReturn("school.beta.openregister.org");
+    private RequestContext requestContext;
 
-        String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
-
-        assertThat(registerPrimaryKey, equalTo("school"));
+    @Before
+    public void beforeEach() throws IOException {
+        requestContext = createRequestContext();
     }
 
     @Test
-    public void behavesGracefullyWhenGivenHostWithNoDots() throws Exception {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
-        requestContext.httpServletRequest = httpServletRequest;
-        when(httpServletRequest.getHeader("Host")).thenReturn("school");
-
-        String registerPrimaryKey = requestContext.getRegisterPrimaryKey();
-
-        assertThat(registerPrimaryKey, equalTo("school"));
+    public void takesRegisterNameFromRegisterData() throws IOException {
+        assertThat(requestContext.getRegisterPrimaryKey(), equalTo("foobar"));
     }
 
     @Test
     public void resourceExtension_returnsTheResourceExtensionIfExists() {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
-        requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getRequestURI()).thenReturn("/foo/bar.json");
 
         assertThat(requestContext.resourceExtension(), equalTo(Optional.of("json")));
@@ -52,11 +45,18 @@ public class RequestContextTest {
 
     @Test
     public void resourceExtension_returnsEmptyIfResourceExtensionIsNotExists() {
-        RequestContext requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> "");
-        requestContext.httpServletRequest = httpServletRequest;
         when(httpServletRequest.getRequestURI()).thenReturn("/foo/bar");
 
         assertThat(requestContext.resourceExtension(), equalTo(Optional.empty()));
     }
 
+    private RequestContext createRequestContext() throws IOException {
+        HashMap<String, JsonNode> configData = new ObjectMapper().readValue("{\"register\":\"foobar\"}", HashMap.class);
+        RequestContext resultRequestContext = new RequestContext(new RegisterData(configData), () -> "");
+
+        httpServletRequest = Mockito.mock(HttpServletRequest.class);
+        resultRequestContext.httpServletRequest = httpServletRequest;
+
+        return resultRequestContext;
+    }
 }

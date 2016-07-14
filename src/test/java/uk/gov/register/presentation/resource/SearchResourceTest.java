@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.RegistersConfiguration;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +31,7 @@ public class SearchResourceTest {
 
     @Before
     public void setUp() throws Exception {
-        requestContext = new RequestContext(new RegistersConfiguration(Optional.empty()), () -> ""){
+        requestContext = new RequestContext(new RegisterData(Collections.emptyMap()), () -> ""){
             @Override
             public HttpServletResponse getHttpServletResponse() {
                 return servletResponse;
@@ -52,4 +54,5 @@ public class SearchResourceTest {
                         MediaType.APPLICATION_JSON,
                         ExtraMediaType.TEXT_TTL));
     }
+
 }

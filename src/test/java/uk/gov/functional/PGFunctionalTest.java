@@ -37,10 +37,14 @@ import static uk.gov.functional.TestDBSupport.testItemDAO;
 import static uk.gov.functional.TestDBSupport.testRecordDAO;
 
 public class PGFunctionalTest {
+    public static final int APPLICATION_PORT = 9000;
+
     private final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,
-            ResourceHelpers.resourceFilePath("test-config.yaml"),
+            ResourceHelpers.resourceFilePath("test-app-config.yaml"),
             ConfigOverride.config("database.url", postgresConnectionString),
-            ConfigOverride.config("jerseyClient.timeout", "3000ms"));
+            ConfigOverride.config("jerseyClient.timeout", "3000ms"),
+            ConfigOverride.config("register", "register"));
+
     @Rule
     public TestRule ruleChain = RuleChain.
             outerRule(new CleanDatabaseRule()).
@@ -220,7 +224,7 @@ public class PGFunctionalTest {
     }
 
     private Response send(String... payload) {
-        return authenticatingClient().target("http://localhost:4568/load")
+        return authenticatingClient().target("http://localhost:" + APPLICATION_PORT + "/load")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(String.join("\n", payload)));
 
