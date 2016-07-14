@@ -1,11 +1,6 @@
 package uk.gov.register.presentation.resource;
 
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.RegisterNameExtractor;
-import uk.gov.register.presentation.config.Register;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
-import uk.gov.register.presentation.config.RegistersConfiguration;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -26,18 +21,8 @@ public class RequestContext {
     @Context
     HttpServletResponse httpServletResponse;
 
-    private final RegisterData registerData;
-
-    private final String registerDomain;
-
     @Inject
-    public RequestContext(RegisterData registerData, RegisterDomainConfiguration domainConfiguration) {
-        this.registerData = registerData;
-        this.registerDomain = domainConfiguration.getRegisterDomain();
-    }
-
-    public String getRegisterPrimaryKey() {
-        return registerData.getRegister().getRegisterName();
+    public RequestContext() {
     }
 
     public String getScheme() {
@@ -54,18 +39,6 @@ public class RequestContext {
 
     public HttpServletResponse getHttpServletResponse() {
         return httpServletResponse;
-    }
-
-    public Register getRegister() {
-        return registerData.getRegister();
-    }
-
-    public RegisterData getRegisterData() {
-        return registerData;
-    }
-
-    public String getRegisterDomain() {
-        return registerDomain;
     }
 
     public Optional<String> resourceExtension() {

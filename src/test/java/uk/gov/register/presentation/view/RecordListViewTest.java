@@ -1,5 +1,7 @@
 package uk.gov.register.presentation.view;
 
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
@@ -10,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.Record;
@@ -23,7 +26,6 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecordListViewTest {
@@ -44,8 +46,8 @@ public class RecordListViewTest {
                         new Item("cd", Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"))
                 )
         );
-        when(requestContext.getRegisterPrimaryKey()).thenReturn("address");
-        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty()), requestContext), records);
+        RegisterData registerData = new RegisterData(ImmutableMap.of("register", new TextNode("address")));
+        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty()), requestContext, () -> "test.register.gov.uk"), records, () -> "test.register.gov.uk", registerData);
 
         Map<String, RecordView> result = recordListView.recordsJson();
         assertThat(result.size(), equalTo(2));

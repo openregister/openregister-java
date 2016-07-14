@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.*;
@@ -20,17 +21,17 @@ import java.util.Collection;
 public class DataResource {
     protected final ViewFactory viewFactory;
     private final ItemQueryDAO itemDAO;
-    private RequestContext requestContext;
     private RecordQueryDAO recordDAO;
     private final EntryQueryDAO entryDAO;
+    private String registerPrimaryKey;
 
     @Inject
-    public DataResource(ViewFactory viewFactory, RequestContext requestContext, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO, ItemQueryDAO itemDAO) {
+    public DataResource(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO, ItemQueryDAO itemDAO, RegisterNameConfiguration registerNameConfiguration) {
         this.viewFactory = viewFactory;
-        this.requestContext = requestContext;
         this.recordDAO = recordDAO;
         this.entryDAO = entryDAO;
         this.itemDAO = itemDAO;
+        this.registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
     @GET
@@ -53,7 +54,7 @@ public class DataResource {
 
         return Response
                 .ok(new ArchiveCreator().create(registerDetail, entries, items))
-                .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", requestContext.getRegisterPrimaryKey(), System.currentTimeMillis()))
+                .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", registerPrimaryKey, System.currentTimeMillis()))
                 .header("Content-Transfer-Encoding", "binary")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)
                 .build();

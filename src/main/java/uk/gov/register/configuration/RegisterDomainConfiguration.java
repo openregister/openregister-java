@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.config;
+package uk.gov.register.configuration;
 
 import org.jvnet.hk2.annotations.Contract;
 

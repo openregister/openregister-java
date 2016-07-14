@@ -4,9 +4,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.ListValue;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ItemView;
@@ -18,11 +20,11 @@ import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class ItemTurtleWiter extends TurtleRepresentationWriter<ItemView> {
+public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
 
     @Inject
-    public ItemTurtleWiter(RequestContext requestContext) {
-        super(requestContext);
+    public ItemTurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterNameConfiguration registerNameConfiguration) {
+        super(requestContext, registerDomainConfiguration, registerNameConfiguration);
     }
 
     @Override

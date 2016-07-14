@@ -2,7 +2,9 @@ package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.PublicBody;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.representations.CsvRepresentation;
 import uk.gov.register.presentation.resource.IPagination;
@@ -16,15 +18,15 @@ public class EntryListView extends CsvRepresentationView {
     private Collection<Entry> entries;
     private final Optional<String> recordKey;
 
-    public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries) {
-        super(requestContext, custodian, custodianBranding, "entries.html");
+    public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
+        super(requestContext, custodian, custodianBranding, "entries.html", registerDomainConfiguration, registerData);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.empty();
     }
 
-    public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, String recordKey) {
-        super(requestContext, custodian, custodianBranding, "entries.html");
+    public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, String recordKey, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
+        super(requestContext, custodian, custodianBranding, "entries.html", registerDomainConfiguration, registerData);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.of(recordKey);

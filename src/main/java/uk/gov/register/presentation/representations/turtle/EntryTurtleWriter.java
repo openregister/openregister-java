@@ -3,6 +3,8 @@ package uk.gov.register.presentation.representations.turtle;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
+import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.EntryView;
@@ -16,8 +18,8 @@ import javax.ws.rs.ext.Provider;
 public class EntryTurtleWriter extends TurtleRepresentationWriter<EntryView> {
 
     @Inject
-    public EntryTurtleWriter(RequestContext requestContext) {
-        super(requestContext);
+    public EntryTurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterNameConfiguration registerNameConfiguration) {
+        super(requestContext, registerDomainConfiguration, registerNameConfiguration);
     }
 
     @Override

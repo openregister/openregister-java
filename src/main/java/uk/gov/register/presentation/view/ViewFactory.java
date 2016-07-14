@@ -4,9 +4,10 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.presentation.config.PublicBodiesConfiguration;
 import uk.gov.register.presentation.config.PublicBody;
-import uk.gov.register.presentation.config.RegisterDomainConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
 import uk.gov.register.presentation.dao.Record;
@@ -29,66 +30,71 @@ public class ViewFactory {
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
     private final String registerDomain;
+    private final RegisterData registerData;
+    private final RegisterDomainConfiguration registerDomainConfiguration;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
                        ItemConverter itemConverter,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
-                       RegisterDomainConfiguration domainConfiguration) {
+                       RegisterDomainConfiguration domainConfiguration,
+                       RegisterData registerData) {
         this.requestContext = requestContext;
         this.itemConverter = itemConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomain = domainConfiguration.getRegisterDomain();
+        this.registerDomainConfiguration = domainConfiguration;
+        this.registerData = registerData;
     }
 
     public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, templateName);
+        return new ThymeleafView(requestContext, templateName, registerData, registerDomainConfiguration);
     }
 
     public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, e);
+        return new BadRequestExceptionView(requestContext, e, registerDomainConfiguration, registerData);
     }
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Instant lastUpdated) {
-        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomain);
+        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomainConfiguration, registerData);
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Instant lastUpdated) {
-        return new RegisterDetailView(totalRecords, totalEntries, totalItems, lastUpdated, requestContext.getRegisterData(), registerDomain);
+        return new RegisterDetailView(totalRecords, totalEntries, totalItems, lastUpdated, registerData, registerDomain);
     }
 
     public ItemView getItemView(Item item) {
-        return new ItemView(requestContext, getCustodian(), getBranding(), itemConverter, item);
+        return new ItemView(requestContext, getCustodian(), getBranding(), itemConverter, item, registerDomainConfiguration, registerData);
     }
 
     public EntryView getEntryView(Entry entry) {
-        return new EntryView(requestContext, getCustodian(), getBranding(), entry);
+        return new EntryView(requestContext, getCustodian(), getBranding(), entry, registerDomainConfiguration, registerData);
     }
 
     public EntryListView getEntriesView(Collection<Entry> entries, IPagination pagination) {
-        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries);
+        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, registerDomainConfiguration, registerData);
     }
 
     public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, IPagination pagination) {
-        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, recordKey);
+        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, recordKey, registerDomainConfiguration, registerData);
     }
 
     public RecordView getRecordView(Record record) {
-        return new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, record);
+        return new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, record, registerDomainConfiguration, registerData);
     }
 
     public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
-        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records);
+        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records, registerDomainConfiguration, registerData);
     }
 
     private PublicBody getCustodian() {
-        return publicBodiesConfiguration.getPublicBody(requestContext.getRegister().getRegistry());
+        return publicBodiesConfiguration.getPublicBody(registerData.getRegister().getRegistry());
     }
 
     private Optional<GovukOrganisation.Details> getBranding() {
-        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(requestContext.getRegister().getRegistry());
+        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(registerData.getRegister().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
     }
 }
