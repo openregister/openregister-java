@@ -8,7 +8,7 @@ import uk.gov.mint.auth.MintAuthenticatorFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.presentation.config.ResourceConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
