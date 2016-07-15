@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import uk.gov.register.presentation.AuditProof;
+import uk.gov.register.presentation.ConsistencyProof;
 import uk.gov.register.presentation.RegisterProof;
 import uk.gov.register.presentation.dao.EntryMerkleLeafStore;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
@@ -48,7 +49,7 @@ public class VerifiableLogResource {
     @GET
     @Path("/entry/{total-entries}/{entry-number}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
-    public AuditProof registerProof(@PathParam("total-entries") int totalEntries, @PathParam("entry-number") int entryNumber) throws NoSuchAlgorithmException {
+    public AuditProof auditProof(@PathParam("total-entries") int totalEntries, @PathParam("entry-number") int entryNumber) throws NoSuchAlgorithmException {
         try {
             entryDAO.begin();
             VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
@@ -57,6 +58,23 @@ public class VerifiableLogResource {
                     .map(this::bytesToString).collect(Collectors.toList());
 
             return new AuditProof(Integer.toString(entryNumber), auditProof);
+        } finally {
+            entryDAO.rollback();
+        }
+    }
+
+    @GET
+    @Path("/consistency/{total-entries-1}/{total-entries-2}/merkle:sha-256")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ConsistencyProof consistencyProof(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) throws NoSuchAlgorithmException {
+        try {
+            entryDAO.begin();
+            VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
+
+            List<String> consistencyProof = verifiableLog.consistencyProof(totalEntries1, totalEntries2).stream()
+                    .map(this::bytesToString).collect(Collectors.toList());
+
+            return new ConsistencyProof(consistencyProof);
         } finally {
             entryDAO.rollback();
         }

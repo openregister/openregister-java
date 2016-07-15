@@ -34,6 +34,4 @@ public class AuditProof {
     public List<String> getAuditPath() {
         return auditPath;
     }
-
-
 }
