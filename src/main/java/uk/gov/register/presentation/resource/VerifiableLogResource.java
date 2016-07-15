@@ -1,19 +1,23 @@
 package uk.gov.register.presentation.resource;
 
+import uk.gov.register.presentation.AuditProof;
 import uk.gov.register.presentation.RegisterProof;
-import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.register.presentation.dao.EntryMerkleLeafStore;
+import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/proof")
 public class VerifiableLogResource {
@@ -36,6 +40,23 @@ public class VerifiableLogResource {
             VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
             String rootHash = bytesToString(verifiableLog.currentRoot());
             return new RegisterProof(rootHash);
+        } finally {
+            entryDAO.rollback();
+        }
+    }
+
+    @GET
+    @Path("/entry/{total-entries}/{entry-number}/merkle:sha-256")
+    @Produces(MediaType.APPLICATION_JSON)
+    public AuditProof registerProof(@PathParam("total-entries") int totalEntries, @PathParam("entry-number") int entryNumber) throws NoSuchAlgorithmException {
+        try {
+            entryDAO.begin();
+            VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
+
+            List<String> auditProof = verifiableLog.auditProof(entryNumber, totalEntries).stream()
+                    .map(this::bytesToString).collect(Collectors.toList());
+
+            return new AuditProof(Integer.toString(entryNumber), auditProof);
         } finally {
             entryDAO.rollback();
         }
