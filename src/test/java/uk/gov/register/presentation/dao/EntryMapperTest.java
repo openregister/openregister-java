@@ -7,7 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import static org.hamcrest.Matchers.is;
+
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -32,6 +33,6 @@ public class EntryMapperTest {
         verify(resultSetMock, times(2)).getString(anyString());
         verify(resultSetMock, times(1)).getTimestamp(eq("timestamp"), anyObject());
 
-        assertThat(actualEntry.getTimestamp(), is(expected));
+        assertThat(actualEntry.getTimestamp(), equalTo(expected));
     }
 }
