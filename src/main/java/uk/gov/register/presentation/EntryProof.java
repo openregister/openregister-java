@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
 
 @JsonPropertyOrder({"proof-identifier", "entry-number", "merkle-audit-path"})
-public class AuditProof {
+public class EntryProof {
 
     private static final String proofIdentifier = "merkle:sha-256";
     private final String entryNumber;
     private final List<String> auditPath;
 
-    public AuditProof(String entryNumber, List<String> auditPath) {
+    public EntryProof(String entryNumber, List<String> auditPath) {
         this.entryNumber = entryNumber;
         this.auditPath = auditPath;
     }

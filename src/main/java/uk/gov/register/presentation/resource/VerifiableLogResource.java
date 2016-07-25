@@ -1,6 +1,6 @@
 package uk.gov.register.presentation.resource;
 
-import uk.gov.register.presentation.AuditProof;
+import uk.gov.register.presentation.EntryProof;
 import uk.gov.register.presentation.ConsistencyProof;
 import uk.gov.register.presentation.RegisterProof;
 import uk.gov.register.presentation.dao.EntryMerkleLeafStore;
@@ -49,7 +49,7 @@ public class VerifiableLogResource {
     @GET
     @Path("/entry/{total-entries}/{entry-number}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
-    public AuditProof auditProof(@PathParam("total-entries") int totalEntries, @PathParam("entry-number") int entryNumber) throws NoSuchAlgorithmException {
+    public EntryProof entryProof(@PathParam("total-entries") int totalEntries, @PathParam("entry-number") int entryNumber) throws NoSuchAlgorithmException {
         try {
             entryDAO.begin();
             VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
@@ -57,7 +57,7 @@ public class VerifiableLogResource {
             List<String> auditProof = verifiableLog.auditProof(entryNumber, totalEntries).stream()
                     .map(this::bytesToString).collect(Collectors.toList());
 
-            return new AuditProof(Integer.toString(entryNumber), auditProof);
+            return new EntryProof(Integer.toString(entryNumber), auditProof);
         } finally {
             entryDAO.rollback();
         }

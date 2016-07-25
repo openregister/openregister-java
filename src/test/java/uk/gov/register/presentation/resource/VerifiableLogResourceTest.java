@@ -2,7 +2,7 @@ package uk.gov.register.presentation.resource;
 
 import org.junit.Test;
 import org.skife.jdbi.v2.ResultIterator;
-import uk.gov.register.presentation.AuditProof;
+import uk.gov.register.presentation.EntryProof;
 import uk.gov.register.presentation.ConsistencyProof;
 import uk.gov.register.presentation.RegisterProof;
 import uk.gov.register.presentation.dao.Entry;
@@ -71,16 +71,16 @@ public class VerifiableLogResourceTest {
     }
 
     @Test
-    public void shouldReturnValidAuditProof() throws NoSuchAlgorithmException {
+    public void shouldReturnValidEntryProof() throws NoSuchAlgorithmException {
         EntryQueryDAO entryDAO = entryDAOForEntries(entry1, entry2, entry3, entry4);
         VerifiableLogResource verifiableLogResource = new VerifiableLogResource(entryDAO, new DoNothing());
 
-        AuditProof auditProof = verifiableLogResource.auditProof(4, 1);
+        EntryProof entryProof = verifiableLogResource.entryProof(4, 1);
 
-        assertThat(auditProof.getProofIdentifier(), equalTo("merkle:sha-256"));
-        assertThat(auditProof.getEntryNumber(), equalTo("1"));
-        assertThat(auditProof.getAuditPath(), hasSize(equalTo(2)));
-        assertThat(auditProof.getAuditPath(), is(Arrays.asList(
+        assertThat(entryProof.getProofIdentifier(), equalTo("merkle:sha-256"));
+        assertThat(entryProof.getEntryNumber(), equalTo("1"));
+        assertThat(entryProof.getAuditPath(), hasSize(equalTo(2)));
+        assertThat(entryProof.getAuditPath(), is(Arrays.asList(
                 "d3d33f57b033d18ad11e14b28ef6f33487410c98548d1759c772370dfeb6db11", "0a95724bb3e5c1f28e2c2eb7c47c8ceee1200d7a262ba47a4217bb434e558fe5")));
     }
 
