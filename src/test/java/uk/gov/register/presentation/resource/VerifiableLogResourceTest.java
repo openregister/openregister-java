@@ -3,6 +3,7 @@ package uk.gov.register.presentation.resource;
 import org.junit.Test;
 import org.skife.jdbi.v2.ResultIterator;
 import uk.gov.register.presentation.AuditProof;
+import uk.gov.register.presentation.ConsistencyProof;
 import uk.gov.register.presentation.RegisterProof;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
@@ -83,6 +84,17 @@ public class VerifiableLogResourceTest {
                 "d3d33f57b033d18ad11e14b28ef6f33487410c98548d1759c772370dfeb6db11", "0a95724bb3e5c1f28e2c2eb7c47c8ceee1200d7a262ba47a4217bb434e558fe5")));
     }
 
+    @Test
+    public void shouldReturnValidConsistencyProof() throws NoSuchAlgorithmException {
+        EntryQueryDAO entryDAO = entryDAOForEntries(entry1, entry2, entry3, entry4);
+        VerifiableLogResource verifiableLogResource = new VerifiableLogResource(entryDAO, new DoNothing());
+
+        ConsistencyProof consistencyProof = verifiableLogResource.consistencyProof(2, 4);
+
+        assertThat(consistencyProof.getProofIdentifier(), equalTo("merkle:sha-256"));
+        assertThat(consistencyProof.getConsistencyNodes(), hasSize(equalTo(1)));
+        assertThat(consistencyProof.getConsistencyNodes(), is(Arrays.asList("e869291e3017a7b1dd6b16af0b556d75378bef59486f1a7f53586b3ca86aed09")));
+    }
 
     private EntryQueryDAO entryDAOForEntries(Entry... entries) {
         EntryQueryDAO entryDAO = mock(EntryQueryDAO.class);
@@ -96,7 +108,6 @@ public class VerifiableLogResourceTest {
 
         return entryDAO;
     }
-
 }
 
 class FakeResultIterator<T> implements ResultIterator<T> {
