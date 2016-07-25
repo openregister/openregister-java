@@ -1,8 +1,8 @@
 package uk.gov.register.presentation.resource;
 
-import uk.gov.register.presentation.EntryProof;
-import uk.gov.register.presentation.ConsistencyProof;
-import uk.gov.register.presentation.RegisterProof;
+import uk.gov.register.presentation.view.EntryProof;
+import uk.gov.register.presentation.view.ConsistencyProof;
+import uk.gov.register.presentation.view.RegisterProof;
 import uk.gov.register.presentation.dao.EntryMerkleLeafStore;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.verifiablelog.VerifiableLog;

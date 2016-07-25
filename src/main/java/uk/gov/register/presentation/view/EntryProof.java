@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.presentation.view;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
