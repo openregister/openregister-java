@@ -75,7 +75,7 @@ public class VerifiableLogResourceTest {
         EntryQueryDAO entryDAO = entryDAOForEntries(entry1, entry2, entry3, entry4);
         VerifiableLogResource verifiableLogResource = new VerifiableLogResource(entryDAO, new DoNothing());
 
-        EntryProof entryProof = verifiableLogResource.entryProof(4, 1);
+        EntryProof entryProof = verifiableLogResource.entryProof(1, 4);
 
         assertThat(entryProof.getProofIdentifier(), equalTo("merkle:sha-256"));
         assertThat(entryProof.getEntryNumber(), equalTo("1"));

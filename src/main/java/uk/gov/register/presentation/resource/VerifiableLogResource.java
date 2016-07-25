@@ -49,7 +49,7 @@ public class VerifiableLogResource {
     @GET
     @Path("/entry/{total-entries}/{entry-number}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
-    public EntryProof entryProof(@PathParam("total-entries") int totalEntries, @PathParam("entry-number") int entryNumber) throws NoSuchAlgorithmException {
+    public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) throws NoSuchAlgorithmException {
         try {
             entryDAO.begin();
             VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
