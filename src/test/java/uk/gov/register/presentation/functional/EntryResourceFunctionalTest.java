@@ -11,6 +11,11 @@ import org.junit.Test;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,7 +55,6 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
         assertThat(text, equalTo("sha-256:" + sha256Hex));
     }
 
-
     @Test
     public void return404ResponseWhenEntryNotExist() {
         assertThat(getRequest("/entry/5001").getStatus(), equalTo(404));
@@ -59,5 +63,23 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
     @Test
     public void return404ResponseWhenEntryNumberIsNotAnIntegerValue() {
         assertThat(getRequest("/entry/a2").getStatus(), equalTo(404));
+    }
+
+    @Test
+    public void entryResource_retrieviesTimestampsInUTC() throws IOException {
+        String dateTimeWithNoSeconds = "yyyyMMddHHmm";
+        String expectedDateTime = formatInstant(Instant.now(), dateTimeWithNoSeconds);
+
+        Response response = getRequest("/entry/1.json");
+
+        Map<String, String> responseData = response.readEntity(Map.class);
+        Instant entryTimestamp = Instant.parse(responseData.get("entry-timestamp"));
+        String actualDateTime = formatInstant(entryTimestamp, dateTimeWithNoSeconds);
+
+        assertThat(actualDateTime, equalTo(expectedDateTime));
+    }
+
+    private String formatInstant(Instant instant, String format){
+        return ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern(format));
     }
 }
