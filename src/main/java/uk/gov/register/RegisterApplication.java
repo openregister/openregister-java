@@ -14,8 +14,7 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.java8.Java8Bundle;
-import io.dropwizard.java8.jdbi.DBIFactory;
+import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.MutableServletContextHandler;
@@ -30,11 +29,11 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
 import uk.gov.mint.monitoring.CloudWatchHeartbeater;
 import uk.gov.organisation.client.GovukOrganisationClient;
+import uk.gov.register.configuration.PublicBodiesConfiguration;
+import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.configuration.PublicBodiesConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.register.presentation.dao.ItemQueryDAO;
 import uk.gov.register.presentation.dao.RecordQueryDAO;
@@ -83,7 +82,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                         new EnvironmentVariableSubstitutor(false)
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
-        bootstrap.addBundle(new Java8Bundle());
         bootstrap.setObjectMapper(customObjectMapper());
     }
 

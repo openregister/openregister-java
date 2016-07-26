@@ -1,6 +1,5 @@
 ext {
-    dropwizard_version = '0.9.3'
-    dropwizard_java8_version = '0.9.0-1'
+    dropwizard_version = '1.0.0'
     jersey_version = '2.22.1'
     jackson_version = '2.6.7'
 
@@ -25,9 +24,6 @@ ext {
     awsCloudWatch = 'com.amazonaws:aws-java-sdk-cloudwatch:1.10.54'
     jdbi = 'org.jdbi:jdbi:2.63.1'
     jersey_client = 'org.glassfish.jersey.core:jersey-client:2.22.1'
-
-    dropwizard_module_java8      = "io.dropwizard.modules:dropwizard-java8:${dropwizard_java8_version}"
-    dropwizard_module_java8_jdbi = "io.dropwizard.modules:dropwizard-java8-jdbi:${dropwizard_java8_version}"
 
     jacksonCsv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:${jackson_version}"
 
