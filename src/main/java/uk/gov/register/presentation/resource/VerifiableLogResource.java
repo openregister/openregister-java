@@ -47,7 +47,7 @@ public class VerifiableLogResource {
     }
 
     @GET
-    @Path("/entry/{total-entries}/{entry-number}/merkle:sha-256")
+    @Path("/entry/{entry-number}/{total-entries}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
     public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) throws NoSuchAlgorithmException {
         try {
