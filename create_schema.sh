@@ -4,7 +4,7 @@ db_name=$1
 
 psql $db_name -U postgres -q -S -c "
 
-CREATE TABLE IF NOT EXISTS current_keys(key VARCHAR PRIMARY KEY, serial_number INTEGER UNIQUE);
+CREATE TABLE IF NOT EXISTS current_keys(key VARCHAR PRIMARY KEY, entry_number INTEGER UNIQUE);
 
 CREATE TABLE IF NOT EXISTS total_records(count INTEGER);
 

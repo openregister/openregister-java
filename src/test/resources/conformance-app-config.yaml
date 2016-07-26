@@ -1,0 +1,32 @@
+server:
+  registerDefaultExceptionMappers: false
+  applicationConnectors:
+    - type: http
+      port: 9090
+  adminConnectors:
+    - type: http
+      port: 9091
+
+register: school
+registerDomain: test.register.gov.uk
+
+credentials:
+  user: foo
+  password: bar
+
+database:
+  driverClass: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/ft_openregister_java
+  user: postgres
+  properties:
+    charSet: UTF-8
+
+  #db connection properties
+  initialSize: 1
+  minSize: 1
+  maxSize: 2
+
+  properties:
+    charSet: UTF-8
+
+enableDownloadResource: true
