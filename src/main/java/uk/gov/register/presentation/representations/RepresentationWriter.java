@@ -1,6 +1,5 @@
 package uk.gov.register.presentation.representations;
 
-import io.dropwizard.views.View;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import javax.ws.rs.core.Context;
@@ -9,7 +8,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-public abstract class RepresentationWriter<T extends View> implements MessageBodyWriter<T> {
+public abstract class RepresentationWriter<T> implements MessageBodyWriter<T> {
     @Context
     protected RequestContext requestContext;
 
