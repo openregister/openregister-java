@@ -1,10 +1,11 @@
 package uk.gov.register.presentation.dao;
 
-import io.dropwizard.java8.jdbi.args.InstantMapper;
+import io.dropwizard.jdbi.args.InstantMapper;
 import org.skife.jdbi.v2.ResultIterator;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.FetchSize;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterColumnMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
@@ -19,7 +20,7 @@ public interface EntryQueryDAO extends Transactional<EntryQueryDAO> {
     @SingleValueResult(Entry.class)
     Optional<Entry> findByEntryNumber(@Bind("entry_number") int entryNumber);
 
-    @RegisterMapper(InstantMapper.class)
+    @RegisterColumnMapper(InstantMapper.class)
     @SqlQuery("SELECT timestamp FROM entry ORDER BY entry_number DESC LIMIT 1")
     Instant getLastUpdatedTime();
 

@@ -1,6 +1,6 @@
 package uk.gov.register.presentation.functional.testSupport;
 
-import io.dropwizard.java8.jdbi.args.InstantArgumentFactory;
+import io.dropwizard.jdbi.args.InstantArgumentFactory;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
