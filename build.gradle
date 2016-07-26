@@ -132,7 +132,7 @@ task(run, type: JavaExec) {
 task(loadSchoolData, type: JavaExec) {
     main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
-    args = ["school", "school-data.jsonl", "school"]
+    args = ["school", "school-data.jsonl", "openregister_java"]
 }
 
 task(loadSchoolDataForConformance, type: JavaExec) {
