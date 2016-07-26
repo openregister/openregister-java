@@ -26,7 +26,8 @@ public class RequestContext {
     }
 
     public String getScheme() {
-        return httpServletRequest.getScheme();
+        Optional<String> header = Optional.ofNullable(httpServletRequest.getHeader("X-Forwarded-Proto"));
+        return header.orElse(httpServletRequest.getScheme());
     }
 
     public HttpServletRequest getHttpServletRequest() {
