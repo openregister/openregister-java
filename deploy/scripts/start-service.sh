@@ -3,7 +3,7 @@
 set -eu
 
 INSTANCE_ID=$(curl 169.254.169.254/2014-11-05/meta-data/instance-id)
-REGISTER_NAME=$(aws ec2 describe-tags --filters Name=resource-id,Values=$INSTANCE_ID Name=key,Values=Name --region eu-west-1 --query 'Tags[0].Value' --output text)
+REGISTER_NAME=$(aws ec2 describe-tags --filters Name=resource-id,Values=$INSTANCE_ID Name=key,Values=Register --region eu-west-1 --query 'Tags[0].Value' --output text)
 ENV=$(aws ec2 describe-tags --filters Name=resource-id,Values=$INSTANCE_ID Name=key,Values=Environment --region eu-west-1 --query 'Tags[0].Value' --output text)
 CONFIG_BUCKET=openregister.${ENV}.config
 
