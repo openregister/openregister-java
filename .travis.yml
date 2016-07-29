@@ -32,9 +32,9 @@ before_script:
 - psql -c 'create database ft_openregister_java;' -U postgres
 deploy:
 - provider: s3
-  access_key_id: AKIAI5JSOOUBYFGE7NEA
+  access_key_id: AKIAINSAHPOLGXFFYGMQ
   secret_access_key: &1
-    secure: QiAS4c5DmLezKRW5SucyrvQvhfLKrzPn6CD10fcFwt9iJHROcUifeG6rAeUmvFEpsfaFvDaLpSiySxaAu07PuNVRJEAJIOUSwcFad486c+0152Ocytb9vxjp2RZPYpZ46i8gZu2L8gfZqBIpBA/Dv2IzoEfqdnXwOEYc7CKdWFcGiZVJQloc2cZgk1WLDaaeSUNXyBlNzKwl8C2nToVxdZVLaMjrjmAu+LYuLQEIsYZ+IwVFOBnkCVKSWXtc5Jo20p2UpiZjf55IBDmC3YAmCZxRI+XsmZ1rnHQtu8ZL+PFjOx+LVwKkr9LPszKI7++wB30mnjo/tleyTzyecID+TIOwXssLCfV4JWxC5s7wu1FjEx9tpg2Hc1pPKr5LFi5q3zQiC16WSqjB8cn+0JSifI1cIg28wKB1R/FuY22M97BCgHDpa9IbbSE1jnV8JRj+ULdQGzCe3MLiszVgtxsLvZ64k0oF84SKKH7++QQZf63HO/H2sApheAU9LMNvn+FBEOhwQ0H2U7S3m24aS1HGd6POMsMoG8BZ7Z9+uUgnC48caOr0MyiMoz3svzdo8mHJH8WZURtDAQZpmeO6+pKy+HEHbPS0sL0YO4q4IXJjF6nmlQ4AzyJcCP7OxPco1tAg4ehhMSW9LJOZ64/nLobDnCEvCi0ZblOpKdLA0KWlEBE=
+    secure: IBuHgCLFVPxg35wCStvG6Ec4FB9hm6BvLYZDpMbras5Y5F9gXUQZXDP+BfgZ3fdbY3Nm1TL2KdrG5lcOd2eaVjxDJbBU4IbpyRJUVCNBlBzRhfFfdHNOxMYHsih/T6GF2vOp/nHyyn2zpjS85tsw3CH083zTre+IPSUYEDg4SGyj2RSzgZgZgdETTys9InFShbPAv5F8vEyfU+Y64hzlbRpjCnsNGR2WqxJc1o4qfF1bt8Id/piIoZMTGkBF7VCrXtttIwuJI7AO2dZEqT5DKNGRbUZfIZgRbciAsH70r+Go5p7kK/n6J7Lumu32MoyaMS7kJjHnOjwp3PSRF+d0inyRfaAY176rDTuBeOCnUKj9bMABsxO2Dm5R1SarCSMbQI2dBq6mza7KUpduaVnIJ2iE8DZBC9znpuoc1xQN4F+Q+XhPDwafbodf7SXlJU8EmNTXpLuihsrcRoQSQRslml/fwHGSNB6QhRQrq/RQtpYO5wFk/x84BAndYA0q7ClTzQtDcn0Ns0K0a5BsCdQzfsnsMM06ehshvTo20MnEhWbQ1UrFMYFdf25avZn6H5fJ48JK0w3L7UtWUAzOuYCks/8y9k07VILavNaPDXVmLydgHuUYF8XUXsx+6d7Ax2xKYmpdvRG2FP0j+HPAqVVMRw1M68k8TGeJsiYia3uy/7g=
   local_dir: deployable_bundle
   bucket: openregister.app.artifacts
   region: eu-west-1
@@ -42,13 +42,3 @@ deploy:
   on: &2
     branch: master
     condition: $DEPLOY=true
-- provider: codedeploy
-  access_key_id: AKIAI5JSOOUBYFGE7NEA
-  secret_access_key: *1
-  bucket: openregister.app.artifacts
-  key: openregister-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
-  bundle_type: zip
-  application: openregister-app
-  deployment_group: test
-  region: eu-west-1
-  on: *2
