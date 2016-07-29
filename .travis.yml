@@ -30,3 +30,25 @@ before_script:
 - psql --version
 - psql -c 'create database test_openregister_java;' -U postgres
 - psql -c 'create database ft_openregister_java;' -U postgres
+deploy:
+- provider: s3
+  access_key_id: AKIAI5JSOOUBYFGE7NEA
+  secret_access_key: &1
+    secure: QiAS4c5DmLezKRW5SucyrvQvhfLKrzPn6CD10fcFwt9iJHROcUifeG6rAeUmvFEpsfaFvDaLpSiySxaAu07PuNVRJEAJIOUSwcFad486c+0152Ocytb9vxjp2RZPYpZ46i8gZu2L8gfZqBIpBA/Dv2IzoEfqdnXwOEYc7CKdWFcGiZVJQloc2cZgk1WLDaaeSUNXyBlNzKwl8C2nToVxdZVLaMjrjmAu+LYuLQEIsYZ+IwVFOBnkCVKSWXtc5Jo20p2UpiZjf55IBDmC3YAmCZxRI+XsmZ1rnHQtu8ZL+PFjOx+LVwKkr9LPszKI7++wB30mnjo/tleyTzyecID+TIOwXssLCfV4JWxC5s7wu1FjEx9tpg2Hc1pPKr5LFi5q3zQiC16WSqjB8cn+0JSifI1cIg28wKB1R/FuY22M97BCgHDpa9IbbSE1jnV8JRj+ULdQGzCe3MLiszVgtxsLvZ64k0oF84SKKH7++QQZf63HO/H2sApheAU9LMNvn+FBEOhwQ0H2U7S3m24aS1HGd6POMsMoG8BZ7Z9+uUgnC48caOr0MyiMoz3svzdo8mHJH8WZURtDAQZpmeO6+pKy+HEHbPS0sL0YO4q4IXJjF6nmlQ4AzyJcCP7OxPco1tAg4ehhMSW9LJOZ64/nLobDnCEvCi0ZblOpKdLA0KWlEBE=
+  local_dir: deployable_bundle
+  bucket: openregister.app.artifacts
+  region: eu-west-1
+  skip_cleanup: true
+  on: &2
+    branch: master
+    condition: $DEPLOY=true
+- provider: codedeploy
+  access_key_id: AKIAI5JSOOUBYFGE7NEA
+  secret_access_key: *1
+  bucket: openregister.app.artifacts
+  key: openregister-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
+  bundle_type: zip
+  application: openregister-app
+  deployment_group: test
+  region: eu-west-1
+  on: *2
