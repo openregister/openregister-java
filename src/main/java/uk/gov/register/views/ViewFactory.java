@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.view;
+package uk.gov.register.views;
 
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;

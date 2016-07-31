@@ -2,7 +2,7 @@ package uk.gov.register.presentation.filter;
 
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.resources.DownloadNotAvailable;
-import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.views.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;

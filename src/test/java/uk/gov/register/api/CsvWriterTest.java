@@ -8,8 +8,8 @@ import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
 import uk.gov.register.configuration.Register;
 import uk.gov.register.core.Entry;
-import uk.gov.register.presentation.view.ItemView;
-import uk.gov.register.presentation.view.EntryListView;
+import uk.gov.register.views.ItemView;
+import uk.gov.register.views.EntryListView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

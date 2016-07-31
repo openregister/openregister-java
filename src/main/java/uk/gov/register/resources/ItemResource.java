@@ -2,9 +2,9 @@ package uk.gov.register.resources;
 
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.AttributionView;
-import uk.gov.register.presentation.view.ItemView;
-import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.views.AttributionView;
+import uk.gov.register.views.ItemView;
+import uk.gov.register.views.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

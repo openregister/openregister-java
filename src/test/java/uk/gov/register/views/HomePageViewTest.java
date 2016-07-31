@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.view;
+package uk.gov.register.views;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.ImmutableMap;

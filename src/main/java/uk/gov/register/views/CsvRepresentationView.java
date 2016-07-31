@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.view;
+package uk.gov.register.views;
 
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.presentation.RegisterData;

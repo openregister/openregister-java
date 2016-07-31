@@ -4,7 +4,7 @@ import io.dropwizard.views.View;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.views.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

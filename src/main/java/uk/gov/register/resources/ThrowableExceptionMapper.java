@@ -4,7 +4,7 @@ import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.api.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.views.ViewFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.ClientErrorException;

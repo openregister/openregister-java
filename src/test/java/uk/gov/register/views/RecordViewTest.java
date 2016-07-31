@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.view;
+package uk.gov.register.views;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;

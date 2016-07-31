@@ -39,7 +39,7 @@ import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.views.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.db.EntryStore;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwo;
@@ -150,11 +150,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
-                        jersey.register(new AuthDynamicFeature(
-                                new BasicCredentialAuthFilter.Builder<User>()
-                                        .setAuthenticator(authenticator)
-                                        .buildAuthFilter()
-                        ))
+                                jersey.register(new AuthDynamicFeature(
+                                        new BasicCredentialAuthFilter.Builder<User>()
+                                                .setAuthenticator(authenticator)
+                                                .buildAuthFilter()
+                                ))
                 );
 
         if (configuration.cloudWatchEnvironmentName().isPresent()) {

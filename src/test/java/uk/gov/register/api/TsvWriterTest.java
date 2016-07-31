@@ -7,7 +7,7 @@ import uk.gov.register.api.representations.TsvWriter;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
 import uk.gov.register.configuration.Register;
-import uk.gov.register.presentation.view.ItemView;
+import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

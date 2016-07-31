@@ -11,7 +11,7 @@ import uk.gov.register.presentation.LinkValue;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.presentation.view.ItemView;
+import uk.gov.register.views.ItemView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;

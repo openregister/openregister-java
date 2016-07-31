@@ -5,7 +5,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
-import uk.gov.register.presentation.view.*;
+import uk.gov.register.views.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

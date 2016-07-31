@@ -18,8 +18,8 @@ import uk.gov.register.presentation.StringValue;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.presentation.view.EntryView;
-import uk.gov.register.presentation.view.ItemView;
+import uk.gov.register.views.EntryView;
+import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;

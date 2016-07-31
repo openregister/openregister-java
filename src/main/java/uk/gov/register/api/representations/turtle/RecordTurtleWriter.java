@@ -7,9 +7,9 @@ import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.presentation.view.ItemView;
-import uk.gov.register.presentation.view.EntryView;
-import uk.gov.register.presentation.view.RecordView;
+import uk.gov.register.views.ItemView;
+import uk.gov.register.views.EntryView;
+import uk.gov.register.views.RecordView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;

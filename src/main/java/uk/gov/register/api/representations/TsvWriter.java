@@ -1,7 +1,7 @@
 package uk.gov.register.api.representations;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import uk.gov.register.presentation.view.CsvRepresentationView;
+import uk.gov.register.views.CsvRepresentationView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;

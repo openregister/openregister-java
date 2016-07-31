@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.view;
+package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.presentation.RegisterData;
