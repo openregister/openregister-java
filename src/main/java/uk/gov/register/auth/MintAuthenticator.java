@@ -1,4 +1,4 @@
-package uk.gov.mint.auth;
+package uk.gov.register.auth;
 
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;

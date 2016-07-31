@@ -1,4 +1,4 @@
-package uk.gov.mint.auth;
+package uk.gov.register.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
