@@ -1,11 +1,11 @@
-package uk.gov.register.presentation.representations.turtle;
+package uk.gov.register.api.representations.turtle;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.presentation.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.EntryView;

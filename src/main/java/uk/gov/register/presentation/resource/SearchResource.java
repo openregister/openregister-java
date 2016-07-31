@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.api.representations.ExtraMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

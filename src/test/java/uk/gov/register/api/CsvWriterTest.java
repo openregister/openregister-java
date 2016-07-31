@@ -1,16 +1,21 @@
-package uk.gov.register.presentation.representations;
+package uk.gov.register.api;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
+import uk.gov.register.api.representations.CsvWriter;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
 import uk.gov.register.configuration.Register;
+import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.view.ItemView;
+import uk.gov.register.presentation.view.EntryListView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
@@ -18,31 +23,47 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TsvWriterTest {
+public class CsvWriterTest {
 
-    private final TsvWriter writer = new TsvWriter();
+    CsvWriter csvWriter = new CsvWriter();
     Register register = new Register("register1", ImmutableList.of("key1", "key2", "key3", "key4"),
             "copyright", "registry1", "text1", "phase1");
 
     @Test
-    public void tsv_entriesAreGenerated() throws IOException {
+    public void writes_EntryListView_to_output_stream() throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        csvWriter.writeTo(new EntryListView(null,null,null, Optional.empty(),
+                ImmutableList.of(new Entry("1","1234abcd", Instant.ofEpochSecond(1400000000L))), () -> "test.register.gov.uk", null),
+                EntryListView.class,
+                null,
+                null,
+                null,
+                null,
+                outputStream);
+        byte[] bytes = outputStream.toByteArray();
+        String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
+        assertThat(generatedCsv, is("entry-number,entry-timestamp,item-hash\r\n1,2014-05-13T16:53:20Z,sha-256:1234abcd\r\n"));
+    }
+
+    @Test
+    public void writeEntriesTo_writesCsvEscapedEntries() throws IOException {
         ItemView itemView = mock(ItemView.class);
 
         when(itemView.getContent()).thenReturn(ImmutableMap.of(
-                "key1", new StringValue("value1"),
-                "key2", new StringValue("value2"),
+                "key1", new StringValue("valu\te1"),
+                "key2", new StringValue("val,ue2"),
                 "key3", new StringValue("val\"ue3"),
-                "key4", new StringValue("value4")
+                "key4", new StringValue("val\nue4")
         ));
         when(itemView.getRegister()).thenReturn(register);
         when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
+        csvWriter.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedCsv, is("key1\tkey2\tkey3\tkey4\nvalue1\tvalue2\tval\"ue3\tvalue4\n"));
+        assertThat(generatedCsv, is("key1,key2,key3,key4\r\n\"valu\te1\",\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
     }
 
     @Test
@@ -66,27 +87,30 @@ public class TsvWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
+        csvWriter.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedCsv, is("key1\tkey2\tkey3\tkey4\nvalue1;value2;value3\tvalue4;value5;value6\t\t\n"));
+        assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1;value2;value3,value4;value5;value6,,\r\n"));
     }
 
     @Test
-    public void tsvWriter_rendersAllFieldsEvenIfSomeAreMissing() throws Exception {
+    public void writeEntriesTo_includesAllColumnsEvenWhenValuesAreNotPresent() throws Exception {
         ItemView itemView = mock(ItemView.class);
 
         when(itemView.getContent()).thenReturn(ImmutableMap.of(
-                "key1", new StringValue("value1")
+                "key1", new StringValue("value1"),
+                "key2", new StringValue(""),
+                "key3", new StringValue(""),
+                "key4", new StringValue("")
         ));
         when(itemView.getRegister()).thenReturn(register);
         when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
+        csvWriter.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedCsv, is("key1\tkey2\tkey3\tkey4\nvalue1\t\t\t\n"));
+        assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1,,,\r\n"));
     }
 }

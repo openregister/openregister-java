@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.api.representations.ExtraMediaType;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;

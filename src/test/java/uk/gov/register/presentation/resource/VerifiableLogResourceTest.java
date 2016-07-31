@@ -2,9 +2,9 @@ package uk.gov.register.presentation.resource;
 
 import org.junit.Test;
 import org.skife.jdbi.v2.ResultIterator;
-import uk.gov.register.presentation.view.EntryProof;
-import uk.gov.register.presentation.view.ConsistencyProof;
-import uk.gov.register.presentation.view.RegisterProof;
+import uk.gov.register.api.EntryProof;
+import uk.gov.register.api.ConsistencyProof;
+import uk.gov.register.api.RegisterProof;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.EntryQueryDAO;
 import uk.gov.verifiablelog.store.memoization.DoNothing;

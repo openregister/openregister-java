@@ -5,7 +5,7 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.RegisterDetail;
 import uk.gov.register.presentation.dao.*;
-import uk.gov.register.presentation.representations.ExtraMediaType;
+import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ViewFactory;
 
 import javax.inject.Inject;

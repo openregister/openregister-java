@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.representations;
+package uk.gov.register.api;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +8,8 @@ import org.junit.Test;
 import uk.gov.register.Cardinality;
 import uk.gov.register.Field;
 import uk.gov.register.FieldsConfiguration;
+import uk.gov.register.api.representations.turtle.EntryTurtleWriter;
+import uk.gov.register.api.representations.turtle.ItemTurtleWriter;
 import uk.gov.register.presentation.FieldValue;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.LinkValue;
@@ -15,8 +17,6 @@ import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
 import uk.gov.register.presentation.dao.Entry;
 import uk.gov.register.presentation.dao.Item;
-import uk.gov.register.presentation.representations.turtle.EntryTurtleWriter;
-import uk.gov.register.presentation.representations.turtle.ItemTurtleWriter;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.EntryView;
 import uk.gov.register.presentation.view.ItemView;
