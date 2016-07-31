@@ -1,4 +1,4 @@
-package uk.gov.indexer.dao;
+package uk.gov.register.db;
 
 public class CurrentKey {
     public final int entry_number;

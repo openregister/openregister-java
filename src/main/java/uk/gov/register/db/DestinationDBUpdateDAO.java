@@ -1,4 +1,4 @@
-package uk.gov.indexer.dao;
+package uk.gov.register.db;
 
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;

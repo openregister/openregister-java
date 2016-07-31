@@ -1,4 +1,4 @@
-package uk.gov.indexer.dao;
+package uk.gov.register.db;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
