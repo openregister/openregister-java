@@ -8,7 +8,7 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.presentation.ArchiveCreator;
-import uk.gov.register.presentation.RegisterDetail;
+import uk.gov.register.core.RegisterDetail;
 import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.views.ViewFactory;
 

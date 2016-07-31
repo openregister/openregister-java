@@ -1,8 +1,8 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.RegisterDetail;
+import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterDetail;
 
 import java.time.Instant;
 

@@ -1,4 +1,4 @@
-package uk.gov.register;
+package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

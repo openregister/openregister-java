@@ -1,6 +1,6 @@
 package uk.gov.register.views;
 
-import uk.gov.register.presentation.RegisterData;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.configuration.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.resources.RequestContext;

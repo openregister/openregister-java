@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.presentation.RegisterData;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 
 import static org.hamcrest.CoreMatchers.containsString;

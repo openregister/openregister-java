@@ -1,6 +1,7 @@
-package uk.gov.register.presentation;
+package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.register.presentation.ISODateFormatter;
 
 import java.time.Instant;
 

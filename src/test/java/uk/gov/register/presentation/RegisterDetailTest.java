@@ -1,6 +1,7 @@
 package uk.gov.register.presentation;
 
 import org.junit.Test;
+import uk.gov.register.core.RegisterDetail;
 
 import java.time.Instant;
 

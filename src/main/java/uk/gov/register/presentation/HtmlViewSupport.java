@@ -1,5 +1,7 @@
 package uk.gov.register.presentation;
 
+import uk.gov.register.core.LinkValue;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 import java.util.Map;

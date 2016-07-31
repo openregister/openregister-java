@@ -4,7 +4,7 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.presentation.ItemConverter;
-import uk.gov.register.presentation.RegisterData;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;

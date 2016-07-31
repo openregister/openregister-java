@@ -6,6 +6,7 @@ import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
+import uk.gov.register.core.RegisterDetail;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.Closeable;

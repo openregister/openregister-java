@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
