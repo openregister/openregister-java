@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
-import uk.gov.register.presentation.dao.Entry;
-import uk.gov.register.presentation.dao.Item;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.Closeable;

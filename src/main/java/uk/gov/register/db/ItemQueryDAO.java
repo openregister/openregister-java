@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.dao;
+package uk.gov.register.db;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import uk.gov.register.core.Item;
 
 import java.io.IOException;
 import java.sql.ResultSet;

@@ -34,14 +34,14 @@ import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.dao.EntryQueryDAO;
-import uk.gov.register.presentation.dao.ItemQueryDAO;
-import uk.gov.register.presentation.dao.RecordQueryDAO;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.presentation.resource.RequestContext;
 import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
-import uk.gov.store.EntryStore;
+import uk.gov.register.db.EntryStore;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwo;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 

@@ -7,7 +7,7 @@ import uk.gov.register.api.representations.CsvWriter;
 import uk.gov.register.presentation.ListValue;
 import uk.gov.register.presentation.StringValue;
 import uk.gov.register.configuration.Register;
-import uk.gov.register.presentation.dao.Entry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.presentation.view.ItemView;
 import uk.gov.register.presentation.view.EntryListView;
 

@@ -1,4 +1,4 @@
-package uk.gov.store;
+package uk.gov.register.db;
 
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;

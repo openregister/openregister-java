@@ -2,9 +2,13 @@ package uk.gov.register.presentation.resource;
 
 import io.dropwizard.views.View;
 import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.presentation.ArchiveCreator;
 import uk.gov.register.presentation.RegisterDetail;
-import uk.gov.register.presentation.dao.*;
 import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.ViewFactory;
 

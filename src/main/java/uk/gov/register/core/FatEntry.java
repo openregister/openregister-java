@@ -1,4 +1,4 @@
-package uk.gov.register;
+package uk.gov.register.core;
 
 import uk.gov.mint.Entry;
 import uk.gov.mint.Item;

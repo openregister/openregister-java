@@ -1,9 +1,10 @@
-package uk.gov.register.presentation.dao;
+package uk.gov.register.db;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import uk.gov.register.core.Entry;
 import uk.gov.verifiablelog.store.MerkleLeafStore;
 
 public class EntryMerkleLeafStore implements MerkleLeafStore {

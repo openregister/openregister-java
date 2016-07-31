@@ -6,7 +6,7 @@ import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.configuration.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.presentation.dao.Record;
+import uk.gov.register.core.Record;
 import uk.gov.register.api.representations.CsvRepresentation;
 import uk.gov.register.presentation.resource.Pagination;
 import uk.gov.register.presentation.resource.RequestContext;

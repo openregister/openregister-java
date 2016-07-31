@@ -1,6 +1,7 @@
 package uk.gov.register.presentation.dao;
 
 import org.junit.Test;
+import uk.gov.register.core.Entry;
 
 import java.time.Instant;
 

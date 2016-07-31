@@ -1,7 +1,7 @@
 package uk.gov.register.presentation.resource;
 
-import uk.gov.register.presentation.dao.EntryQueryDAO;
-import uk.gov.register.presentation.dao.RecordQueryDAO;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.RegisterDetailView;
 import uk.gov.register.presentation.view.ViewFactory;

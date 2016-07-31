@@ -13,9 +13,9 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.dao.Entry;
-import uk.gov.register.presentation.dao.Item;
-import uk.gov.register.presentation.dao.Record;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.Record;
 import uk.gov.register.presentation.resource.RequestContext;
 
 import java.io.IOException;

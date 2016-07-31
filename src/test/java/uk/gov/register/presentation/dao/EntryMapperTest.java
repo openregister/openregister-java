@@ -3,7 +3,9 @@ package uk.gov.register.presentation.dao;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
-import uk.gov.store.EntryDAO;
+import uk.gov.register.core.Entry;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.EntryDAO;
 
 import java.sql.Timestamp;
 import java.time.Instant;

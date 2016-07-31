@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.dao;
+package uk.gov.register.db;
 
 import io.dropwizard.jdbi.args.InstantMapper;
 import org.skife.jdbi.v2.ResultIterator;
@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterColumnMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
+import uk.gov.register.core.Entry;
 
 import java.time.Instant;
 import java.util.Collection;

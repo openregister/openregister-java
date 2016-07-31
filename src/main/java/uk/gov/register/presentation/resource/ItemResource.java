@@ -1,6 +1,6 @@
 package uk.gov.register.presentation.resource;
 
-import uk.gov.register.presentation.dao.ItemQueryDAO;
+import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.presentation.view.AttributionView;
 import uk.gov.register.presentation.view.ItemView;

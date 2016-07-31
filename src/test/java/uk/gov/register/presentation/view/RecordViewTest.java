@@ -5,9 +5,9 @@ import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
 import org.junit.Test;
 import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.dao.Entry;
-import uk.gov.register.presentation.dao.Item;
-import uk.gov.register.presentation.dao.Record;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.Record;
 
 import java.io.IOException;
 import java.time.Instant;

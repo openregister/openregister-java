@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.dao;
+package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

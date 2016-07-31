@@ -3,7 +3,7 @@ package uk.gov.indexer.dao;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
-import uk.gov.register.FatEntry;
+import uk.gov.register.core.FatEntry;
 
 import java.util.HashMap;
 import java.util.List;

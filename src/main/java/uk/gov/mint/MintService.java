@@ -5,7 +5,7 @@ import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.store.EntryStore;
+import uk.gov.register.db.EntryStore;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;

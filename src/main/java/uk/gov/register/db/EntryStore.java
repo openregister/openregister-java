@@ -1,4 +1,4 @@
-package uk.gov.store;
+package uk.gov.register.db;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.skife.jdbi.v2.Handle;
@@ -8,7 +8,7 @@ import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 import uk.gov.indexer.dao.DestinationDBUpdateDAO;
 import uk.gov.mint.Entry;
 import uk.gov.mint.Item;
-import uk.gov.register.FatEntry;
+import uk.gov.register.core.FatEntry;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

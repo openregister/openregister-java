@@ -1,7 +1,8 @@
-package uk.gov.register.presentation.dao;
+package uk.gov.register.db;
 
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import uk.gov.register.core.Entry;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

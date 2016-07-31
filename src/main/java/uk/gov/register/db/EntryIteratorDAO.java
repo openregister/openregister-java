@@ -1,6 +1,7 @@
-package uk.gov.register.presentation.dao;
+package uk.gov.register.db;
 
 import org.skife.jdbi.v2.ResultIterator;
+import uk.gov.register.core.Entry;
 
 public class EntryIteratorDAO {
 
