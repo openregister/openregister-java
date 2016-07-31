@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.filter;
+package uk.gov.register.filter;
 
 import com.google.common.net.HttpHeaders;
 import io.dropwizard.jersey.caching.CacheControl;

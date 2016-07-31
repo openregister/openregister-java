@@ -140,7 +140,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         });
 
         resourceConfig.packages(
-                "uk.gov.register.presentation.filter",
+                "uk.gov.register.filter",
                 "uk.gov.register.api.representations",
                 "uk.gov.register.resources");
 

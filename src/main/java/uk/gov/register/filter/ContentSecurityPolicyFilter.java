@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.filter;
+package uk.gov.register.filter;
 
 import com.google.common.net.HttpHeaders;
 
@@ -9,9 +9,9 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @Provider
-public class ContentTypeOptionsFilter implements ContainerResponseFilter {
+public class ContentSecurityPolicyFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        responseContext.getHeaders().add(HttpHeaders.X_CONTENT_TYPE_OPTIONS, "nosniff");
+        responseContext.getHeaders().add(HttpHeaders.CONTENT_SECURITY_POLICY, "default-src 'self'");
     }
 }
