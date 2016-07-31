@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import org.junit.Test;
 import org.skife.jdbi.v2.ResultIterator;
@@ -24,7 +24,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.register.presentation.resource.FakeResultIterator.resultIterator;
+import static uk.gov.register.resources.FakeResultIterator.resultIterator;
 
 public class VerifiableLogResourceTest {
     private static final String item1 = "{\"address\":\"6789\",\"name\":\"presley\"}";

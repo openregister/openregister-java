@@ -6,7 +6,7 @@ import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 import uk.gov.register.presentation.view.EntryListView;
 import uk.gov.register.presentation.view.EntryView;
 

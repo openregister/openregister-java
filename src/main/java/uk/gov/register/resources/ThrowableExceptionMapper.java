@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;

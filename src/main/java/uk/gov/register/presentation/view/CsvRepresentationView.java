@@ -5,7 +5,7 @@ import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.configuration.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.api.representations.CsvRepresentation;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 
 import java.util.Optional;
 

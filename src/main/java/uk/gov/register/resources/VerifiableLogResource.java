@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import uk.gov.register.api.EntryProof;
 import uk.gov.register.api.ConsistencyProof;

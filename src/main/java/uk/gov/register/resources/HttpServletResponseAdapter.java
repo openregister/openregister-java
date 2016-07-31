@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.multipart.ContentDisposition;

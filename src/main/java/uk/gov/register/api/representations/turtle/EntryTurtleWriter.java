@@ -6,7 +6,7 @@ import org.apache.jena.rdf.model.Property;
 import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 import uk.gov.register.presentation.view.EntryView;
 
 import javax.inject.Inject;
@@ -27,7 +27,7 @@ public class EntryTurtleWriter extends TurtleRepresentationWriter<EntryView> {
         Model model = ModelFactory.createDefaultModel();
         Property entryNumberProperty = model.createProperty(SPEC_PREFIX + "entry-number-field");
         Property entryTimestampProperty = model.createProperty(SPEC_PREFIX + "entry-timestamp-field");
-        Property itemProperty = model.createProperty(SPEC_PREFIX + "item-resource");
+        Property itemProperty = model.createProperty(SPEC_PREFIX + "item-resources");
 
         model.createResource(entryUri(entryView.getEntry().entryNumber).toString())
                 .addProperty(entryNumberProperty, entryView.getEntry().entryNumber)

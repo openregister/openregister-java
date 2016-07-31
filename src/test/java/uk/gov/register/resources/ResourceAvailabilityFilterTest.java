@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;

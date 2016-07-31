@@ -14,7 +14,7 @@ import java.io.IOException;
 
 /**
  * Filter to provide a default Cache-control: header of "no-transform".  Can be overridden with a {@link CacheControl}
- * annotation on the resource method.
+ * annotation on the resources method.
  */
 @Provider
 public class CacheNoTransformFilterFactory implements DynamicFeature {

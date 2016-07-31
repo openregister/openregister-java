@@ -1,6 +1,6 @@
 package uk.gov.register.api.representations;
 
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;

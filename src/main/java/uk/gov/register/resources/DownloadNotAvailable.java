@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.ElementType;

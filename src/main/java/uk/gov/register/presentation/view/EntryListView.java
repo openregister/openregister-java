@@ -7,8 +7,8 @@ import uk.gov.register.configuration.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.api.representations.CsvRepresentation;
-import uk.gov.register.presentation.resource.IPagination;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.IPagination;
+import uk.gov.register.resources.RequestContext;
 
 import java.util.Collection;
 import java.util.Optional;

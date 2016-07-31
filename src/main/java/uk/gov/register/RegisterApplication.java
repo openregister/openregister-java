@@ -38,7 +38,7 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 import uk.gov.register.presentation.view.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.db.EntryStore;
@@ -142,7 +142,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         resourceConfig.packages(
                 "uk.gov.register.presentation.filter",
                 "uk.gov.register.api.representations",
-                "uk.gov.register.presentation.resource");
+                "uk.gov.register.resources");
 
         jersey.register(ItemValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);

@@ -7,7 +7,7 @@ import uk.gov.register.Cardinality;
 import uk.gov.register.Field;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 
 import javax.inject.Inject;
 import java.util.Map;

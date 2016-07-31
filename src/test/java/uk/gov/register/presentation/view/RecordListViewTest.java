@@ -16,7 +16,7 @@ import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 
 import java.io.IOException;
 import java.time.Instant;

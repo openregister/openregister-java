@@ -23,7 +23,7 @@ public class ResourceYamlFileReader {
             InputStream fieldsStream = new ResourceYamlFileReader().getStreamFromFile(resourceYamlPath, defaultResourceYamlFilePath);
             return yamlObjectMapper.<Map<String, N>>readValue(fieldsStream, typeReference).values();
         } catch (IOException e) {
-            throw new RuntimeException("Error loading resource configuration file.", e);
+            throw new RuntimeException("Error loading resources configuration file.", e);
         }
     }
 

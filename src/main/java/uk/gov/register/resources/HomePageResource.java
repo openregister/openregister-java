@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
 import uk.gov.register.db.EntryQueryDAO;

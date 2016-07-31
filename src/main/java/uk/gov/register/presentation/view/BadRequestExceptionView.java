@@ -2,7 +2,7 @@ package uk.gov.register.presentation.view;
 
 import uk.gov.register.presentation.RegisterData;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.ws.rs.BadRequestException;

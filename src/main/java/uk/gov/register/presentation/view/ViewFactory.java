@@ -11,9 +11,9 @@ import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.presentation.resource.IPagination;
-import uk.gov.register.presentation.resource.Pagination;
-import uk.gov.register.presentation.resource.RequestContext;
+import uk.gov.register.resources.IPagination;
+import uk.gov.register.resources.Pagination;
+import uk.gov.register.resources.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;

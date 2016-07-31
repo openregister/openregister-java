@@ -1,4 +1,4 @@
-package uk.gov.register.presentation.resource;
+package uk.gov.register.resources;
 
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
