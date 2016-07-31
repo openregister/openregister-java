@@ -7,11 +7,11 @@ import uk.gov.mint.User;
 
 import java.util.Optional;
 
-public class MintAuthenticator implements Authenticator<BasicCredentials, User> {
+public class RegisterAuthenticator implements Authenticator<BasicCredentials, User> {
     private final String expectedUsername;
     private final String expectedPassword;
 
-    public MintAuthenticator(String expectedUsername, String expectedPassword) {
+    public RegisterAuthenticator(String expectedUsername, String expectedPassword) {
         this.expectedUsername = expectedUsername;
         this.expectedPassword = expectedPassword;
     }

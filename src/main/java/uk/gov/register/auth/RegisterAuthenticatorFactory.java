@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 import java.util.Optional;
 
-public class MintAuthenticatorFactory {
+public class RegisterAuthenticatorFactory {
     @Valid
     @JsonProperty
     private String user;
@@ -14,9 +14,9 @@ public class MintAuthenticatorFactory {
     @JsonProperty
     private String password;
 
-    public Optional<MintAuthenticator> build() {
+    public Optional<RegisterAuthenticator> build() {
         if (user != null && password != null) {
-            return Optional.of(new MintAuthenticator(user, password));
+            return Optional.of(new RegisterAuthenticator(user, password));
         }
         return Optional.empty();
     }
