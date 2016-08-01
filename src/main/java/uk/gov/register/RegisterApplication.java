@@ -27,21 +27,21 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
-import uk.gov.mint.monitoring.CloudWatchHeartbeater;
+import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
-import uk.gov.register.presentation.RegisterData;
-import uk.gov.register.presentation.dao.EntryQueryDAO;
-import uk.gov.register.presentation.dao.ItemQueryDAO;
-import uk.gov.register.presentation.dao.RecordQueryDAO;
-import uk.gov.register.presentation.representations.ExtraMediaType;
-import uk.gov.register.presentation.resource.RequestContext;
-import uk.gov.register.presentation.view.ViewFactory;
+import uk.gov.register.core.RegisterData;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.api.representations.ExtraMediaType;
+import uk.gov.register.resources.RequestContext;
+import uk.gov.register.views.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
-import uk.gov.store.EntryStore;
+import uk.gov.register.db.EntryStore;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwo;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -140,21 +140,20 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         });
 
         resourceConfig.packages(
-                "uk.gov.register.presentation.filter",
-                "uk.gov.register.presentation.representations",
-                "uk.gov.register.presentation.resource");
+                "uk.gov.register.filter",
+                "uk.gov.register.api.representations",
+                "uk.gov.register.resources");
 
         jersey.register(ItemValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
-        jersey.register(MintService.class);
 
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
-                        jersey.register(new AuthDynamicFeature(
-                                new BasicCredentialAuthFilter.Builder<User>()
-                                        .setAuthenticator(authenticator)
-                                        .buildAuthFilter()
-                        ))
+                                jersey.register(new AuthDynamicFeature(
+                                        new BasicCredentialAuthFilter.Builder<User>()
+                                                .setAuthenticator(authenticator)
+                                                .buildAuthFilter()
+                                ))
                 );
 
         if (configuration.cloudWatchEnvironmentName().isPresent()) {

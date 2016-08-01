@@ -11,6 +11,7 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.thymeleaf.ThymeleafResourceResolver;
 
 import javax.servlet.ServletContext;

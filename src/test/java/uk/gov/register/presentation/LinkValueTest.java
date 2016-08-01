@@ -1,6 +1,7 @@
 package uk.gov.register.presentation;
 
 import org.junit.Test;
+import uk.gov.register.core.LinkValue;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

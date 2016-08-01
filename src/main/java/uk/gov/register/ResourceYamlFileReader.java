@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-class ResourceYamlFileReader {
+public class ResourceYamlFileReader {
     private final Logger logger = LoggerFactory.getLogger(ResourceYamlFileReader.class);
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
@@ -23,7 +23,7 @@ class ResourceYamlFileReader {
             InputStream fieldsStream = new ResourceYamlFileReader().getStreamFromFile(resourceYamlPath, defaultResourceYamlFilePath);
             return yamlObjectMapper.<Map<String, N>>readValue(fieldsStream, typeReference).values();
         } catch (IOException e) {
-            throw new RuntimeException("Error loading resource configuration file.", e);
+            throw new RuntimeException("Error loading resources configuration file.", e);
         }
     }
 

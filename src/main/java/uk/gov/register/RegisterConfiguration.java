@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
-import uk.gov.mint.auth.MintAuthenticatorFactory;
+import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
@@ -35,7 +35,7 @@ public class RegisterConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private MintAuthenticatorFactory credentials = new MintAuthenticatorFactory();
+    private RegisterAuthenticatorFactory credentials = new RegisterAuthenticatorFactory();
 
     @SuppressWarnings("unused")
     @Valid
@@ -65,7 +65,7 @@ public class RegisterConfiguration extends Configuration
         return register;
     }
 
-    public MintAuthenticatorFactory getAuthenticator() {
+    public RegisterAuthenticatorFactory getAuthenticator() {
         return credentials;
     }
 
