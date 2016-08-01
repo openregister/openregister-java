@@ -1,4 +1,4 @@
-package uk.gov.mint;
+package uk.gov.register.core;
 
 public class User implements java.security.Principal {
     @Override

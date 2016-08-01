@@ -3,7 +3,7 @@ package uk.gov.register.auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;
-import uk.gov.mint.User;
+import uk.gov.register.core.User;
 
 import java.util.Optional;
 
