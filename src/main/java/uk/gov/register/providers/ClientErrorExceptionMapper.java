@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.providers;
 
 import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.ViewFactory;
