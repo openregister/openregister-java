@@ -1,4 +1,4 @@
-package uk.gov.register.services;
+package uk.gov.register.service;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;

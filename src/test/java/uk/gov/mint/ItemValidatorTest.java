@@ -6,7 +6,7 @@ import org.junit.Test;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.exceptions.ItemValidationException;
-import uk.gov.register.services.ItemValidator;
+import uk.gov.register.service.ItemValidator;
 
 import java.io.IOException;
 import java.util.Optional;

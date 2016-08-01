@@ -41,7 +41,7 @@ import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.providers.ItemValidationExceptionMapper;
 import uk.gov.register.providers.JsonParseExceptionMapper;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.services.ItemValidator;
+import uk.gov.register.service.ItemValidator;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwo;
