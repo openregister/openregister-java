@@ -1,6 +1,7 @@
 package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import uk.gov.register.core.PublicBody;
 import uk.gov.register.util.ResourceYamlFileReader;
 
 import java.util.Collection;
