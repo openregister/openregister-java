@@ -1,4 +1,4 @@
-package uk.gov.register.api.representations;
+package uk.gov.register.views.representations;
 
 import javax.ws.rs.core.MediaType;
 

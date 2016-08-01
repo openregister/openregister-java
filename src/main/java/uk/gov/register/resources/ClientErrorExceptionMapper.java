@@ -1,6 +1,6 @@
 package uk.gov.register.resources;
 
-import uk.gov.register.api.representations.ExtraMediaType;
+import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafView;
 

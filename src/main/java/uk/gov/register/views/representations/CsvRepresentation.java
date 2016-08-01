@@ -1,4 +1,4 @@
-package uk.gov.register.api.representations;
+package uk.gov.register.views.representations;
 
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 

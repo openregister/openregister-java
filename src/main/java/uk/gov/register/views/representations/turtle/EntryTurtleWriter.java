@@ -1,9 +1,9 @@
-package uk.gov.register.api.representations.turtle;
+package uk.gov.register.views.representations.turtle;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
-import uk.gov.register.api.representations.ExtraMediaType;
+import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.resources.RequestContext;

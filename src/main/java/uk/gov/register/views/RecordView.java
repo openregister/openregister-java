@@ -11,7 +11,7 @@ import uk.gov.register.core.RegisterData;
 import uk.gov.register.configuration.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.Record;
-import uk.gov.register.api.representations.CsvRepresentation;
+import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.resources.RequestContext;
 
 import java.util.Map;

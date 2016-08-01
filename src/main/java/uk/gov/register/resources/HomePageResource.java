@@ -3,7 +3,7 @@ package uk.gov.register.resources;
 import io.dropwizard.views.View;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.api.representations.ExtraMediaType;
+import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.ViewFactory;
 
 import javax.inject.Inject;

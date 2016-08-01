@@ -1,4 +1,4 @@
-package uk.gov.register.api.representations;
+package uk.gov.register.views.representations;
 
 import uk.gov.register.resources.RequestContext;
 
