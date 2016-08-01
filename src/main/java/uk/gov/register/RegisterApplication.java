@@ -38,8 +38,6 @@ import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
 import uk.gov.register.presentation.ItemConverter;
-import uk.gov.register.providers.ItemValidationExceptionMapper;
-import uk.gov.register.providers.JsonParseExceptionMapper;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
@@ -134,10 +132,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         resourceConfig.packages(
                 "uk.gov.register.filters",
                 "uk.gov.register.views.representations",
-                "uk.gov.register.resources");
+                "uk.gov.register.resources",
+                "uk.gov.register.providers");
 
-        jersey.register(ItemValidationExceptionMapper.class);
-        jersey.register(JsonParseExceptionMapper.class);
         jersey.register(UriDataFormatFilter.class);
 
         configuration.getAuthenticator().build()
