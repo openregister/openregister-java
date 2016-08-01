@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register;
 
 import io.dropwizard.setup.Environment;
 import org.apache.commons.lang3.StringUtils;
