@@ -1,4 +1,4 @@
-package uk.gov.register;
+package uk.gov.register.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
