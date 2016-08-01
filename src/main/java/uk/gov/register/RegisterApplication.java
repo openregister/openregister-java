@@ -146,7 +146,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         jersey.register(ItemValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
-        jersey.register(MintService.class);
 
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
