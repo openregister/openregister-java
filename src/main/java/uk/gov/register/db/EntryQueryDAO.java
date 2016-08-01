@@ -10,6 +10,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import uk.gov.register.core.Entry;
+import uk.gov.register.db.mappers.EntryMapper;
 
 import java.time.Instant;
 import java.util.Collection;

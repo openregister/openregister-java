@@ -15,6 +15,7 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
+import uk.gov.register.db.mappers.EntryMapper;
 
 import java.io.IOException;
 import java.sql.ResultSet;
