@@ -1,4 +1,4 @@
-package uk.gov.mint.monitoring;
+package uk.gov.register.monitoring;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
