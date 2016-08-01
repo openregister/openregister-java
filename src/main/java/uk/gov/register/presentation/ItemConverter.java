@@ -3,13 +3,9 @@ package uk.gov.register.presentation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.core.Cardinality;
-import uk.gov.register.core.Field;
+import uk.gov.register.core.*;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.core.FieldValue;
-import uk.gov.register.core.LinkValue;
-import uk.gov.register.core.ListValue;
 import uk.gov.register.resources.RequestContext;
 
 import javax.inject.Inject;

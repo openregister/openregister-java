@@ -14,7 +14,7 @@ import uk.gov.register.core.FieldValue;
 import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
-import uk.gov.register.presentation.StringValue;
+import uk.gov.register.core.StringValue;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.resources.RequestContext;
