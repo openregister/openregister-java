@@ -2,7 +2,6 @@ package uk.gov.register.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
-import uk.gov.register.util.CanonicalJsonMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

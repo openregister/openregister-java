@@ -4,8 +4,11 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.views.EntryListView;
+import uk.gov.register.views.RecordListView;
+import uk.gov.register.views.RecordView;
+import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
-import uk.gov.register.views.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

@@ -2,11 +2,11 @@ package uk.gov.register.resources;
 
 import org.junit.Test;
 import org.skife.jdbi.v2.ResultIterator;
-import uk.gov.register.views.EntryProof;
-import uk.gov.register.views.ConsistencyProof;
-import uk.gov.register.views.RegisterProof;
 import uk.gov.register.core.Entry;
 import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.views.ConsistencyProof;
+import uk.gov.register.views.EntryProof;
+import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
 import java.security.NoSuchAlgorithmException;

@@ -1,7 +1,7 @@
 package uk.gov.register.views;
 
-import uk.gov.register.core.RegisterData;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 

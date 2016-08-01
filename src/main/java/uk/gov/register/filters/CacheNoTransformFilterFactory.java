@@ -3,11 +3,7 @@ package uk.gov.register.filters;
 import com.google.common.net.HttpHeaders;
 import io.dropwizard.jersey.caching.CacheControl;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.container.*;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;

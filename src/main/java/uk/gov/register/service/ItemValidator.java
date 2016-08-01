@@ -3,13 +3,13 @@ package uk.gov.register.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.exceptions.ItemValidationException;
-import uk.gov.register.core.Cardinality;
-import uk.gov.register.core.Field;
 import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.configuration.Register;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.Cardinality;
+import uk.gov.register.core.Field;
+import uk.gov.register.core.datatype.Datatype;
+import uk.gov.register.exceptions.ItemValidationException;
 
 import javax.inject.Inject;
 import java.util.Set;

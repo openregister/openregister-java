@@ -11,12 +11,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.service.ItemConverter;
-import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
+import uk.gov.register.service.ItemConverter;
 
 import java.io.IOException;
 import java.time.Instant;

@@ -2,9 +2,7 @@ package uk.gov.functional;
 
 import org.junit.rules.ExternalResource;
 
-import static uk.gov.functional.TestDBSupport.testEntryDAO;
-import static uk.gov.functional.TestDBSupport.testItemDAO;
-import static uk.gov.functional.TestDBSupport.testRecordDAO;
+import static uk.gov.functional.TestDBSupport.*;
 
 public class WipeDatabaseRule extends ExternalResource {
     @Override

@@ -3,8 +3,8 @@ package uk.gov.register.providers;
 import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.ClientErrorException;

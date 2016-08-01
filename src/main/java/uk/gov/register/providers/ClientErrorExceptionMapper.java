@@ -1,8 +1,8 @@
 package uk.gov.register.providers;
 
-import uk.gov.register.views.representations.ExtraMediaType;
-import uk.gov.register.views.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafView;
+import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;

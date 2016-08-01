@@ -1,7 +1,6 @@
 package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import uk.gov.register.core.FieldValue;
 
 import javax.validation.constraints.NotNull;
 

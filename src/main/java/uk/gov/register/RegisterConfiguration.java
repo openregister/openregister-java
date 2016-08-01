@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
-import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
-import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.ResourceConfiguration;
 
 import javax.validation.Valid;

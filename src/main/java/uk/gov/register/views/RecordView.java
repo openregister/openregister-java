@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.service.ItemConverter;
-import uk.gov.register.core.FieldValue;
-import uk.gov.register.core.RegisterData;
 import uk.gov.register.configuration.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
+import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
-import uk.gov.register.views.representations.CsvRepresentation;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
+import uk.gov.register.service.ItemConverter;
+import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Map;
 import java.util.Optional;

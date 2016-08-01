@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
 import org.junit.Test;
-import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
+import uk.gov.register.core.RegisterData;
 
 import java.io.IOException;
 import java.time.Instant;
