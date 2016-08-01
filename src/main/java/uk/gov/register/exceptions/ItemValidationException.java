@@ -1,4 +1,4 @@
-package uk.gov.mint;
+package uk.gov.register.exceptions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

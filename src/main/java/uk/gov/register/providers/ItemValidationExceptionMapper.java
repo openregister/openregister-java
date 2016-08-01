@@ -1,6 +1,6 @@
 package uk.gov.register.providers;
 
-import uk.gov.mint.ItemValidationException;
+import uk.gov.register.exceptions.ItemValidationException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
