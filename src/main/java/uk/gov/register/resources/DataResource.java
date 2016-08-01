@@ -14,7 +14,7 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.EntryStore;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.service.ArchiveCreator;
+import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.core.RegisterDetail;
 import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.ViewFactory;
