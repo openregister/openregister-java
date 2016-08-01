@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.providers;
 
 import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
