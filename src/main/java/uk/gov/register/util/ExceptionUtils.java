@@ -1,4 +1,4 @@
-package uk.gov.register.exceptions;
+package uk.gov.register.util;
 
 public class ExceptionUtils {
     @SuppressWarnings("unchecked")
