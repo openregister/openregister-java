@@ -1,6 +1,6 @@
-package uk.gov.mint;
+package uk.gov.register.exceptions;
 
-class ExceptionUtils {
+public class ExceptionUtils {
     @SuppressWarnings("unchecked")
     private static <T extends Exception> void throwAsUnchecked(Throwable exception) throws T {
         throw (T) exception;
