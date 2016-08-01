@@ -11,7 +11,7 @@ import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.views.representations.turtle.EntryTurtleWriter;
 import uk.gov.register.views.representations.turtle.ItemTurtleWriter;
 import uk.gov.register.core.FieldValue;
-import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
 import uk.gov.register.core.StringValue;

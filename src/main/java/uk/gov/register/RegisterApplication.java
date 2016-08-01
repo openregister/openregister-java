@@ -37,7 +37,7 @@ import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
-import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;

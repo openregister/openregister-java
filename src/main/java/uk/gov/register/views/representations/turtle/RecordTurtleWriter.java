@@ -3,7 +3,7 @@ package uk.gov.register.views.representations.turtle;
 import org.apache.jena.rdf.model.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.resources.RequestContext;

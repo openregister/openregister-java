@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.configuration.PublicBody;

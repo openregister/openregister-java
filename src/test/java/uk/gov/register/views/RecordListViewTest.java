@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.FieldsConfiguration;
-import uk.gov.register.presentation.ItemConverter;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;

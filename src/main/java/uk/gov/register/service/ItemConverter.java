@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
