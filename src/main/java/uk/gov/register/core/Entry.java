@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import uk.gov.register.presentation.ISODateFormatter;
+import uk.gov.register.util.ISODateFormatter;
 
 import java.time.Instant;
 

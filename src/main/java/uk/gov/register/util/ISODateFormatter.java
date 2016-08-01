@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.util;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
