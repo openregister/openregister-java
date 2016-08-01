@@ -15,7 +15,7 @@ import java.util.zip.ZipInputStream;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DataResourceTest extends FunctionalTestBase {
+public class DataDownloadTest extends FunctionalTestBase {
     @Before
     public void publishTestMessages() {
         mintItems("{\"street\":\"ellis\",\"address\":\"12345\"}",
