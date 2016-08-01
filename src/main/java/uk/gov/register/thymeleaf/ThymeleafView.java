@@ -3,7 +3,7 @@ package uk.gov.register.thymeleaf;
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
-import uk.gov.register.configuration.Register;
+import uk.gov.register.core.Register;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;

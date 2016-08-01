@@ -26,7 +26,7 @@ public class RegistersConfiguration {
 
     public RegisterData getRegisterData(String registerName) {
         try {
-            return registers.stream().filter(f -> Objects.equals(f.getRegister().registerName, registerName)).findFirst().get();
+            return registers.stream().filter(f -> Objects.equals(f.getRegister().getRegisterName(), registerName)).findFirst().get();
         } catch (RuntimeException e) {
             throw new RuntimeException("Cannot get register data for " + registerName, e);
         }
