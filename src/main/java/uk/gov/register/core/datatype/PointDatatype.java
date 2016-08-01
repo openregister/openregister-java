@@ -1,18 +1,17 @@
-package uk.gov.register.datatype;
+package uk.gov.register.core.datatype;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class UnvalidatedDatatype implements Datatype{
-
+public class PointDatatype implements Datatype {
     private final String datatypeName;
 
-    public UnvalidatedDatatype(String datatypeName) {
+    public PointDatatype(String datatypeName) {
         this.datatypeName = datatypeName;
     }
 
     @Override
     public boolean isValid(JsonNode value) {
-        return true;
+        return value.textValue().trim().matches("^\\[\\s*[-]?\\d+\\.\\d+\\s*,\\s*[-]?\\d+\\.\\d+\\s*\\]$");
     }
 
     public String getName(){

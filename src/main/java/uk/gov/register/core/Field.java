@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.datatype.Datatype;
-import uk.gov.register.datatype.DatatypeFactory;
+import uk.gov.register.core.datatype.Datatype;
+import uk.gov.register.core.datatype.DatatypeFactory;
 
 import java.util.Optional;
 

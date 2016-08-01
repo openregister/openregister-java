@@ -1,4 +1,4 @@
-package uk.gov.register.datatype;
+package uk.gov.register.core.datatype;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.junit.Test;

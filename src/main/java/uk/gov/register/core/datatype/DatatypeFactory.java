@@ -1,4 +1,4 @@
-package uk.gov.register.datatype;
+package uk.gov.register.core.datatype;
 
 public class DatatypeFactory {
     public static Datatype get(String datatypeName) {

@@ -1,4 +1,4 @@
-package uk.gov.register.datatype;
+package uk.gov.register.core.datatype;
 
 import org.junit.Test;
 
