@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import uk.gov.register.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.services.ItemValidator;
 
 import java.io.IOException;
 import java.util.Optional;

@@ -1,8 +1,9 @@
-package uk.gov.mint;
+package uk.gov.register.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.mint.ItemValidationException;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
 import uk.gov.register.FieldsConfiguration;

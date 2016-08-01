@@ -5,7 +5,7 @@ import com.google.common.base.Throwables;
 import io.dropwizard.views.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.mint.ItemValidator;
+import uk.gov.register.services.ItemValidator;
 import uk.gov.mint.ObjectReconstructor;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
