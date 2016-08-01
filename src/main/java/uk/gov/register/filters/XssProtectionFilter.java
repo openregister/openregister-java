@@ -1,4 +1,4 @@
-package uk.gov.register.filter;
+package uk.gov.register.filters;
 
 import com.google.common.net.HttpHeaders;
 

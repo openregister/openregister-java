@@ -1,4 +1,4 @@
-package uk.gov.register.filter;
+package uk.gov.register.filters;
 
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.resources.DownloadNotAvailable;
