@@ -17,7 +17,7 @@ import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
 import uk.gov.functional.db.TestDBItem;
 import uk.gov.functional.db.TestRecord;
-import uk.gov.mint.CanonicalJsonMapper;
+import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.mint.Entry;
 import uk.gov.mint.Item;
 

@@ -3,6 +3,7 @@ package uk.gov.mint;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.postgresql.util.PGobject;
+import uk.gov.register.util.CanonicalJsonMapper;
 
 import java.sql.SQLException;
 
