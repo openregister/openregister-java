@@ -2,6 +2,7 @@ package uk.gov.mint;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import org.junit.Test;
+import uk.gov.register.providers.JsonParseExceptionMapper;
 
 import javax.ws.rs.core.Response;
 
