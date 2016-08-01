@@ -24,7 +24,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.mint.ObjectReconstructor;
+import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;

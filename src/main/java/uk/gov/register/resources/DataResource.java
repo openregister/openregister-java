@@ -6,7 +6,7 @@ import io.dropwizard.views.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.mint.ObjectReconstructor;
+import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;

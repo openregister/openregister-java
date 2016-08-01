@@ -3,6 +3,7 @@ package uk.gov.mint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.util.ObjectReconstructor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ObjectReconstructorTest {

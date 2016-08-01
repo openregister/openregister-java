@@ -1,4 +1,4 @@
-package uk.gov.mint;
+package uk.gov.register.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
