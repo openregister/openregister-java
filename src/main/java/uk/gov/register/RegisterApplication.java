@@ -25,6 +25,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.RegisterData;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.FieldsConfiguration;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;

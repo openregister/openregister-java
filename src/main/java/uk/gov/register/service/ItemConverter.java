@@ -3,7 +3,7 @@ package uk.gov.register.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.FieldsConfiguration;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
