@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.util.HtmlViewSupport;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
