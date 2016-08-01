@@ -1,4 +1,4 @@
-package uk.gov.register.presentation;
+package uk.gov.register.util;
 
 public class RegisterNameExtractor {
     public static String extractRegisterName(String host) {
