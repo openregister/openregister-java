@@ -80,6 +80,28 @@ void startApp() {
     builder.redirectError(ProcessBuilder.Redirect.to(new File(projectDir, 'stderr.txt')))
     builder.redirectOutput(ProcessBuilder.Redirect.to(new File(projectDir, 'stdout.txt')))
     project.ext.runningApp = builder.start()
+    waitForApplicationToStart()
+}
+
+def waitForApplicationToStart() {
+    URL target = new URL('http://localhost:9090/')
+
+    int counter = 0
+    boolean appRunning = false
+    println "Waiting for application to start (10s max)"
+    while (!appRunning && counter++ < 10) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) target.openConnection()
+            appRunning = connection.getResponseCode() == 200
+        }
+        catch (IOException ignored) {
+            Thread.sleep(1000)
+        }
+    }
+
+    if(!appRunning){
+        throw new Exception("Application start timeout (10s)")
+    }
 }
 
 task stopAppForConformance << {
@@ -119,9 +141,6 @@ task runConformanceTests(type: Exec) {
     dependsOn << installConformanceTestDeps
     finalizedBy stopAppForConformance
     mustRunAfter test
-    doFirst {
-        waitForApplicationToStart()
-    }
     commandLine '.venv/bin/openregister-conformance', '--no-https', 'http://school.openregister.dev:9090'
 }
 
@@ -169,23 +188,7 @@ task(run, type: JavaExec) {
     jvmArgs = ["-DbaseDirForTemplates=$projectDir/src/main/resources"]
 }
 
-def waitForApplicationToStart() {
-    URL target = new URL('http://localhost:9090/')
 
-    int counter = 0
-    boolean appRunning = false
-    println "Waiting for application to start (10s max)"
-    while (!appRunning && counter++ < 10) {
-
-        try {
-            HttpURLConnection connection = (HttpURLConnection) target.openConnection()
-            appRunning = connection.getResponseCode() == 200
-        }
-        catch (IOException ignored) {
-            Thread.sleep(1000)
-        }
-    }
-}
 
 task(loadSchoolData, type: JavaExec) {
     main = 'uk.gov.register.presentation.functional.testSupport.DBSupport'
