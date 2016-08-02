@@ -1,4 +1,4 @@
-package uk.gov.register.functional.testSupport;
+package uk.gov.functional.app;
 
 import io.dropwizard.testing.ResourceHelpers;
 import uk.gov.register.RegisterApplication;

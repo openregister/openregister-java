@@ -13,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
+import uk.gov.functional.app.CleanDatabaseRule;
 import uk.gov.functional.db.TestDBItem;
 import uk.gov.functional.db.TestRecord;
 import uk.gov.mint.Entry;
@@ -31,9 +32,9 @@ import java.util.Map;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static uk.gov.functional.TestDBSupport.*;
+import static uk.gov.functional.db.TestDBSupport.*;
 
-public class PGFunctionalTest {
+public class DataUploadFunctionalTest {
     public static final int APPLICATION_PORT = 9000;
 
     private final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,

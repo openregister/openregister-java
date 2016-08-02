@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;

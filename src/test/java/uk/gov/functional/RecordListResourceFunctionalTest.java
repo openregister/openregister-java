@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.codec.digest.DigestUtils;

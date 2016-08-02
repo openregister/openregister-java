@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import org.json.JSONException;
 import org.jsoup.Jsoup;

@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
@@ -11,7 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-import uk.gov.functional.CleanDatabaseRule;
+import uk.gov.functional.app.CleanDatabaseRule;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
 
@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
-import static uk.gov.functional.TestDBSupport.postgresConnectionString;
+import static uk.gov.functional.db.TestDBSupport.postgresConnectionString;
 
 public class HomePageFunctionalTest  {
 

@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;

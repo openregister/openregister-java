@@ -1,8 +1,8 @@
-package uk.gov.functional;
+package uk.gov.functional.app;
 
 import org.junit.rules.ExternalResource;
 
-import static uk.gov.functional.TestDBSupport.*;
+import static uk.gov.functional.db.TestDBSupport.*;
 
 public class WipeDatabaseRule extends ExternalResource {
     @Override

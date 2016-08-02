@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
@@ -20,11 +20,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-import static uk.gov.register.functional.TestEntry.anEntry;
+import static uk.gov.functional.db.TestEntry.anEntry;
 
 @RunWith(Parameterized.class)
 @Ignore("test failing due to register being taken from config not from request")
-public class RepresentationsTest extends FunctionalTestBase {
+public class RepresentationsFunctionalTest extends FunctionalTestBase {
     private static final String REGISTER_NAME = "register";
     private final String extension;
     private final String expectedContentType;
@@ -56,7 +56,7 @@ public class RepresentationsTest extends FunctionalTestBase {
         });
     }
 
-    public RepresentationsTest(String extension, String expectedContentType) {
+    public RepresentationsFunctionalTest(String extension, String expectedContentType) {
         this.extension = extension;
         this.expectedContentType = expectedContentType;
         this.expectedItemValue = fixture("fixtures/item." + extension);

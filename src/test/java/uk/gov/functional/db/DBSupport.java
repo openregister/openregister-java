@@ -1,6 +1,4 @@
-package uk.gov.register.functional.testSupport;
-
-import uk.gov.register.functional.TestEntry;
+package uk.gov.functional.db;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static uk.gov.register.functional.TestEntry.anEntry;
+import static uk.gov.functional.db.TestEntry.anEntry;
 
 public class DBSupport {
     public static void main(String[] args) throws IOException, SQLException {

@@ -121,7 +121,7 @@ task(loadSchoolDataForConformance, type: JavaExec) {
             executable "$projectDir/create_schema.sh" args 'ft_openregister_java'
         }
     }
-    main = 'uk.gov.register.functional.testSupport.DBSupport'
+    main = 'uk.gov.functional.db.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
     args = ["school", "school-data.jsonl", "ft_openregister_java"]
 }
@@ -191,7 +191,7 @@ task(run, type: JavaExec) {
 
 
 task(loadSchoolData, type: JavaExec) {
-    main = 'uk.gov.register.functional.testSupport.DBSupport'
+    main = 'uk.gov.functional.db.DBSupport'
     classpath = sourceSets.test.runtimeClasspath
     args = ["school", "school-data.jsonl", "openregister_java"]
 }

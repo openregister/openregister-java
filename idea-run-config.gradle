@@ -9,7 +9,7 @@ idea {
                 appendApplication(
                     projectRunConfigurationManagerNode,
                     'FunctionalTestRegisterRunner',
-                    "uk.gov.register.presentation.functional.testSupport.RegisterApplicationRunner",
+                    "uk.gov.functional.app.RegisterApplicationRunner",
                     '-DbaseDirForTemplates=$PROJECT_DIR$/src/main/resources',
                     '',
                     'file://$PROJECT_DIR$',

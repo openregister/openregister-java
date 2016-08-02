@@ -1,4 +1,4 @@
-package uk.gov.functional;
+package uk.gov.functional.db;
 
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;

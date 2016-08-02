@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -6,6 +6,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
+import uk.gov.functional.db.TestEntry;
 import uk.gov.register.util.ResourceYamlFileReader;
 
 import javax.ws.rs.core.Response;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
-import static uk.gov.register.functional.TestEntry.anEntry;
+import static uk.gov.functional.db.TestEntry.anEntry;
 
 
 public class RegisterResourceFunctionalTest extends FunctionalTestBase {

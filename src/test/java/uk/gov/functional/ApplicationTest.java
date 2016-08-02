@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HttpHeaders;

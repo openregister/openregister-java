@@ -1,4 +1,4 @@
-package uk.gov.register.functional.testSupport;
+package uk.gov.functional.db;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;

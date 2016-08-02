@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
@@ -9,12 +9,12 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
-import uk.gov.functional.WipeDatabaseRule;
+import uk.gov.functional.app.WipeDatabaseRule;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
-import uk.gov.register.functional.testSupport.RegisterApplicationRunner;
-import uk.gov.register.functional.testSupport.DBSupport;
-import uk.gov.register.functional.testSupport.TestDAO;
+import uk.gov.functional.app.RegisterApplicationRunner;
+import uk.gov.functional.db.DBSupport;
+import uk.gov.functional.db.TestDAO;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;

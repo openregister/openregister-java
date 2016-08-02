@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.util.zip.ZipInputStream;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DataDownloadTest extends FunctionalTestBase {
+public class DataDownloadFunctionalTest extends FunctionalTestBase {
     @Before
     public void publishTestMessages() {
         mintItems("{\"street\":\"ellis\",\"address\":\"12345\"}",

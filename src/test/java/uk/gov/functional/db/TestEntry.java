@@ -1,4 +1,4 @@
-package uk.gov.register.functional;
+package uk.gov.functional.db;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
