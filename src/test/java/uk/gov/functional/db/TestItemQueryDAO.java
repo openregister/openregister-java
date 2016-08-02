@@ -1,4 +1,4 @@
-package uk.gov.register.functional.testSupport;
+package uk.gov.functional.db;
 
 import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -6,7 +6,7 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
 import java.sql.SQLException;
 
-public abstract class TestItemDAO {
+public abstract class TestItemQueryDAO {
     @SqlUpdate("delete from item where sha256hex=:sha256hex; insert into item(sha256hex, content) values(:sha256hex, :content)")
     public abstract void __insertIfNotExist(@Bind("sha256hex") String sha256, @Bind("content") PGobject item);
 

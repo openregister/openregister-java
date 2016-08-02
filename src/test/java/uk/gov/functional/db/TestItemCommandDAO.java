@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface TestItemDAO {
+public interface TestItemCommandDAO {
     @SqlUpdate("drop table if exists item")
     void dropTable();
 

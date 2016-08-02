@@ -9,7 +9,7 @@ public class TestDAO {
     public final TestTotalEntryDAO testTotalEntryDAO;
     public final TestTotalRecordDAO testTotalRecordDAO;
 
-    public final uk.gov.register.functional.testSupport.TestItemDAO testItemDAO;
+    public final TestItemQueryDAO testItemDAO;
     public final TestEntryDAO testEntryDAO;
 
     private TestDAO(String databaseName, String user) {
@@ -20,7 +20,7 @@ public class TestDAO {
         this.testCurrentKeyDAO = handle.attach(TestCurrentKeyDAO.class);
         this.testTotalEntryDAO = handle.attach(TestTotalEntryDAO.class);
         this.testTotalRecordDAO = handle.attach(TestTotalRecordDAO.class);
-        this.testItemDAO = handle.attach(uk.gov.register.functional.testSupport.TestItemDAO.class);
+        this.testItemDAO = handle.attach(TestItemQueryDAO.class);
         this.testEntryDAO = handle.attach(TestEntryDAO.class);
     }
 
