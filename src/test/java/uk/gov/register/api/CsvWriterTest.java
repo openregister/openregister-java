@@ -3,13 +3,13 @@ package uk.gov.register.api;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.register.api.representations.CsvWriter;
-import uk.gov.register.core.ListValue;
-import uk.gov.register.presentation.StringValue;
-import uk.gov.register.configuration.Register;
+import uk.gov.register.core.Register;
 import uk.gov.register.core.Entry;
-import uk.gov.register.views.ItemView;
+import uk.gov.register.core.ListValue;
+import uk.gov.register.core.StringValue;
 import uk.gov.register.views.EntryListView;
+import uk.gov.register.views.ItemView;
+import uk.gov.register.views.representations.CsvWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

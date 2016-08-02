@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
-import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.EntryDAO;
+import uk.gov.register.db.EntryQueryDAO;
 
 import java.sql.Timestamp;
 import java.time.Instant;

@@ -6,18 +6,15 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import org.postgresql.util.PGobject;
-import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
+import uk.gov.register.db.mappers.EntryMapper;
+import uk.gov.register.db.mappers.RecordMapper;
 
-import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -55,26 +52,6 @@ public abstract class RecordQueryDAO {
         return __findMax100RecordsByKeyValue(writePGObject(key, value));
     }
 
-    public static class RecordMapper implements ResultSetMapper<Record> {
-        @Override
-        public Record map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-            try {
-                return new Record(
-                        new Entry(
-                                r.getString("entry_number"),
-                                r.getString("sha256hex"),
-                                r.getTimestamp("timestamp").toInstant()
-                        ),
-                        new Item(
-                                r.getString("sha256hex"),
-                                objectMapper.readTree(r.getString("content"))
-                        )
-                );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 
     private PGobject writePGObject(String key, String value) {
         try {

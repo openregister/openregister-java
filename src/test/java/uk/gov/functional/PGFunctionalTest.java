@@ -13,13 +13,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
-import uk.gov.register.RegisterApplication;
-import uk.gov.register.RegisterConfiguration;
 import uk.gov.functional.db.TestDBItem;
 import uk.gov.functional.db.TestRecord;
-import uk.gov.mint.CanonicalJsonMapper;
 import uk.gov.mint.Entry;
 import uk.gov.mint.Item;
+import uk.gov.register.RegisterApplication;
+import uk.gov.register.RegisterConfiguration;
+import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -31,10 +31,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static uk.gov.functional.TestDBSupport.postgresConnectionString;
-import static uk.gov.functional.TestDBSupport.testEntryDAO;
-import static uk.gov.functional.TestDBSupport.testItemDAO;
-import static uk.gov.functional.TestDBSupport.testRecordDAO;
+import static uk.gov.functional.TestDBSupport.*;
 
 public class PGFunctionalTest {
     public static final int APPLICATION_PORT = 9000;

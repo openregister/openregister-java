@@ -7,13 +7,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-
 import java.util.Optional;
 import java.util.function.Supplier;
 

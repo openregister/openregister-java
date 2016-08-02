@@ -2,6 +2,7 @@ package uk.gov.mint;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import org.junit.Test;
+import uk.gov.register.util.CanonicalJsonMapper;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;

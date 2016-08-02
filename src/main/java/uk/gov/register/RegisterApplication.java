@@ -24,24 +24,24 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.mint.*;
-import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.organisation.client.GovukOrganisationClient;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.presentation.AssetsBundleCustomErrorHandler;
-import uk.gov.register.presentation.ItemConverter;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.User;
 import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.EntryStore;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.api.representations.ExtraMediaType;
 import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.views.ViewFactory;
+import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.ItemValidator;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
-import uk.gov.register.db.EntryStore;
+import uk.gov.register.util.ObjectReconstructor;
+import uk.gov.register.views.ViewFactory;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwo;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -130,12 +130,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         });
 
         resourceConfig.packages(
-                "uk.gov.register.filter",
-                "uk.gov.register.api.representations",
-                "uk.gov.register.resources");
+                "uk.gov.register.filters",
+                "uk.gov.register.views.representations",
+                "uk.gov.register.resources",
+                "uk.gov.register.providers");
 
-        jersey.register(ItemValidationExceptionMapper.class);
-        jersey.register(JsonParseExceptionMapper.class);
         jersey.register(UriDataFormatFilter.class);
 
         configuration.getAuthenticator().build()

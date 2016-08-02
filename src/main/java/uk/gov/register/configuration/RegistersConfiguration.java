@@ -1,8 +1,8 @@
 package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import uk.gov.register.ResourceYamlFileReader;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.util.ResourceYamlFileReader;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class RegistersConfiguration {
 
     public RegisterData getRegisterData(String registerName) {
         try {
-            return registers.stream().filter(f -> Objects.equals(f.getRegister().registerName, registerName)).findFirst().get();
+            return registers.stream().filter(f -> Objects.equals(f.getRegister().getRegisterName(), registerName)).findFirst().get();
         } catch (RuntimeException e) {
             throw new RuntimeException("Cannot get register data for " + registerName, e);
         }

@@ -1,6 +1,7 @@
 package uk.gov.register;
 
 import org.junit.Test;
+import uk.gov.register.configuration.FieldsConfiguration;
 
 import java.io.File;
 import java.net.URISyntaxException;

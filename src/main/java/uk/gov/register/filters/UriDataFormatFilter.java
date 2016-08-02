@@ -2,7 +2,7 @@ package uk.gov.register.filters;
 
 import com.google.common.collect.ImmutableMap;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
-import uk.gov.register.api.representations.ExtraMediaType;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
