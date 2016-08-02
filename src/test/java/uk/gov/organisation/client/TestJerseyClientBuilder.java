@@ -1,4 +1,4 @@
-package uk.gov.register.test_support;
+package uk.gov.organisation.client;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.client.JerseyClientBuilder;

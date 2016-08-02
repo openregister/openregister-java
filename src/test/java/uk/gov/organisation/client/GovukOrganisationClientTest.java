@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 import static java.util.Optional.empty;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.register.test_support.TestJerseyClientBuilder.createTestJerseyClient;
+import static uk.gov.organisation.client.TestJerseyClientBuilder.createTestJerseyClient;
 
 public class GovukOrganisationClientTest {
     // pulled from https://www.gov.uk/api/organisations/department-for-education
