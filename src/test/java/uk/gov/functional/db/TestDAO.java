@@ -3,7 +3,6 @@ package uk.gov.functional.db;
 import io.dropwizard.jdbi.args.InstantArgumentFactory;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
-import uk.gov.register.functional.testSupport.TestEntryDAO;
 
 public class TestDAO {
     public final TestCurrentKeyDAO testCurrentKeyDAO;
@@ -11,7 +10,7 @@ public class TestDAO {
     public final TestTotalRecordDAO testTotalRecordDAO;
 
     public final uk.gov.register.functional.testSupport.TestItemDAO testItemDAO;
-    public final uk.gov.register.functional.testSupport.TestEntryDAO testEntryDAO;
+    public final TestEntryDAO testEntryDAO;
 
     private TestDAO(String databaseName, String user) {
         String postgresConnectionString = String.format("jdbc:postgresql://localhost:5432/%s?user=%s", databaseName, user);
