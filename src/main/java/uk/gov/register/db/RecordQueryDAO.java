@@ -36,7 +36,7 @@ public abstract class RecordQueryDAO {
     @RegisterMapper(RecordMapper.class)
     public abstract List<Record> getRecords(@Bind("limit") long limit, @Bind("offset") long offset);
 
-    @SqlQuery(" select entry_number, timestamp, sha256hex from entry where sha256hex in (select sha256hex from item where (content @> :contentPGobject))")
+    @SqlQuery("select entry_number, timestamp, sha256hex from entry where sha256hex in (select sha256hex from item where (content @> :contentPGobject)) order by entry_number asc")
     @RegisterMapper(EntryMapper.class)
     public abstract Collection<Entry> __findAllEntriesOfRecordBy(@Bind("contentPGobject") PGobject content);
 
