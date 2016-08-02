@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
@@ -24,7 +23,6 @@ import io.dropwizard.views.ViewBundle;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.mint.*;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
@@ -38,6 +36,8 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.api.representations.ExtraMediaType;
+import uk.gov.register.filters.UriDataFormatFilter;
+import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
@@ -48,7 +48,6 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 import javax.inject.Singleton;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -102,15 +101,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
 
-        ImmutableMap<String, MediaType> representations = ImmutableMap.of(
-                "csv", ExtraMediaType.TEXT_CSV_TYPE,
-                "tsv", ExtraMediaType.TEXT_TSV_TYPE,
-                "ttl", ExtraMediaType.TEXT_TTL_TYPE,
-                "json", MediaType.APPLICATION_JSON_TYPE,
-                "yaml", ExtraMediaType.TEXT_YAML_TYPE
-        );
-        resourceConfig.property(ServerProperties.MEDIA_TYPE_MAPPINGS, representations);
-
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
                 .build("http-client");
 
@@ -146,6 +136,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         jersey.register(ItemValidationExceptionMapper.class);
         jersey.register(JsonParseExceptionMapper.class);
+        jersey.register(UriDataFormatFilter.class);
 
         configuration.getAuthenticator().build()
                 .ifPresent(authenticator ->
