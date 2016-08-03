@@ -78,6 +78,7 @@ shadowJar {
 }
 
 assemble {
+    dependsOn << shadowJar
     doLast {
         new File("deploy/openregister-java.jar").bytes = new File("build/libs/openregister-java.jar").bytes
         createDeployableBundle.execute()
@@ -215,3 +216,5 @@ task(loadSchoolData, type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     args = ["school", "school-data.jsonl", "openregister_java"]
 }
+
+task stage(dependsOn: ['assemble'])
