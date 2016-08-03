@@ -44,7 +44,6 @@ public class DataUpload {
     @POST
     @PermitAll
     @Path("/load")
-    @Consumes(MediaType.APPLICATION_JSON)
     public void load(String payload) {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
