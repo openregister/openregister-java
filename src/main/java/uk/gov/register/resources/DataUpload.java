@@ -13,11 +13,9 @@ import uk.gov.register.views.ViewFactory;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 @Path("/")
 public class DataUpload {
@@ -44,7 +42,6 @@ public class DataUpload {
     @POST
     @PermitAll
     @Path("/load")
-    @Consumes(MediaType.APPLICATION_JSON)
     public void load(String payload) {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
