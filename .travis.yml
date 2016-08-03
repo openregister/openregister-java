@@ -46,7 +46,7 @@ deploy:
   access_key_id: AKIAINSAHPOLGXFFYGMQ
   secret_access_key: *1
   bucket: openregister.app.artifacts
-  key: openregister-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
+  key: openregister-java-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
   bundle_type: zip
   application: openregister-app
   deployment_group: test
