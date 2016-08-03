@@ -10,6 +10,10 @@ DROP TABLE IF EXISTS total_records;
 
 DROP TABLE IF EXISTS total_entries;
 
+DROP TABLE IF EXISTS current_entry_number;
+
+DROP TABLE IF EXISTS current_keys;
+
 DROP TABLE IF EXISTS item;
 
 DROP TABLE IF EXISTS entry;
