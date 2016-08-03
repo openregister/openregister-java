@@ -5,6 +5,17 @@ apply from: 'idea-config.gradle'
 
 group 'openregister'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
 }
@@ -54,6 +65,15 @@ jar {
                     "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
             )
         }
+    }
+}
+
+shadowJar {
+    mergeServiceFiles()
+
+    baseName = "openregister-java"
+    manifest {
+        attributes 'Main-Class': 'uk.gov.register.RegisterApplication'
     }
 }
 
