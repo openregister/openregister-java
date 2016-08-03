@@ -5,6 +5,17 @@ apply from: 'idea-config.gradle'
 
 group 'openregister'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
 }
@@ -36,30 +47,19 @@ dependencies {
 
 jar.baseName = "openregister-java"
 
-jar {
-    doFirst {
-        from {
-            configurations.compile.collect {
-                it.isDirectory() ? it : zipTree(it)
-            }
-        } {
-            exclude "META-INF/*.SF"
-            exclude "META-INF/*.DSA"
-            exclude "META-INF/*.RSA"
-        }
+shadowJar {
+    mergeServiceFiles()
 
-        manifest {
-            attributes(
-                    "Main-Class": "uk.gov.register.RegisterApplication",
-                    "Class-Path": configurations.runtime.findAll { !it.directory }.collect { it.name }.join(' ')
-            )
-        }
+    baseName = "openregister-java"
+    manifest {
+        attributes 'Main-Class': 'uk.gov.register.RegisterApplication'
     }
 }
 
 assemble {
+    dependsOn << shadowJar
     doLast {
-        new File("deploy/openregister-java.jar").bytes = new File("build/libs/openregister-java.jar").bytes
+        new File("deploy/openregister-java.jar").bytes = shadowJar.archivePath.bytes
         createDeployableBundle.execute()
     }
 }
@@ -71,9 +71,8 @@ task startAppForConformance << {
 void startApp() {
     ProcessBuilder builder = new ProcessBuilder(
             "java",
-            "-cp",
-            sourceSets.test.runtimeClasspath.join(":"),
-            "uk.gov.register.RegisterApplication",
+            "-jar",
+            relativePath(shadowJar.archivePath),
             "server",
             "src/test/resources/conformance-app-config.yaml"
     ).directory(projectDir.absoluteFile)
@@ -195,3 +194,5 @@ task(loadSchoolData, type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     args = ["school", "school-data.jsonl", "openregister_java"]
 }
+
+task stage(dependsOn: ['assemble'])

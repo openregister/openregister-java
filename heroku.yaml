@@ -1,0 +1,34 @@
+database:
+  driverClass: org.postgresql.Driver
+  url: ${JDBC_DATABASE_URL}
+  user: ${JDBC_DATABASE_USER}
+  password: ${JDBC_DATABASE_PASSWORD}
+
+  #db connection properties
+  initialSize: 1
+  minSize: 1
+  maxSize: 4
+
+  properties:
+    charSet: UTF-8
+
+server:
+  registerDefaultExceptionMappers: false
+  connectors:
+    - type: http
+      port: ${PORT}
+  adminConnectors:
+    - type: http
+      port: ${PORT}
+
+registerDomain: ${APP_DOMAIN}
+
+register: school
+
+enableDownloadResource: true
+
+logging:
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+  appenders:
+  - type: console
