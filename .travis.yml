@@ -42,3 +42,13 @@ deploy:
   on: &2
     branch: master
     condition: $DEPLOY=true
+- provider: codedeploy
+  access_key_id: AKIAINSAHPOLGXFFYGMQ
+  secret_access_key: *1
+  bucket: openregister.app.artifacts
+  key: openregister-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
+  bundle_type: zip
+  application: openregister-app
+  deployment_group: test
+  region: eu-west-1
+  on: *2
