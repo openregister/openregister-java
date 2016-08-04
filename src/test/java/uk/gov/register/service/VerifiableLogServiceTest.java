@@ -1,6 +1,5 @@
 package uk.gov.register.service;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.skife.jdbi.v2.ResultIterator;
