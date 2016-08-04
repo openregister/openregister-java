@@ -1,16 +1,19 @@
 package uk.gov.register.core;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.register.util.ISODateFormatter;
 
 import java.time.Instant;
+import java.util.Optional;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisterDetail {
     private final String domain;
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
-    private final Instant lastUpdated;
+    private final Optional<Instant> lastUpdated;
     private RegisterData registerData;
 
     public RegisterDetail(
@@ -18,7 +21,7 @@ public class RegisterDetail {
             int totalRecords,
             int totalEntries,
             int totalItems,
-            Instant lastUpdated,
+            Optional<Instant> lastUpdated,
             RegisterData registerData) {
         this.domain = domain;
         this.totalRecords = totalRecords;
@@ -36,7 +39,7 @@ public class RegisterDetail {
     @SuppressWarnings("unused, used from template")
     @JsonProperty("last-updated")
     public String getLastUpdatedTime() {
-        return ISODateFormatter.format(lastUpdated);
+        return lastUpdated.isPresent() ? ISODateFormatter.format(lastUpdated.get()) : null;
     }
 
     @SuppressWarnings("unused, used to serialize in register json")

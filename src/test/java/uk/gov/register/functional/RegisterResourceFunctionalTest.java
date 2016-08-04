@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.core.IsNot.not;
 import static uk.gov.register.functional.db.TestEntry.anEntry;
 
 
@@ -56,6 +58,20 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
         verifyStringIsAnISODate(registerRecordMapFromAddressRegister.get("entry-timestamp").toString());
 
         assertAddressRegisterMapIsEqualTo(registerRecordMapFromAddressRegister);
+    }
+
+    @Test
+    public void registerJsonShouldGenerateValidResponseForEmptyDB(){
+        Response registerResourceFromAddressRegisterResponse = getRequest("address", "/register.json");
+        assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
+
+        Map<String,?> registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
+
+        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(0));
+        assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(0));
+        assertThat(registerResourceMapFromAddressRegister.get("total-items"), equalTo(0));
+
+        assertThat(registerResourceMapFromAddressRegister, not(hasKey("last-updated")));
     }
 
     private void populateAddressRegisterEntries() {

@@ -17,14 +17,15 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface EntryQueryDAO extends Transactional<EntryQueryDAO> {
-    @SqlQuery("select * from entry where entry_number=:entry_number")
     @RegisterMapper(EntryMapper.class)
     @SingleValueResult(Entry.class)
+    @SqlQuery("select * from entry where entry_number=:entry_number")
     Optional<Entry> findByEntryNumber(@Bind("entry_number") int entryNumber);
 
     @RegisterColumnMapper(InstantMapper.class)
+    @SingleValueResult(Instant.class)
     @SqlQuery("SELECT timestamp FROM entry ORDER BY entry_number DESC LIMIT 1")
-    Instant getLastUpdatedTime();
+    Optional<Instant> getLastUpdatedTime();
 
     @SqlQuery("SELECT value FROM current_entry_number")
     int getTotalEntries();
