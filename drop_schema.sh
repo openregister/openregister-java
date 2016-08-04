@@ -4,14 +4,11 @@ db_name=$1
 
 psql $db_name -U postgres -q -S -c "
 
-DROP TABLE IF EXISTS current_keys;
-
-DROP TABLE IF EXISTS total_records;
-
-DROP TABLE IF EXISTS total_entries;
-
-DROP TABLE IF EXISTS item;
-
-DROP TABLE IF EXISTS entry;
+drop table if exists current_keys;
+drop table if exists current_entry_number;
+drop table if exists total_records;
+drop table if exists total_entries;
+drop table if exists item;
+drop table if exists entry;
 
 "

@@ -8,9 +8,9 @@ import uk.gov.register.core.Entry;
 import uk.gov.verifiablelog.store.MerkleLeafStore;
 
 public class EntryMerkleLeafStore implements MerkleLeafStore {
-
     private final EntryQueryDAO entryDAO;
     private final EntryIteratorDAO entryIteratorDAO;
+
 
     public EntryMerkleLeafStore(EntryQueryDAO entryDAO) {
         this.entryDAO = entryDAO;

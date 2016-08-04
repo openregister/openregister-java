@@ -31,7 +31,7 @@ public class HomePageViewTest {
                 "phase", new TextNode("alpha"),
                 "text", new TextNode(registerText)
         ));
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, () -> "test.register.gov.uk", registerData);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, () -> "test.register.gov.uk", registerData, createRegisterProof());
 
         String result = homePageView.getRegisterText();
 
@@ -42,7 +42,7 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
 
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", null);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", null, createRegisterProof());
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
@@ -56,9 +56,24 @@ public class HomePageViewTest {
         RegisterData registerData = new RegisterData(ImmutableMap.of(
                 "register", new TextNode("school")
         ));
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", registerData);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", registerData, createRegisterProof());
 
         assertThat(homePageView.getLinkToRegisterRegister(), equalTo("https://register.test.register.gov.uk/record/school"));
+    }
+
+    @Test
+    public void getRegisterProof_returnsPrettyPrintedJson() throws Exception {
+        RegisterProof regProof = new RegisterProof("e869291e3017a7b1dd6b16af0b556d75378bef59486f1a7f53586b3ca86aed09");
+
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, () -> "test.register.gov.uk", null, regProof);
+
+        String result = homePageView.getRegisterJson();
+
+        assertThat(result, equalTo("{\n  \"proof-identifier\" : \"merkle:sha-256\",\n  \"root-hash\" : \"e869291e3017a7b1dd6b16af0b556d75378bef59486f1a7f53586b3ca86aed09\"\n}"));
+    }
+
+    private RegisterProof createRegisterProof(){
+        return new RegisterProof("e869291e3017a7b1dd6b16af0b556d75378bef59486f1a7f53586b3ca86aed09");
     }
 
 }

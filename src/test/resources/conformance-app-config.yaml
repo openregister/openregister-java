@@ -24,7 +24,7 @@ database:
   #db connection properties
   initialSize: 1
   minSize: 1
-  maxSize: 2
+  maxSize: 3
 
   properties:
     charSet: UTF-8
