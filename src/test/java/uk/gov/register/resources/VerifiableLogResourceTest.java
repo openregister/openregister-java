@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
 import uk.gov.register.service.VerifiableLogService;
 import uk.gov.register.views.ConsistencyProof;
@@ -49,7 +50,7 @@ public class VerifiableLogResourceTest {
         verify(vlServiceMock, times(1)).getEntryProof(entryNumber, totalEntries);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
         assertThat(actualProof.getEntryNumber(), equalTo(expectedProof.getEntryNumber()));
-        assertThat(actualProof.getAuditPath(), containsInAnyOrder(expectedAuditPath.toArray()));
+        assertThat(actualProof.getAuditPath(), IsIterableContainingInOrder.contains(sampleHash1, sampleHash2));
     }
 
     @Test
@@ -67,7 +68,8 @@ public class VerifiableLogResourceTest {
 
         verify(vlServiceMock, times(1)).getConsistencyProof(totalEntries1, totalEntries2);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
-        assertThat(actualProof.getConsistencyNodes(), containsInAnyOrder(expectedConsistencyNodes.toArray()));
+
+        assertThat(actualProof.getConsistencyNodes(), IsIterableContainingInOrder.contains(sampleHash1, sampleHash2));
     }
 }
 
