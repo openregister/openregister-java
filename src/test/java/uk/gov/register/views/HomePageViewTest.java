@@ -12,6 +12,7 @@ import uk.gov.register.resources.RequestContext;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -42,7 +43,7 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
 
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", null, createRegisterProof());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", null, createRegisterProof());
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
@@ -56,7 +57,7 @@ public class HomePageViewTest {
         RegisterData registerData = new RegisterData(ImmutableMap.of(
                 "register", new TextNode("school")
         ));
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, instant, () -> "test.register.gov.uk", registerData, createRegisterProof());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", registerData, createRegisterProof());
 
         assertThat(homePageView.getLinkToRegisterRegister(), equalTo("https://register.test.register.gov.uk/record/school"));
     }

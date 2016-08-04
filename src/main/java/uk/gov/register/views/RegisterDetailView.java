@@ -5,12 +5,13 @@ import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterDetail;
 
 import java.time.Instant;
+import java.util.Optional;
 
 public class RegisterDetailView {
     private final int totalRecords;
     private final int totalEntries;
     private final int totalItems;
-    private final Instant lastUpdated;
+    private final Optional<Instant> lastUpdated;
     private final RegisterData registerData;
     private final String registerDomain;
 
@@ -18,7 +19,7 @@ public class RegisterDetailView {
             int totalRecords,
             int totalEntries,
             int totalItems,
-            Instant lastUpdated,
+            Optional<Instant> lastUpdated,
             RegisterData registerData,
             String registerDomain) {
         this.totalRecords = totalRecords;

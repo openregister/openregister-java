@@ -4,12 +4,8 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
-import uk.gov.register.core.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.*;
 import uk.gov.register.resources.IPagination;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
@@ -57,11 +53,11 @@ public class ViewFactory {
         return new BadRequestExceptionView(requestContext, e, registerDomainConfiguration, registerData);
     }
 
-    public HomePageView homePageView(int totalRecords, int totalEntries, Instant lastUpdated, RegisterProof registerProof) {
+    public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated, RegisterProof registerProof) {
         return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomainConfiguration, registerData, registerProof);
     }
 
-    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Instant lastUpdated) {
+    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Optional<Instant> lastUpdated) {
         return new RegisterDetailView(totalRecords, totalEntries, totalItems, lastUpdated, registerData, registerDomain);
     }
 

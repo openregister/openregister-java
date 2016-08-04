@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.core.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
+import uk.gov.register.core.PublicBody;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 
@@ -20,7 +20,7 @@ public class HomePageView extends AttributionView {
      */
     private final static DateTimeFormatter FRIENDLY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMMM uuuu").withZone(ZoneId.of("UTC"));
 
-    private final Instant lastUpdated;
+    private final Optional<Instant> lastUpdated;
     private final RegisterProof registerProof;
     private final int totalRecords;
     private final int totalEntries;
@@ -32,7 +32,7 @@ public class HomePageView extends AttributionView {
             RequestContext requestContext,
             int totalRecords,
             int totalEntries,
-            Instant lastUpdated,
+            Optional<Instant> lastUpdated,
             RegisterDomainConfiguration registerDomainConfiguration,
             RegisterData registerData,
             RegisterProof registerProof) {
@@ -61,11 +61,7 @@ public class HomePageView extends AttributionView {
 
     @SuppressWarnings("unused, used from template")
     public String getLastUpdatedTime() {
-        // lastUpdated can be null in an empty register (ie no entries)
-        if (lastUpdated != null) {
-            return FRIENDLY_DATE_TIME_FORMATTER.format(lastUpdated);
-        }
-        return null;
+        return lastUpdated.isPresent() ? FRIENDLY_DATE_TIME_FORMATTER.format(lastUpdated.get()) : "";
     }
 
     @SuppressWarnings("unused, used from template")
