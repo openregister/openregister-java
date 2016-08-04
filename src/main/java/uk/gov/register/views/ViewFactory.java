@@ -57,7 +57,7 @@ public class ViewFactory {
         return new BadRequestExceptionView(requestContext, e, registerDomainConfiguration, registerData);
     }
 
-    public HomePageView homePageView(int totalRecords, int totalEntries, Instant lastUpdated, Optional<RegisterProof> registerProof) {
+    public HomePageView homePageView(int totalRecords, int totalEntries, Instant lastUpdated, RegisterProof registerProof) {
         return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomainConfiguration, registerData, registerProof);
     }
 

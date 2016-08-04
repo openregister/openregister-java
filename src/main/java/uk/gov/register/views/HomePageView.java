@@ -21,7 +21,7 @@ public class HomePageView extends AttributionView {
     private final static DateTimeFormatter FRIENDLY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMMM uuuu").withZone(ZoneId.of("UTC"));
 
     private final Instant lastUpdated;
-    private final Optional<RegisterProof> registerProof;
+    private final RegisterProof registerProof;
     private final int totalRecords;
     private final int totalEntries;
     private final String registerDomain;
@@ -35,7 +35,7 @@ public class HomePageView extends AttributionView {
             Instant lastUpdated,
             RegisterDomainConfiguration registerDomainConfiguration,
             RegisterData registerData,
-            Optional<RegisterProof> registerProof) {
+            RegisterProof registerProof) {
         super(requestContext, custodian, custodianBranding, "home.html", registerDomainConfiguration, registerData);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
@@ -80,7 +80,7 @@ public class HomePageView extends AttributionView {
     public String getRegisterJson() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        return registerProof.isPresent()? objectMapper.writeValueAsString(registerProof.get()) : "";
+        return objectMapper.writeValueAsString(registerProof);
 
     }
 

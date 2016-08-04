@@ -39,21 +39,21 @@ public class HomePageResource {
     @GET
     @Produces({ExtraMediaType.TEXT_HTML})
     public View home() throws NoSuchAlgorithmException {
-        Optional<RegisterProof> registerProof = Optional.empty();
         try {
             entryDAO.begin();
             VerifiableLog verifiableLog = createVerifiableLog(entryDAO);
             String rootHash = bytesToString(verifiableLog.currentRoot());
-            registerProof = Optional.of(new RegisterProof(rootHash));
+            RegisterProof registerProof  = new RegisterProof(rootHash);
+            return viewFactory.homePageView(
+                    recordDAO.getTotalRecords(),
+                    entryDAO.getTotalEntries(),
+                    entryDAO.getLastUpdatedTime(),
+                    registerProof);
+
         } finally {
             entryDAO.rollback();
         }
 
-        return viewFactory.homePageView(
-                recordDAO.getTotalRecords(),
-                entryDAO.getTotalEntries(),
-                entryDAO.getLastUpdatedTime(),
-                registerProof);
     }
 
     @GET
