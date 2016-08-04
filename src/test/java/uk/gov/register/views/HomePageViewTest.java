@@ -6,16 +6,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Optional;
 
-import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
