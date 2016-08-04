@@ -15,6 +15,7 @@ import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.text.IsEmptyString.isEmptyString;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -46,6 +47,13 @@ public class HomePageViewTest {
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", null, createRegisterProof());
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
+    }
+
+    @Test
+    public void getLastUpdatedTime_returnsEmptyStringIfLastUpdatedTimeNotPresent() {
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, createRegisterProof());
+
+        assertThat(homePageView.getLastUpdatedTime(), isEmptyString());
     }
 
     @Test
