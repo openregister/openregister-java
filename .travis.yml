@@ -31,8 +31,8 @@ before_script:
 - psql -c 'create database test_openregister_java;' -U postgres
 - psql -c 'create database ft_openregister_java;' -U postgres
 after_failure:
-- cat /home/travis/build/openregister/openregister-java/stderr.txt
-- cat /home/travis/build/openregister/openregister-java/stdout.txt
+- cat $TRAVIS_BUILD_DIR/stderr.txt
+- cat $TRAVIS_BUILD_DIR/stdout.txt
 deploy:
 - provider: s3
   access_key_id: AKIAINSAHPOLGXFFYGMQ
