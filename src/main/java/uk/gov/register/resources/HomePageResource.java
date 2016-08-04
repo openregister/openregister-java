@@ -1,7 +1,6 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
-import jdk.nashorn.internal.runtime.options.Option;
 import uk.gov.register.db.EntryMerkleLeafStore;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
