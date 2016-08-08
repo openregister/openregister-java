@@ -6,12 +6,14 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import uk.gov.mint.Entry;
+import uk.gov.register.core.Entry;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 public interface TestEntryDAO {
     @SqlUpdate("drop table if exists entry;" +
@@ -24,17 +26,17 @@ public interface TestEntryDAO {
     void wipeData();
 
     @RegisterMapper(EntryMapper.class)
-    @SqlQuery("select entry_number,sha256hex from entry")
+    @SqlQuery("select entry_number, sha256hex, timestamp from entry")
     List<Entry> getAllEntries();
 
     @SqlUpdate("insert into entry(entry_number, sha256hex, timestamp) values(:entry_number, :sha256hex, :timestamp)")
-    void insert(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256, @Bind("timestamp") Instant timestamp);
+    void insert(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256, @Bind("timestamp") long timestamp);
 
 
     class EntryMapper implements ResultSetMapper<Entry> {
         @Override
         public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-            return new Entry(r.getInt("entry_number"), r.getString("sha256hex"));
+            return new Entry(r.getInt("entry_number"), r.getString("sha256hex"), Instant.ofEpochSecond(r.getLong("timestamp")));
         }
     }
 }

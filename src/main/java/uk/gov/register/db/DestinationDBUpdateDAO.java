@@ -30,7 +30,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle {
 
     private List<CurrentKey> extractCurrentKeys(String registerName, List<FatEntry> records) {
         Map<String, Integer> currentKeys = new HashMap<>();
-        records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntry_number()));
+        records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntryNumber()));
         return currentKeys
                 .entrySet()
                 .stream()

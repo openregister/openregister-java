@@ -41,7 +41,7 @@ public class DBSupport {
     }
 
     private void insertIntoItemAndEntryTables(TestEntry testEntry) {
-        testDAO.testEntryDAO.insert(testEntry.entryNumber, testEntry.sha256hex, testEntry.entryTimestamp);
+        testDAO.testEntryDAO.insert(testEntry.entryNumber, testEntry.sha256hex, testEntry.getTimestampAsLong());
         testDAO.testItemDAO.insertIfNotExist(testEntry.sha256hex, testEntry.itemJson);
     }
 

@@ -38,11 +38,11 @@ public class RecordListViewTest {
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
         List<Record> records = Lists.newArrayList(
                 new Record(
-                        new Entry("1", "ab", t1),
+                        new Entry(1, "ab", t1),
                         new Item("ab", Jackson.newObjectMapper().readTree("{\"address\":\"123\", \"street\":\"foo\"}"))
                 ),
                 new Record(
-                        new Entry("2", "cd", t2),
+                        new Entry(2, "cd", t2),
                         new Item("cd", Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"))
                 )
         );

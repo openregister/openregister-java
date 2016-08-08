@@ -1,16 +1,15 @@
 package uk.gov.register.db;
 
-import io.dropwizard.jdbi.args.InstantMapper;
 import org.skife.jdbi.v2.ResultIterator;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.FetchSize;
-import org.skife.jdbi.v2.sqlobject.customizers.RegisterColumnMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import uk.gov.register.core.Entry;
 import uk.gov.register.db.mappers.EntryMapper;
+import uk.gov.register.db.mappers.LongTimestampToInstantMapper;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -19,10 +18,10 @@ import java.util.Optional;
 public interface EntryQueryDAO extends Transactional<EntryQueryDAO> {
     @RegisterMapper(EntryMapper.class)
     @SingleValueResult(Entry.class)
-    @SqlQuery("select * from entry where entry_number=:entry_number")
-    Optional<Entry> findByEntryNumber(@Bind("entry_number") int entryNumber);
+    @SqlQuery("select * from entry where entry_number=:entryNumber")
+    Optional<Entry> findByEntryNumber(@Bind("entryNumber") int entryNumber);
 
-    @RegisterColumnMapper(InstantMapper.class)
+    @RegisterMapper(LongTimestampToInstantMapper.class)
     @SingleValueResult(Instant.class)
     @SqlQuery("SELECT timestamp FROM entry ORDER BY entry_number DESC LIMIT 1")
     Optional<Instant> getLastUpdatedTime();

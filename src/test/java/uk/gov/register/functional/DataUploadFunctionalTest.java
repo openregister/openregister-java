@@ -16,7 +16,7 @@ import org.junit.rules.TestRule;
 import uk.gov.register.functional.app.CleanDatabaseRule;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestRecord;
-import uk.gov.mint.Entry;
+import uk.gov.register.core.Entry;
 import uk.gov.mint.Item;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
@@ -26,6 +26,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ public class DataUploadFunctionalTest {
         assertThat(storedItem.sha256hex, equalTo(Item.itemHash(inputItem)));
 
         Entry entry = testEntryDAO.getAllEntries().get(0);
-        assertThat(entry, equalTo(new Entry(1, storedItem.sha256hex)));
+        assertThat(entry, equalTo(new Entry(1, storedItem.sha256hex, Instant.now())));
 
         TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
         assertThat(record.getEntryNumber(), equalTo(1));
@@ -99,8 +100,8 @@ public class DataUploadFunctionalTest {
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1)),
-                        new Entry(2, Item.itemHash(canonicalItem2))
+                        new Entry(1, Item.itemHash(canonicalItem1), Instant.now()),
+                        new Entry(2, Item.itemHash(canonicalItem2), Instant.now())
                 )
         );
 
@@ -135,8 +136,8 @@ public class DataUploadFunctionalTest {
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem)),
-                        new Entry(2, Item.itemHash(canonicalItem))
+                        new Entry(1, Item.itemHash(canonicalItem), Instant.now()),
+                        new Entry(2, Item.itemHash(canonicalItem), Instant.now())
                 )
         );
 
@@ -171,9 +172,9 @@ public class DataUploadFunctionalTest {
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1)),
-                        new Entry(2, Item.itemHash(canonicalItem1)),
-                        new Entry(3, Item.itemHash(canonicalItem2))
+                        new Entry(1, Item.itemHash(canonicalItem1), Instant.now()),
+                        new Entry(2, Item.itemHash(canonicalItem1), Instant.now()),
+                        new Entry(3, Item.itemHash(canonicalItem2), Instant.now())
                 )
         );
 

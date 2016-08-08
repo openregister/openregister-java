@@ -21,14 +21,14 @@ public class RecordViewTest {
     public void recordJsonRepresentation_isFlatJsonOfEntryAndItemContent() throws IOException, JSONException {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-        Record record = new Record(new Entry("1", "ab", Instant.ofEpochMilli(1459241964336L)), new Item("ab", objectMapper.readTree("{\"a\":\"b\"}")));
+        Record record = new Record(new Entry(1, "ab", Instant.ofEpochSecond(1470403440)), new Item("ab", objectMapper.readTree("{\"a\":\"b\"}")));
         RecordView recordView = new RecordView(null, null, null, null, record, () -> "test.register.gov.uk", new RegisterData(Collections.emptyMap()));
 
         String result = objectMapper.writeValueAsString(recordView);
 
         assertThat(result, equalTo("{" +
                 "\"entry-number\":\"1\"," +
-                "\"entry-timestamp\":\"2016-03-29T08:59:24Z\"," +
+                "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"item-hash\":\"sha-256:ab\"," +
                 "\"a\":\"b\"" +
                 "}"));

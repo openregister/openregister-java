@@ -15,7 +15,6 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 public class ItemMapper implements ResultSetMapper<Item> {
-
     private final ObjectMapper objectMapper;
 
     public ItemMapper() {

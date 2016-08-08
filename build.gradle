@@ -135,6 +135,7 @@ task installConformanceTestDeps(type: Exec) {
 }
 
 task runConformanceTests(type: Exec) {
+    dependsOn << assemble
     dependsOn << startAppForConformance
     dependsOn << loadSchoolDataForConformance
     dependsOn << installConformanceTestDeps

@@ -1,9 +1,8 @@
 group EntryDAO;
 
 ensureSchema() ::= <<
-   create table if not exists entry (entry_number integer primary key, sha256hex varchar, timestamp timestamp default (now() at time zone 'utc'));
+   create table if not exists entry (entry_number integer primary key, sha256hex varchar, timestamp integer);
    create index if not exists entry_sha256hex_index on entry (sha256hex);
-
    create table if not exists current_entry_number(value integer not null);
 
    insert into current_entry_number(value)

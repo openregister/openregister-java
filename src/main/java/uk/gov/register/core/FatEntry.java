@@ -1,6 +1,6 @@
 package uk.gov.register.core;
 
-import uk.gov.mint.Entry;
+import uk.gov.register.core.Entry;
 import uk.gov.mint.Item;
 
 public class FatEntry {
