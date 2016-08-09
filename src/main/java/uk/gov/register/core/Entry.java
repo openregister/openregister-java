@@ -16,7 +16,7 @@ import java.time.Instant;
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash"})
 public class Entry {
-    private final Integer entryNumber;
+    private final int entryNumber;
     private final String sha256hex;
     private final Instant timestamp;
 
@@ -74,7 +74,7 @@ public class Entry {
         Entry entry = (Entry) o;
 
         if (entryNumber != entry.entryNumber) return false;
-        return sha256hex.equals(entry.sha256hex);
+        return sha256hex == null ? entry.sha256hex == null : sha256hex.equals(entry.sha256hex);
 
     }
 
