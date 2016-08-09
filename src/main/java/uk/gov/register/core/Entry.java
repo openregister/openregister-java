@@ -80,8 +80,8 @@ public class Entry {
 
     @Override
     public int hashCode() {
-        int result = entryNumber;
-        result = 31 * result + sha256hex.hashCode();
+        int result = sha256hex != null ? sha256hex.hashCode() : 0;
+        result = 31 * entryNumber + result;
         return result;
     }
 }
