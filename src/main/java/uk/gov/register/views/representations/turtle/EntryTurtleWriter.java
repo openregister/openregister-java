@@ -27,7 +27,7 @@ public class EntryTurtleWriter extends TurtleRepresentationWriter<EntryView> {
         Model model = ModelFactory.createDefaultModel();
         Property entryNumberProperty = model.createProperty(SPEC_PREFIX + "entry-number-field");
         Property entryTimestampProperty = model.createProperty(SPEC_PREFIX + "entry-timestamp-field");
-        Property itemProperty = model.createProperty(SPEC_PREFIX + "item-resources");
+        Property itemProperty = model.createProperty(SPEC_PREFIX + "item-resource");
 
         String entryNumber = Integer.toString(entryView.getEntry().getEntryNumber());
         model.createResource(entryUri(entryNumber).toString())
