@@ -61,17 +61,5 @@ public class ArchiveCreator {
             zipOutputStream.close();
         }
     }
-
-    private static class ArchiveEntryData {
-        public final String entryNumber;
-        public final String itemHash;
-        public final String timestamp;
-
-        public ArchiveEntryData(String entryNumber, String itemHash, String timestamp) {
-            this.entryNumber = entryNumber;
-            this.itemHash = itemHash;
-            this.timestamp = timestamp;
-        }
-    }
 }
 
