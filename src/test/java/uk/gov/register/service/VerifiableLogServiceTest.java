@@ -32,10 +32,10 @@ public class VerifiableLogServiceTest {
     private static final String item3 = "{\"address\":\"6790\",\"name\":\"rose cottage\"}";
     private static final String item4 = "{\"address\":\"6790\",\"name\":\"rose cottage2\"}";
 
-    private static final Entry entry1 = new Entry("1", sha256Hex(item1), Instant.parse("2016-07-01T11:21:30.00Z"));
-    private static final Entry entry2 = new Entry("2", sha256Hex(item2), Instant.parse("2016-07-01T11:21:35.00Z"));
-    private static final Entry entry3 = new Entry("3", sha256Hex(item3), Instant.parse("2016-07-01T11:22:10.00Z"));
-    private static final Entry entry4 = new Entry("4", sha256Hex(item4), Instant.parse("2016-07-01T11:24:10.00Z"));
+    private static final Entry entry1 = new Entry(1, sha256Hex(item1), Instant.parse("2016-07-01T11:21:30.00Z"));
+    private static final Entry entry2 = new Entry(2, sha256Hex(item2), Instant.parse("2016-07-01T11:21:35.00Z"));
+    private static final Entry entry3 = new Entry(3, sha256Hex(item3), Instant.parse("2016-07-01T11:22:10.00Z"));
+    private static final Entry entry4 = new Entry(4, sha256Hex(item4), Instant.parse("2016-07-01T11:24:10.00Z"));
 
     @Test
     public void shouldReturnValidRegisterProofForOneEntry() throws Exception {

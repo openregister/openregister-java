@@ -29,6 +29,10 @@ public class TestEntry {
         }
     }
 
+    public long getTimestampAsLong() {
+        return entryTimestamp.getEpochSecond();
+    }
+
     public static TestEntry anEntry(int entryNumber, String itemJson) {
         return new TestEntry(entryNumber, itemJson, Instant.now());
     }

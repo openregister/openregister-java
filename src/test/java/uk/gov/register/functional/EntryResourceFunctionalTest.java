@@ -15,8 +15,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Map;
+import java.util.Optional;
 
+import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -67,19 +71,18 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void entryResource_retrieviesTimestampsInUTC() throws IOException {
-        String dateTimeWithNoSeconds = "yyyyMMddHHmm";
-        String expectedDateTime = formatInstant(Instant.now(), dateTimeWithNoSeconds);
+        String expectedDateTime = formatInstant(Instant.now(), Optional.of(ChronoUnit.MINUTES));
 
         Response response = getRequest("/entry/1.json");
 
         Map<String, String> responseData = response.readEntity(Map.class);
         Instant entryTimestamp = Instant.parse(responseData.get("entry-timestamp"));
-        String actualDateTime = formatInstant(entryTimestamp, dateTimeWithNoSeconds);
+        String actualDateTime = formatInstant(entryTimestamp, Optional.of(ChronoUnit.MINUTES));
 
         assertThat(actualDateTime, equalTo(expectedDateTime));
     }
 
-    private String formatInstant(Instant instant, String format){
-        return ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern(format));
+    private String formatInstant(Instant instant, Optional<TemporalUnit> temporalUnit){
+        return ISO_INSTANT.format(instant.truncatedTo(temporalUnit.orElseGet(() -> ChronoUnit.SECONDS)));
     }
 }

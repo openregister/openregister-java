@@ -16,7 +16,7 @@ import static org.junit.Assert.assertThat;
 
 public class EntryMapperTest {
     @Test
-    public void map_returnsSameDateAndTimeInUTC2() throws Exception {
+    public void map_returnsSameDateAndTimeInUTC() throws Exception {
         String expected = "2016-07-15T10:00:00Z";
         Instant expectedInstant = Instant.parse(expected);
 
@@ -27,13 +27,12 @@ public class EntryMapperTest {
 
         h.execute("drop table if exists entry; drop table if exists current_entry_number");
         entryDAO.ensureSchema();
-        h.execute("insert into entry(entry_number, sha256hex, timestamp) values(5, 'abcdef', :timestamp at time zone 'utc')",
-                new Timestamp(expectedInstant.toEpochMilli()));
+        h.execute("insert into entry(entry_number, sha256hex, timestamp) values(5, 'abcdef', :timestamp)",expectedInstant.getEpochSecond());
 
         // this method implicitly invokes EntryMapper
         Collection<Entry> allEntriesNoPagination = entryQueryDAO.getAllEntriesNoPagination();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(allEntriesNoPagination.iterator().next().getTimestamp(), equalTo(expected));
+        assertThat(allEntriesNoPagination.iterator().next().getTimestamp(), equalTo(expectedInstant));
     }
 }

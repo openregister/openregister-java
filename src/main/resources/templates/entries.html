@@ -25,7 +25,7 @@
         <tbody>
         <tr th:each="entry : ${entries}">
             <td><a th:href="${'/entry/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a></td>
-            <td><a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a></td>
+            <td><a th:href="${'/item/' + entry.sha256hexFull}" th:text="${entry.sha256hexFull}"></a></td>
             <td th:text="${entry.timestamp}"></td>
         </tr>
         </tbody>

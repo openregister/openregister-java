@@ -22,12 +22,12 @@
         <tr>
             <td th:text="item-hash"></td>
             <td>
-                <a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a>
+                <a th:href="${'/item/' + entry.sha256hexFull}" th:text="${entry.sha256hexFull}"></a>
             </td>
         </tr>
         <tr>
             <td th:text="entry-timestamp"></td>
-            <td th:text="${entry.timestamp}"></td>
+            <td th:text="${entry.timestampAsISOFormat}"></td>
         </tr>
         </tbody>
     </table>

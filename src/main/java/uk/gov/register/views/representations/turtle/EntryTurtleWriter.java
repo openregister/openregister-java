@@ -27,12 +27,13 @@ public class EntryTurtleWriter extends TurtleRepresentationWriter<EntryView> {
         Model model = ModelFactory.createDefaultModel();
         Property entryNumberProperty = model.createProperty(SPEC_PREFIX + "entry-number-field");
         Property entryTimestampProperty = model.createProperty(SPEC_PREFIX + "entry-timestamp-field");
-        Property itemProperty = model.createProperty(SPEC_PREFIX + "item-resources");
+        Property itemProperty = model.createProperty(SPEC_PREFIX + "item-resource");
 
-        model.createResource(entryUri(entryView.getEntry().entryNumber).toString())
-                .addProperty(entryNumberProperty, entryView.getEntry().entryNumber)
-                .addProperty(entryTimestampProperty, entryView.getEntry().getTimestamp())
-                .addProperty(itemProperty, model.createResource(itemUri(entryView.getEntry().getSha256hex()).toString()));
+        String entryNumber = Integer.toString(entryView.getEntry().getEntryNumber());
+        model.createResource(entryUri(entryNumber).toString())
+                .addProperty(entryNumberProperty, entryNumber)
+                .addProperty(entryTimestampProperty, entryView.getEntry().getTimestampAsISOFormat())
+                .addProperty(itemProperty, model.createResource(itemUri(entryView.getEntry().getSha256hexFull()).toString()));
 
         model.setNsPrefix("register-metadata", SPEC_PREFIX);
         return model;
