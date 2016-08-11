@@ -1,0 +1,11 @@
+// Download-specific styles
+// ==========================================================================
+
+.content-two-thirds {
+  @include grid-column( 2/3 );
+  padding: 0;
+}
+
+ul {
+  padding-left: 20px;
+}

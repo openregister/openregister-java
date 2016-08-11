@@ -42,6 +42,7 @@ $NTA-Light: $Helvetica-Regular;
 @import "home";
 @import "organisations";
 @import "page-navigation";
+@import "download";
 
 body {
   font-family: $Helvetica-Regular;
@@ -107,6 +108,7 @@ main {
 
 .grid-row {
   @extend %grid-row;
+  margin: 0;
 
   .column-third {
     @include grid-column( 1/3 );

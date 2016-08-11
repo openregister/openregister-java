@@ -21,7 +21,9 @@
 
 </head>
 
-<header th:fragment="header" id="global-header">
+
+
+<header th:fragment="header" id="global-header" role="banner">
     <div class="header-wrapper">
         <div class="header-global">
             <div class="header-logo">
@@ -32,6 +34,7 @@
         </div>
     </div>
 </header>
+
 
 <div th:fragment="phase" th:if="${register.phase == 'alpha' || register.phase == 'beta'}" th:class="'phase-banner-' + ${register.phase}">
     <p>
