@@ -5,10 +5,10 @@
 <body>
 <header th:replace="main.html::header"></header>
 
-<div class="grid-row">
+<div class="content-grid-row">
     <main id="content" role="main">
-
         <div th:replace="main.html::phase"></div>
+        <a href="/">&lt; back</a>
         <header th:replace="fragments/page-header.html(title='Download register data')"></header>
         <article role="article" class="article-container group content-two-thirds">
             <p>Registers are arranged into pages. There are x records per page. You can download up to 5000 pages from a register in bulk as:</p>
@@ -23,7 +23,7 @@
 
             <h2>Updates</h2>
             <p>
-                Once you have downloaded your copy of the register you can check for new entries using visiting <a href="/entries">entries page</a>.
+                Once you have downloaded your copy of the register you can check for new entries visiting <a href="/entries">entries page</a>.
                 Read the technical guidance alongside the register to find out how to do this.
             </p>
         </article>

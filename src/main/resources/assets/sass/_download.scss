@@ -6,6 +6,11 @@
   padding: 0;
 }
 
+.content-grid-row {
+  @extend %grid-row;
+  margin: 0;
+}
+
 ul {
   padding-left: 20px;
 }

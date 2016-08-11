@@ -108,7 +108,6 @@ main {
 
 .grid-row {
   @extend %grid-row;
-  margin: 0;
 
   .column-third {
     @include grid-column( 1/3 );
