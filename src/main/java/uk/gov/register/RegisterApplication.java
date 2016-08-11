@@ -1,8 +1,5 @@
 package uk.gov.register;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
@@ -12,7 +9,6 @@ import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -63,12 +59,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         }
     }
 
-    public static ObjectMapper customObjectMapper() {
-        ObjectMapper objectMapper = Jackson.newObjectMapper();
-        objectMapper.registerModules(new Jdk8Module(), new JavaTimeModule());
-        return objectMapper;
-    }
-
     @Override
     public String getName() {
         return "openregister";
@@ -82,7 +72,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                         new EnvironmentVariableSubstitutor(false)
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
-        bootstrap.setObjectMapper(customObjectMapper());
     }
 
     @Override

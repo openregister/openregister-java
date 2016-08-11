@@ -3,9 +3,9 @@ package uk.gov.organisation.client;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import uk.gov.register.RegisterApplication;
 
 import javax.ws.rs.client.Client;
 
@@ -17,7 +17,7 @@ public abstract class TestJerseyClientBuilder {
     }
 
     public static Client createTestJerseyClient(Duration timeout) {
-        Environment environment = new Environment("test-dropwizard-apache-connector", RegisterApplication.customObjectMapper(),
+        Environment environment = new Environment("test-dropwizard-apache-connector", Jackson.newObjectMapper(),
                 buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
                 TestJerseyClientBuilder.class.getClassLoader());
 
