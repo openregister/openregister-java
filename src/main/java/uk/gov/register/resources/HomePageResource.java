@@ -3,7 +3,6 @@ package uk.gov.register.resources;
 import io.dropwizard.views.View;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.service.VerifiableLogService;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -19,15 +18,12 @@ public class HomePageResource {
     private final ViewFactory viewFactory;
     private final RecordQueryDAO recordDAO;
     private final EntryQueryDAO entryDAO;
-    private final VerifiableLogService verifiableLogService;
-
 
     @Inject
-    public HomePageResource(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO, VerifiableLogService verifiableLogService) {
+    public HomePageResource(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO) {
         this.viewFactory = viewFactory;
         this.recordDAO = recordDAO;
         this.entryDAO = entryDAO;
-        this.verifiableLogService = verifiableLogService;
     }
 
     @GET
@@ -36,8 +32,8 @@ public class HomePageResource {
         return viewFactory.homePageView(
                 recordDAO.getTotalRecords(),
                 entryDAO.getTotalEntries(),
-                entryDAO.getLastUpdatedTime(),
-                verifiableLogService.getRegisterProof());
+                entryDAO.getLastUpdatedTime()
+        );
     }
 
     @GET

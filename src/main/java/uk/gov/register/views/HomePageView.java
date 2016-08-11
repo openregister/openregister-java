@@ -1,8 +1,5 @@
 package uk.gov.register.views;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.PublicBody;
@@ -21,7 +18,6 @@ public class HomePageView extends AttributionView {
     private final static DateTimeFormatter FRIENDLY_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMMM uuuu").withZone(ZoneId.of("UTC"));
 
     private final Optional<Instant> lastUpdated;
-    private final RegisterProof registerProof;
     private final int totalRecords;
     private final int totalEntries;
     private final String registerDomain;
@@ -34,13 +30,11 @@ public class HomePageView extends AttributionView {
             int totalEntries,
             Optional<Instant> lastUpdated,
             RegisterDomainConfiguration registerDomainConfiguration,
-            RegisterData registerData,
-            RegisterProof registerProof) {
+            RegisterData registerData) {
         super(requestContext, custodian, custodianBranding, "home.html", registerDomainConfiguration, registerData);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
-        this.registerProof = registerProof;
         this.registerDomain = registerDomainConfiguration.getRegisterDomain();
     }
 
@@ -72,13 +66,4 @@ public class HomePageView extends AttributionView {
                 getRegisterId()
         );
     }
-
-    public String getRegisterJson() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        return objectMapper.writeValueAsString(registerProof);
-
-    }
-
-
 }
