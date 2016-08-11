@@ -9,7 +9,6 @@ import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -73,7 +72,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                         new EnvironmentVariableSubstitutor(false)
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
-        bootstrap.setObjectMapper(Jackson.newObjectMapper());
     }
 
     @Override
