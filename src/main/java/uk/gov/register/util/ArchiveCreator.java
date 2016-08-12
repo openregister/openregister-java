@@ -28,7 +28,7 @@ public class ArchiveCreator {
                         zipEntryWriter.writeEntry(String.format("item/%s.json", item.sha256hex), item.content)
                 );
                 entries.forEach(entry ->
-                        zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.getEntryNumber()), new ArchiveEntryData(Integer.toString(entry.getEntryNumber()), entry.getSha256hexFull(), entry.getTimestampAsISOFormat()))
+                        zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.getEntryNumber()), entry)
                 );
             }
         };
@@ -59,18 +59,6 @@ public class ArchiveCreator {
         public void close() throws IOException {
             zipOutputStream.flush();
             zipOutputStream.close();
-        }
-    }
-
-    private static class ArchiveEntryData {
-        public final String entryNumber;
-        public final String itemHash;
-        public final String timestamp;
-
-        public ArchiveEntryData(String entryNumber, String itemHash, String timestamp) {
-            this.entryNumber = entryNumber;
-            this.itemHash = itemHash;
-            this.timestamp = timestamp;
         }
     }
 }
