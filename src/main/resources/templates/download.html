@@ -11,21 +11,39 @@
         <a href="/">&lt; back</a>
         <header th:replace="fragments/page-header.html(title='Download register data')"></header>
         <article role="article" class="article-container group content-two-thirds">
-            <p>Registers are arranged into pages. There are x records per page. You can download up to 5000 pages from a register in bulk as:</p>
+            <p>
+                Registers are arranged into pages. There are 100 records per page.
+                You can download up to 5000 records from this register in bulk as:
+            </p>
             <ul>
-                <li><a href="/records.json?page-size=5000" rel="alternate">json</a></li>
-                <li><a href="/records.ttl?page-size=5000" rel="alternate">ttl</a></li>
-                <li><a href="/records.tsv?page-size=5000" rel="alternate">tsv</a></li>
-                <li><a href="/records.csv?page-size=5000" rel="alternate">csv</a></li>
+                <li><a href="/records.json?page-size=5000" rel="alternate">JSON</a></li>
+                <li><a href="/records.ttl?page-size=5000" rel="alternate">TTL</a></li>
+                <li><a href="/records.tsv?page-size=5000" rel="alternate">TSV</a></li>
+                <li><a href="/records.csv?page-size=5000" rel="alternate">CSV</a></li>
             </ul>
-            <p>You can download fewer pages ... as soon as Jen or Tome writes about it</p>
-            <p>You can also download the full contents of this register <a href="/download-register">in JSON as a zip file</a>.</p>
+            <p>You can download a section of a register by navigating to the page of records you need and selecting ‘Download this data’ at the bottom of the page.</p>
+            <p>
+                You can download more entries or select a portion of the register by amending your URL. Use <code class="url-param">page-size</code> to define the number of records you want to download.
+                You can use <code class="url-param">page-index</code> to specify a particular page of the register.
+            </p>
+            <p>For example, in a register of 1000 entries, you could download 250 entries in a JSON format at a time using the at the following URLs.</p>
+            <p>
+                <ul class="url-list">
+                    <li>/records.json?page-size=250</li>
+                    <li>/records.json?page-index=2&amp;page-size=250</li>
+                    <li>/records.json?page-index=3&amp;page-size=250</li>
+                    <li>/records.json?page-index=4&amp;page-size=250</li>
+                </ul>
+            </p>
+
+            <p>You can also download the data in CSV, TTL, or TSV formats by amending <code class="url-param">.json</code> to the format of your choice.</p>
+            <p>
+                You can also download the full contents of this register <a href="/download-register">in JSON as a zip file</a>.
+                Please note, each entry will be downloaded as a separate file.
+            </p>
 
             <h2>Updates</h2>
-            <p>
-                Once you have downloaded your copy of the register you can check for new entries visiting <a href="/entries">entries page</a>.
-                Read the technical guidance alongside the register to find out how to do this.
-            </p>
+            <p>Once you have downloaded your copy of the register you can check for new entries on the <a href="/entries">entries page</a>.</p>
         </article>
     </main>
 </div>
