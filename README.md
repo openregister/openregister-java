@@ -22,13 +22,9 @@ A java implementation of a register
 
 ## Updating the styles
 
-Ensure you have sassc installed:
+Recompile the `.scss` files to `.css` via Gradle task:
 
-    brew install sassc
-
-Recompile the `.scss` files to `.css`:
-
-    ./build-styles.sh
+    ./gradlew compassCompile
 
 ## Running the server
 

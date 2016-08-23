@@ -8,13 +8,30 @@ group 'openregister'
 buildscript {
     repositories {
         jcenter()
+        maven { url "http://dl.bintray.com/robfletcher/gradle-plugins" }
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+        classpath "com.github.robfletcher:compass-gradle-plugin:2.0.5"
     }
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "com.github.robfletcher.compass"
+
+def assetsDir = new File(projectDir, "src/main/resources/assets")
+
+compass {
+    importPath = files(
+        new File(assetsDir, "govuk_frontend_toolkit/stylesheets"),
+        new File(assetsDir, "govuk_template/source/assets/stylesheets")
+    )
+    sassDir = new File(assetsDir, "sass")
+    cssDir = new File(assetsDir, "css")
+    outputStyle = "expanded"
+    force = true
+    sourcemap = true
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
@@ -82,7 +99,7 @@ void startApp() {
     waitForApplicationToStart()
 }
 
-def waitForApplicationToStart() {
+void waitForApplicationToStart() {
     URL target = new URL('http://localhost:9090/')
 
     int counter = 0

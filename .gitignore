@@ -24,3 +24,6 @@ deployable_bundle
 
 .venv
 .cache
+
+.sass-cache
+src/main/resources/assets/css
