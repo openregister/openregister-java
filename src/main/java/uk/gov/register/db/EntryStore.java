@@ -6,8 +6,8 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 import uk.gov.register.core.Entry;
-import uk.gov.mint.Item;
 import uk.gov.register.core.FatEntry;
+import uk.gov.register.core.Item;
 
 import java.time.Instant;
 import java.util.List;
@@ -36,7 +36,7 @@ public abstract class EntryStore implements GetHandle {
                 .map(Item::new)
                 .collect(Collectors.toList());
         List<FatEntry> fatEntries = items.stream()
-                .map(item -> new FatEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
+                .map(item -> new FatEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hexDb(), Instant.now()), item))
                 .collect(Collectors.toList());
         List<Entry> entries = fatEntries.stream()
                 .map(fatEntry -> fatEntry.entry)

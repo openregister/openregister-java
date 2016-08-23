@@ -2,22 +2,53 @@ package uk.gov.register.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.postgresql.util.PGobject;
+import uk.gov.register.util.CanonicalJsonMapper;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Item {
+    private static final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+
     public final String sha256hex;
     public final JsonNode content;
+
+    public Item(JsonNode content) {
+        this(itemHash(content), content);
+    }
 
     public Item(String sha256hex, JsonNode content) {
         this.sha256hex = sha256hex;
         this.content = content;
     }
 
+    public static String itemHash(JsonNode content) {
+        return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
+    }
+
+
     public String getSha256hex() {
         return "sha-256:" + sha256hex;
+    }
+
+    public String getSha256hexDb() {
+        return sha256hex;
+    }
+
+    @SuppressWarnings("unused, used by DAO")
+    public PGobject getContent() throws SQLException {
+        PGobject data = new PGobject();
+        data.setType("jsonb");
+        data.setValue(content.toString());
+        return data;
+    }
+
+    public String getKey(String key) {
+        return content.get(key).textValue();
     }
 
     public Stream<Map.Entry<String, JsonNode>> getFieldsStream() {
