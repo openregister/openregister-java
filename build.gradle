@@ -33,6 +33,10 @@ compass {
     sourcemap = true
 }
 
+// because we build into src/main/resources, we need compassCompile to run before processResources
+processResources.dependsOn 'compassCompile'
+
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
 }
@@ -198,7 +202,7 @@ task createDeployableBundle(type: Zip) {
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
 
-task(run, type: JavaExec) {
+task(run, type: JavaExec, dependsOn: ['classes']) {
     main = 'uk.gov.register.RegisterApplication'
     classpath = sourceSets.main.runtimeClasspath
     args = ["server", "config.yaml"]
