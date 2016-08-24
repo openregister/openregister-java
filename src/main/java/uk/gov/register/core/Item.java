@@ -30,7 +30,7 @@ public class Item {
         return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
     }
 
-    public String getSha256hex() {
+    public String getItemHash() {
         return "sha-256:" + sha256hex;
     }
 
