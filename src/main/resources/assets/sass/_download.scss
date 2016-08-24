@@ -1,0 +1,39 @@
+// Download-specific styles
+// ==========================================================================
+
+@mixin border {
+  background-color: $pale-grey;
+  border: 1px solid $dark-grey;
+}
+
+@mixin font-code {
+	@include core-16;
+	font-family: monospace;
+}
+
+.content-two-thirds {
+  @include grid-column( 2/3 );
+  padding: 0;
+}
+
+.content-grid-row {
+  @extend %grid-row;
+  margin: 0;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+.url-param{
+  @include font-code;
+  @include border;
+}
+
+.url-list {
+	@include border;
+	@include font-code;
+	padding: 1em;
+
+	list-style: none;
+}

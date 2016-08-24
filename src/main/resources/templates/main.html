@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
 <head th:fragment="head">
     <meta charset="UTF-8"/>
     <meta name="mobile-web-app-capable" content="yes"/>
@@ -18,10 +19,9 @@
 
     <title th:text="${friendlyRegisterName}"></title>
     <link rel="stylesheet" href="/assets/css/main.css"/>
-
 </head>
 
-<header th:fragment="header" id="global-header">
+<header th:fragment="header" id="global-header" role="banner">
     <div class="header-wrapper">
         <div class="header-global">
             <div class="header-logo">
@@ -30,6 +30,12 @@
                    th:text="${friendlyRegisterName}"></a>
             </div>
         </div>
+    </div>
+</header>
+
+<header th:fragment="page-header(title)" class="page-header">
+    <div>
+        <h1 th:text="${title}"></h1>
     </div>
 </header>
 
