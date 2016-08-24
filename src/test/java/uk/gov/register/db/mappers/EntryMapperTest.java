@@ -7,7 +7,6 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.db.EntryDAO;
 import uk.gov.register.db.EntryQueryDAO;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
 
