@@ -33,6 +33,12 @@
     </div>
 </header>
 
+<header th:fragment="page-header(title)" class="page-header">
+    <div>
+        <h1 th:text="${title}"></h1>
+    </div>
+</header>
+
 <div th:fragment="phase" th:if="${register.phase == 'alpha' || register.phase == 'beta'}" th:class="'phase-banner-' + ${register.phase}">
     <p>
         <strong class="phase-tag" th:text="${#strings.toUpperCase(register.phase)}">ALPHA</strong>
