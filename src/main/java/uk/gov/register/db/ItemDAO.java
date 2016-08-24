@@ -11,6 +11,6 @@ public interface ItemDAO {
             "CREATE INDEX IF NOT EXISTS item_content_gin ON item USING gin(content jsonb_path_ops);")
     void ensureSchema();
 
-    @SqlBatch("insert into item(sha256hex, content) values(:sha256hexDb, :contentDb) on conflict do nothing")
+    @SqlBatch("insert into item(sha256hex, content) values(:sha256hexDb, :contentAsJsonb) on conflict do nothing")
     void insertInBatch(@BindBean Iterable<Item> items);
 }

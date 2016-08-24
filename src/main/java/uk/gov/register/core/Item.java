@@ -43,7 +43,7 @@ public class Item {
     }
 
     @SuppressWarnings("unused, used by DAO")
-    public PGobject getContentDb() throws SQLException {
+    public PGobject getContentAsJsonb() throws SQLException {
         PGobject data = new PGobject();
         data.setType("jsonb");
         data.setValue(content.toString());
