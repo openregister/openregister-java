@@ -31,7 +31,7 @@ public class RecordView extends CsvRepresentationView {
     }
 
     public String getPrimaryKey() {
-        return record.item.content.get(registerPrimaryKey).textValue();
+        return record.item.getContent().get(registerPrimaryKey).textValue();
     }
 
     @SuppressWarnings("unused, used to create the json representation of this class")
@@ -39,7 +39,7 @@ public class RecordView extends CsvRepresentationView {
     public ObjectNode getRecordJson() {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         ObjectNode jsonNodes = objectMapper.convertValue(record.entry, ObjectNode.class);
-        jsonNodes.setAll((ObjectNode) record.item.content.deepCopy());
+        jsonNodes.setAll((ObjectNode) record.item.getContent().deepCopy());
         return jsonNodes;
     }
 

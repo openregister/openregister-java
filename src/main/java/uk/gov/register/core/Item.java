@@ -14,8 +14,8 @@ import java.util.stream.StreamSupport;
 public class Item {
     private static final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
-    public final String sha256hex;
-    public final JsonNode content;
+    private final String sha256hex;
+    private final JsonNode content;
 
     public Item(JsonNode content) {
         this(itemHash(content), content);
@@ -30,7 +30,6 @@ public class Item {
         return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
     }
 
-
     public String getSha256hex() {
         return "sha-256:" + sha256hex;
     }
@@ -39,8 +38,12 @@ public class Item {
         return sha256hex;
     }
 
+    public JsonNode getContent() {
+        return content;
+    }
+
     @SuppressWarnings("unused, used by DAO")
-    public PGobject getContent() throws SQLException {
+    public PGobject getContentDb() throws SQLException {
         PGobject data = new PGobject();
         data.setType("jsonb");
         data.setValue(content.toString());
