@@ -34,7 +34,7 @@ public class Item {
         return "sha-256:" + sha256hex;
     }
 
-    public String getSha256hexDb() {
+    public String getSha256hex() {
         return sha256hex;
     }
 
