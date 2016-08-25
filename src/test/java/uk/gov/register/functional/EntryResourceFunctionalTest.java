@@ -30,8 +30,7 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
     private final String item2 = "{\"address\":\"6790\",\"street\":\"presley\"}";
     private final String item1Hash = "sha-256:" + DigestUtils.sha256Hex(item1);
     private final String item2Hash = "sha-256:" + DigestUtils.sha256Hex(item2);
-
-
+    
     @Before
     public void publishTestMessages() throws Throwable {
         mintItems(item1, item2);
