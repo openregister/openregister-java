@@ -6,8 +6,8 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 import uk.gov.register.core.Entry;
-import uk.gov.mint.Item;
 import uk.gov.register.core.FatEntry;
+import uk.gov.register.core.Item;
 
 import java.time.Instant;
 import java.util.List;

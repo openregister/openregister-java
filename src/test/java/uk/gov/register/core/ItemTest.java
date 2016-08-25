@@ -1,4 +1,4 @@
-package uk.gov.mint;
+package uk.gov.register.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

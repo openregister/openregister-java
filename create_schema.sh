@@ -13,5 +13,15 @@ create table if not exists current_entry_number(value integer not null);
 
 insert into total_records (count) select 0 where not exists (select count from total_records);
 insert into total_entries (count) select 0 where not exists (select count from total_entries);
+insert into current_entry_number(value)
+  select (
+    select case
+      when (select max(entry_number) from entry) is null then 0
+      else (select max(entry_number) from entry)
+    end as t
+  )
+  where not exists (
+    select 1 from current_entry_number
+  );
 
 "

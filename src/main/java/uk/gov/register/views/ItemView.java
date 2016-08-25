@@ -35,7 +35,7 @@ public class ItemView extends CsvRepresentationView {
         return new CsvRepresentation<>(Item.csvSchema(getRegister().getFields()), getContent());
     }
 
-    public String getSha256hex() {
-        return item.getSha256hex();
+    public String getItemHash() {
+        return item.getItemHash();
     }
 }

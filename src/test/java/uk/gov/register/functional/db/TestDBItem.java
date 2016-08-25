@@ -1,7 +1,7 @@
 package uk.gov.register.functional.db;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import uk.gov.mint.Item;
+import uk.gov.register.core.Item;
 
 public class TestDBItem {
     public final String sha256hex;

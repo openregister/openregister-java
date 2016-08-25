@@ -50,7 +50,7 @@ public class Entry {
     }
 
     @JsonProperty("item-hash")
-    public String getSha256hexFull() {
+    public String getItemHash() {
         return "sha-256:" + sha256hex;
     }
 

@@ -32,7 +32,7 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
         String itemFieldPrefix = fieldUri().toString();
 
         Model model = ModelFactory.createDefaultModel();
-        Resource resource = model.createResource(itemUri(view.getSha256hex()).toString());
+        Resource resource = model.createResource(itemUri(view.getItemHash()).toString());
 
         for (Map.Entry<String, FieldValue> field : view.getContent().entrySet()) {
             FieldRenderer fieldRenderer = new FieldRenderer(model.createProperty(itemFieldPrefix + field.getKey()));
