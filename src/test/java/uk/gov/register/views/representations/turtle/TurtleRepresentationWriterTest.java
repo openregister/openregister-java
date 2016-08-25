@@ -97,7 +97,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null);
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("itemhash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -108,6 +108,7 @@ public class TurtleRepresentationWriterTest {
         assertThat(generatedTtl, containsString("field:address <http://address.test.register.gov.uk/record/1111111>"));
         assertThat(generatedTtl, containsString("field:location <http://address.test.register.gov.uk/record/location-value>"));
         assertThat(generatedTtl, containsString("field:name \"foo\""));
+        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/item/sha-256:itemhash>"));
     }
 
     @Test
