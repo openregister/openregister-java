@@ -3,7 +3,7 @@ package uk.gov.register.db;
 import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
-import uk.gov.register.core.FatEntry;
+import uk.gov.register.core.Record;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +20,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle {
 
     }
 
-    public void upsertInCurrentKeysTable(String registerName, List<FatEntry> records) {
+    public void upsertInCurrentKeysTable(String registerName, List<Record> records) {
         int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(records, r -> r.item.getKey(registerName)));
         List<CurrentKey> currentKeys = extractCurrentKeys(registerName, records);
 
@@ -28,7 +28,7 @@ public abstract class DestinationDBUpdateDAO implements GetHandle {
         currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
     }
 
-    private List<CurrentKey> extractCurrentKeys(String registerName, List<FatEntry> records) {
+    private List<CurrentKey> extractCurrentKeys(String registerName, List<Record> records) {
         Map<String, Integer> currentKeys = new HashMap<>();
         records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntryNumber()));
         return currentKeys

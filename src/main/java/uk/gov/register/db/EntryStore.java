@@ -6,8 +6,8 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Transaction;
 import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.FatEntry;
 import uk.gov.register.core.Item;
+import uk.gov.register.core.Record;
 
 import java.time.Instant;
 import java.util.List;
@@ -35,19 +35,18 @@ public abstract class EntryStore implements GetHandle {
         List<Item> items = StreamSupport.stream(itemNodes.spliterator(), false)
                 .map(Item::new)
                 .collect(Collectors.toList());
-        List<FatEntry> fatEntries = items.stream()
-                .map(item -> new FatEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
+        List<Record> records = items.stream()
+                .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
                 .collect(Collectors.toList());
-        List<Entry> entries = fatEntries.stream()
-                .map(fatEntry -> fatEntry.entry)
+        List<Entry> entries = records.stream()
+                .map(record -> record.entry)
                 .collect(Collectors.toList());
 
         entryDAO.insertInBatch(entries);
         itemDAO.insertInBatch(items);
-        destinationDBUpdateDAO.upsertInCurrentKeysTable(registerName, fatEntries);
+        destinationDBUpdateDAO.upsertInCurrentKeysTable(registerName, records);
 
         entryDAO.setEntryNumber(currentEntryNumber.get());
-
     }
 }
 
