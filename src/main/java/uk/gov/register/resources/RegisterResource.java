@@ -32,7 +32,6 @@ public class RegisterResource {
         return viewFactory.registerDetailView(
                 recordDAO.getTotalRecords(),
                 entryDAO.getTotalEntries(),
-                entryDAO.getTotalEntries(),
                 entryDAO.getLastUpdatedTime()
         );
     }

@@ -10,7 +10,6 @@ import java.util.Optional;
 public class RegisterDetailView {
     private final int totalRecords;
     private final int totalEntries;
-    private final int totalItems;
     private final Optional<Instant> lastUpdated;
     private final RegisterData registerData;
     private final String registerDomain;
@@ -18,13 +17,11 @@ public class RegisterDetailView {
     public RegisterDetailView(
             int totalRecords,
             int totalEntries,
-            int totalItems,
             Optional<Instant> lastUpdated,
             RegisterData registerData,
             String registerDomain) {
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
-        this.totalItems = totalItems;
         this.lastUpdated = lastUpdated;
         this.registerData = registerData;
         this.registerDomain = registerDomain;
@@ -36,7 +33,6 @@ public class RegisterDetailView {
                 registerDomain,
                 totalRecords,
                 totalEntries,
-                totalItems,
                 lastUpdated,
                 registerData
         );

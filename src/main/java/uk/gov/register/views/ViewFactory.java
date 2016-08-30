@@ -57,8 +57,8 @@ public class ViewFactory {
         return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomainConfiguration, registerData);
     }
 
-    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, int totalItems, Optional<Instant> lastUpdated) {
-        return new RegisterDetailView(totalRecords, totalEntries, totalItems, lastUpdated, registerData, registerDomain);
+    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
+        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData, registerDomain);
     }
 
     public ItemView getItemView(Item item) {

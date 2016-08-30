@@ -55,7 +55,7 @@ public class ArchiveCreatorTest {
             "fields", registerFields
         ));
 
-        RegisterDetail registerDetail = new RegisterDetail("test-domain", 2, 2, 2, Optional.empty(), registerData);
+        RegisterDetail registerDetail = new RegisterDetail("test-domain", 2, 2, Optional.empty(), registerData);
 
         StreamingOutput streamingOutput = sutArchiveCreator.create(
             registerDetail,
@@ -71,7 +71,6 @@ public class ArchiveCreatorTest {
         assertThat(actualRegisterNode.get("domain").asText(), equalTo("test-domain"));
         assertThat(actualRegisterNode.get("total-records").asInt(), equalTo(2));
         assertThat(actualRegisterNode.get("total-entries").asInt(), equalTo(2));
-        assertThat(actualRegisterNode.get("total-items").asInt(), equalTo(2));
 
         JsonNode actualRegisterRecord = actualRegisterNode.get("register-record");
         assertThat(actualRegisterRecord.get("register").asText(), equalTo("test-register"));
