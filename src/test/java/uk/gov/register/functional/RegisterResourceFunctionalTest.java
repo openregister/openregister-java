@@ -51,7 +51,6 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(5));
         assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(3));
-        assertThat(registerResourceMapFromAddressRegister.get("total-items"), equalTo(5));
         verifyStringIsAnISODate(registerResourceMapFromAddressRegister.get("last-updated").toString());
 
         Map<?,?> registerRecordMapFromAddressRegister = (Map)registerResourceMapFromAddressRegister.get("register-record");
@@ -69,7 +68,6 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(0));
         assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(0));
-        assertThat(registerResourceMapFromAddressRegister.get("total-items"), equalTo(0));
 
         assertThat(registerResourceMapFromAddressRegister, not(hasKey("last-updated")));
     }

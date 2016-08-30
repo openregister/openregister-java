@@ -12,7 +12,6 @@ public class RegisterDetail {
     private final String domain;
     private final int totalRecords;
     private final int totalEntries;
-    private final int totalItems;
     private final Optional<Instant> lastUpdated;
     private RegisterData registerData;
 
@@ -20,13 +19,11 @@ public class RegisterDetail {
             String domain,
             int totalRecords,
             int totalEntries,
-            int totalItems,
             Optional<Instant> lastUpdated,
             RegisterData registerData) {
         this.domain = domain;
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
-        this.totalItems = totalItems;
         this.lastUpdated = lastUpdated;
         this.registerData = registerData;
     }
@@ -52,12 +49,6 @@ public class RegisterDetail {
     @JsonProperty("total-entries")
     public int getTotalEntries() {
         return totalEntries;
-    }
-
-    @SuppressWarnings("unused, used from template")
-    @JsonProperty("total-items")
-    public int getTotalItems() {
-        return totalItems;
     }
 
     @SuppressWarnings("unused, used from template")

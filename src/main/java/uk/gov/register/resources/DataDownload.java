@@ -56,7 +56,6 @@ public class DataDownload {
         RegisterDetail registerDetail = viewFactory.registerDetailView(
                 totalRecords,
                 totalEntries,
-                totalEntries,
                 entryDAO.getLastUpdatedTime()
         ).getRegisterDetail();
 
