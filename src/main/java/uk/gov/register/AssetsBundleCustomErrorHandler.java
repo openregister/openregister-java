@@ -10,10 +10,10 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.thymeleaf.ThymeleafResourceResolver;
-import uk.gov.register.util.RegisterNameExtractor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +55,8 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         ServletContext sc = baseRequest.getContext();
         ServiceLocator sl = ((ServletContainer) environment.getJerseyServletContainer()).getApplicationHandler().getServiceLocator();
         RegistersConfiguration rc = sl.getService(RegistersConfiguration.class);
-        String registerId = RegisterNameExtractor.extractRegisterName(request.getHeader("Host"));
+        RegisterNameConfiguration rnc = sl.getService(RegisterNameConfiguration.class);
+        String registerId = rnc.getRegister();
         RegisterData rd = rc.getRegisterData(registerId);
         String registerName = registerId.replace('-', ' ');
 
@@ -63,6 +64,7 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
                 request.getLocale());
         wc.setVariable("register", rd.getRegister());
         wc.setVariable("friendlyRegisterName", StringUtils.capitalize(registerName) + " register");
+        wc.setVariable("renderedCopyrightText", rd.getRegister().getCopyright());
 
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
         engine.process("404.html", wc, response.getWriter());
