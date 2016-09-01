@@ -79,6 +79,10 @@ main {
 .phase-banner-discovery {
   @include phase-banner($state: discovery);
   margin-bottom: $gutter;
+
+  .phase-tag {
+      background-color: $discovery-colour;
+  }
 }
 
 #footer .footer-meta .footer-meta-inner {
