@@ -70,7 +70,6 @@ public class DataDownload {
     @GET
     @Path("/download")
     @Produces(ExtraMediaType.TEXT_HTML)
-    @DownloadNotAvailable
     public View download() {
         return viewFactory.thymeleafView("download.html");
     }
