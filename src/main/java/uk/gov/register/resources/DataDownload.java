@@ -4,6 +4,7 @@ import io.dropwizard.views.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
@@ -32,14 +33,16 @@ public class DataDownload {
     private final RecordQueryDAO recordDAO;
     private EntryQueryDAO entryDAO;
     private String registerPrimaryKey;
+    private final ResourceConfiguration resourceConfiguration;
 
     @Inject
-    public DataDownload(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO, ItemQueryDAO itemDAO, RegisterNameConfiguration registerNameConfiguration) {
+    public DataDownload(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO, ItemQueryDAO itemDAO, RegisterNameConfiguration registerNameConfiguration, ResourceConfiguration resourceConfiguration) {
         this.viewFactory = viewFactory;
         this.recordDAO = recordDAO;
         this.entryDAO = entryDAO;
         this.itemDAO = itemDAO;
         this.registerPrimaryKey = registerNameConfiguration.getRegister();
+        this.resourceConfiguration = resourceConfiguration;
     }
 
     @GET
@@ -71,7 +74,7 @@ public class DataDownload {
     @Path("/download")
     @Produces(ExtraMediaType.TEXT_HTML)
     public View download() {
-        return viewFactory.thymeleafView("download.html");
+        return viewFactory.downloadPageView(resourceConfiguration.getEnableDownloadResource());
     }
 }
 
