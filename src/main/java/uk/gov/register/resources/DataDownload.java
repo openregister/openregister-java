@@ -73,16 +73,5 @@ public class DataDownload {
     public View download() {
         return viewFactory.thymeleafView("download.html");
     }
-
-    @GET
-    @Path("/download.torrent")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @DownloadNotAvailable
-    public Response downloadTorrent() {
-        return Response
-                .status(Response.Status.NOT_IMPLEMENTED)
-                .entity(viewFactory.thymeleafView("not-implemented.html"))
-                .build();
-    }
 }
 
