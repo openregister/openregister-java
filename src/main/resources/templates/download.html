@@ -37,7 +37,8 @@
             </p>
 
             <p>You can also download the data in CSV, TTL, or TSV formats by amending <code class="url-param">.json</code> to the format of your choice.</p>
-            <p>
+
+            <p th:if="${#bools.isTrue(downloadEnabled)}">
                 You can also download the full contents of this register <a href="/download-register">in JSON as a zip file</a>.
                 Please note, each entry will be downloaded as a separate file.
             </p>

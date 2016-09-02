@@ -4,7 +4,6 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
 import uk.gov.register.configuration.ResourceConfiguration;
-import uk.gov.register.filters.ResourceAvailabilityFilter;
 import uk.gov.register.resources.DownloadNotAvailable;
 import uk.gov.register.views.ViewFactory;
 

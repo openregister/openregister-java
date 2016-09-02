@@ -5,6 +5,7 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.IPagination;
 import uk.gov.register.resources.Pagination;
@@ -55,6 +56,10 @@ public class ViewFactory {
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
         return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomainConfiguration, registerData);
+    }
+
+    public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
+        return new DownloadPageView(requestContext, registerDomainConfiguration, registerData, enableDownloadResource);
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
