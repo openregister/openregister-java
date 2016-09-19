@@ -3,7 +3,7 @@ ext {
     jersey_version = '2.22.1'
     jackson_version = '2.6.7'
 
-    verifiableLog = 'verifiable-log:verifiable-log:0.1.64'
+    verifiableLog = 'verifiable-log:verifiable-log:0.1.67'
 
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",
