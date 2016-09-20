@@ -39,7 +39,7 @@ import uk.gov.register.service.VerifiableLogService;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
-import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwo;
+import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Singleton;
@@ -114,7 +114,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
-                bind(InMemoryPowOfTwo.class).to(MemoizationStore.class).in(Singleton.class);
+                bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
                 bind(configuration);
                 bind(client).to(Client.class);
             }
