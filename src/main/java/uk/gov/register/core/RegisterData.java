@@ -21,8 +21,8 @@ public class RegisterData {
         this.data = data;
     }
 
-    public Register getRegister() {
-        return yamlObjectMapper.convertValue(data, Register.class);
+    public RegisterMetadata getRegister() {
+        return yamlObjectMapper.convertValue(data, RegisterMetadata.class);
     }
 
     @SuppressWarnings("unused, used to serialize in register json")

@@ -13,7 +13,7 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Register {
+public class RegisterMetadata {
     final String registerName;
     final List<String> fields;
     final Optional<String> copyright;
@@ -22,12 +22,12 @@ public class Register {
     final String phase;
 
     @JsonCreator
-    public Register(@JsonProperty("register") String registerName,
-                    @JsonProperty("fields") List<String> fields,
-                    @JsonProperty("copyright") String copyright,
-                    @JsonProperty("registry") String registry,
-                    @JsonProperty("text") String text,
-                    @JsonProperty("phase") String phase) {
+    public RegisterMetadata(@JsonProperty("register") String registerName,
+                            @JsonProperty("fields") List<String> fields,
+                            @JsonProperty("copyright") String copyright,
+                            @JsonProperty("registry") String registry,
+                            @JsonProperty("text") String text,
+                            @JsonProperty("phase") String phase) {
         this.registerName = registerName;
         this.phase = phase;
         this.fields = fields;

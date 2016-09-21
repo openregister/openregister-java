@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
@@ -26,11 +26,11 @@ public class ItemValidator {
     }
 
     public void validateItem(String registerName, JsonNode inputEntry) throws ItemValidationException {
-        Register register = registersConfiguration.getRegisterData(registerName).getRegister();
+        RegisterMetadata registerMetadata = registersConfiguration.getRegisterData(registerName).getRegister();
 
-        validateFields(inputEntry, register);
+        validateFields(inputEntry, registerMetadata);
 
-        validatePrimaryKeyExists(inputEntry, register.getRegisterName());
+        validatePrimaryKeyExists(inputEntry, registerMetadata.getRegisterName());
 
         validateFieldsValue(inputEntry);
     }
@@ -41,9 +41,9 @@ public class ItemValidator {
         validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerName + "' must have a valid value");
     }
 
-    private void validateFields(JsonNode inputEntry, Register register) throws ItemValidationException {
+    private void validateFields(JsonNode inputEntry, RegisterMetadata registerMetadata) throws ItemValidationException {
         Set<String> inputFieldNames = Sets.newHashSet(inputEntry.fieldNames());
-        Set<String> expectedFieldNames = Sets.newHashSet(register.getFields());
+        Set<String> expectedFieldNames = Sets.newHashSet(registerMetadata.getFields());
         Set<String> unknownFields = Sets.difference(inputFieldNames, expectedFieldNames);
 
         throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
