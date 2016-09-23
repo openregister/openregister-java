@@ -7,8 +7,13 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.service.VerifiableLogService;
+import uk.gov.register.views.ConsistencyProof;
+import uk.gov.register.views.EntryProof;
+import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +28,7 @@ public class PostgresRegister implements Register {
     private final ItemQueryDAO itemQueryDAO;
     private final DestinationDBUpdateDAO destinationDBUpdateDAO;
     private final RecordQueryDAO recordQueryDAO;
+    private final VerifiableLogService verifiableLogService;
     private final String registerName;
 
     @Inject
@@ -32,6 +38,7 @@ public class PostgresRegister implements Register {
                             ItemQueryDAO itemQueryDAO,
                             DestinationDBUpdateDAO destinationDBUpdateDAO,
                             RecordQueryDAO recordQueryDAO,
+                            VerifiableLogService verifiableLogService,
                             RegisterNameConfiguration registerNameConfig) {
         this.entryDAO = entryDAO;
         this.entryQueryDAO = entryQueryDAO;
@@ -39,6 +46,7 @@ public class PostgresRegister implements Register {
         this.itemQueryDAO = itemQueryDAO;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
         this.recordQueryDAO = recordQueryDAO;
+        this.verifiableLogService = verifiableLogService;
         registerName = registerNameConfig.getRegister();
     }
 
@@ -123,5 +131,20 @@ public class PostgresRegister implements Register {
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
         return recordQueryDAO.findMax100RecordsByKeyValue(key, value);
+    }
+
+    @Override
+    public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
+        return verifiableLogService.getRegisterProof();
+    }
+
+    @Override
+    public EntryProof getEntryProof(int entryNumber, int totalEntries) {
+        return verifiableLogService.getEntryProof(entryNumber, totalEntries);
+    }
+
+    @Override
+    public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
+        return verifiableLogService.getConsistencyProof(totalEntries1, totalEntries2);
     }
 }

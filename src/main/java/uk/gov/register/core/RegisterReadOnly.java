@@ -1,5 +1,10 @@
 package uk.gov.register.core;
 
+import uk.gov.register.views.ConsistencyProof;
+import uk.gov.register.views.EntryProof;
+import uk.gov.register.views.RegisterProof;
+
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -27,4 +32,10 @@ public interface RegisterReadOnly {
     List<Record> max100RecordsFacetedByKeyValue(String key, String value);
 
     Optional<Instant> getLastUpdatedTime();
+
+    RegisterProof getRegisterProof() throws NoSuchAlgorithmException;
+
+    EntryProof getEntryProof(int entryNumber, int totalEntries);
+
+    ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
 }
