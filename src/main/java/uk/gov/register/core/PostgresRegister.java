@@ -51,26 +51,21 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public void addItem(Item item) {
+    public void mintItem(Item item) {
+        addItem(item);
+        addEntry(new Entry(getTotalEntries()+1, item.getSha256hex(), Instant.now()));
+    }
+
+    private void addItem(Item item) {
         itemDAO.insertInBatch(Collections.singletonList(item));
     }
 
-    @Override
-    public void addEntry(Entry entry) {
+    private void addEntry(Entry entry) {
         // TODO: do we need to check if referred item already exists?
         entryDAO.insertInBatch(Collections.singletonList(entry));
         Record fatEntry = new Record(entry, getItemBySha256(entry.getSha256hex()).get());
         destinationDBUpdateDAO.upsertInCurrentKeysTable(registerName, Collections.singletonList(fatEntry));
         entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + 1);
-    }
-
-    @Override
-    public void addItemAndEntry(Item item, Entry entry) {
-        entryDAO.insertInBatch(Collections.singletonList(entry));
-        itemDAO.insertInBatch(Collections.singletonList(item));
-        // should probably check entry and item match one another
-        Record fatEntry = new Record(entry, item);
-        destinationDBUpdateDAO.upsertInCurrentKeysTable(registerName, Collections.singletonList(fatEntry));
     }
 
     @Override
