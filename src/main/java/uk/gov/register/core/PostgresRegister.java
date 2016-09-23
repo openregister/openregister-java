@@ -1,5 +1,7 @@
 package uk.gov.register.core;
 
+import com.google.common.collect.Iterables;
+import org.skife.jdbi.v2.TransactionIsolationLevel;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.DestinationDBUpdateDAO;
 import uk.gov.register.db.EntryDAO;
@@ -19,6 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class PostgresRegister implements Register {
 
@@ -53,7 +58,22 @@ public class PostgresRegister implements Register {
     @Override
     public void mintItem(Item item) {
         addItem(item);
-        addEntry(new Entry(getTotalEntries()+1, item.getSha256hex(), Instant.now()));
+        addEntry(new Entry(getTotalEntries() + 1, item.getSha256hex(), Instant.now()));
+    }
+
+    @Override
+    public void mintItems(Iterable<Item> items) {
+        entryQueryDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (entryQueryDAO1, status)-> {
+            itemDAO.insertInBatch(items);
+            AtomicInteger currentEntryNumber = new AtomicInteger(getTotalEntries());
+            List<Record> records = StreamSupport.stream(items.spliterator(), false)
+                    .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
+                    .collect(Collectors.toList());
+            entryDAO.insertInBatch(Iterables.transform(records, r -> r.entry));
+            destinationDBUpdateDAO.upsertInCurrentKeysTable(registerName, records);
+            entryDAO.setEntryNumber(currentEntryNumber.get());
+            return 0;
+        });
     }
 
     private void addItem(Item item) {
