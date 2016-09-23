@@ -2,13 +2,13 @@ package uk.gov.register.resources;
 
 import java.util.Optional;
 
-public class NewPagination implements IPagination {
+public class StartLimitPagination implements Pagination {
     public final int start;
     public final int limit;
 
     private int totalEntries;
 
-    public NewPagination(Optional<Integer> optionalStart, Optional<Integer> optionalLimit, int totalEntries) {
+    public StartLimitPagination(Optional<Integer> optionalStart, Optional<Integer> optionalLimit, int totalEntries) {
         this.start = optionalStart.orElseGet(() -> 1);
         this.limit = optionalLimit.orElseGet(() -> 100);
         this.totalEntries = totalEntries;

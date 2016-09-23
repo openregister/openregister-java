@@ -56,7 +56,7 @@ public class RecordResource {
         }
         return viewFactory.getRecordEntriesView(
                 key, allEntries,
-                new Pagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
+                new IndexSizePagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
         );
     }
 
@@ -66,15 +66,15 @@ public class RecordResource {
     public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = recordDAO.findMax100RecordsByKeyValue(key, value);
         Pagination pagination
-                = new Pagination(Optional.empty(), Optional.empty(), records.size());
+                = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
         return viewFactory.getRecordListView(records, pagination);
     }
 
     @GET
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public RecordListView records(@QueryParam(Pagination.INDEX_PARAM) Optional<Integer> pageIndex, @QueryParam(Pagination.SIZE_PARAM) Optional<Integer> pageSize) {
-        Pagination pagination = new Pagination(pageIndex, pageSize, recordDAO.getTotalRecords());
+    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<Integer> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<Integer> pageSize) {
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex, pageSize, recordDAO.getTotalRecords());
 
         requestContext.resourceExtension().ifPresent(
                 ext -> httpServletResponseAdapter.addContentDispositionHeader(registerPrimaryKey + "-records." + ext)
