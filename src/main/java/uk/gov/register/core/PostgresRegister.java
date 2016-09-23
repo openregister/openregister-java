@@ -6,9 +6,13 @@ import uk.gov.register.db.EntryDAO;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 
 import javax.inject.Inject;
+import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class PostgresRegister implements Register {
@@ -18,15 +22,23 @@ public class PostgresRegister implements Register {
     private final ItemDAO itemDAO;
     private final ItemQueryDAO itemQueryDAO;
     private final DestinationDBUpdateDAO destinationDBUpdateDAO;
+    private final RecordQueryDAO recordQueryDAO;
     private final String registerName;
 
     @Inject
-    public PostgresRegister(EntryDAO entryDAO, EntryQueryDAO entryQueryDAO, ItemDAO itemDAO, ItemQueryDAO itemQueryDAO, DestinationDBUpdateDAO destinationDBUpdateDAO, RegisterNameConfiguration registerNameConfig) {
+    public PostgresRegister(EntryDAO entryDAO,
+                            EntryQueryDAO entryQueryDAO,
+                            ItemDAO itemDAO,
+                            ItemQueryDAO itemQueryDAO,
+                            DestinationDBUpdateDAO destinationDBUpdateDAO,
+                            RecordQueryDAO recordQueryDAO,
+                            RegisterNameConfiguration registerNameConfig) {
         this.entryDAO = entryDAO;
         this.entryQueryDAO = entryQueryDAO;
         this.itemDAO = itemDAO;
         this.itemQueryDAO = itemQueryDAO;
         this.destinationDBUpdateDAO = destinationDBUpdateDAO;
+        this.recordQueryDAO = recordQueryDAO;
         registerName = registerNameConfig.getRegister();
     }
 
@@ -64,7 +76,52 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public int currentEntryNumber() {
+    public int getTotalEntries() {
         return entryDAO.currentEntryNumber();
+    }
+
+    @Override
+    public Collection<Entry> getEntries(int start, int limit) {
+        return entryQueryDAO.getEntries(start, limit);
+    }
+
+    @Override
+    public Optional<Record> getRecord(String key) {
+        return recordQueryDAO.findByPrimaryKey(key);
+    }
+
+    @Override
+    public Collection<Entry> allEntriesOfRecord(String key) {
+        return recordQueryDAO.findAllEntriesOfRecordBy(registerName, key);
+    }
+
+    @Override
+    public List<Record> getRecords(int limit, int offset) {
+        return recordQueryDAO.getRecords(limit, offset);
+    }
+
+    @Override
+    public Collection<Entry> getAllEntries() {
+        return entryQueryDAO.getAllEntriesNoPagination();
+    }
+
+    @Override
+    public Collection<Item> getAllItems() {
+        return itemQueryDAO.getAllItemsNoPagination();
+    }
+
+    @Override
+    public int getTotalRecords() {
+        return recordQueryDAO.getTotalRecords();
+    }
+
+    @Override
+    public Optional<Instant> getLastUpdatedTime() {
+        return entryQueryDAO.getLastUpdatedTime();
+    }
+
+    @Override
+    public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
+        return recordQueryDAO.findMax100RecordsByKeyValue(key, value);
     }
 }

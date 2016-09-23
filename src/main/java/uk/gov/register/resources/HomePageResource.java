@@ -1,8 +1,7 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -15,24 +14,22 @@ import java.security.NoSuchAlgorithmException;
 
 @Path("/")
 public class HomePageResource {
+    private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final RecordQueryDAO recordDAO;
-    private final EntryQueryDAO entryDAO;
 
     @Inject
-    public HomePageResource(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO) {
+    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory) {
+        this.register = register;
         this.viewFactory = viewFactory;
-        this.recordDAO = recordDAO;
-        this.entryDAO = entryDAO;
     }
 
     @GET
     @Produces({ExtraMediaType.TEXT_HTML})
     public View home() throws NoSuchAlgorithmException {
         return viewFactory.homePageView(
-                recordDAO.getTotalRecords(),
-                entryDAO.getTotalEntries(),
-                entryDAO.getLastUpdatedTime()
+                register.getTotalRecords(),
+                register.getTotalEntries(),
+                register.getLastUpdatedTime()
         );
     }
 

@@ -27,6 +27,7 @@ import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.User;
 import uk.gov.register.db.CurrentKeysUpdateDAO;
 import uk.gov.register.db.DestinationDBUpdateDAO;
@@ -133,7 +134,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
 
                 bind(MintService.class).to(MintService.class);
-                bind(PostgresRegister.class).to(Register.class);
+                bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(configuration);
                 bind(client).to(Client.class);
             }

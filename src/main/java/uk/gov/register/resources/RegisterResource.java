@@ -1,7 +1,6 @@
 package uk.gov.register.resources;
 
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.RegisterDetailView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -14,15 +13,13 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/")
 public class RegisterResource {
+    private final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
-    private RecordQueryDAO recordDAO;
-    private final EntryQueryDAO entryDAO;
 
     @Inject
-    public RegisterResource(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO) {
+    public RegisterResource(RegisterReadOnly register, ViewFactory viewFactory) {
+        this.register = register;
         this.viewFactory = viewFactory;
-        this.recordDAO = recordDAO;
-        this.entryDAO = entryDAO;
     }
 
     @GET
@@ -30,9 +27,9 @@ public class RegisterResource {
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML})
     public RegisterDetailView getRegisterDetail() {
         return viewFactory.registerDetailView(
-                recordDAO.getTotalRecords(),
-                entryDAO.getTotalEntries(),
-                entryDAO.getLastUpdatedTime()
+                register.getTotalRecords(),
+                register.getTotalEntries(),
+                register.getLastUpdatedTime()
         );
     }
 }

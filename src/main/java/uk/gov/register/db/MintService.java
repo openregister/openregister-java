@@ -22,7 +22,7 @@ public class MintService  {
 
     @Transaction(TransactionIsolationLevel.SERIALIZABLE)
     public void load(Iterable<JsonNode> itemNodes) {
-        AtomicInteger currentEntryNumber = new AtomicInteger(register.currentEntryNumber());
+        AtomicInteger currentEntryNumber = new AtomicInteger(register.getTotalEntries());
         StreamSupport.stream(itemNodes.spliterator(), false)
                 .map(Item::new)
                 .forEach(item -> {
