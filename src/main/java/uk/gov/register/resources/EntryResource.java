@@ -45,26 +45,26 @@ public class EntryResource {
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView entries(@QueryParam("start") Optional<Integer> optionalStart, @QueryParam("limit") Optional<Integer> optionalLimit) {
         int totalEntries = entryDAO.getTotalEntries();
-        NewPagination newPagination = new NewPagination(optionalStart, optionalLimit, totalEntries);
+        StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart, optionalLimit, totalEntries);
 
-        Collection<Entry> entries = entryDAO.getEntries(newPagination.start, newPagination.limit);
+        Collection<Entry> entries = entryDAO.getEntries(startLimitPagination.start, startLimitPagination.limit);
 
-        setHeaders(newPagination);
+        setHeaders(startLimitPagination);
 
-        return viewFactory.getEntriesView(entries, newPagination);
+        return viewFactory.getEntriesView(entries, startLimitPagination);
     }
 
-    private void setHeaders(NewPagination newPagination) {
+    private void setHeaders(StartLimitPagination startLimitPagination) {
         requestContext.resourceExtension().ifPresent(
                 ext -> httpServletResponseAdapter.addContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
         );
 
-        if (newPagination.hasNextPage()) {
-            httpServletResponseAdapter.addLinkHeader("next", newPagination.getNextPageLink());
+        if (startLimitPagination.hasNextPage()) {
+            httpServletResponseAdapter.addLinkHeader("next", startLimitPagination.getNextPageLink());
         }
 
-        if (newPagination.hasPreviousPage()) {
-            httpServletResponseAdapter.addLinkHeader("previous", newPagination.getPreviousPageLink());
+        if (startLimitPagination.hasPreviousPage()) {
+            httpServletResponseAdapter.addLinkHeader("previous", startLimitPagination.getPreviousPageLink());
         }
     }
 }

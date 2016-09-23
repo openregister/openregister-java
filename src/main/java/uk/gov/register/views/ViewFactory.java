@@ -5,9 +5,7 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.*;
-import uk.gov.register.resources.IPagination;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
@@ -74,11 +72,11 @@ public class ViewFactory {
         return new EntryView(requestContext, getCustodian(), getBranding(), entry, registerDomainConfiguration, registerData);
     }
 
-    public EntryListView getEntriesView(Collection<Entry> entries, IPagination pagination) {
+    public EntryListView getEntriesView(Collection<Entry> entries, Pagination pagination) {
         return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, registerDomainConfiguration, registerData);
     }
 
-    public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, IPagination pagination) {
+    public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
         return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, recordKey, registerDomainConfiguration, registerData);
     }
 

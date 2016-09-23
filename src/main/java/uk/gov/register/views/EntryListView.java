@@ -6,7 +6,7 @@ import uk.gov.register.core.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterData;
-import uk.gov.register.resources.IPagination;
+import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.representations.CsvRepresentation;
 
@@ -14,18 +14,18 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class EntryListView extends CsvRepresentationView {
-    private IPagination pagination;
+    private Pagination pagination;
     private Collection<Entry> entries;
     private final Optional<String> recordKey;
 
-    public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
+    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
         super(requestContext, custodian, custodianBranding, "entries.html", registerDomainConfiguration, registerData);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.empty();
     }
 
-    public EntryListView(RequestContext requestContext, IPagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, String recordKey, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
+    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, String recordKey, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
         super(requestContext, custodian, custodianBranding, "entries.html", registerDomainConfiguration, registerData);
         this.pagination = pagination;
         this.entries = entries;
@@ -38,7 +38,7 @@ public class EntryListView extends CsvRepresentationView {
     }
 
     @SuppressWarnings("unused, used from templates")
-    public IPagination getPagination() {
+    public Pagination getPagination() {
         return pagination;
     }
 
