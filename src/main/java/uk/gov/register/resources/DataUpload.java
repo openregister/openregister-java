@@ -5,7 +5,7 @@ import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.db.EntryStore;
+import uk.gov.register.db.MintService;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
@@ -25,14 +25,14 @@ public class DataUpload {
     private String registerPrimaryKey;
     private ObjectReconstructor objectReconstructor;
     private ItemValidator itemValidator;
-    private EntryStore entryStore;
+    private MintService mintService;
 
     @Inject
-    public DataUpload(ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator, EntryStore entryStore) {
+    public DataUpload(ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator, MintService mintService) {
         this.viewFactory = viewFactory;
         this.objectReconstructor = objectReconstructor;
         this.itemValidator = itemValidator;
-        this.entryStore = entryStore;
+        this.mintService = mintService;
         this.registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
@@ -46,7 +46,7 @@ public class DataUpload {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
             objects.forEach(singleObject -> itemValidator.validateItem(registerPrimaryKey, singleObject));
-            entryStore.load(registerPrimaryKey, objects);
+            mintService.load(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));
             throw t;
