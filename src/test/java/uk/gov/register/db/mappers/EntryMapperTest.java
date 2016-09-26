@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
-import uk.gov.register.db.EntryDAO;
 import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.SchemaCreator;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -22,10 +22,10 @@ public class EntryMapperTest {
         DBI dbi = new DBI("jdbc:postgresql://localhost:5432/test_openregister_java?user=postgres");
         Handle h = dbi.open();
         EntryQueryDAO entryQueryDAO = dbi.onDemand(EntryQueryDAO.class);
-        EntryDAO entryDAO = dbi.onDemand(EntryDAO.class);
+        SchemaCreator schemaCreator = dbi.onDemand(SchemaCreator.class);
 
         h.execute("drop table if exists entry; drop table if exists current_entry_number");
-        entryDAO.ensureSchema();
+        schemaCreator.ensureSchema();
         h.execute("insert into entry(entry_number, sha256hex, timestamp) values(5, 'abcdef', :timestamp)",expectedInstant.getEpochSecond());
 
         // this method implicitly invokes EntryMapper

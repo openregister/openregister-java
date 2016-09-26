@@ -37,6 +37,7 @@ import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.MintService;
 import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -94,6 +95,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         EntryDAO entryDAO = jdbi.onDemand(EntryDAO.class);
         CurrentKeysUpdateDAO currentKeysUpdateDAO = jdbi.onDemand(CurrentKeysUpdateDAO.class);
 
+        SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
+        schemaCreator.ensureSchema();
+
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
         RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegister());
@@ -103,10 +107,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
                 .build("http-client");
-
-        itemDAO.ensureSchema();
-        entryDAO.ensureSchema();
-        currentKeysUpdateDAO.ensureRecordTablesInPlace();
 
         jersey.register(new AbstractBinder() {
             @Override
