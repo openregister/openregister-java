@@ -14,7 +14,6 @@ A java implementation of a register
 
 - Install and run postgres db
 - Checkout project
-- Add `school.openregister.dev` and `address.openregister.dev` as aliases for localhost to /etc/hosts
 - Run the `./go` script to set everything up
 - Build project using command `./gradlew clean build`
 
