@@ -30,7 +30,6 @@ import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.User;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.MintService;
 import uk.gov.register.db.RegisterDAO;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.filters.UriDataFormatFilter;
@@ -119,7 +118,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
                 bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
 
-                bind(MintService.class).to(MintService.class);
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(configuration);
                 bind(client).to(Client.class);
