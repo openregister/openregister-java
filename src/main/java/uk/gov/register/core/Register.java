@@ -4,7 +4,5 @@ import org.jvnet.hk2.annotations.Contract;
 
 @Contract
 public interface Register extends RegisterReadOnly {
-    void mintItem(Item item);
-
     void mintItems(Iterable<Item> items);
 }

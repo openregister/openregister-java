@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,12 +55,6 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public void mintItem(Item item) {
-        addItem(item);
-        addEntry(new Entry(getTotalEntries() + 1, item.getSha256hex(), Instant.now()));
-    }
-
-    @Override
     public void mintItems(Iterable<Item> items) {
         entryQueryDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (entryQueryDAO1, status)-> {
             itemDAO.insertInBatch(items);
@@ -74,18 +67,6 @@ public class PostgresRegister implements Register {
             entryDAO.setEntryNumber(currentEntryNumber.get());
             return 0;
         });
-    }
-
-    private void addItem(Item item) {
-        itemDAO.insertInBatch(Collections.singletonList(item));
-    }
-
-    private void addEntry(Entry entry) {
-        // TODO: do we need to check if referred item already exists?
-        entryDAO.insertInBatch(Collections.singletonList(entry));
-        Record fatEntry = new Record(entry, getItemBySha256(entry.getSha256hex()).get());
-        destinationDBUpdateDAO.upsertInCurrentKeysTable(registerName, Collections.singletonList(fatEntry));
-        entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + 1);
     }
 
     @Override
