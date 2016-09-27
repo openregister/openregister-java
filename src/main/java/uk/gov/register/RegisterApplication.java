@@ -29,14 +29,9 @@ import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.User;
-import uk.gov.register.db.CurrentKeysUpdateDAO;
-import uk.gov.register.db.DestinationDBUpdateDAO;
-import uk.gov.register.db.EntryDAO;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.ItemDAO;
-import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.MintService;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.db.RegisterDAO;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
@@ -87,13 +82,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        ItemQueryDAO itemQueryDAO = jdbi.onDemand(ItemQueryDAO.class);
         EntryQueryDAO entryQueryDAO = jdbi.onDemand(EntryQueryDAO.class);
-        RecordQueryDAO recordQueryDAO = jdbi.onDemand(RecordQueryDAO.class);
 
-        ItemDAO itemDAO = jdbi.onDemand(ItemDAO.class);
-        EntryDAO entryDAO = jdbi.onDemand(EntryDAO.class);
-        CurrentKeysUpdateDAO currentKeysUpdateDAO = jdbi.onDemand(CurrentKeysUpdateDAO.class);
+        RegisterDAO registerDAO = jdbi.open().attach(RegisterDAO.class);
 
         SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
         schemaCreator.ensureSchema();
@@ -111,13 +102,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(itemQueryDAO).to(ItemQueryDAO.class);
                 bind(entryQueryDAO).to(EntryQueryDAO.class);
-                bind(recordQueryDAO).to(RecordQueryDAO.class);
-                bind(itemDAO).to(ItemDAO.class);
-                bind(entryDAO).to(EntryDAO.class);
-                bind(DestinationDBUpdateDAO.class).to(DestinationDBUpdateDAO.class);
-                bind(currentKeysUpdateDAO).to(CurrentKeysUpdateDAO.class);
+                bind(registerDAO).to(RegisterDAO.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bind(registerData).to(RegisterData.class);

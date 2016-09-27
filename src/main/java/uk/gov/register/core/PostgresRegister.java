@@ -3,12 +3,7 @@ package uk.gov.register.core;
 import com.google.common.collect.Iterables;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.db.DestinationDBUpdateDAO;
-import uk.gov.register.db.EntryDAO;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.ItemDAO;
-import uk.gov.register.db.ItemQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.db.RegisterDAO;
 import uk.gov.register.service.VerifiableLogService;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -25,108 +20,93 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class PostgresRegister implements Register {
+    private final RegisterDAO registerDAO;
 
-    private final EntryDAO entryDAO;
-    private final EntryQueryDAO entryQueryDAO;
-    private final ItemDAO itemDAO;
-    private final ItemQueryDAO itemQueryDAO;
-    private final DestinationDBUpdateDAO destinationDBUpdateDAO;
-    private final RecordQueryDAO recordQueryDAO;
     private final VerifiableLogService verifiableLogService;
     private final String registerName;
 
     @Inject
-    public PostgresRegister(EntryDAO entryDAO,
-                            EntryQueryDAO entryQueryDAO,
-                            ItemDAO itemDAO,
-                            ItemQueryDAO itemQueryDAO,
-                            DestinationDBUpdateDAO destinationDBUpdateDAO,
-                            RecordQueryDAO recordQueryDAO,
-                            VerifiableLogService verifiableLogService,
-                            RegisterNameConfiguration registerNameConfig) {
-        this.entryDAO = entryDAO;
-        this.entryQueryDAO = entryQueryDAO;
-        this.itemDAO = itemDAO;
-        this.itemQueryDAO = itemQueryDAO;
-        this.destinationDBUpdateDAO = destinationDBUpdateDAO;
-        this.recordQueryDAO = recordQueryDAO;
+    public PostgresRegister(VerifiableLogService verifiableLogService,
+                            RegisterNameConfiguration registerNameConfig,
+                            RegisterDAO registerDAO) {
         this.verifiableLogService = verifiableLogService;
+        this.registerDAO = registerDAO;
         registerName = registerNameConfig.getRegister();
     }
 
     @Override
     public void mintItems(Iterable<Item> items) {
-        entryQueryDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (entryQueryDAO1, status)-> {
-            itemDAO.insertInBatch(items);
-            AtomicInteger currentEntryNumber = new AtomicInteger(getTotalEntries());
+        registerDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (txnRegisterDAO, status)-> {
+            txnRegisterDAO.batchInsertItems(items);
+            AtomicInteger currentEntryNumber = new AtomicInteger(txnRegisterDAO.getTotalEntries());
             List<Record> records = StreamSupport.stream(items.spliterator(), false)
                     .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
                     .collect(Collectors.toList());
-            entryDAO.insertInBatch(Iterables.transform(records, r -> r.entry));
-            destinationDBUpdateDAO.upsertInCurrentKeysTable(registerName, records);
-            entryDAO.setEntryNumber(currentEntryNumber.get());
+            txnRegisterDAO.batchInsertEntries(Iterables.transform(records, r -> r.entry));
+            txnRegisterDAO.upsertInCurrentKeysTable(registerName, records);
+            txnRegisterDAO.setEntryNumber(currentEntryNumber.get());
             return 0;
         });
     }
 
     @Override
     public Optional<Entry> getEntry(int entryNumber) {
-        return entryQueryDAO.findByEntryNumber(entryNumber);
+        return registerDAO.getEntry(entryNumber);
     }
 
     @Override
     public Optional<Item> getItemBySha256(String sha256hex) {
-        return itemQueryDAO.getItemBySHA256(sha256hex);
+        return registerDAO.getItemBySha256(sha256hex);
     }
 
     @Override
     public int getTotalEntries() {
-        return entryDAO.currentEntryNumber();
+        return registerDAO.getTotalEntries();
     }
 
     @Override
     public Collection<Entry> getEntries(int start, int limit) {
-        return entryQueryDAO.getEntries(start, limit);
+        return registerDAO.getEntries(start, limit);
     }
 
     @Override
     public Optional<Record> getRecord(String key) {
-        return recordQueryDAO.findByPrimaryKey(key);
+        return registerDAO.getRecord(key);
     }
 
     @Override
     public Collection<Entry> allEntriesOfRecord(String key) {
-        return recordQueryDAO.findAllEntriesOfRecordBy(registerName, key);
+        return registerDAO.findAllEntriesOfRecordBy(registerName, key);
     }
 
     @Override
     public List<Record> getRecords(int limit, int offset) {
-        return recordQueryDAO.getRecords(limit, offset);
+        return registerDAO.getRecords(limit, offset);
     }
 
     @Override
     public Collection<Entry> getAllEntries() {
-        return entryQueryDAO.getAllEntriesNoPagination();
+        return registerDAO.getAllEntries();
     }
 
     @Override
     public Collection<Item> getAllItems() {
-        return itemQueryDAO.getAllItemsNoPagination();
+        return registerDAO.getAllItems();
     }
 
     @Override
     public int getTotalRecords() {
-        return recordQueryDAO.getTotalRecords();
+        return registerDAO.getTotalRecords();
     }
 
     @Override
     public Optional<Instant> getLastUpdatedTime() {
-        return entryQueryDAO.getLastUpdatedTime();
+        return registerDAO.getLastUpdatedTime();
     }
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
-        return recordQueryDAO.findMax100RecordsByKeyValue(key, value);
+        return registerDAO.findMax100RecordsByKeyValue(key, value);
     }
 
     @Override
