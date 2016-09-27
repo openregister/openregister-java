@@ -84,7 +84,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         EntryQueryDAO entryQueryDAO = jdbi.onDemand(EntryQueryDAO.class);
 
-        RegisterDAO registerDAO = jdbi.open().attach(RegisterDAO.class);
+        RegisterDAO registerDAO = jdbi.onDemand(RegisterDAO.class);
 
         SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
         schemaCreator.ensureSchema();
