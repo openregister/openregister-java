@@ -57,6 +57,11 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private boolean enableDownloadResource = false;
 
+    @SuppressWarnings("unused")
+    @Valid
+    @JsonProperty
+    private String historyPageUrl;
+
     public DataSourceFactory getDatabase() {
         return database;
     }
@@ -85,5 +90,9 @@ public class RegisterConfiguration extends Configuration
     @Override
     public boolean getEnableDownloadResource() {
         return enableDownloadResource;
+    }
+
+    public Optional<String> getRegisterHistoryPageUrl() {
+        return historyPageUrl == null || historyPageUrl.isEmpty() ? Optional.empty() : Optional.of(historyPageUrl);
     }
 }
