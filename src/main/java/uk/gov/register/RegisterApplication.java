@@ -129,8 +129,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 "uk.gov.register.resources",
                 "uk.gov.register.providers");
 
-        jersey.register(UriDataFormatFilter.class);
-
         if (configuration.cloudWatchEnvironmentName().isPresent()) {
             ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
             cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getRegister()), 0, 10000, TimeUnit.MILLISECONDS);
