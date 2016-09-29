@@ -3,11 +3,11 @@ package uk.gov.register.auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;
-import uk.gov.register.core.User;
 
+import java.security.Principal;
 import java.util.Optional;
 
-public class RegisterAuthenticator implements Authenticator<BasicCredentials, User> {
+public class RegisterAuthenticator implements Authenticator<BasicCredentials, RegisterAuthenticator.User> {
     private final String expectedUsername;
     private final String expectedPassword;
 
@@ -22,5 +22,12 @@ public class RegisterAuthenticator implements Authenticator<BasicCredentials, Us
             return Optional.of(new User());
         }
         return Optional.empty();
+    }
+
+    public static class User implements Principal {
+        @Override
+        public String getName() {
+            return "default user";
+        }
     }
 }

@@ -4,8 +4,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
-import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -21,6 +19,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
+import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
@@ -28,7 +27,6 @@ import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.core.User;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.RegisterDAO;
 import uk.gov.register.db.SchemaCreator;
@@ -74,6 +72,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                         new EnvironmentVariableSubstitutor(false)
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
+        bootstrap.addBundle(new AuthBundle());
     }
 
     @Override
@@ -131,15 +130,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 "uk.gov.register.providers");
 
         jersey.register(UriDataFormatFilter.class);
-
-        configuration.getAuthenticator().build()
-                .ifPresent(authenticator ->
-                                jersey.register(new AuthDynamicFeature(
-                                        new BasicCredentialAuthFilter.Builder<User>()
-                                                .setAuthenticator(authenticator)
-                                                .buildAuthFilter()
-                                ))
-                );
 
         if (configuration.cloudWatchEnvironmentName().isPresent()) {
             ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
