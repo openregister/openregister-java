@@ -2,7 +2,7 @@ package uk.gov.register.resources;
 
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
-import uk.gov.register.service.VerifiableLogService;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 
@@ -23,13 +22,13 @@ public class VerifiableLogResourceTest {
     @Test
     public void shouldUseServiceToGetRegisterProof() throws NoSuchAlgorithmException {
         RegisterProof expectedProof = new RegisterProof(sampleHash1);
-        VerifiableLogService vlServiceMock = mock(VerifiableLogService.class);
-        when(vlServiceMock.getRegisterProof()).thenReturn(expectedProof);
+        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
+        when(registerMock.getRegisterProof()).thenReturn(expectedProof);
 
-        VerifiableLogResource vlResource = new VerifiableLogResource(vlServiceMock);
+        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
         RegisterProof actualProof = vlResource.registerProof();
 
-        verify(vlServiceMock, times(1)).getRegisterProof();
+        verify(registerMock, times(1)).getRegisterProof();
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
         assertThat(actualProof.getRootHash(), equalTo(expectedProof.getRootHash()));
     }
@@ -41,13 +40,13 @@ public class VerifiableLogResourceTest {
         List<String> expectedAuditPath = Arrays.asList(sampleHash1, sampleHash2);
 
         EntryProof expectedProof = new EntryProof("3", expectedAuditPath);
-        VerifiableLogService vlServiceMock = mock(VerifiableLogService.class);
-        when(vlServiceMock.getEntryProof(entryNumber, totalEntries)).thenReturn(expectedProof);
+        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
+        when(registerMock.getEntryProof(entryNumber, totalEntries)).thenReturn(expectedProof);
 
-        VerifiableLogResource vlResource = new VerifiableLogResource(vlServiceMock);
+        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
         EntryProof actualProof = vlResource.entryProof(entryNumber, totalEntries);
 
-        verify(vlServiceMock, times(1)).getEntryProof(entryNumber, totalEntries);
+        verify(registerMock, times(1)).getEntryProof(entryNumber, totalEntries);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
         assertThat(actualProof.getEntryNumber(), equalTo(expectedProof.getEntryNumber()));
         assertThat(actualProof.getAuditPath(), IsIterableContainingInOrder.contains(sampleHash1, sampleHash2));
@@ -60,13 +59,13 @@ public class VerifiableLogResourceTest {
         List<String> expectedConsistencyNodes = Arrays.asList(sampleHash1, sampleHash2);
 
         ConsistencyProof expectedProof = new ConsistencyProof(expectedConsistencyNodes);
-        VerifiableLogService vlServiceMock = mock(VerifiableLogService.class);
-        when(vlServiceMock.getConsistencyProof(totalEntries1, totalEntries2)).thenReturn(expectedProof);
+        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
+        when(registerMock.getConsistencyProof(totalEntries1, totalEntries2)).thenReturn(expectedProof);
 
-        VerifiableLogResource vlResource = new VerifiableLogResource(vlServiceMock);
+        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
         ConsistencyProof actualProof = vlResource.consistencyProof(totalEntries1, totalEntries2);
 
-        verify(vlServiceMock, times(1)).getConsistencyProof(totalEntries1, totalEntries2);
+        verify(registerMock, times(1)).getConsistencyProof(totalEntries1, totalEntries2);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
 
         assertThat(actualProof.getConsistencyNodes(), IsIterableContainingInOrder.contains(sampleHash1, sampleHash2));

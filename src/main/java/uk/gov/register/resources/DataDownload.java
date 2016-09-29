@@ -1,16 +1,12 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.ItemQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -26,21 +22,16 @@ import java.util.Collection;
 
 @Path("/")
 public class DataDownload {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
-    private final ItemQueryDAO itemDAO;
-    private final RecordQueryDAO recordDAO;
-    private EntryQueryDAO entryDAO;
     private String registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
 
     @Inject
-    public DataDownload(ViewFactory viewFactory, RecordQueryDAO recordDAO, EntryQueryDAO entryDAO, ItemQueryDAO itemDAO, RegisterNameConfiguration registerNameConfiguration, ResourceConfiguration resourceConfiguration) {
+    public DataDownload(RegisterReadOnly register, ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ResourceConfiguration resourceConfiguration) {
+        this.register = register;
         this.viewFactory = viewFactory;
-        this.recordDAO = recordDAO;
-        this.entryDAO = entryDAO;
-        this.itemDAO = itemDAO;
         this.registerPrimaryKey = registerNameConfiguration.getRegister();
         this.resourceConfiguration = resourceConfiguration;
     }
@@ -50,16 +41,16 @@ public class DataDownload {
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Response downloadRegister() {
-        Collection<Entry> entries = entryDAO.getAllEntriesNoPagination();
-        Collection<Item> items = itemDAO.getAllItemsNoPagination();
+        Collection<Entry> entries = register.getAllEntries();
+        Collection<Item> items = register.getAllItems();
 
-        int totalEntries = entryDAO.getTotalEntries();
-        int totalRecords = recordDAO.getTotalRecords();
+        int totalEntries = register.getTotalEntries();
+        int totalRecords = register.getTotalRecords();
 
         RegisterDetail registerDetail = viewFactory.registerDetailView(
                 totalRecords,
                 totalEntries,
-                entryDAO.getLastUpdatedTime()
+                register.getLastUpdatedTime()
         ).getRegisterDetail();
 
         return Response

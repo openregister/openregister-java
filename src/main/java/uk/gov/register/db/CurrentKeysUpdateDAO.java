@@ -7,13 +7,9 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import org.skife.jdbi.v2.unstable.BindIn;
 
-@UseStringTemplate3StatementLocator("/sql/init_records.sql")
+@UseStringTemplate3StatementLocator
 public interface CurrentKeysUpdateDAO {
-
     String CURRENT_KEYS_TABLE = "current_keys";
-
-    @SqlUpdate
-    void ensureRecordTablesInPlace();
 
     @SqlUpdate("delete from " + CURRENT_KEYS_TABLE + " where key in (<keys>)")
     int removeRecordWithKeys(@BindIn("keys") Iterable<String> allKeys);

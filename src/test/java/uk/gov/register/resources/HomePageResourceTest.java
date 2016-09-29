@@ -1,8 +1,7 @@
 package uk.gov.register.resources;
 
 import org.junit.Test;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.HomePageView;
 import uk.gov.register.views.ViewFactory;
 
@@ -21,20 +20,19 @@ public class HomePageResourceTest {
         Optional<Instant> lastUpdated = Optional.of(Instant.ofEpochMilli(1459241964336L));
         HomePageView homePageView = mock(HomePageView.class);
 
-        RecordQueryDAO recordDAOMock = mock(RecordQueryDAO.class);
-        EntryQueryDAO entryDAOMock = mock(EntryQueryDAO.class);
+        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         ViewFactory viewFactoryMock = mock(ViewFactory.class);
 
-        when(recordDAOMock.getTotalRecords()).thenReturn(totalRecords);
-        when(entryDAOMock.getTotalEntries()).thenReturn(totalEntries);
-        when(entryDAOMock.getLastUpdatedTime()).thenReturn(lastUpdated);
+        when(registerMock.getTotalRecords()).thenReturn(totalRecords);
+        when(registerMock.getTotalEntries()).thenReturn(totalEntries);
+        when(registerMock.getLastUpdatedTime()).thenReturn(lastUpdated);
         when(viewFactoryMock.homePageView(totalRecords, totalEntries, lastUpdated)).thenReturn(homePageView);
 
-        HomePageResource homePageResource = new HomePageResource(viewFactoryMock, recordDAOMock, entryDAOMock);
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock);
         homePageResource.home();
 
-        verify(recordDAOMock, times(1)).getTotalRecords();
-        verify(entryDAOMock, times(1)).getTotalEntries();
+        verify(registerMock, times(1)).getTotalRecords();
+        verify(registerMock, times(1)).getTotalEntries();
         verify(viewFactoryMock, times(1)).homePageView(totalRecords, totalEntries, lastUpdated);
     }
 }

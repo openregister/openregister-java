@@ -1,23 +1,20 @@
 package uk.gov.register.db;
 
 import com.google.common.collect.Lists;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.sqlobject.mixins.GetHandle;
 import uk.gov.register.core.Record;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class DestinationDBUpdateDAO implements GetHandle {
+public class DestinationDBUpdateDAO {
     protected final CurrentKeysUpdateDAO currentKeysUpdateDAO;
 
-    protected DestinationDBUpdateDAO() {
-        Handle handle = getHandle();
-        this.currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
-        currentKeysUpdateDAO.ensureRecordTablesInPlace();
-
+    @Inject
+    protected DestinationDBUpdateDAO(CurrentKeysUpdateDAO currentKeysUpdateDAO) {
+        this.currentKeysUpdateDAO = currentKeysUpdateDAO;
     }
 
     public void upsertInCurrentKeysTable(String registerName, List<Record> records) {

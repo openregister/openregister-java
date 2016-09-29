@@ -3,25 +3,24 @@ package uk.gov.register.core;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
-import uk.gov.register.core.Register;
 
 import static org.junit.Assert.assertThat;
 
-public class RegisterTest {
+public class RegisterMetadataTest {
     @Test
     public void getFields_returnsFieldsInConfiguredOrder() throws Exception {
-        Register register = new Register("address", ImmutableList.of("address", "street", "postcode", "area", "property"), "", "", "", "alpha");
+        RegisterMetadata registerMetadata = new RegisterMetadata("address", ImmutableList.of("address", "street", "postcode", "area", "property"), "", "", "", "alpha");
 
-        Iterable<String> fields = register.getFields();
+        Iterable<String> fields = registerMetadata.getFields();
 
         assertThat(fields, IsIterableContainingInOrder.contains("address", "street", "postcode", "area", "property"));
     }
 
     @Test
     public void getNonPrimaryFields_returnsFieldsOtherThanPrimaryInConfiguredOrder() throws Exception {
-        Register register = new Register("company", ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+        RegisterMetadata registerMetadata = new RegisterMetadata("company", ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
 
-        Iterable<String> fields = register.getNonPrimaryFields();
+        Iterable<String> fields = registerMetadata.getNonPrimaryFields();
 
         assertThat(fields, IsIterableContainingInOrder.contains("address","secretary", "company-status", "company-accounts-category"));
     }

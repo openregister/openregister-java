@@ -3,11 +3,10 @@ package uk.gov.register.views.representations;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.ListValue;
 import uk.gov.register.core.StringValue;
 import uk.gov.register.views.ItemView;
-import uk.gov.register.views.representations.TsvWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class TsvWriterTest {
 
     private final TsvWriter writer = new TsvWriter();
-    Register register = new Register("register1", ImmutableList.of("key1", "key2", "key3", "key4"),
+    RegisterMetadata registerMetadata = new RegisterMetadata("register1", ImmutableList.of("key1", "key2", "key3", "key4"),
             "copyright", "registry1", "text1", "phase1");
 
     @Test
@@ -35,7 +34,7 @@ public class TsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         ));
-        when(itemView.getRegister()).thenReturn(register);
+        when(itemView.getRegister()).thenReturn(registerMetadata);
         when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -62,7 +61,7 @@ public class TsvWriterTest {
                         new StringValue("value5"),
                         new StringValue("value6"))
                 )));
-        when(itemView.getRegister()).thenReturn(register);
+        when(itemView.getRegister()).thenReturn(registerMetadata);
         when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -80,7 +79,7 @@ public class TsvWriterTest {
         when(itemView.getContent()).thenReturn(ImmutableMap.of(
                 "key1", new StringValue("value1")
         ));
-        when(itemView.getRegister()).thenReturn(register);
+        when(itemView.getRegister()).thenReturn(registerMetadata);
         when(itemView.csvRepresentation()).thenCallRealMethod();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

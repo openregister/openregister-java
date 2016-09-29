@@ -1,6 +1,6 @@
 package uk.gov.register.resources;
 
-import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.ViewFactory;
@@ -12,13 +12,13 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/item")
 public class ItemResource {
+    private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final ItemQueryDAO itemDAO;
 
     @Inject
-    public ItemResource(ViewFactory viewFactory, ItemQueryDAO itemDAO) {
+    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory) {
+        this.register = register;
         this.viewFactory = viewFactory;
-        this.itemDAO = itemDAO;
     }
 
     @GET
@@ -33,6 +33,6 @@ public class ItemResource {
     }
 
     private ItemView getItemBySHA256(String sha256Hash) {
-        return itemDAO.getItemBySHA256(sha256Hash).map(viewFactory::getItemView).orElseThrow(NotFoundException::new);
+        return register.getItemBySha256(sha256Hash).map(viewFactory::getItemView).orElseThrow(NotFoundException::new);
     }
 }

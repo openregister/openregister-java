@@ -3,7 +3,7 @@ package uk.gov.register.resources;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.RecordListView;
 import uk.gov.register.views.RecordView;
@@ -21,14 +21,14 @@ import java.util.Optional;
 public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
     private final RequestContext requestContext;
+    private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final RecordQueryDAO recordDAO;
     private final String registerPrimaryKey;
 
     @Inject
-    public RecordResource(ViewFactory viewFactory, RequestContext requestContext, RecordQueryDAO recordDAO, RegisterNameConfiguration registerNameConfiguration) {
+    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration) {
+        this.register = register;
         this.viewFactory = viewFactory;
-        this.recordDAO = recordDAO;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
         registerPrimaryKey = registerNameConfiguration.getRegister();
@@ -40,8 +40,8 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
-        return recordDAO
-                .findByPrimaryKey(key)
+        return register
+                .getRecord(key)
                 .map(viewFactory::getRecordView)
                 .orElseThrow(NotFoundException::new);
     }
@@ -50,7 +50,7 @@ public class RecordResource {
     @Path("/record/{record-key}/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
-        Collection<Entry> allEntries = recordDAO.findAllEntriesOfRecordBy(registerPrimaryKey, key);
+        Collection<Entry> allEntries = register.allEntriesOfRecord(key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
@@ -64,7 +64,7 @@ public class RecordResource {
     @Path("/records/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
-        List<Record> records = recordDAO.findMax100RecordsByKeyValue(key, value);
+        List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         Pagination pagination
                 = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
         return viewFactory.getRecordListView(records, pagination);
@@ -74,7 +74,7 @@ public class RecordResource {
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<Integer> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<Integer> pageSize) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex, pageSize, recordDAO.getTotalRecords());
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex, pageSize, register.getTotalRecords());
 
         requestContext.resourceExtension().ifPresent(
                 ext -> httpServletResponseAdapter.addContentDispositionHeader(registerPrimaryKey + "-records." + ext)
@@ -88,7 +88,7 @@ public class RecordResource {
             httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
         }
 
-        return viewFactory.getRecordListView(recordDAO.getRecords(pagination.pageSize(), pagination.offset()), pagination);
+        return viewFactory.getRecordListView(register.getRecords(pagination.pageSize(), pagination.offset()), pagination);
     }
 
 }

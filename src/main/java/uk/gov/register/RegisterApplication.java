@@ -24,12 +24,14 @@ import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.PostgresRegister;
+import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.User;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.EntryStore;
-import uk.gov.register.db.ItemQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.db.RegisterDAO;
+import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -79,10 +81,12 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        EntryStore entryStore = jdbi.open().attach(EntryStore.class);
-        ItemQueryDAO itemDAO = jdbi.onDemand(ItemQueryDAO.class);
-        EntryQueryDAO entryDAO = jdbi.onDemand(EntryQueryDAO.class);
-        RecordQueryDAO recordDAO = jdbi.onDemand(RecordQueryDAO.class);
+        EntryQueryDAO entryQueryDAO = jdbi.onDemand(EntryQueryDAO.class);
+
+        RegisterDAO registerDAO = jdbi.onDemand(RegisterDAO.class);
+
+        SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
+        schemaCreator.ensureSchema();
 
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
@@ -97,10 +101,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(entryStore).to(EntryStore.class);
-                bind(itemDAO).to(ItemQueryDAO.class);
-                bind(entryDAO).to(EntryQueryDAO.class);
-                bind(recordDAO).to(RecordQueryDAO.class);
+                bind(entryQueryDAO).to(EntryQueryDAO.class);
+                bind(registerDAO).to(RegisterDAO.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bind(registerData).to(RegisterData.class);
@@ -115,6 +117,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
                 bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
+
+                bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(configuration);
                 bind(client).to(Client.class);
             }
