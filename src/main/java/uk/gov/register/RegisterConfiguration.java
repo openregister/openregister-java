@@ -60,7 +60,7 @@ public class RegisterConfiguration extends Configuration
     @SuppressWarnings("unused")
     @Valid
     @JsonProperty
-    private String historyPageUrl;
+    private Optional<String> historyPageUrl = Optional.empty();
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -93,6 +93,6 @@ public class RegisterConfiguration extends Configuration
     }
 
     public Optional<String> getRegisterHistoryPageUrl() {
-        return historyPageUrl == null || historyPageUrl.isEmpty() ? Optional.empty() : Optional.of(historyPageUrl);
+        return historyPageUrl;
     }
 }
