@@ -25,12 +25,7 @@ public class RegisterContentPages {
     }
 
     @SuppressWarnings("unused, used from template")
-    public String getRegisterHistoryPageUrl() {
-        return registerHistoryUrl.get();
-    }
-
-    @SuppressWarnings("unused, used from template")
-    public Boolean hasHistoryPage() {
-        return registerHistoryUrl.isPresent();
+    public Optional<String> getRegisterHistoryPageUrl() {
+        return registerHistoryUrl;
     }
 }

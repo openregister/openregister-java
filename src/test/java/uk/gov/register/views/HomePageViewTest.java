@@ -78,13 +78,13 @@ public class HomePageViewTest {
         RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages);
 
-        assertThat(homePageView.getContentPages().hasHistoryPage(), is(false));
+        assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(false));
 
         String historyUrl = "http://register-history.openregister.org";
         registerContentPages = new RegisterContentPages(Optional.of(historyUrl));
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages);
 
-        assertThat(homePageView.getContentPages().hasHistoryPage(), is(true));
-        assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl(), is(historyUrl));
+        assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(true));
+        assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().get(), is(historyUrl));
     }
 }
