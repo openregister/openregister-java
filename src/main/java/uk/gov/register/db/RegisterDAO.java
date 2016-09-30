@@ -24,10 +24,6 @@ public abstract class RegisterDAO implements GetHandle, Transactional<RegisterDA
         return getHandle().attach(EntryDAO.class);
     }
 
-    private ItemDAO getItemDAO() {
-        return getHandle().attach(ItemDAO.class);
-    }
-
     private DestinationDBUpdateDAO getDestinationDBUpdateDAO() {
         return new DestinationDBUpdateDAO(getHandle().attach(CurrentKeysUpdateDAO.class));
     }
@@ -62,10 +58,6 @@ public abstract class RegisterDAO implements GetHandle, Transactional<RegisterDA
 
     public Optional<Instant> getLastUpdatedTime() {
         return getEntryQueryDAO().getLastUpdatedTime();
-    }
-
-    public void batchInsertItems(Iterable<Item> items) {
-        getItemDAO().insertInBatch(items);
     }
 
     public void setEntryNumber(int newEntryNumber) {

@@ -23,20 +23,23 @@ public class PostgresRegister implements Register {
 
     private final String registerName;
     private final EntryLog entryLog;
+    private final ItemStore itemStore;
 
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfig,
                             RegisterDAO registerDAO,
-                            EntryLog entryLog) {
+                            EntryLog entryLog,
+                            ItemStore itemStore) {
         this.registerDAO = registerDAO;
         registerName = registerNameConfig.getRegister();
         this.entryLog = entryLog;
+        this.itemStore = itemStore;
     }
 
     @Override
     public void mintItems(Iterable<Item> items) {
         registerDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (txnRegisterDAO, status) -> {
-            txnRegisterDAO.batchInsertItems(items);
+            itemStore.putItems(txnRegisterDAO.getHandle(), items);
             AtomicInteger currentEntryNumber = new AtomicInteger(txnRegisterDAO.getTotalEntries());
             List<Record> records = StreamSupport.stream(items.spliterator(), false)
                     .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))

@@ -106,6 +106,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(EntryLog.class).to(EntryLog.class);
+                bind(ItemStore.class).to(ItemStore.class);
 
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
