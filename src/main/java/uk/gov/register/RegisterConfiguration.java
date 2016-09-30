@@ -6,6 +6,7 @@ import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
+import uk.gov.register.configuration.RegisterContentPagesConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.ResourceConfiguration;
@@ -15,8 +16,11 @@ import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Optional;
 
-public class RegisterConfiguration extends Configuration
-        implements RegisterNameConfiguration, RegisterDomainConfiguration, ResourceConfiguration, GovukClientConfiguration {
+public class RegisterConfiguration extends Configuration implements RegisterNameConfiguration,
+        RegisterDomainConfiguration,
+        RegisterContentPagesConfiguration,
+        ResourceConfiguration,
+        GovukClientConfiguration {
     @Valid
     @NotNull
     @JsonProperty

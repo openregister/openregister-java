@@ -3,9 +3,9 @@ package uk.gov.register.views;
 import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
-import uk.gov.register.RegisterConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterContentPages;
+import uk.gov.register.configuration.RegisterContentPagesConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
@@ -35,15 +35,16 @@ public class ViewFactory {
                        ItemConverter itemConverter,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
-                       RegisterConfiguration registerConfiguration,
+                       RegisterDomainConfiguration registerDomainConfiguration,
+                       RegisterContentPagesConfiguration registerContentPagesConfiguration,
                        RegisterData registerData) {
         this.requestContext = requestContext;
         this.itemConverter = itemConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
-        this.registerDomainConfiguration = registerConfiguration;
+        this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerData = registerData;
-        this.registerContentPages = new RegisterContentPages(registerConfiguration.getRegisterHistoryPageUrl());
+        this.registerContentPages = new RegisterContentPages(registerContentPagesConfiguration.getRegisterHistoryPageUrl());
     }
 
     public ThymeleafView thymeleafView(String templateName) {
