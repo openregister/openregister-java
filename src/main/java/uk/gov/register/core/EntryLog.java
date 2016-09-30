@@ -14,7 +14,10 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 import javax.inject.Inject;
 import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +35,26 @@ public class EntryLog {
         EntryDAO entryDAO = handle.attach(EntryDAO.class);
         entryDAO.insertInBatch(entries);
         entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + entries.size());
+    }
+
+    public Optional<Entry> getEntry(Handle handle, int entryNumber) {
+        return handle.attach(EntryQueryDAO.class).findByEntryNumber(entryNumber);
+    }
+
+    public Collection<Entry> getEntries(Handle h, int start, int limit) {
+        return h.attach(EntryQueryDAO.class).getEntries(start, limit);
+    }
+
+    public Collection<Entry> getAllEntries(Handle handle) {
+        return handle.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
+    }
+
+    public int getTotalEntries(Handle h) {
+        return h.attach(EntryQueryDAO.class).getTotalEntries();
+    }
+
+    public Optional<Instant> getLastUpdatedTime(Handle h) {
+        return h.attach(EntryQueryDAO.class).getLastUpdatedTime();
     }
 
     public RegisterProof getRegisterProof(Handle handle) throws NoSuchAlgorithmException {

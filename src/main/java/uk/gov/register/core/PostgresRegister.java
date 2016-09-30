@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import com.google.common.collect.Lists;
+import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RegisterDAO;
@@ -24,50 +25,52 @@ public class PostgresRegister implements Register {
     private final String registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
+    private final DBI dbi;
 
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfig,
                             RegisterDAO registerDAO,
                             EntryLog entryLog,
-                            ItemStore itemStore) {
+                            ItemStore itemStore,
+                            DBI dbi) {
         this.registerDAO = registerDAO;
         registerName = registerNameConfig.getRegister();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
+        this.dbi = dbi;
     }
 
     @Override
     public void mintItems(Iterable<Item> items) {
-        registerDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (txnRegisterDAO, status) -> {
-            itemStore.putItems(txnRegisterDAO.getHandle(), items);
-            AtomicInteger currentEntryNumber = new AtomicInteger(txnRegisterDAO.getTotalEntries());
+        dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
+            itemStore.putItems(handle, items);
+            AtomicInteger currentEntryNumber = new AtomicInteger(entryLog.getTotalEntries(handle));
             List<Record> records = StreamSupport.stream(items.spliterator(), false)
                     .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
                     .collect(Collectors.toList());
-            entryLog.appendEntries(txnRegisterDAO.getHandle(), Lists.transform(records, r -> r.entry));
-            txnRegisterDAO.upsertInCurrentKeysTable(registerName, records);
-            return 0;
+            entryLog.appendEntries(handle, Lists.transform(records, r -> r.entry));
+            handle.attach(RegisterDAO.class).upsertInCurrentKeysTable(registerName, records);
         });
     }
 
     @Override
     public Optional<Entry> getEntry(int entryNumber) {
-        return registerDAO.getEntry(entryNumber);
+        return dbi.withHandle(handle -> entryLog.getEntry(handle, entryNumber));
     }
 
     @Override
     public Optional<Item> getItemBySha256(String sha256hex) {
-        return registerDAO.getItemBySha256(sha256hex);
+        return dbi.withHandle(h -> itemStore.getItemBySha256(h, sha256hex));
     }
 
     @Override
     public int getTotalEntries() {
-        return registerDAO.getTotalEntries();
+        return dbi.withHandle(entryLog::getTotalEntries);
     }
 
     @Override
     public Collection<Entry> getEntries(int start, int limit) {
-        return registerDAO.getEntries(start, limit);
+        return dbi.withHandle(h -> entryLog.getEntries(h, start, limit));
     }
 
     @Override
@@ -87,12 +90,12 @@ public class PostgresRegister implements Register {
 
     @Override
     public Collection<Entry> getAllEntries() {
-        return registerDAO.getAllEntries();
+        return dbi.withHandle(entryLog::getAllEntries);
     }
 
     @Override
     public Collection<Item> getAllItems() {
-        return registerDAO.getAllItems();
+        return dbi.withHandle(itemStore::getAllItems);
     }
 
     @Override
@@ -102,7 +105,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Instant> getLastUpdatedTime() {
-        return registerDAO.getLastUpdatedTime();
+        return dbi.withHandle(entryLog::getLastUpdatedTime);
     }
 
     @Override
@@ -112,19 +115,18 @@ public class PostgresRegister implements Register {
 
     @Override
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return registerDAO.inTransaction((txnDAO, status) ->
-                entryLog.getRegisterProof(txnDAO.getHandle()));
+        return dbi.withHandle(entryLog::getRegisterProof);
     }
 
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return registerDAO.inTransaction((txnDAO, status) ->
-                entryLog.getEntryProof(txnDAO.getHandle(), entryNumber, totalEntries));
+        return dbi.withHandle(handle ->
+                entryLog.getEntryProof(handle, entryNumber, totalEntries));
     }
 
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return registerDAO.inTransaction((txnDAO, status) ->
-                entryLog.getConsistencyProof(txnDAO.getHandle(), totalEntries1, totalEntries2));
+        return dbi.withHandle(handle ->
+                entryLog.getConsistencyProof(handle, totalEntries1, totalEntries2));
     }
 }
