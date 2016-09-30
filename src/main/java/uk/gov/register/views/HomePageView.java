@@ -1,6 +1,7 @@
 package uk.gov.register.views;
 
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.configuration.RegisterContentPages;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.PublicBody;
 import uk.gov.register.core.RegisterData;
@@ -21,6 +22,7 @@ public class HomePageView extends AttributionView {
     private final int totalRecords;
     private final int totalEntries;
     private final String registerDomain;
+    private final RegisterContentPages registerContentPages;
 
     public HomePageView(
             PublicBody custodian,
@@ -30,12 +32,14 @@ public class HomePageView extends AttributionView {
             int totalEntries,
             Optional<Instant> lastUpdated,
             RegisterDomainConfiguration registerDomainConfiguration,
-            RegisterData registerData) {
+            RegisterData registerData,
+            RegisterContentPages registerContentPages) {
         super(requestContext, custodian, custodianBranding, "home.html", registerDomainConfiguration, registerData);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
         this.registerDomain = registerDomainConfiguration.getRegisterDomain();
+        this.registerContentPages = registerContentPages;
     }
 
     @SuppressWarnings("unused, used from template")
@@ -65,5 +69,10 @@ public class HomePageView extends AttributionView {
                 registerDomain,
                 getRegisterId()
         );
+    }
+
+    @SuppressWarnings("unused, used from template")
+    public RegisterContentPages getContentPages() {
+        return registerContentPages;
     }
 }

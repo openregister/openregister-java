@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.configuration.RegisterContentPages;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.text.IsEmptyString.isEmptyString;
 import static org.junit.Assert.assertThat;
@@ -24,6 +26,7 @@ public class HomePageViewTest {
 
     @Mock
     RequestContext mockRequestContext;
+    RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty());
 
     @Test
     public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
@@ -33,7 +36,7 @@ public class HomePageViewTest {
                 "phase", new TextNode("alpha"),
                 "text", new TextNode(registerText)
         ));
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, () -> "test.register.gov.uk", registerData);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, () -> "test.register.gov.uk", registerData, registerContentPages);
 
         String result = homePageView.getRegisterText();
 
@@ -44,14 +47,14 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
 
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", null);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", null, registerContentPages);
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
 
     @Test
     public void getLastUpdatedTime_returnsEmptyStringIfLastUpdatedTimeNotPresent() {
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages);
 
         assertThat(homePageView.getLastUpdatedTime(), isEmptyString());
     }
@@ -65,8 +68,23 @@ public class HomePageViewTest {
         RegisterData registerData = new RegisterData(ImmutableMap.of(
                 "register", new TextNode("school")
         ));
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", registerData);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", registerData, registerContentPages);
 
         assertThat(homePageView.getLinkToRegisterRegister(), equalTo("https://register.test.register.gov.uk/record/school"));
+    }
+
+    @Test
+    public void shouldDisplayHistoryPageIfAvailable() {
+        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages);
+
+        assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(false));
+
+        String historyUrl = "http://register-history.openregister.org";
+        registerContentPages = new RegisterContentPages(Optional.of(historyUrl));
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages);
+
+        assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(true));
+        assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().get(), is(historyUrl));
     }
 }

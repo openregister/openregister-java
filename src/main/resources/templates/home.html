@@ -34,9 +34,10 @@
             <div class="column-third">
                 <ul>
                     <li><a href="/download">Download data</a></li>
-                    <li><a href="https://www.gov.uk/government/publications/registers/registers">About registers</a></li>
-                    <li><a href="https://www.gov.uk/guidance/using-registers-to-build-a-service">Guidance for using registers</a></li>
-                    <li><a href="http://openregister.github.io/specification/">Technical specification</a></li>
+                    <li th:if="${#bools.isTrue(contentPages.registerHistoryPageUrl.isPresent())}"><a th:href="${contentPages.registerHistoryPageUrl.get()}">Register history</a></li>
+                    <li><a th:href="${contentPages.registersIntroductionUrl}">About registers</a></li>
+                    <li><a th:href="${contentPages.usingRegistersGuidanceUrl}">Guidance for using registers</a></li>
+                    <li><a th:href="${contentPages.specificationUrl}">Technical specification</a></li>
                 </ul>
             </div>
         </div>

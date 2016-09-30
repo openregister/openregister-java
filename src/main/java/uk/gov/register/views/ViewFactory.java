@@ -4,6 +4,8 @@ import org.jvnet.hk2.annotations.Service;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
+import uk.gov.register.configuration.RegisterContentPages;
+import uk.gov.register.configuration.RegisterContentPagesConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
@@ -24,24 +26,25 @@ public class ViewFactory {
     private final ItemConverter itemConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
-    private final String registerDomain;
     private final RegisterData registerData;
     private final RegisterDomainConfiguration registerDomainConfiguration;
+    private final RegisterContentPages registerContentPages;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
                        ItemConverter itemConverter,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
-                       RegisterDomainConfiguration domainConfiguration,
+                       RegisterDomainConfiguration registerDomainConfiguration,
+                       RegisterContentPagesConfiguration registerContentPagesConfiguration,
                        RegisterData registerData) {
         this.requestContext = requestContext;
         this.itemConverter = itemConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
-        this.registerDomain = domainConfiguration.getRegisterDomain();
-        this.registerDomainConfiguration = domainConfiguration;
+        this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerData = registerData;
+        this.registerContentPages = new RegisterContentPages(registerContentPagesConfiguration.getRegisterHistoryPageUrl());
     }
 
     public ThymeleafView thymeleafView(String templateName) {
@@ -53,7 +56,16 @@ public class ViewFactory {
     }
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
-        return new HomePageView(getCustodian(), getBranding(), requestContext, totalRecords, totalEntries, lastUpdated, registerDomainConfiguration, registerData);
+        return new HomePageView(
+                getCustodian(),
+                getBranding(),
+                requestContext,
+                totalRecords,
+                totalEntries,
+                lastUpdated,
+                registerDomainConfiguration,
+                registerData,
+                registerContentPages);
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
@@ -61,7 +73,7 @@ public class ViewFactory {
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
-        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData, registerDomain);
+        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData, registerDomainConfiguration.getRegisterDomain());
     }
 
     public ItemView getItemView(Item item) {
