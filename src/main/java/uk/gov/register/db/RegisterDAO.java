@@ -68,10 +68,6 @@ public abstract class RegisterDAO implements GetHandle, Transactional<RegisterDA
         getItemDAO().insertInBatch(items);
     }
 
-    public void batchInsertEntries(Iterable<Entry> entries) {
-        getEntryDAO().insertInBatch(entries);
-    }
-
     public void setEntryNumber(int newEntryNumber) {
         getEntryDAO().setEntryNumber(newEntryNumber);
     }

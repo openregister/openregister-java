@@ -1,10 +1,9 @@
 package uk.gov.register.core;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RegisterDAO;
-import uk.gov.register.service.VerifiableLogService;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -22,29 +21,28 @@ import java.util.stream.StreamSupport;
 public class PostgresRegister implements Register {
     private final RegisterDAO registerDAO;
 
-    private final VerifiableLogService verifiableLogService;
     private final String registerName;
+    private final EntryLog entryLog;
 
     @Inject
-    public PostgresRegister(VerifiableLogService verifiableLogService,
-                            RegisterNameConfiguration registerNameConfig,
-                            RegisterDAO registerDAO) {
-        this.verifiableLogService = verifiableLogService;
+    public PostgresRegister(RegisterNameConfiguration registerNameConfig,
+                            RegisterDAO registerDAO,
+                            EntryLog entryLog) {
         this.registerDAO = registerDAO;
         registerName = registerNameConfig.getRegister();
+        this.entryLog = entryLog;
     }
 
     @Override
     public void mintItems(Iterable<Item> items) {
-        registerDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (txnRegisterDAO, status)-> {
+        registerDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (txnRegisterDAO, status) -> {
             txnRegisterDAO.batchInsertItems(items);
             AtomicInteger currentEntryNumber = new AtomicInteger(txnRegisterDAO.getTotalEntries());
             List<Record> records = StreamSupport.stream(items.spliterator(), false)
                     .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
                     .collect(Collectors.toList());
-            txnRegisterDAO.batchInsertEntries(Iterables.transform(records, r -> r.entry));
+            entryLog.appendEntries(txnRegisterDAO.getHandle(), Lists.transform(records, r -> r.entry));
             txnRegisterDAO.upsertInCurrentKeysTable(registerName, records);
-            txnRegisterDAO.setEntryNumber(currentEntryNumber.get());
             return 0;
         });
     }
@@ -111,16 +109,19 @@ public class PostgresRegister implements Register {
 
     @Override
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return verifiableLogService.getRegisterProof();
+        return registerDAO.inTransaction((txnDAO, status) ->
+                entryLog.getRegisterProof(txnDAO.getHandle()));
     }
 
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return verifiableLogService.getEntryProof(entryNumber, totalEntries);
+        return registerDAO.inTransaction((txnDAO, status) ->
+                entryLog.getEntryProof(txnDAO.getHandle(), entryNumber, totalEntries));
     }
 
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return verifiableLogService.getConsistencyProof(totalEntries1, totalEntries2);
+        return registerDAO.inTransaction((txnDAO, status) ->
+                entryLog.getConsistencyProof(txnDAO.getHandle(), totalEntries1, totalEntries2));
     }
 }
