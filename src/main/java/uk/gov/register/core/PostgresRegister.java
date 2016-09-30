@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.db.RegisterDAO;
+import uk.gov.register.db.RecordIndex;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class PostgresRegister implements Register {
-    private final RegisterDAO registerDAO;
+    private final RecordIndex recordIndex;
 
     private final String registerName;
     private final EntryLog entryLog;
@@ -29,11 +29,11 @@ public class PostgresRegister implements Register {
 
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfig,
-                            RegisterDAO registerDAO,
+                            RecordIndex recordIndex,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             DBI dbi) {
-        this.registerDAO = registerDAO;
+        this.recordIndex = recordIndex;
         registerName = registerNameConfig.getRegister();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
@@ -49,7 +49,7 @@ public class PostgresRegister implements Register {
                     .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
                     .collect(Collectors.toList());
             entryLog.appendEntries(handle, Lists.transform(records, r -> r.entry));
-            handle.attach(RegisterDAO.class).upsertInCurrentKeysTable(registerName, records);
+            handle.attach(RecordIndex.class).updateRecordIndex(handle, registerName, records);
         });
     }
 
@@ -75,17 +75,17 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Record> getRecord(String key) {
-        return registerDAO.getRecord(key);
+        return dbi.withHandle(h -> recordIndex.getRecord(h, key));
     }
 
     @Override
     public Collection<Entry> allEntriesOfRecord(String key) {
-        return registerDAO.findAllEntriesOfRecordBy(registerName, key);
+        return dbi.withHandle(h -> recordIndex.findAllEntriesOfRecordBy(h, registerName, key));
     }
 
     @Override
     public List<Record> getRecords(int limit, int offset) {
-        return registerDAO.getRecords(limit, offset);
+        return dbi.withHandle(h -> recordIndex.getRecords(h, limit, offset));
     }
 
     @Override
@@ -100,7 +100,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public int getTotalRecords() {
-        return registerDAO.getTotalRecords();
+        return dbi.withHandle(recordIndex::getTotalRecords);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
-        return registerDAO.findMax100RecordsByKeyValue(key, value);
+        return dbi.withHandle(h -> recordIndex.findMax100RecordsByKeyValue(h, key, value));
     }
 
     @Override

@@ -25,7 +25,7 @@ import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.RegisterDAO;
+import uk.gov.register.db.RecordIndex;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
@@ -78,8 +78,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         EntryQueryDAO entryQueryDAO = jdbi.onDemand(EntryQueryDAO.class);
 
-        RegisterDAO registerDAO = jdbi.onDemand(RegisterDAO.class);
-
         SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
         schemaCreator.ensureSchema();
 
@@ -97,7 +95,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             @Override
             protected void configure() {
                 bind(entryQueryDAO).to(EntryQueryDAO.class);
-                bind(registerDAO).to(RegisterDAO.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bind(registerData).to(RegisterData.class);
@@ -108,6 +105,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(EntryLog.class).to(EntryLog.class);
                 bind(ItemStore.class).to(ItemStore.class);
+                bind(RecordIndex.class).to(RecordIndex.class);
 
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
