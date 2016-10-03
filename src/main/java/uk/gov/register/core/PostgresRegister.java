@@ -115,18 +115,18 @@ public class PostgresRegister implements Register {
 
     @Override
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return dbi.withHandle(entryLog::getRegisterProof);
+        return dbi.inTransaction((handle, status) -> entryLog.getRegisterProof(handle));
     }
 
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return dbi.withHandle(handle ->
+        return dbi.inTransaction((handle, status) ->
                 entryLog.getEntryProof(handle, entryNumber, totalEntries));
     }
 
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return dbi.withHandle(handle ->
+        return dbi.inTransaction((handle, status) ->
                 entryLog.getConsistencyProof(handle, totalEntries1, totalEntries2));
     }
 }
