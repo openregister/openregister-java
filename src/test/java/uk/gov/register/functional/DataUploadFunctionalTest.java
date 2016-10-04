@@ -222,6 +222,14 @@ public class DataUploadFunctionalTest {
         assertThat(response.readEntity(String.class), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'. Error entry: '" + entry + "'"));
     }
 
+    @Test
+    public void requestWithoutCredentials_isRejectedAsUnauthorized() throws Exception {
+        Response response = testClient().target("http://localhost:" + APPLICATION_PORT + "/load")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(Entity.json("{}"));
+        assertThat(response.getStatus(), equalTo(401));
+    }
+
     private Response send(String... payload) {
         return authenticatingClient().target("http://localhost:" + APPLICATION_PORT + "/load")
                 .request(MediaType.APPLICATION_JSON_TYPE)

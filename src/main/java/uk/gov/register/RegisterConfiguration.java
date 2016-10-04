@@ -5,6 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
+import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.RegisterContentPagesConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
@@ -16,7 +17,9 @@ import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Optional;
 
-public class RegisterConfiguration extends Configuration implements RegisterNameConfiguration,
+public class RegisterConfiguration extends Configuration
+        implements AuthenticatorConfiguration,
+        RegisterNameConfiguration,
         RegisterDomainConfiguration,
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
@@ -74,6 +77,7 @@ public class RegisterConfiguration extends Configuration implements RegisterName
         return register;
     }
 
+    @Override
     public RegisterAuthenticatorFactory getAuthenticator() {
         return credentials;
     }
