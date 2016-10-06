@@ -1,10 +1,10 @@
 package uk.gov.register.core;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.db.RegisterDAO;
-import uk.gov.register.service.VerifiableLogService;
+import uk.gov.register.db.RecordIndex;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -20,107 +20,113 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class PostgresRegister implements Register {
-    private final RegisterDAO registerDAO;
+    private final RecordIndex recordIndex;
 
-    private final VerifiableLogService verifiableLogService;
     private final String registerName;
+    private final EntryLog entryLog;
+    private final ItemStore itemStore;
+    private final DBI dbi;
 
     @Inject
-    public PostgresRegister(VerifiableLogService verifiableLogService,
-                            RegisterNameConfiguration registerNameConfig,
-                            RegisterDAO registerDAO) {
-        this.verifiableLogService = verifiableLogService;
-        this.registerDAO = registerDAO;
+    public PostgresRegister(RegisterNameConfiguration registerNameConfig,
+                            RecordIndex recordIndex,
+                            EntryLog entryLog,
+                            ItemStore itemStore,
+                            DBI dbi) {
+        this.recordIndex = recordIndex;
         registerName = registerNameConfig.getRegister();
+        this.entryLog = entryLog;
+        this.itemStore = itemStore;
+        this.dbi = dbi;
     }
 
     @Override
     public void mintItems(Iterable<Item> items) {
-        registerDAO.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (txnRegisterDAO, status)-> {
-            txnRegisterDAO.batchInsertItems(items);
-            AtomicInteger currentEntryNumber = new AtomicInteger(txnRegisterDAO.getTotalEntries());
+        dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
+            itemStore.putItems(handle, items);
+            AtomicInteger currentEntryNumber = new AtomicInteger(entryLog.getTotalEntries(handle));
             List<Record> records = StreamSupport.stream(items.spliterator(), false)
                     .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
                     .collect(Collectors.toList());
-            txnRegisterDAO.batchInsertEntries(Iterables.transform(records, r -> r.entry));
-            txnRegisterDAO.upsertInCurrentKeysTable(registerName, records);
-            txnRegisterDAO.setEntryNumber(currentEntryNumber.get());
-            return 0;
+            entryLog.appendEntries(handle, Lists.transform(records, r -> r.entry));
+            handle.attach(RecordIndex.class).updateRecordIndex(handle, registerName, records);
         });
     }
 
     @Override
     public Optional<Entry> getEntry(int entryNumber) {
-        return registerDAO.getEntry(entryNumber);
+        return dbi.withHandle(handle -> entryLog.getEntry(handle, entryNumber));
     }
 
     @Override
     public Optional<Item> getItemBySha256(String sha256hex) {
-        return registerDAO.getItemBySha256(sha256hex);
+        return dbi.withHandle(h -> itemStore.getItemBySha256(h, sha256hex));
     }
 
     @Override
     public int getTotalEntries() {
-        return registerDAO.getTotalEntries();
+        return dbi.withHandle(entryLog::getTotalEntries);
     }
 
     @Override
     public Collection<Entry> getEntries(int start, int limit) {
-        return registerDAO.getEntries(start, limit);
+        return dbi.withHandle(h -> entryLog.getEntries(h, start, limit));
     }
 
     @Override
     public Optional<Record> getRecord(String key) {
-        return registerDAO.getRecord(key);
+        return dbi.withHandle(h -> recordIndex.getRecord(h, key));
     }
 
     @Override
     public Collection<Entry> allEntriesOfRecord(String key) {
-        return registerDAO.findAllEntriesOfRecordBy(registerName, key);
+        return dbi.withHandle(h -> recordIndex.findAllEntriesOfRecordBy(h, registerName, key));
     }
 
     @Override
     public List<Record> getRecords(int limit, int offset) {
-        return registerDAO.getRecords(limit, offset);
+        return dbi.withHandle(h -> recordIndex.getRecords(h, limit, offset));
     }
 
     @Override
     public Collection<Entry> getAllEntries() {
-        return registerDAO.getAllEntries();
+        return dbi.withHandle(entryLog::getAllEntries);
     }
 
     @Override
     public Collection<Item> getAllItems() {
-        return registerDAO.getAllItems();
+        return dbi.withHandle(itemStore::getAllItems);
     }
 
     @Override
     public int getTotalRecords() {
-        return registerDAO.getTotalRecords();
+        return dbi.withHandle(recordIndex::getTotalRecords);
     }
 
     @Override
     public Optional<Instant> getLastUpdatedTime() {
-        return registerDAO.getLastUpdatedTime();
+        return dbi.withHandle(entryLog::getLastUpdatedTime);
     }
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
-        return registerDAO.findMax100RecordsByKeyValue(key, value);
+        return dbi.withHandle(h -> recordIndex.findMax100RecordsByKeyValue(h, key, value));
     }
 
     @Override
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return verifiableLogService.getRegisterProof();
+        return dbi.inTransaction((handle, status) -> entryLog.getRegisterProof(handle));
     }
 
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return verifiableLogService.getEntryProof(entryNumber, totalEntries);
+        return dbi.inTransaction((handle, status) ->
+                entryLog.getEntryProof(handle, entryNumber, totalEntries));
     }
 
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return verifiableLogService.getConsistencyProof(totalEntries1, totalEntries2);
+        return dbi.inTransaction((handle, status) ->
+                entryLog.getConsistencyProof(handle, totalEntries1, totalEntries2));
     }
 }
