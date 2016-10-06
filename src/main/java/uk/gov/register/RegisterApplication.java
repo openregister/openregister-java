@@ -24,10 +24,8 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
-import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.db.SchemaCreator;
-import uk.gov.register.filters.UriDataFormatFilter;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
@@ -76,8 +74,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        EntryQueryDAO entryQueryDAO = jdbi.onDemand(EntryQueryDAO.class);
-
         SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
         schemaCreator.ensureSchema();
 
@@ -94,7 +90,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(entryQueryDAO).to(EntryQueryDAO.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bind(registerData).to(RegisterData.class);
