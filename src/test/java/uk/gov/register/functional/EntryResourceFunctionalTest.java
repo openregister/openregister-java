@@ -3,6 +3,7 @@ package uk.gov.register.functional;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.hamcrest.Matcher;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,14 +13,14 @@ import org.junit.Test;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Map;
-import java.util.Optional;
 
-import static java.time.format.DateTimeFormatter.ISO_INSTANT;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertTrue;
 
 public class EntryResourceFunctionalTest extends FunctionalTestBase {
@@ -88,26 +89,23 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void entryResource_retrieviesTimestampsInUTC() throws IOException {
-        String expectedDateTime = formatInstant(Instant.now(), Optional.of(ChronoUnit.MINUTES));
+    public void entryResource_retrievesTimestampsInUTC() throws IOException {
+        Instant now = Instant.now();
 
         Response response = getRequest("/entry/1.json");
-
         Map<String, String> responseData = response.readEntity(Map.class);
         Instant entryTimestamp = Instant.parse(responseData.get("entry-timestamp"));
-        String actualDateTime = formatInstant(entryTimestamp, Optional.of(ChronoUnit.MINUTES));
 
-        assertThat(actualDateTime, equalTo(expectedDateTime));
-    }
-
-    private String formatInstant(Instant instant, Optional<TemporalUnit> temporalUnit){
-        return ISO_INSTANT.format(instant.truncatedTo(temporalUnit.orElseGet(() -> ChronoUnit.SECONDS)));
+        assertThat(entryTimestamp, between(now.minus(30, SECONDS), now.plus(30, SECONDS)));
     }
 
     private void assertEntryInJsonNode(JsonNode actualJsonNode, int expectedEntryNumber, String expectedHash){
         assertThat(actualJsonNode.get("entry-number").asInt(), equalTo(expectedEntryNumber));
         assertThat(actualJsonNode.get("item-hash").textValue(), equalTo(expectedHash));
         assertTrue(actualJsonNode.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+    }
 
+    private Matcher<Instant> between(Instant lower, Instant upper) {
+        return allOf(greaterThan(lower), lessThan(upper));
     }
 }
