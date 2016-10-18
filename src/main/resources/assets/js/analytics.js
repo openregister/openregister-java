@@ -10,11 +10,22 @@ ga('create', 'UA-85775854-1', 'auto', {
 ga('send', 'pageview');
 
 
-var trackEvent = function(elems, category, action, fnLabel){
+var setupEventAnalytics = function(elems, category, action, fnLabel){
     for(var i=0; i < elems.length; i++) {
         elems[i].onclick = function(e){
-            console.log("sending event - category: "+ category + " action: "+ action + " etext: "+ e.target);
-            ga('send', 'event', category, action, fnLabel(e));
+            var targetLabel = fnLabel(e);
+            console.log("sending event - category: "+ category + " action: "+ action + " label: "+ targetLabel +" target: "+ e.target);
+            ga('send', 'event', category, action, targetLabel);
+        };
+    };
+};
+
+var setupVirtualPageviewAnalytics = function(elems, fnPath){
+    for(var i=0; i < elems.length; i++) {
+        elems[i].onclick = function(e){
+            var targetPath = fnPath(e);
+            console.log("sending virtual pageview - path: "+targetPath+" target: "+ e.target);
+            ga('send', 'pageview', targetPath);
         };
     };
 };

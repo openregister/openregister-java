@@ -8,4 +8,4 @@ for(var j = 0; j < elems.length; j++) {
     }
 }
 
-trackEvent(filtered, "Link", "external", function(e){ return e.target.href; });
+setupEventAnalytics(filtered, "Link", "external", function(e){ return e.target.href; });

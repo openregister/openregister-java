@@ -1,2 +1,5 @@
 var elems = document.getElementsByClassName("js-download");
-trackEvent(elems, "Data", "download", function(e){ return e.target.text; });
+
+setupEventAnalytics(elems, "Data", "download", function(e){
+    return e.target.getAttribute("data-download-type") || "unrecognised";
+});
