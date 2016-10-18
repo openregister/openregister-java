@@ -164,7 +164,7 @@ task runConformanceTests(type: Exec) {
     dependsOn << installConformanceTestDeps
     finalizedBy stopAppForConformance
     mustRunAfter test
-    commandLine '.venv/bin/openregister-conformance', '--no-https', 'http://school.openregister.dev:9090'
+    commandLine '.venv/bin/openregister-conformance', '--no-https', '--register', 'school', 'http://localhost:9090'
 }
 
 check {
