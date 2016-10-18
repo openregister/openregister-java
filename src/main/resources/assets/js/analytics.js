@@ -4,8 +4,17 @@
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 ga('create', 'UA-85775854-1', 'auto', {
-    'allowLinker': true
+    'allowLinker': false
 });
 
 ga('send', 'pageview');
 
+
+var trackEvent = function(elems, category, action, fnLabel){
+    for(var i=0; i < elems.length; i++) {
+        elems[i].onclick = function(e){
+            console.log("sending event - category: "+ category + " action: "+ action + " etext: "+ e.target);
+            ga('send', 'event', category, action, fnLabel(e));
+        };
+    };
+};
