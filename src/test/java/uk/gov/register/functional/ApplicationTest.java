@@ -41,7 +41,7 @@ public class ApplicationTest extends FunctionalTestBase {
                 .request()
                 .get();
 
-        assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self'")));
+        assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self' www.google-analytics.com")));
     }
 
     @Test
