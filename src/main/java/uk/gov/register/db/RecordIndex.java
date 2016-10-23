@@ -5,7 +5,6 @@ import uk.gov.register.core.Record;
 import uk.gov.register.store.BackingStoreDriver;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RecordIndex {
     private final BackingStoreDriver backingStoreDriver;
@@ -36,15 +35,5 @@ public class RecordIndex {
 
     public Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key) {
         return backingStoreDriver.findAllEntriesOfRecordBy(registerName, key);
-    }
-
-    private List<CurrentKey> extractCurrentKeys(String registerName, List<Record> records) {
-        Map<String, Integer> currentKeys = new HashMap<>();
-        records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntryNumber()));
-        return currentKeys
-                .entrySet()
-                .stream()
-                .map(e -> new CurrentKey(e.getKey(), e.getValue()))
-                .collect(Collectors.toList());
     }
 }
