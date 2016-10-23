@@ -4,7 +4,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.TransactionCallback;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
 import uk.gov.register.core.Entry;
