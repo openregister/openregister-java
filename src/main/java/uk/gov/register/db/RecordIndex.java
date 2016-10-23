@@ -4,11 +4,18 @@ import com.google.common.collect.Lists;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
+import uk.gov.register.store.BackingStoreDriver;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class RecordIndex {
+    private final BackingStoreDriver backingStoreDriver;
+
+    public RecordIndex(BackingStoreDriver backingStoreDriver) {
+        this.backingStoreDriver = backingStoreDriver;
+    }
+
     public void updateRecordIndex(Handle handle, String registerName, List<Record> records) {
         CurrentKeysUpdateDAO currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
         List<CurrentKey> currentKeys = extractCurrentKeys(registerName, records);
@@ -18,24 +25,24 @@ public class RecordIndex {
         currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
     }
 
-    public Optional<Record> getRecord(Handle h, String key) {
-        return h.attach(RecordQueryDAO.class).findByPrimaryKey(key);
+    public Optional<Record> getRecord(String key) {
+        return backingStoreDriver.getRecord(key);
     }
 
-    public int getTotalRecords(Handle h) {
-        return h.attach(RecordQueryDAO.class).getTotalRecords();
+    public int getTotalRecords() {
+        return backingStoreDriver.getTotalRecords();
     }
 
-    public List<Record> getRecords(Handle h, int limit, int offset) {
-        return h.attach(RecordQueryDAO.class).getRecords(limit, offset);
+    public List<Record> getRecords(int limit, int offset) {
+        return backingStoreDriver.getRecords(limit, offset);
     }
 
-    public List<Record> findMax100RecordsByKeyValue(Handle h, String key, String value) {
-        return h.attach(RecordQueryDAO.class).findMax100RecordsByKeyValue(key, value);
+    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
+        return backingStoreDriver.findMax100RecordsByKeyValue(key, value);
     }
 
-    public Collection<Entry> findAllEntriesOfRecordBy(Handle h, String registerName, String key) {
-        return h.attach(RecordQueryDAO.class).findAllEntriesOfRecordBy(registerName, key);
+    public Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key) {
+        return backingStoreDriver.findAllEntriesOfRecordBy(registerName, key);
     }
 
     private List<CurrentKey> extractCurrentKeys(String registerName, List<Record> records) {

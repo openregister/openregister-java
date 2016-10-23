@@ -30,13 +30,12 @@ public class PostgresRegister implements Register {
 
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfig,
-                            RecordIndex recordIndex,
                             DBI dbi,
                             BackingStoreDriver backingStoreDriver) {
         registerName = registerNameConfig.getRegister();
         this.entryLog = new EntryLog(backingStoreDriver);
         this.itemStore = new ItemStore(backingStoreDriver);
-        this.recordIndex = recordIndex;
+        this.recordIndex = new RecordIndex(backingStoreDriver);
         this.dbi = dbi;
     }
 
@@ -75,17 +74,17 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Record> getRecord(String key) {
-        return dbi.withHandle(h -> recordIndex.getRecord(h, key));
+        return recordIndex.getRecord(key);
     }
 
     @Override
     public Collection<Entry> allEntriesOfRecord(String key) {
-        return dbi.withHandle(h -> recordIndex.findAllEntriesOfRecordBy(h, registerName, key));
+        return recordIndex.findAllEntriesOfRecordBy(registerName, key);
     }
 
     @Override
     public List<Record> getRecords(int limit, int offset) {
-        return dbi.withHandle(h -> recordIndex.getRecords(h, limit, offset));
+        return recordIndex.getRecords(limit, offset);
     }
 
     @Override
@@ -100,7 +99,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public int getTotalRecords() {
-        return dbi.withHandle(recordIndex::getTotalRecords);
+        return recordIndex.getTotalRecords();
     }
 
     @Override
@@ -110,7 +109,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
-        return dbi.withHandle(h -> recordIndex.findMax100RecordsByKeyValue(h, key, value));
+        return recordIndex.findMax100RecordsByKeyValue(key, value);
     }
 
     @Override
