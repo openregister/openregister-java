@@ -7,7 +7,6 @@ import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
-import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
@@ -20,7 +19,6 @@ import java.util.Optional;
 public class EntryLog {
     private final BackingStoreDriver backingStoreDriver;
 
-    @Inject
     public EntryLog(BackingStoreDriver backingStoreDriver) {
         this.backingStoreDriver = backingStoreDriver;
     }

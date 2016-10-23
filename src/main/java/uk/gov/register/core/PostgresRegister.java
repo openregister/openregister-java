@@ -31,12 +31,11 @@ public class PostgresRegister implements Register {
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfig,
                             RecordIndex recordIndex,
-                            ItemStore itemStore,
                             DBI dbi,
                             BackingStoreDriver backingStoreDriver) {
         registerName = registerNameConfig.getRegister();
         this.entryLog = new EntryLog(backingStoreDriver);
-        this.itemStore = itemStore;
+        this.itemStore = new ItemStore(backingStoreDriver);
         this.recordIndex = recordIndex;
         this.dbi = dbi;
     }
@@ -61,7 +60,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Item> getItemBySha256(String sha256hex) {
-        return dbi.withHandle(h -> itemStore.getItemBySha256(h, sha256hex));
+        return itemStore.getItemBySha256(sha256hex);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Collection<Item> getAllItems() {
-        return dbi.withHandle(itemStore::getAllItems);
+        return itemStore.getAllItems();
     }
 
     @Override
