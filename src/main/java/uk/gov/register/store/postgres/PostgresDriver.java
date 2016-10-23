@@ -105,7 +105,7 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     @Override
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return inTransaction((handle, status) -> {
+        return inTransaction(handle -> {
             VerifiableLog verifiableLog = getVerifiableLog(handle);
             String rootHash = bytesToString(verifiableLog.currentRoot());
             return new RegisterProof(rootHash);
@@ -114,7 +114,7 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return inTransaction((handle, status) -> {
+        return inTransaction(handle -> {
             VerifiableLog verifiableLog = getVerifiableLog(handle);
 
             List<String> auditProof = verifiableLog.auditProof(entryNumber, totalEntries).stream()
@@ -126,7 +126,7 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return inTransaction((handle, status) -> {
+        return inTransaction(handle -> {
             VerifiableLog verifiableLog = getVerifiableLog(handle);
             List<String> consistencyProof = verifiableLog.consistencyProof(totalEntries1, totalEntries2).stream()
                     .map(this::bytesToString).collect(Collectors.toList());
@@ -170,5 +170,5 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     protected abstract <ReturnType> ReturnType withHandle(HandleCallback<ReturnType> callback);
 
-    protected abstract <ReturnType> ReturnType inTransaction(TransactionCallback<ReturnType> callback);
+    protected abstract <ReturnType> ReturnType inTransaction(HandleCallback<ReturnType> callback);
 }
