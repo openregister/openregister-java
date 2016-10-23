@@ -1,7 +1,5 @@
 package uk.gov.register.core;
 
-import org.skife.jdbi.v2.Handle;
-import uk.gov.register.db.ItemDAO;
 import uk.gov.register.store.BackingStoreDriver;
 
 import java.util.Collection;
@@ -14,8 +12,8 @@ public class ItemStore {
         this.backingStoreDriver = backingStoreDriver;
     }
 
-    public void putItems(Handle handle, Iterable<Item> items) {
-        handle.attach(ItemDAO.class).insertInBatch(items);
+    public void putItem(Item item) {
+        backingStoreDriver.insertItem(item);
     }
 
     public Optional<Item> getItemBySha256(String sha256hex) {

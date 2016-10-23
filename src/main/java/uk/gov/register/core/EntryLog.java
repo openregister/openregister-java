@@ -1,7 +1,5 @@
 package uk.gov.register.core;
 
-import org.skife.jdbi.v2.Handle;
-import uk.gov.register.db.EntryDAO;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -10,7 +8,6 @@ import uk.gov.register.views.RegisterProof;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,10 +20,8 @@ public class EntryLog {
         this.backingStoreDriver = backingStoreDriver;
     }
 
-    public void appendEntries(Handle handle, List<Entry> entries) {
-        EntryDAO entryDAO = handle.attach(EntryDAO.class);
-        entryDAO.insertInBatch(entries);
-        entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + entries.size());
+    public void appendEntry(Entry entry) {
+        backingStoreDriver.insertEntry(entry);
     }
 
     public Optional<Entry> getEntry(int entryNumber) {

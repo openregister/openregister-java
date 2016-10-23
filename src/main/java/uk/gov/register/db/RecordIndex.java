@@ -1,7 +1,5 @@
 package uk.gov.register.db;
 
-import com.google.common.collect.Lists;
-import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.store.BackingStoreDriver;
@@ -16,13 +14,8 @@ public class RecordIndex {
         this.backingStoreDriver = backingStoreDriver;
     }
 
-    public void updateRecordIndex(Handle handle, String registerName, List<Record> records) {
-        CurrentKeysUpdateDAO currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
-        List<CurrentKey> currentKeys = extractCurrentKeys(registerName, records);
-        int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(currentKeys, r -> r.key));
-
-        currentKeysUpdateDAO.writeCurrentKeys(currentKeys);
-        currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
+    public void updateRecordIndex(String registerName, Record record) {
+        backingStoreDriver.insertRecord(record, registerName);
     }
 
     public Optional<Record> getRecord(String key) {
