@@ -30,6 +30,8 @@ import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.store.BackingStoreDriver;
+import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
@@ -101,6 +103,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(EntryLog.class).to(EntryLog.class);
                 bind(ItemStore.class).to(ItemStore.class);
                 bind(RecordIndex.class).to(RecordIndex.class);
+                bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
 
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);

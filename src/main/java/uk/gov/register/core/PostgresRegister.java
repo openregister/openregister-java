@@ -5,6 +5,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RecordIndex;
+import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -30,13 +31,13 @@ public class PostgresRegister implements Register {
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfig,
                             RecordIndex recordIndex,
-                            EntryLog entryLog,
                             ItemStore itemStore,
-                            DBI dbi) {
-        this.recordIndex = recordIndex;
+                            DBI dbi,
+                            BackingStoreDriver backingStoreDriver) {
         registerName = registerNameConfig.getRegister();
-        this.entryLog = entryLog;
+        this.entryLog = new EntryLog(backingStoreDriver);
         this.itemStore = itemStore;
+        this.recordIndex = recordIndex;
         this.dbi = dbi;
     }
 
@@ -44,7 +45,7 @@ public class PostgresRegister implements Register {
     public void mintItems(Iterable<Item> items) {
         dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
             itemStore.putItems(handle, items);
-            AtomicInteger currentEntryNumber = new AtomicInteger(entryLog.getTotalEntries(handle));
+            AtomicInteger currentEntryNumber = new AtomicInteger(entryLog.getTotalEntries());
             List<Record> records = StreamSupport.stream(items.spliterator(), false)
                     .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
                     .collect(Collectors.toList());
@@ -55,7 +56,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Entry> getEntry(int entryNumber) {
-        return dbi.withHandle(handle -> entryLog.getEntry(handle, entryNumber));
+        return entryLog.getEntry(entryNumber);
     }
 
     @Override
@@ -65,12 +66,12 @@ public class PostgresRegister implements Register {
 
     @Override
     public int getTotalEntries() {
-        return dbi.withHandle(entryLog::getTotalEntries);
+        return entryLog.getTotalEntries();
     }
 
     @Override
     public Collection<Entry> getEntries(int start, int limit) {
-        return dbi.withHandle(h -> entryLog.getEntries(h, start, limit));
+        return entryLog.getEntries(start, limit);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Collection<Entry> getAllEntries() {
-        return dbi.withHandle(entryLog::getAllEntries);
+        return entryLog.getAllEntries();
     }
 
     @Override
@@ -105,7 +106,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Instant> getLastUpdatedTime() {
-        return dbi.withHandle(entryLog::getLastUpdatedTime);
+        return entryLog.getLastUpdatedTime();
     }
 
     @Override
@@ -115,18 +116,16 @@ public class PostgresRegister implements Register {
 
     @Override
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return dbi.inTransaction((handle, status) -> entryLog.getRegisterProof(handle));
+        return entryLog.getRegisterProof();
     }
 
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return dbi.inTransaction((handle, status) ->
-                entryLog.getEntryProof(handle, entryNumber, totalEntries));
+        return entryLog.getEntryProof(entryNumber, totalEntries);
     }
 
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return dbi.inTransaction((handle, status) ->
-                entryLog.getConsistencyProof(handle, totalEntries1, totalEntries2));
+        return entryLog.getConsistencyProof(totalEntries1, totalEntries2);
     }
 }
