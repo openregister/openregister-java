@@ -56,6 +56,12 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     @Override
+    public Optional<Item> getItemBySha256(String sha256hex) {
+        Optional<Item> stagedItem = searchStagingForItem(sha256hex);
+        return stagedItem.isPresent() ? stagedItem : super.getItemBySha256(sha256hex);
+    }
+
+    @Override
     protected void useHandle(HandleConsumer callback) {
         useExistingHandle(callback);
     }
@@ -120,5 +126,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
         super.insertCurrentKeys(currentKeysToWrite);
         stagedCurrentKeys.clear();
+    }
+
+    private Optional<Item> searchStagingForItem(String sha256hex) {
+        return stagedItems.stream().filter(item -> item.getSha256hex().equals(sha256hex)).findFirst();
     }
 }
