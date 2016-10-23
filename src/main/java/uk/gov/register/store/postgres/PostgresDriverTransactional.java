@@ -34,8 +34,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
     public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
         dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
-            callback.accept(new PostgresDriverTransactional(handle, memoizationStore));
-            callback.andThen(pd -> pd.writeStagedData());
+            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, memoizationStore);
+            callback.accept(postgresDriver);
+            postgresDriver.writeStagedData();
         });
     }
 
@@ -61,24 +62,23 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
     @Override
     protected <ReturnType> ReturnType withHandle(HandleCallback<ReturnType> callback) {
-        return useExistingHandle(callback);
+        return writeDataUsingExistingHandle(callback);
     }
 
     @Override
     protected <ReturnType> ReturnType inTransaction(HandleCallback<ReturnType> callback) {
-        return useExistingHandle(callback);
+        return writeDataUsingExistingHandle(callback);
     }
 
     private void useExistingHandle(HandleConsumer callback) {
         try {
-            writeStagedData();
             callback.useHandle(handle);
         } catch (Exception ex) {
             throw new CallbackFailedException(ex);
         }
     }
 
-    private <ReturnType> ReturnType useExistingHandle(HandleCallback<ReturnType> callback) {
+    private <ReturnType> ReturnType writeDataUsingExistingHandle(HandleCallback<ReturnType> callback) {
         try {
             writeStagedData();
             return callback.withHandle(handle);

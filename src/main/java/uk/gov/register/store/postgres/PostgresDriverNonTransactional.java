@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import java.util.Arrays;
 
 public class PostgresDriverNonTransactional extends PostgresDriver {
-
     private DBI dbi;
 
     @Inject
