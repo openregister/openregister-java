@@ -6,9 +6,11 @@ import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.service.RegisterService;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
 
@@ -18,23 +20,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
+import java.time.Instant;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Path("/")
 public class DataUpload {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected final ViewFactory viewFactory;
+    private RegisterService registerService;
     private String registerPrimaryKey;
     private ObjectReconstructor objectReconstructor;
     private ItemValidator itemValidator;
-    private Register register;
 
     @Inject
-    public DataUpload(ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator, Register register) {
+    public DataUpload(ViewFactory viewFactory, RegisterService registerService, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator) {
         this.viewFactory = viewFactory;
+        this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
         this.itemValidator = itemValidator;
-        this.register = register;
         this.registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
@@ -48,11 +52,23 @@ public class DataUpload {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
             objects.forEach(singleObject -> itemValidator.validateItem(registerPrimaryKey, singleObject));
-            register.mintItems(Iterables.transform(objects, Item::new));
+            mintItems(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));
             throw t;
         }
+    }
+
+    private void mintItems(Iterable<JsonNode> objects) {
+        registerService.asAtomicRegisterOperation(register -> {
+            AtomicInteger currentEntryNumber = new AtomicInteger(register.getTotalEntries());
+            Iterables.transform(objects, Item::new).forEach(item -> mintItem(register, currentEntryNumber, item));
+        });
+    }
+
+    private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
+        register.putItem(item);
+        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()));
     }
 }
 

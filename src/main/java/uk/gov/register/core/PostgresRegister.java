@@ -1,15 +1,11 @@
 package uk.gov.register.core;
 
-import com.google.common.collect.Lists;
-import org.skife.jdbi.v2.DBI;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.store.BackingStoreDriver;
-import uk.gov.register.store.postgres.PostgresDriverTransactional;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
-import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
@@ -17,9 +13,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -27,33 +20,25 @@ public class PostgresRegister implements Register {
     private final String registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
-    private final DBI dbi;
-    private final MemoizationStore memoizationStore;
 
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfig,
-                            DBI dbi,
-                            BackingStoreDriver backingStoreDriver,
-                            MemoizationStore memoizationStore) {
+                            BackingStoreDriver backingStoreDriver) {
         registerName = registerNameConfig.getRegister();
         this.entryLog = new EntryLog(backingStoreDriver);
         this.itemStore = new ItemStore(backingStoreDriver);
         this.recordIndex = new RecordIndex(backingStoreDriver);
-        this.dbi = dbi;
-        this.memoizationStore = memoizationStore;
     }
 
     @Override
-    public void mintItems(Iterable<Item> items) {
-        PostgresDriverTransactional.useTransaction(dbi, memoizationStore, handle -> {
-            items.forEach(itemStore::putItem);
-            AtomicInteger currentEntryNumber = new AtomicInteger(entryLog.getTotalEntries());
-            List<Record> records = StreamSupport.stream(items.spliterator(), false)
-                    .map(item -> new Record(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now()), item))
-                    .collect(Collectors.toList());
-            Lists.transform(records, r -> r.entry).forEach(entryLog::appendEntry);
-            records.forEach(record -> recordIndex.updateRecordIndex(registerName, record));
-        });
+    public void putItem(Item item) {
+        itemStore.putItem(item);
+    }
+
+    @Override
+    public void appendEntry(Entry entry) {
+        entryLog.appendEntry(entry);
+        recordIndex.updateRecordIndex(registerName, new Record(entry, itemStore.getItemBySha256(entry.getSha256hex()).get()));
     }
 
     @Override
