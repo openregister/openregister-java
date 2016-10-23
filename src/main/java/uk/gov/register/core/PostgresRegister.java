@@ -2,6 +2,7 @@ package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RecordIndex;
+import uk.gov.register.exceptions.NoSuchItemException;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -38,7 +39,8 @@ public class PostgresRegister implements Register {
     @Override
     public void appendEntry(Entry entry) {
         entryLog.appendEntry(entry);
-        recordIndex.updateRecordIndex(registerName, new Record(entry, itemStore.getItemBySha256(entry.getSha256hex()).get()));
+        recordIndex.updateRecordIndex(registerName, new Record(entry, itemStore.getItemBySha256(entry.getSha256hex())
+                .orElseThrow(() -> new NoSuchItemException(entry.getSha256hex()))));
     }
 
     @Override
