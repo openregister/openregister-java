@@ -28,7 +28,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
-        this.stagedItems = new HashSet<>();
+        this.stagedItems = new LinkedHashSet<>();
         this.stagedCurrentKeys = new HashMap<>();
     }
 
