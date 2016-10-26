@@ -1,11 +1,14 @@
-var elems = document.getElementsByTagName('a');
-var filtered = new Array();
+(function(){
+    var elems = document.getElementsByTagName('a');
+    var filtered = new Array();
 
-for(var j = 0; j < elems.length; j++) {
-    var href = elems[j].getAttribute("href");
-    if (! (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) ) {
-        filtered.push(elems[j]);
+    for(var j = 0; j < elems.length; j++) {
+        var href = elems[j].getAttribute("href");
+        if (! (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) ) {
+            filtered.push(elems[j]);
+        }
     }
-}
 
-setupEventAnalytics(filtered, "Link", "external", function(e){ return e.target.href; });
+    setupEventAnalytics(filtered, "Link", "external", function(e){ return e.target.href; });
+})();
+
