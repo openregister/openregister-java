@@ -1,6 +1,8 @@
 package uk.gov.register.store.postgres;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.assertj.core.error.ShouldBeInSameYear;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +17,7 @@ import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -171,7 +174,7 @@ public class PostgresDriverTransactionalTest {
 
         postgresDriver.insertItem(new Item("itemhash2", new ObjectMapper().createObjectNode()));
         postgresDriver.insertEntry(mock(Entry.class));
-        postgresDriver.insertRecord(mockRecord("country", "DE", 2), "country");
+        postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
 
         postgresDriver.getItemBySha256("itemhash2");
 
@@ -185,6 +188,57 @@ public class PostgresDriverTransactionalTest {
         assertThat(entries.size(), is(2));
         assertThat(currentKeys.size(), is(2));
 
+    }
+
+    @Test
+    public void insertRecordWithSameKeyValueDoesNotStageBothCurrentKeys() {
+        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
+        PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
+                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+
+        Record record1 = mockRecord("country", "DE", 1);
+        Record record2 = mockRecord("country", "VA", 2);
+        Record record3 = mockRecord("country", "DE", 3);
+
+        postgresDriver.insertRecord(record1, "country");
+        postgresDriver.insertRecord(record2, "country");
+        postgresDriver.insertRecord(record3, "country");
+
+        assertThat(currentKeys, is(empty()));
+
+        postgresDriver.getAllEntries();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeys.get(0).getKey(), is("DE"));
+        assertThat(currentKeys.get(0).getEntry_number(), is(3));
+        assertThat(currentKeys.get(1).getKey(), is("VA"));
+        assertThat(currentKeys.get(1).getEntry_number(), is(2));
+    }
+
+    @Test
+    public void entryAndItemDataShouldBeCommittedInOrder() {
+        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
+        PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
+                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+
+        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
+        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
+        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
+        Entry entry1 = new Entry(1, "itemhash1", Instant.now());
+        Entry entry2 = new Entry(2, "itemhash2", Instant.now());
+        Entry entry3 = new Entry(3, "itemhash3", Instant.now());
+
+        postgresDriver.insertItem(item1);
+        postgresDriver.insertItem(item2);
+        postgresDriver.insertItem(item3);
+        postgresDriver.insertEntry(entry1);
+        postgresDriver.insertEntry(entry2);
+        postgresDriver.insertEntry(entry3);
+
+        postgresDriver.getAllEntries();
+
+        assertThat(items, contains(item1, item2, item3));
+        assertThat(entries, contains(entry1, entry2, entry3));
     }
 
     private void assertStagedDataIsCommittedOnAction(Consumer<PostgresDriverTransactional> actionToTest) {
