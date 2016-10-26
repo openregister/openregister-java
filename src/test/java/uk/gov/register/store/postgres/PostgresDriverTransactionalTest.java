@@ -11,10 +11,13 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
+import uk.gov.register.views.RegisterProof;
+import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -140,6 +143,13 @@ public class PostgresDriverTransactionalTest {
     public void findAllEntriesOfRecordByShouldAlwaysCommitStagedData() {
         when(recordQueryDAO.findAllEntriesOfRecordBy("country", "DE")).thenReturn(asList());
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findAllEntriesOfRecordBy("country", "DE"));
+    }
+
+    @Test
+    public void withVerifiableLogShouldAlwaysCommitStagedData() {
+        Function<VerifiableLog, RegisterProof> func = mock(Function.class);
+        when(func.apply(mock(VerifiableLog.class))).thenReturn(mock(RegisterProof.class));
+        assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.withVerifiableLog(verifiableLog -> func));
     }
 
     @Test
