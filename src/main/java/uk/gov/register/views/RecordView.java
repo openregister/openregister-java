@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.FieldValue;
@@ -23,8 +24,8 @@ public class RecordView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private final Record record;
 
-    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
-        super(requestContext, custodian, custodianBranding, "record.html", registerDomainConfiguration, registerData);
+    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration) {
+        super(requestContext, custodian, custodianBranding, "record.html", registerDomainConfiguration, registerData, registerTrackingConfiguration);
         this.itemConverter = itemConverter;
         this.record = record;
         this.registerPrimaryKey = registerData.getRegister().getRegisterName();

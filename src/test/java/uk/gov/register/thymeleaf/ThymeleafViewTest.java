@@ -10,6 +10,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -25,7 +27,7 @@ public class ThymeleafViewTest {
         RegisterData register = new RegisterData(ImmutableMap.of(
                 "register", new TextNode("company-limited-by-guarantee"),
                 "copyright", new TextNode("Copyright text [with link](http://www.example.com/copyright)")));
-        thymeleafView = new ThymeleafView(requestContext, "don't care", register, () -> "test.register.gov.uk");
+        thymeleafView = new ThymeleafView(requestContext, "don't care", register, () -> "test.register.gov.uk", () -> Optional.empty());
     }
 
     @Test

@@ -50,7 +50,10 @@
 </div>
 
 <footer th:replace="main.html::footer"></footer>
-<script type="text/javascript" src="/assets/js/analytics-download-type.js"></script>
+
+<th:block th:if="${registerTrackingId.present}">
+    <script type="text/javascript" src="/assets/js/analytics-download-type.js"></script>
+</th:block>
 
 </body>
 </html>

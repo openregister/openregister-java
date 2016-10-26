@@ -9,6 +9,7 @@ import uk.gov.register.resources.RequestContext;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -31,7 +32,7 @@ public class DownloadPageViewTest {
 
     @Test
     public void getDownloadEnabled_returnsTheSameValuePassedInConstructor() throws Exception {
-        DownloadPageView downloadPageView = new DownloadPageView(mockRequestContext, () -> "test.register.gov.uk", null , enableResourceDownload);
+        DownloadPageView downloadPageView = new DownloadPageView(mockRequestContext, () -> "test.register.gov.uk", null , enableResourceDownload, () -> Optional.empty());
         assertThat(downloadPageView.getDownloadEnabled(), equalTo(enableResourceDownload));
     }
 }

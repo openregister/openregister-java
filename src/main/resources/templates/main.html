@@ -83,8 +83,16 @@
         </div>
     </div>
     <script type="text/javascript" src="/assets/js/details.polyfill.js"></script>
-    <script type="text/javascript" src="/assets/js/analytics.js"></script>
-    <script type="text/javascript" src="/assets/js/analytics-external-links.js"></script>
+
+    <th:block th:if="${registerTrackingId != null and registerTrackingId.present}">
+        <script nonce="321analytics123" th:inline="javascript">
+            /*<![CDATA[*/
+                var gaTrackingId = /*[[${registerTrackingId.get()}]]*/ '';
+            /*]]>*/
+        </script>
+        <script type="text/javascript" src="/assets/js/analytics.js"></script>
+        <script type="text/javascript" src="/assets/js/analytics-external-links.js"></script>
+    </th:block>
 </footer>
 
 </html>

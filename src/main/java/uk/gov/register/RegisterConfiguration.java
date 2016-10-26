@@ -7,10 +7,7 @@ import io.dropwizard.db.DataSourceFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
-import uk.gov.register.configuration.RegisterContentPagesConfiguration;
-import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.configuration.ResourceConfiguration;
+import uk.gov.register.configuration.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -23,7 +20,8 @@ public class RegisterConfiguration extends Configuration
         RegisterDomainConfiguration,
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
-        GovukClientConfiguration {
+        GovukClientConfiguration,
+        RegisterTrackingConfiguration {
     @Valid
     @NotNull
     @JsonProperty
@@ -69,6 +67,11 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private Optional<String> historyPageUrl = Optional.empty();
 
+    @SuppressWarnings("unused")
+    @Valid
+    @JsonProperty
+    private Optional<String> trackingId = Optional.empty();
+
     public DataSourceFactory getDatabase() {
         return database;
     }
@@ -102,5 +105,9 @@ public class RegisterConfiguration extends Configuration
 
     public Optional<String> getRegisterHistoryPageUrl() {
         return historyPageUrl;
+    }
+
+    public Optional<String> getRegisterTrackingId() {
+        return trackingId;
     }
 }

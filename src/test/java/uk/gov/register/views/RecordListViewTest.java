@@ -47,7 +47,7 @@ public class RecordListViewTest {
                 )
         );
         RegisterData registerData = new RegisterData(ImmutableMap.of("register", new TextNode("address")));
-        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty()), requestContext, () -> "test.register.gov.uk"), records, () -> "test.register.gov.uk", registerData);
+        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty()), requestContext, () -> "test.register.gov.uk"), records, () -> "test.register.gov.uk", registerData, () -> Optional.empty());
 
         Map<String, RecordView> result = recordListView.recordsJson();
         assertThat(result.size(), equalTo(2));
