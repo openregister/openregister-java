@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -63,6 +64,11 @@ public class DataUpload {
         registerService.asAtomicRegisterOperation(register -> {
             AtomicInteger currentEntryNumber = new AtomicInteger(register.getTotalEntries());
             Iterables.transform(objects, Item::new).forEach(item -> mintItem(register, currentEntryNumber, item));
+            try {
+                register.getRegisterProof();
+            } catch (NoSuchAlgorithmException e) {
+                // do nothing
+            }
         });
     }
 
