@@ -1,8 +1,6 @@
 package uk.gov.register.store.postgres;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.assertj.core.error.ShouldBeInSameYear;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
