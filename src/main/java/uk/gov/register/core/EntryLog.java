@@ -5,10 +5,13 @@ import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
+import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * An append-only log of Entries, together with proofs
@@ -45,14 +48,29 @@ public class EntryLog {
     }
 
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return backingStoreDriver.getRegisterProof();
+        String rootHash =  backingStoreDriver.withVerifiableLog(verifiableLog ->
+                bytesToString(verifiableLog.currentRoot()));
+
+        return new RegisterProof(rootHash);
     }
 
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return backingStoreDriver.getEntryProof(entryNumber, totalEntries);
+        List<String> auditProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
+                verifiableLog.auditProof(entryNumber, totalEntries)
+                        .stream().map(this::bytesToString).collect(Collectors.toList()));
+
+        return new EntryProof(Integer.toString(entryNumber), auditProof);
     }
 
-    public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2){
-        return backingStoreDriver.getConsistencyProof(totalEntries1, totalEntries2);
+    public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
+        List<String> consistencyProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
+                verifiableLog.consistencyProof(totalEntries1, totalEntries2))
+                .stream().map(this::bytesToString).collect(Collectors.toList());
+
+        return new ConsistencyProof(consistencyProof);
+    }
+
+    private String bytesToString(byte[] bytes) {
+        return DatatypeConverter.printHexBinary(bytes).toLowerCase();
     }
 }

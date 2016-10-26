@@ -12,19 +12,13 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
 import uk.gov.register.store.BackingStoreDriver;
-import uk.gov.register.views.ConsistencyProof;
-import uk.gov.register.views.EntryProof;
-import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
-import javax.xml.bind.DatatypeConverter;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public abstract class PostgresDriver implements BackingStoreDriver {
 
@@ -130,35 +124,8 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     }
 
     @Override
-    public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
-        return inTransaction(handle -> {
-            VerifiableLog verifiableLog = getVerifiableLog(handle);
-            String rootHash = bytesToString(verifiableLog.currentRoot());
-            return new RegisterProof(rootHash);
-        });
-    }
-
-    @Override
-    public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return inTransaction(handle -> {
-            VerifiableLog verifiableLog = getVerifiableLog(handle);
-
-            List<String> auditProof = verifiableLog.auditProof(entryNumber, totalEntries).stream()
-                    .map(this::bytesToString).collect(Collectors.toList());
-
-            return new EntryProof(Integer.toString(entryNumber), auditProof);
-        });
-    }
-
-    @Override
-    public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return inTransaction(handle -> {
-            VerifiableLog verifiableLog = getVerifiableLog(handle);
-            List<String> consistencyProof = verifiableLog.consistencyProof(totalEntries1, totalEntries2).stream()
-                    .map(this::bytesToString).collect(Collectors.toList());
-
-            return new ConsistencyProof(consistencyProof);
-        });
+    public <ReturnType> ReturnType withVerifiableLog(Function<VerifiableLog, ReturnType> callback) {
+        return inTransaction(handle -> callback.apply(getVerifiableLog(handle)));
     }
 
     protected void insertEntries(Iterable<Entry> entries) {
@@ -186,10 +153,6 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     private VerifiableLog getVerifiableLog(Handle handle) {
         EntryMerkleLeafStore merkleLeafStore = new EntryMerkleLeafStore(entryQueryDAOFromHandle.apply(handle));
         return new VerifiableLog(DigestUtils.getSha256Digest(), merkleLeafStore, memoizationStore);
-    }
-
-    private String bytesToString(byte[] bytes) {
-        return DatatypeConverter.printHexBinary(bytes).toLowerCase();
     }
 
     protected abstract void useHandle(HandleConsumer callback);

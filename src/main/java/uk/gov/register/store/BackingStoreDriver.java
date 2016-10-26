@@ -1,13 +1,11 @@
 package uk.gov.register.store;
 
+import com.google.common.base.Function;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.views.ConsistencyProof;
-import uk.gov.register.views.EntryProof;
-import uk.gov.register.views.RegisterProof;
+import uk.gov.verifiablelog.VerifiableLog;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +32,5 @@ public interface BackingStoreDriver {
     List<Record> findMax100RecordsByKeyValue(String key, String value);
     Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key);
 
-    RegisterProof getRegisterProof() throws NoSuchAlgorithmException;
-    EntryProof getEntryProof(int entryNumber, int totalEntries);
-    ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
+    <ReturnType> ReturnType withVerifiableLog(Function<VerifiableLog, ReturnType> callback);
 }
