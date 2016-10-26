@@ -1,5 +1,6 @@
 package uk.gov.register.store.postgres;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,7 +30,33 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     protected final MemoizationStore memoizationStore;
 
+    private final Function<Handle, EntryQueryDAO> entryQueryDAOFromHandle;
+    private final Function<Handle, EntryDAO> entryDAOFromHandle;
+    private final Function<Handle, ItemQueryDAO> itemQueryDAOFromHandle;
+    private final Function<Handle, ItemDAO> itemDAOFromHandle;
+    private final Function<Handle, RecordQueryDAO> recordQueryDAOFromHandle;
+    private final Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAOFromHandle;
+
     public PostgresDriver(MemoizationStore memoizationStore) {
+        this(h -> h.attach(EntryQueryDAO.class), h -> h.attach(EntryDAO.class),
+                h -> h.attach(ItemQueryDAO.class), h -> h.attach(ItemDAO.class),
+                h -> h.attach(RecordQueryDAO.class), h -> h.attach(CurrentKeysUpdateDAO.class), memoizationStore);
+    }
+
+    protected PostgresDriver(
+            Function<Handle, EntryQueryDAO> entryQueryDAOFromHandle,
+            Function<Handle, EntryDAO> entryDAOFromHandle,
+            Function<Handle, ItemQueryDAO> itemQueryDAOFromHandle,
+            Function<Handle, ItemDAO> itemDAOFromHandle,
+            Function<Handle, RecordQueryDAO> recordQueryDAOFromHandle,
+            Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAOFromHandle,
+            MemoizationStore memoizationStore) {
+        this.entryQueryDAOFromHandle = entryQueryDAOFromHandle;
+        this.entryDAOFromHandle = entryDAOFromHandle;
+        this.itemQueryDAOFromHandle = itemQueryDAOFromHandle;
+        this.itemDAOFromHandle = itemDAOFromHandle;
+        this.recordQueryDAOFromHandle = recordQueryDAOFromHandle;
+        this.currentKeysUpdateDAOFromHandle = currentKeysUpdateDAOFromHandle;
         this.memoizationStore = memoizationStore;
     }
 
@@ -44,62 +71,62 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     @Override
     public Optional<Entry> getEntry(int entryNumber) {
-        return withHandle(handle -> handle.attach(EntryQueryDAO.class).findByEntryNumber(entryNumber));
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).findByEntryNumber(entryNumber));
     }
 
     @Override
     public Collection<Entry> getEntries(int start, int limit) {
-        return withHandle(handle -> handle.attach(EntryQueryDAO.class).getEntries(start, limit));
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getEntries(start, limit));
     }
 
     @Override
     public Collection<Entry> getAllEntries() {
-        return withHandle(handle -> handle.attach(EntryQueryDAO.class).getAllEntriesNoPagination());
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getAllEntriesNoPagination());
     }
 
     @Override
     public int getTotalEntries() {
-        return withHandle(handle -> handle.attach(EntryQueryDAO.class).getTotalEntries());
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getTotalEntries());
     }
 
     @Override
     public Optional<Instant> getLastUpdatedTime() {
-        return withHandle(handle -> handle.attach(EntryQueryDAO.class).getLastUpdatedTime());
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getLastUpdatedTime());
     }
 
     @Override
     public Optional<Item> getItemBySha256(String sha256hex) {
-        return withHandle(handle -> handle.attach(ItemQueryDAO.class).getItemBySHA256(sha256hex));
+        return withHandle(handle -> itemQueryDAOFromHandle.apply(handle).getItemBySHA256(sha256hex));
     }
 
     @Override
     public Collection<Item> getAllItems() {
-        return withHandle(handle -> handle.attach(ItemQueryDAO.class).getAllItemsNoPagination());
+        return withHandle(handle -> itemQueryDAOFromHandle.apply(handle).getAllItemsNoPagination());
     }
 
     @Override
     public Optional<Record> getRecord(String key) {
-        return withHandle(handle -> handle.attach(RecordQueryDAO.class).findByPrimaryKey(key));
+        return withHandle(handle -> recordQueryDAOFromHandle.apply(handle).findByPrimaryKey(key));
     }
 
     @Override
     public int getTotalRecords() {
-        return withHandle(handle -> handle.attach(RecordQueryDAO.class).getTotalRecords());
+        return withHandle(handle -> recordQueryDAOFromHandle.apply(handle).getTotalRecords());
     }
 
     @Override
     public List<Record> getRecords(int limit, int offset) {
-        return withHandle(handle -> handle.attach(RecordQueryDAO.class).getRecords(limit, offset));
+        return withHandle(handle -> recordQueryDAOFromHandle.apply(handle).getRecords(limit, offset));
     }
 
     @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
-        return withHandle(handle -> handle.attach(RecordQueryDAO.class).findMax100RecordsByKeyValue(key, value));
+        return withHandle(handle -> recordQueryDAOFromHandle.apply(handle).findMax100RecordsByKeyValue(key, value));
     }
 
     @Override
     public Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key) {
-        return withHandle(handle -> handle.attach(RecordQueryDAO.class).findAllEntriesOfRecordBy(registerName, key));
+        return withHandle(handle -> recordQueryDAOFromHandle.apply(handle).findAllEntriesOfRecordBy(registerName, key));
     }
 
     @Override
@@ -136,28 +163,28 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     protected void insertEntries(Iterable<Entry> entries) {
         useHandle(handle -> {
-            EntryDAO entryDAO = handle.attach(EntryDAO.class);
-            entryDAO.insertInBatch(entries);
-            entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + Iterables.size(entries));
+            EntryDAO dao = entryDAOFromHandle.apply(handle);
+            dao.insertInBatch(entries);
+            dao.setEntryNumber(dao.currentEntryNumber() + Iterables.size(entries));
         });
     }
 
     protected void insertItems(Iterable<Item> items) {
-        useHandle(handle -> handle.attach(ItemDAO.class).insertInBatch(items));
+        useHandle(handle -> itemDAOFromHandle.apply(handle).insertInBatch(items));
     }
 
     protected void insertCurrentKeys(List<CurrentKey> currentKeys) {
         useHandle(handle -> {
-            CurrentKeysUpdateDAO currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
+            CurrentKeysUpdateDAO dao = currentKeysUpdateDAOFromHandle.apply(handle);
 
-            int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(currentKeys, r -> r.getKey()));
-            currentKeysUpdateDAO.writeCurrentKeys(currentKeys);
-            currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
+            int noOfRecordsDeleted = dao.removeRecordWithKeys(Lists.transform(currentKeys, r -> r.getKey()));
+            dao.writeCurrentKeys(currentKeys);
+            dao.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
         });
     }
 
     private VerifiableLog getVerifiableLog(Handle handle) {
-        EntryMerkleLeafStore merkleLeafStore = new EntryMerkleLeafStore(handle.attach(EntryQueryDAO.class));
+        EntryMerkleLeafStore merkleLeafStore = new EntryMerkleLeafStore(entryQueryDAOFromHandle.apply(handle));
         return new VerifiableLog(DigestUtils.getSha256Digest(), merkleLeafStore, memoizationStore);
     }
 

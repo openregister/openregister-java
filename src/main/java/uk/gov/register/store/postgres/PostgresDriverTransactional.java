@@ -1,5 +1,6 @@
 package uk.gov.register.store.postgres;
 
+import com.google.common.base.Function;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -9,7 +10,7 @@ import org.skife.jdbi.v2.tweak.HandleConsumer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.CurrentKey;
+import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.util.*;
@@ -25,6 +26,18 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
     private PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore) {
         super(memoizationStore);
+
+        this.handle = handle;
+        this.stagedEntries = new ArrayList<>();
+        this.stagedItems = new LinkedHashSet<>();
+        this.stagedCurrentKeys = new HashMap<>();
+    }
+
+    protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
+                                          Function<Handle, EntryQueryDAO> entryQueryDAO, Function<Handle, EntryDAO> entryDAO,
+                                          Function<Handle, ItemQueryDAO> itemQueryDAO, Function<Handle, ItemDAO> itemDAO,
+                                          Function<Handle, RecordQueryDAO> recordQueryDAO, Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAO) {
+        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore);
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
