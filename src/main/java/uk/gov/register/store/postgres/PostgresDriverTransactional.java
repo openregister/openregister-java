@@ -7,9 +7,7 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
+import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -31,6 +29,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new LinkedHashSet<>();
         this.stagedCurrentKeys = new HashMap<>();
+
+        // Initialise the entry cutoff now that have have our PostgresDriver created
+        ((TransactionalMemoizationStore)memoizationStore).setCurrentEntryCount(this.getTotalEntries());
     }
 
     protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
@@ -46,11 +47,32 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
-        dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
-            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, memoizationStore);
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStoreImpl(memoizationStore);
+
+        // Get the handle
+        Handle handle = dbi.open();
+
+        try {
+            handle.setTransactionIsolation(TransactionIsolationLevel.SERIALIZABLE);
+            handle.begin();
+
+            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, transactionalMemoizationStore);
             callback.accept(postgresDriver);
             postgresDriver.writeStagedData();
-        });
+
+            boolean throwException = false;
+            if (throwException) {
+                throw new RuntimeException("intellij needs to support throwing exceptions during debugging");
+            }
+
+            handle.commit();
+            transactionalMemoizationStore.commitEntries(postgresDriver.getTotalEntries());
+        } catch (Exception ex) {
+            handle.rollback();
+            transactionalMemoizationStore.rollbackEntries();
+        } finally {
+            handle.close();
+        }
     }
 
     @Override
