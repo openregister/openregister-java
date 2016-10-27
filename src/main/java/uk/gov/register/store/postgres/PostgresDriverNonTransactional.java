@@ -1,13 +1,14 @@
 package uk.gov.register.store.postgres;
 
+import com.google.common.base.Function;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.TransactionCallback;
+import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.CurrentKey;
+import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Inject;
@@ -19,6 +20,14 @@ public class PostgresDriverNonTransactional extends PostgresDriver {
     @Inject
     public PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore) {
         super(memoizationStore);
+        this.dbi = dbi;
+    }
+
+    protected PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore,
+                                             Function<Handle, EntryQueryDAO> entryQueryDAO, Function<Handle, EntryDAO> entryDAO,
+                                             Function<Handle, ItemQueryDAO> itemQueryDAO, Function<Handle, ItemDAO> itemDAO,
+                                             Function<Handle, RecordQueryDAO> recordQueryDAO, Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAO) {
+        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore);
         this.dbi = dbi;
     }
 

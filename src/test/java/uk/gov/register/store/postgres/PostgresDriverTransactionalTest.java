@@ -1,19 +1,14 @@
 package uk.gov.register.store.postgres;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
 import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
-import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.time.Instant;
 import java.util.*;
@@ -27,43 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PostgresDriverTransactionalTest {
-
-    List<Entry> entries;
-    List<Item> items;
-    List<CurrentKey> currentKeys;
-
-    EntryQueryDAO entryQueryDAO;
-    EntryDAO entryDAO;
-    ItemQueryDAO itemQueryDAO;
-    ItemDAO itemDAO;
-    RecordQueryDAO recordQueryDAO;
-    CurrentKeysUpdateDAO currentKeysUpdateDAO;
-
-    @Mock
-    Handle handle;
-    @Mock
-    MemoizationStore memoizationStore;
-
-    ArgumentCaptor<Collection> argumentCaptor = ArgumentCaptor.forClass(Collection.class);
-
-    @Before
-    public void setup() {
-        entries = new ArrayList<>();
-        items = new ArrayList<>();
-        currentKeys = new ArrayList<>();
-
-        entryQueryDAO = mock(EntryQueryDAO.class);
-        entryDAO = mock(EntryDAO.class);
-        itemQueryDAO = mock(ItemQueryDAO.class);
-        itemDAO = mock(ItemDAO.class);
-        recordQueryDAO = mock(RecordQueryDAO.class);
-        currentKeysUpdateDAO = mock(CurrentKeysUpdateDAO.class);
-
-        mockEntryDAOInsert();
-        mockItemDAOInsert();
-        mockCurrentKeysUpdateDAOInsert();
-    }
+public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void insertItemEntryRecordShouldNotCommitData() {
@@ -257,34 +216,5 @@ public class PostgresDriverTransactionalTest {
         assertThat(items.size(), is(2));
         assertThat(entries.size(), is(1));
         assertThat(currentKeys.size(), is(1));
-    }
-
-    private Record mockRecord(String registerName, String key, Integer entryNumber) {
-        Entry entry = mock(Entry.class);
-        Item item = mock(Item.class);
-        when(entry.getEntryNumber()).thenReturn(entryNumber);
-        when(item.getKey(registerName)).thenReturn(key);
-        return new Record(entry, item);
-    }
-
-    private void mockEntryDAOInsert() {
-        Mockito.doAnswer(invocation -> {
-            entries.addAll(argumentCaptor.getValue());
-            return null;
-        }).when(entryDAO).insertInBatch(argumentCaptor.capture());
-    }
-
-    private void mockItemDAOInsert() {
-        Mockito.doAnswer(invocation -> {
-            items.addAll(argumentCaptor.getValue());
-            return null;
-        }).when(itemDAO).insertInBatch(argumentCaptor.capture());
-    }
-
-    private void mockCurrentKeysUpdateDAOInsert() {
-        Mockito.doAnswer(invocation -> {
-            currentKeys.addAll(argumentCaptor.getValue());
-            return null;
-        }).when(currentKeysUpdateDAO).writeCurrentKeys(argumentCaptor.capture());
     }
 }
