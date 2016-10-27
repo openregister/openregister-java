@@ -1,50 +1,39 @@
 package uk.gov.register.db;
 
-import com.google.common.collect.Lists;
-import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
+import uk.gov.register.store.BackingStoreDriver;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RecordIndex {
-    public void updateRecordIndex(Handle handle, String registerName, List<Record> records) {
-        CurrentKeysUpdateDAO currentKeysUpdateDAO = handle.attach(CurrentKeysUpdateDAO.class);
-        List<CurrentKey> currentKeys = extractCurrentKeys(registerName, records);
-        int noOfRecordsDeleted = currentKeysUpdateDAO.removeRecordWithKeys(Lists.transform(currentKeys, r -> r.key));
+    private final BackingStoreDriver backingStoreDriver;
 
-        currentKeysUpdateDAO.writeCurrentKeys(currentKeys);
-        currentKeysUpdateDAO.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
+    public RecordIndex(BackingStoreDriver backingStoreDriver) {
+        this.backingStoreDriver = backingStoreDriver;
     }
 
-    public Optional<Record> getRecord(Handle h, String key) {
-        return h.attach(RecordQueryDAO.class).findByPrimaryKey(key);
+    public void updateRecordIndex(String registerName, Record record) {
+        backingStoreDriver.insertRecord(record, registerName);
     }
 
-    public int getTotalRecords(Handle h) {
-        return h.attach(RecordQueryDAO.class).getTotalRecords();
+    public Optional<Record> getRecord(String key) {
+        return backingStoreDriver.getRecord(key);
     }
 
-    public List<Record> getRecords(Handle h, int limit, int offset) {
-        return h.attach(RecordQueryDAO.class).getRecords(limit, offset);
+    public int getTotalRecords() {
+        return backingStoreDriver.getTotalRecords();
     }
 
-    public List<Record> findMax100RecordsByKeyValue(Handle h, String key, String value) {
-        return h.attach(RecordQueryDAO.class).findMax100RecordsByKeyValue(key, value);
+    public List<Record> getRecords(int limit, int offset) {
+        return backingStoreDriver.getRecords(limit, offset);
     }
 
-    public Collection<Entry> findAllEntriesOfRecordBy(Handle h, String registerName, String key) {
-        return h.attach(RecordQueryDAO.class).findAllEntriesOfRecordBy(registerName, key);
+    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
+        return backingStoreDriver.findMax100RecordsByKeyValue(key, value);
     }
 
-    private List<CurrentKey> extractCurrentKeys(String registerName, List<Record> records) {
-        Map<String, Integer> currentKeys = new HashMap<>();
-        records.forEach(r -> currentKeys.put(r.item.getKey(registerName), r.entry.getEntryNumber()));
-        return currentKeys
-                .entrySet()
-                .stream()
-                .map(e -> new CurrentKey(e.getKey(), e.getValue()))
-                .collect(Collectors.toList());
+    public Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key) {
+        return backingStoreDriver.findAllEntriesOfRecordBy(registerName, key);
     }
 }

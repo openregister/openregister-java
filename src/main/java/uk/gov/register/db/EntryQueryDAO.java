@@ -6,7 +6,6 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.FetchSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
-import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
 import uk.gov.register.core.Entry;
 import uk.gov.register.db.mappers.EntryMapper;
 import uk.gov.register.db.mappers.LongTimestampToInstantMapper;
@@ -15,7 +14,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface EntryQueryDAO extends Transactional<EntryQueryDAO> {
+public interface EntryQueryDAO {
     @RegisterMapper(EntryMapper.class)
     @SingleValueResult(Entry.class)
     @SqlQuery("select * from entry where entry_number=:entryNumber")
