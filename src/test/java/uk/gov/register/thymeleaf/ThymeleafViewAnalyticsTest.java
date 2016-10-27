@@ -1,11 +1,10 @@
-package uk.gov.register.views;
+package uk.gov.register.thymeleaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.thymeleaf.ThymeleafView;
 
 import java.util.Optional;
 
@@ -13,7 +12,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AnalyticsViewTest {
+public class ThymeleafViewAnalyticsTest {
     @Mock
     RequestContext mockRequestContext;
 
