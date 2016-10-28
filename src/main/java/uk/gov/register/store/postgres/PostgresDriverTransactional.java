@@ -60,11 +60,6 @@ public class PostgresDriverTransactional extends PostgresDriver {
             callback.accept(postgresDriver);
             postgresDriver.writeStagedData();
 
-            boolean throwException = false;
-            if (throwException) {
-                throw new RuntimeException("intellij needs to support throwing exceptions during debugging");
-            }
-
             handle.commit();
             transactionalMemoizationStore.commitEntries();
         } catch (Exception ex) {
