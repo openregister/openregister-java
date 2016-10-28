@@ -64,11 +64,6 @@ public class DataUpload {
         registerService.asAtomicRegisterOperation(register -> {
             AtomicInteger currentEntryNumber = new AtomicInteger(register.getTotalEntries());
             Iterables.transform(objects, Item::new).forEach(item -> mintItem(register, currentEntryNumber, item));
-            try {
-                register.getRegisterProof();
-            } catch (NoSuchAlgorithmException e) {
-                // do nothing
-            }
         });
     }
 
