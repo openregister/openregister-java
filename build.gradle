@@ -48,7 +48,6 @@ repositories {
     maven {
         url 'https://dl.bintray.com/openregister/openregister'
     }
-    //mavenLocal()
 }
 
 //noinspection GroovyAssignabilityCheck
