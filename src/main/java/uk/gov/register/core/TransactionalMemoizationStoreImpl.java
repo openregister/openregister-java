@@ -21,7 +21,7 @@ public class TransactionalMemoizationStoreImpl implements TransactionalMemoizati
 
     @Override
     public void put(Integer start, Integer size, byte[] value) {
-        if ((start + size) < currentEntryCount) {
+        if ((start + size) <= currentEntryCount) {
             return;
         }
 
@@ -50,7 +50,7 @@ public class TransactionalMemoizationStoreImpl implements TransactionalMemoizati
     }
 
     @Override
-    public void commitEntries(int newEntryCount) {
+    public void commitEntries() {
         temporaryEntries.forEach((start, hashesBySize) -> {
             hashesBySize.forEach((size, hash) -> {
                 instance.put(start, size, hash);
@@ -58,9 +58,10 @@ public class TransactionalMemoizationStoreImpl implements TransactionalMemoizati
         });
         temporaryEntries.clear();
 
-        setCurrentEntryCount(newEntryCount);
+        setCurrentEntryCount(temporaryEntries.size() + currentEntryCount);
     }
 
+    @Override
     public void rollbackEntries() {
         temporaryEntries.clear();
     }
