@@ -1,6 +1,6 @@
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/country
+  url: jdbc:postgresql://localhost:5432/openregister_java
   user: postgres
   password:
 
@@ -20,7 +20,7 @@ server:
 
 registerDomain: openregister.dev:8080
 
-register: country
+register: school
 
 enableDownloadResource: true
 
