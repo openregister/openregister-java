@@ -66,7 +66,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
             }
 
             handle.commit();
-            transactionalMemoizationStore.commitEntries(postgresDriver.getTotalEntries());
+            transactionalMemoizationStore.commitEntries();
         } catch (Exception ex) {
             handle.rollback();
             transactionalMemoizationStore.rollbackEntries();
