@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
