@@ -84,7 +84,6 @@ public class AnalyticsFunctionalTest {
         assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
 
         if (shouldIncludeAnalytics) {
-            assertThat(docIncludesAnalyticsId, equalTo(true));
             assertThat(trackingIdElem.html(), containsString("var gaTrackingId = '" + trackingId + "';"));
         }
     }
