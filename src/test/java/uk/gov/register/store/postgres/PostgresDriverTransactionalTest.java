@@ -3,10 +3,10 @@ package uk.gov.register.store.postgres;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
+import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.*;
 import uk.gov.register.db.*;
+import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
 
@@ -27,7 +27,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     @Test
     public void insertItemEntryRecordShouldNotCommitData() {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
-                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                handle, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         postgresDriver.insertItem(mock(Item.class));
         postgresDriver.insertEntry(mock(Entry.class));
@@ -93,10 +93,37 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.getRecords(10, 0));
     }
 
+    @Test(expected = NoSuchFieldException.class)
+    public void findMax100RecordsByKeyValueShouldFailWhenKeyDoesNotExist() {
+        RegisterMetadata registerMetadata = mock(RegisterMetadata.class);
+        RegisterData registerData = mock(RegisterData.class);
+        when(registerData.getRegister()).thenReturn(registerMetadata);
+        when(registersConfiguration.getRegisterData("country")).thenReturn(registerData);
+        when(recordQueryDAO.findMax100RecordsByKeyValue("name", "Germany")).thenReturn(asList());
+
+        PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
+                handle, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+
+        postgresDriver.insertItem(mock(Item.class));
+        postgresDriver.insertItem(mock(Item.class));
+        postgresDriver.insertEntry(mock(Entry.class));
+        postgresDriver.insertRecord(mockRecord("country", "DE", 1), "country");
+
+        postgresDriver.findMax100RecordsByKeyValue("country", "name", "Germany");
+    }
+
     @Test
     public void findMax100RecordsByKeyValueShouldAlwaysCommitStagedData() {
+        ArrayList<String> fieldsInRegister = new ArrayList<>();
+        fieldsInRegister.add("name");
+        RegisterMetadata registerMetadata = mock(RegisterMetadata.class);
+        RegisterData registerData = mock(RegisterData.class);
+        when(registerMetadata.getFields()).thenReturn(fieldsInRegister);
+        when(registerData.getRegister()).thenReturn(registerMetadata);
+        when(registersConfiguration.getRegisterData("country")).thenReturn(registerData);
         when(recordQueryDAO.findMax100RecordsByKeyValue("name", "Germany")).thenReturn(asList());
-        assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findMax100RecordsByKeyValue("name", "Germany"));
+
+        assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findMax100RecordsByKeyValue("country", "name", "Germany"));
     }
 
     @Test
@@ -119,7 +146,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
                 .thenReturn(items.stream().filter(item -> item.getSha256hex().equals(hashArgumentCaptor.getValue())).findFirst());
 
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
-                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                handle, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         items.add(new Item("itemhash1", new ObjectMapper().createObjectNode()));
         entries.add(mock(Entry.class));
@@ -151,7 +178,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     public void insertRecordWithSameKeyValueDoesNotStageBothCurrentKeys() {
         when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
-                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                handle, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         Record record1 = mockRecord("country", "DE", 1);
         Record record2 = mockRecord("country", "VA", 2);
@@ -176,7 +203,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     public void entryAndItemDataShouldBeCommittedInOrder() {
         when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
-                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                handle, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
         Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
@@ -200,7 +227,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
     private void assertStagedDataIsCommittedOnAction(Consumer<PostgresDriverTransactional> actionToTest) {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
-                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                handle, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         postgresDriver.insertItem(mock(Item.class));
         postgresDriver.insertItem(mock(Item.class));

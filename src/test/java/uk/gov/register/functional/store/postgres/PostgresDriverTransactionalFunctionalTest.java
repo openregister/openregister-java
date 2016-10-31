@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.WipeDatabaseRule;
@@ -17,6 +18,7 @@ import java.time.Instant;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
 
 public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
 
@@ -34,7 +36,8 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Entry entry2 = new Entry(2, "itemhash2", Instant.now());
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());
 
-        PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
+        RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
+        PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), registersConfiguration, postgresDriver -> {
             postgresDriver.insertItem(item1);
             postgresDriver.insertEntry(entry1);
 
@@ -76,7 +79,8 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());
 
         try {
-            PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
+            RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
+            PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), registersConfiguration, postgresDriver -> {
                 postgresDriver.insertItem(item1);
                 postgresDriver.insertEntry(entry1);
 

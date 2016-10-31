@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
+import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
@@ -24,8 +25,8 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final Set<Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
 
-    private PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore) {
-        super(memoizationStore);
+    private PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration) {
+        super(memoizationStore, registersConfiguration);
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
@@ -33,11 +34,11 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedCurrentKeys = new HashMap<>();
     }
 
-    protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
+    protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration,
                                           Function<Handle, EntryQueryDAO> entryQueryDAO, Function<Handle, EntryDAO> entryDAO,
                                           Function<Handle, ItemQueryDAO> itemQueryDAO, Function<Handle, ItemDAO> itemDAO,
                                           Function<Handle, RecordQueryDAO> recordQueryDAO, Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAO) {
-        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore);
+        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore, registersConfiguration);
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
@@ -45,9 +46,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedCurrentKeys = new HashMap<>();
     }
 
-    public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
+    public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration, Consumer<PostgresDriverTransactional> callback) {
         dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
-            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, memoizationStore);
+            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, memoizationStore, registersConfiguration);
             callback.accept(postgresDriver);
             postgresDriver.writeStagedData();
         });

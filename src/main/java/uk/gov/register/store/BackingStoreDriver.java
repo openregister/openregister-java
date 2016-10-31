@@ -29,7 +29,7 @@ public interface BackingStoreDriver {
     Optional<Record> getRecord(String key);
     int getTotalRecords();
     List<Record> getRecords(int limit, int offset);
-    List<Record> findMax100RecordsByKeyValue(String key, String value);
+    List<Record> findMax100RecordsByKeyValue(String registerName, String key, String value);
     Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key);
 
     <ReturnType> ReturnType withVerifiableLog(Function<VerifiableLog, ReturnType> callback);

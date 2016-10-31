@@ -3,26 +3,31 @@ package uk.gov.register.store.postgres;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
+import uk.gov.register.RegisterConfiguration;
+import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.*;
 import uk.gov.register.db.*;
+import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
+import javax.inject.Inject;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public abstract class PostgresDriver implements BackingStoreDriver {
 
     protected final MemoizationStore memoizationStore;
+    private final HashMap<String, ArrayList<String>> registerFieldLookup;
+    private @Inject RegistersConfiguration registersConfiguration;
 
     private final Function<Handle, EntryQueryDAO> entryQueryDAOFromHandle;
     private final Function<Handle, EntryDAO> entryDAOFromHandle;
@@ -31,10 +36,10 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     private final Function<Handle, RecordQueryDAO> recordQueryDAOFromHandle;
     private final Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAOFromHandle;
 
-    public PostgresDriver(MemoizationStore memoizationStore) {
+    public PostgresDriver(MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration) {
         this(h -> h.attach(EntryQueryDAO.class), h -> h.attach(EntryDAO.class),
                 h -> h.attach(ItemQueryDAO.class), h -> h.attach(ItemDAO.class),
-                h -> h.attach(RecordQueryDAO.class), h -> h.attach(CurrentKeysUpdateDAO.class), memoizationStore);
+                h -> h.attach(RecordQueryDAO.class), h -> h.attach(CurrentKeysUpdateDAO.class), memoizationStore, registersConfiguration);
     }
 
     protected PostgresDriver(
@@ -44,7 +49,8 @@ public abstract class PostgresDriver implements BackingStoreDriver {
             Function<Handle, ItemDAO> itemDAOFromHandle,
             Function<Handle, RecordQueryDAO> recordQueryDAOFromHandle,
             Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAOFromHandle,
-            MemoizationStore memoizationStore) {
+            MemoizationStore memoizationStore,
+            RegistersConfiguration registersConfiguration) {
         this.entryQueryDAOFromHandle = entryQueryDAOFromHandle;
         this.entryDAOFromHandle = entryDAOFromHandle;
         this.itemQueryDAOFromHandle = itemQueryDAOFromHandle;
@@ -52,6 +58,8 @@ public abstract class PostgresDriver implements BackingStoreDriver {
         this.recordQueryDAOFromHandle = recordQueryDAOFromHandle;
         this.currentKeysUpdateDAOFromHandle = currentKeysUpdateDAOFromHandle;
         this.memoizationStore = memoizationStore;
+        this.registerFieldLookup = new HashMap<>();
+        this.registersConfiguration = registersConfiguration;
     }
 
     @Override
@@ -114,7 +122,11 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     }
 
     @Override
-    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
+    public List<Record> findMax100RecordsByKeyValue(String registerName, String key, String value) {
+        if (!registerContainsField(registerName, key)) {
+            throw new NoSuchFieldException(registerName, key);
+        }
+
         return withHandle(handle -> recordQueryDAOFromHandle.apply(handle).findMax100RecordsByKeyValue(key, value));
     }
 
@@ -154,6 +166,19 @@ public abstract class PostgresDriver implements BackingStoreDriver {
         EntryMerkleLeafStore merkleLeafStore = new EntryMerkleLeafStore(entryQueryDAOFromHandle.apply(handle));
         return new VerifiableLog(DigestUtils.getSha256Digest(), merkleLeafStore, memoizationStore);
     }
+
+    private boolean registerContainsField(String registerName, String fieldName) {
+        if (!registerFieldLookup.containsKey(registerName)) {
+            Iterable<String> fieldsIterable = registersConfiguration.getRegisterData(registerName).getRegister().getFields();
+            ArrayList<String> fields = Lists.newArrayList(fieldsIterable);
+
+            registerFieldLookup.put(registerName, fields);
+        }
+
+        return registerFieldLookup.get(registerName).contains(fieldName);
+    }
+
+
 
     protected abstract void useHandle(HandleConsumer callback);
 

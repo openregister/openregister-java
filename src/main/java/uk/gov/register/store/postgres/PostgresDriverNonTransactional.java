@@ -5,6 +5,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
+import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
@@ -18,16 +19,16 @@ public class PostgresDriverNonTransactional extends PostgresDriver {
     private DBI dbi;
 
     @Inject
-    public PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore) {
-        super(memoizationStore);
+    public PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration) {
+        super(memoizationStore, registersConfiguration);
         this.dbi = dbi;
     }
 
-    protected PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore,
+    protected PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration,
                                              Function<Handle, EntryQueryDAO> entryQueryDAO, Function<Handle, EntryDAO> entryDAO,
                                              Function<Handle, ItemQueryDAO> itemQueryDAO, Function<Handle, ItemDAO> itemDAO,
                                              Function<Handle, RecordQueryDAO> recordQueryDAO, Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAO) {
-        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore);
+        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore, registersConfiguration);
         this.dbi = dbi;
     }
 

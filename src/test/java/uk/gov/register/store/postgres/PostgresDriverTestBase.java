@@ -5,6 +5,7 @@ import org.mockito.ArgumentCaptor;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
+import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
@@ -35,6 +36,7 @@ public class PostgresDriverTestBase {
     protected DBI dbi;
     protected Handle handle;
     protected MemoizationStore memoizationStore;
+    protected RegistersConfiguration registersConfiguration;
 
     @Before
     public void setup() {
@@ -52,6 +54,7 @@ public class PostgresDriverTestBase {
         dbi = mock(DBI.class);
         handle = mock(Handle.class);
         memoizationStore = mock(MemoizationStore.class);
+        registersConfiguration = mock(RegistersConfiguration.class);
 
         mockDBI();
         mockEntryDAOInsert();

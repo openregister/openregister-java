@@ -100,7 +100,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
-        return recordIndex.findMax100RecordsByKeyValue(key, value);
+        return recordIndex.findMax100RecordsByKeyValue(registerName, key, value);
     }
 
     @Override
