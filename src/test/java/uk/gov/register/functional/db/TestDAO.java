@@ -12,8 +12,10 @@ public class TestDAO {
     public final TestItemQueryDAO testItemDAO;
     public final TestEntryDAO testEntryDAO;
 
+    public final String postgresConnectionString;
+
     private TestDAO(String databaseName, String user) {
-        String postgresConnectionString = String.format("jdbc:postgresql://localhost:5432/%s?user=%s", databaseName, user);
+        this.postgresConnectionString = String.format("jdbc:postgresql://localhost:5432/%s?user=%s", databaseName, user);
         DBI dbi = new DBI(postgresConnectionString);
         dbi.registerArgumentFactory(new InstantArgumentFactory());
         Handle handle = dbi.open();

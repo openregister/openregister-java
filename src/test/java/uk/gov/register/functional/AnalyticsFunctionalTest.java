@@ -14,6 +14,9 @@ import org.junit.runners.Parameterized;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
 import uk.gov.register.functional.app.WipeDatabaseRule;
+import uk.gov.register.functional.db.DBSupport;
+import uk.gov.register.functional.db.TestDAO;
+import uk.gov.register.functional.db.TestEntry;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
@@ -25,7 +28,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
-import static uk.gov.register.functional.db.TestDBSupport.postgresConnectionString;
 
 @RunWith(Parameterized.class)
 public class AnalyticsFunctionalTest {
@@ -33,6 +35,22 @@ public class AnalyticsFunctionalTest {
     private static final String TRACKING_ID_NOT_PRESENT = null;
     private static final String TRACKING_ID_EMPTY = "";
     private static final String TRACKING_ID_VALID = "UA-12345678-1";
+
+    private static TestEntry testEntry1;
+    private static TestEntry testEntry2;
+    private static String testEntry1Key = "st1";
+    private static String testEntry2Key = "st2";
+
+    private static final TestDAO testDAO;
+    private static final DBSupport dbSupport;
+
+    static {
+        testDAO = TestDAO.get("ft_openregister_java", "postgres");
+        dbSupport = new DBSupport(testDAO);
+        testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}");
+        testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}");
+        dbSupport.publishEntries("address", Arrays.asList(testEntry1, testEntry2));
+    }
 
     @Rule
     public TestRule wipe = new WipeDatabaseRule();
@@ -43,7 +61,6 @@ public class AnalyticsFunctionalTest {
     private final String targetUrl;
     private final String trackingId;
     private final Boolean shouldIncludeAnalytics;
-
 
     public AnalyticsFunctionalTest(String targetUrl, String trackingId, Boolean shouldIncludeAnalytics) {
         this.appRule = createAppRule(trackingId);
@@ -59,7 +76,22 @@ public class AnalyticsFunctionalTest {
         sourceData.addAll(generateTestSetFor("/"));
         sourceData.addAll(generateTestSetFor("/download"));
         sourceData.addAll(generateTestSetFor("/entries"));
+        sourceData.addAll(generateTestSetFor("/entry/9999999999"));
+        sourceData.addAll(generateTestSetFor("/entry/" + testEntry1.entryNumber));
+        sourceData.addAll(generateTestSetFor("/entry/" + testEntry2.entryNumber));
+
         sourceData.addAll(generateTestSetFor("/records"));
+        sourceData.addAll(generateTestSetFor("/records/non-existent-record"));
+        sourceData.addAll(generateTestSetFor("/records/non-existent-record/entries"));
+        sourceData.addAll(generateTestSetFor("/records/" + testEntry1Key));
+        sourceData.addAll(generateTestSetFor("/records/" + testEntry2Key));
+        sourceData.addAll(generateTestSetFor("/records/" + testEntry1Key + "/entries"));
+        sourceData.addAll(generateTestSetFor("/records/" + testEntry2Key + "/entries"));
+
+        sourceData.addAll(generateTestSetFor("/item/sha-256:non-existent-item"));
+        sourceData.addAll(generateTestSetFor("/item/" + testEntry1.sha256hex));
+        sourceData.addAll(generateTestSetFor("/item/" + testEntry2.sha256hex));
+
         sourceData.addAll(generateTestSetFor("/not-found-page"));
 
         return sourceData;
@@ -96,9 +128,9 @@ public class AnalyticsFunctionalTest {
 
     private static DropwizardAppRule<RegisterConfiguration> createAppRule(String trackingId) {
         ArrayList<ConfigOverride> configOverrides = new ArrayList<>(Arrays.asList(
-                ConfigOverride.config("database.url", postgresConnectionString),
+                ConfigOverride.config("database.url", testDAO.postgresConnectionString),
                 ConfigOverride.config("jerseyClient.timeout", "3000ms"),
-                ConfigOverride.config("register", "register")
+                ConfigOverride.config("register", "address")
         ));
 
         if (trackingId != null) {
@@ -117,4 +149,5 @@ public class AnalyticsFunctionalTest {
                 new Object[]{url, TRACKING_ID_VALID, true}
         );
     }
+
 }
