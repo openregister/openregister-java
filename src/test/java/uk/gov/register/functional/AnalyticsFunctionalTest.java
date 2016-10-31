@@ -36,10 +36,10 @@ public class AnalyticsFunctionalTest {
     private static final String TRACKING_ID_EMPTY = "";
     private static final String TRACKING_ID_VALID = "UA-12345678-1";
 
-    private static TestEntry testEntry1;
-    private static TestEntry testEntry2;
-    private static String testEntry1Key = "st1";
-    private static String testEntry2Key = "st2";
+    private static final TestEntry testEntry1;
+    private static final TestEntry testEntry2;
+    private static final String testEntry1Key = "st1";
+    private static final String testEntry2Key = "st2";
 
     private static final TestDAO testDAO;
     private static final DBSupport dbSupport;
@@ -47,13 +47,12 @@ public class AnalyticsFunctionalTest {
     static {
         testDAO = TestDAO.get("ft_openregister_java", "postgres");
         dbSupport = new DBSupport(testDAO);
+
+        dbSupport.cleanDb();
         testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}");
         testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}");
         dbSupport.publishEntries("address", Arrays.asList(testEntry1, testEntry2));
     }
-
-    @Rule
-    public TestRule wipe = new WipeDatabaseRule();
 
     @Rule
     public DropwizardAppRule<RegisterConfiguration> appRule;

@@ -10,7 +10,9 @@ public class TestDAO {
     public final TestTotalRecordDAO testTotalRecordDAO;
 
     public final TestItemQueryDAO testItemDAO;
+    public final TestItemCommandDAO testItemCommandDAO;
     public final TestEntryDAO testEntryDAO;
+    public final TestRecordDAO testRecordDAO;
 
     public final String postgresConnectionString;
 
@@ -24,6 +26,8 @@ public class TestDAO {
         this.testTotalRecordDAO = handle.attach(TestTotalRecordDAO.class);
         this.testItemDAO = handle.attach(TestItemQueryDAO.class);
         this.testEntryDAO = handle.attach(TestEntryDAO.class);
+        this.testItemCommandDAO = handle.attach(TestItemCommandDAO.class);
+        this.testRecordDAO = handle.attach(TestRecordDAO.class);
     }
 
     public static TestDAO get(String databaseName, String user) {
