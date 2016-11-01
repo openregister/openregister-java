@@ -40,6 +40,12 @@ public class DBSupport {
         });
     }
 
+    public void cleanDb(){
+        testDAO.testEntryDAO.wipeData();
+        testDAO.testItemCommandDAO.wipeData();
+        testDAO.testRecordDAO.wipeData();
+    }
+
     private void insertIntoItemAndEntryTables(TestEntry testEntry) {
         testDAO.testEntryDAO.insert(testEntry.entryNumber, testEntry.sha256hex, testEntry.getTimestampAsLong());
         testDAO.testItemDAO.insertIfNotExist(testEntry.sha256hex, testEntry.itemJson);

@@ -12,6 +12,7 @@ import uk.gov.register.core.RegisterData;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -22,7 +23,7 @@ public class RecordViewTest {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
         Record record = new Record(new Entry(1, "ab", Instant.ofEpochSecond(1470403440)), new Item("ab", objectMapper.readTree("{\"a\":\"b\"}")));
-        RecordView recordView = new RecordView(null, null, null, null, record, () -> "test.register.gov.uk", new RegisterData(Collections.emptyMap()));
+        RecordView recordView = new RecordView(null, null, null, null, record, () -> "test.register.gov.uk", new RegisterData(Collections.emptyMap()), () -> Optional.empty());
 
         String result = objectMapper.writeValueAsString(recordView);
 

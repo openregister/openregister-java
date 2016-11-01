@@ -10,10 +10,14 @@ public class TestDAO {
     public final TestTotalRecordDAO testTotalRecordDAO;
 
     public final TestItemQueryDAO testItemDAO;
+    public final TestItemCommandDAO testItemCommandDAO;
     public final TestEntryDAO testEntryDAO;
+    public final TestRecordDAO testRecordDAO;
+
+    public final String postgresConnectionString;
 
     private TestDAO(String databaseName, String user) {
-        String postgresConnectionString = String.format("jdbc:postgresql://localhost:5432/%s?user=%s", databaseName, user);
+        this.postgresConnectionString = String.format("jdbc:postgresql://localhost:5432/%s?user=%s", databaseName, user);
         DBI dbi = new DBI(postgresConnectionString);
         dbi.registerArgumentFactory(new InstantArgumentFactory());
         Handle handle = dbi.open();
@@ -22,6 +26,8 @@ public class TestDAO {
         this.testTotalRecordDAO = handle.attach(TestTotalRecordDAO.class);
         this.testItemDAO = handle.attach(TestItemQueryDAO.class);
         this.testEntryDAO = handle.attach(TestEntryDAO.class);
+        this.testItemCommandDAO = handle.attach(TestItemCommandDAO.class);
+        this.testRecordDAO = handle.attach(TestRecordDAO.class);
     }
 
     public static TestDAO get(String databaseName, String user) {

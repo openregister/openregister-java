@@ -16,10 +16,10 @@
                 You can download up to 5000 records from this register in bulk as:
             </p>
             <ul>
-                <li><a href="/records.json?page-size=5000" rel="alternate">JSON</a></li>
-                <li><a href="/records.ttl?page-size=5000" rel="alternate">TTL</a></li>
-                <li><a href="/records.tsv?page-size=5000" rel="alternate">TSV</a></li>
-                <li><a href="/records.csv?page-size=5000" rel="alternate">CSV</a></li>
+                <li><a href="/records.json?page-size=5000" rel="alternate" class="js-download" data-download-type="JSON">JSON</a></li>
+                <li><a href="/records.ttl?page-size=5000" rel="alternate" class="js-download" data-download-type="TTL">TTL</a></li>
+                <li><a href="/records.tsv?page-size=5000" rel="alternate" class="js-download" data-download-type="TSV">TSV</a></li>
+                <li><a href="/records.csv?page-size=5000" rel="alternate" class="js-download" data-download-type="CSV">CSV</a></li>
             </ul>
             <p>You can download a section of a register by navigating to the page of records you need and selecting ‘Download this data’ at the bottom of the page.</p>
             <p>
@@ -39,7 +39,7 @@
             <p>You can also download the data in CSV, TTL, or TSV formats by amending <code class="url-param">.json</code> to the format of your choice.</p>
 
             <p th:if="${#bools.isTrue(downloadEnabled)}">
-                You can also download the full contents of this register <a href="/download-register">in JSON as a zip file</a>.
+                You can also download the full contents of this register <a href="/download-register" class="js-download" data-download-type="ZIP">in JSON as a zip file</a>.
                 Please note, each entry will be downloaded as a separate file.
             </p>
 
@@ -50,6 +50,10 @@
 </div>
 
 <footer th:replace="main.html::footer"></footer>
+
+<th:block th:if="${registerTrackingId.present}">
+    <script type="text/javascript" src="/assets/js/analytics-download-type.js"></script>
+</th:block>
 
 </body>
 </html>

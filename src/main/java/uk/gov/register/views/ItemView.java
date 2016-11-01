@@ -2,6 +2,7 @@ package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.FieldValue;
@@ -19,8 +20,8 @@ public class ItemView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private Item item;
 
-    public ItemView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Item item, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData) {
-        super(requestContext, custodian, branding, "item.html", registerDomainConfiguration, registerData);
+    public ItemView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Item item, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration) {
+        super(requestContext, custodian, branding, "item.html", registerDomainConfiguration, registerData, registerTrackingConfiguration);
         this.itemConverter = itemConverter;
         this.item = item;
     }

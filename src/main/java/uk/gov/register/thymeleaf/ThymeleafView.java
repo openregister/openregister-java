@@ -3,6 +3,7 @@ package uk.gov.register.thymeleaf;
 import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
+import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.RegisterData;
@@ -18,14 +19,16 @@ public class ThymeleafView extends View {
     protected final RequestContext requestContext;
     private final RegisterData registerData;
     private final String registerDomain;
+    private Optional<String> registerTrackingId;
     private String thymeleafTemplateName;
     protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    public ThymeleafView(RequestContext requestContext, String templateName, RegisterData registerData, RegisterDomainConfiguration registerDomainConfiguration) {
+    public ThymeleafView(RequestContext requestContext, String templateName, RegisterData registerData, RegisterDomainConfiguration registerDomainConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration) {
         super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
         this.registerData = registerData;
         this.registerDomain = registerDomainConfiguration.getRegisterDomain();
+        this.registerTrackingId = registerTrackingConfiguration.getRegisterTrackingId();
     }
 
     @Override
@@ -84,5 +87,10 @@ public class ThymeleafView extends View {
     @SuppressWarnings("unused, used by templates")
     public String getScheme() {
         return requestContext.getScheme();
+    }
+
+
+    public Optional<String> getRegisterTrackingId() {
+        return registerTrackingId;
     }
 }
