@@ -7,10 +7,7 @@ import io.dropwizard.db.DataSourceFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
-import uk.gov.register.configuration.RegisterContentPagesConfiguration;
-import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.configuration.ResourceConfiguration;
+import uk.gov.register.configuration.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

@@ -36,8 +36,7 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Entry entry2 = new Entry(2, "itemhash2", Instant.now());
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());
 
-        RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
-        PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), registersConfiguration, postgresDriver -> {
+        PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
             postgresDriver.insertItem(item1);
             postgresDriver.insertEntry(entry1);
 
@@ -79,8 +78,7 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());
 
         try {
-            RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
-            PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), registersConfiguration, postgresDriver -> {
+            PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
                 postgresDriver.insertItem(item1);
                 postgresDriver.insertEntry(entry1);
 

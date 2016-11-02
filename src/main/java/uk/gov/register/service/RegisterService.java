@@ -1,6 +1,7 @@
 package uk.gov.register.service;
 
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.PostgresRegister;
@@ -13,21 +14,21 @@ import java.util.function.Consumer;
 
 public class RegisterService {
     private final RegisterNameConfiguration registerNameConfig;
+    private final RegisterFieldsConfiguration registerFieldsConfiguration;
     private final DBI dbi;
     private final MemoizationStore memoizationStore;
-    private final RegistersConfiguration registersConfiguration;
 
     @Inject
-    public RegisterService(RegisterNameConfiguration registerNameConfig, DBI dbi, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration) {
+    public RegisterService(RegisterNameConfiguration registerNameConfig, RegisterFieldsConfiguration registerFieldsConfiguration, DBI dbi, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration) {
         this.registerNameConfig = registerNameConfig;
+        this.registerFieldsConfiguration = registerFieldsConfiguration;
         this.dbi = dbi;
         this.memoizationStore = memoizationStore;
-        this.registersConfiguration = registersConfiguration;
     }
 
     public void asAtomicRegisterOperation(Consumer<Register> callback) {
-        PostgresDriverTransactional.useTransaction(dbi, memoizationStore, registersConfiguration, postgresDriver -> {
-            Register register = new PostgresRegister(registerNameConfig, postgresDriver);
+        PostgresDriverTransactional.useTransaction(dbi, memoizationStore, postgresDriver -> {
+            Register register = new PostgresRegister(registerNameConfig, registerFieldsConfiguration, postgresDriver);
             callback.accept(register);
         });
     }

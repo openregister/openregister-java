@@ -17,9 +17,8 @@ public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void insertItemShouldCommitItemImmediatelyInOrder() throws Exception {
-        RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
         PostgresDriverNonTransactional postgresDriver = new PostgresDriverNonTransactional(
-                dbi, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                dbi, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
         Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
@@ -39,9 +38,8 @@ public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void insertEntryShouldCommitEntryImmediatelyInOrder() throws Exception {
-        RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
         PostgresDriverNonTransactional postgresDriver = new PostgresDriverNonTransactional(
-                dbi, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                dbi, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         Entry entry1 = new Entry(1, "itemhash1", Instant.now());
         Entry entry2 = new Entry(2, "itemhash2", Instant.now());
@@ -59,9 +57,8 @@ public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void insertRecordShouldCommitRecordImmediatelyInOrder() throws Exception {
-        RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
         PostgresDriverNonTransactional postgresDriver = new PostgresDriverNonTransactional(
-                dbi, memoizationStore, registersConfiguration, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+                dbi, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         postgresDriver.insertRecord(mockRecord("country", "DE", 1), "country");
         assertThat(currentKeys.size(), is(1));

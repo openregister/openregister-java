@@ -25,8 +25,8 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final Set<Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
 
-    private PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration) {
-        super(memoizationStore, registersConfiguration);
+    private PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore) {
+        super(memoizationStore);
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
@@ -34,11 +34,11 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedCurrentKeys = new HashMap<>();
     }
 
-    protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration,
+    protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
                                           Function<Handle, EntryQueryDAO> entryQueryDAO, Function<Handle, EntryDAO> entryDAO,
                                           Function<Handle, ItemQueryDAO> itemQueryDAO, Function<Handle, ItemDAO> itemDAO,
                                           Function<Handle, RecordQueryDAO> recordQueryDAO, Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAO) {
-        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore, registersConfiguration);
+        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore);
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
@@ -46,9 +46,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedCurrentKeys = new HashMap<>();
     }
 
-    public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration, Consumer<PostgresDriverTransactional> callback) {
+    public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
         dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
-            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, memoizationStore, registersConfiguration);
+            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, memoizationStore);
             callback.accept(postgresDriver);
             postgresDriver.writeStagedData();
         });
