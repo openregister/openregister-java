@@ -20,7 +20,7 @@ public class TransactionalMemoizationStoreTest {
         byte[] hash = "22905e52ce72f3880bddd5564966b15b017a038d84de41c390b2aafe28fd8452".getBytes();
         MemoizationStore internalStore = mock(MemoizationStore.class);
         when(internalStore.get(0, 2)).thenReturn(hash);
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 2);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         byte[] result = store.get(1, 1);
 
@@ -32,7 +32,7 @@ public class TransactionalMemoizationStoreTest {
         byte[] hash = "22905e52ce72f3880bddd5564966b15b017a038d84de41c390b2aafe28fd8452".getBytes();
         MemoizationStore internalStore = mock(MemoizationStore.class);
         when(internalStore.get(0, 1)).thenReturn(hash);
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 1);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         byte[] result = store.get(0, 1);
 
@@ -44,7 +44,7 @@ public class TransactionalMemoizationStoreTest {
     public void getShouldReturnHashWhenHashHasBeenAddedButNotCommitted() {
         byte[] hash = "22905e52ce72f3880bddd5564966b15b017a038d84de41c390b2aafe28fd8452".getBytes();
         MemoizationStore internalStore = mock(MemoizationStore.class);
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 0);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         store.put(0, 1, hash);
         byte[] result = store.get(0, 1);
@@ -58,7 +58,7 @@ public class TransactionalMemoizationStoreTest {
         byte[] originalHash = "22905e52ce72f3880bddd5564966b15b017a038d84de41c390b2aafe28fd8452".getBytes();
         byte[] newHash = "1c3c123932880750cf05a415622a7f7f532b36c6c2c151964f60265b1c3b2dd3".getBytes();
         MemoizationStore internalStore = mock(MemoizationStore.class);
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 0);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         // Add hash to empty store and commit
         store.put(0, 1, originalHash);
@@ -79,7 +79,7 @@ public class TransactionalMemoizationStoreTest {
         when(internalStore.get(0, 1)).thenReturn(hash);
         setupAddHashToList(internalStore, addedHashes);
 
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 0);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         store.put(0, 1, hash);
 
@@ -94,7 +94,7 @@ public class TransactionalMemoizationStoreTest {
         when(internalStore.get(0, 1)).thenReturn(hash);
         setupAddHashToList(internalStore, addedHashes);
 
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 0);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         store.put(0, 1, hash);
         store.put(1, 1, hash);
@@ -109,7 +109,7 @@ public class TransactionalMemoizationStoreTest {
         byte[] hash = "22905e52ce72f3880bddd5564966b15b017a038d84de41c390b2aafe28fd8452".getBytes();
         byte[] newHash = "1c3c123932880750cf05a415622a7f7f532b36c6c2c151964f60265b1c3b2dd3".getBytes();
         MemoizationStore internalStore = mock(MemoizationStore.class);
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 0);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         store.put(0, 1, hash);
         store.put(0, 1, newHash);
@@ -127,7 +127,7 @@ public class TransactionalMemoizationStoreTest {
         when(internalStore.get(0, 1)).thenReturn(hash);
         setupAddHashToList(internalStore, addedHashes);
 
-        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore, 0);
+        TransactionalMemoizationStore store = createTransactionMemoizationStore(internalStore);
 
         store.put(0, 1, hash);
         store.rollbackHashesFromStore();
@@ -138,15 +138,12 @@ public class TransactionalMemoizationStoreTest {
         assertThat(addedHashes, hasSize(0));
     }
 
-    private TransactionalMemoizationStore createTransactionMemoizationStore(MemoizationStore memoizationStore, int entryCount) {
+    private TransactionalMemoizationStore createTransactionMemoizationStore(MemoizationStore memoizationStore) {
         if (memoizationStore == null) {
             memoizationStore = mock(MemoizationStore.class);
         }
 
-        TransactionalMemoizationStore store = new TransactionalMemoizationStore(memoizationStore);
-        store.setCurrentEntryCount(entryCount);
-
-        return store;
+        return new TransactionalMemoizationStore(memoizationStore);
     }
 
     private void setupAddHashToList(MemoizationStore store, List<byte[]> list) {

@@ -6,12 +6,10 @@ import java.util.HashMap;
 public class TransactionalMemoizationStore implements MemoizationStore {
     private final MemoizationStore memoizationStore;
     private final HashMap<Integer, HashMap<Integer, byte[]>> stagedHashes;
-    private Integer currentEntryCount;
 
     public TransactionalMemoizationStore(MemoizationStore memoizationStore) {
         this.memoizationStore = memoizationStore;
         this.stagedHashes = new HashMap<>();
-        this.currentEntryCount = 0;
     }
 
     @Override
@@ -35,18 +33,12 @@ public class TransactionalMemoizationStore implements MemoizationStore {
         return hash == null ? memoizationStore.get(start, size) : hash;
     }
 
-    public void setCurrentEntryCount(int currentEntryCount) {
-        this.currentEntryCount = currentEntryCount;
-    }
-
     public void commitHashesToStore() {
         stagedHashes.forEach((start, hashesBySize) -> {
             hashesBySize.forEach((size, hash) -> {
                 memoizationStore.put(start, size, hash);
             });
         });
-
-        setCurrentEntryCount(stagedHashes.size() + currentEntryCount);
 
         stagedHashes.clear();
     }

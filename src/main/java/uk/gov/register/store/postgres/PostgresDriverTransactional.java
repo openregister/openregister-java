@@ -29,8 +29,6 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new LinkedHashSet<>();
         this.stagedCurrentKeys = new HashMap<>();
-
-        memoizationStore.setCurrentEntryCount(this.getTotalEntries());
     }
 
     protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
