@@ -22,7 +22,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final Set<Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
 
-    private PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore) {
+    private PostgresDriverTransactional(Handle handle, TransactionalMemoizationStore memoizationStore) {
         super(memoizationStore);
 
         this.handle = handle;
@@ -30,8 +30,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedItems = new LinkedHashSet<>();
         this.stagedCurrentKeys = new HashMap<>();
 
-        // Initialise the entry cutoff now that have have our PostgresDriver created
-        ((TransactionalMemoizationStore)memoizationStore).setCurrentEntryCount(this.getTotalEntries());
+        memoizationStore.setCurrentEntryCount(this.getTotalEntries());
     }
 
     protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
@@ -47,9 +46,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
-        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStoreImpl(memoizationStore);
-
-        // Get the handle
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
         Handle handle = dbi.open();
 
         try {
@@ -60,11 +57,12 @@ public class PostgresDriverTransactional extends PostgresDriver {
             callback.accept(postgresDriver);
             postgresDriver.writeStagedData();
 
+            transactionalMemoizationStore.commitHashesToStore();
             handle.commit();
-            transactionalMemoizationStore.commitEntries();
         } catch (Exception ex) {
             handle.rollback();
-            transactionalMemoizationStore.rollbackEntries();
+            transactionalMemoizationStore.rollbackHashesFromStore();
+            throw ex;
         } finally {
             handle.close();
         }
