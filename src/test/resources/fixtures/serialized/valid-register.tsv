@@ -1,0 +1,4 @@
+add-item	{"address":"9AQZJ3M","parent-address":"","primary-address":"","street":"43070006","name":"ST LAWRENCE CHURCH REMAINS OF","name-cy":"","point":"[51.8377189,-0.2673113]","end-date":""}
+append-entry	2016-11-02T14:45:54Z	sha-256:22c3e102937320cb613660e88116bb937c1873ed54321966ee089e1d71fb4b7f
+add-item	{"address":"9AQZJ3K","parent-address":"","primary-address":"","street":"43070006","name":"THE PALLADIAN CHURCH","name-cy":"","point":"[51.8379454,-0.2717007]","end-date":"2010-09-03"}
+append-entry	2016-11-02T14:45:54Z	sha-256:e19fd978afb7d148bddd7011f8a0fbbe6138fc83411a96f264d0e2d31e3fad1a
