@@ -1,7 +1,6 @@
 package uk.gov.register.core;
 
 import com.google.common.collect.Lists;
-import uk.gov.register.RegisterConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RecordIndex;

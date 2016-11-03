@@ -7,9 +7,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
-import uk.gov.register.core.*;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
-import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
@@ -20,9 +21,6 @@ import java.util.*;
 public abstract class PostgresDriver implements BackingStoreDriver {
 
     protected final MemoizationStore memoizationStore;
-    private final HashMap<String, ArrayList<String>> registerFieldLookup;
-
-
     private final Function<Handle, EntryQueryDAO> entryQueryDAOFromHandle;
     private final Function<Handle, EntryDAO> entryDAOFromHandle;
     private final Function<Handle, ItemQueryDAO> itemQueryDAOFromHandle;
@@ -51,7 +49,6 @@ public abstract class PostgresDriver implements BackingStoreDriver {
         this.recordQueryDAOFromHandle = recordQueryDAOFromHandle;
         this.currentKeysUpdateDAOFromHandle = currentKeysUpdateDAOFromHandle;
         this.memoizationStore = memoizationStore;
-        this.registerFieldLookup = new HashMap<>();
     }
 
     @Override

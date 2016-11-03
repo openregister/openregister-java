@@ -6,13 +6,12 @@ import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.store.BackingStoreDriver;
-import uk.gov.register.store.postgres.PostgresDriverTestBase;
 
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
 
-public class PostgresRegisterTest extends PostgresDriverTestBase {
+public class PostgresRegisterTest {
     private RegisterNameConfiguration registerNameConfiguration;
     private RegisterFieldsConfiguration registerFieldsConfiguration;
     private BackingStoreDriver backingStoreDriver;
