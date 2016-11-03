@@ -1,7 +1,6 @@
 package uk.gov.register.service;
 
 import org.skife.jdbi.v2.DBI;
-import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
@@ -17,7 +16,7 @@ public class RegisterService {
     private final MemoizationStore memoizationStore;
 
     @Inject
-    public RegisterService(RegisterData registerData, DBI dbi, MemoizationStore memoizationStore, RegistersConfiguration registersConfiguration) {
+    public RegisterService(RegisterData registerData, DBI dbi, MemoizationStore memoizationStore) {
         this.registerData = registerData;
         this.dbi = dbi;
         this.memoizationStore = memoizationStore;
