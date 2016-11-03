@@ -22,7 +22,6 @@ import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.SchemaCreator;
@@ -95,7 +94,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             protected void configure() {
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
-                bind(RegisterFieldsConfiguration.class).to(RegisterFieldsConfiguration.class);
                 bind(registerData).to(RegisterData.class);
                 bind(jdbi);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);

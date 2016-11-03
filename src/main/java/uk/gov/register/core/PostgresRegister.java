@@ -1,8 +1,6 @@
 package uk.gov.register.core;
 
 import com.google.common.collect.Lists;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemException;
@@ -28,11 +26,11 @@ public class PostgresRegister implements Register {
     private final ArrayList<String> fields;
 
     @Inject
-    public PostgresRegister(RegisterNameConfiguration registerNameConfig,
-                            RegisterFieldsConfiguration registerFieldsConfiguration,
+    public PostgresRegister(RegisterData registerData,
                             BackingStoreDriver backingStoreDriver) {
-        registerName = registerNameConfig.getRegister();
-        fields = Lists.newArrayList(registerFieldsConfiguration.getFields());
+        RegisterMetadata registerMetadata = registerData.getRegister();
+        registerName = registerMetadata.getRegisterName();
+        fields = Lists.newArrayList(registerMetadata.getFields());
         this.entryLog = new EntryLog(backingStoreDriver);
         this.itemStore = new ItemStore(backingStoreDriver);
         this.recordIndex = new RecordIndex(backingStoreDriver);
