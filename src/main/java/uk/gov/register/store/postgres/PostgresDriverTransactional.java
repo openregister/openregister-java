@@ -7,9 +7,7 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
+import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -24,7 +22,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final Set<Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
 
-    private PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore) {
+    private PostgresDriverTransactional(Handle handle, TransactionalMemoizationStore memoizationStore) {
         super(memoizationStore);
 
         this.handle = handle;
@@ -46,11 +44,26 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
-        dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
-            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, memoizationStore);
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
+        Handle handle = dbi.open();
+
+        try {
+            handle.setTransactionIsolation(TransactionIsolationLevel.SERIALIZABLE);
+            handle.begin();
+
+            PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, transactionalMemoizationStore);
             callback.accept(postgresDriver);
             postgresDriver.writeStagedData();
-        });
+
+            transactionalMemoizationStore.commitHashesToStore();
+            handle.commit();
+        } catch (Exception ex) {
+            handle.rollback();
+            transactionalMemoizationStore.rollbackHashesFromStore();
+            throw ex;
+        } finally {
+            handle.close();
+        }
     }
 
     @Override
