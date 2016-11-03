@@ -16,14 +16,11 @@ import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class PostgresDriver implements BackingStoreDriver {
 
     protected final MemoizationStore memoizationStore;
-
     private final Function<Handle, EntryQueryDAO> entryQueryDAOFromHandle;
     private final Function<Handle, EntryDAO> entryDAOFromHandle;
     private final Function<Handle, ItemQueryDAO> itemQueryDAOFromHandle;

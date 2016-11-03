@@ -6,18 +6,19 @@ import org.mockito.ArgumentCaptor;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.*;
+import uk.gov.register.db.CurrentKey;
 import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -96,6 +97,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     @Test
     public void findMax100RecordsByKeyValueShouldAlwaysCommitStagedData() {
         when(recordQueryDAO.findMax100RecordsByKeyValue("name", "Germany")).thenReturn(asList());
+
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findMax100RecordsByKeyValue("name", "Germany"));
     }
 

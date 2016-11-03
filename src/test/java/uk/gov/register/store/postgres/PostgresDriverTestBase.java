@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 public class PostgresDriverTestBase {
 
