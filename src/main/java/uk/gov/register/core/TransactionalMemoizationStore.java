@@ -20,8 +20,9 @@ public class TransactionalMemoizationStore implements MemoizationStore {
 
     @Override
     public byte[] get(Integer start, Integer size) {
-        if (stagedHashes.containsKey(Pair.of(start, size)))  {
-            return stagedHashes.get(Pair.of(start, size));
+        Pair<Integer, Integer> startSizePair = Pair.of(start, size);
+        if (stagedHashes.containsKey(startSizePair))  {
+            return stagedHashes.get(startSizePair);
         }
 
         return memoizationStore.get(start, size);
