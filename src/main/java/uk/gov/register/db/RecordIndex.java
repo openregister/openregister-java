@@ -29,8 +29,8 @@ public class RecordIndex {
         return backingStoreDriver.getRecords(limit, offset);
     }
 
-    public List<Record> findMax100RecordsByKeyValue(String registerName, String key, String value) {
-        return backingStoreDriver.findMax100RecordsByKeyValue(registerName, key, value);
+    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
+        return backingStoreDriver.findMax100RecordsByKeyValue(key, value);
     }
 
     public Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key) {

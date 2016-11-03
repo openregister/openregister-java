@@ -98,7 +98,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     public void findMax100RecordsByKeyValueShouldAlwaysCommitStagedData() {
         when(recordQueryDAO.findMax100RecordsByKeyValue("name", "Germany")).thenReturn(asList());
 
-        assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findMax100RecordsByKeyValue("country", "name", "Germany"));
+        assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findMax100RecordsByKeyValue("name", "Germany"));
     }
 
     @Test

@@ -2,16 +2,14 @@ package uk.gov.register.store.postgres;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 
 import java.time.Instant;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.mock;
 
 public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {
 

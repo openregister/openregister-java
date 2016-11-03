@@ -116,7 +116,7 @@ public class PostgresRegister implements Register {
             throw new NoSuchFieldException(registerName, key);
         }
 
-        return recordIndex.findMax100RecordsByKeyValue(registerName, key, value);
+        return recordIndex.findMax100RecordsByKeyValue(key, value);
     }
 
     @Override

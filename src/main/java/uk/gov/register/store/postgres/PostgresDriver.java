@@ -111,7 +111,7 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     }
 
     @Override
-    public List<Record> findMax100RecordsByKeyValue(String registerName, String key, String value) {
+    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
         return withHandle(handle -> recordQueryDAOFromHandle.apply(handle).findMax100RecordsByKeyValue(key, value));
     }
 
@@ -151,10 +151,6 @@ public abstract class PostgresDriver implements BackingStoreDriver {
         EntryMerkleLeafStore merkleLeafStore = new EntryMerkleLeafStore(entryQueryDAOFromHandle.apply(handle));
         return new VerifiableLog(DigestUtils.getSha256Digest(), merkleLeafStore, memoizationStore);
     }
-
-
-
-
 
     protected abstract void useHandle(HandleConsumer callback);
 

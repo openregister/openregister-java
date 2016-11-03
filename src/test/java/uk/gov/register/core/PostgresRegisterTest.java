@@ -37,6 +37,6 @@ public class PostgresRegisterTest {
     public void findMax100RecordsByKeyValueShouldReturnValueWhenKeyExists() {
         PostgresRegister register = new PostgresRegister(registerNameConfiguration, registerFieldsConfiguration, backingStoreDriver);
         register.max100RecordsFacetedByKeyValue("name", "United Kingdom");
-        verify(backingStoreDriver, times(1)).findMax100RecordsByKeyValue(registerNameConfiguration.getRegister(), "name", "United Kingdom");
+        verify(backingStoreDriver, times(1)).findMax100RecordsByKeyValue("name", "United Kingdom");
     }
 }
