@@ -47,7 +47,7 @@ public class PostgresRegister implements Register {
     public void appendEntry(Entry entry) {
         entryLog.appendEntry(entry);
         recordIndex.updateRecordIndex(registerName, new Record(entry, itemStore.getItemBySha256(entry.getSha256hex())
-                .orElseThrow(() -> new NoSuchItemForEntryException(entry.getItemHash(), entry.getEntryNumber()))));
+                .orElseThrow(() -> new NoSuchItemForEntryException(entry))));
     }
 
     @Override
