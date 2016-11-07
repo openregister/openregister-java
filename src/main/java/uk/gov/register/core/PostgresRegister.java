@@ -3,7 +3,7 @@ package uk.gov.register.core;
 import com.google.common.collect.Lists;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
-import uk.gov.register.exceptions.NoSuchItemException;
+import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.views.ConsistencyProof;
@@ -47,7 +47,7 @@ public class PostgresRegister implements Register {
     public void appendEntry(Entry entry) {
         entryLog.appendEntry(entry);
         recordIndex.updateRecordIndex(registerName, new Record(entry, itemStore.getItemBySha256(entry.getSha256hex())
-                .orElseThrow(() -> new NoSuchItemException(entry.getSha256hex()))));
+                .orElseThrow(() -> new NoSuchItemForEntryException(entry.getItemHash(), entry.getEntryNumber()))));
     }
 
     @Override
