@@ -8,6 +8,7 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.util.ArchiveCreator;
+import uk.gov.register.util.TSVFormatter;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -71,7 +72,7 @@ public class DataDownload {
         Iterator<Entry> entryIterator = register.getEntryIterator(0, totalEntries);
 
         return Response
-                .ok(new ArchiveCreator().createRSF(itemIterator, entryIterator))
+                .ok(new ArchiveCreator().createRSF(itemIterator, entryIterator, new TSVFormatter()))
                 .header("Content-Disposition", String.format("attachment; filename=%s-%d.tsv", registerPrimaryKey, System.currentTimeMillis()))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)
                 .build();
