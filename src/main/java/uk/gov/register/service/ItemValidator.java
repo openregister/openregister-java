@@ -4,25 +4,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.inject.Inject;
 import java.util.Set;
 
 public class ItemValidator {
-
     private final FieldsConfiguration fieldsConfiguration;
     private final RegistersConfiguration registersConfiguration;
+    private final CanonicalJsonMapper canonicalJsonMapper;
 
     @Inject
-    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration) {
+    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, CanonicalJsonMapper canonicalJsonMapper) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;
+        this.canonicalJsonMapper = canonicalJsonMapper;
     }
 
     public void validateItem(String registerName, JsonNode inputEntry) throws ItemValidationException {
@@ -33,6 +35,8 @@ public class ItemValidator {
         validatePrimaryKeyExists(inputEntry, registerMetadata.getRegisterName());
 
         validateFieldsValue(inputEntry);
+
+        validateItemIsCanonicalized(inputEntry);
     }
 
     private void validatePrimaryKeyExists(JsonNode inputEntry, String registerName) throws ItemValidationException {
@@ -68,6 +72,13 @@ public class ItemValidator {
             }
 
         });
+    }
+
+    public void validateItemIsCanonicalized(JsonNode inputEntry) {
+        byte[] rawItemBytes = inputEntry.toString().getBytes();
+        JsonNode canonicalizedItem = canonicalJsonMapper.readFromBytes(rawItemBytes);
+
+        throwEntryValidationExceptionIfConditionIsFalse(inputEntry == canonicalizedItem, inputEntry, "Entry is not canonicalized");
     }
 
     private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode inputJsonEntry, String errorMessage) {

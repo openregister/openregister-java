@@ -7,6 +7,7 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.util.CanonicalJsonMapper;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -17,11 +18,12 @@ import static org.junit.Assert.fail;
 
 public class ItemValidatorTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
     private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty());
     private RegistersConfiguration registerConfiguration = new RegistersConfiguration(Optional.empty());
 
-    private ItemValidator itemValidator = new ItemValidator(registerConfiguration, fieldsConfiguration);
+    private ItemValidator itemValidator = new ItemValidator(registerConfiguration, fieldsConfiguration, canonicalJsonMapper);
 
     @Test
     public void validateItem_throwsValidationException_givenPrimaryKeyOfRegisterNotExists() throws IOException {

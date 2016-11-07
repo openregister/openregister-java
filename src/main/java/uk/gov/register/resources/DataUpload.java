@@ -5,6 +5,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
@@ -28,12 +29,14 @@ public class DataUpload {
     protected final ViewFactory viewFactory;
     private RegisterService registerService;
     private ObjectReconstructor objectReconstructor;
+    private final String registerPrimaryKey;
 
     @Inject
-    public DataUpload(ViewFactory viewFactory, RegisterService registerService, ObjectReconstructor objectReconstructor) {
+    public DataUpload(ViewFactory viewFactory, RegisterService registerService, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor) {
         this.viewFactory = viewFactory;
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
+        this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 
     @Context
@@ -45,6 +48,19 @@ public class DataUpload {
     public void load(String payload) {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
+            mintItems(objects);
+        } catch (Throwable t) {
+            logger.error(Throwables.getStackTraceAsString(t));
+            throw t;
+        }
+    }
+
+    @POST
+    @PermitAll
+    @Path("/loadWithoutCanonicalization")
+    public void loadWithoutCanonicalization(String payload) {
+        try {
+            Iterable<JsonNode> objects = objectReconstructor.reconstructWithoutCanonicalization(payload.split("\n"));
             mintItems(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));
