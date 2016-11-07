@@ -5,11 +5,9 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterService;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
@@ -29,17 +27,13 @@ public class DataUpload {
 
     protected final ViewFactory viewFactory;
     private RegisterService registerService;
-    private String registerPrimaryKey;
     private ObjectReconstructor objectReconstructor;
-    private ItemValidator itemValidator;
 
     @Inject
-    public DataUpload(ViewFactory viewFactory, RegisterService registerService, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator) {
+    public DataUpload(ViewFactory viewFactory, RegisterService registerService, ObjectReconstructor objectReconstructor) {
         this.viewFactory = viewFactory;
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
-        this.itemValidator = itemValidator;
-        this.registerPrimaryKey = registerNameConfiguration.getRegister();
     }
 
     @Context
@@ -51,7 +45,6 @@ public class DataUpload {
     public void load(String payload) {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
-            objects.forEach(singleObject -> itemValidator.validateItem(registerPrimaryKey, singleObject));
             mintItems(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));

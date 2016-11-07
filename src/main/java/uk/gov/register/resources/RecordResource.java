@@ -31,7 +31,7 @@ public class RecordResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        registerPrimaryKey = registerNameConfiguration.getRegister();
+        registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 
     @GET

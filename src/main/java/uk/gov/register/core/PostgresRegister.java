@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemException;
+import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -27,12 +28,13 @@ public class PostgresRegister implements Register {
 
     @Inject
     public PostgresRegister(RegisterData registerData,
-                            BackingStoreDriver backingStoreDriver) {
+                            BackingStoreDriver backingStoreDriver,
+                            ItemValidator itemValidator) {
         RegisterMetadata registerMetadata = registerData.getRegister();
         registerName = registerMetadata.getRegisterName();
         fields = Lists.newArrayList(registerMetadata.getFields());
         this.entryLog = new EntryLog(backingStoreDriver);
-        this.itemStore = new ItemStore(backingStoreDriver);
+        this.itemStore = new ItemStore(backingStoreDriver, itemValidator, registerName);
         this.recordIndex = new RecordIndex(backingStoreDriver);
     }
 
