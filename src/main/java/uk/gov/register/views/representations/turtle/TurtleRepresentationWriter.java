@@ -29,7 +29,7 @@ public abstract class TurtleRepresentationWriter<T extends View> extends Represe
     protected TurtleRepresentationWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterNameConfiguration registerNameConfiguration) {
         this.requestContext = requestContext;
         this.registerDomain = registerDomainConfiguration.getRegisterDomain();
-        this.registerPrimaryKey = registerNameConfiguration.getRegister();
+        this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 
     @Override

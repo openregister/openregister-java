@@ -56,7 +56,7 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         ServiceLocator sl = ((ServletContainer) environment.getJerseyServletContainer()).getApplicationHandler().getServiceLocator();
         RegistersConfiguration rc = sl.getService(RegistersConfiguration.class);
         RegisterNameConfiguration rnc = sl.getService(RegisterNameConfiguration.class);
-        String registerId = rnc.getRegister();
+        String registerId = rnc.getRegisterName();
         RegisterData rd = rc.getRegisterData(registerId);
         String registerName = registerId.replace('-', ' ');
 

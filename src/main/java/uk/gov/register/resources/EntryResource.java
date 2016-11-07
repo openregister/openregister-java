@@ -29,7 +29,7 @@ public class EntryResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        this.registerPrimaryKey = registerNameConfiguration.getRegister();
+        this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 
     @GET

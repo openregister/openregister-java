@@ -4,5 +4,5 @@ import org.jvnet.hk2.annotations.Contract;
 
 @Contract
 public interface RegisterNameConfiguration {
-    String getRegister();
+    String getRegisterName();
 }

@@ -76,7 +76,7 @@ public class RegisterConfiguration extends Configuration
         return database;
     }
 
-    public String getRegister() {
+    public String getRegisterName() {
         return register;
     }
 

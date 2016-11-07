@@ -14,17 +14,19 @@ public class RegisterService {
     private final RegisterData registerData;
     private final DBI dbi;
     private final MemoizationStore memoizationStore;
+    private final ItemValidator itemValidator;
 
     @Inject
-    public RegisterService(RegisterData registerData, DBI dbi, MemoizationStore memoizationStore) {
+    public RegisterService(RegisterData registerData, DBI dbi, MemoizationStore memoizationStore, ItemValidator itemValidator) {
         this.registerData = registerData;
         this.dbi = dbi;
         this.memoizationStore = memoizationStore;
+        this.itemValidator = itemValidator;
     }
 
     public void asAtomicRegisterOperation(Consumer<Register> callback) {
         PostgresDriverTransactional.useTransaction(dbi, memoizationStore, postgresDriver -> {
-            Register register = new PostgresRegister(registerData, postgresDriver);
+            Register register = new PostgresRegister(registerData, postgresDriver, itemValidator);
             callback.accept(register);
         });
     }

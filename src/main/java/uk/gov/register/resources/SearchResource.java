@@ -25,7 +25,7 @@ public class SearchResource {
     @Inject
     public SearchResource(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration) {
         this.requestContext = requestContext;
-        registerPrimaryKey = registerNameConfiguration.getRegister();
+        registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 
     @GET
