@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Iterator;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -132,5 +133,15 @@ public class PostgresRegister implements Register {
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
         return entryLog.getConsistencyProof(totalEntries1, totalEntries2);
+    }
+
+    @Override
+    public Iterator<Entry> getEntryIterator(int start, int end) {
+        return entryLog.getIterator(start, end);
+    }
+
+    @Override
+    public Iterator<Item> getItemIterator(int start, int end) {
+        return itemStore.getIterator(start, end);
     }
 }

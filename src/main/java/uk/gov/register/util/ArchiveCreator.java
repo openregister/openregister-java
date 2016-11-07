@@ -9,10 +9,12 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
 
 import javax.ws.rs.core.StreamingOutput;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -31,6 +33,28 @@ public class ArchiveCreator {
                         zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.getEntryNumber()), entry)
                 );
             }
+        };
+    }
+
+    public StreamingOutput createRSF(Iterator<Item> items, Iterator<Entry> entries) {
+        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+        return output -> {
+            items.forEachRemaining(item -> {
+                try {
+                    output.write(String.format("add-item\t%s\n", canonicalJsonMapper.writeToString(item.getContent())).getBytes());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            entries.forEachRemaining(entry -> {
+                try {
+                    output.write(String.format("append-entry\t%s\t%s\n", entry.getTimestampAsISOFormat(), entry.getItemHash()).getBytes());
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
         };
     }
 

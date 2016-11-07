@@ -19,6 +19,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
+import java.util.Iterator;
 
 @Path("/")
 public class DataDownload {
@@ -62,10 +63,26 @@ public class DataDownload {
     }
 
     @GET
+    @Path("/download-rsf")
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
+    public Response downloadRSF() {
+        int totalEntries = register.getTotalEntries();
+        Iterator<Item> itemIterator = register.getItemIterator(0, totalEntries);
+        Iterator<Entry> entryIterator = register.getEntryIterator(0, totalEntries);
+
+        return Response
+                .ok(new ArchiveCreator().createRSF(itemIterator, entryIterator))
+                .header("Content-Disposition", String.format("attachment; filename=%s-%d.tsv", registerPrimaryKey, System.currentTimeMillis()))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)
+                .build();
+    }
+
+    @GET
     @Path("/download")
     @Produces(ExtraMediaType.TEXT_HTML)
     public View download() {
         return viewFactory.downloadPageView(resourceConfiguration.getEnableDownloadResource());
     }
+
 }
 

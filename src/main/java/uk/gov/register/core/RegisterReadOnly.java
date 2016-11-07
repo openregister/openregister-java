@@ -7,6 +7,7 @@ import uk.gov.register.views.RegisterProof;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +33,7 @@ public interface RegisterReadOnly {
     RegisterProof getRegisterProof() throws NoSuchAlgorithmException;
     EntryProof getEntryProof(int entryNumber, int totalEntries);
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
+
+    Iterator<Entry> getEntryIterator(int start, int end);
+    Iterator<Item> getItemIterator(int start, int end);
 }
