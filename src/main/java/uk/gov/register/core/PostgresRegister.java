@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import com.google.common.collect.Lists;
+import org.thymeleaf.templatemode.ITemplateModeHandler;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
@@ -45,9 +46,9 @@ public class PostgresRegister implements Register {
 
     @Override
     public void appendEntry(Entry entry) {
+        Item item = itemStore.getItemBySha256(entry.getSha256hex()).orElseThrow(() -> new NoSuchItemForEntryException(entry));
         entryLog.appendEntry(entry);
-        recordIndex.updateRecordIndex(registerName, new Record(entry, itemStore.getItemBySha256(entry.getSha256hex())
-                .orElseThrow(() -> new NoSuchItemForEntryException(entry))));
+        recordIndex.updateRecordIndex(registerName, new Record(entry, item));
     }
 
     @Override
