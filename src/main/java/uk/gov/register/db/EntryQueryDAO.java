@@ -12,7 +12,6 @@ import uk.gov.register.db.mappers.LongTimestampToInstantMapper;
 
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Optional;
 
 public interface EntryQueryDAO {

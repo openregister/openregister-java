@@ -42,17 +42,16 @@ public class ArchiveCreator {
             items.forEachRemaining(item -> {
                 try {
                     output.write(String.format("add-item\t%s\n", canonicalJsonMapper.writeToString(item.getContent())).getBytes());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    Throwables.propagate(e);
                 }
             });
 
             entries.forEachRemaining(entry -> {
                 try {
                     output.write(String.format("append-entry\t%s\t%s\n", entry.getTimestampAsISOFormat(), entry.getItemHash()).getBytes());
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    Throwables.propagate(e);
                 }
             });
         };
