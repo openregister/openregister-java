@@ -125,6 +125,13 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
         assertFormattedEntry(rsfLines[3], "sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
     }
 
+    @Test
+    public void downloadPartialRSF_shouldReturnReturn404ForIncorectRsfBoundaries() throws IOException {
+        Response response = getRequest("/download-rsf/4/1");
+        
+        assertThat(response.getStatus(), equalTo(400));
+    }
+
     private String[] getRsfLinesFrom(Response response){
         InputStream is = response.readEntity(InputStream.class);
         return new BufferedReader(new InputStreamReader(is)).lines().toArray(String[]::new);
