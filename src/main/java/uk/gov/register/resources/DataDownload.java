@@ -65,6 +65,7 @@ public class DataDownload {
     @GET
     @Path("/download-rsf")
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
+    @DownloadNotAvailable
     public Response downloadRSF() {
         return createStreamResponseFor(register.getItemIterator(), register.getEntryIterator(), new TSVFormatter());
     }
@@ -72,6 +73,7 @@ public class DataDownload {
     @GET
     @Path("/download-rsf/{start-entry-no}/{end-entry-no}")
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
+    @DownloadNotAvailable
     public Response downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
         if (startEntryNo > endEntryNo) {
             throw new BadRequestException("start-entry-no must be smaller than or equal to end-entry-no");
