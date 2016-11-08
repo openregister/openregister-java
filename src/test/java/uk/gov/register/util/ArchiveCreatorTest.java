@@ -17,15 +17,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.mockito.Mockito.*;
 
 public class ArchiveCreatorTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
@@ -33,11 +31,11 @@ public class ArchiveCreatorTest {
     private final Entry entry1 = new Entry(1, "entry1sha", Instant.parse("2016-07-24T16:55:00Z"));
     private final Entry entry2 = new Entry(2, "entry2sha", Instant.parse("2016-07-24T16:56:00Z"));
 
-    private final Item entry1Item = new Item("entry1sha", jsonFactory.objectNode()
+    private final Item item1 = new Item("entry1sha", jsonFactory.objectNode()
         .put("field-1", "entry1-field-1-value")
         .put("field-2", "entry1-field-2-value"));
 
-    private final Item entry2Item = new Item("entry2sha", jsonFactory.objectNode()
+    private final Item item2 = new Item("entry2sha", jsonFactory.objectNode()
         .put("field-1", "entry2-field-1-value")
         .put("field-2", "entry2-field-2-value"));
 
@@ -60,7 +58,7 @@ public class ArchiveCreatorTest {
         StreamingOutput streamingOutput = sutArchiveCreator.create(
             registerDetail,
             Arrays.asList(entry1, entry2),
-            Arrays.asList(entry1Item, entry2Item));
+            Arrays.asList(item1, item2));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         streamingOutput.write(baos);
@@ -98,6 +96,29 @@ public class ArchiveCreatorTest {
 
         inputStreamFromArchive.close();
     }
+
+    @Test
+    public void createRSF_shouldCreateRegisterRepresentationWithEntriesAndItems() throws IOException {
+        Iterator<Item> itemIterator = Arrays.asList(item1, item2).iterator();
+        Iterator<Entry> entryIterator = Arrays.asList(entry1, entry2).iterator();
+
+        SerialisationFormatter mockFormatter = mock(SerialisationFormatter.class);
+        when(mockFormatter.format(entry1)).thenReturn("e1-serialised;");
+        when(mockFormatter.format(entry2)).thenReturn("e2-serialised;");
+        when(mockFormatter.format(item1)).thenReturn("i1-serialised;");
+        when(mockFormatter.format(item2)).thenReturn("i2-serialised;");
+
+        ArchiveCreator sutArchiveCreator= new ArchiveCreator();
+        StreamingOutput rsfStream = sutArchiveCreator.createRSF(itemIterator, entryIterator, mockFormatter);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        rsfStream.write(baos);
+        String expectedRSF = "i1-serialised;i2-serialised;e1-serialised;e2-serialised;";
+        String actualRSF = baos.toString();
+
+        assertThat(actualRSF, equalTo(expectedRSF));
+    }
+
 
     private Map<String, JsonNode> getArchiveEntries(InputStream inputStream) throws IOException {
         ZipInputStream zis = new ZipInputStream(inputStream);
