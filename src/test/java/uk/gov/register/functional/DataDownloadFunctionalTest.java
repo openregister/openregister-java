@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -20,10 +22,10 @@ import static org.junit.Assert.assertTrue;
 
 public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
-    private final String item1 = "{\"street\":\"ellis\",\"address\":\"12345\"}";
-    private final String item2 = "{\"street\":\"presley\",\"address\":\"6789\"}";
-    private final String item3 =  "{\"street\":\"foo\",\"address\":\"12345\"}";
-    private final String item4 =  "{\"street\":\"ellis\",\"address\":\"145678\"}";
+    private final String item1 = "{\"address\":\"12345\",\"street\":\"ellis\"}";
+    private final String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
+    private final String item3 =  "{\"address\":\"12345\",\"street\":\"foo\"}";
+    private final String item4 =  "{\"address\":\"145678\",\"street\":\"ellis\"}";
 
     @Before
     public void publishTestMessages() {
@@ -82,6 +84,55 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
         assertTrue(registerJson.has("last-updated"));
         assertTrue(registerJson.has("domain"));
         assertTrue(registerJson.has("register-record"));
+    }
+
+    @Test
+    public void downloadRSF_shouldReturnRegisterAsRsfStream() throws IOException {
+        Response response = getRequest("/download-rsf");
+
+        assertThat(response.getHeaderString("Content-Type"), equalTo(MediaType.APPLICATION_OCTET_STREAM));
+        assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
+        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
+
+        String[] rsfLines = getRsfLinesFrom(response);
+
+        assertThat(rsfLines[0], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}"));
+        assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
+        assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
+        assertThat(rsfLines[3], equalTo("add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
+
+        assertFormattedEntry(rsfLines[4], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+        assertFormattedEntry(rsfLines[5], "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
+        assertFormattedEntry(rsfLines[6], "sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+        assertFormattedEntry(rsfLines[7], "sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
+        assertFormattedEntry(rsfLines[8], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+    }
+
+    @Test
+    public void downloadPartialRSF_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
+        Response response = getRequest("/download-rsf/3/4");
+
+        assertThat(response.getHeaderString("Content-Type"), equalTo(MediaType.APPLICATION_OCTET_STREAM));
+        assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
+        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
+
+        String[] rsfLines = getRsfLinesFrom(response);
+
+        assertThat(rsfLines[0], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
+        assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
+
+        assertFormattedEntry(rsfLines[2], "sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+        assertFormattedEntry(rsfLines[3], "sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
+    }
+
+    private String[] getRsfLinesFrom(Response response){
+        InputStream is = response.readEntity(InputStream.class);
+        return new BufferedReader(new InputStreamReader(is)).lines().toArray(String[]::new);
+    }
+
+    private void assertFormattedEntry(String actualEntry, String expectedEntrySha){
+        assertThat(actualEntry, startsWith("append-entry"));
+        assertThat(actualEntry, endsWith(expectedEntrySha));
     }
 
     private Map<String, JsonNode> getEntries(InputStream inputStream) throws IOException {

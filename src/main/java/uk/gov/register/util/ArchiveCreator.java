@@ -21,6 +21,7 @@ import java.util.zip.ZipOutputStream;
 public class ArchiveCreator {
 
     public StreamingOutput create(RegisterDetail registerDetail, Collection<Entry> entries, Collection<Item> items) {
+        CanonicalJsonMapper mapper = new CanonicalJsonMapper();
         return output -> {
             try (ZipEntryWriter zipEntryWriter = new ZipEntryWriter(output)) {
 
