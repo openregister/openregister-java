@@ -1,6 +1,7 @@
 package uk.gov.register.util;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -18,6 +19,16 @@ public class CanonicalJsonMapperTest {
         byte[] canonicalBytes = mapper.writeToBytes(mapper.readFromBytes(jsonBytes));
         
         assertThat(canonicalBytes, equalTo(jsonBytes));
+    }
+
+    @Test
+    public void shouldProduceSameOutputForAllWriteMethods(){
+        JsonNode inputNode = mapper.readFromBytes("{\"foo\":\"bar\"}".getBytes());
+        
+        byte[] byteResult = mapper.writeToBytes(inputNode);
+        String stringResult = mapper.writeToString(inputNode);
+
+        assertThat(byteResult, equalTo(stringResult.getBytes()));
     }
 
     @Test(expected = JsonParseException.class)
