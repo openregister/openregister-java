@@ -24,8 +24,15 @@ public interface ItemQueryDAO {
     @RegisterMapper(ItemMapper.class)
     Collection<Item> getAllItemsNoPagination();
 
-    @SqlQuery("select * from item where exists(select 1 from entry where entry_number between :startEntryNo and :endEntryNo)")
+    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex)")
+    @RegisterMapper(ItemMapper.class)
+    @FetchSize(262144)
+    ResultIterator<Item> getIterator();
+
+    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex and entry_number between :startEntryNo and :endEntryNo)")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(262144)
     ResultIterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);
+
+
 }

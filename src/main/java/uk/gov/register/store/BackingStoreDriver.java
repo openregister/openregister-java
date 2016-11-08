@@ -35,6 +35,9 @@ public interface BackingStoreDriver {
 
     <ReturnType> ReturnType withVerifiableLog(Function<VerifiableLog, ReturnType> callback);
 
+    Iterator<Entry> getEntryIterator();
     Iterator<Entry> getEntryIterator(int start, int end);
+
+    Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);
 }

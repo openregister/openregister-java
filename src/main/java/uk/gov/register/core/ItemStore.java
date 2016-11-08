@@ -31,7 +31,12 @@ public class ItemStore {
         return backingStoreDriver.getAllItems();
     }
 
+    public Iterator<Item> getIterator() {
+        return backingStoreDriver.getItemIterator();
+    }
+
     public Iterator<Item> getIterator(int start, int end){
         return backingStoreDriver.getItemIterator(start, end);
     }
+
 }

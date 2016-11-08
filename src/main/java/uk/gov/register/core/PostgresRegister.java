@@ -136,8 +136,18 @@ public class PostgresRegister implements Register {
     }
 
     @Override
+    public Iterator<Entry> getEntryIterator() {
+        return entryLog.getIterator();
+    }
+
+    @Override
     public Iterator<Entry> getEntryIterator(int start, int end) {
         return entryLog.getIterator(start, end);
+    }
+
+    @Override
+    public Iterator<Item> getItemIterator() {
+        return itemStore.getIterator();
     }
 
     @Override

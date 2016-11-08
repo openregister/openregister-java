@@ -8,5 +8,7 @@ public interface SerialisationFormatter {
     String format(Item item);
     String format(Entry entry);
     String format(RegisterProof proof);
+
+    String getFileExtension();
 }
 

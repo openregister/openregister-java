@@ -36,6 +36,10 @@ public class EntryLog {
         return backingStoreDriver.getEntries(start, limit);
     }
 
+    public Iterator<Entry> getIterator() {
+        return backingStoreDriver.getEntryIterator();
+    }
+
     public Iterator<Entry> getIterator(int start, int end){
         return backingStoreDriver.getEntryIterator(start, end);
     }
@@ -78,4 +82,6 @@ public class EntryLog {
     private String bytesToString(byte[] bytes) {
         return DatatypeConverter.printHexBinary(bytes).toLowerCase();
     }
+
+
 }

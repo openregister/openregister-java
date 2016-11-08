@@ -8,14 +8,13 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.util.ArchiveCreator;
+import uk.gov.register.util.SerialisationFormatter;
 import uk.gov.register.util.TSVFormatter;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -67,15 +66,21 @@ public class DataDownload {
     @Path("/download-rsf")
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     public Response downloadRSF() {
-        int totalEntries = register.getTotalEntries();
-        Iterator<Item> itemIterator = register.getItemIterator(0, totalEntries);
-        Iterator<Entry> entryIterator = register.getEntryIterator(0, totalEntries);
+        return createStreamResponseFor(register.getItemIterator(), register.getEntryIterator(), new TSVFormatter());
+    }
 
-        return Response
-                .ok(new ArchiveCreator().createRSF(itemIterator, entryIterator, new TSVFormatter()))
-                .header("Content-Disposition", String.format("attachment; filename=%s-%d.tsv", registerPrimaryKey, System.currentTimeMillis()))
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)
-                .build();
+    @GET
+    @Path("/download-rsf/{start-entry-no}/{end-entry-no}")
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
+    public Response downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
+        if (startEntryNo > endEntryNo) {
+            throw new BadRequestException("start-entry-no must be smaller than or equal to end-entry-no");
+        }
+
+        return createStreamResponseFor(
+                register.getItemIterator(startEntryNo, endEntryNo),
+                register.getEntryIterator(startEntryNo, endEntryNo),
+                new TSVFormatter());
     }
 
     @GET
@@ -85,5 +90,12 @@ public class DataDownload {
         return viewFactory.downloadPageView(resourceConfiguration.getEnableDownloadResource());
     }
 
+    private Response createStreamResponseFor(Iterator<Item> itemIterator, Iterator<Entry> entryIterator, SerialisationFormatter formatter) {
+        return Response
+                .ok(new ArchiveCreator().createRSF(itemIterator, entryIterator, formatter))
+                .header("Content-Disposition", String.format("attachment; filename=%s-%d.%s", registerPrimaryKey, System.currentTimeMillis(), formatter.getFileExtension()))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)
+                .build();
+    }
 }
 

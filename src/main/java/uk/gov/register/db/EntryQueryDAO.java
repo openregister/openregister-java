@@ -42,6 +42,11 @@ public interface EntryQueryDAO {
     @FetchSize(262144) // Has to be non-zero to enable cursor mode https://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor
     ResultIterator<Entry> entriesIteratorFrom(@Bind("entryNumber") int entryNumber);
 
+    @SqlQuery("SELECT * FROM entry ORDER BY entry_number")
+    @RegisterMapper(EntryMapper.class)
+    @FetchSize(262144)
+    ResultIterator<Entry> getIterator();
+
     @SqlQuery("SELECT * FROM entry WHERE entry_number between :startEntryNo and :endEntryNo ORDER BY entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144)

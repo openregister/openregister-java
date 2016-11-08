@@ -24,4 +24,9 @@ public class TSVFormatter implements SerialisationFormatter {
     public String format(RegisterProof proof) {
         return "assert-root-hash" + TAB + proof.getRootHash() + NEW_LINE;
     }
+
+    @Override
+    public String getFileExtension() {
+        return "tsv";
+    }
 }

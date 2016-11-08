@@ -53,8 +53,18 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     }
 
     @Override
+    public Iterator<Entry> getEntryIterator(){
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getIterator());
+    }
+
+    @Override
     public Iterator<Entry> getEntryIterator(int start, int end){
         return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getIterator(start, end));
+    }
+
+    @Override
+    public Iterator<Item> getItemIterator(){
+        return withHandle(handle -> itemQueryDAOFromHandle.apply(handle).getIterator());
     }
 
     @Override
