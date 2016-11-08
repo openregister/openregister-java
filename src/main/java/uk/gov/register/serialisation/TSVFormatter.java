@@ -1,7 +1,8 @@
-package uk.gov.register.util;
+package uk.gov.register.serialisation;
 
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
+import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.views.RegisterProof;
 
 public class TSVFormatter implements SerialisationFormatter {

@@ -8,8 +8,8 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.util.ArchiveCreator;
-import uk.gov.register.util.SerialisationFormatter;
-import uk.gov.register.util.TSVFormatter;
+import uk.gov.register.serialisation.SerialisationFormatter;
+import uk.gov.register.serialisation.TSVFormatter;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
