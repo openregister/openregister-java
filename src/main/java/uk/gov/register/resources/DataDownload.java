@@ -9,7 +9,7 @@ import uk.gov.register.core.RegisterDetail;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.serialisation.SerialisationFormatter;
-import uk.gov.register.serialisation.TSVFormatter;
+import uk.gov.register.serialisation.TsvFormatter;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -67,7 +67,7 @@ public class DataDownload {
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Response downloadRSF() {
-        return createStreamResponseFor(register.getItemIterator(), register.getEntryIterator(), new TSVFormatter());
+        return createStreamResponseFor(register.getItemIterator(), register.getEntryIterator(), new TsvFormatter());
     }
 
     @GET
@@ -82,7 +82,7 @@ public class DataDownload {
         return createStreamResponseFor(
                 register.getItemIterator(startEntryNo, endEntryNo),
                 register.getEntryIterator(startEntryNo, endEntryNo),
-                new TSVFormatter());
+                new TsvFormatter());
     }
 
     @GET

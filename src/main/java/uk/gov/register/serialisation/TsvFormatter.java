@@ -5,7 +5,7 @@ import uk.gov.register.core.Item;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.views.RegisterProof;
 
-public class TSVFormatter implements SerialisationFormatter {
+public class TsvFormatter implements SerialisationFormatter {
 
     private final String TAB = "\t";
     private final String NEW_LINE = System.lineSeparator();
