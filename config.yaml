@@ -25,3 +25,12 @@ register: school
 enableDownloadResource: true
 
 historyPageUrl: https://registers-history.herokuapp.com/country
+
+# Logging settings.
+logging:
+
+  level: INFO
+
+  # Logger-specific levels.
+  loggers:
+    "uk.gov": DEBUG

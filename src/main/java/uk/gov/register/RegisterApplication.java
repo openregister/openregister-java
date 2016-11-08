@@ -26,6 +26,7 @@ import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
+import uk.gov.register.resources.RegisterComponentReader;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
@@ -34,6 +35,7 @@ import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.ObjectReconstructor;
+import uk.gov.register.util.OrphanFinder;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
@@ -86,8 +88,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
 
-        Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration())
-                .build("http-client");
+        Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
+
+        OrphanFinder orphanFinder = new OrphanFinder();
 
         jersey.register(new AbstractBinder() {
             @Override
@@ -112,6 +115,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(configuration);
                 bind(client).to(Client.class);
+                bind(orphanFinder).to(OrphanFinder.class);
             }
         });
 

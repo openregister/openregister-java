@@ -28,6 +28,7 @@ public class OrphanFinderTest {
     private Item item2;
     private Entry entry0;
     private Entry entry1;
+    private OrphanFinder orphanFinder;
 
     @Before
     public void setUp() throws Exception {
@@ -41,6 +42,8 @@ public class OrphanFinderTest {
 
         entry0 = new Entry(0, getHash(content0), Instant.now());
         entry1 = new Entry(1, getHash(content1), Instant.now());
+
+        orphanFinder = new OrphanFinder();
     }
 
     @Test
@@ -48,7 +51,7 @@ public class OrphanFinderTest {
         Set<Item> items = Sets.newHashSet(item0, item1, item2);
         List<Entry> entries = Arrays.asList(entry0, entry1);
 
-        Set<Item> orphanItems = OrphanFinder.findOrphanItems(items, entries);
+        Set<Item> orphanItems = orphanFinder.findOrphanItems(items, entries);
         assertThat( orphanItems.size(), is(1));
 
     }
@@ -58,8 +61,28 @@ public class OrphanFinderTest {
         Set<Item> items = Sets.newHashSet(item0, item1);
         List<Entry> entries = Arrays.asList(entry0, entry1);
 
-        Set<Item> orphanItems = OrphanFinder.findOrphanItems(items, entries);
+        Set<Item> orphanItems = orphanFinder.findOrphanItems(items, entries);
         assertThat( orphanItems.size(), is(0));
+
+    }
+
+    @Test
+    public void shouldFindChildlessEntries() throws Exception {
+        Set<Item> items = Sets.newHashSet(item0);
+        List<Entry> entries = Arrays.asList(entry0, entry1);
+
+        Set<Entry> childlessEntries = orphanFinder.findChildlessEntries(items, entries);
+        assertThat( childlessEntries.size(), is(1));
+
+    }
+
+    @Test
+    public void shouldNotFindChildlessEntries() throws Exception {
+        Set<Item> items = Sets.newHashSet(item0, item1);
+        List<Entry> entries = Arrays.asList(entry0, entry1);
+
+        Set<Entry> childlessEntries = orphanFinder.findChildlessEntries(items, entries);
+        assertThat( childlessEntries.size(), is(0));
 
     }
 

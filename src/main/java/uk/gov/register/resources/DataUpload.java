@@ -9,10 +9,12 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.serialization.RegisterComponents;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterService;
 import uk.gov.register.util.ObjectReconstructor;
+import uk.gov.register.util.OrphanFinder;
 import uk.gov.register.views.ViewFactory;
 
 import javax.annotation.security.PermitAll;
@@ -23,7 +25,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Path("/")
 public class DataUpload {
@@ -34,6 +39,7 @@ public class DataUpload {
     private String registerPrimaryKey;
     private ObjectReconstructor objectReconstructor;
     private ItemValidator itemValidator;
+
 
     @Inject
     public DataUpload(ViewFactory viewFactory, RegisterService registerService, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator) {
@@ -66,22 +72,9 @@ public class DataUpload {
     @Consumes("application/uk-gov-rsf")
     @Path("/load-rsf")
     public void loadRsf(RegisterComponents registerComponents) {
-        try {
-            logger.debug(registerComponents.toString());
-            // TODO check fields
-            // TODO orphan entries
-            mintRegisterComponents(registerComponents);
-        } catch (Throwable t) {
-            logger.error(Throwables.getStackTraceAsString(t));
-            throw t;
-        }
-    }
-
-    private void mintRegisterComponents(RegisterComponents registerComponents) {
-        registerService.asAtomicRegisterOperation(register -> {
-            registerComponents.items.forEach(i -> register.putItem(i));
-            registerComponents.entries.forEach(e -> register.appendEntry(e));
-        });
+        logger.info("parsed rsf input");
+        registerService.processRegisterComponents(registerComponents);
+        logger.info("loading rsf complete");
     }
 
     private void mintItems(Iterable<JsonNode> objects) {

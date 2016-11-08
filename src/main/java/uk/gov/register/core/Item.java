@@ -84,4 +84,11 @@ public class Item {
         result = 31 * result + (content != null ? content.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "content=" + content +
+                '}';
+    }
 }

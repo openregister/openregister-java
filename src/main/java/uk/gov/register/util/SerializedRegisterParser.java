@@ -28,7 +28,7 @@ public class SerializedRegisterParser {
         AtomicInteger currentEntryNumber = new AtomicInteger(0);
 
         List<Object> itemEntries = buffer.lines().map(s -> {
-            LOG.debug("processing: " + s);
+            //LOG.debug("processing: " + s);
             String[] parts = s.split("\t");
             String commandName = parts[0];
             switch (commandName) {

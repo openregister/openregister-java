@@ -7,7 +7,6 @@ import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.serialization.RegisterComponents;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,6 +44,25 @@ public class SerializedRegisterParserTest {
 
             Entry entry1 = entries.get(1);
             assertThat(entry1.getEntryNumber(), is(1));
+        }
+    }
+
+    @Test
+    public void shouldParseCommandsEscaped() throws Exception {
+        SerializedRegisterParser parser = new SerializedRegisterParser();
+        try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))
+        ) {
+            RegisterComponents registerComponents = parser.parseCommands(serializerRegisterStream);
+            Set<Item> items = registerComponents.items;
+            List<Entry> entries = registerComponents.entries;
+
+            assertThat(items.size(), is(1));
+            assertThat(entries.size(), is(1));
+
+            Entry entry = entries.get(0);
+            Item item = items.iterator().next();
+
+            assertThat( entry.getSha256hex(), is(item.getSha256hex()));
         }
     }
 
