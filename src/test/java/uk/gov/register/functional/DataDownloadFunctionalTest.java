@@ -1,15 +1,19 @@
 package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -20,10 +24,10 @@ import static org.junit.Assert.assertTrue;
 
 public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
-    private final String item1 = "{\"street\":\"ellis\",\"address\":\"12345\"}";
-    private final String item2 = "{\"street\":\"presley\",\"address\":\"6789\"}";
-    private final String item3 =  "{\"street\":\"foo\",\"address\":\"12345\"}";
-    private final String item4 =  "{\"street\":\"ellis\",\"address\":\"145678\"}";
+    private final String item1 = "{\"address\":\"12345\",\"street\":\"ellis\"}";
+    private final String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
+    private final String item3 =  "{\"address\":\"12345\",\"street\":\"foo\"}";
+    private final String item4 =  "{\"address\":\"145678\",\"street\":\"ellis\"}";
 
     @Before
     public void publishTestMessages() {
@@ -50,10 +54,13 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
     public void downloadRegister_shouldUseCorrectEntryAndItemJsonFormat() throws IOException {
         Response response = getRequest("/download-register");
         InputStream is = response.readEntity(InputStream.class);
+        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
+        // Hacking this test to get it to canonicalize on-the-fly, as data is being retrieved from Beta register
         List<String> itemJson = getEntries(is).entrySet().stream()
                 .filter(j -> j.getKey().startsWith("item"))
                 .map(j -> j.getValue().toString())
+                .map(j -> new String(canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(j.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8))
                 .collect(Collectors.toList());
 
         assertThat(itemJson, hasItems(item1, item2, item3, item4));
@@ -96,7 +103,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
                 sb.append(new String(buffer, 0, read));
             }
 
-            entries.put(entry.getName(), new ObjectMapper().readTree(sb.toString()));
+            entries.put(entry.getName(), new CanonicalJsonMapper().readFromBytes(sb.toString().getBytes()));
         }
 
         return entries;

@@ -13,8 +13,8 @@ public class ItemTest {
     @Test
     public void twoItemsAreSameIfHashIsSame() throws IOException {
         JsonNode json = new ObjectMapper().readTree("{\"key\":\"value\"}");
-        Item item1 = new Item(json);
-        Item item2 = new Item(json);
+        Item item1 = new Item(json, "{\"key\":\"value\"}");
+        Item item2 = new Item(json, "{\"key\":\"value\"}");
         Assert.assertThat(item1, equalTo(item2));
     }
 }

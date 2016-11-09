@@ -33,6 +33,8 @@ import uk.gov.register.service.RegisterService;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
+import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.JsonMapper;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
@@ -102,6 +104,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
                 bind(RegisterService.class).to(RegisterService.class);
+                bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
+                bind(JsonMapper.class).to(JsonMapper.class);
 
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);

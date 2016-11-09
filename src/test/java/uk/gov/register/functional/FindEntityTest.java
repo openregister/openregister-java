@@ -16,9 +16,9 @@ public class FindEntityTest extends FunctionalTestBase {
     @Before
     public void publishTestMessages() {
         mintItems(
-                "{\"street\":\"ellis\",\"address\":\"12345\"}",
-                "{\"street\":\"presley\",\"address\":\"6789\"}",
-                "{\"street\":\"ellis\",\"address\":\"145678\"}"
+                "{\"address\":\"12345\",\"street\":\"ellis\"}",
+                "{\"address\":\"6789\",\"street\":\"presley\"}",
+                "{\"address\":\"145678\",\"street\":\"ellis\"}"
         );
     }
 

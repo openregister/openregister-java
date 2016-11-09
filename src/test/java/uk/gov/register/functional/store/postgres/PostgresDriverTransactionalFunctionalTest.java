@@ -27,9 +27,9 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
     public void useTransactionShouldApplyChangesAtomicallyToDatabase() {
         DBI dbi = new DBI(postgresConnectionString);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
+        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode(), "");
+        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode(), "");
+        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode(), "");
         Entry entry1 = new Entry(1, "itemhash1", Instant.now());
         Entry entry2 = new Entry(2, "itemhash2", Instant.now());
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());
@@ -68,9 +68,9 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
     public void useTransactionShouldRollbackIfExceptionThrown() {
         DBI dbi = new DBI(postgresConnectionString);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
+        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode(), "");
+        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode(), "");
+        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode(), "");
         Entry entry1 = new Entry(1, "itemhash1", Instant.now());
         Entry entry2 = new Entry(2, "itemhash2", Instant.now());
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());
@@ -111,4 +111,3 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         assertThat(testItemDAO.getItems().size(), is(0));
     }
 }
-

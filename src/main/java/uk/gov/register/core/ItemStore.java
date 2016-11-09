@@ -18,7 +18,7 @@ public class ItemStore {
     }
 
     public void putItem(Item item) {
-        itemValidator.validateItem(registerName, item.getContent());
+        itemValidator.validateItem(registerName, item);
         backingStoreDriver.insertItem(item);
     }
 
