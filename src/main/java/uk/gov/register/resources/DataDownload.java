@@ -32,7 +32,7 @@ public class DataDownload {
     public DataDownload(RegisterReadOnly register, ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ResourceConfiguration resourceConfiguration) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.registerPrimaryKey = registerNameConfiguration.getRegister();
+        this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
         this.resourceConfiguration = resourceConfiguration;
     }
 

@@ -20,6 +20,7 @@ public interface RegisterReadOnly {
     int getTotalEntries();
 
     Optional<Instant> getLastUpdatedTime();
+    boolean containsField(String fieldName);
 
     Optional<Record> getRecord(String key); // TODO: is "record" the right word?
     int getTotalRecords();

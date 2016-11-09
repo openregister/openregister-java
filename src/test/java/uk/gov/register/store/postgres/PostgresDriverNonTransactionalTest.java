@@ -8,7 +8,7 @@ import uk.gov.register.core.Item;
 import java.time.Instant;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 
 public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {

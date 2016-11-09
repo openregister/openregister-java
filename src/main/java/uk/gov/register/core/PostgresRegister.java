@@ -1,8 +1,10 @@
 package uk.gov.register.core;
 
-import uk.gov.register.configuration.RegisterNameConfiguration;
+import com.google.common.collect.Lists;
 import uk.gov.register.db.RecordIndex;
-import uk.gov.register.exceptions.NoSuchItemException;
+import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.exceptions.NoSuchItemForEntryException;
+import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -11,6 +13,7 @@ import uk.gov.register.views.RegisterProof;
 import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -21,13 +24,17 @@ public class PostgresRegister implements Register {
     private final String registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
+    private final ArrayList<String> fields;
 
     @Inject
-    public PostgresRegister(RegisterNameConfiguration registerNameConfig,
-                            BackingStoreDriver backingStoreDriver) {
-        registerName = registerNameConfig.getRegister();
+    public PostgresRegister(RegisterData registerData,
+                            BackingStoreDriver backingStoreDriver,
+                            ItemValidator itemValidator) {
+        RegisterMetadata registerMetadata = registerData.getRegister();
+        registerName = registerMetadata.getRegisterName();
+        fields = Lists.newArrayList(registerMetadata.getFields());
         this.entryLog = new EntryLog(backingStoreDriver);
-        this.itemStore = new ItemStore(backingStoreDriver);
+        this.itemStore = new ItemStore(backingStoreDriver, itemValidator, registerName);
         this.recordIndex = new RecordIndex(backingStoreDriver);
     }
 
@@ -38,9 +45,9 @@ public class PostgresRegister implements Register {
 
     @Override
     public void appendEntry(Entry entry) {
+        Item item = itemStore.getItemBySha256(entry.getSha256hex()).orElseThrow(() -> new NoSuchItemForEntryException(entry));
         entryLog.appendEntry(entry);
-        recordIndex.updateRecordIndex(registerName, new Record(entry, itemStore.getItemBySha256(entry.getSha256hex())
-                .orElseThrow(() -> new NoSuchItemException(entry.getSha256hex()))));
+        recordIndex.updateRecordIndex(registerName, new Record(entry, item));
     }
 
     @Override
@@ -99,7 +106,16 @@ public class PostgresRegister implements Register {
     }
 
     @Override
+    public boolean containsField(String fieldName) {
+        return fields.contains(fieldName);
+    }
+
+    @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
+        if (!containsField(key)) {
+            throw new NoSuchFieldException(registerName, key);
+        }
+
         return recordIndex.findMax100RecordsByKeyValue(key, value);
     }
 
