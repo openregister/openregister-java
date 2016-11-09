@@ -1,7 +1,6 @@
 package uk.gov.register.core;
 
 import com.google.common.collect.Lists;
-import org.thymeleaf.templatemode.ITemplateModeHandler;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
