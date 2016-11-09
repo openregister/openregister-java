@@ -17,6 +17,7 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public abstract class PostgresDriver implements BackingStoreDriver {
 

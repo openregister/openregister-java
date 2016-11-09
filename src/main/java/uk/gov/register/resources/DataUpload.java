@@ -30,20 +30,17 @@ public class DataUpload {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected final ViewFactory viewFactory;
     private final RegisterService registerService;
-    private final String registerPrimaryKey;
     private final ObjectReconstructor objectReconstructor;
-    private final ItemValidator itemValidator;
     private final RegisterUpdateService registerUpdateService;
 
 
     @Inject
 
-    public DataUpload(ViewFactory viewFactory, RegisterService registerService, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator, RegisterUpdateService registerUpdateService) {
-        this.viewFactory = viewFactory;
+    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterUpdateService registerUpdateService) {
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
+        this.registerUpdateService = registerUpdateService;
     }
 
     @Context
