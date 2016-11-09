@@ -23,7 +23,10 @@ import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.*;
+import uk.gov.register.core.PostgresRegister;
+import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -33,6 +36,7 @@ import uk.gov.register.service.RegisterService;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
+import uk.gov.register.util.CanonicalJsonValidator;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
@@ -98,6 +102,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(jdbi);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
+                bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
