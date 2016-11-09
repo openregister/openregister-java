@@ -23,19 +23,21 @@ import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.*;
+import uk.gov.register.core.PostgresRegister;
+import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
-import uk.gov.register.resources.RegisterComponentReader;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterService;
+import uk.gov.register.service.RegisterUpdateService;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.ObjectReconstructor;
-import uk.gov.register.util.OrphanFinder;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
@@ -90,8 +92,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
 
-        OrphanFinder orphanFinder = new OrphanFinder();
-
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
@@ -101,10 +101,12 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(jdbi);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
+
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
                 bind(RegisterService.class).to(RegisterService.class);
+                bind(RegisterUpdateService.class).to(RegisterUpdateService.class);
 
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
@@ -115,7 +117,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(configuration);
                 bind(client).to(Client.class);
-                bind(orphanFinder).to(OrphanFinder.class);
             }
         });
 

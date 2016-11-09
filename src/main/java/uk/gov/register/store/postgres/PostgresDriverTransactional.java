@@ -7,8 +7,11 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
+import uk.gov.register.service.RegisterService;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.util.*;
@@ -16,6 +19,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class PostgresDriverTransactional extends PostgresDriver {
+
+    private final static Logger LOG = LoggerFactory.getLogger(PostgresDriverTransactional.class);
+
     private final Handle handle;
 
     private final List<Entry> stagedEntries;
@@ -58,6 +64,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
             transactionalMemoizationStore.commitHashesToStore();
             handle.commit();
         } catch (Exception ex) {
+            LOG.error("",ex);
             handle.rollback();
             transactionalMemoizationStore.rollbackHashesFromStore();
             throw ex;

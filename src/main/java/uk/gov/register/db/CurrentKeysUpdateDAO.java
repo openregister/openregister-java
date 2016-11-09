@@ -11,8 +11,8 @@ import org.skife.jdbi.v2.unstable.BindIn;
 public interface CurrentKeysUpdateDAO {
     String CURRENT_KEYS_TABLE = "current_keys";
 
-    @SqlUpdate("delete from " + CURRENT_KEYS_TABLE + " where key in (<keys>)")
-    int removeRecordWithKeys(@BindIn("keys") Iterable<String> allKeys);
+    @SqlBatch("delete from " + CURRENT_KEYS_TABLE + " where key = :key")
+    int[] removeRecordWithKeys(@Bind("key") Iterable<String> allKeys);
 
     @SqlBatch("insert into " + CURRENT_KEYS_TABLE + "(entry_number, key) values(:entry_number, :key)")
     void writeCurrentKeys(@BindBean Iterable<CurrentKey> values);

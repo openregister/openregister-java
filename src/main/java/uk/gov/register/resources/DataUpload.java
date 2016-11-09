@@ -9,12 +9,11 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.serialization.RegisterComponents;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterService;
+import uk.gov.register.service.RegisterUpdateService;
 import uk.gov.register.util.ObjectReconstructor;
-import uk.gov.register.util.OrphanFinder;
 import uk.gov.register.views.ViewFactory;
 
 import javax.annotation.security.PermitAll;
@@ -25,29 +24,30 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Path("/")
 public class DataUpload {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected final ViewFactory viewFactory;
-    private RegisterService registerService;
-    private String registerPrimaryKey;
-    private ObjectReconstructor objectReconstructor;
-    private ItemValidator itemValidator;
+    private final RegisterService registerService;
+    private final String registerPrimaryKey;
+    private final ObjectReconstructor objectReconstructor;
+    private final ItemValidator itemValidator;
+    private final RegisterUpdateService registerUpdateService;
 
 
     @Inject
-    public DataUpload(ViewFactory viewFactory, RegisterService registerService, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator) {
+
+    public DataUpload(ViewFactory viewFactory, RegisterService registerService, RegisterNameConfiguration registerNameConfiguration, ObjectReconstructor objectReconstructor, ItemValidator itemValidator, RegisterUpdateService registerUpdateService) {
         this.viewFactory = viewFactory;
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
         this.itemValidator = itemValidator;
         this.registerPrimaryKey = registerNameConfiguration.getRegister();
+        this.registerUpdateService = registerUpdateService;
     }
 
     @Context
@@ -73,7 +73,7 @@ public class DataUpload {
     @Path("/load-rsf")
     public void loadRsf(RegisterComponents registerComponents) {
         logger.info("parsed rsf input");
-        registerService.processRegisterComponents(registerComponents);
+        registerUpdateService.processRegisterComponents(registerComponents);
         logger.info("loading rsf complete");
     }
 
