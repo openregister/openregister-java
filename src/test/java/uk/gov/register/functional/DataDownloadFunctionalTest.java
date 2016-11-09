@@ -22,10 +22,10 @@ import static org.junit.Assert.assertTrue;
 
 public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
-    private final String item1 = "{\"address\":\"12345\",\"street\":\"ellis\"}";
-    private final String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
-    private final String item3 =  "{\"address\":\"12345\",\"street\":\"foo\"}";
-    private final String item4 =  "{\"address\":\"145678\",\"street\":\"ellis\"}";
+    private final String item1 = "{\"street\":\"ellis\",\"address\":\"12345\"}";
+    private final String item2 = "{\"street\":\"presley\",\"address\":\"6789\"}";
+    private final String item3 =  "{\"street\":\"foo\",\"address\":\"12345\"}";
+    private final String item4 =  "{\"street\":\"ellis\",\"address\":\"145678\"}";
 
     @Before
     public void publishTestMessages() {
@@ -126,9 +126,16 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void downloadPartialRSF_shouldReturnReturn404ForIncorectRsfBoundaries() throws IOException {
+    public void downloadPartialRSF_shouldReturnReturn404ForRsfBoundariesInTheIncorrectOrder() throws IOException {
         Response response = getRequest("/download-rsf/4/1");
         
+        assertThat(response.getStatus(), equalTo(400));
+    }
+
+    @Test
+    public void downloadPartialRSF_shouldReturnReturn404ForRsfBoundariesOutOfBound() throws IOException {
+        Response response = getRequest("/download-rsf/666/1000");
+
         assertThat(response.getStatus(), equalTo(400));
     }
 

@@ -75,8 +75,14 @@ public class DataDownload {
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Response downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
+
         if (startEntryNo > endEntryNo) {
             throw new BadRequestException("start-entry-no must be smaller than or equal to end-entry-no");
+        }
+
+        int totalEntries = register.getTotalEntries();
+        if(startEntryNo > totalEntries){
+            throw new BadRequestException("start-entry-no must be smaller than total entries in the register");
         }
 
         return createStreamResponseFor(
