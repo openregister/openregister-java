@@ -11,8 +11,6 @@ import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.EntryView;
 import uk.gov.register.views.ItemView;
-import uk.gov.register.views.representations.turtle.EntryTurtleWriter;
-import uk.gov.register.views.representations.turtle.ItemTurtleWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -65,7 +63,7 @@ public class TurtleRepresentationWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map), ""), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -98,7 +96,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("itemhash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("itemhash", objectMapper.valueToTree(map), ""), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -121,7 +119,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map), ""), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

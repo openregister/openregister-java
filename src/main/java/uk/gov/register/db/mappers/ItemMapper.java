@@ -22,7 +22,7 @@ public class ItemMapper implements ResultSetMapper<Item> {
     public Item map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         try {
             String rawContent = r.getString("content");
-            return new Item(r.getString("sha256hex"), objectMapper.readValue(rawContent, JsonNode.class));
+            return new Item(r.getString("sha256hex"), objectMapper.readValue(rawContent, JsonNode.class), rawContent);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

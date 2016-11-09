@@ -39,11 +39,11 @@ public class RecordListViewTest {
         List<Record> records = Lists.newArrayList(
                 new Record(
                         new Entry(1, "ab", t1),
-                        new Item("ab", Jackson.newObjectMapper().readTree("{\"address\":\"123\", \"street\":\"foo\"}"))
+                        new Item("ab", Jackson.newObjectMapper().readTree("{\"address\":\"123\", \"street\":\"foo\"}"), "")
                 ),
                 new Record(
                         new Entry(2, "cd", t2),
-                        new Item("cd", Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"))
+                        new Item("cd", Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"), "")
                 )
         );
         RegisterData registerData = new RegisterData(ImmutableMap.of("register", new TextNode("address")));

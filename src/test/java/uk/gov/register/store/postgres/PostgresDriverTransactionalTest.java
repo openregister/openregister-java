@@ -123,7 +123,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        items.add(new Item("itemhash1", new ObjectMapper().createObjectNode()));
+        items.add(new Item("itemhash1", new ObjectMapper().createObjectNode(), ""));
         entries.add(mock(Entry.class));
         currentKeys.add(new CurrentKey("DE", 1));
 
@@ -131,7 +131,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertThat(entries.size(), is(1));
         assertThat(currentKeys.size(), is(1));
 
-        postgresDriver.insertItem(new Item("itemhash2", new ObjectMapper().createObjectNode()));
+        postgresDriver.insertItem(new Item("itemhash2", new ObjectMapper().createObjectNode(), ""));
         postgresDriver.insertEntry(mock(Entry.class));
         postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
 
@@ -180,9 +180,9 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
+        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode(), "");
+        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode(), "");
+        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode(), "");
         Entry entry1 = new Entry(1, "itemhash1", Instant.now());
         Entry entry2 = new Entry(2, "itemhash2", Instant.now());
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());

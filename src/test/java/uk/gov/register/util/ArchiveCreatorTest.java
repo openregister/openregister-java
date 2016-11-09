@@ -35,11 +35,11 @@ public class ArchiveCreatorTest {
 
     private final Item entry1Item = new Item("entry1sha", jsonFactory.objectNode()
         .put("field-1", "entry1-field-1-value")
-        .put("field-2", "entry1-field-2-value"));
+        .put("field-2", "entry1-field-2-value"), "{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}");
 
     private final Item entry2Item = new Item("entry2sha", jsonFactory.objectNode()
         .put("field-1", "entry2-field-1-value")
-        .put("field-2", "entry2-field-2-value"));
+        .put("field-2", "entry2-field-2-value"), "{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}");
 
     @Test
     public void create_shouldCreateAnArchiveWithRegisterInfoEntriesAndItems() throws IOException {

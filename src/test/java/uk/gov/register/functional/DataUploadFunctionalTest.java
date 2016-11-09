@@ -87,8 +87,8 @@ public class DataUploadFunctionalTest {
 
     @Test
     public void loadTwoDistinctItems_addsTwoRowsInEntryAndItemTable() {
-        String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
-        String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
+        String item1 = "{\"phase\":\"alpha\",\"register\":\"register1\",\"text\":\"Register1 Text\"}";
+        String item2 = "{\"phase\":\"alpha\",\"register\":\"register2\",\"text\":\"Register2 Text\"}";
 
         Response r = send(item1 + "\n" + item2);
 
@@ -124,8 +124,8 @@ public class DataUploadFunctionalTest {
 
     @Test
     public void loadTwoSameItems_addsTwoRowsInEntryAndOnlyOneRowInItemTable() {
-        String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
-        String item2 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
+        String item1 = "{\"phase\":\"alpha\",\"register\":\"register1\",\"text\":\"Register1 Text\"}";
+        String item2 = "{\"phase\":\"alpha\",\"register\":\"register1\",\"text\":\"Register1 Text\"}";
 
         Response r = send(item1 + "\n" + item2);
 
@@ -156,11 +156,11 @@ public class DataUploadFunctionalTest {
 
     @Test
     public void loadTwoNewItems_withOneItemPreexistsInDatabase_addsTwoRowsInEntryAndOnlyOneRowInItemTable() {
-        String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
+        String item1 = "{\"phase\":\"alpha\",\"register\":\"register1\",\"text\":\"Register1 Text\"}";
         Response r = send(item1);
         assertThat(r.getStatus(), equalTo(204));
 
-        String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
+        String item2 = "{\"phase\":\"alpha\",\"register\":\"register2\",\"text\":\"Register2 Text\"}";
 
         r = send(item1 + "\n" + item2);
 

@@ -16,14 +16,16 @@ public class Item {
 
     private final String sha256hex;
     private final JsonNode content;
+    private final String rawContent;
 
-    public Item(JsonNode content) {
-        this(itemHash(content), content);
+    public Item(JsonNode content, String rawContent) {
+        this(itemHash(content), content, rawContent);
     }
 
-    public Item(String sha256hex, JsonNode content) {
+    public Item(String sha256hex, JsonNode content, String rawContent) {
         this.sha256hex = sha256hex;
         this.content = content;
+        this.rawContent = rawContent;
     }
 
     public static String itemHash(JsonNode content) {
@@ -41,6 +43,8 @@ public class Item {
     public JsonNode getContent() {
         return content;
     }
+
+    public String getRawContent() { return rawContent; }
 
     @SuppressWarnings("unused, used by DAO")
     public PGobject getContentAsJsonb() throws SQLException {

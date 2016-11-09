@@ -18,10 +18,10 @@ public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverNonTransactional postgresDriver = new PostgresDriverNonTransactional(
                 dbi, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
-        Item item4 = new Item("itemhash4", new ObjectMapper().createObjectNode());
+        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode(), "");
+        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode(), "");
+        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode(), "");
+        Item item4 = new Item("itemhash4", new ObjectMapper().createObjectNode(), "");
 
         postgresDriver.insertItem(item1);
         postgresDriver.insertItem(item2);

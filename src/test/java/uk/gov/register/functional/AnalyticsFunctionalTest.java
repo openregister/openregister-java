@@ -8,12 +8,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
-import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.DBSupport;
 import uk.gov.register.functional.db.TestDAO;
 import uk.gov.register.functional.db.TestEntry;
@@ -49,8 +47,8 @@ public class AnalyticsFunctionalTest {
         dbSupport = new DBSupport(testDAO);
 
         dbSupport.cleanDb();
-        testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}");
-        testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}");
+        testEntry1 = TestEntry.anEntry(1, "{\"address\":\"12345\",\"street\":\"" + testEntry1Key + "\"}");
+        testEntry2 = TestEntry.anEntry(2, "{\"address\":\"12346\",\"street\":\"" + testEntry2Key + "\"}");
         dbSupport.publishEntries("address", Arrays.asList(testEntry1, testEntry2));
     }
 

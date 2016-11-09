@@ -7,36 +7,42 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.JsonMapper;
 
 import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Set;
 
 public class ItemValidator {
     private final FieldsConfiguration fieldsConfiguration;
     private final RegistersConfiguration registersConfiguration;
+    private final JsonMapper jsonMapper;
     private final CanonicalJsonMapper canonicalJsonMapper;
 
     @Inject
-    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, CanonicalJsonMapper canonicalJsonMapper) {
+    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, JsonMapper jsonMapper, CanonicalJsonMapper canonicalJsonMapper) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;
+        this.jsonMapper = jsonMapper;
         this.canonicalJsonMapper = canonicalJsonMapper;
     }
 
-    public void validateItem(String registerName, JsonNode inputEntry) throws ItemValidationException {
+    public void validateItem(String registerName, Item item) throws ItemValidationException {
         RegisterMetadata registerMetadata = registersConfiguration.getRegisterData(registerName).getRegister();
 
-        validateFields(inputEntry, registerMetadata);
+        validateFields(item.getContent(), registerMetadata);
 
-        validatePrimaryKeyExists(inputEntry, registerMetadata.getRegisterName());
+        validatePrimaryKeyExists(item.getContent(), registerMetadata.getRegisterName());
 
-        validateFieldsValue(inputEntry);
+        validateFieldsValue(item.getContent());
 
-        validateItemIsCanonicalized(inputEntry);
+        validateItemIsCanonicalized(item);
     }
 
     private void validatePrimaryKeyExists(JsonNode inputEntry, String registerName) throws ItemValidationException {
@@ -74,11 +80,12 @@ public class ItemValidator {
         });
     }
 
-    public void validateItemIsCanonicalized(JsonNode inputEntry) {
-        byte[] rawItemBytes = inputEntry.toString().getBytes();
-        JsonNode canonicalizedItem = canonicalJsonMapper.readFromBytes(rawItemBytes);
+    public void validateItemIsCanonicalized(Item item) {
+        byte[] rawContentBytes = item.getRawContent().getBytes(StandardCharsets.UTF_8);
+        byte[] nonCanonicalizedBytes = jsonMapper.writeToBytes(jsonMapper.readFromBytes(rawContentBytes));
+        byte[] canonicalizedBytes = canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(rawContentBytes));
 
-        throwEntryValidationExceptionIfConditionIsFalse(inputEntry == canonicalizedItem, inputEntry, "Entry is not canonicalized");
+        throwEntryValidationExceptionIfConditionIsFalse(!Arrays.equals(nonCanonicalizedBytes, canonicalizedBytes), item.getContent(), "Entry is not canonicalized");
     }
 
     private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
