@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.views.RegisterProof;
 
 import java.io.IOException;
@@ -17,6 +18,10 @@ import java.time.Instant;
 public class CommandParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(CommandParser.class);
+
+    private final String TAB = "\t";
+    private final String NEW_LINE = System.lineSeparator();
+    private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
     public RegisterCommand newCommand(String s){
         String[] parts = s.split("\t");
@@ -64,14 +69,14 @@ public class CommandParser {
         }
     }
 
-    public String serialise(Entry e){
-        return e.toString();
+    public String serialise(Entry entry){
+        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getItemHash() + NEW_LINE;
     }
-    public String serialise(Item i){
-        return i.toString();
+    public String serialise(Item item){
+        return "add-item" + TAB + canonicalJsonMapper.writeToString(item.getContent()) + NEW_LINE;
     }
     public String serialise(RegisterProof registerProof){
-        return registerProof.toString();
+        return "assert-root-hash" + TAB + registerProof.getRootHash() + NEW_LINE;
     }
 
 

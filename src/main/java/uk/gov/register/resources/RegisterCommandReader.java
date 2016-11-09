@@ -48,3 +48,4 @@ public class RegisterCommandReader implements MessageBodyReader<RegisterCommandL
 
     }
 }
+

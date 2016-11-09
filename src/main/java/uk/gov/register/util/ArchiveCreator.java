@@ -7,21 +7,18 @@ import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
-import uk.gov.register.serialisation.SerialisationFormatter;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ArchiveCreator {
 
     public StreamingOutput create(RegisterDetail registerDetail, Collection<Entry> entries, Collection<Item> items) {
-        CanonicalJsonMapper mapper = new CanonicalJsonMapper();
         return output -> {
             try (ZipEntryWriter zipEntryWriter = new ZipEntryWriter(output)) {
 
@@ -34,26 +31,6 @@ public class ArchiveCreator {
                         zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.getEntryNumber()), entry)
                 );
             }
-        };
-    }
-
-    public StreamingOutput createRSF(Iterator<Item> items, Iterator<Entry> entries, SerialisationFormatter formatter) {
-        return output -> {
-            items.forEachRemaining(item -> {
-                try {
-                    output.write(formatter.format(item).getBytes());
-                } catch (IOException e) {
-                    Throwables.propagate(e);
-                }
-            });
-
-            entries.forEachRemaining(entry -> {
-                try {
-                    output.write(formatter.format(entry).getBytes());
-                } catch (IOException e) {
-                    Throwables.propagate(e);
-                }
-            });
         };
     }
 
