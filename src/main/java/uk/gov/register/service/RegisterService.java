@@ -19,7 +19,7 @@ public class RegisterService {
     private final ItemValidator itemValidator;
 
     @Inject
-    public RegisterService(RegisterNameConfiguration registerNameConfig, DBI dbi, MemoizationStore memoizationStore, ItemValidator itemValidator, OrphanFinder orphanFinder) {
+    public RegisterService(RegisterNameConfiguration registerNameConfig, DBI dbi, MemoizationStore memoizationStore, ItemValidator itemValidator) {
         this.registerNameConfig = registerNameConfig;
         this.dbi = dbi;
         this.memoizationStore = memoizationStore;

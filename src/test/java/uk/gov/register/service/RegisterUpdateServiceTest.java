@@ -32,9 +32,8 @@ public class RegisterUpdateServiceTest {
     private Entry entry1;
 
     @Mock
-    private OrphanFinder orphanFinder;
-    @Mock
     private RegisterService registerService;
+
     private RegisterUpdateService service;
 
     @Before
@@ -50,7 +49,7 @@ public class RegisterUpdateServiceTest {
         entry0 = new Entry(0, getHash(content0), Instant.now());
         entry1 = new Entry(1, getHash(content1), Instant.now());
 
-        service = new RegisterUpdateService(registerService, orphanFinder);
+        service = new RegisterUpdateService(registerService);
     }
 
     @Test

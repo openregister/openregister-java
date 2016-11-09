@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
-import uk.gov.register.util.SerializedRegisterParser;
 import uk.gov.register.views.RegisterProof;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 
 public class CommandParser {
-    private static final Logger LOG = LoggerFactory.getLogger(SerializedRegisterParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CommandParser.class);
 
     public RegisterCommand newCommand(String s){
         String[] parts = s.split("\t");

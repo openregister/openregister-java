@@ -19,7 +19,7 @@ public class RegisterUpdateService {
     private final RegisterService registerService;
 
     @Inject
-    public RegisterUpdateService(RegisterService registerService, OrphanFinder orphanFinder) {
+    public RegisterUpdateService(RegisterService registerService) {
         this.registerService = registerService;
     }
 

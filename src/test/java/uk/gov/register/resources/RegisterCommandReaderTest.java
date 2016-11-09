@@ -1,13 +1,23 @@
-package uk.gov.register.util;
+package uk.gov.register.resources;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterComponents;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,91 +31,85 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertThat;
 
-public class SerializedRegisterParserTest {
+@RunWith(MockitoJUnitRunner.class)
+public class RegisterCommandReaderTest {
+
+    Class<RegisterComponents> type = RegisterComponents.class;
+    @Mock
+    Type genericType;
+    @Mock
+    Annotation[] annotations;
+    @Mock
+    MediaType mediaType;
+    @Mock
+    MultivaluedMap<String, String> httpHeaders;
 
     @Test
     public void shouldParseCommands() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register.tsv"))
         ) {
-            RegisterComponents registerComponents = parser.parseCommands(serializerRegisterStream);
-            Set<Item> items = registerComponents.items;
-            List<Entry> entries = registerComponents.entries;
+            RegisterComponents registerComponents = parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
+            List<RegisterCommand> commands = registerComponents.commands;
 
-            assertThat(items.size(), is(2));
+            assertThat(commands.size(), is(4));
 
-            List<String> contents = items.stream().map(i -> i.getContent().toString()).collect(Collectors.toList());
-            assertThat(contents, hasItems(startsWith("{\"address\":\"9AQZJ3M\""), startsWith("{\"address\":\"9AQZJ3K\"")));
 
-            assertThat(entries.size(), is(2));
-
-            Entry entry0 = entries.get(0);
-            assertThat(entry0.getEntryNumber(), is(0));
-
-            Entry entry1 = entries.get(1);
-            assertThat(entry1.getEntryNumber(), is(1));
         }
     }
 
     @Test
     public void shouldParseCommandsEscaped() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))
         ) {
-            RegisterComponents registerComponents = parser.parseCommands(serializerRegisterStream);
-            Set<Item> items = registerComponents.items;
-            List<Entry> entries = registerComponents.entries;
+            RegisterComponents registerComponents = parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
+            List<RegisterCommand> commands = registerComponents.commands;
 
-            assertThat(items.size(), is(1));
-            assertThat(entries.size(), is(1));
-
-            Entry entry = entries.get(0);
-            Item item = items.iterator().next();
-
-            assertThat( entry.getSha256hex(), is(item.getSha256hex()));
+            assertThat(commands.size(), is(2));
         }
     }
 
     @Test(expected = SerializedRegisterParseException.class)
     public void shouldThrowExWhenNoHash() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         InputStream serializerRegisterStream = streamString("append-entry\t2016-10-12T17:45:19.757132");
-        parser.parseCommands(serializerRegisterStream);
+        parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
     }
 
     @Test(expected = SerializedRegisterParseException.class)
     public void shouldThrowExWhenNoContent() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         InputStream serializerRegisterStream = streamString("add-item");
-        parser.parseCommands(serializerRegisterStream);
+        parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
     }
 
     @Test(expected = SerializedRegisterParseException.class)
     public void shouldThrowExWhenNoHashPrefix() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         InputStream serializerRegisterStream = streamString("append-entry\t2016-10-12T17:45:19.757132\tabc123");
-        parser.parseCommands(serializerRegisterStream);
+        parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
     }
 
     @Test(expected = SerializedRegisterParseException.class)
     public void shouldThrowExWhenInvalidCommand() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         InputStream serializerRegisterStream = streamString("assert-root-hash\tabc123");
-        parser.parseCommands(serializerRegisterStream);
+        parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
     }
 
     @Test(expected = DateTimeParseException.class)
     public void shouldFailIfTimestampNotIso() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         InputStream serializerRegisterStream = streamString("append-entry\t20161212\tsha-256:abc123");
-        parser.parseCommands(serializerRegisterStream);
+        parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
     }
 
     @Test(expected = SerializedRegisterParseException.class)
     public void shouldFailIfInvalidJson() throws Exception {
-        SerializedRegisterParser parser = new SerializedRegisterParser();
+        RegisterCommandReader parser = new RegisterCommandReader();
         InputStream serializerRegisterStream = streamString("add-item\t{\"address\":\"9AQZJ3K\"");
-        parser.parseCommands(serializerRegisterStream);
+        parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
     }
 
 
