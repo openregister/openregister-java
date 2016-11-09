@@ -3,6 +3,7 @@ package uk.gov.register.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.service.ItemValidator;
@@ -12,6 +13,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
 public class PostgresRegisterTest {
@@ -74,7 +77,8 @@ public class PostgresRegisterTest {
         } catch (NoSuchItemForEntryException ex) {
         }
 
-        verify(backingStoreDriver, times(1)).insertEntry(any());
+        verify(backingStoreDriver, times(1)).insertEntry(entryNotDangling);
+        verify(backingStoreDriver, never()).insertEntry(entryDangling);
     }
 
     @Test
@@ -99,6 +103,11 @@ public class PostgresRegisterTest {
         } catch (NoSuchItemForEntryException ex) {
         }
 
-        verify(backingStoreDriver, times(1)).insertRecord(any(), eq("country"));
+        verify(backingStoreDriver, times(1)).insertRecord(any(), anyString());
+
+        ArgumentCaptor<Record> argumentCaptor = ArgumentCaptor.forClass(Record.class);
+        verify(backingStoreDriver, times(1)).insertRecord(argumentCaptor.capture(), eq("country"));
+        assertThat(argumentCaptor.getValue().entry, is(entryNotDangling));
+        assertThat(argumentCaptor.getValue().item, is(item));
     }
 }
