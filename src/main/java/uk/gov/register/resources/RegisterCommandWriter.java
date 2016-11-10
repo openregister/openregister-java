@@ -1,6 +1,5 @@
 package uk.gov.register.resources;
 
-import uk.gov.register.core.Register;
 import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -22,8 +21,7 @@ import java.util.Iterator;
 public class RegisterCommandWriter implements MessageBodyWriter<Iterator<RegisterCommand>>{
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        boolean result = Iterator.class.isAssignableFrom(type);
-        return result;
+        return Iterator.class.isAssignableFrom(type);
     }
 
     @Override
@@ -34,6 +32,8 @@ public class RegisterCommandWriter implements MessageBodyWriter<Iterator<Registe
     @Override
     public void writeTo(Iterator<RegisterCommand> registerCommandIterator, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         CommandParser commandParser = new CommandParser();
+        httpHeaders.add("Content-Disposition", String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), commandParser.getFileExtension()));
+
         registerCommandIterator.forEachRemaining(command -> {
             try {
                 entityStream.write(command.serialise(commandParser).getBytes());

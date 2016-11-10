@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -90,7 +91,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
     public void downloadRSF_shouldReturnRegisterAsRsfStream() throws IOException {
         Response response = getRequest("/download-rsf");
 
-        assertThat(response.getHeaderString("Content-Type"), equalTo(MediaType.APPLICATION_OCTET_STREAM));
+        assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
 
@@ -112,7 +113,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
     public void downloadPartialRSF_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
         Response response = getRequest("/download-rsf/3/4");
 
-        assertThat(response.getHeaderString("Content-Type"), equalTo(MediaType.APPLICATION_OCTET_STREAM));
+        assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
 

@@ -78,6 +78,7 @@ public class CommandParser {
     public String serialise(RegisterProof registerProof){
         return "assert-root-hash" + TAB + registerProof.getRootHash() + NEW_LINE;
     }
-
-
+    public String getFileExtension(){
+        return "tsv";
+    }
 }
