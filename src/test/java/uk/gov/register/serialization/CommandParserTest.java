@@ -1,21 +1,21 @@
 package uk.gov.register.serialization;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.tomakehurst.wiremock.common.Json;
 import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
-import uk.gov.register.resources.RegisterCommandReader;
+import uk.gov.register.views.RegisterProof;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class CommandParserTest {
 
@@ -75,5 +75,33 @@ public class CommandParserTest {
         commandParser.newCommand(line);
     }
 
+    @Test
+    public void serialise_shouldFormatEntryAsTsvLine(){
+        Instant entryTimestamp = Instant.parse("2016-07-15T10:00:00Z");
+        Entry entry = new Entry(1, "item-hash", entryTimestamp);
+
+        String actualLine = commandParser.serialise(entry);
+
+        assertThat(actualLine, equalTo("append-entry\t2016-07-15T10:00:00Z\tsha-256:item-hash\n"));
+    }
+
+    @Test
+    public void serialise_shouldFormatItemAsTsvLine(){
+        JsonNode itemContent = Json.read("{\"b\": \"2\",\"a\": \"1\" }", JsonNode.class);
+        Item item = new Item(itemContent);
+
+        String actualLine = commandParser.serialise(item);
+
+        assertThat(actualLine, equalTo("add-item\t{\"a\":\"1\",\"b\":\"2\"}\n"));
+    }
+
+    @Test
+    public void serialise_shouldFormatProofAsTsvLine(){
+        RegisterProof registerProof = new RegisterProof("root-hash");
+
+        String actualLine = commandParser.serialise(registerProof);
+
+        assertThat(actualLine, equalTo("assert-root-hash\troot-hash\n"));
+    }
 
 }
