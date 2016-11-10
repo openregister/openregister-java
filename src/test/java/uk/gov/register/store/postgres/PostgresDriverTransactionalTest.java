@@ -18,6 +18,7 @@ import java.util.function.Function;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
@@ -175,14 +176,14 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     }
 
     @Test
-    public void entryAndItemDataShouldBeCommittedInOrder() {
+    public void entryAndItemDataShouldBeCommittedInOrder() throws Exception {
         when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
+        Item item1 = new Item("itemhash1", new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
+        Item item2 = new Item("itemhash2", new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
+        Item item3 = new Item("itemhash3", new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
         Entry entry1 = new Entry(1, "itemhash1", Instant.now());
         Entry entry2 = new Entry(2, "itemhash2", Instant.now());
         Entry entry3 = new Entry(3, "itemhash3", Instant.now());
@@ -196,7 +197,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
         postgresDriver.getAllEntries();
 
-        assertThat(items, contains(item1, item2, item3));
+        assertThat(items, containsInAnyOrder(item1, item2, item3));
         assertThat(entries, contains(entry1, entry2, entry3));
     }
 
@@ -204,8 +205,11 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        postgresDriver.insertItem(mock(Item.class));
-        postgresDriver.insertItem(mock(Item.class));
+        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
+        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
+
+        postgresDriver.insertItem(item1);
+        postgresDriver.insertItem(item2);
         postgresDriver.insertEntry(mock(Entry.class));
         postgresDriver.insertRecord(mockRecord("country", "DE", 1), "country");
 

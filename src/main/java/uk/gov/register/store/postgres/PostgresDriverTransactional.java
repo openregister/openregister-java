@@ -9,12 +9,17 @@ import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.core.*;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.Record;
+import uk.gov.register.core.TransactionalMemoizationStore;
 import uk.gov.register.db.*;
-import uk.gov.register.service.RegisterService;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -25,7 +30,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final Handle handle;
 
     private final List<Entry> stagedEntries;
-    private final Set<Item> stagedItems;
+    private final HashMap<String,Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
 
     private PostgresDriverTransactional(Handle handle, TransactionalMemoizationStore memoizationStore) {
@@ -33,7 +38,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
-        this.stagedItems = new LinkedHashSet<>();
+        this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
     }
 
@@ -45,7 +50,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
-        this.stagedItems = new LinkedHashSet<>();
+        this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
     }
 
@@ -80,7 +85,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
     @Override
     public void insertItem(Item item) {
-        stagedItems.add(item);
+        stagedItems.put(item.getSha256hex(),item);
     }
 
     @Override
@@ -144,7 +149,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
         if (stagedItems.isEmpty()) {
             return;
         }
-        super.insertItems(stagedItems);
+        super.insertItems(stagedItems.values());
         stagedItems.clear();
     }
 
@@ -162,6 +167,6 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     private Optional<Item> searchStagingForItem(String sha256hex) {
-        return stagedItems.stream().filter(item -> item.getSha256hex().equals(sha256hex)).findFirst();
+        return Optional.ofNullable(stagedItems.get(sha256hex));
     }
 }
