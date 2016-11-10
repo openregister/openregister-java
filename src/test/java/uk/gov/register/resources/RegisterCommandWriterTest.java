@@ -3,7 +3,13 @@ package uk.gov.register.resources;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.mockito.Mockito.*;
+
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
@@ -12,18 +18,17 @@ import uk.gov.register.serialization.AppendEntryCommand;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Matchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterCommandWriterTest {
@@ -43,11 +48,12 @@ public class RegisterCommandWriterTest {
 
 
     @Mock
-    private MultivaluedMap<String, Object> httpHeaders;
+    private MultivaluedMap<String, Object> httpHeadersMock;
 
     @Test
     public void writeTo_shouldCreateRegisterRepresentationWithEntriesAndItems() throws IOException {
-        Iterator<RegisterCommand> registerCommandsIterator = Arrays.asList(new AddItemCommand(item1),
+        Iterator<RegisterCommand> registerCommandsIterator = Arrays.asList(
+                new AddItemCommand(item1),
                 new AddItemCommand(item2),
                 new AppendEntryCommand(entry1),
                 new AppendEntryCommand(entry2)).iterator();
@@ -61,7 +67,7 @@ public class RegisterCommandWriterTest {
                 registerCommandsIterator.getClass(),
                 new Annotation[]{},
                 ExtraMediaType.APPLICATION_RSF_TYPE,
-                httpHeaders,
+                httpHeadersMock,
                 outputStream);
 
         String expectedRSF =
@@ -72,6 +78,34 @@ public class RegisterCommandWriterTest {
         String actualRSF = outputStream.toString();
 
         assertThat(actualRSF, equalTo(expectedRSF));
+    }
+
+    @Test
+    public void writeTo_shouldAddContentDispositionHeader() throws IOException {
+        Iterator<RegisterCommand> registerCommandsIterator = Arrays.asList(
+                new AddItemCommand(item1),
+                new AppendEntryCommand(entry1)).iterator();
+
+        final String[] actualContentDisposition = {""};
+        Mockito.doAnswer(invocation -> {
+            actualContentDisposition[0] = invocation.getArgument(1);
+            return null;
+        }).when(httpHeadersMock).add(eq("Content-Disposition"), anyObject());
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter();
+        sutCommandWriter.writeTo(
+                registerCommandsIterator,
+                registerCommandsIterator.getClass(),
+                registerCommandsIterator.getClass(),
+                new Annotation[]{},
+                ExtraMediaType.APPLICATION_RSF_TYPE,
+                httpHeadersMock,
+                outputStream);
+
+        verify(httpHeadersMock, times(1)).add(eq("Content-Disposition"), anyString());
+        assertThat(actualContentDisposition[0], startsWith("attachment; filename="));
+        assertThat(actualContentDisposition[0], endsWith(".tsv"));
     }
 
 }
