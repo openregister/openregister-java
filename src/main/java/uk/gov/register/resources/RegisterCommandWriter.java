@@ -17,7 +17,7 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 
 @Provider
-@Produces({ExtraMediaType.RSF, ExtraMediaType.TEXT_HTML})
+@Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
 public class RegisterCommandWriter implements MessageBodyWriter<Iterator<RegisterCommand>>{
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {

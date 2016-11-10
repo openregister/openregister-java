@@ -91,7 +91,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
     public void downloadRSF_shouldReturnRegisterAsRsfStream() throws IOException {
         Response response = getRequest("/download-rsf");
 
-        assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.RSF));
+        assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
 
@@ -113,7 +113,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
     public void downloadPartialRSF_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
         Response response = getRequest("/download-rsf/3/4");
 
-        assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.RSF));
+        assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
 

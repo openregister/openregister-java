@@ -66,7 +66,7 @@ public class DataDownload {
 
     @GET
     @Path("/download-rsf")
-    @Produces({ExtraMediaType.RSF, ExtraMediaType.TEXT_HTML})
+    @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Iterator<RegisterCommand> downloadRSF() {
         Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(), AddItemCommand::new);
@@ -77,7 +77,7 @@ public class DataDownload {
 
     @GET
     @Path("/download-rsf/{start-entry-no}/{end-entry-no}")
-    @Produces({ExtraMediaType.RSF, ExtraMediaType.TEXT_HTML})
+    @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Iterator<RegisterCommand> downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
 
