@@ -82,6 +82,4 @@ public class EntryLog {
     private String bytesToString(byte[] bytes) {
         return DatatypeConverter.printHexBinary(bytes).toLowerCase();
     }
-
-
 }
