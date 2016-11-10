@@ -24,7 +24,7 @@ public class CommandParser {
     private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
     public RegisterCommand newCommand(String s){
-        String[] parts = s.split("\t");
+        String[] parts = s.split(TAB);
         String commandName = parts[0];
         switch (commandName) {
             case "add-item":

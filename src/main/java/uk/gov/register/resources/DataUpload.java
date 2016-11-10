@@ -12,6 +12,7 @@ import uk.gov.register.serialization.RegisterCommandList;
 import uk.gov.register.service.RegisterService;
 import uk.gov.register.service.RegisterUpdateService;
 import uk.gov.register.util.ObjectReconstructor;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -59,7 +60,7 @@ public class DataUpload {
 
     @POST
     @PermitAll
-    @Consumes("application/uk-gov-rsf")
+    @Consumes(ExtraMediaType.APPLICATION_RSF)
     @Path("/load-rsf")
     public void loadRsf(RegisterCommandList registerCommandList) {
         logger.info("parsed rsf input");
