@@ -15,6 +15,7 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 
 public class CommandParser {
+
     private static final Logger LOG = LoggerFactory.getLogger(CommandParser.class);
 
     public RegisterCommand newCommand(String s){

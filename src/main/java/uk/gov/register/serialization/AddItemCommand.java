@@ -3,6 +3,8 @@ package uk.gov.register.serialization;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class AddItemCommand implements RegisterCommand {
 
     private Item item;
@@ -12,7 +14,7 @@ public class AddItemCommand implements RegisterCommand {
     }
 
     @Override
-    public void execute(Register register) {
+    public void execute(Register register, AtomicInteger entryNumber) {
         register.putItem(item);
     }
 

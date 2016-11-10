@@ -8,12 +8,10 @@ import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.serialization.RegisterComponents;
-import uk.gov.register.service.ItemValidator;
+import uk.gov.register.serialization.RegisterCommandList;
 import uk.gov.register.service.RegisterService;
 import uk.gov.register.service.RegisterUpdateService;
 import uk.gov.register.util.ObjectReconstructor;
-import uk.gov.register.views.ViewFactory;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -63,9 +61,9 @@ public class DataUpload {
     @PermitAll
     @Consumes("application/uk-gov-rsf")
     @Path("/load-rsf")
-    public void loadRsf(RegisterComponents registerComponents) {
+    public void loadRsf(RegisterCommandList registerCommandList) {
         logger.info("parsed rsf input");
-        registerUpdateService.processRegisterComponents(registerComponents);
+        registerUpdateService.processRegisterComponents(registerCommandList.commands);
         logger.info("loading rsf complete");
     }
 

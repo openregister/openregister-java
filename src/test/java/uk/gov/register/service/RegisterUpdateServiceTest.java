@@ -7,65 +7,80 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
+import uk.gov.register.core.Register;
+import uk.gov.register.serialization.AddItemCommand;
+import uk.gov.register.serialization.AppendEntryCommand;
+import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.CanonicalJsonMapper;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterUpdateServiceTest {
 
     private CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-    private JsonNode content0;
-    private JsonNode content1;
-    private JsonNode content2;
-    private Item item0;
-    private Item item1;
-    private Item item2;
-    private Entry entry0;
-    private Entry entry1;
 
     @Mock
     private RegisterService registerService;
+
+    @Mock
+    private Register register;
+
+    private List<RegisterCommand> commands;
+
+    private Item item;
+
+    private Entry entry;
 
     private RegisterUpdateService service;
 
     @Before
     public void setUp() throws Exception {
-        content0 = new ObjectMapper().readTree("{\"address\":\"9AQZJ3M\",\"name\":\"ST LAWRENCE CHURCH\"}");
-        content1 = new ObjectMapper().readTree("{\"address\":\"9AQZJ3M\",\"name\":\"ST LAWRENCE CHURCH REMAINS OF\"}");
-        content2 = new ObjectMapper().readTree("{\"address\":\"ZZZZZZZ\",\"name\":\"ST MARYS CHURCH\"}");
+        JsonNode content = new ObjectMapper().readTree("{\"address\":\"9AQZJ3M\",\"name\":\"ST LAWRENCE CHURCH\"}");
 
-        item0 = new Item(content0);
-        item1 = new Item(content1);
-        item2 = new Item(content2);
+        item = new Item(content);
+        AddItemCommand itemCommand = new AddItemCommand(item);
 
-        entry0 = new Entry(0, getHash(content0), Instant.now());
-        entry1 = new Entry(1, getHash(content1), Instant.now());
+        entry = new Entry(0, getHash(content), Instant.now());
+        AppendEntryCommand entryCommand = new AppendEntryCommand(entry);
+
+        commands = Arrays.asList(itemCommand, entryCommand);
 
         service = new RegisterUpdateService(registerService);
     }
 
     @Test
     public void processRegisterComponents() throws Exception {
-//        Set<Item> items = Sets.newHashSet(item0, item1, item2);
-//        List<Entry> entries = Arrays.asList(entry0, entry1);
-//
-//        when(orphanFinder.findOrphanItems(items, entries)).thenReturn(Collections.emptySet());
-//        when(orphanFinder.findChildlessEntries(items, entries)).thenReturn(Collections.emptySet());
-//
-//        RegisterComponents registerComponents = new RegisterComponents(entries, items);
-//
-//        service.processRegisterComponents(registerComponents);
-//
-//        verify(registerService).asAtomicRegisterOperation(any(Consumer.class));
-        assertEquals(1,1);
+
+        when(register.getTotalEntries()).thenReturn(0);
+
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) {
+                Consumer<Register> callback = (Consumer<Register>)invocation.getArguments()[0];
+                callback.accept(register);
+                return null;
+            }
+        }).when(registerService).asAtomicRegisterOperation(any(Consumer.class));
+
+        service.processRegisterComponents(commands);
+
+        verify(register).putItem(item);
+        verify(register).appendEntry(entry);
+
+
     }
 
     private String getHash(JsonNode content) {

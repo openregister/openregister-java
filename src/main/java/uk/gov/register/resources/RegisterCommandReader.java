@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterCommand;
-import uk.gov.register.serialization.RegisterComponents;
+import uk.gov.register.serialization.RegisterCommandList;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
@@ -21,28 +21,30 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Provider
 @Consumes("application/uk-gov-rsf")
-public class RegisterCommandReader implements MessageBodyReader<RegisterComponents> {
+public class RegisterCommandReader implements MessageBodyReader<RegisterCommandList> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegisterCommandReader.class);
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return type == RegisterComponents.class;
+        return type == RegisterCommandList.class;
     }
 
     @Override
-    public RegisterComponents readFrom(Class<RegisterComponents> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
+    public RegisterCommandList readFrom(Class<RegisterCommandList> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
         return parseCommands(entityStream);
     }
 
-    private RegisterComponents parseCommands(InputStream commandStream) {
+    private RegisterCommandList parseCommands(InputStream commandStream) {
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
-
-        List<RegisterCommand> commands = buffer.lines().map(s -> new CommandParser().newCommand(s)).collect(Collectors.toList());
+        final CommandParser parser = new CommandParser();
+        List<RegisterCommand> commands = buffer.lines().map(s -> parser.newCommand(s)).collect(toList());
         // don't close the reader as the caller will close the input stream
-        return new RegisterComponents(commands);
+        return new RegisterCommandList(commands);
 
     }
 }

@@ -2,11 +2,11 @@ package uk.gov.register.serialization;
 
 import java.util.List;
 
-public class RegisterComponents {
+public class RegisterCommandList {
 
     public final List<RegisterCommand> commands;
 
-    public RegisterComponents(List<RegisterCommand> commands) {
+    public RegisterCommandList(List<RegisterCommand> commands) {
         this.commands = commands;
     }
 }
