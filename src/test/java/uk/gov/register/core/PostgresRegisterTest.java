@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.service.ItemValidator;
@@ -21,6 +22,7 @@ public class PostgresRegisterTest {
     private RegisterData registerData;
     private BackingStoreDriver backingStoreDriver;
     private ItemValidator itemValidator;
+    private RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Before
     public void setup() {
@@ -34,17 +36,19 @@ public class PostgresRegisterTest {
         when(registerData.getRegister()).thenReturn(registerMetadata);
         backingStoreDriver = mock(BackingStoreDriver.class);
         itemValidator = mock(ItemValidator.class);
+        registerFieldsConfiguration = mock(RegisterFieldsConfiguration.class);
     }
 
     @Test(expected = NoSuchFieldException.class)
     public void findMax100RecordsByKeyValueShouldFailWhenKeyDoesNotExist() {
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
         register.max100RecordsFacetedByKeyValue("citizen-name", "British");
     }
 
     @Test
     public void findMax100RecordsByKeyValueShouldReturnValueWhenKeyExists() {
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator);
+        when(registerFieldsConfiguration.containsField("name")).thenReturn(true);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
         register.max100RecordsFacetedByKeyValue("name", "United Kingdom");
         verify(backingStoreDriver, times(1)).findMax100RecordsByKeyValue("name", "United Kingdom");
     }
@@ -55,7 +59,7 @@ public class PostgresRegisterTest {
 
         when(backingStoreDriver.getItemBySha256(anyString())).thenReturn(Optional.empty());
 
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
         register.appendEntry(entryDangling);
     }
 
@@ -69,7 +73,7 @@ public class PostgresRegisterTest {
                 .thenReturn(Optional.of(item))
                 .thenReturn(Optional.empty());
 
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
 
         try {
             register.appendEntry(entryNotDangling);
@@ -95,7 +99,7 @@ public class PostgresRegisterTest {
         when(registerMetadata.getRegisterName()).thenReturn("country");
         when(registerData.getRegister()).thenReturn(registerMetadata);
 
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
 
         try {
             register.appendEntry(entryNotDangling);

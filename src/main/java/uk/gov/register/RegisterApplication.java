@@ -22,6 +22,7 @@ import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
+import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.SchemaCreator;
@@ -82,6 +83,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
         RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
+        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
 
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
@@ -95,6 +97,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bind(registerData).to(RegisterData.class);
+                bind(registerFieldsConfiguration).to(RegisterFieldsConfiguration.class);
                 bind(jdbi);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
