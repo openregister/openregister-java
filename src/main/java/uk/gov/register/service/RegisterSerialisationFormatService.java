@@ -5,16 +5,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.serialization.AddItemCommand;
-import uk.gov.register.serialization.AppendEntryCommand;
-import uk.gov.register.serialization.RegisterCommand;
-import uk.gov.register.serialization.RegisterSerialisationFormat;
+import uk.gov.register.serialization.*;
+import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RegisterSerialisationFormatService {
+
+    private final String EMPTY_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    private final RegisterProof emptyRegisterProof;
 
     private final RegisterService registerService;
     private RegisterReadOnly register;
@@ -23,20 +25,31 @@ public class RegisterSerialisationFormatService {
     public RegisterSerialisationFormatService(RegisterService registerService, RegisterReadOnly register) {
         this.registerService = registerService;
         this.register = register;
+        this.emptyRegisterProof = new RegisterProof(EMPTY_ROOT_HASH);
     }
 
     public void processRegisterComponents(RegisterSerialisationFormat rsf) {
         registerService.asAtomicRegisterOperation(register -> mintRegisterComponents(rsf.getCommands(), register));
     }
 
-    public RegisterSerialisationFormat createRegisterSerialisationFormat(){
+    public RegisterSerialisationFormat createRegisterSerialisationFormat() {
         Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(), AddItemCommand::new);
         Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(), AppendEntryCommand::new);
 
-        return new RegisterSerialisationFormat(Iterators.concat(itemCommandsIterator, entryCommandIterator));
+        try {
+            return new RegisterSerialisationFormat(Iterators.concat(
+                    Iterators.forArray(new AssertRootHashCommand(emptyRegisterProof)),
+                    itemCommandsIterator,
+                    entryCommandIterator,
+                    Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof()))
+            ));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    public RegisterSerialisationFormat createRegisterSerialisationFormat(int startEntryNo, int endEntryNo){
+    public RegisterSerialisationFormat createRegisterSerialisationFormat(int startEntryNo, int endEntryNo) {
         Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(startEntryNo, endEntryNo), AddItemCommand::new);
         Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(startEntryNo, endEntryNo), AppendEntryCommand::new);
 
@@ -46,7 +59,13 @@ public class RegisterSerialisationFormatService {
     private void mintRegisterComponents(Iterator<RegisterCommand> commands, Register register) {
         final int startEntryNum = register.getTotalEntries();
         AtomicInteger entryNum = new AtomicInteger(startEntryNum);
-        commands.forEachRemaining(c -> c.execute(register, entryNum));
+        commands.forEachRemaining(c -> {
+            try {
+                c.execute(register, entryNum);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }

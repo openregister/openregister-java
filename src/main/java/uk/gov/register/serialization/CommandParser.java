@@ -52,8 +52,12 @@ public class CommandParser {
                     throw new SerializedRegisterParseException("append entry line must have 3 elements, was : " + s);
                 }
             case "assert-root-hash":
-                LOG.error("assert-root-hash not yet supported");
-                throw new NotImplementedException("assert-root-hash not yet supported");
+                if (parts.length == 2) {
+                    return new AssertRootHashCommand(new RegisterProof(parts[1]));
+                } else {
+                    LOG.error("assert root hash line must have 1 elements, was : " + s);
+                    throw new SerializedRegisterParseException("assert root hash line must have 1 elements, was : " + s);
+                }
             default:
                 LOG.error("line must begin with legal command not:" + commandName);
                 throw new SerializedRegisterParseException("line must begin with legal command not: " + commandName);
