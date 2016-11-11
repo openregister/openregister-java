@@ -2,18 +2,28 @@ package uk.gov.register.util;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
 
-public class CanonicalJsonMapper extends JsonMapper {
+public class CanonicalJsonMapper {
+    private final ObjectMapper objectMapper;
+
     public CanonicalJsonMapper() {
-        super();
+        objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
         objectMapper.getFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
     }
 
-    @Override
+    public JsonNode readFromBytes(byte[] body) {
+        try {
+            return objectMapper.readValue(body, JsonNode.class);
+        } catch (IOException e) {
+            return ExceptionUtils.rethrow(e);
+        }
+    }
+
     public byte[] writeToBytes(JsonNode jsonNode) {
         try {
             // Method from http://stackoverflow.com/questions/18952571/jackson-jsonnode-to-string-with-sorted-keys
@@ -21,6 +31,16 @@ public class CanonicalJsonMapper extends JsonMapper {
             // for some reason, writeValueAsString(obj).getBytes() doesn't re-escape unicode, but writeValueAsBytes does
             // our canonical form requires raw unescaped unicode, so we need this version
             return objectMapper.writeValueAsString(obj).getBytes();
+        } catch (IOException e) {
+            return ExceptionUtils.rethrow(e);
+        }
+    }
+
+    public String writeToString(JsonNode jsonNode) {
+        try {
+            // should this live over here? if so then TODO: refactor
+            Object obj = objectMapper.treeToValue(jsonNode, Object.class);
+            return objectMapper.writeValueAsString(obj);
         } catch (IOException e) {
             return ExceptionUtils.rethrow(e);
         }
