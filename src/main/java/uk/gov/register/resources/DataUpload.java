@@ -8,13 +8,16 @@ import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.serialization.RegisterCommandList;
 import uk.gov.register.service.RegisterService;
+import uk.gov.register.service.RegisterUpdateService;
 import uk.gov.register.util.ObjectReconstructor;
-import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -23,17 +26,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Path("/")
 public class DataUpload {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected final ViewFactory viewFactory;
-    private RegisterService registerService;
-    private ObjectReconstructor objectReconstructor;
+    private final RegisterService registerService;
+    private final ObjectReconstructor objectReconstructor;
+    private final RegisterUpdateService registerUpdateService;
+
 
     @Inject
-    public DataUpload(ViewFactory viewFactory, RegisterService registerService, ObjectReconstructor objectReconstructor) {
-        this.viewFactory = viewFactory;
+
+    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterUpdateService registerUpdateService) {
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
+        this.registerUpdateService = registerUpdateService;
     }
 
     @Context
@@ -50,6 +56,16 @@ public class DataUpload {
             logger.error(Throwables.getStackTraceAsString(t));
             throw t;
         }
+    }
+
+    @POST
+    @PermitAll
+    @Consumes(ExtraMediaType.APPLICATION_RSF)
+    @Path("/load-rsf")
+    public void loadRsf(RegisterCommandList registerCommandList) {
+        logger.info("parsed rsf input");
+        registerUpdateService.processRegisterComponents(registerCommandList.commands);
+        logger.info("loading rsf complete");
     }
 
     private void mintItems(Iterable<JsonNode> objects) {

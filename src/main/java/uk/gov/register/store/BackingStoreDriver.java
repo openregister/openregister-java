@@ -8,6 +8,7 @@ import uk.gov.verifiablelog.VerifiableLog;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,4 +34,10 @@ public interface BackingStoreDriver {
     Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key);
 
     <ReturnType> ReturnType withVerifiableLog(Function<VerifiableLog, ReturnType> callback);
+
+    Iterator<Entry> getEntryIterator();
+    Iterator<Entry> getEntryIterator(int start, int end);
+
+    Iterator<Item> getItemIterator();
+    Iterator<Item> getItemIterator(int start, int end);
 }

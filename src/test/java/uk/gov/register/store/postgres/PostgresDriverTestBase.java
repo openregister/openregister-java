@@ -105,7 +105,7 @@ public class PostgresDriverTestBase {
                     currentKeys.remove(currentKeyToRemove.get());
                 }
             });
-            return null;
+            return new int[]{1};
         }).when(currentKeysUpdateDAO).removeRecordWithKeys(argumentCaptor.capture());
     }
 }

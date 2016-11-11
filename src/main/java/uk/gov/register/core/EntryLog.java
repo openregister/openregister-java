@@ -9,6 +9,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +34,14 @@ public class EntryLog {
 
     public Collection<Entry> getEntries(int start, int limit) {
         return backingStoreDriver.getEntries(start, limit);
+    }
+
+    public Iterator<Entry> getIterator() {
+        return backingStoreDriver.getEntryIterator();
+    }
+
+    public Iterator<Entry> getIterator(int start, int end){
+        return backingStoreDriver.getEntryIterator(start, end);
     }
 
     public Collection<Entry> getAllEntries() {

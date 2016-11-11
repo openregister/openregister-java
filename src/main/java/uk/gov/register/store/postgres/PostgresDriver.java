@@ -17,6 +17,7 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public abstract class PostgresDriver implements BackingStoreDriver {
 
@@ -49,6 +50,26 @@ public abstract class PostgresDriver implements BackingStoreDriver {
         this.recordQueryDAOFromHandle = recordQueryDAOFromHandle;
         this.currentKeysUpdateDAOFromHandle = currentKeysUpdateDAOFromHandle;
         this.memoizationStore = memoizationStore;
+    }
+
+    @Override
+    public Iterator<Entry> getEntryIterator(){
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getIterator());
+    }
+
+    @Override
+    public Iterator<Entry> getEntryIterator(int start, int end){
+        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getIterator(start, end));
+    }
+
+    @Override
+    public Iterator<Item> getItemIterator(){
+        return withHandle(handle -> itemQueryDAOFromHandle.apply(handle).getIterator());
+    }
+
+    @Override
+    public Iterator<Item> getItemIterator(int start, int end){
+        return withHandle(handle -> itemQueryDAOFromHandle.apply(handle).getIterator(start, end));
     }
 
     @Override
@@ -141,7 +162,8 @@ public abstract class PostgresDriver implements BackingStoreDriver {
         useHandle(handle -> {
             CurrentKeysUpdateDAO dao = currentKeysUpdateDAOFromHandle.apply(handle);
 
-            int noOfRecordsDeleted = dao.removeRecordWithKeys(Lists.transform(currentKeys, r -> r.getKey()));
+            int[] noOfRecordsDeletedPerBatch = dao.removeRecordWithKeys(Lists.transform(currentKeys, r -> r.getKey()));
+            int noOfRecordsDeleted = IntStream.of(noOfRecordsDeletedPerBatch).sum();
             dao.writeCurrentKeys(currentKeys);
             dao.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
         });

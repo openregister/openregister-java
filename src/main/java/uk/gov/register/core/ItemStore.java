@@ -4,6 +4,7 @@ import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 
 public class ItemStore {
@@ -29,4 +30,13 @@ public class ItemStore {
     public Collection<Item> getAllItems() {
         return backingStoreDriver.getAllItems();
     }
+
+    public Iterator<Item> getIterator() {
+        return backingStoreDriver.getItemIterator();
+    }
+
+    public Iterator<Item> getIterator(int start, int end){
+        return backingStoreDriver.getItemIterator(start, end);
+    }
+
 }

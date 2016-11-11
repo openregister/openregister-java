@@ -33,11 +33,11 @@ public class ArchiveCreatorTest {
     private final Entry entry1 = new Entry(1, "entry1sha", Instant.parse("2016-07-24T16:55:00Z"));
     private final Entry entry2 = new Entry(2, "entry2sha", Instant.parse("2016-07-24T16:56:00Z"));
 
-    private final Item entry1Item = new Item("entry1sha", jsonFactory.objectNode()
+    private final Item item1 = new Item("entry1sha", jsonFactory.objectNode()
         .put("field-1", "entry1-field-1-value")
         .put("field-2", "entry1-field-2-value"));
 
-    private final Item entry2Item = new Item("entry2sha", jsonFactory.objectNode()
+    private final Item item2 = new Item("entry2sha", jsonFactory.objectNode()
         .put("field-1", "entry2-field-1-value")
         .put("field-2", "entry2-field-2-value"));
 
@@ -60,7 +60,7 @@ public class ArchiveCreatorTest {
         StreamingOutput streamingOutput = sutArchiveCreator.create(
             registerDetail,
             Arrays.asList(entry1, entry2),
-            Arrays.asList(entry1Item, entry2Item));
+            Arrays.asList(item1, item2));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         streamingOutput.write(baos);

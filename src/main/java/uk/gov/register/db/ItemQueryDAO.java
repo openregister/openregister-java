@@ -1,7 +1,9 @@
 package uk.gov.register.db;
 
+import org.skife.jdbi.v2.ResultIterator;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.customizers.FetchSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import uk.gov.register.core.Item;
@@ -21,4 +23,16 @@ public interface ItemQueryDAO {
     @SqlQuery("select * from item")
     @RegisterMapper(ItemMapper.class)
     Collection<Item> getAllItemsNoPagination();
+
+    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex)")
+    @RegisterMapper(ItemMapper.class)
+    @FetchSize(262144)
+    ResultIterator<Item> getIterator();
+
+    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex and entry_number between :startEntryNo and :endEntryNo)")
+    @RegisterMapper(ItemMapper.class)
+    @FetchSize(262144)
+    ResultIterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);
+
+
 }
