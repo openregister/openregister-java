@@ -35,14 +35,4 @@ public class CanonicalJsonMapper {
             return ExceptionUtils.rethrow(e);
         }
     }
-
-    public String writeToString(JsonNode jsonNode) {
-        try {
-            // should this live over here? if so then TODO: refactor
-            Object obj = objectMapper.treeToValue(jsonNode, Object.class);
-            return objectMapper.writeValueAsString(obj);
-        } catch (IOException e) {
-            return ExceptionUtils.rethrow(e);
-        }
-    }
 }
