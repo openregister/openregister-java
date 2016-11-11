@@ -11,6 +11,8 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.serialization.AddItemCommand;
 import uk.gov.register.serialization.AppendEntryCommand;
 import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
+import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -30,13 +32,15 @@ public class DataDownload {
     protected final ViewFactory viewFactory;
     private String registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
+    private RegisterSerialisationFormatService rsfService;
 
     @Inject
-    public DataDownload(RegisterReadOnly register, ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ResourceConfiguration resourceConfiguration) {
+    public DataDownload(RegisterReadOnly register, ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ResourceConfiguration resourceConfiguration, RegisterSerialisationFormatService rsfService) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
         this.resourceConfiguration = resourceConfiguration;
+        this.rsfService = rsfService;
     }
 
     @GET
@@ -68,18 +72,15 @@ public class DataDownload {
     @Path("/download-rsf")
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
-    public Iterator<RegisterCommand> downloadRSF() {
-        Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(), AddItemCommand::new);
-        Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(), AppendEntryCommand::new);
-
-        return Iterators.concat(itemCommandsIterator, entryCommandIterator);
+    public RegisterSerialisationFormat downloadRSF() {
+        return rsfService.createRegisterSerialisationFormat();
     }
 
     @GET
     @Path("/download-rsf/{start-entry-no}/{end-entry-no}")
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
-    public Iterator<RegisterCommand> downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
+    public RegisterSerialisationFormat downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
 
         if (startEntryNo > endEntryNo) {
             throw new BadRequestException("start-entry-no must be smaller than or equal to end-entry-no");
@@ -90,10 +91,7 @@ public class DataDownload {
             throw new BadRequestException("start-entry-no must be smaller than total entries in the register");
         }
 
-        Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(startEntryNo, endEntryNo), AddItemCommand::new);
-        Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(startEntryNo, endEntryNo), AppendEntryCommand::new);
-
-        return Iterators.concat(itemCommandsIterator, entryCommandIterator);
+        return rsfService.createRegisterSerialisationFormat(startEntryNo, endEntryNo);
     }
 
     @GET

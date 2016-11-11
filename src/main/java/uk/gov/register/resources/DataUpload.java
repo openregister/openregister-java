@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.serialization.RegisterCommandList;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterService;
-import uk.gov.register.service.RegisterUpdateService;
+import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -31,15 +31,14 @@ public class DataUpload {
 
     private final RegisterService registerService;
     private final ObjectReconstructor objectReconstructor;
-    private final RegisterUpdateService registerUpdateService;
+    private final RegisterSerialisationFormatService registerSerialisationFormatService;
 
 
     @Inject
-
-    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterUpdateService registerUpdateService) {
+    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService) {
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
-        this.registerUpdateService = registerUpdateService;
+        this.registerSerialisationFormatService = registerSerialisationFormatService;
     }
 
     @Context
@@ -62,10 +61,8 @@ public class DataUpload {
     @PermitAll
     @Consumes(ExtraMediaType.APPLICATION_RSF)
     @Path("/load-rsf")
-    public void loadRsf(RegisterCommandList registerCommandList) {
-        logger.info("parsed rsf input");
-        registerUpdateService.processRegisterComponents(registerCommandList.commands);
-        logger.info("loading rsf complete");
+    public void loadRsf(RegisterSerialisationFormat registerSerialisationFormat) {
+        registerSerialisationFormatService.processRegisterComponents(registerSerialisationFormat);
     }
 
     private void mintItems(Iterable<JsonNode> objects) {

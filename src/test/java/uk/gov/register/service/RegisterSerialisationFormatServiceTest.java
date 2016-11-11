@@ -16,10 +16,12 @@ import uk.gov.register.core.Register;
 import uk.gov.register.serialization.AddItemCommand;
 import uk.gov.register.serialization.AppendEntryCommand;
 import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.util.CanonicalJsonMapper;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -29,7 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RegisterUpdateServiceTest {
+public class RegisterSerialisationFormatServiceTest {
 
     private CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
@@ -39,13 +41,11 @@ public class RegisterUpdateServiceTest {
     @Mock
     private Register register;
 
-    private List<RegisterCommand> commands;
-
+    private Iterator<RegisterCommand> commands;
     private Item item;
-
     private Entry entry;
-
-    private RegisterUpdateService service;
+    private RegisterSerialisationFormatService service;
+    private RegisterSerialisationFormat rsf;
 
     @Before
     public void setUp() throws Exception {
@@ -57,9 +57,10 @@ public class RegisterUpdateServiceTest {
         entry = new Entry(0, getHash(content), Instant.now());
         AppendEntryCommand entryCommand = new AppendEntryCommand(entry);
 
-        commands = Arrays.asList(itemCommand, entryCommand);
+        commands = Arrays.asList(itemCommand, entryCommand).iterator();
+        rsf = new RegisterSerialisationFormat(commands);
 
-        service = new RegisterUpdateService(registerService);
+        service = new RegisterSerialisationFormatService(registerService, register);
     }
 
     @Test
@@ -75,7 +76,7 @@ public class RegisterUpdateServiceTest {
             }
         }).when(registerService).asAtomicRegisterOperation(any(Consumer.class));
 
-        service.processRegisterComponents(commands);
+        service.processRegisterComponents(rsf);
 
         verify(register).putItem(item);
         verify(register).appendEntry(entry);

@@ -16,6 +16,7 @@ import uk.gov.register.core.Item;
 import uk.gov.register.serialization.AddItemCommand;
 import uk.gov.register.serialization.AppendEntryCommand;
 import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -52,19 +53,19 @@ public class RegisterCommandWriterTest {
 
     @Test
     public void writeTo_shouldCreateRegisterRepresentationWithEntriesAndItems() throws IOException {
-        Iterator<RegisterCommand> registerCommandsIterator = Arrays.asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 new AddItemCommand(item1),
                 new AddItemCommand(item2),
                 new AppendEntryCommand(entry1),
-                new AppendEntryCommand(entry2)).iterator();
+                new AppendEntryCommand(entry2)).iterator());
 
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter();
         sutCommandWriter.writeTo(
-                registerCommandsIterator,
-                registerCommandsIterator.getClass(),
-                registerCommandsIterator.getClass(),
+                rsf,
+                rsf.getClass(),
+                rsf.getClass(),
                 new Annotation[]{},
                 ExtraMediaType.APPLICATION_RSF_TYPE,
                 httpHeadersMock,
@@ -82,9 +83,9 @@ public class RegisterCommandWriterTest {
 
     @Test
     public void writeTo_shouldAddContentDispositionHeader() throws IOException {
-        Iterator<RegisterCommand> registerCommandsIterator = Arrays.asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 new AddItemCommand(item1),
-                new AppendEntryCommand(entry1)).iterator();
+                new AppendEntryCommand(entry1)).iterator());
 
         final String[] actualContentDisposition = {""};
         Mockito.doAnswer(invocation -> {
@@ -95,9 +96,9 @@ public class RegisterCommandWriterTest {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter();
         sutCommandWriter.writeTo(
-                registerCommandsIterator,
-                registerCommandsIterator.getClass(),
-                registerCommandsIterator.getClass(),
+                rsf,
+                rsf.getClass(),
+                rsf.getClass(),
                 new Annotation[]{},
                 ExtraMediaType.APPLICATION_RSF_TYPE,
                 httpHeadersMock,
