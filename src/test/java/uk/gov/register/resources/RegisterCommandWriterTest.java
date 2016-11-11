@@ -3,11 +3,6 @@ package uk.gov.register.resources;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.mockito.Mockito.*;
-
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -15,7 +10,6 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.serialization.AddItemCommand;
 import uk.gov.register.serialization.AppendEntryCommand;
-import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -25,11 +19,13 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Iterator;
 
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterCommandWriterTest {

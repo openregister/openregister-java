@@ -5,7 +5,7 @@ import uk.gov.register.core.Register;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class AppendEntryCommand implements RegisterCommand {
+public class AppendEntryCommand extends RegisterCommand {
 
     private Entry entry;
 
@@ -22,6 +22,20 @@ public class AppendEntryCommand implements RegisterCommand {
     @Override
     public String serialise(CommandParser parser) {
         return parser.serialise(entry);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AppendEntryCommand command = (AppendEntryCommand) o;
+        return command.entry == this.entry;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * entry.hashCode();
     }
 
 

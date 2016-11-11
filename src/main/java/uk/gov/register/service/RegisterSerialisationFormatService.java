@@ -16,8 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RegisterSerialisationFormatService {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RegisterSerialisationFormatService.class);
-
     private final RegisterService registerService;
     private RegisterReadOnly register;
 
