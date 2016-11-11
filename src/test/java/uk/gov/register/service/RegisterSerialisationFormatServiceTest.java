@@ -21,7 +21,6 @@ import uk.gov.register.views.RegisterProof;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -43,7 +42,6 @@ public class RegisterSerialisationFormatServiceTest {
     @Mock
     private Register register;
 
-    private Iterator<RegisterCommand> commands;
     private Item item;
     private Entry entry1;
     private Entry entry2;
@@ -55,7 +53,6 @@ public class RegisterSerialisationFormatServiceTest {
     private RegisterCommand assertRootEmptyRegister;
 
     private RegisterSerialisationFormatService sutService;
-    private RegisterSerialisationFormat rsf;
 
     @Before
     public void setUp() throws Exception {
@@ -71,17 +68,13 @@ public class RegisterSerialisationFormatServiceTest {
         appendEntryCommand2 = new AppendEntryCommand(entry2);
         assertRootEmptyRegister = new AssertRootHashCommand(emptyRegisterProof);
 
-
-        commands = Arrays.asList(addItemCommand, appendEntryCommand1, appendEntryCommand2).iterator();
-
-        rsf = new RegisterSerialisationFormat(commands);
         sutService = new RegisterSerialisationFormatService(registerService, register);
     }
 
     @Test
     public void processRegisterComponents() throws Exception {
-
         when(register.getTotalEntries()).thenReturn(0);
+        when(register.getRegisterProof()).thenReturn(emptyRegisterProof);
 
         doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) {
@@ -91,10 +84,18 @@ public class RegisterSerialisationFormatServiceTest {
             }
         }).when(registerService).asAtomicRegisterOperation(any(Consumer.class));
 
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+                assertRootEmptyRegister,
+                addItemCommand,
+                appendEntryCommand1,
+                appendEntryCommand2).iterator());
+
         sutService.processRegisterComponents(rsf);
 
+        verify(register).getRegisterProof();
         verify(register).putItem(item);
         verify(register).appendEntry(entry1);
+        verify(register).appendEntry(entry2);
     }
 
     @Test
