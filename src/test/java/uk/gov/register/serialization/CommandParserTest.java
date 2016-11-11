@@ -57,9 +57,9 @@ public class CommandParserTest {
         commandParser.newCommand(line);
     }
 
-    @Test(expected = NotImplementedException.class)
-    public void shouldThrowExWhenInvalidCommand() throws Exception {
-        String line = "assert-root-hash\tabc123";
+    @Test(expected = SerializedRegisterParseException.class)
+    public void shouldThrowExWhenUnknownCommand() throws Exception {
+        String line = "unknown-command-here\tabc123";
         commandParser.newCommand(line);
     }
 

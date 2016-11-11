@@ -97,16 +97,20 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
         String[] rsfLines = getRsfLinesFrom(response);
 
-        assertThat(rsfLines[0], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}"));
-        assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
-        assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
-        assertThat(rsfLines[3], equalTo("add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
+        assertThat(rsfLines[0], equalTo("assert-root-hash\te3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
-        assertFormattedEntry(rsfLines[4], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
-        assertFormattedEntry(rsfLines[5], "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
-        assertFormattedEntry(rsfLines[6], "sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
-        assertFormattedEntry(rsfLines[7], "sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
-        assertFormattedEntry(rsfLines[8], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+        assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}"));
+        assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
+        assertThat(rsfLines[3], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
+        assertThat(rsfLines[4], equalTo("add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
+
+        assertFormattedEntry(rsfLines[5], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+        assertFormattedEntry(rsfLines[6], "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
+        assertFormattedEntry(rsfLines[7], "sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+        assertFormattedEntry(rsfLines[8], "sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
+        assertFormattedEntry(rsfLines[9], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+
+        assertThat(rsfLines[10], containsString("assert-root-hash\t"));
     }
 
     @Test
