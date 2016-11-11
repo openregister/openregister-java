@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandList;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 @Provider
-@Consumes("application/uk-gov-rsf")
+@Consumes(ExtraMediaType.APPLICATION_RSF)
 public class RegisterCommandReader implements MessageBodyReader<RegisterCommandList> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegisterCommandReader.class);
