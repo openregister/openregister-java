@@ -17,8 +17,15 @@ public class CanonicalJsonValidatorTest {
     }
 
     @Test(expected = SerializationFormatValidationException.class)
-    public void validateItemIsCanonicalized_throwsValidationException_whenItemIsNotCanonicalized() {
+    public void validateItemIsCanonicalized_throwsValidationException_whenItemIsNotCanonicalizedByFieldOrder() {
         String jsonString = "{\"text\":\"some text\",\"register\":\"aregister\"}";
+
+        canonicalJsonValidator.validateItemStringIsCanonicalized(jsonString);
+    }
+
+    @Test(expected = SerializationFormatValidationException.class)
+    public void validateItemIsCanonicalized_throwsValidationException_whenItemIsNotCanonicalizedByWhitespace() {
+        String jsonString = "{ \"register\":\"aregister\", \"text\":\"some text\"  }";
 
         canonicalJsonValidator.validateItemStringIsCanonicalized(jsonString);
     }
