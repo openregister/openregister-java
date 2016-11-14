@@ -21,7 +21,6 @@ public class AssertRootHashCommand extends RegisterCommand {
         if (!actualProof.equals(this.registerProof)) {
             throw new RootHashAssertionException("Actual root hash: " + actualProof.getRootHash() + " does not match expected: " + this.registerProof.getRootHash());
         }
-
     }
 
     @Override
