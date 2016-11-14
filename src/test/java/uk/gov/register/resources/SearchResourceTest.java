@@ -51,8 +51,6 @@ public class SearchResourceTest {
 
     @Test
     public void findSupportsTurtleHtmlAndJson() throws Exception {
-        resource = new SearchResource(requestContext, () -> "school", registerFieldsConfiguration);
-
         Method searchMethod = SearchResource.class.getDeclaredMethod("find", String.class, String.class);
         List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
