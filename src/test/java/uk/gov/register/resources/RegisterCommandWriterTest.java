@@ -10,7 +10,9 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.serialization.AddItemCommand;
 import uk.gov.register.serialization.AppendEntryCommand;
+import uk.gov.register.serialization.AssertRootHashCommand;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
+import uk.gov.register.views.RegisterProof;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.*;
 public class RegisterCommandWriterTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
+    private final String EMPTY_REGISTER_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
     private final Entry entry1 = new Entry(1, "entry1sha", Instant.parse("2016-07-24T16:55:00Z"));
     private final Entry entry2 = new Entry(2, "entry2sha", Instant.parse("2016-07-24T16:56:00Z"));
@@ -50,11 +53,12 @@ public class RegisterCommandWriterTest {
     @Test
     public void writeTo_shouldCreateRegisterRepresentationWithEntriesAndItems() throws IOException {
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+                new AssertRootHashCommand(new RegisterProof(EMPTY_REGISTER_ROOT_HASH)),
                 new AddItemCommand(item1),
                 new AddItemCommand(item2),
                 new AppendEntryCommand(entry1),
-                new AppendEntryCommand(entry2)).iterator());
-
+                new AppendEntryCommand(entry2),
+                new AssertRootHashCommand(new RegisterProof("K3rfuFF1e"))).iterator());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter();
@@ -68,10 +72,13 @@ public class RegisterCommandWriterTest {
                 outputStream);
 
         String expectedRSF =
+                "assert-root-hash\te3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
                 "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
                 "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
                 "append-entry\t2016-07-24T16:55:00Z\tsha-256:entry1sha\n" +
-                "append-entry\t2016-07-24T16:56:00Z\tsha-256:entry2sha\n";
+                "append-entry\t2016-07-24T16:56:00Z\tsha-256:entry2sha\n" +
+                "assert-root-hash\tK3rfuFF1e\n";
+
         String actualRSF = outputStream.toString();
 
         assertThat(actualRSF, equalTo(expectedRSF));
