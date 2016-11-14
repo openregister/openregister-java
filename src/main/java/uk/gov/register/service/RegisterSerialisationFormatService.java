@@ -57,7 +57,7 @@ public class RegisterSerialisationFormatService {
     }
 
     private void mintRegisterComponents(Iterator<RegisterCommand> commands, Register register) {
-        final int startEntryNum = register.getTotalEntries();
+        final int startEntryNum = register.getTotalEntries() + 1;
         AtomicInteger entryNum = new AtomicInteger(startEntryNum);
         commands.forEachRemaining(c -> {
             try {

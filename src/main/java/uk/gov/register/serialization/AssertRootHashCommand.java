@@ -18,8 +18,8 @@ public class AssertRootHashCommand extends RegisterCommand {
     @Override
     public void execute(Register register, AtomicInteger entryNumber) throws Exception {
         RegisterProof actualProof = register.getRegisterProof();
-        if (actualProof != this.registerProof) {
-            throw new RootHashAssertionException("Actual root hash: "+actualProof.getRootHash()+" does not match expected: "+this.registerProof.getRootHash());
+        if (!actualProof.equals(this.registerProof)) {
+            throw new RootHashAssertionException("Actual root hash: " + actualProof.getRootHash() + " does not match expected: " + this.registerProof.getRootHash());
         }
 
     }

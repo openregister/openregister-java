@@ -7,7 +7,9 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -59,8 +61,8 @@ public class RegisterSerialisationFormatServiceTest {
         JsonNode content = new ObjectMapper().readTree("{\"address\":\"9AQZJ3M\",\"name\":\"ST LAWRENCE CHURCH\"}");
 
         item = new Item(content);
-        entry1 = new Entry(0, getHash(content), Instant.now());
-        entry2 = new Entry(1, getHash(content), Instant.now().plusMillis(100));
+        entry1 = new Entry(1, getHash(content), Instant.now());
+        entry2 = new Entry(2, getHash(content), Instant.now().plusMillis(100));
         emptyRegisterProof = new RegisterProof("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 
         addItemCommand = new AddItemCommand(item);
@@ -90,12 +92,16 @@ public class RegisterSerialisationFormatServiceTest {
                 appendEntryCommand1,
                 appendEntryCommand2).iterator());
 
+        InOrder inOrder = Mockito.inOrder(register);
+
         sutService.processRegisterComponents(rsf);
 
-        verify(register).getRegisterProof();
-        verify(register).putItem(item);
-        verify(register).appendEntry(entry1);
-        verify(register).appendEntry(entry2);
+        verify(register, times(1)).getRegisterProof();
+        verify(register, times(1)).putItem(item);
+        verify(register, times(2)).appendEntry(any());
+
+        inOrder.verify(register, calls(1)).appendEntry(entry1);
+        inOrder.verify(register, calls(1)).appendEntry(entry2);
     }
 
     @Test
