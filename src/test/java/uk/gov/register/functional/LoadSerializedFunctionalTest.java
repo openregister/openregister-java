@@ -1,7 +1,5 @@
 package uk.gov.register.functional;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -16,11 +14,11 @@ import org.junit.rules.TestRule;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.CleanDatabaseRule;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestRecord;
 import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -28,11 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -40,7 +34,6 @@ import static uk.gov.register.functional.db.TestDBSupport.*;
 
 public class LoadSerializedFunctionalTest {
     public static final int APPLICATION_PORT = 9000;
-    public static final MediaType RSF_TYPE = new MediaType("application", "uk-gov-rsf", "UTF-8");
 
     private final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,
             ResourceHelpers.resourceFilePath("test-app-config.yaml"),
@@ -88,8 +81,8 @@ public class LoadSerializedFunctionalTest {
 
     private Response send(String payload) {
         return authenticatingClient().target("http://localhost:" + APPLICATION_PORT + "/load-rsf")
-                .request(RSF_TYPE)
-                .post(Entity.entity(payload, RSF_TYPE));
+                .request(ExtraMediaType.APPLICATION_RSF_TYPE)
+                .post(Entity.entity(payload, ExtraMediaType.APPLICATION_RSF_TYPE));
 
     }
 
