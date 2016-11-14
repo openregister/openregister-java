@@ -7,7 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
+import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.CanonicalJsonValidator;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
@@ -23,7 +26,9 @@ public class CommandParserTest {
 
     @Before
     public void setUp() throws Exception {
-        commandParser = new CommandParser();
+        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
+        commandParser = new CommandParser(canonicalJsonMapper, canonicalJsonValidator);
     }
 
     @Test
@@ -75,6 +80,13 @@ public class CommandParserTest {
         commandParser.newCommand(line);
     }
 
+    @Test(expected = SerializationFormatValidationException.class)
+    public void shouldThrowSerializationFormatValidationExceptionWhenItemNotCanonicalized() {
+        String line = "add-item\t{\"address\":\"9AQZJ3M\",\"street\":\"43070006\",\"name\":\"ST LAWRENCE CHURCH REMAINS OF\"}";
+
+        commandParser.newCommand(line);
+    }
+
     @Test
     public void serialise_shouldFormatEntryAsTsvLine(){
         Instant entryTimestamp = Instant.parse("2016-07-15T10:00:00Z");
@@ -103,5 +115,4 @@ public class CommandParserTest {
 
         assertThat(actualLine, equalTo("assert-root-hash\troot-hash\n"));
     }
-
 }
