@@ -2,6 +2,7 @@ package uk.gov.register.serialization;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,19 +10,27 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.CanonicalJsonValidator;
 import uk.gov.register.views.RegisterProof;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Instant;
 
 public class CommandParser {
-
     private static final Logger LOG = LoggerFactory.getLogger(CommandParser.class);
 
     private final String TAB = "\t";
     private final String NEW_LINE = System.lineSeparator();
-    private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+    private final CanonicalJsonMapper canonicalJsonMapper;
+    private final CanonicalJsonValidator canonicalJsonValidator;
+
+    @Inject
+    public CommandParser(CanonicalJsonMapper canonicalJsonMapper, CanonicalJsonValidator canonicalJsonValidator) {
+        this.canonicalJsonMapper = canonicalJsonMapper;
+        this.canonicalJsonValidator = canonicalJsonValidator;
+    }
 
     public RegisterCommand newCommand(String s){
         String[] parts = s.split(TAB);
@@ -30,7 +39,10 @@ public class CommandParser {
             case "add-item":
                 if (parts.length == 2) {
                     try {
-                        Item item = new Item(new ObjectMapper().readTree(parts[1]));
+                        String jsonContent = parts[1];
+                        canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
+                        String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes());
+                        Item item = new Item(itemHash, new ObjectMapper().readTree(jsonContent));
                         return new AddItemCommand(item);
                     } catch (JsonParseException jpe){
                         LOG.error("failed to parse json: " + parts[1]);

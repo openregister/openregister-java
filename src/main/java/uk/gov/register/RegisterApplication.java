@@ -31,6 +31,7 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
+import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterService;
@@ -38,6 +39,7 @@ import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
+import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
@@ -105,7 +107,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(jdbi);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
+                bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
+                bind(CommandParser.class).to(CommandParser.class);
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);

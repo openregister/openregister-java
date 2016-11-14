@@ -7,6 +7,7 @@ import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.views.representations.ExtraMediaType;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -27,6 +28,13 @@ public class RegisterCommandReader implements MessageBodyReader<RegisterSerialis
 
     private static final Logger LOG = LoggerFactory.getLogger(RegisterCommandReader.class);
 
+    private final CommandParser commandParser;
+
+    @Inject
+    public RegisterCommandReader(CommandParser commandParser) {
+        this.commandParser = commandParser;
+    }
+
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return type == RegisterSerialisationFormat.class;
@@ -39,8 +47,7 @@ public class RegisterCommandReader implements MessageBodyReader<RegisterSerialis
 
     private RegisterSerialisationFormat parseCommands(InputStream commandStream) {
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
-        final CommandParser parser = new CommandParser();
-        Iterator<RegisterCommand> commands = buffer.lines().map(s -> parser.newCommand(s)).iterator();
+        Iterator<RegisterCommand> commands = buffer.lines().map(s -> commandParser.newCommand(s)).iterator();
         // don't close the reader as the caller will close the input stream
         return new RegisterSerialisationFormat(commands);
 

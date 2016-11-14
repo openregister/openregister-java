@@ -8,10 +8,9 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
-import uk.gov.register.serialization.AddItemCommand;
-import uk.gov.register.serialization.AppendEntryCommand;
-import uk.gov.register.serialization.AssertRootHashCommand;
-import uk.gov.register.serialization.RegisterSerialisationFormat;
+import uk.gov.register.serialization.*;
+import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.CanonicalJsonValidator;
 import uk.gov.register.views.RegisterProof;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -61,7 +60,10 @@ public class RegisterCommandWriterTest {
                 new AssertRootHashCommand(new RegisterProof("K3rfuFF1e"))).iterator());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter();
+        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
+        CommandParser commandParser = new CommandParser(canonicalJsonMapper, canonicalJsonValidator);
+        RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter(commandParser);
         sutCommandWriter.writeTo(
                 rsf,
                 rsf.getClass(),
@@ -97,7 +99,10 @@ public class RegisterCommandWriterTest {
         }).when(httpHeadersMock).add(eq("Content-Disposition"), anyObject());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter();
+        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
+        CommandParser commandParser = new CommandParser(canonicalJsonMapper, canonicalJsonValidator);
+        RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter(commandParser);
         sutCommandWriter.writeTo(
                 rsf,
                 rsf.getClass(),
@@ -111,5 +116,4 @@ public class RegisterCommandWriterTest {
         assertThat(actualContentDisposition[0], startsWith("attachment; filename="));
         assertThat(actualContentDisposition[0], endsWith(".tsv"));
     }
-
 }
