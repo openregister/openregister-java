@@ -2,7 +2,6 @@ package uk.gov.register.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.tomakehurst.wiremock.common.Json;
-import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.Entry;

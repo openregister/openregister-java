@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
