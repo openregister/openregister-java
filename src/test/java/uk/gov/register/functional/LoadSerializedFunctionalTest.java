@@ -91,7 +91,7 @@ public class LoadSerializedFunctionalTest {
 
         Response r = send(input);
 
-        assertThat(r.getStatus(), equalTo(500));
+        assertThat(r.getStatus(), equalTo(409));
         assertThat(testItemDAO.getItems(), is(empty()));
         assertThat(testEntryDAO.getAllEntries(), is(empty()));
     }

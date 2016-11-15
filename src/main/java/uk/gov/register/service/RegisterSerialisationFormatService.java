@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.exceptions.RootHashAssertionException;
 import uk.gov.register.serialization.*;
 import uk.gov.register.views.RegisterProof;
 
@@ -62,9 +63,12 @@ public class RegisterSerialisationFormatService {
         commands.forEachRemaining(c -> {
             try {
                 c.execute(register, entryNum);
+            }catch(RootHashAssertionException e){
+                throw e;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+
         });
     }
 
