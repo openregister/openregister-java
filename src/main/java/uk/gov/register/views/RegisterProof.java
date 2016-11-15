@@ -3,6 +3,8 @@ package uk.gov.register.views;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.Objects;
+
 @JsonPropertyOrder({"proof-identifier", "root-hash"})
 public class RegisterProof {
 
@@ -23,5 +25,19 @@ public class RegisterProof {
     @JsonProperty("root-hash")
     public String getRootHash() {
         return rootHash;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RegisterProof registerProof = (RegisterProof) o;
+        return Objects.equals(registerProof.getRootHash(), this.getRootHash());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * getRootHash().hashCode();
     }
 }

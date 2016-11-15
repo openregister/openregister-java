@@ -4,10 +4,16 @@ import uk.gov.register.core.Register;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public interface RegisterCommand {
+public abstract class RegisterCommand {
 
-    void execute(Register register, AtomicInteger entryNumber);
+    public abstract void execute(Register register, AtomicInteger entryNumber) throws Exception;
 
-    String serialise(CommandParser commandParser);
+    public abstract String serialise(CommandParser commandParser);
+
+    @Override
+    public abstract boolean equals(Object o);
+
+    @Override
+    public abstract int hashCode();
 }
 

@@ -34,7 +34,7 @@ import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterService;
-import uk.gov.register.service.RegisterUpdateService;
+import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
@@ -110,7 +110,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
                 bind(RegisterService.class).to(RegisterService.class);
-                bind(RegisterUpdateService.class).to(RegisterUpdateService.class);
+                bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
                 bind(RequestContext.class).to(RequestContext.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
