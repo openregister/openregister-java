@@ -1,7 +1,6 @@
 package uk.gov.register.serialization;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
@@ -11,11 +10,13 @@ import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
+import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 public class CommandParser {
@@ -23,11 +24,13 @@ public class CommandParser {
 
     private final String TAB = "\t";
     private final String NEW_LINE = System.lineSeparator();
+    private final ObjectReconstructor objectReconstructor;
     private final CanonicalJsonMapper canonicalJsonMapper;
     private final CanonicalJsonValidator canonicalJsonValidator;
 
     @Inject
-    public CommandParser(CanonicalJsonMapper canonicalJsonMapper, CanonicalJsonValidator canonicalJsonValidator) {
+    public CommandParser(ObjectReconstructor objectReconstructor, CanonicalJsonMapper canonicalJsonMapper, CanonicalJsonValidator canonicalJsonValidator) {
+        this.objectReconstructor = objectReconstructor;
         this.canonicalJsonMapper = canonicalJsonMapper;
         this.canonicalJsonValidator = canonicalJsonValidator;
     }
@@ -41,8 +44,8 @@ public class CommandParser {
                     try {
                         String jsonContent = parts[1];
                         canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
-                        String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes());
-                        Item item = new Item(itemHash, new ObjectMapper().readTree(jsonContent));
+                        String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes(StandardCharsets.UTF_8));
+                        Item item = new Item(itemHash, objectReconstructor.reconstruct(jsonContent));
                         return new AddItemCommand(item);
                     } catch (JsonParseException jpe){
                         LOG.error("failed to parse json: " + parts[1]);

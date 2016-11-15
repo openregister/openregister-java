@@ -14,6 +14,7 @@ import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
+import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -35,18 +36,15 @@ import static org.mockito.Mockito.*;
 public class RegisterCommandWriterTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
-
     private final Entry entry1 = new Entry(1, "entry1sha", Instant.parse("2016-07-24T16:55:00Z"));
     private final Entry entry2 = new Entry(2, "entry2sha", Instant.parse("2016-07-24T16:56:00Z"));
 
     private final Item item1 = new Item("entry1sha", jsonFactory.objectNode()
             .put("field-1", "entry1-field-1-value")
             .put("field-2", "entry1-field-2-value"));
-
     private final Item item2 = new Item("entry2sha", jsonFactory.objectNode()
             .put("field-1", "entry2-field-1-value")
             .put("field-2", "entry2-field-2-value"));
-
 
     @Mock
     private MultivaluedMap<String, Object> httpHeadersMock;
@@ -59,12 +57,9 @@ public class RegisterCommandWriterTest {
                 new AppendEntryCommand(entry1),
                 new AppendEntryCommand(entry2)).iterator();
 
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
-        CommandParser commandParser = new CommandParser(canonicalJsonMapper, canonicalJsonValidator);
-        RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter(commandParser);
+        RegisterCommandWriter sutCommandWriter = createRegisterCommandWriter();
+
         sutCommandWriter.writeTo(
                 registerCommandsIterator,
                 registerCommandsIterator.getClass(),
@@ -97,10 +92,8 @@ public class RegisterCommandWriterTest {
         }).when(httpHeadersMock).add(eq("Content-Disposition"), anyObject());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
-        CommandParser commandParser = new CommandParser(canonicalJsonMapper, canonicalJsonValidator);
-        RegisterCommandWriter sutCommandWriter = new RegisterCommandWriter(commandParser);
+        RegisterCommandWriter sutCommandWriter = createRegisterCommandWriter();
+
         sutCommandWriter.writeTo(
                 registerCommandsIterator,
                 registerCommandsIterator.getClass(),
@@ -115,4 +108,11 @@ public class RegisterCommandWriterTest {
         assertThat(actualContentDisposition[0], endsWith(".tsv"));
     }
 
+    private RegisterCommandWriter createRegisterCommandWriter() {
+        ObjectReconstructor objectReconstructor = new ObjectReconstructor();
+        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
+        CommandParser commandParser = new CommandParser(objectReconstructor, canonicalJsonMapper, canonicalJsonValidator);
+        return new RegisterCommandWriter(commandParser);
+    }
 }

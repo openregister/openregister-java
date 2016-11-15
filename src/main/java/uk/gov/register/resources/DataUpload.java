@@ -50,7 +50,7 @@ public class DataUpload {
     @Path("/load")
     public void load(String payload) {
         try {
-            Iterable<JsonNode> objects = objectReconstructor.reconstruct(payload.split("\n"));
+            Iterable<JsonNode> objects = objectReconstructor.reconstructWithCanonicalization(payload.split("\n"));
             mintItems(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));

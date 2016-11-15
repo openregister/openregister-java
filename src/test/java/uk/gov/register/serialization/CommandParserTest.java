@@ -11,6 +11,7 @@ import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
+import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
@@ -26,9 +27,10 @@ public class CommandParserTest {
 
     @Before
     public void setUp() throws Exception {
+        ObjectReconstructor objectReconstructor = new ObjectReconstructor();
         CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
         CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
-        commandParser = new CommandParser(canonicalJsonMapper, canonicalJsonValidator);
+        commandParser = new CommandParser(objectReconstructor, canonicalJsonMapper, canonicalJsonValidator);
     }
 
     @Test

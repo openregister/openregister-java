@@ -3,14 +3,22 @@ package uk.gov.register.util;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.util.ObjectReconstructor;
+
+import java.io.IOException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ObjectReconstructorTest {
     @Test
-    public void createsJsonNodeFromValidJson() {
+    public void createsJsonNodeFromValidJson() throws IOException {
         ObjectReconstructor testObj = new ObjectReconstructor();
         String payload = "{\"register\":\"value1\"}";
-        testObj.reconstruct(payload.split("\n"));
+        testObj.reconstruct(payload);
+    }
+
+    @Test
+    public void createsJsonNodeFromValidJsonStringArray() {
+        ObjectReconstructor testObj = new ObjectReconstructor();
+        String payload = "{\"register\":\"value1\"}";
+        testObj.reconstructWithCanonicalization(payload.split("\n"));
     }
 }
