@@ -1,34 +1,32 @@
 package uk.gov.register.resources;
 
-import org.apache.commons.lang3.NotImplementedException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandList;
+import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.CanonicalJsonValidator;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterCommandReaderTest {
-
     Class<RegisterCommandList> type = RegisterCommandList.class;
+    private RegisterCommandReader parser;
 
     @Mock
     Type genericType;
@@ -41,9 +39,16 @@ public class RegisterCommandReaderTest {
     @Mock
     MultivaluedMap<String, String> httpHeaders;
 
+    @Before
+    public void setup() {
+        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
+        CommandParser commandParser = new CommandParser(canonicalJsonMapper, canonicalJsonValidator);
+        parser = new RegisterCommandReader(commandParser);
+    }
+
     @Test
     public void shouldParseCommands() throws Exception {
-        RegisterCommandReader parser = new RegisterCommandReader();
         try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register.tsv"))
         ) {
             RegisterCommandList registerCommandList = parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
@@ -55,7 +60,6 @@ public class RegisterCommandReaderTest {
 
     @Test
     public void shouldParseCommandsEscaped() throws Exception {
-        RegisterCommandReader parser = new RegisterCommandReader();
         try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))
         ) {
             RegisterCommandList registerCommandList = parser.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
@@ -64,5 +68,4 @@ public class RegisterCommandReaderTest {
             assertThat(commands.size(), is(2));
         }
     }
-
 }
