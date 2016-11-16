@@ -1,16 +1,12 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
-import org.apache.jena.ext.com.google.common.collect.Iterators;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
 import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.serialization.AddItemCommand;
-import uk.gov.register.serialization.AppendEntryCommand;
-import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ArchiveCreator;
@@ -23,7 +19,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-import java.util.Iterator;
 
 @Path("/")
 public class DataDownload {
@@ -81,6 +76,9 @@ public class DataDownload {
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public RegisterSerialisationFormat downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
+        if (startEntryNo < 1) {
+            throw new BadRequestException("start-entry-no must be greater than 0");
+        }
 
         if (startEntryNo > endEntryNo) {
             throw new BadRequestException("start-entry-no must be smaller than or equal to end-entry-no");

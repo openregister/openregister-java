@@ -31,6 +31,7 @@ public interface RegisterReadOnly {
     List<Record> max100RecordsFacetedByKeyValue(String key, String value);
 
     RegisterProof getRegisterProof() throws NoSuchAlgorithmException;
+    RegisterProof getRegisterProof(int startEntryNo, int endEntryNo);
     EntryProof getEntryProof(int entryNumber, int totalEntries);
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
 

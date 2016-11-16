@@ -1,8 +1,6 @@
 package uk.gov.register.service;
 
 import org.apache.jena.ext.com.google.common.collect.Iterators;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.RootHashAssertionException;
@@ -54,7 +52,13 @@ public class RegisterSerialisationFormatService {
         Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(startEntryNo, endEntryNo), AddItemCommand::new);
         Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(startEntryNo, endEntryNo), AppendEntryCommand::new);
 
-        return new RegisterSerialisationFormat(Iterators.concat(itemCommandsIterator, entryCommandIterator));
+        RegisterProof previousRegisterProof = startEntryNo == 1 ? emptyRegisterProof : register.getRegisterProof(startEntryNo - 1, startEntryNo - 1);
+
+        return new RegisterSerialisationFormat(Iterators.concat(
+                Iterators.forArray(new AssertRootHashCommand(previousRegisterProof)),
+                itemCommandsIterator,
+                entryCommandIterator,
+                Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof(startEntryNo, endEntryNo)))));
     }
 
     private void mintRegisterComponents(Iterator<RegisterCommand> commands, Register register) {
@@ -71,5 +75,4 @@ public class RegisterSerialisationFormatService {
 
         });
     }
-
 }
