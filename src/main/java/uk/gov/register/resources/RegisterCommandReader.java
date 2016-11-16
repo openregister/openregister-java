@@ -28,13 +28,6 @@ public class RegisterCommandReader implements MessageBodyReader<RegisterSerialis
 
     private static final Logger LOG = LoggerFactory.getLogger(RegisterCommandReader.class);
 
-    private final CommandParser commandParser;
-
-    @Inject
-    public RegisterCommandReader(CommandParser commandParser) {
-        this.commandParser = commandParser;
-    }
-
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return type == RegisterSerialisationFormat.class;
@@ -47,7 +40,9 @@ public class RegisterCommandReader implements MessageBodyReader<RegisterSerialis
 
     private RegisterSerialisationFormat parseCommands(InputStream commandStream) {
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
-        Iterator<RegisterCommand> commands = buffer.lines().map(s -> commandParser.newCommand(s)).iterator();
+        final CommandParser parser = new CommandParser();
+        buffer.lines().forEach(s -> parser.addCommand(s));
+        Iterator<RegisterCommand> commands = parser.getCommands();
         // don't close the reader as the caller will close the input stream
         return new RegisterSerialisationFormat(commands);
 

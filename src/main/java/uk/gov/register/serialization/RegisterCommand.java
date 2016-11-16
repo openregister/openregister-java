@@ -10,10 +10,5 @@ public abstract class RegisterCommand {
 
     public abstract String serialise(CommandParser commandParser);
 
-    @Override
-    public abstract boolean equals(Object o);
-
-    @Override
-    public abstract int hashCode();
 }
 

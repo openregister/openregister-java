@@ -87,8 +87,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item{" +
-                "content=" + content +
-                '}';
+        return "Item{content=" + content.toString() + "}";
     }
 }
