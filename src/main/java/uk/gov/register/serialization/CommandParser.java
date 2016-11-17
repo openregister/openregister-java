@@ -34,17 +34,17 @@ public class CommandParser {
     private Integer position;
     private final HashMap<Integer, Item> items;
     private final HashMap<Integer, Entry> entries;
-    private final HashMap<String, List<Integer>> entryHashes;
+    private final HashMap<String, Integer> itemHashToEntryCount;
     private final HashMap<Integer, RegisterProof> proofs;
 
     public CommandParser() {
+        position = 0;
         objectReconstructor = new ObjectReconstructor();
         canonicalJsonMapper = new CanonicalJsonMapper();
         canonicalJsonValidator = new CanonicalJsonValidator();
-        position = 0;
         items = new HashMap<>();
         entries = new HashMap<>();
-        entryHashes = new HashMap<>();
+        itemHashToEntryCount = new HashMap<>();
         proofs = new HashMap<>();
     }
 
@@ -61,6 +61,7 @@ public class CommandParser {
                         String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes(StandardCharsets.UTF_8));
                         Item item = new Item(itemHash, objectReconstructor.reconstruct(jsonContent));
                         items.put(position++, item);
+                        itemHashToEntryCount.put(itemHash, 0);
                     } catch (JsonParseException jpe) {
                         LOG.error("failed to parse json: " + parts[1]);
                         throw new SerializedRegisterParseException("failed to parse json: " + parts[1], jpe);
@@ -76,8 +77,8 @@ public class CommandParser {
             case "append-entry":
                 if (parts.length == 3) {
                     Entry entry = new Entry(0, stripPrefix(parts[2]), Instant.parse(parts[1]));
-                    entries.put(position, entry);
-                    updateEntryHashes(entry.getSha256hex(), position++);
+                    entries.put(position++, entry);
+                    updateItemHashCount(entry.getSha256hex());
                 } else {
                     LOG.error("append entry line must have 3 elements, was : " + s);
                     throw new SerializedRegisterParseException("append entry line must have 3 elements, was : " + s);
@@ -98,6 +99,13 @@ public class CommandParser {
         }
     }
 
+    private void updateItemHashCount(String sha256hex) {
+        if (itemHashToEntryCount.containsKey(sha256hex)) {
+            Integer count = itemHashToEntryCount.get(sha256hex);
+            itemHashToEntryCount.replace(sha256hex, count + 1);
+        }
+    }
+
     public Iterator<RegisterCommand> getCommands() {
 
         validateOrphanItems();
@@ -105,25 +113,27 @@ public class CommandParser {
         return IntStream.range(0, position).mapToObj(i -> {
             if (entries.containsKey(i)) {
                 return new AppendEntryCommand(entries.get(i));
-            } else if (items.containsKey(i)) {
-                return new AddItemCommand(items.get(i));
-            } else if (proofs.containsKey(i)) {
-                return new AssertRootHashCommand(proofs.get(i));
-            } else {
-                throw new RuntimeException("No command found for position " + String.valueOf(i));
             }
+            if (items.containsKey(i)) {
+                return new AddItemCommand(items.get(i));
+            }
+            if (proofs.containsKey(i)) {
+                return new AssertRootHashCommand(proofs.get(i));
+            }
+            throw new RuntimeException("No command found for position " + String.valueOf(i));
         }).iterator();
     }
 
     private void validateOrphanItems() {
-        Set<Item> orphanItems = items.entrySet().stream().filter(kv -> {
-            // item must be referenced by entry below it
-            Integer itemPosition = kv.getKey();
-            return !entryHashes.containsKey(kv.getValue().getSha256hex()) ||
-                    entryHashes.get(kv.getValue().getSha256hex()).stream().allMatch(p -> p < itemPosition);
-        }).map(kv -> kv.getValue()).collect(toSet());
 
-        if (!orphanItems.isEmpty()) {
+        final Set<String> orphanItemHashes = itemHashToEntryCount.entrySet().stream().filter(kv -> kv.getValue() == 0)
+                .map(Map.Entry::getKey).collect(toSet());
+
+        if (!orphanItemHashes.isEmpty()) {
+
+            Set<Item> orphanItems = items.values().stream().filter(i -> orphanItemHashes.contains(i.getSha256hex()))
+                    .collect(toSet());
+
             throw new OrphanItemException("no corresponding entry for item(s): ", orphanItems);
         }
     }
@@ -134,16 +144,6 @@ public class CommandParser {
             throw new SerializedRegisterParseException("hash field must start with sha-256: not: " + hashField);
         } else {
             return hashField.substring(8);
-        }
-    }
-
-    private void updateEntryHashes(String hash, Integer pos) {
-        if (entryHashes.containsKey(hash)) {
-            entryHashes.get(hash).add(pos);
-        } else {
-            ArrayList<Integer> list = new ArrayList<>();
-            list.add(pos);
-            entryHashes.put(hash, list);
         }
     }
 
