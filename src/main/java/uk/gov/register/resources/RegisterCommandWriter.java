@@ -19,12 +19,6 @@ import java.lang.reflect.Type;
 @Provider
 @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
 public class RegisterCommandWriter implements MessageBodyWriter<RegisterSerialisationFormat> {
-    private final CommandParser commandParser;
-
-    @Inject
-    public RegisterCommandWriter(CommandParser commandParser) {
-        this.commandParser = commandParser;
-    }
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -38,6 +32,7 @@ public class RegisterCommandWriter implements MessageBodyWriter<RegisterSerialis
 
     @Override
     public void writeTo(RegisterSerialisationFormat rsf, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+        CommandParser commandParser = new CommandParser();
         httpHeaders.add("Content-Disposition", String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), commandParser.getFileExtension()));
 
         rsf.getCommands().forEachRemaining(command -> {

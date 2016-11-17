@@ -26,32 +26,30 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterCommandReaderTest {
+
     private final Class<RegisterSerialisationFormat> type = RegisterSerialisationFormat.class;
+
+    @Mock
+    private Type genericType;
+
+    private Annotation[] annotations = new Annotation[]{};
+
+    @Mock
+    private MediaType mediaType;
+
+    @Mock
+    private MultivaluedMap<String, String> httpHeaders;
+
     private RegisterCommandReader registerCommandReader;
-
-    @Mock
-    Type genericType;
-
-    Annotation[] annotations = new Annotation[]{};
-
-    @Mock
-    MediaType mediaType;
-
-    @Mock
-    MultivaluedMap<String, String> httpHeaders;
 
     @Before
     public void setup() {
-        ObjectReconstructor objectReconstructor = new ObjectReconstructor();
-        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
-        CommandParser commandParser = new CommandParser(objectReconstructor, canonicalJsonMapper, canonicalJsonValidator);
-        registerCommandReader = new RegisterCommandReader(commandParser);
+        registerCommandReader = new RegisterCommandReader();
     }
 
     @Test
     public void shouldParseCommands() throws Exception {
-        try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register.tsv"))
+        try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf.tsv"))
         ) {
             RegisterSerialisationFormat registerSerialisationFormat = registerCommandReader.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
             RegisterCommand[] registerCommands = Iterators.toArray(registerSerialisationFormat.getCommands(), RegisterCommand.class);

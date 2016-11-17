@@ -86,6 +86,14 @@ public class LoadSerializedFunctionalTest {
     }
 
     @Test
+    public void shouldReturnBadRequestForOrphanItems() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-orphan-rsf.tsv")));
+        Response response = send(input);
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("{\"message\":\"no corresponding entry for item(s): \",\"orphanItems\":[{\"register\":\"ft_openregister_test\",\"text\":\"orphan item\"}]}"));
+    }
+
+    @Test
     public void shouldRollbackIfCheckedRootHashDoesNotMatchExpectedOne() throws IOException {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf-invalid-root-hash.tsv")));
 

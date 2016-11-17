@@ -113,10 +113,6 @@ public class RegisterCommandWriterTest {
     }
 
     private RegisterCommandWriter createRegisterCommandWriter() {
-        ObjectReconstructor objectReconstructor = new ObjectReconstructor();
-        CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-        CanonicalJsonValidator canonicalJsonValidator = new CanonicalJsonValidator();
-        CommandParser commandParser = new CommandParser(objectReconstructor, canonicalJsonMapper, canonicalJsonValidator);
-        return new RegisterCommandWriter(commandParser);
+        return new RegisterCommandWriter();
     }
 }
