@@ -4,7 +4,7 @@ import org.skife.jdbi.v2.sqlobject.*;
 import uk.gov.register.core.Entry;
 
 public interface EntryDAO {
-    @SqlBatch("insert into entry(entry_number, sha256hex, timestamp) values(:entryNumber, :sha256hex, :timestampAsLong)")
+    @SqlBatch("insert into entry(entry_number, sha256hex, timestamp, item_key) values(:entryNumber, :sha256hex, :timestampAsLong, :itemKey)")
     void insertInBatch(@BindBean Iterable<Entry> entries);
 
     @SqlQuery("select value from current_entry_number")
