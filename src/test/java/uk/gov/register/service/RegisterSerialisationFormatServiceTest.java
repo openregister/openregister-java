@@ -139,8 +139,8 @@ public class RegisterSerialisationFormatServiceTest {
 
         when(register.getItemIterator(2, 2)).thenReturn(Arrays.asList(item).iterator());
         when(register.getEntryIterator(2, 2)).thenReturn(Arrays.asList(entry2).iterator());
-        when(register.getRegisterProof(1, 1)).thenReturn(oneEntryRegisterProof);
-        when(register.getRegisterProof(2, 2)).thenReturn(twoEntriesRegisterProof);
+        when(register.getRegisterProof(1)).thenReturn(oneEntryRegisterProof);
+        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat(2, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());

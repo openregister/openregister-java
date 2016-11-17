@@ -45,20 +45,19 @@ public class RegisterSerialisationFormatService {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public RegisterSerialisationFormat createRegisterSerialisationFormat(int startEntryNo, int endEntryNo) {
         Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(startEntryNo, endEntryNo), AddItemCommand::new);
         Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(startEntryNo, endEntryNo), AppendEntryCommand::new);
 
-        RegisterProof previousRegisterProof = startEntryNo == 1 ? emptyRegisterProof : register.getRegisterProof(startEntryNo - 1, startEntryNo - 1);
+        RegisterProof previousRegisterProof = startEntryNo == 1 ? emptyRegisterProof : register.getRegisterProof(startEntryNo - 1);
 
         return new RegisterSerialisationFormat(Iterators.concat(
                 Iterators.forArray(new AssertRootHashCommand(previousRegisterProof)),
                 itemCommandsIterator,
                 entryCommandIterator,
-                Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof(startEntryNo, endEntryNo)))));
+                Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof(endEntryNo)))));
     }
 
     private void mintRegisterComponents(Iterator<RegisterCommand> commands, Register register) {
