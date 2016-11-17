@@ -50,7 +50,7 @@ public class Item {
         return data;
     }
 
-    public String getKey(String key) {
+    public String getValue(String key) {
         return content.get(key).textValue();
     }
 

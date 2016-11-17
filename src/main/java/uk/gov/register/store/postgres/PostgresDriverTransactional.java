@@ -87,7 +87,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
     @Override
     public void insertRecord(Record record, String registerName) {
-        stagedCurrentKeys.put(record.item.getKey(registerName), record.entry.getEntryNumber());
+        stagedCurrentKeys.put(record.item.getValue(registerName), record.entry.getEntryNumber());
     }
 
     @Override

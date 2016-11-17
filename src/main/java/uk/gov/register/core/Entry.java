@@ -19,11 +19,13 @@ public class Entry {
     private final int entryNumber;
     private final String sha256hex;
     private final Instant timestamp;
+    private String itemKey;
 
-    public Entry(int entryNumber, String sha256hex, Instant timestamp) {
+    public Entry(int entryNumber, String sha256hex, Instant timestamp, String itemKey) {
         this.entryNumber = entryNumber;
         this.sha256hex = sha256hex;
         this.timestamp = timestamp;
+        this.itemKey = itemKey;
     }
 
     @JsonIgnore
@@ -83,5 +85,10 @@ public class Entry {
         int result = sha256hex != null ? sha256hex.hashCode() : 0;
         result = 31 * entryNumber + result;
         return result;
+    }
+
+    @JsonIgnore
+    public String getItemKey() {
+        return itemKey;
     }
 }
