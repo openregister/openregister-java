@@ -19,6 +19,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Iterator;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -78,12 +79,16 @@ public class CommandParserTest {
         commandParser.addCommand(line);
     }
 
-    @Test(expected = OrphanItemException.class)
+    @Test
     public void shouldFailForOrphanItem() throws Exception {
-        commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}");
-        commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"orphan\"}");
-        commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
-        commandParser.getCommands();
+        try {
+            commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}");
+            commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"orphan\"}");
+            commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
+            commandParser.getCommands();
+        } catch (OrphanItemException e) {
+            assertThat(e.getErrorJson().toString(), is("{\"message\":\"no corresponding entry for item(s): \",\"orphanItems\":[{\"register\":\"ft_openregister_test\",\"text\":\"orphan\"}]}"));
+        }
     }
 
     @Test(expected = OrphanItemException.class)
@@ -100,7 +105,7 @@ public class CommandParserTest {
     }
 
     @Test
-    public void serialise_shouldFormatEntryAsTsvLine(){
+    public void serialise_shouldFormatEntryAsTsvLine() {
         Instant entryTimestamp = Instant.parse("2016-07-15T10:00:00Z");
         Entry entry = new Entry(1, "item-hash", entryTimestamp);
 
@@ -110,7 +115,7 @@ public class CommandParserTest {
     }
 
     @Test
-    public void serialise_shouldFormatItemAsTsvLine(){
+    public void serialise_shouldFormatItemAsTsvLine() {
         JsonNode itemContent = Json.read("{\"b\": \"2\",\"a\": \"1\" }", JsonNode.class);
         Item item = new Item(itemContent);
 
@@ -120,7 +125,7 @@ public class CommandParserTest {
     }
 
     @Test
-    public void serialise_shouldFormatProofAsTsvLine(){
+    public void serialise_shouldFormatProofAsTsvLine() {
         RegisterProof registerProof = new RegisterProof("root-hash");
 
         String actualLine = commandParser.serialise(registerProof);

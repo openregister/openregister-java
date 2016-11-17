@@ -48,7 +48,6 @@ public class CommandParser {
         proofs = new HashMap<>();
     }
 
-
     public void addCommand(String s) {
         String[] parts = s.split(TAB);
         String commandName = parts[0];
@@ -107,7 +106,6 @@ public class CommandParser {
     }
 
     public Iterator<RegisterCommand> getCommands() {
-
         validateOrphanItems();
 
         return IntStream.range(0, position).mapToObj(i -> {
