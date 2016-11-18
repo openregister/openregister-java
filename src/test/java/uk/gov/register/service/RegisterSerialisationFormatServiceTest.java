@@ -52,7 +52,6 @@ public class RegisterSerialisationFormatServiceTest {
     private RegisterCommand appendEntryCommand2;
     private RegisterCommand assertRootEmptyRegister;
 
-
     private RegisterSerialisationFormatService sutService;
 
     @Before
@@ -68,7 +67,6 @@ public class RegisterSerialisationFormatServiceTest {
         appendEntryCommand1 = new AppendEntryCommand(entry1);
         appendEntryCommand2 = new AppendEntryCommand(entry2);
         assertRootEmptyRegister = new AssertRootHashCommand(emptyRegisterProof);
-
 
         sutService = new RegisterSerialisationFormatService(registerService, register);
     }

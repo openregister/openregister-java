@@ -152,14 +152,14 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
-    public void downloadPartialRSF_shouldReturnSameRootHashAsDownloadRSF() {
+    public void downloadPartialRSF_shouldReturnSameRSFAsFullDownload() {
         Response fullRsfResponse = getRequest("/download-rsf");
         Response partialRsfResponse = getRequest("/download-rsf/1/5");
 
         String[] fullRsfLines = getRsfLinesFrom(fullRsfResponse);
         String[] partialRsfLines = getRsfLinesFrom(partialRsfResponse);
 
-        assertThat(fullRsfLines[10], equalTo(partialRsfLines[10]));
+        assertThat(fullRsfLines, equalTo(partialRsfLines));
     }
 
     private String[] getRsfLinesFrom(Response response){
