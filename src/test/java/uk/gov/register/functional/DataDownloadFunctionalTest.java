@@ -12,7 +12,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -100,9 +103,9 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
         assertThat(rsfLines[0], equalTo("assert-root-hash\te3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
         assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}"));
-        assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
-        assertThat(rsfLines[3], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
-        assertThat(rsfLines[4], equalTo("add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
+        assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
+        assertThat(rsfLines[3], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
+        assertThat(rsfLines[4], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
 
         assertFormattedEntry(rsfLines[5], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
         assertFormattedEntry(rsfLines[6], "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
@@ -115,7 +118,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void downloadPartialRSF_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
-        Response response = getRequest("/download-rsf/2/3");
+        Response response = getRequest("/download-rsf/1/2");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
@@ -123,11 +126,15 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
         String[] rsfLines = getRsfLinesFrom(response);
 
-        assertThat(rsfLines[0], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
-        assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
+        assertThat(rsfLines[0], equalTo("assert-root-hash\te3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
-        assertFormattedEntry(rsfLines[2], "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
-        assertFormattedEntry(rsfLines[3], "sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+        assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}"));
+        assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
+
+        assertFormattedEntry(rsfLines[3], "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+        assertFormattedEntry(rsfLines[4], "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
+
+        assertThat(rsfLines[5], containsString("assert-root-hash\t"));
     }
 
     @Test
@@ -142,6 +149,17 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
         Response response = getRequest("/download-rsf/666/1000");
 
         assertThat(response.getStatus(), equalTo(400));
+    }
+
+    @Test
+    public void downloadPartialRSF_shouldReturnSameRSFAsFullDownload() {
+        Response fullRsfResponse = getRequest("/download-rsf");
+        Response partialRsfResponse = getRequest("/download-rsf/1/5");
+
+        String[] fullRsfLines = getRsfLinesFrom(fullRsfResponse);
+        String[] partialRsfLines = getRsfLinesFrom(partialRsfResponse);
+
+        assertThat(fullRsfLines, equalTo(partialRsfLines));
     }
 
     private String[] getRsfLinesFrom(Response response){

@@ -14,22 +14,22 @@ import java.util.Optional;
 
 public interface ItemQueryDAO {
 
-    @SqlQuery("select * from item where sha256hex=:sha256hex")
+    @SqlQuery("select * from item where sha256hex=:sha256hex order by sha256hex")
     @SingleValueResult(Item.class)
     @RegisterMapper(ItemMapper.class)
     Optional<Item> getItemBySHA256(@Bind("sha256hex") String sha256Hash);
 
     //Note: This is fine for small data registers like country
-    @SqlQuery("select * from item")
+    @SqlQuery("select * from item order by sha256hex")
     @RegisterMapper(ItemMapper.class)
     Collection<Item> getAllItemsNoPagination();
 
-    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex)")
+    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex) order by sha256hex")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(262144)
     ResultIterator<Item> getIterator();
 
-    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex and entry_number between :startEntryNo and :endEntryNo)")
+    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex and entry_number between :startEntryNo and :endEntryNo) order by sha256hex")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(262144)
     ResultIterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);

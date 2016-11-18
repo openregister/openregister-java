@@ -58,7 +58,14 @@ public class EntryLog {
 
     public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
         String rootHash =  backingStoreDriver.withVerifiableLog(verifiableLog ->
-                bytesToString(verifiableLog.currentRoot()));
+                bytesToString(verifiableLog.getCurrentRootHash()));
+
+        return new RegisterProof(rootHash);
+    }
+
+    public RegisterProof getRegisterProof(int entryNo) {
+        String rootHash = backingStoreDriver.withVerifiableLog(verifiableLog ->
+                bytesToString(verifiableLog.getSpecificRootHash(entryNo)));
 
         return new RegisterProof(rootHash);
     }

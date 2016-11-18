@@ -32,10 +32,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterSerialisationFormatServiceTest {
-
     private CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
     @Mock
@@ -112,7 +110,6 @@ public class RegisterSerialisationFormatServiceTest {
         RegisterProof expectedRegisterProof = new RegisterProof("1231234");
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
 
-
         RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat();
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
@@ -133,8 +130,15 @@ public class RegisterSerialisationFormatServiceTest {
 
     @Test
     public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
+        RegisterProof oneEntryRegisterProof = new RegisterProof("oneEntryInRegisterHash");
+        RegisterProof twoEntriesRegisterProof = new RegisterProof("twoEntriesInRegisterHash");
+        RegisterCommand assertRootOneEntryInRegister = new AssertRootHashCommand(oneEntryRegisterProof);
+        RegisterCommand assertRootTwoEntriesInRegister = new AssertRootHashCommand(twoEntriesRegisterProof);
+
         when(register.getItemIterator(2, 2)).thenReturn(Arrays.asList(item).iterator());
         when(register.getEntryIterator(2, 2)).thenReturn(Arrays.asList(entry2).iterator());
+        when(register.getRegisterProof(1)).thenReturn(oneEntryRegisterProof);
+        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat(2, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
@@ -142,15 +146,11 @@ public class RegisterSerialisationFormatServiceTest {
         verify(register, times(1)).getItemIterator(2, 2);
         verify(register, times(1)).getEntryIterator(2, 2);
 
-
-        assertThat(actualCommands.size(), equalTo(2));
-        assertThat(actualCommands, contains(addItemCommand, appendEntryCommand2));
+        assertThat(actualCommands.size(), equalTo(4));
+        assertThat(actualCommands, contains(assertRootOneEntryInRegister, addItemCommand, appendEntryCommand2, assertRootTwoEntriesInRegister));
     }
-
 
     private String getHash(JsonNode content) {
         return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
     }
-
-
 }
