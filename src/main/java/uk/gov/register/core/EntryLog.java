@@ -63,11 +63,9 @@ public class EntryLog {
         return new RegisterProof(rootHash);
     }
 
-    public RegisterProof getRegisterProof(int startEntryNo, int endEntryNo) {
-        int numberOfEntries = (endEntryNo - startEntryNo) + 1;
-        int startIndex = startEntryNo - 1;
+    public RegisterProof getRegisterProof(int entryNo) {
         String rootHash = backingStoreDriver.withVerifiableLog(verifiableLog ->
-                bytesToString(verifiableLog.getSpecificRootHash(startIndex, numberOfEntries)));
+                bytesToString(verifiableLog.getSpecificRootHash(entryNo)));
 
         return new RegisterProof(rootHash);
     }
