@@ -49,8 +49,8 @@ public class AnalyticsFunctionalTest {
         dbSupport = new DBSupport(testDAO);
 
         dbSupport.cleanDb();
-        testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}");
-        testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}");
+        testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}", "12345");
+        testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}", "12346");
         dbSupport.publishEntries("address", Arrays.asList(testEntry1, testEntry2));
     }
 

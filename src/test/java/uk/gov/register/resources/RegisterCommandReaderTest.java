@@ -49,8 +49,7 @@ public class RegisterCommandReaderTest {
 
     @Test
     public void shouldParseCommands() throws Exception {
-        try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf.tsv"))
-        ) {
+        try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf.tsv"))) {
             RegisterSerialisationFormat registerSerialisationFormat = registerCommandReader.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
             RegisterCommand[] registerCommands = Iterators.toArray(registerSerialisationFormat.getCommands(), RegisterCommand.class);
 
@@ -60,8 +59,7 @@ public class RegisterCommandReaderTest {
 
     @Test
     public void shouldParseCommandsEscaped() throws Exception {
-        try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))
-        ) {
+        try (InputStream serializerRegisterStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))) {
             RegisterSerialisationFormat registerSerialisationFormat = registerCommandReader.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
             RegisterCommand[] registerCommands = Iterators.toArray(registerSerialisationFormat.getCommands(), RegisterCommand.class);
 

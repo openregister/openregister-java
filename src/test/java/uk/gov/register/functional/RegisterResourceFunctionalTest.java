@@ -22,8 +22,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.core.IsNot.not;
-import static uk.gov.register.functional.db.TestEntry.anEntry;
-
 
 public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
@@ -74,11 +72,11 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
     private void populateAddressRegisterEntries() {
         dbSupport.publishEntries(ImmutableList.of(
-                TestEntry.anEntry(1, "{\"name\":\"ellis\",\"address\":\"12345\"}"),
-                TestEntry.anEntry(2, "{\"name\":\"presley\",\"address\":\"6789\"}"),
-                TestEntry.anEntry(3, "{\"name\":\"ellis\",\"address\":\"145678\"}"),
-                TestEntry.anEntry(4, "{\"name\":\"updatedEllisName\",\"address\":\"145678\"}"),
-                TestEntry.anEntry(5, "{\"name\":\"ellis\",\"address\":\"6789\"}")
+                TestEntry.anEntry(1, "{\"name\":\"ellis\",\"address\":\"12345\"}", "12345"),
+                TestEntry.anEntry(2, "{\"name\":\"presley\",\"address\":\"6789\"}", "6789"),
+                TestEntry.anEntry(3, "{\"name\":\"ellis\",\"address\":\"145678\"}", "145678"),
+                TestEntry.anEntry(4, "{\"name\":\"updatedEllisName\",\"address\":\"145678\"}", "145678"),
+                TestEntry.anEntry(5, "{\"name\":\"ellis\",\"address\":\"6789\"}" ,"6789")
         ));
     }
 
@@ -94,7 +92,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
             int entryNumber = Integer.parseInt(r.remove("entry-number").toString());
             String timestampISO = (String) r.remove("entry-timestamp");
             r.remove("item-hash");
-            return TestEntry.anEntry(entryNumber, writeToString(r), Instant.parse(timestampISO));
+            return TestEntry.anEntry(entryNumber, writeToString(r), Instant.parse(timestampISO), r.get("register").toString());
         }).collect(Collectors.toList());
 
         dbSupport.publishEntries("register", registerEntries);

@@ -30,9 +30,9 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
         Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
         Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
-        Entry entry1 = new Entry(1, "itemhash1", Instant.now());
-        Entry entry2 = new Entry(2, "itemhash2", Instant.now());
-        Entry entry3 = new Entry(3, "itemhash3", Instant.now());
+        Entry entry1 = new Entry(1, "itemhash1", Instant.now(), "itemKey1");
+        Entry entry2 = new Entry(2, "itemhash2", Instant.now(), "itemKey2");
+        Entry entry3 = new Entry(3, "itemhash3", Instant.now(), "itemKey3");
 
         PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
             postgresDriver.insertItem(item1);
@@ -71,9 +71,9 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
         Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
         Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
-        Entry entry1 = new Entry(1, "itemhash1", Instant.now());
-        Entry entry2 = new Entry(2, "itemhash2", Instant.now());
-        Entry entry3 = new Entry(3, "itemhash3", Instant.now());
+        Entry entry1 = new Entry(1, "itemhash1", Instant.now(), "itemKey1");
+        Entry entry2 = new Entry(2, "itemhash2", Instant.now(), "itemKey2");
+        Entry entry3 = new Entry(3, "itemhash3", Instant.now(), "itemKey3");
 
         try {
             PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {

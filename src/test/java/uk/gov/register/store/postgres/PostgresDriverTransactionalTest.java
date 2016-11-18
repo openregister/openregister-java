@@ -215,9 +215,9 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         Item item1 = new Item("itemhash1", new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
         Item item2 = new Item("itemhash2", new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
         Item item3 = new Item("itemhash3", new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
-        Entry entry1 = new Entry(1, "itemhash1", Instant.now());
-        Entry entry2 = new Entry(2, "itemhash2", Instant.now());
-        Entry entry3 = new Entry(3, "itemhash3", Instant.now());
+        Entry entry1 = new Entry(1, "itemhash1", Instant.now(), "aaa");
+        Entry entry2 = new Entry(2, "itemhash2", Instant.now(), "bbb");
+        Entry entry3 = new Entry(3, "itemhash3", Instant.now(), "ccc");
 
         postgresDriver.insertItem(item1);
         postgresDriver.insertItem(item2);
