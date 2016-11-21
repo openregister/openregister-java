@@ -12,6 +12,6 @@ import java.io.IOException;
 public class ContentSecurityPolicyFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        responseContext.getHeaders().add(HttpHeaders.CONTENT_SECURITY_POLICY, "default-src 'self' www.google-analytics.com 'nonce-321analytics123'");
+        responseContext.getHeaders().add(HttpHeaders.CONTENT_SECURITY_POLICY, "default-src 'self' www.google-analytics.com");
     }
 }

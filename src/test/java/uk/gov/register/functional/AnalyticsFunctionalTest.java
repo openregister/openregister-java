@@ -105,18 +105,13 @@ public class AnalyticsFunctionalTest {
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));
 
-        Element trackingIdElem = doc.getElementById("analytics-tracking-id");
-        Boolean docIncludesAnalyticsId = trackingIdElem != null;
+        Boolean docIncludesAnalyticsId = doc.getElementById("analytics-tracking-id") != null;
         Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
         Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
 
         assertThat(docIncludesAnalyticsId, equalTo(shouldIncludeAnalytics));
         assertThat(docIncludesMainAnalytics, equalTo(shouldIncludeAnalytics));
         assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
-
-        if (shouldIncludeAnalytics) {
-            assertThat(trackingIdElem.html(), containsString("var gaTrackingId = '" + trackingId + "';"));
-        }
     }
 
     private Client getTestClient(DropwizardAppRule<RegisterConfiguration> appRule) {

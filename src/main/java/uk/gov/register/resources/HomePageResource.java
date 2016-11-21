@@ -1,6 +1,7 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
+import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -16,11 +17,13 @@ import java.security.NoSuchAlgorithmException;
 public class HomePageResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
+    private final RegisterTrackingConfiguration config;
 
     @Inject
-    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory) {
+    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory, RegisterTrackingConfiguration config) {
         this.register = register;
         this.viewFactory = viewFactory;
+        this.config = config;
     }
 
     @GET
@@ -39,6 +42,12 @@ public class HomePageResource {
     public String robots() {
         return "User-agent: *\n" +
                 "Disallow: /\n";
+    }
+    @GET
+    @Path("/analytics-code.js")
+    @Produces("application/javascript")
+    public String analyticsTrackingId() {
+        return "var gaTrackingId = \"" + config.getRegisterTrackingId().get() + "\";\n";
     }
 
 }

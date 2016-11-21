@@ -28,7 +28,7 @@ public class HomePageResourceTest {
         when(registerMock.getLastUpdatedTime()).thenReturn(lastUpdated);
         when(viewFactoryMock.homePageView(totalRecords, totalEntries, lastUpdated)).thenReturn(homePageView);
 
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock);
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("trackingId"));
         homePageResource.home();
 
         verify(registerMock, times(1)).getTotalRecords();
