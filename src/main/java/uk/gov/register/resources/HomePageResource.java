@@ -45,7 +45,7 @@ public class HomePageResource {
     }
     @GET
     @Path("/analytics-code.js")
-    @Produces("application/javascript")
+    @Produces(ExtraMediaType.APPLICATION_JAVASCRIPT)
     public String analyticsTrackingId() {
         return config.getRegisterTrackingId().map(
                 trackingId -> "var gaTrackingId = \"" + trackingId + "\";\n"

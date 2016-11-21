@@ -4,6 +4,7 @@ import javax.ws.rs.core.MediaType;
 
 public class ExtraMediaType {
     public static final String TEXT_HTML = "text/html; charset=UTF-8";
+    public static final String APPLICATION_JAVASCRIPT = "application/javascript";
 
     public static final String TEXT_CSV = "text/csv; charset=UTF-8";
     public static final MediaType TEXT_CSV_TYPE = new MediaType("text", "csv", "UTF-8");
