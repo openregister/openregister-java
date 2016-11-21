@@ -85,11 +85,7 @@
     <script type="text/javascript" src="/assets/js/details.polyfill.js"></script>
 
     <th:block th:if="${registerTrackingId != null and registerTrackingId.present and !#strings.isEmpty(registerTrackingId.get())}">
-        <script id="analytics-tracking-id" nonce="321analytics123" th:inline="javascript">
-            /*<![CDATA[*/
-                var gaTrackingId = /*[[${registerTrackingId.get()}]]*/ '';
-            /*]]>*/
-        </script>
+        <script id="analytics-tracking-id" src="/analytics-code.js"></script>
         <script id="analytics-main" type="text/javascript" src="/assets/js/analytics.js"></script>
         <script id="analytics-external-links" type="text/javascript" src="/assets/js/analytics-external-links.js"></script>
     </th:block>
