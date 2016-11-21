@@ -47,7 +47,8 @@ public class HomePageResource {
     @Path("/analytics-code.js")
     @Produces("application/javascript")
     public String analyticsTrackingId() {
-        return "var gaTrackingId = \"" + config.getRegisterTrackingId().get() + "\";\n";
+        return config.getRegisterTrackingId().map(
+                trackingId -> "var gaTrackingId = \"" + trackingId + "\";\n"
+        ).orElse("");
     }
-
 }
