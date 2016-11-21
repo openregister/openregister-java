@@ -14,18 +14,18 @@ import uk.gov.register.util.ISODateFormatter;
 import java.time.Instant;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-@JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "item-key"})
+@JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
 public class Entry {
     private final int entryNumber;
     private final String sha256hex;
     private final Instant timestamp;
-    private String itemKey;
+    private String key;
 
-    public Entry(int entryNumber, String sha256hex, Instant timestamp, String itemKey) {
+    public Entry(int entryNumber, String sha256hex, Instant timestamp, String key) {
         this.entryNumber = entryNumber;
         this.sha256hex = sha256hex;
         this.timestamp = timestamp;
-        this.itemKey = itemKey;
+        this.key = key;
     }
 
     @JsonIgnore
@@ -61,9 +61,9 @@ public class Entry {
         return ISODateFormatter.format(timestamp);
     }
 
-    @JsonProperty("item-key")
-    public String getItemKey() {
-        return itemKey;
+    @JsonProperty("key")
+    public String getKey() {
+        return key;
     }
 
     public static CsvSchema csvSchema() {

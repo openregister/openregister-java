@@ -62,14 +62,14 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
         assertThat(entry1.get("entry-number").textValue(), equalTo("1"));
         assertThat(entry1.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
         verifyStringIsADateSpecifiedInSpecification(entry1.get("entry-timestamp").textValue());
-        assertThat(entry1.get("item-key").textValue(), equalTo("1234"));
+        assertThat(entry1.get("key").textValue(), equalTo("1234"));
 
         JsonNode entry2 = jsonNodes.get(1);
         assertThat(Iterators.size(entry2.fields()), equalTo(4));
         assertThat(entry2.get("entry-number").textValue(), equalTo("2"));
         assertThat(entry2.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item2)));
         verifyStringIsADateSpecifiedInSpecification(entry2.get("entry-timestamp").textValue());
-        assertThat(entry2.get("item-key").textValue(), equalTo("6789"));
+        assertThat(entry2.get("key").textValue(), equalTo("6789"));
 
     }
 

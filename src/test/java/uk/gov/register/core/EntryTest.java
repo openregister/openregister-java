@@ -25,7 +25,7 @@ public class EntryTest {
     }
 
     @Test
-    public void getItemKey_returnsItemKeyValue() {
+    public void getkey_returnskeyValue() {
         Entry entry = new Entry(123, "abc", Instant.ofEpochSecond(1470403440), "123");
         assertThat(entry.getItemHash(), equalTo("sha-256:abc"));
     }

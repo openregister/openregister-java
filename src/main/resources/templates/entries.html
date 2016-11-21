@@ -20,7 +20,7 @@
             <th scope="col">Entry</th>
             <th scope="col">item-hash</th>
             <th scope="col">entry-timestamp</th>
-            <th scope="col">item-key</th>
+            <th scope="col">key</th>
         </tr>
         </thead>
         <tbody>
@@ -28,7 +28,7 @@
             <td><a th:href="${'/entry/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a></td>
             <td><a th:href="${'/item/' + entry.itemHash}" th:text="${entry.itemHash}"></a></td>
             <td th:text="${entry.timestamp}"></td>
-            <td th:text="${entry.itemKey}"></td>
+            <td th:text="${entry.key}"></td>
         </tr>
         </tbody>
     </table>

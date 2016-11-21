@@ -107,11 +107,11 @@ public class CommandParserTest {
     @Test
     public void serialise_shouldFormatEntryAsTsvLine() {
         Instant entryTimestamp = Instant.parse("2016-07-15T10:00:00Z");
-        Entry entry = new Entry(1, "item-hash", entryTimestamp, "item-key");
+        Entry entry = new Entry(1, "item-hash", entryTimestamp, "key");
 
         String actualLine = commandParser.serialise(entry);
 
-        assertThat(actualLine, equalTo("append-entry\t2016-07-15T10:00:00Z\tsha-256:item-hash\titem-key\n"));
+        assertThat(actualLine, equalTo("append-entry\t2016-07-15T10:00:00Z\tsha-256:item-hash\tkey\n"));
     }
 
     @Test

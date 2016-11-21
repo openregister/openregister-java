@@ -82,7 +82,7 @@ public class DataUploadFunctionalTest {
                 "item-hash", "sha-256:"+storedItem.sha256hex,
                 "register", "ft_openregister_test",
                 "text", "SomeText",
-                "item-key", "ft_openregister_test"
+                "key", "ft_openregister_test"
         )));
     }
 

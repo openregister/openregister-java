@@ -31,7 +31,7 @@ public class RecordViewTest {
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"item-hash\":\"sha-256:ab\"," +
-                "\"item-key\":\"b\"," +
+                "\"key\":\"b\"," +
                 "\"a\":\"b\"" +
                 "}"));
     }

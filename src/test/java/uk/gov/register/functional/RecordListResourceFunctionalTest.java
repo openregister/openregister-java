@@ -44,7 +44,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
                 .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
                 .put("street", "ellis")
                 .put("address", "6789")
-                .put("item-key", "6789").build()));
+                .put("key", "6789").build()));
 
         assertThat(responseMap.get("145678"), equalTo(ImmutableMap.builder()
                 .put("entry-number", "4")
@@ -52,7 +52,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
                 .put("entry-timestamp", responseMap.get("145678").get("entry-timestamp"))
                 .put("street", "updatedEllisName")
                 .put("address", "145678")
-                .put("item-key", "145678").build()));
+                .put("key", "145678").build()));
 
         assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
                 .put("entry-number", "1")
@@ -60,7 +60,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
                 .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
                 .put("street", "ellis")
                 .put("address", "12345")
-                .put("item-key", "12345").build()));
+                .put("key", "12345").build()));
 
     }
 
@@ -108,7 +108,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
                 .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
                 .put("street", "ellis")
                 .put("address", "6789")
-                .put("item-key", "6789").build()));
+                .put("key", "6789").build()));
 
         assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
                 .put("entry-number", "1")
@@ -116,7 +116,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
                 .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
                 .put("street", "ellis")
                 .put("address", "12345")
-                .put("item-key", "12345").build()));
+                .put("key", "12345").build()));
     }
 
 

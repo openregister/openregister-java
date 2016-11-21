@@ -78,7 +78,7 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, "hash", Instant.now(), "itemkey"), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, "hash", Instant.now(), "key"), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

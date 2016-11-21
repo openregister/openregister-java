@@ -146,7 +146,7 @@ public class CommandParser {
     }
 
     public String serialise(Entry entry) {
-        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getItemHash() + TAB + entry.getItemKey() + NEW_LINE;
+        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getItemHash() + TAB + entry.getKey() + NEW_LINE;
     }
 
     public String serialise(Item item) {

@@ -82,13 +82,13 @@ public class ArchiveCreatorTest {
         assertThat(actualEntry1Node.get("entry-number").asInt(), equalTo(1));
         assertThat(actualEntry1Node.get("entry-timestamp").asText(), equalTo("2016-07-24T16:55:00Z"));
         assertThat(actualEntry1Node.get("item-hash").asText(), equalTo("sha-256:entry1sha"));
-        assertThat(actualEntry1Node.get("item-key").asText(), equalTo("entry1-field-1-value"));
+        assertThat(actualEntry1Node.get("key").asText(), equalTo("entry1-field-1-value"));
 
         JsonNode actualEntry2Node = archiveEntries.get("entry/2.json");
         assertThat(actualEntry2Node.get("entry-number").asInt(), equalTo(2));
         assertThat(actualEntry2Node.get("entry-timestamp").asText(), equalTo("2016-07-24T16:56:00Z"));
         assertThat(actualEntry2Node.get("item-hash").asText(), equalTo("sha-256:entry2sha"));
-        assertThat(actualEntry2Node.get("item-key").asText(), equalTo("entry2-field-1-value"));
+        assertThat(actualEntry2Node.get("key").asText(), equalTo("entry2-field-1-value"));
 
         JsonNode actualEntry1ItemNode = archiveEntries.get("item/entry1sha.json");
         assertThat(actualEntry1ItemNode.get("field-1").asText(), equalTo("entry1-field-1-value"));

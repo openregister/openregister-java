@@ -16,6 +16,6 @@ public class EntryMapper implements ResultSetMapper<Entry> {
 
     @Override
     public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-        return new Entry(r.getInt("entry_number"), r.getString("sha256hex"), longTimestampToInstantMapper.map(index, r, ctx), r.getString("item_key"));
+        return new Entry(r.getInt("entry_number"), r.getString("sha256hex"), longTimestampToInstantMapper.map(index, r, ctx), r.getString("key"));
     }
 }
