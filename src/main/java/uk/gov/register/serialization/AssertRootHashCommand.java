@@ -5,7 +5,6 @@ import uk.gov.register.exceptions.RootHashAssertionException;
 import uk.gov.register.views.RegisterProof;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AssertRootHashCommand extends RegisterCommand {
 
@@ -16,7 +15,7 @@ public class AssertRootHashCommand extends RegisterCommand {
     }
 
     @Override
-    public void execute(Register register, AtomicInteger entryNumber) throws Exception {
+    public void execute(Register register) throws Exception {
         RegisterProof actualProof = register.getRegisterProof();
         if (!actualProof.equals(this.registerProof)) {
             throw new RootHashAssertionException("Actual root hash: " + actualProof.getRootHash() + " does not match expected: " + this.registerProof.getRootHash());

@@ -10,7 +10,6 @@ import uk.gov.register.views.RegisterProof;
 import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class RegisterSerialisationFormatService {
 
@@ -61,11 +60,9 @@ public class RegisterSerialisationFormatService {
     }
 
     private void mintRegisterComponents(Iterator<RegisterCommand> commands, Register register) {
-        final int startEntryNum = register.getTotalEntries() + 1;
-        AtomicInteger entryNum = new AtomicInteger(startEntryNum);
         commands.forEachRemaining(c -> {
             try {
-                c.execute(register, entryNum);
+                c.execute(register);
             }catch(RootHashAssertionException e){
                 throw e;
             } catch (Exception e) {

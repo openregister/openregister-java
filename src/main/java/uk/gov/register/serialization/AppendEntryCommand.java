@@ -3,8 +3,6 @@ package uk.gov.register.serialization;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Register;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class AppendEntryCommand extends RegisterCommand {
 
     private Entry entry;
@@ -14,8 +12,9 @@ public class AppendEntryCommand extends RegisterCommand {
     }
 
     @Override
-    public void execute(Register register, AtomicInteger entryNumber) {
-        Entry numberedEntry = new Entry(entryNumber.getAndIncrement(), entry.getSha256hex(), entry.getTimestamp());
+    public void execute(Register register) {
+        int nextEntryNumber = register.getTotalEntries() + 1;
+        Entry numberedEntry = new Entry(nextEntryNumber, entry.getSha256hex(), entry.getTimestamp());
         register.appendEntry(numberedEntry);
     }
 
@@ -37,6 +36,4 @@ public class AppendEntryCommand extends RegisterCommand {
     public int hashCode() {
         return 31 * entry.hashCode();
     }
-
-
 }
