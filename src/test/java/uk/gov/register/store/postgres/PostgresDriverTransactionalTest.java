@@ -67,7 +67,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
         items.add(new Item("itemhash1", new ObjectMapper().createObjectNode()));
-        entries.add(new Entry(1, "itemhash1", Instant.now()));
+        entries.add(new Entry(1, "itemhash1", Instant.now(), "1234"));
         currentKeys.add(new CurrentKey("DE", 1));
 
         assertThat(items.size(), is(1));
@@ -77,7 +77,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertThat(postgresDriver.getTotalEntries(), is(1));
 
         postgresDriver.insertItem(new Item("itemhash2", new ObjectMapper().createObjectNode()));
-        postgresDriver.insertEntry(new Entry(2, "itemhash2", Instant.now()));
+        postgresDriver.insertEntry(new Entry(2, "itemhash2", Instant.now(), "1234"));
         postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
 
         assertThat(items.size(), is(1));
@@ -87,7 +87,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertThat(postgresDriver.getTotalEntries(), is(2));
 
         postgresDriver.insertItem(new Item("itemhash3", new ObjectMapper().createObjectNode()));
-        postgresDriver.insertEntry(new Entry(3, "itemhash3", Instant.now()));
+        postgresDriver.insertEntry(new Entry(3, "itemhash3", Instant.now(), "1234"));
         postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
 
         assertThat(items.size(), is(1));

@@ -98,8 +98,8 @@ public class RegisterSerialisationFormatServiceTest {
         verify(register, times(1)).putItem(item);
         verify(register, times(2)).appendEntry(any());
 
-        inOrder.verify(register, calls(1)).appendEntry(new Entry(1, entry1.getSha256hex(), entry1.getTimestamp()));
-        inOrder.verify(register, calls(1)).appendEntry(new Entry(2, entry2.getSha256hex(), entry2.getTimestamp()));
+        inOrder.verify(register, calls(1)).appendEntry(new Entry(1, entry1.getSha256hex(), entry1.getTimestamp(), entry1.getKey()));
+        inOrder.verify(register, calls(1)).appendEntry(new Entry(2, entry2.getSha256hex(), entry2.getTimestamp(), entry2.getKey()));
     }
 
     @Test
