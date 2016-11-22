@@ -16,10 +16,7 @@ import uk.gov.register.core.TransactionalMemoizationStore;
 import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -100,6 +97,12 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     @Override
+    public int getTotalEntries() {
+        OptionalInt maxStagedEntryNumber = getMaxStagedEntryNumber();
+        return maxStagedEntryNumber.orElseGet(super::getTotalEntries);
+    }
+
+    @Override
     protected void useHandle(HandleConsumer callback) {
         useExistingHandle(callback);
     }
@@ -168,5 +171,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
     private Optional<Item> searchStagingForItem(String sha256hex) {
         return Optional.ofNullable(stagedItems.get(sha256hex));
+    }
+
+    private OptionalInt getMaxStagedEntryNumber() {
+        return stagedEntries.stream().mapToInt(Entry::getEntryNumber).max();
     }
 }
