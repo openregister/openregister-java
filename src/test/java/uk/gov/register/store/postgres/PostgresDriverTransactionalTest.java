@@ -60,9 +60,41 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     }
 
     @Test
-    public void getTotalEntriesShouldAlwaysCommitStagedData() {
-        when(entryQueryDAO.getTotalEntries()).thenReturn(10);
-        assertStagedDataIsCommittedOnAction(PostgresDriverTransactional::getTotalEntries);
+    public void getTotalEntriesShouldNotCommitStagedDataButCountStagedData() {
+        when(entryQueryDAO.getTotalEntries()).thenReturn(1);
+
+        PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
+                handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
+
+        items.add(new Item("itemhash1", new ObjectMapper().createObjectNode()));
+        entries.add(new Entry(1, "itemhash1", Instant.now()));
+        currentKeys.add(new CurrentKey("DE", 1));
+
+        assertThat(items.size(), is(1));
+        assertThat(entries.size(), is(1));
+        assertThat(currentKeys.size(), is(1));
+
+        assertThat(postgresDriver.getTotalEntries(), is(1));
+
+        postgresDriver.insertItem(new Item("itemhash2", new ObjectMapper().createObjectNode()));
+        postgresDriver.insertEntry(new Entry(2, "itemhash2", Instant.now()));
+        postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
+
+        assertThat(items.size(), is(1));
+        assertThat(entries.size(), is(1));
+        assertThat(currentKeys.size(), is(1));
+
+        assertThat(postgresDriver.getTotalEntries(), is(2));
+
+        postgresDriver.insertItem(new Item("itemhash3", new ObjectMapper().createObjectNode()));
+        postgresDriver.insertEntry(new Entry(3, "itemhash3", Instant.now()));
+        postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
+
+        assertThat(items.size(), is(1));
+        assertThat(entries.size(), is(1));
+        assertThat(currentKeys.size(), is(1));
+
+        assertThat(postgresDriver.getTotalEntries(), is(3));
     }
 
     @Test
@@ -147,7 +179,6 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertThat(items.size(), is(2));
         assertThat(entries.size(), is(2));
         assertThat(currentKeys.size(), is(2));
-
     }
 
     @Test

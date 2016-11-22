@@ -73,7 +73,7 @@ public class RegisterSerialisationFormatServiceTest {
 
     @Test
     public void processRegisterComponents() throws Exception {
-        when(register.getTotalEntries()).thenReturn(0);
+        when(register.getTotalEntries()).thenReturn(0).thenReturn(1);
         when(register.getRegisterProof()).thenReturn(emptyRegisterProof);
 
         doAnswer(new Answer<Void>() {
@@ -98,8 +98,8 @@ public class RegisterSerialisationFormatServiceTest {
         verify(register, times(1)).putItem(item);
         verify(register, times(2)).appendEntry(any());
 
-        inOrder.verify(register, calls(1)).appendEntry(entry1);
-        inOrder.verify(register, calls(1)).appendEntry(entry2);
+        inOrder.verify(register, calls(1)).appendEntry(new Entry(1, entry1.getSha256hex(), entry1.getTimestamp()));
+        inOrder.verify(register, calls(1)).appendEntry(new Entry(2, entry2.getSha256hex(), entry2.getTimestamp()));
     }
 
     @Test
