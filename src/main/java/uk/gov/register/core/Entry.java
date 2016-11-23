@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
 
 import java.time.Instant;
@@ -17,12 +18,12 @@ import java.time.Instant;
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash"})
 public class Entry {
     private final int entryNumber;
-    private final String sha256hex;
+    private final HashValue hashValue;
     private final Instant timestamp;
 
     public Entry(int entryNumber, String sha256hex, Instant timestamp) {
         this.entryNumber = entryNumber;
-        this.sha256hex = sha256hex;
+        this.hashValue = new HashValue(HashingAlgorithm.SHA256, sha256hex);
         this.timestamp = timestamp;
     }
 
@@ -34,9 +35,8 @@ public class Entry {
     @SuppressWarnings("unused, used from DAO")
     @JsonIgnore
     public String getSha256hex() {
-        return sha256hex;
+        return hashValue.decode();
     }
-
 
     @JsonIgnore
     public long getTimestampAsLong() {
@@ -51,14 +51,13 @@ public class Entry {
 
     @JsonProperty("item-hash")
     public String getItemHash() {
-        return "sha-256:" + sha256hex;
+        return hashValue.encode();
     }
 
     @JsonProperty("entry-timestamp")
     public String getTimestampAsISOFormat() {
         return ISODateFormatter.format(timestamp);
     }
-
 
     public static CsvSchema csvSchema() {
         CsvMapper csvMapper = new CsvMapper();
@@ -74,13 +73,13 @@ public class Entry {
         Entry entry = (Entry) o;
 
         if (entryNumber != entry.entryNumber) return false;
-        return sha256hex == null ? entry.sha256hex == null : sha256hex.equals(entry.sha256hex);
-
+        return hashValue == null ? entry.hashValue == null : hashValue.decode().equals(entry.hashValue.decode());
     }
 
     @Override
     public int hashCode() {
-        int result = sha256hex != null ? sha256hex.hashCode() : 0;
+        String hash = hashValue.decode();
+        int result = hash != null ? hash.hashCode() : 0;
         result = 31 * entryNumber + result;
         return result;
     }

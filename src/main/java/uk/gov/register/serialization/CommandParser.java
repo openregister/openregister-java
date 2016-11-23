@@ -5,6 +5,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.OrphanItemException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
@@ -137,8 +138,9 @@ public class CommandParser {
     }
 
     private String stripPrefix(String hashField) {
-        if (!hashField.startsWith("sha-256:")) {
-            LOG.error("hash field must start with sha-256: not:" + hashField);
+        String hashingAlgorithm = HashingAlgorithm.SHA256.toString();
+        if (!hashField.startsWith(hashingAlgorithm + ":")) {
+            LOG.error("hash field must start with "+ hashingAlgorithm +": not:" + hashField);
             throw new SerializedRegisterParseException("hash field must start with sha-256: not: " + hashField);
         } else {
             return hashField.substring(8);
