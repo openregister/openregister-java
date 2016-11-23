@@ -19,7 +19,7 @@ public class EntryMapperTest {
         String expected = "2016-07-15T10:00:00Z";
         Instant expectedInstant = Instant.parse(expected);
 
-        DBI dbi = new DBI("jdbc:postgresql://localhost:5432/test_openregister_java?user=postgres");
+        DBI dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java?user=postgres");
         Handle h = dbi.open();
         EntryQueryDAO entryQueryDAO = dbi.onDemand(EntryQueryDAO.class);
         SchemaCreator schemaCreator = dbi.onDemand(SchemaCreator.class);
