@@ -7,6 +7,9 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.flyway.FlywayBundle;
+import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -16,6 +19,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.flywaydb.core.Flyway;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
@@ -31,11 +35,10 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.register.service.RegisterService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
+import uk.gov.register.service.RegisterService;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
@@ -77,6 +80,18 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
         bootstrap.addBundle(new AuthBundle());
+
+        bootstrap.addBundle(new FlywayBundle<RegisterConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(RegisterConfiguration configuration) {
+                return configuration.getDatabase();
+            }
+
+            @Override
+            public FlywayFactory getFlywayFactory(RegisterConfiguration configuration) {
+                return configuration.getFlywayFactory();
+            }
+        });
     }
 
     @Override
@@ -86,6 +101,10 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
         schemaCreator.ensureSchema();
+
+        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
+        flyway.setBaselineVersionAsString("0");
+        flyway.migrate();
 
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));

@@ -13,7 +13,8 @@ ext {
             "io.dropwizard:dropwizard-configuration:${dropwizard_version}",
             "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
             "io.dropwizard:dropwizard-logging:${dropwizard_version}",
-            "io.dropwizard:dropwizard-views:${dropwizard_version}"
+            "io.dropwizard:dropwizard-views:${dropwizard_version}",
+            "io.dropwizard.modules:dropwizard-flyway:1.0.0-1"
     ]
 
     stringTemplate= 'org.antlr:stringtemplate:3.2.1'
