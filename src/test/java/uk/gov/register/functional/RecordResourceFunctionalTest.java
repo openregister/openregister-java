@@ -47,6 +47,16 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
+    public void recordResource_return400ResponseWhenPageSizeIsNotANumber() {
+        assertThat(getRequest("/records?page-size=not-a-number").getStatus(), equalTo(400));
+    }
+
+    @Test
+    public void recordResource_return400ResponseWhenPageIndexIsNotANumber() {
+        assertThat(getRequest("/records?page-index=not-a-number").getStatus(), equalTo(400));
+    }
+
+    @Test
     public void historyResource_returnsHistoryOfARecord() throws IOException {
         Response response = getRequest("/record/6789/entries.json");
 
