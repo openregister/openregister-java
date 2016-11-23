@@ -8,17 +8,8 @@ BEGIN
         RAISE EXCEPTION 'Item content does not have key: %', item_content_key;
     end if;
 
-    IF NOT EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='entry' AND COLUMN_NAME='key') then
-        alter table entry add column key varchar;
-    ELSE
-        RAISE NOTICE 'Column key already exists in entry table';
-    END IF;
-
-    IF EXISTS(select 1 from entry where not exists(select 1 from item where item.content->>item_content_key=entry.key)) THEN
-        update entry set key = content->>item_content_key from item where entry.sha256hex=item.sha256hex;
-    ELSE
-        RAISE NOTICE 'Data already copied from items[%]', item_content_key;
-    END IF;
+    alter table entry add column key varchar;
+    update entry set key = content->>item_content_key from item where entry.sha256hex=item.sha256hex;
 END;
 $$ language plpgsql;
 
