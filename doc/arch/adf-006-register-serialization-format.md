@@ -38,7 +38,7 @@ Registers can be large - the address register currently has c34 million Entries 
 
 To be valid:
 
-- All Items should be referred to by at least one Entry. There should be no Orphan Entries.
+- All Items should be referred to by at least one Entry. There should be no Orphan Items.
 - All Entries should refer to an Item. In theory >1 Entry can point to the same Item. Where the RSF represents part of a Register, the Item may be part of the existing Register.
 
 
@@ -57,7 +57,7 @@ To be valid:
 
 - a canonicalized JSON string
 
-Example (note this is one line)
+Example
 
     add-item[tab]{"address":"5T8EXT7N","denominations":["C22"],"dioceses":["CE23"],"headteacher":"Mr T Wilson","maximum-age":"11","minimum-age":"3","name":"Sir John Cass's Foundation Primary School","school":"100000","school-authority":"201","school-gender":"M","school-phase":"PRI","school-type":"2","website":"http://www.sirjohncassprimary.org"}
 
@@ -72,15 +72,15 @@ Example (note this is one line)
 - a timestamp in UTC in ISO 8601 format
 - the hash of the corresponding Entry prepended with *sha-256*
 
-Example (note this is one line)
+Example
 
     append-entry[tab]2016-11-07T16:26:21Z[tab]sha-256:100171bf018db8598080d8d930040989d3ef788e7bc00def8ca083d25a0f40e5
 
 #### Notes
 
-- The reference can an item that already exists in the register or one in the RSF.
+- The reference can an Item that already exists in the register or one in the RSF.
 - The entry number is inferred by the order that *append-entry* commands appear.
-- If  *append-entry* does not reference an earlier *add-item* or *item* in the register then the RSF should be rejected.
+- If  *append-entry* does not reference an earlier *add-item* or *Item* in the register then the RSF should be rejected.
 
 ### assert-root-hash
 
@@ -88,7 +88,7 @@ Example (note this is one line)
 
 - the root hash of the register prepended with *sha-256*
 
-Example (note this is one line)
+Example
 
     assert-root-hash[tab]sha-256:100171bf018db8598080d8d930040989d3ef788e7bc00def8ca083d25a0f40e5
 
