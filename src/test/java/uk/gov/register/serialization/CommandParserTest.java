@@ -6,12 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
-import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.OrphanItemException;
+import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
-import uk.gov.register.util.CanonicalJsonMapper;
-import uk.gov.register.util.CanonicalJsonValidator;
-import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
@@ -130,6 +127,6 @@ public class CommandParserTest {
 
         String actualLine = commandParser.serialise(registerProof);
 
-        assertThat(actualLine, equalTo("assert-root-hash\troot-hash\n"));
+        assertThat(actualLine, equalTo("assert-root-hash\tsha-256:root-hash\n"));
     }
 }

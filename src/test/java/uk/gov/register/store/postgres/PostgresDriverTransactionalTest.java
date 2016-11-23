@@ -7,6 +7,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.CurrentKey;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
 
@@ -31,7 +32,10 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        postgresDriver.insertItem(mock(Item.class));
+        Item mockItem = mock(Item.class);
+        when(mockItem.getSha256hex()).thenReturn(mock(HashValue.class));
+
+        postgresDriver.insertItem(mockItem);
         postgresDriver.insertEntry(mock(Entry.class));
         postgresDriver.insertEntry(mock(Entry.class));
         postgresDriver.insertRecord(mockRecord("country", "DE", 1), "country");

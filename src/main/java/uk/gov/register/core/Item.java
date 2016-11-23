@@ -31,12 +31,8 @@ public class Item {
         return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
     }
 
-    public String getItemHash() {
-        return hashValue.encode();
-    }
-
-    public String getSha256hex() {
-        return hashValue.decode();
+    public HashValue getSha256hex() {
+        return hashValue;
     }
 
     public JsonNode getContent() {
@@ -73,16 +69,15 @@ public class Item {
         if (o == null || getClass() != o.getClass()) return false;
 
         Item item = (Item) o;
-        String hash = hashValue.decode();
 
-        if (hash != null ? !hash.equals(item.hashValue.decode()) : item.hashValue.decode() != null) return false;
+        if (hashValue != null ? !hashValue.equals(item.hashValue) : item.hashValue != null) return false;
         return content != null ? content.equals(item.content) : item.content == null;
 
     }
 
     @Override
     public int hashCode() {
-        String hash = hashValue.decode();
+        String hash = hashValue.getValue();
         int result = hash != null ? hash.hashCode() : 0;
         result = 31 * result + (content != null ? content.hashCode() : 0);
         return result;

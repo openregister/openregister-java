@@ -2,6 +2,7 @@ package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import uk.gov.register.core.HashingAlgorithm;
 
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ public class RegisterProof {
     private final String rootHash;
 
     public RegisterProof(String rootHash) {
-        this.rootHash = rootHash;
+        this.rootHash = HashingAlgorithm.SHA256.toString() + ":" + rootHash;
     }
 
     @SuppressWarnings("unused, used as jsonproperty")

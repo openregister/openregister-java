@@ -73,7 +73,10 @@ public class EntryLog {
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
         List<String> auditProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
                 verifiableLog.auditProof(entryNumber, totalEntries)
-                        .stream().map(this::bytesToString).collect(Collectors.toList()));
+                        .stream()
+                        .map(this::bytesToString)
+                        .map(p -> HashingAlgorithm.SHA256.toString() + ":" + p)
+                        .collect(Collectors.toList()));
 
         return new EntryProof(Integer.toString(entryNumber), auditProof);
     }
@@ -81,7 +84,10 @@ public class EntryLog {
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
         List<String> consistencyProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
                 verifiableLog.consistencyProof(totalEntries1, totalEntries2))
-                .stream().map(this::bytesToString).collect(Collectors.toList());
+                .stream()
+                .map(this::bytesToString)
+                .map(p -> HashingAlgorithm.SHA256.toString() + ":" + p)
+                .collect(Collectors.toList());
 
         return new ConsistencyProof(consistencyProof);
     }
