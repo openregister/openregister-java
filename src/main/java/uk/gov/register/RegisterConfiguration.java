@@ -1,9 +1,11 @@
 package uk.gov.register;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.flyway.FlywayFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
@@ -12,6 +14,7 @@ import uk.gov.register.configuration.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Optional;
 
 public class RegisterConfiguration extends Configuration
@@ -72,8 +75,20 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private Optional<String> trackingId = Optional.empty();
 
+    @SuppressWarnings("unused")
+    @Valid
+    @JsonProperty
+    private FlywayFactory flywayFactory = new FlywayFactory();
+
     public DataSourceFactory getDatabase() {
         return database;
+    }
+
+    public FlywayFactory getFlywayFactory() {
+        flywayFactory.setBaselineOnMigrate(true);
+        flywayFactory.setLocations(Collections.singletonList("/sql"));
+        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", getRegisterName()));
+        return flywayFactory;
     }
 
     public String getRegisterName() {
