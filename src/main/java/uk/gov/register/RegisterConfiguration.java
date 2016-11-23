@@ -14,7 +14,7 @@ import uk.gov.register.configuration.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 public class RegisterConfiguration extends Configuration
@@ -86,8 +86,8 @@ public class RegisterConfiguration extends Configuration
 
     public FlywayFactory getFlywayFactory() {
         flywayFactory.setBaselineOnMigrate(true);
-        flywayFactory.setLocations(Arrays.asList("/sql"));
-        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", getRegisterName()));
+        flywayFactory.setLocations(Collections.singletonList("/sql"));
+        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", getRegisterName()));
         return flywayFactory;
     }
 
