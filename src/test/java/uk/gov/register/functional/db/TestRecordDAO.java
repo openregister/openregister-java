@@ -11,9 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public interface TestRecordDAO {
-    @SqlUpdate("drop table if exists current_keys")
-    void dropTable();
-
     @SqlUpdate("delete from current_keys;" +
             "delete from total_records;" +
             "insert into total_records values(0)")

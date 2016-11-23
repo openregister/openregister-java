@@ -32,7 +32,6 @@ import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.db.SchemaCreator;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
@@ -98,9 +97,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
     public void run(RegisterConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
-
-        SchemaCreator schemaCreator = jdbi.onDemand(SchemaCreator.class);
-        schemaCreator.ensureSchema();
 
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
         flyway.setBaselineVersionAsString("0");
