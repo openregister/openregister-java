@@ -82,7 +82,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
     @Override
     public void insertItem(Item item) {
-        stagedItems.put(item.getSha256hex(),item);
+        stagedItems.put(item.getSha256hex().getValue(),item);
     }
 
     @Override

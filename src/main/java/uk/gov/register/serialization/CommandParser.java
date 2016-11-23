@@ -11,6 +11,7 @@ import uk.gov.register.exceptions.OrphanItemException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.RegisterProof;
 
@@ -18,7 +19,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toSet;
@@ -86,7 +90,8 @@ public class CommandParser {
                 break;
             case "assert-root-hash":
                 if (parts.length == 2) {
-                    RegisterProof registerProof = new RegisterProof(parts[1]);
+                    String decodedHash = HashValue.decode(HashingAlgorithm.SHA256.toString(), parts[1]);
+                    RegisterProof registerProof = new RegisterProof(decodedHash);
                     proofs.put(position++, registerProof);
                 } else {
                     LOG.error("assert root hash line must have 1 elements, was : " + s);
@@ -130,7 +135,7 @@ public class CommandParser {
 
         if (!orphanItemHashes.isEmpty()) {
 
-            Set<Item> orphanItems = items.values().stream().filter(i -> orphanItemHashes.contains(i.getSha256hex()))
+            Set<Item> orphanItems = items.values().stream().filter(i -> orphanItemHashes.contains(i.getSha256hex().getValue()))
                     .collect(toSet());
 
             throw new OrphanItemException("no corresponding entry for item(s): ", orphanItems);

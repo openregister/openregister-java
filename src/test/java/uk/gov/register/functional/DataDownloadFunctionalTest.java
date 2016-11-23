@@ -100,7 +100,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
         String[] rsfLines = getRsfLinesFrom(response);
 
-        assertThat(rsfLines[0], equalTo("assert-root-hash\te3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+        assertThat(rsfLines[0], equalTo("assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
         assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}"));
         assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
@@ -126,7 +126,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
         String[] rsfLines = getRsfLinesFrom(response);
 
-        assertThat(rsfLines[0], equalTo("assert-root-hash\te3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+        assertThat(rsfLines[0], equalTo("assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
         assertThat(rsfLines[1], equalTo("add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}"));
         assertThat(rsfLines[2], equalTo("add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));

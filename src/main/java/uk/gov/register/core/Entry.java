@@ -37,7 +37,7 @@ public class Entry {
     @SuppressWarnings("unused, used from DAO")
     @JsonIgnore
     public String getSha256hex() {
-        return hashValue.decode();
+        return hashValue.getValue();
     }
 
     @JsonIgnore
@@ -80,12 +80,12 @@ public class Entry {
         Entry entry = (Entry) o;
 
         if (entryNumber != entry.entryNumber) return false;
-        return hashValue == null ? entry.hashValue == null : hashValue.decode().equals(entry.hashValue.decode());
+        return hashValue == null ? entry.hashValue == null : hashValue.getValue().equals(entry.hashValue.getValue());
     }
 
     @Override
     public int hashCode() {
-        String hash = hashValue.decode();
+        String hash = hashValue.getValue();
         int result = hash != null ? hash.hashCode() : 0;
         result = 31 * entryNumber + result;
         return result;
