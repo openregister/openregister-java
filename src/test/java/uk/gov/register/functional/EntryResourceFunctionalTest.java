@@ -49,6 +49,16 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
     }
 
     @Test
+    public void getEntries_return400ResponseWhenStartIsNotANumber() {
+        assertThat(getRequest("/entries?start=not-a-number").getStatus(), equalTo(400));
+    }
+
+    @Test
+    public void getEntries_return400ResponseWhenLimitIsNotANumber() {
+        assertThat(getRequest("/entries?limit=not-a-number").getStatus(), equalTo(400));
+    }
+
+    @Test
     public void getEntriesAsJson() throws JSONException, IOException {
         Response response = getRequest("/entries.json");
 
