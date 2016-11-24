@@ -74,11 +74,11 @@ public class RegisterCommandWriterTest {
 
         String expectedRSF =
                 "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
-                "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
-                "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
-                "append-entry\t2016-07-24T16:55:00Z\tsha-256:entry1sha\n" +
-                "append-entry\t2016-07-24T16:56:00Z\tsha-256:entry2sha\n" +
-                "assert-root-hash\tsha-256:K3rfuFF1e\n";
+                        "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
+                        "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
+                        "append-entry\t2016-07-24T16:55:00Z\tsha-256:entry1sha\tentry1-field-1-value\n" +
+                        "append-entry\t2016-07-24T16:56:00Z\tsha-256:entry2sha\tentry2-field-1-value\n" +
+                        "assert-root-hash\tsha-256:K3rfuFF1e\n";
 
         String actualRSF = outputStream.toString();
 

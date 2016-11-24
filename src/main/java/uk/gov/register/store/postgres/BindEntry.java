@@ -17,6 +17,7 @@ public @interface BindEntry {
                 q.bind("entry_number", arg.getEntryNumber());
                 q.bind("sha256hex", arg.getSha256hex().getValue());
                 q.bind("timestampAsLong", arg.getTimestampAsLong());
+                q.bind("key", arg.getKey());
             };
         }
     }
