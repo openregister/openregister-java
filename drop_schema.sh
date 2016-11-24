@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
 
-db_name=$1
+set -eu
 
-psql $db_name -U postgres -q -S -c "
+config_file=$1
 
-drop table if exists current_keys;
-drop table if exists current_entry_number;
-drop table if exists total_records;
-drop table if exists total_entries;
-drop table if exists item;
-drop table if exists entry;
-
-"
+java -jar build/libs/openregister-java-all.jar db clean $config_file

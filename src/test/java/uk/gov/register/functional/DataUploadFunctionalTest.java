@@ -40,7 +40,6 @@ public class DataUploadFunctionalTest {
 
     private final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,
             ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-            ConfigOverride.config("database.url", postgresConnectionString),
             ConfigOverride.config("jerseyClient.timeout", "3000ms"),
             ConfigOverride.config("register", "register"));
 
