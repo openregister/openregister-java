@@ -19,7 +19,6 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestRecord;
-import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.client.Client;
@@ -91,6 +90,16 @@ public class LoadSerializedFunctionalTest {
         Response response = send(input);
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("{\"message\":\"no corresponding entry for item(s): \",\"orphanItems\":[{\"register\":\"ft_openregister_test\",\"text\":\"orphan item\"}]}"));
+    }
+
+    @Test
+    public void shouldReturnBadRequestForNonCanonicalItems() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-non-canonical-item.tsv")));
+
+        Response r = send(input);
+
+        assertThat(r.getStatus(), equalTo(400));
+        assertThat(r.readEntity(String.class), equalTo("Item in serialization format is not canonicalized: '{ \"register\":\"ft_openregister_test\",   \"text\":\"SomeText\" }'"));
     }
 
     @Test
