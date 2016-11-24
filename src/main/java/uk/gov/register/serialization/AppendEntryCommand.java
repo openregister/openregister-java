@@ -14,7 +14,7 @@ public class AppendEntryCommand extends RegisterCommand {
     @Override
     public void execute(Register register) {
         int nextEntryNumber = register.getTotalEntries() + 1;
-        Entry numberedEntry = new Entry(nextEntryNumber, entry.getSha256hex(), entry.getTimestamp());
+        Entry numberedEntry = new Entry(nextEntryNumber, entry.getSha256hex(), entry.getTimestamp(), entry.getKey());
         register.appendEntry(numberedEntry);
     }
 

@@ -43,7 +43,7 @@ public class PostgresDriverNonTransactional extends PostgresDriver {
 
     @Override
     public void insertRecord(Record record, String registerName) {
-        super.insertCurrentKeys(Arrays.asList(new CurrentKey(record.item.getKey(registerName), record.entry.getEntryNumber())));
+        super.insertCurrentKeys(Arrays.asList(new CurrentKey(record.item.getValue(registerName), record.entry.getEntryNumber())));
     }
 
     @Override

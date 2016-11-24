@@ -39,9 +39,9 @@ public class RepresentationsFunctionalTest extends FunctionalTestBase {
     public void publishTestMessages() {
         dbSupport.publishEntries(REGISTER_NAME, ImmutableList.of(
                 anEntry(1, "{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}",
-                        Instant.parse("2016-03-01T01:02:03Z")),
+                        Instant.parse("2016-03-01T01:02:03Z"), "value1"),
                 anEntry(2, "{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}",
-                        Instant.parse("2016-03-02T02:03:04Z"))
+                        Instant.parse("2016-03-02T02:03:04Z"), "value2")
         ));
     }
 

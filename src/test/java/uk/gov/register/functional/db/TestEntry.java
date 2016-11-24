@@ -17,13 +17,16 @@ public class TestEntry {
     public final String itemJson;
     public final Instant entryTimestamp;
     public final String sha256hex;
+    public final String key;
 
-    private TestEntry(int entryNumber, String itemJson, Instant entryTimestamp) {
+
+    private TestEntry(int entryNumber, String itemJson, Instant entryTimestamp, String key) {
         try {
             this.entryNumber = entryNumber;
             this.entryTimestamp = entryTimestamp;
             this.itemJson = canonicalJson(itemJson);
             this.sha256hex = DigestUtils.sha256Hex(this.itemJson);
+            this.key = key;
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }
@@ -33,12 +36,12 @@ public class TestEntry {
         return entryTimestamp.getEpochSecond();
     }
 
-    public static TestEntry anEntry(int entryNumber, String itemJson) {
-        return new TestEntry(entryNumber, itemJson, Instant.now());
+    public static TestEntry anEntry(int entryNumber, String itemJson, String key) {
+        return new TestEntry(entryNumber, itemJson, Instant.now(), key);
     }
 
-    public static TestEntry anEntry(int entryNumber, String itemJson, Instant entryTimestamp) {
-        return new TestEntry(entryNumber, itemJson, entryTimestamp);
+    public static TestEntry anEntry(int entryNumber, String itemJson, Instant entryTimestamp, String key) {
+        return new TestEntry(entryNumber, itemJson, entryTimestamp, key);
     }
 
     private String canonicalJson(String itemJson) throws IOException {

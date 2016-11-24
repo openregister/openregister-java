@@ -59,8 +59,8 @@ public class RegisterSerialisationFormatServiceTest {
         JsonNode content = new ObjectMapper().readTree("{\"address\":\"9AQZJ3M\",\"name\":\"ST LAWRENCE CHURCH\"}");
 
         item = new Item(content);
-        entry1 = new Entry(1, getHash(content), Instant.now());
-        entry2 = new Entry(2, getHash(content), Instant.now().plusMillis(100));
+        entry1 = new Entry(1, getHash(content), Instant.now(), "9AQZJ3M");
+        entry2 = new Entry(2, getHash(content), Instant.now().plusMillis(100), "9AQZJ3M");
         emptyRegisterProof = new RegisterProof("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 
         addItemCommand = new AddItemCommand(item);
@@ -98,8 +98,8 @@ public class RegisterSerialisationFormatServiceTest {
         verify(register, times(1)).putItem(item);
         verify(register, times(2)).appendEntry(any());
 
-        inOrder.verify(register, calls(1)).appendEntry(new Entry(1, entry1.getSha256hex(), entry1.getTimestamp()));
-        inOrder.verify(register, calls(1)).appendEntry(new Entry(2, entry2.getSha256hex(), entry2.getTimestamp()));
+        inOrder.verify(register, calls(1)).appendEntry(new Entry(1, entry1.getSha256hex(), entry1.getTimestamp(), entry1.getKey()));
+        inOrder.verify(register, calls(1)).appendEntry(new Entry(2, entry2.getSha256hex(), entry2.getTimestamp(), entry2.getKey()));
     }
 
     @Test

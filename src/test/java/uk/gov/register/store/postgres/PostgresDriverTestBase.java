@@ -62,7 +62,7 @@ public class PostgresDriverTestBase {
         Entry entry = mock(Entry.class);
         Item item = mock(Item.class);
         when(entry.getEntryNumber()).thenReturn(entryNumber);
-        when(item.getKey(registerName)).thenReturn(key);
+        when(item.getValue(registerName)).thenReturn(key);
         return new Record(entry, item);
     }
 

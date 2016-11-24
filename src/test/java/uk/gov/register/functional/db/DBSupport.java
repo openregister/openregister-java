@@ -1,5 +1,8 @@
 package uk.gov.register.functional.db;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -10,16 +13,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static uk.gov.register.functional.db.TestEntry.anEntry;
-
 public class DBSupport {
     public static void main(String[] args) throws IOException, SQLException {
-        String filePath = args[1];
 
-        DBSupport dbSupport = new DBSupport(TestDAO.get(args[2], "postgres"));
+        String registerName = args[0];
+        String filePath = args[1];
+        String dbName = args[2];
+
+        DBSupport dbSupport = new DBSupport(TestDAO.get(dbName, "postgres"));
         try (Stream<String> lines = Files.lines(new File(filePath).toPath(), Charset.defaultCharset())) {
+            ObjectMapper objectMapper = new ObjectMapper();
             AtomicInteger index = new AtomicInteger(0);
-            dbSupport.publishEntries(args[0], lines.map(l -> TestEntry.anEntry(index.incrementAndGet(), l)).collect(Collectors.toList()));
+            dbSupport.publishEntries(registerName, lines.map(l -> {
+                try {
+                    JsonNode jsonNode = objectMapper.readTree(l);
+                    return TestEntry.anEntry(index.incrementAndGet(), l, jsonNode.get(registerName).asText());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }).collect(Collectors.toList()));
         }
     }
 
@@ -47,7 +59,7 @@ public class DBSupport {
     }
 
     private void insertIntoItemAndEntryTables(TestEntry testEntry) {
-        testDAO.testEntryDAO.insert(testEntry.entryNumber, testEntry.sha256hex, testEntry.getTimestampAsLong());
+        testDAO.testEntryDAO.insert(testEntry.entryNumber, testEntry.sha256hex, testEntry.getTimestampAsLong(), testEntry.key);
         testDAO.testItemDAO.insertIfNotExist(testEntry.sha256hex, testEntry.itemJson);
     }
 

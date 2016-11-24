@@ -74,13 +74,13 @@ public class CommandParser {
                 }
                 break;
             case "append-entry":
-                if (parts.length == 3) {
-                    Entry entry = new Entry(0, stripPrefix(parts[2]), Instant.parse(parts[1]));
+                if (parts.length == 4) {
+                    Entry entry = new Entry(0, stripPrefix(parts[2]), Instant.parse(parts[1]), parts[3]);
                     entries.put(position++, entry);
                     updateItemHashCount(entry.getSha256hex());
                 } else {
-                    LOG.error("append entry line must have 3 elements, was : " + s);
-                    throw new SerializedRegisterParseException("append entry line must have 3 elements, was : " + s);
+                    LOG.error("append entry line must have 4 elements, was : " + s);
+                    throw new SerializedRegisterParseException("append entry line must have 4 elements, was : " + s);
                 }
                 break;
             case "assert-root-hash":
@@ -146,7 +146,7 @@ public class CommandParser {
     }
 
     public String serialise(Entry entry) {
-        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getItemHash() + NEW_LINE;
+        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getItemHash() + TAB + entry.getKey() + NEW_LINE;
     }
 
     public String serialise(Item item) {

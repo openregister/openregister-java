@@ -31,8 +31,8 @@ public class CsvWriterTest {
     @Test
     public void writes_EntryListView_to_output_stream() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        csvWriter.writeTo(new EntryListView(null,null,null, Optional.empty(),
-                ImmutableList.of(new Entry(1,"1234abcd", Instant.ofEpochSecond(1400000000L))), () -> "test.register.gov.uk", null, () -> Optional.empty()),
+        csvWriter.writeTo(new EntryListView(null, null, null, Optional.empty(),
+                        ImmutableList.of(new Entry(1, "1234abcd", Instant.ofEpochSecond(1400000000L), "abc")), () -> "test.register.gov.uk", null, () -> Optional.empty()),
                 EntryListView.class,
                 null,
                 null,
@@ -41,7 +41,7 @@ public class CsvWriterTest {
                 outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedCsv, is("entry-number,entry-timestamp,item-hash\r\n1,2014-05-13T16:53:20Z,sha-256:1234abcd\r\n"));
+        assertThat(generatedCsv, is("entry-number,entry-timestamp,item-hash,key\r\n1,2014-05-13T16:53:20Z,sha-256:1234abcd,abc\r\n"));
     }
 
     @Test

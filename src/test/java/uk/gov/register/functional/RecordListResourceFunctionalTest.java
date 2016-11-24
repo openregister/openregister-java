@@ -38,9 +38,30 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(responseMap.size(), equalTo(3));
 
-        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.of("entry-number", "5", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"), "entry-timestamp", responseMap.get("6789").get("entry-timestamp"), "street", "ellis", "address", "6789")));
-        assertThat(responseMap.get("145678"), equalTo(ImmutableMap.of("entry-number", "4", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"145678\",\"street\":\"updatedEllisName\"}"), "entry-timestamp", responseMap.get("145678").get("entry-timestamp"), "street", "updatedEllisName", "address", "145678")));
-        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "street", "ellis", "address", "12345")));
+        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.builder()
+                .put("entry-number", "5")
+                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"))
+                .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
+                .put("street", "ellis")
+                .put("address", "6789")
+                .put("key", "6789").build()));
+
+        assertThat(responseMap.get("145678"), equalTo(ImmutableMap.builder()
+                .put("entry-number", "4")
+                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"145678\",\"street\":\"updatedEllisName\"}"))
+                .put("entry-timestamp", responseMap.get("145678").get("entry-timestamp"))
+                .put("street", "updatedEllisName")
+                .put("address", "145678")
+                .put("key", "145678").build()));
+
+        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
+                .put("entry-number", "1")
+                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"))
+                .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
+                .put("street", "ellis")
+                .put("address", "12345")
+                .put("key", "12345").build()));
+
     }
 
     @Test
@@ -81,8 +102,21 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(responseMap.size(), equalTo(2));
 
-        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.of("entry-number", "5", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"), "entry-timestamp", responseMap.get("6789").get("entry-timestamp"), "street", "ellis", "address", "6789")));
-        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.of("entry-number", "1", "item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"), "entry-timestamp", responseMap.get("12345").get("entry-timestamp"), "street", "ellis", "address", "12345")));
+        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.builder()
+                .put("entry-number", "5")
+                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"))
+                .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
+                .put("street", "ellis")
+                .put("address", "6789")
+                .put("key", "6789").build()));
+
+        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
+                .put("entry-number", "1")
+                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"))
+                .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
+                .put("street", "ellis")
+                .put("address", "12345")
+                .put("key", "12345").build()));
     }
 
 

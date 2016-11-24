@@ -22,7 +22,7 @@ public class RecordViewTest {
     public void recordJsonRepresentation_isFlatJsonOfEntryAndItemContent() throws IOException, JSONException {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-        Record record = new Record(new Entry(1, "ab", Instant.ofEpochSecond(1470403440)), new Item("ab", objectMapper.readTree("{\"a\":\"b\"}")));
+        Record record = new Record(new Entry(1, "ab", Instant.ofEpochSecond(1470403440), "b"), new Item("ab", objectMapper.readTree("{\"a\":\"b\"}")));
         RecordView recordView = new RecordView(null, null, null, null, record, () -> "test.register.gov.uk", new RegisterData(Collections.emptyMap()), () -> Optional.empty());
 
         String result = objectMapper.writeValueAsString(recordView);
@@ -31,6 +31,7 @@ public class RecordViewTest {
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"item-hash\":\"sha-256:ab\"," +
+                "\"key\":\"b\"," +
                 "\"a\":\"b\"" +
                 "}"));
     }

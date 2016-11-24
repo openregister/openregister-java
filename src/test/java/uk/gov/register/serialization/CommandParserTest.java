@@ -35,7 +35,7 @@ public class CommandParserTest {
     @Test
     public void shouldParseAddItemCommand() {
         commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}");
-        commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
+        commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
         Iterator<RegisterCommand> registerCommands = commandParser.getCommands();
         assertTrue(registerCommands.hasNext());
         assertTrue(registerCommands.next() instanceof AddItemCommand);
@@ -69,7 +69,7 @@ public class CommandParserTest {
 
     @Test(expected = DateTimeParseException.class)
     public void shouldFailIfTimestampNotIso() throws Exception {
-        String line = "append-entry\t20161212\tsha-256:abc123";
+        String line = "append-entry\t20161212\tsha-256:abc123\t123";
         commandParser.addCommand(line);
     }
 
@@ -84,7 +84,7 @@ public class CommandParserTest {
         try {
             commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}");
             commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"orphan\"}");
-            commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
+            commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
             commandParser.getCommands();
         } catch (OrphanItemException e) {
             assertThat(e.getErrorJson().toString(), is("{\"message\":\"no corresponding entry for item(s): \",\"orphanItems\":[{\"register\":\"ft_openregister_test\",\"text\":\"orphan\"}]}"));
@@ -93,7 +93,7 @@ public class CommandParserTest {
 
     @Test(expected = OrphanItemException.class)
     public void shouldFailForItemAfterEntry() throws Exception {
-        commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
+        commandParser.addCommand("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
         commandParser.addCommand("add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}");
         commandParser.getCommands();
     }
@@ -107,11 +107,11 @@ public class CommandParserTest {
     @Test
     public void serialise_shouldFormatEntryAsTsvLine() {
         Instant entryTimestamp = Instant.parse("2016-07-15T10:00:00Z");
-        Entry entry = new Entry(1, "item-hash", entryTimestamp);
+        Entry entry = new Entry(1, "item-hash", entryTimestamp, "key");
 
         String actualLine = commandParser.serialise(entry);
 
-        assertThat(actualLine, equalTo("append-entry\t2016-07-15T10:00:00Z\tsha-256:item-hash\n"));
+        assertThat(actualLine, equalTo("append-entry\t2016-07-15T10:00:00Z\tsha-256:item-hash\tkey\n"));
     }
 
     @Test

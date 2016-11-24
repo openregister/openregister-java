@@ -20,17 +20,17 @@ public interface TestEntryDAO {
     void wipeData();
 
     @RegisterMapper(EntryMapper.class)
-    @SqlQuery("select entry_number, sha256hex, timestamp from entry")
+    @SqlQuery("select entry_number, sha256hex, timestamp, key from entry")
     List<Entry> getAllEntries();
 
-    @SqlUpdate("insert into entry(entry_number, sha256hex, timestamp) values(:entry_number, :sha256hex, :timestamp)")
-    void insert(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256, @Bind("timestamp") long timestamp);
+    @SqlUpdate("insert into entry(entry_number, sha256hex, timestamp, key) values(:entry_number, :sha256hex, :timestamp, :key)")
+    void insert(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256, @Bind("timestamp") long timestamp, @Bind("key") String key);
 
 
     class EntryMapper implements ResultSetMapper<Entry> {
         @Override
         public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-            return new Entry(r.getInt("entry_number"), r.getString("sha256hex"), Instant.ofEpochSecond(r.getLong("timestamp")));
+            return new Entry(r.getInt("entry_number"), r.getString("sha256hex"), Instant.ofEpochSecond(r.getLong("timestamp")), r.getString("key"));
         }
     }
 }

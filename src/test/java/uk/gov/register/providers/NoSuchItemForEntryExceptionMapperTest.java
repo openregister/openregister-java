@@ -15,9 +15,9 @@ public class NoSuchItemForEntryExceptionMapperTest {
     @Test
     public void toResponse_returns400Response() {
         NoSuchItemForEntryExceptionMapper noSuchItemForEntryExceptionMapper = new NoSuchItemForEntryExceptionMapper();
-        Response response = noSuchItemForEntryExceptionMapper.toResponse(new NoSuchItemForEntryException(new Entry(105, "abcdeabcde", Instant.now())));
+        Response response = noSuchItemForEntryExceptionMapper.toResponse(new NoSuchItemForEntryException(new Entry(105, "abcdeabcde", Instant.now(), "1234")));
 
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.getEntity(), equalTo("No item found with item-hash sha-256:abcdeabcde for entryNumber 105"));
+        assertThat(response.getEntity(), equalTo("No item found with item-hash: sha-256:abcdeabcde for entryNumber: 105 and key: 1234"));
     }
 }
