@@ -137,10 +137,10 @@ void stopApp() {
 task(loadSchoolDataForConformance, type: JavaExec) {
     doFirst{
         exec{
-            executable "$projectDir/drop_schema.sh" args 'ft_openregister_java'
+            executable "$projectDir/drop_schema.sh" args 'src/test/resources/test-app-config.yaml'
         }
         exec{
-            executable "$projectDir/create_schema.sh" args 'ft_openregister_java'
+            executable "$projectDir/create_schema.sh" args 'src/test/resources/test-app-config.yaml'
         }
     }
     main = 'uk.gov.register.functional.db.DBSupport'
