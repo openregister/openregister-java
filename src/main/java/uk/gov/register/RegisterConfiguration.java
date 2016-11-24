@@ -1,7 +1,6 @@
 package uk.gov.register;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
@@ -88,6 +87,7 @@ public class RegisterConfiguration extends Configuration
         flywayFactory.setBaselineOnMigrate(true);
         flywayFactory.setLocations(Collections.singletonList("/sql"));
         flywayFactory.setPlaceholders(Collections.singletonMap("registerName", getRegisterName()));
+        flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }
 
