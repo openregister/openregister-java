@@ -53,12 +53,20 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void recordResource_return400ResponseWhenPageSizeIsNotANumber() {
-        assertThat(register.target().path("/records").queryParam("page-size","not-a-number").request().get().getStatus(), equalTo(400));
+        Response response = register.target().path("/records").queryParam("page-size", "not-a-number").request().get();
+
+        assertThat(response.getMediaType().getType(), equalTo("text"));
+        assertThat(response.getMediaType().getSubtype(), equalTo("html"));
+        assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
     public void recordResource_return400ResponseWhenPageIndexIsNotANumber() {
-        assertThat(register.target().path("/records").queryParam("page-index","not-a-number").request().get().getStatus(), equalTo(400));
+        Response response = register.target().path("/records").queryParam("page-index", "not-a-number").request().get();
+
+        assertThat(response.getMediaType().getType(), equalTo("text"));
+        assertThat(response.getMediaType().getSubtype(), equalTo("html"));
+        assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test

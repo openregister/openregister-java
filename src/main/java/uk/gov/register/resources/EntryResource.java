@@ -4,6 +4,7 @@ import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ViewFactory;
@@ -44,7 +45,7 @@ public class EntryResource {
     @GET
     @Path("/entries")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView entries(@QueryParam("start") Optional<IntParam> optionalStart, @QueryParam("limit") Optional<IntParam> optionalLimit) {
+    public EntryListView entries(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
         int totalEntries = register.getTotalEntries();
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
