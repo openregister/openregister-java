@@ -9,6 +9,7 @@ import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
+import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -55,9 +56,9 @@ public class PostgresRegisterTest {
 
     @Test(expected = NoSuchItemForEntryException.class)
     public void appendEntryShouldThrowExceptionIfNoCorrespondingItemExists() {
-        Entry entryDangling = new Entry(106, "item-hash-2", Instant.now());
+        Entry entryDangling = new Entry(106, new HashValue(HashingAlgorithm.SHA256, "item-hash-2"), Instant.now());
 
-        when(backingStoreDriver.getItemBySha256(anyString())).thenReturn(Optional.empty());
+        when(backingStoreDriver.getItemBySha256(any(HashValue.class))).thenReturn(Optional.empty());
 
         PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
         register.appendEntry(entryDangling);
@@ -65,11 +66,11 @@ public class PostgresRegisterTest {
 
     @Test
     public void appendEntryShouldNotInsertDanglingEntry() {
-        Item item = new Item("item-hash-1", new ObjectMapper().createObjectNode());
-        Entry entryNotDangling = new Entry(105, "item-hash-1", Instant.now());
-        Entry entryDangling = new Entry(106, "item-hash-2", Instant.now());
+        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "item-hash-1"), new ObjectMapper().createObjectNode());
+        Entry entryNotDangling = new Entry(105, new HashValue(HashingAlgorithm.SHA256, "item-hash-1"), Instant.now());
+        Entry entryDangling = new Entry(106, new HashValue(HashingAlgorithm.SHA256, "item-hash-2"), Instant.now());
 
-        when(backingStoreDriver.getItemBySha256(anyString()))
+        when(backingStoreDriver.getItemBySha256(any(HashValue.class)))
                 .thenReturn(Optional.of(item))
                 .thenReturn(Optional.empty());
 
@@ -87,11 +88,11 @@ public class PostgresRegisterTest {
 
     @Test
     public void appendEntryShouldNotInsertRecordForDanglingEntry() {
-        Item item = new Item("item-hash-1", new ObjectMapper().createObjectNode());
-        Entry entryNotDangling = new Entry(105, "item-hash-1", Instant.now());
-        Entry entryDangling = new Entry(106, "item-hash-2", Instant.now());
+        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "item-hash-1"), new ObjectMapper().createObjectNode());
+        Entry entryNotDangling = new Entry(105, new HashValue(HashingAlgorithm.SHA256, "item-hash-1"), Instant.now());
+        Entry entryDangling = new Entry(106, new HashValue(HashingAlgorithm.SHA256, "item-hash-2"), Instant.now());
 
-        when(backingStoreDriver.getItemBySha256(anyString()))
+        when(backingStoreDriver.getItemBySha256(any(HashValue.class)))
                 .thenReturn(Optional.of(item))
                 .thenReturn(Optional.empty());
 

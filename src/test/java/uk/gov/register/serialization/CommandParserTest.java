@@ -5,10 +5,12 @@ import com.github.tomakehurst.wiremock.common.Json;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.OrphanItemException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
@@ -104,7 +106,7 @@ public class CommandParserTest {
     @Test
     public void serialise_shouldFormatEntryAsTsvLine() {
         Instant entryTimestamp = Instant.parse("2016-07-15T10:00:00Z");
-        Entry entry = new Entry(1, "item-hash", entryTimestamp);
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item-hash"), entryTimestamp);
 
         String actualLine = commandParser.serialise(entry);
 

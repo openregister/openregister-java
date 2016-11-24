@@ -61,10 +61,10 @@ public class DataUploadFunctionalTest {
 
         TestDBItem storedItem = testItemDAO.getItems().get(0);
         assertThat(storedItem.contents, equalTo(inputItem));
-        assertThat(storedItem.sha256hex, equalTo(Item.itemHash(inputItem)));
+        assertThat(storedItem.hashValue, equalTo(Item.itemHash(inputItem)));
 
         Entry entry = testEntryDAO.getAllEntries().get(0);
-        assertThat(entry, equalTo(new Entry(1, storedItem.sha256hex, Instant.now())));
+        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, Instant.now())));
 
         TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
         assertThat(record.getEntryNumber(), equalTo(1));
@@ -79,7 +79,7 @@ public class DataUploadFunctionalTest {
         actualJson.remove("entry-timestamp"); // ignore the timestamp as we can't do exact match
         assertThat(actualJson, equalTo(ImmutableMap.of(
                 "entry-number", "1",
-                "item-hash", "sha-256:"+storedItem.sha256hex,
+                "item-hash", storedItem.hashValue.toString(),
                 "register", "ft_openregister_test",
                 "text", "SomeText"
         )));

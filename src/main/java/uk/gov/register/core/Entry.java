@@ -21,9 +21,9 @@ public class Entry {
     private final HashValue hashValue;
     private final Instant timestamp;
 
-    public Entry(int entryNumber, String sha256hex, Instant timestamp) {
+    public Entry(int entryNumber, HashValue hashValue, Instant timestamp) {
         this.entryNumber = entryNumber;
-        this.hashValue = new HashValue(HashingAlgorithm.SHA256, sha256hex);
+        this.hashValue = hashValue;
         this.timestamp = timestamp;
     }
 
@@ -34,8 +34,8 @@ public class Entry {
 
     @SuppressWarnings("unused, used from DAO")
     @JsonIgnore
-    public String getSha256hex() {
-        return hashValue.getValue();
+    public HashValue getSha256hex() {
+        return hashValue;
     }
 
     @JsonIgnore
@@ -51,7 +51,7 @@ public class Entry {
 
     @JsonProperty("item-hash")
     public String getItemHash() {
-        return hashValue.encode();
+        return hashValue.toString();
     }
 
     @JsonProperty("entry-timestamp")

@@ -14,10 +14,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.serialization.*;
 import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import java.security.NoSuchAlgorithmException;
@@ -150,7 +152,9 @@ public class RegisterSerialisationFormatServiceTest {
         assertThat(actualCommands, contains(assertRootOneEntryInRegister, addItemCommand, appendEntryCommand2, assertRootTwoEntriesInRegister));
     }
 
-    private String getHash(JsonNode content) {
-        return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
+    private HashValue getHash(JsonNode content) {
+        String hash = DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
+
+        return new HashValue(HashingAlgorithm.SHA256, hash);
     }
 }

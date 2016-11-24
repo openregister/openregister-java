@@ -7,13 +7,13 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.util.HashValue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 public interface TestEntryDAO {
     @SqlUpdate("drop table if exists entry;" +
@@ -36,7 +36,7 @@ public interface TestEntryDAO {
     class EntryMapper implements ResultSetMapper<Entry> {
         @Override
         public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-            return new Entry(r.getInt("entry_number"), r.getString("sha256hex"), Instant.ofEpochSecond(r.getLong("timestamp")));
+            return new Entry(r.getInt("entry_number"), new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")), Instant.ofEpochSecond(r.getLong("timestamp")));
         }
     }
 }

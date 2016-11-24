@@ -63,7 +63,7 @@ public class CommandParser {
                         String jsonContent = parts[1];
                         canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
                         String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes(StandardCharsets.UTF_8));
-                        Item item = new Item(itemHash, objectReconstructor.reconstruct(jsonContent));
+                        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, itemHash), objectReconstructor.reconstruct(jsonContent));
                         items.put(position++, item);
                         itemHashToEntryCount.put(itemHash, 0);
                     } catch (JsonParseException jpe) {
@@ -80,9 +80,9 @@ public class CommandParser {
                 break;
             case "append-entry":
                 if (parts.length == 3) {
-                    Entry entry = new Entry(0, stripPrefix(parts[2]), Instant.parse(parts[1]));
+                    Entry entry = new Entry(0, new HashValue(HashingAlgorithm.SHA256, stripPrefix(parts[2])), Instant.parse(parts[1]));
                     entries.put(position++, entry);
-                    updateItemHashCount(entry.getSha256hex());
+                    updateItemHashCount(entry.getSha256hex().getValue());
                 } else {
                     LOG.error("append entry line must have 3 elements, was : " + s);
                     throw new SerializedRegisterParseException("append entry line must have 3 elements, was : " + s);
@@ -153,7 +153,7 @@ public class CommandParser {
     }
 
     public String serialise(Entry entry) {
-        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getItemHash() + NEW_LINE;
+        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getSha256hex().encode() + NEW_LINE;
     }
 
     public String serialise(Item item) {

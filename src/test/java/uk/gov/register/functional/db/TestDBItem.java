@@ -2,18 +2,19 @@ package uk.gov.register.functional.db;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.gov.register.core.Item;
+import uk.gov.register.util.HashValue;
 
 public class TestDBItem {
-    public final String sha256hex;
+    public final HashValue hashValue;
     public final JsonNode contents;
 
-    public TestDBItem(String sha256hex, JsonNode contents) {
-        this.sha256hex = sha256hex;
+    public TestDBItem(HashValue hashValue, JsonNode contents) {
+        this.hashValue = hashValue;
         this.contents = contents;
     }
 
     public TestDBItem(JsonNode contents) {
-        this.sha256hex = Item.itemHash(contents);
+        this.hashValue = Item.itemHash(contents);
         this.contents = contents;
     }
 
@@ -24,14 +25,14 @@ public class TestDBItem {
 
         TestDBItem that = (TestDBItem) o;
 
-        if (sha256hex != null ? !sha256hex.equals(that.sha256hex) : that.sha256hex != null) return false;
+        if (hashValue != null ? !hashValue.equals(that.hashValue) : that.hashValue != null) return false;
         return contents.equals(that.contents);
 
     }
 
     @Override
     public int hashCode() {
-        int result = sha256hex != null ? sha256hex.hashCode() : 0;
+        int result = hashValue != null ? hashValue.hashCode() : 0;
         result = 31 * result + contents.hashCode();
         return result;
     }
@@ -39,7 +40,7 @@ public class TestDBItem {
     @Override
     public String toString() {
         return "TestDBItem{" +
-                "sha256hex='" + sha256hex + '\'' +
+                "hashValue='" + hashValue.toString() + '\'' +
                 ", contents=" + contents.toString() +
                 '}';
     }

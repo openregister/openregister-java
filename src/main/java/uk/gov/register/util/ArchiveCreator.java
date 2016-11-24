@@ -25,7 +25,7 @@ public class ArchiveCreator {
                 zipEntryWriter.writeEntry("register.json", registerDetail);
 
                 items.forEach(item ->
-                        zipEntryWriter.writeEntry(String.format("item/%s.json", item.getSha256hex()), item.getContent())
+                        zipEntryWriter.writeEntry(String.format("item/%s.json", item.getSha256hex().getValue()), item.getContent())
                 );
                 entries.forEach(entry ->
                         zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.getEntryNumber()), entry)
