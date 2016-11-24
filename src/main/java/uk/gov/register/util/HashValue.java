@@ -44,7 +44,12 @@ public class HashValue {
     }
 
     @Override
+    public int hashCode() {
+        return 31 * getValue().hashCode();
+    }
+
+    @Override
     public String toString() {
-        return getValue();
+        return encode();
     }
 }

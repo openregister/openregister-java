@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
+import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.VerifiableLog;
 
 import java.time.Instant;
@@ -24,7 +25,7 @@ public interface BackingStoreDriver {
     int getTotalEntries();
     Optional<Instant> getLastUpdatedTime();
 
-    Optional<Item> getItemBySha256(String sha256hex);
+    Optional<Item> getItemBySha256(HashValue hash);
     Collection<Item> getAllItems();
 
     Optional<Record> getRecord(String key);

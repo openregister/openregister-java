@@ -11,12 +11,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
+import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -38,12 +36,12 @@ public class RecordListViewTest {
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
         List<Record> records = Lists.newArrayList(
                 new Record(
-                        new Entry(1, "ab", t1, "123"),
-                        new Item("ab", Jackson.newObjectMapper().readTree("{\"address\":\"123\", \"street\":\"foo\"}"))
+                        new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123"),
+                        new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), Jackson.newObjectMapper().readTree("{\"address\":\"123\", \"street\":\"foo\"}"))
                 ),
                 new Record(
-                        new Entry(2, "cd", t2, "456"),
-                        new Item("cd", Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"))
+                        new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456"),
+                        new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"))
                 )
         );
         RegisterData registerData = new RegisterData(ImmutableMap.of("register", new TextNode("address")));

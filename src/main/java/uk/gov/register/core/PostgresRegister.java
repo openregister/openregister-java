@@ -6,6 +6,7 @@ import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -57,8 +58,8 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Optional<Item> getItemBySha256(String sha256hex) {
-        return itemStore.getItemBySha256(sha256hex);
+    public Optional<Item> getItemBySha256(HashValue hash) {
+        return itemStore.getItemBySha256(hash);
     }
 
     @Override

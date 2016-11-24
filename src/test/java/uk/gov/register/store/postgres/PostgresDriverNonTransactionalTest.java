@@ -3,7 +3,9 @@ package uk.gov.register.store.postgres;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
+import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
 
@@ -18,10 +20,10 @@ public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverNonTransactional postgresDriver = new PostgresDriverNonTransactional(
                 dbi, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
-        Item item4 = new Item("itemhash4", new ObjectMapper().createObjectNode());
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
+        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
+        Item item4 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash4"), new ObjectMapper().createObjectNode());
 
         postgresDriver.insertItem(item1);
         postgresDriver.insertItem(item2);
@@ -39,9 +41,9 @@ public class PostgresDriverNonTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverNonTransactional postgresDriver = new PostgresDriverNonTransactional(
                 dbi, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Entry entry1 = new Entry(1, "itemhash1", Instant.now(), "key1");
-        Entry entry2 = new Entry(2, "itemhash2", Instant.now(), "key2");
-        Entry entry3 = new Entry(3, "itemhash3", Instant.now(), "key3");
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "key1");
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "key2");
+        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "key3");
 
         postgresDriver.insertEntry(entry1);
         assertThat(entries.size(), is(1));

@@ -22,13 +22,15 @@ public class Item {
         this(itemHash(content), content);
     }
 
-    public Item(String sha256hex, JsonNode content) {
-        this.hashValue = new HashValue(HashingAlgorithm.SHA256, sha256hex);
+    public Item(HashValue hashValue, JsonNode content) {
+        this.hashValue = hashValue;
         this.content = content;
     }
 
-    public static String itemHash(JsonNode content) {
-        return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
+    public static HashValue itemHash(JsonNode content) {
+        String hash = DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
+
+        return new HashValue(HashingAlgorithm.SHA256, hash);
     }
 
     public HashValue getSha256hex() {

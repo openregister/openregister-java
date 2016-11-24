@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.CurrentKey;
@@ -70,8 +71,8 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        items.add(new Item("itemhash1", new ObjectMapper().createObjectNode()));
-        entries.add(new Entry(1, "itemhash1", Instant.now(), "1234"));
+        items.add(new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode()));
+        entries.add(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "1234"));
         currentKeys.add(new CurrentKey("DE", 1));
 
         assertThat(items.size(), is(1));
@@ -80,8 +81,8 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
         assertThat(postgresDriver.getTotalEntries(), is(1));
 
-        postgresDriver.insertItem(new Item("itemhash2", new ObjectMapper().createObjectNode()));
-        postgresDriver.insertEntry(new Entry(2, "itemhash2", Instant.now(), "1234"));
+        postgresDriver.insertItem(new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode()));
+        postgresDriver.insertEntry(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "1234"));
         postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
 
         assertThat(items.size(), is(1));
@@ -90,8 +91,8 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
         assertThat(postgresDriver.getTotalEntries(), is(2));
 
-        postgresDriver.insertItem(new Item("itemhash3", new ObjectMapper().createObjectNode()));
-        postgresDriver.insertEntry(new Entry(3, "itemhash3", Instant.now(), "1234"));
+        postgresDriver.insertItem(new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode()));
+        postgresDriver.insertEntry(new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "1234"));
         postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
 
         assertThat(items.size(), is(1));
@@ -160,7 +161,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        items.add(new Item("itemhash1", new ObjectMapper().createObjectNode()));
+        items.add(new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode()));
         entries.add(mock(Entry.class));
         currentKeys.add(new CurrentKey("DE", 1));
 
@@ -168,17 +169,17 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertThat(entries.size(), is(1));
         assertThat(currentKeys.size(), is(1));
 
-        postgresDriver.insertItem(new Item("itemhash2", new ObjectMapper().createObjectNode()));
+        postgresDriver.insertItem(new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode()));
         postgresDriver.insertEntry(mock(Entry.class));
         postgresDriver.insertRecord(mockRecord("country", "VA", 2), "country");
 
-        postgresDriver.getItemBySha256("itemhash2");
+        postgresDriver.getItemBySha256(new HashValue(HashingAlgorithm.SHA256, "itemhash2"));
 
         assertThat(items.size(), is(1));
         assertThat(entries.size(), is(1));
         assertThat(currentKeys.size(), is(1));
 
-        postgresDriver.getItemBySha256("itemhash1");
+        postgresDriver.getItemBySha256(new HashValue(HashingAlgorithm.SHA256, "itemhash1"));
 
         assertThat(items.size(), is(2));
         assertThat(entries.size(), is(2));
@@ -216,12 +217,12 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
-        Item item2 = new Item("itemhash2", new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
-        Item item3 = new Item("itemhash3", new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
-        Entry entry1 = new Entry(1, "itemhash1", Instant.now(), "aaa");
-        Entry entry2 = new Entry(2, "itemhash2", Instant.now(), "bbb");
-        Entry entry3 = new Entry(3, "itemhash3", Instant.now(), "ccc");
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
+        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "aaa");
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "bbb");
+        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "ccc");
 
         postgresDriver.insertItem(item1);
         postgresDriver.insertItem(item2);
@@ -240,8 +241,8 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
 
         postgresDriver.insertItem(item1);
         postgresDriver.insertItem(item2);

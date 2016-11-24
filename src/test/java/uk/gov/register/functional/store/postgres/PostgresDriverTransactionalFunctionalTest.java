@@ -6,10 +6,12 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBSupport;
 import uk.gov.register.store.postgres.PostgresDriverTransactional;
+import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
 import java.time.Instant;
@@ -27,12 +29,12 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
     public void useTransactionShouldApplyChangesAtomicallyToDatabase() {
         DBI dbi = new DBI(postgresConnectionString);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
-        Entry entry1 = new Entry(1, "itemhash1", Instant.now(), "key1");
-        Entry entry2 = new Entry(2, "itemhash2", Instant.now(), "key2");
-        Entry entry3 = new Entry(3, "itemhash3", Instant.now(), "key3");
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
+        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "key1");
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "key2");
+        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "key3");
 
         PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
             postgresDriver.insertItem(item1);
@@ -68,12 +70,12 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
     public void useTransactionShouldRollbackIfExceptionThrown() {
         DBI dbi = new DBI(postgresConnectionString);
 
-        Item item1 = new Item("itemhash1", new ObjectMapper().createObjectNode());
-        Item item2 = new Item("itemhash2", new ObjectMapper().createObjectNode());
-        Item item3 = new Item("itemhash3", new ObjectMapper().createObjectNode());
-        Entry entry1 = new Entry(1, "itemhash1", Instant.now(), "key1");
-        Entry entry2 = new Entry(2, "itemhash2", Instant.now(), "key2");
-        Entry entry3 = new Entry(3, "itemhash3", Instant.now(), "key3");
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
+        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "key1");
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "key2");
+        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "key3");
 
         try {
             PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
