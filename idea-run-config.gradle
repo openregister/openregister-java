@@ -9,9 +9,9 @@ idea {
                 appendApplication(
                     projectRunConfigurationManagerNode,
                     'FunctionalTestRegisterRunner',
-                    "uk.gov.register.functional.app.RegisterApplicationRunner",
+                    "uk.gov.register.RegisterApplication",
                     '-DbaseDirForTemplates=$PROJECT_DIR$/src/main/resources',
-                    '',
+                    'server $PROJECT_DIR$/src/test/resources/test-app-config.yaml',
                     'file://$PROJECT_DIR$',
                     'openregister-java'
                 )

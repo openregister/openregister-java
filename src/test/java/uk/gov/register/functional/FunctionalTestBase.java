@@ -12,7 +12,6 @@ import org.junit.rules.TestRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
-import uk.gov.register.functional.app.RegisterApplicationRunner;
 import uk.gov.register.functional.db.DBSupport;
 import uk.gov.register.functional.db.TestDAO;
 
@@ -35,7 +34,6 @@ public class FunctionalTestBase {
     @ClassRule
     public static DropwizardAppRule<RegisterConfiguration> app = new DropwizardAppRule<>(RegisterApplication.class,
             ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-            ConfigOverride.config("database.url", RegisterApplicationRunner.DATABASE_URL),
             ConfigOverride.config("jerseyClient.timeout", "3000ms"));
 
     private static io.dropwizard.client.JerseyClientBuilder testClientBuilder() {
