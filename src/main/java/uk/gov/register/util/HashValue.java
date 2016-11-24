@@ -19,13 +19,18 @@ public class HashValue {
         return value;
     }
 
-    public static String decode(String hashingAlgorithm, String encodedHash) {
+    public static HashValue decode(String hashingAlgorithm, String encodedHash) {
         if (!encodedHash.startsWith(hashingAlgorithm)) {
             throw new RuntimeException("Hash cannot be decoded");
         }
 
         String[] parts = encodedHash.split(hashingAlgorithm + ":");
-        return parts[1];
+
+        if (parts.length != 2) {
+            throw new RuntimeException(String.format("Cannot create HashValue from encoded hash %s", encodedHash));
+        }
+
+        return new HashValue(HashingAlgorithm.SHA256, parts[1]);
     }
 
     @Override

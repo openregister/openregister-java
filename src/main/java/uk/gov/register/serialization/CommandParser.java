@@ -90,8 +90,8 @@ public class CommandParser {
                 break;
             case "assert-root-hash":
                 if (parts.length == 2) {
-                    String decodedHash = HashValue.decode(HashingAlgorithm.SHA256.toString(), parts[1]);
-                    RegisterProof registerProof = new RegisterProof(decodedHash);
+                    HashValue hash = HashValue.decode(HashingAlgorithm.SHA256.toString(), parts[1]);
+                    RegisterProof registerProof = new RegisterProof(hash.getValue());
                     proofs.put(position++, registerProof);
                 } else {
                     LOG.error("assert root hash line must have 1 elements, was : " + s);
