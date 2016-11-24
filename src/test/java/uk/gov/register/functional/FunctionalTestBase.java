@@ -3,22 +3,20 @@ package uk.gov.register.functional;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.apache.http.impl.conn.InMemoryDnsResolver;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
-import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
+import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.DBSupport;
 import uk.gov.register.functional.db.TestDAO;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-import java.net.InetAddress;
 
 public class FunctionalTestBase {
     public static final int APPLICATION_PORT = 9000;
@@ -37,14 +35,8 @@ public class FunctionalTestBase {
             ConfigOverride.config("jerseyClient.timeout", "3000ms"));
 
     private static io.dropwizard.client.JerseyClientBuilder testClientBuilder() {
-        InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
-        customDnsResolver.add("address.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("postcode.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("register.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("localhost", InetAddress.getLoopbackAddress());
         return new io.dropwizard.client.JerseyClientBuilder(app.getEnvironment())
-                .using(app.getConfiguration().getJerseyClientConfiguration())
-                .using(customDnsResolver);
+                .using(app.getConfiguration().getJerseyClientConfiguration());
     }
 
     @BeforeClass
@@ -58,17 +50,12 @@ public class FunctionalTestBase {
     }
 
     Response getRequest(String path) {
-        return getRequest("address", path);
-    }
-
-    Response getRequest(String registerName, String path) {
-        String hostHeader = registerName + ".beta.openregister.org";
-        return client.target(String.format("http://%s:%d%s", hostHeader, app.getLocalPort(), path)).request().get();
+        return client.target(String.format("http://localhost:%d%s", app.getLocalPort(), path)).request().get();
     }
 
     protected void mintItems(String... items) {
         for (String item : items) {
-            Response response = authenticatingClient.target(String.format("http://localhost:%d/load", app.getLocalPort())).request().header("Host", "address.beta.openregister.org")
+            Response response = authenticatingClient.target(String.format("http://localhost:%d/load", app.getLocalPort())).request()
                     .post(Entity.json(item));
             if (response.getStatus() > 399) {
                 throw new RuntimeException("failed to mint items");

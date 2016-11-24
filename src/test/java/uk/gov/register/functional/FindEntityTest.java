@@ -27,7 +27,7 @@ public class FindEntityTest extends FunctionalTestBase {
         Response response = getRequest("/address/12345.json");
 
         assertThat(response.getStatus(), equalTo(301));
-        String expectedRedirect = "http://address.beta.openregister.org:" + app.getLocalPort() + "/record/12345";
+        String expectedRedirect = "http://localhost:" + app.getLocalPort() + "/record/12345";
         assertThat(response.getHeaderString("Location"), equalTo(expectedRedirect));
     }
 

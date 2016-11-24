@@ -3,7 +3,6 @@ package uk.gov.register.functional;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.apache.http.impl.conn.InMemoryDnsResolver;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -25,7 +24,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -52,7 +50,9 @@ public class LoadSerializedFunctionalTest {
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-        client = testClient();
+        client = new io.dropwizard.client.JerseyClientBuilder(appRule.getEnvironment())
+                .using(appRule.getConfiguration().getJerseyClientConfiguration())
+                .build("test client");
     }
 
     @Test
@@ -123,18 +123,6 @@ public class LoadSerializedFunctionalTest {
         ClientConfig configuration = new ClientConfig();
         configuration.register(HttpAuthenticationFeature.basic("foo", "bar"));
         return JerseyClientBuilder.createClient(configuration);
-    }
-
-    private static Client testClient() {
-        InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
-        customDnsResolver.add("address.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("postcode.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("register.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("localhost", InetAddress.getLoopbackAddress());
-        return new io.dropwizard.client.JerseyClientBuilder(appRule.getEnvironment())
-                .using(appRule.getConfiguration().getJerseyClientConfiguration())
-                .using(customDnsResolver)
-                .build("test client");
     }
 
     Response getRequest(String path) {

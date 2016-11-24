@@ -29,14 +29,14 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void entries_setsAppropriateFilenameForDownload() {
-        Response response = getRequest("address", "/entries.json");
+        Response response = getRequest("/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-entries.json\""));
     }
 
     @Test
     public void entriesPageHasXhtmlLangAttributes() throws Throwable {
-        Response response = getRequest("address", "/entries");
+        Response response = getRequest("/entries");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");

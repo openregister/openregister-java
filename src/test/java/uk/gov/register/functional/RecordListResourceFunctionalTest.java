@@ -66,7 +66,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void newRecords_setsAppropriateFilenameForDownload() {
-        Response response = getRequest("address", "/records.json");
+        Response response = getRequest("/records.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
     }
@@ -85,7 +85,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void newRecordsPageHasXhtmlLangAttributes() {
-        Response response = getRequest("address", "/records");
+        Response response = getRequest("/records");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
@@ -125,7 +125,7 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
     public void oldFacetedResourceRedirectsToNewResource(){
         Response response = getRequest("/street/ellis.json");
         assertThat(response.getStatus(), equalTo(301));
-        String expectedRedirect = "http://address.beta.openregister.org:" + app.getLocalPort() + "/records/street/ellis";
+        String expectedRedirect = "http://localhost:" + app.getLocalPort() + "/records/street/ellis";
         assertThat(response.getHeaders().get("Location").get(0), equalTo(expectedRedirect));
     }
 }

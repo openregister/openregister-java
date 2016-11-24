@@ -18,7 +18,7 @@ public class ApplicationTest extends FunctionalTestBase {
     @Test
     public void appSupportsCORS() {
         String origin = "http://originfortest.com";
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries?cors-test")
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/entries?cors-test")
                 .request()
                 .header(HttpHeaders.ORIGIN, origin)
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
@@ -37,7 +37,7 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appSupportsContentSecurityPolicy() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/entries")
                 .request()
                 .get();
 
@@ -46,7 +46,7 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appExplicitlySendsHtmlCharsetInHeader() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/entries")
                 .request()
                 .get();
 
@@ -57,7 +57,7 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appSupportsContentTypeOptions() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/entries")
                 .request()
                 .get();
 
@@ -66,7 +66,7 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appSupportsXssProtection() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/entries")
                 .request()
                 .get();
 
@@ -75,7 +75,7 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void app404PageHasXhtmlLangAttributes() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/missing_page_to_force_a_404")
+        Response response = client.target("http://localhost:" + APPLICATION_PORT + "/missing_page_to_force_a_404")
                 .request()
                 .get();
 
