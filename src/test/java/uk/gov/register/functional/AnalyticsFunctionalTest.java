@@ -5,15 +5,12 @@ import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
-import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.DBSupport;
 import uk.gov.register.functional.db.TestDAO;
 import uk.gov.register.functional.db.TestEntry;
@@ -24,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
@@ -122,7 +118,6 @@ public class AnalyticsFunctionalTest {
 
     private static DropwizardAppRule<RegisterConfiguration> createAppRule(String trackingId) {
         ArrayList<ConfigOverride> configOverrides = new ArrayList<>(Arrays.asList(
-                ConfigOverride.config("database.url", testDAO.postgresConnectionString),
                 ConfigOverride.config("jerseyClient.timeout", "3000ms"),
                 ConfigOverride.config("register", "address")
         ));
