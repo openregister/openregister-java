@@ -37,7 +37,7 @@ public class ThrowableExceptionMapper implements ExceptionMapper<Throwable> {
                     .entity(viewFactory.thymeleafView("404.html"))
                     .build();        }
 
-        LOGGER.warn("Uncaught exception: {}", exception);
+        LOGGER.error("Uncaught exception: {}", exception);
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
