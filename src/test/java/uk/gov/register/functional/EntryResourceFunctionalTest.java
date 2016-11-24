@@ -55,12 +55,20 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void getEntries_return400ResponseWhenStartIsNotANumber() {
-        assertThat(register.target().path("/entries").queryParam("start","not-a-number").request().get().getStatus(), equalTo(400));
+        Response response = register.target().path("/entries").queryParam("start", "not-a-number").request().get();
+
+        assertThat(response.getMediaType().getType(), equalTo("text"));
+        assertThat(response.getMediaType().getSubtype(), equalTo("html"));
+        assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
     public void getEntries_return400ResponseWhenLimitIsNotANumber() {
-        assertThat(register.target().path("/entries").queryParam("limit","not-a-number").request().get().getStatus(), equalTo(400));
+        Response response = register.target().path("/entries").queryParam("limit", "not-a-number").request().get();
+
+        assertThat(response.getMediaType().getType(), equalTo("text"));
+        assertThat(response.getMediaType().getSubtype(), equalTo("html"));
+        assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test

@@ -5,6 +5,7 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.RecordListView;
 import uk.gov.register.views.RecordView;
@@ -74,7 +75,7 @@ public class RecordResource {
     @GET
     @Path("/records")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntParam> pageSize) {
+    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
 
         requestContext.resourceExtension().ifPresent(
