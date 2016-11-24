@@ -14,6 +14,7 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.TransactionalMemoizationStore;
 import uk.gov.register.db.*;
+import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.util.*;
@@ -27,7 +28,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final Handle handle;
 
     private final List<Entry> stagedEntries;
-    private final HashMap<String,Item> stagedItems;
+    private final HashMap<HashValue,Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
 
     private PostgresDriverTransactional(Handle handle, TransactionalMemoizationStore memoizationStore) {
@@ -91,9 +92,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     @Override
-    public Optional<Item> getItemBySha256(String sha256hex) {
-        Optional<Item> stagedItem = searchStagingForItem(sha256hex);
-        return stagedItem.isPresent() ? stagedItem : super.getItemBySha256(sha256hex);
+    public Optional<Item> getItemBySha256(HashValue hash) {
+        Optional<Item> stagedItem = searchStagingForItem(hash);
+        return stagedItem.isPresent() ? stagedItem : super.getItemBySha256(hash);
     }
 
     @Override
@@ -169,8 +170,8 @@ public class PostgresDriverTransactional extends PostgresDriver {
         stagedCurrentKeys.clear();
     }
 
-    private Optional<Item> searchStagingForItem(String sha256hex) {
-        return Optional.ofNullable(stagedItems.get(sha256hex));
+    private Optional<Item> searchStagingForItem(HashValue hash) {
+        return Optional.ofNullable(stagedItems.get(hash));
     }
 
     private OptionalInt getMaxStagedEntryNumber() {

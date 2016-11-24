@@ -7,11 +7,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.serialization.AddItemCommand;
 import uk.gov.register.serialization.AppendEntryCommand;
 import uk.gov.register.serialization.AssertRootHashCommand;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -35,13 +37,13 @@ public class RegisterCommandWriterTest {
 
     private final String EMPTY_REGISTER_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
-    private final Entry entry1 = new Entry(1, "entry1sha", Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
-    private final Entry entry2 = new Entry(2, "entry2sha", Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value");
+    private final Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "entry1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
+    private final Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "entry2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value");
 
-    private final Item item1 = new Item("entry1sha", jsonFactory.objectNode()
+    private final Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "entry1sha"), jsonFactory.objectNode()
             .put("field-1", "entry1-field-1-value")
             .put("field-2", "entry1-field-2-value"));
-    private final Item item2 = new Item("entry2sha", jsonFactory.objectNode()
+    private final Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "entry2sha"), jsonFactory.objectNode()
             .put("field-1", "entry2-field-1-value")
             .put("field-2", "entry2-field-2-value"));
 
@@ -71,12 +73,12 @@ public class RegisterCommandWriterTest {
                 outputStream);
 
         String expectedRSF =
-                "assert-root-hash\te3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
-                "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
-                "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
-                "append-entry\t2016-07-24T16:55:00Z\tsha-256:entry1sha\tentry1-field-1-value\n" +
-                "append-entry\t2016-07-24T16:56:00Z\tsha-256:entry2sha\tentry2-field-1-value\n" +
-                "assert-root-hash\tK3rfuFF1e\n";
+                "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                        "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
+                        "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
+                        "append-entry\t2016-07-24T16:55:00Z\tsha-256:entry1sha\tentry1-field-1-value\n" +
+                        "append-entry\t2016-07-24T16:56:00Z\tsha-256:entry2sha\tentry2-field-1-value\n" +
+                        "assert-root-hash\tsha-256:K3rfuFF1e\n";
 
         String actualRSF = outputStream.toString();
 

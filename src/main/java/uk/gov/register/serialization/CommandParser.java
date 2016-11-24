@@ -5,11 +5,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.exceptions.OrphanItemException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.RegisterProof;
 
@@ -17,7 +19,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toSet;
@@ -58,7 +63,7 @@ public class CommandParser {
                         String jsonContent = parts[1];
                         canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
                         String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes(StandardCharsets.UTF_8));
-                        Item item = new Item(itemHash, objectReconstructor.reconstruct(jsonContent));
+                        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, itemHash), objectReconstructor.reconstruct(jsonContent));
                         items.put(position++, item);
                         itemHashToEntryCount.put(itemHash, 0);
                     } catch (JsonParseException jpe) {
@@ -75,9 +80,9 @@ public class CommandParser {
                 break;
             case "append-entry":
                 if (parts.length == 4) {
-                    Entry entry = new Entry(0, stripPrefix(parts[2]), Instant.parse(parts[1]), parts[3]);
+                    Entry entry = new Entry(0, new HashValue(HashingAlgorithm.SHA256, stripPrefix(parts[2])), Instant.parse(parts[1]), parts[3]);
                     entries.put(position++, entry);
-                    updateItemHashCount(entry.getSha256hex());
+                    updateItemHashCount(entry.getSha256hex().getValue());
                 } else {
                     LOG.error("append entry line must have 4 elements, was : " + s);
                     throw new SerializedRegisterParseException("append entry line must have 4 elements, was : " + s);
@@ -85,7 +90,8 @@ public class CommandParser {
                 break;
             case "assert-root-hash":
                 if (parts.length == 2) {
-                    RegisterProof registerProof = new RegisterProof(parts[1]);
+                    HashValue hash = HashValue.decode(HashingAlgorithm.SHA256.toString(), parts[1]);
+                    RegisterProof registerProof = new RegisterProof(hash.getValue());
                     proofs.put(position++, registerProof);
                 } else {
                     LOG.error("assert root hash line must have 1 elements, was : " + s);
@@ -129,7 +135,7 @@ public class CommandParser {
 
         if (!orphanItemHashes.isEmpty()) {
 
-            Set<Item> orphanItems = items.values().stream().filter(i -> orphanItemHashes.contains(i.getSha256hex()))
+            Set<Item> orphanItems = items.values().stream().filter(i -> orphanItemHashes.contains(i.getSha256hex().getValue()))
                     .collect(toSet());
 
             throw new OrphanItemException("no corresponding entry for item(s): ", orphanItems);
@@ -137,8 +143,9 @@ public class CommandParser {
     }
 
     private String stripPrefix(String hashField) {
-        if (!hashField.startsWith("sha-256:")) {
-            LOG.error("hash field must start with sha-256: not:" + hashField);
+        String hashingAlgorithm = HashingAlgorithm.SHA256.toString();
+        if (!hashField.startsWith(hashingAlgorithm + ":")) {
+            LOG.error("hash field must start with "+ hashingAlgorithm +": not:" + hashField);
             throw new SerializedRegisterParseException("hash field must start with sha-256: not: " + hashField);
         } else {
             return hashField.substring(8);
@@ -146,7 +153,7 @@ public class CommandParser {
     }
 
     public String serialise(Entry entry) {
-        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getItemHash() + TAB + entry.getKey() + NEW_LINE;
+        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getSha256hex().encode() + TAB + entry.getKey() + NEW_LINE;
     }
 
     public String serialise(Item item) {

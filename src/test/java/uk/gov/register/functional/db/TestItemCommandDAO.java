@@ -6,6 +6,8 @@ import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -27,7 +29,7 @@ public interface TestItemCommandDAO {
         @Override
         public TestDBItem map(int index, ResultSet r, StatementContext ctx) throws SQLException {
             try {
-                return new TestDBItem(r.getString("sha256hex"), objectMapper.readTree(r.getString("content")));
+                return new TestDBItem(new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")), objectMapper.readTree(r.getString("content")));
             } catch (IOException e) {
                 throw new SQLException(e);
             }

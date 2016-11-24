@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.RegisterData;
-import uk.gov.register.core.RegisterDetail;
+import uk.gov.register.core.*;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayInputStream;
@@ -30,14 +27,14 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class ArchiveCreatorTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
-    private final Entry entry1 = new Entry(1, "entry1sha", Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
-    private final Entry entry2 = new Entry(2, "entry2sha", Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value");
+    private final Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "entry1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
+    private final Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "entry2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value");
 
-    private final Item item1 = new Item("entry1sha", jsonFactory.objectNode()
+    private final Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "entry1sha"), jsonFactory.objectNode()
         .put("field-1", "entry1-field-1-value")
         .put("field-2", "entry1-field-2-value"));
 
-    private final Item item2 = new Item("entry2sha", jsonFactory.objectNode()
+    private final Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "entry2sha"), jsonFactory.objectNode()
         .put("field-1", "entry2-field-1-value")
         .put("field-2", "entry2-field-2-value"));
 

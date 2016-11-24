@@ -9,10 +9,9 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.EntryView;
 import uk.gov.register.views.ItemView;
-import uk.gov.register.views.representations.turtle.EntryTurtleWriter;
-import uk.gov.register.views.representations.turtle.ItemTurtleWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -65,7 +64,7 @@ public class TurtleRepresentationWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -78,7 +77,7 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, "hash", Instant.now(), "key"), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key"), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -98,7 +97,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("itemhash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash"), objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -121,7 +120,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item("hash", objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

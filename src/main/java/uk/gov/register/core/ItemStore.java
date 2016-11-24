@@ -2,6 +2,7 @@ package uk.gov.register.core;
 
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
+import uk.gov.register.util.HashValue;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,8 +24,8 @@ public class ItemStore {
         backingStoreDriver.insertItem(item);
     }
 
-    public Optional<Item> getItemBySha256(String sha256hex) {
-        return backingStoreDriver.getItemBySha256(sha256hex);
+    public Optional<Item> getItemBySha256(HashValue hash) {
+        return backingStoreDriver.getItemBySha256(hash);
     }
 
     public Collection<Item> getAllItems() {

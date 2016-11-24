@@ -2,10 +2,11 @@ package uk.gov.register.db;
 
 import org.skife.jdbi.v2.sqlobject.*;
 import uk.gov.register.core.Entry;
+import uk.gov.register.store.postgres.BindEntry;
 
 public interface EntryDAO {
-    @SqlBatch("insert into entry(entry_number, sha256hex, timestamp, key) values(:entryNumber, :sha256hex, :timestampAsLong, :key)")
-    void insertInBatch(@BindBean Iterable<Entry> entries);
+    @SqlBatch("insert into entry(entry_number, sha256hex, timestamp, key) values(:entry_number, :sha256hex, :timestampAsLong, :key)")
+    void insertInBatch(@BindEntry Iterable<Entry> entries);
 
     @SqlQuery("select value from current_entry_number")
     int currentEntryNumber();
