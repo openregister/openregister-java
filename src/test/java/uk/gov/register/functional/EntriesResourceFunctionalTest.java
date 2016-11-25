@@ -9,7 +9,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -19,24 +22,32 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class EntriesResourceFunctionalTest extends FunctionalTestBase {
+public class EntriesResourceFunctionalTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
+
+    @Before
+    public void setup() {
+        register.wipe();
+    }
+
     @Test
     public void entries_returnsEmptyResultJsonWhenNoEntryIsAvailable() {
-        Response response = getRequest("/entries.json");
+        Response response = register.getRequest("/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.readEntity(ArrayNode.class).size(), equalTo(0));
     }
 
     @Test
     public void entries_setsAppropriateFilenameForDownload() {
-        Response response = getRequest("/entries.json");
+        Response response = register.getRequest("/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-entries.json\""));
     }
 
     @Test
     public void entriesPageHasXhtmlLangAttributes() throws Throwable {
-        Response response = getRequest("/entries");
+        Response response = register.getRequest("/entries");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
@@ -50,9 +61,9 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
         String item1 = "{\"address\":\"1234\",\"street\":\"elvis\"}";
         String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
 
-        mintItems(item1, item2);
+        register.mintLines(item1, item2);
 
-        Response response = getRequest("/entries.json");
+        Response response = register.getRequest("/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         ArrayNode jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(2));
@@ -79,30 +90,34 @@ public class EntriesResourceFunctionalTest extends FunctionalTestBase {
         String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
         String item3 = "{\"address\":\"567\",\"street\":\"john\"}";
 
-        mintItems(item1, item2, item3);
+        register.mintLines(item1, item2, item3);
 
-        Response response = getRequest("/entries.json?start=1&limit=2");
+        Response response = register.target().path("/entries.json").queryParam("start",1).queryParam("limit",2)
+                .request().get();
         ArrayNode jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(2));
         assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("1"));
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("2"));
         assertThat(response.getHeaderString("Link"), equalTo("<?start=3&limit=2>; rel=\"next\""));
 
-        response = getRequest("/entries.json?start=2&limit=2");
+        response = register.target().path("/entries.json").queryParam("start",2).queryParam("limit",2)
+                .request().get();
         jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(2));
         assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("2"));
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("3"));
         assertThat(response.getHeaderString("Link"), equalTo("<?start=0&limit=2>; rel=\"previous\""));
 
-        response = getRequest("/entries.json?start=2&limit=3");
+        response = register.target().path("/entries.json").queryParam("start",2).queryParam("limit",3)
+                .request().get();
         jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(2));
         assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("2"));
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("3"));
         assertThat(response.getHeaderString("Link"), equalTo("<?start=-1&limit=3>; rel=\"previous\""));
 
-        response = getRequest("/entries.json?start=2&limit=1");
+        response = register.target().path("/entries.json").queryParam("start",2).queryParam("limit",1)
+                .request().get();
         jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(1));
         assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("2"));

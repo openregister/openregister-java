@@ -30,7 +30,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
     @Test
     public void registerJsonShouldContainEntryViewAddressRegister() throws Throwable {
         populateRegisterRegisterEntries();
-        Response addressRecordInRegisterRegisterResponse = getRequest("/record/address.json");
+        Response addressRecordInRegisterRegisterResponse = register.getRequest("/record/address.json");
         assertThat(addressRecordInRegisterRegisterResponse.getStatus(), equalTo(200));
         Map<?,?> addressRecordMapInRegisterRegister = addressRecordInRegisterRegisterResponse.readEntity(Map.class);
         verifyStringIsAnISODate(addressRecordMapInRegisterRegister.get("entry-timestamp").toString());
@@ -42,7 +42,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
     public void registerJsonShouldContainEntryViewRegisterRegister() throws Throwable {
         populateAddressRegisterEntries();
 
-        Response registerResourceFromAddressRegisterResponse = getRequest("/register.json");
+        Response registerResourceFromAddressRegisterResponse = register.getRequest("/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
@@ -59,7 +59,7 @@ public class RegisterResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void registerJsonShouldGenerateValidResponseForEmptyDB(){
-        Response registerResourceFromAddressRegisterResponse = getRequest("/register.json");
+        Response registerResourceFromAddressRegisterResponse = register.getRequest("/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
         Map<String,?> registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);

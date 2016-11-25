@@ -11,29 +11,40 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
-import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.client.Entity.entity;
+import static uk.gov.register.views.representations.ExtraMediaType.APPLICATION_RSF_TYPE;
 
 public class RegisterRule implements TestRule {
     private final WipeDatabaseRule wipeRule;
-    private Client client;
-    private Client authenticatingClient;
     private DropwizardAppRule<RegisterConfiguration> appRule;
 
     private TestRule wholeRule;
 
-    public RegisterRule(String register) {
+    private WebTarget authenticatedTarget;
+    private Client client;
+    public RegisterRule(String register, ConfigOverride... overrides) {
+        ConfigOverride[] configOverrides = constructOverrides(register, overrides);
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
                 ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-                ConfigOverride.config("register", register));
+                configOverrides);
         wipeRule = new WipeDatabaseRule();
         wholeRule = RuleChain
                 .outerRule(appRule)
                 .around(wipeRule);
+    }
+
+    private ConfigOverride[] constructOverrides(String register, ConfigOverride[] overrides) {
+        ConfigOverride[] allOverrides = new ConfigOverride[overrides.length+1];
+        allOverrides[0] = ConfigOverride.config("register", register);
+        System.arraycopy(overrides, 0, allOverrides, 1, overrides.length);
+        return allOverrides;
     }
 
     @Override
@@ -42,22 +53,32 @@ public class RegisterRule implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 client = clientBuilder().build("test client");
-                authenticatingClient = clientBuilder().build("authenticating client");
-                authenticatingClient.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
+                authenticatedTarget = client.target("http://localhost:" + appRule.getLocalPort());
+                authenticatedTarget.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
                 base.evaluate();
             }
         };
         return wholeRule.apply(me, description);
     }
 
-    public void loadRsf(String rsf) {
-        authenticatingClient.target(String.format("http://localhost:%d/load-rsf", appRule.getLocalPort()))
+    public WebTarget target() {
+        return client.target("http://localhost:" + appRule.getLocalPort());
+    }
+
+    public Response loadRsf(String rsf) {
+        return authenticatedTarget.path("/load-rsf")
                 .request()
-                .post(entity(rsf, ExtraMediaType.APPLICATION_RSF_TYPE));
+                .post(entity(rsf, APPLICATION_RSF_TYPE));
+    }
+
+    public Response mintLines(String... payload) {
+        return authenticatedTarget.path("/load")
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .post(Entity.json(String.join("\n", payload)));
     }
 
     public Response getRequest(String path) {
-        return client.target(String.format("http://localhost:%d%s", appRule.getLocalPort(), path)).request().get();
+        return target().path(path).request().get();
     }
 
     public void wipe() {

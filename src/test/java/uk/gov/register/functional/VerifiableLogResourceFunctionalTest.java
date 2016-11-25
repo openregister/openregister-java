@@ -28,7 +28,7 @@ public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getRegisterProof() {
-        Response response = getRequest("/proof/register/" + proofIdentifier);
+        Response response = register.getRequest("/proof/register/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -39,7 +39,7 @@ public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getEntryProof() {
-        Response response = getRequest("/proof/entry/1/5/" + proofIdentifier);
+        Response response = register.getRequest("/proof/entry/1/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -53,7 +53,7 @@ public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getConsistencyProof() {
-        Response response = getRequest("/proof/consistency/2/5/" + proofIdentifier);
+        Response response = register.getRequest("/proof/consistency/2/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 

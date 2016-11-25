@@ -24,7 +24,7 @@ public class ItemResourceFunctionalTest extends FunctionalTestBase {
     public void jsonRepresentationOfAnItem() throws JSONException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = getRequest(String.format("/item/sha-256:%s.json", sha256Hex));
+        Response response = register.getRequest(String.format("/item/sha-256:%s.json", sha256Hex));
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -33,14 +33,14 @@ public class ItemResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void return404ResponseWhenItemNotExist() throws JSONException {
-        Response response = getRequest("/item/sha-256:notExistHexValue");
+        Response response = register.getRequest("/item/sha-256:notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }
 
     @Test
     public void return404ResponseWhenItemHexIsNotInProperFormat() throws JSONException {
-        Response response = getRequest("/item/notExistHexValue");
+        Response response = register.getRequest("/item/notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }

@@ -6,7 +6,9 @@ import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,16 +26,19 @@ public class FindEntityTest extends FunctionalTestBase {
 
     @Test
     public void find_shouldReturnEntryWithThPrimaryKey_whenSearchForPrimaryKey() throws JSONException {
-        Response response = getRequest("/address/12345.json");
+        WebTarget target = register.target();
+        target.property("jersey.config.client.followRedirects",false);
+        Response response = target.path("/address/12345.json").request().get();
 
         assertThat(response.getStatus(), equalTo(301));
-        String expectedRedirect = "http://localhost:" + app.getLocalPort() + "/record/12345";
-        assertThat(response.getHeaderString("Location"), equalTo(expectedRedirect));
+        String expectedRedirect = "/record/12345";
+        URI location = URI.create(response.getHeaderString("Location"));
+        assertThat(location.getPath(), equalTo(expectedRedirect));
     }
 
     @Test
     public void find_returnsTheCorrectTotalRecordsInPaginationHeader() {
-        Response response = getRequest("/records/street/ellis");
+        Response response = register.getRequest("/records/street/ellis");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
 

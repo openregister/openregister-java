@@ -1,21 +1,17 @@
 package uk.gov.register.functional;
 
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.gov.register.RegisterApplication;
-import uk.gov.register.RegisterConfiguration;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.db.DBSupport;
 import uk.gov.register.functional.db.TestDAO;
 import uk.gov.register.functional.db.TestEntry;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,14 +47,14 @@ public class AnalyticsFunctionalTest {
     }
 
     @Rule
-    public DropwizardAppRule<RegisterConfiguration> appRule;
+    public RegisterRule register;
 
     private final String targetUrl;
     private final String trackingId;
     private final Boolean shouldIncludeAnalytics;
 
     public AnalyticsFunctionalTest(String targetUrl, String trackingId, Boolean shouldIncludeAnalytics) {
-        this.appRule = createAppRule(trackingId);
+        this.register = createRegister(trackingId);
         this.targetUrl = targetUrl;
         this.trackingId = trackingId;
         this.shouldIncludeAnalytics = shouldIncludeAnalytics;
@@ -94,9 +90,7 @@ public class AnalyticsFunctionalTest {
 
     @Test
     public void checkAnalyticsScriptsPresence() throws Exception {
-        Client client = getTestClient(this.appRule);
-        Response response = client.target(String.format("http://localhost:%d%s", this.appRule.getLocalPort(), targetUrl))
-                .request().get();
+        Response response = register.getRequest(targetUrl);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));
@@ -110,25 +104,11 @@ public class AnalyticsFunctionalTest {
         assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
     }
 
-    private Client getTestClient(DropwizardAppRule<RegisterConfiguration> appRule) {
-        return new io.dropwizard.client.JerseyClientBuilder(appRule.getEnvironment())
-                .using(appRule.getConfiguration().getJerseyClientConfiguration())
-                .build("test client");
-    }
-
-    private static DropwizardAppRule<RegisterConfiguration> createAppRule(String trackingId) {
-        ArrayList<ConfigOverride> configOverrides = new ArrayList<>(Arrays.asList(
-                ConfigOverride.config("jerseyClient.timeout", "3000ms"),
-                ConfigOverride.config("register", "address")
-        ));
-
+    private static RegisterRule createRegister(String trackingId) {
         if (trackingId != null) {
-            configOverrides.add(ConfigOverride.config("trackingId", trackingId));
+            return new RegisterRule("address", ConfigOverride.config("trackingId", trackingId));
         }
-
-        return new DropwizardAppRule<>(RegisterApplication.class,
-                ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-                configOverrides.toArray(new ConfigOverride[configOverrides.size()]));
+        return new RegisterRule("address");
     }
 
     private static List<Object> generateTestSetFor(String url) {
