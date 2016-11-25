@@ -39,7 +39,7 @@ Registers can be large - the address register currently has c34 million Entries 
 To be valid:
 
 - All Items should be referred to by at least one Entry. There should be no Orphan Items.
-- All Entries should refer to an Item. In theory >1 Entry can point to the same Item. Where the RSF represents part of a Register, the Item may be part of the existing Register.
+- All Entries should refer to an Item. In theory >1 Entry can point to the same Item. Where the RSF represents an addition to a Register, the Item may be part of the existing Register.
 
 
 ## Decision ##
@@ -48,7 +48,7 @@ To be valid:
 - XML can be streamed but there are security objections to using it.
 - The RSF will comprise Commands on separate lines, being one of those listed below.
 - Each Command comprises the Command name with arguments separated by tabs.
-- The Commands are applied to the register in the order they appear in the RSF
+- The Commands are applied to the register in the order they appear in the RSF.
 - RSF must be encoded as UTF-8.
 
 ### add-item
@@ -63,30 +63,31 @@ Example
 
 #### Notes
 
-- add-item must appear before the corresponding append-entry
+- *add-item* must appear before the corresponding *append-entry*
 
 ### append-entry
 
 #### arguments
 
-- a timestamp in UTC in ISO 8601 format
-- the hash of the corresponding Entry prepended with *sha-256*
+- a timestamp in UTC in RFC 3339 format with the UTC offset of 00:00 represented by *Z*
+- the hash of the corresponding Item prepended with *sha-256:*
+- the *key* of the corresponding Item, being the mandatory field in the Item having the same name as the Register itself
 
 Example
 
-    append-entry[tab]2016-11-07T16:26:21Z[tab]sha-256:100171bf018db8598080d8d930040989d3ef788e7bc00def8ca083d25a0f40e5
+    append-entry[tab]2016-11-07T16:26:21Z[tab]sha-256:100171bf018db8598080d8d930040989d3ef788e7bc00def8ca083d25a0f40e5[tab]5T8EXT7N
 
 #### Notes
 
-- The reference can an Item that already exists in the register or one in the RSF.
+- The reference can be to an Item that already exists in the register or one in the RSF.
 - The entry number is inferred by the order that *append-entry* commands appear.
-- If  *append-entry* does not reference an earlier *add-item* or *Item* in the register then the RSF should be rejected.
+- If  *append-entry* does not reference an earlier *add-item* or Item in the register then the RSF should be rejected.
 
 ### assert-root-hash
 
 #### arguments
 
-- the root hash of the register prepended with *sha-256*
+- the root hash of the register prepended with *sha-256:*
 
 Example
 
