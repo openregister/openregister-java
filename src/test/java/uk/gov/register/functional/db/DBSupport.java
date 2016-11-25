@@ -41,21 +41,11 @@ public class DBSupport {
         this.testDAO = testDAO;
     }
 
-    public void publishEntries(List<TestEntry> testEntries) {
-        publishEntries("address", testEntries);
-    }
-
     public void publishEntries(String registerName, List<TestEntry> testEntries) {
         testEntries.forEach(testEntry -> {
             insertIntoItemAndEntryTables(testEntry);
             updateOtherTables(registerName, testEntry.entryNumber, testEntry.itemJson);
         });
-    }
-
-    public void cleanDb(){
-        testDAO.testEntryDAO.wipeData();
-        testDAO.testItemCommandDAO.wipeData();
-        testDAO.testRecordDAO.wipeData();
     }
 
     private void insertIntoItemAndEntryTables(TestEntry testEntry) {
