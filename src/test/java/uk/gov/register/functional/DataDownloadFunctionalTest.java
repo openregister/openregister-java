@@ -96,7 +96,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
-        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
+        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".rsf"));
 
         String[] rsfLines = getRsfLinesFrom(response);
 
@@ -122,7 +122,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
-        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
+        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".rsf"));
 
         String[] rsfLines = getRsfLinesFrom(response);
 
