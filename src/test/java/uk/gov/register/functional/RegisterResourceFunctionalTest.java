@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.db.DBSupport;
+import uk.gov.register.functional.db.TestDAO;
 import uk.gov.register.functional.db.TestEntry;
 import uk.gov.register.util.ResourceYamlFileReader;
 
@@ -28,6 +30,7 @@ import static org.hamcrest.core.IsNot.not;
 
 public class RegisterResourceFunctionalTest {
 
+    protected static final DBSupport dbSupport = new DBSupport(TestDAO.get("ft_openregister_java", "postgres"));
     @ClassRule
     public static RegisterRule register = new RegisterRule("address");
 
@@ -81,7 +84,7 @@ public class RegisterResourceFunctionalTest {
     }
 
     private void populateAddressRegisterEntries() {
-        FunctionalTestBase.dbSupport.publishEntries(ImmutableList.of(
+        dbSupport.publishEntries(ImmutableList.of(
                 TestEntry.anEntry(1, "{\"name\":\"ellis\",\"address\":\"12345\"}", "12345"),
                 TestEntry.anEntry(2, "{\"name\":\"presley\",\"address\":\"6789\"}", "6789"),
                 TestEntry.anEntry(3, "{\"name\":\"ellis\",\"address\":\"145678\"}", "145678"),
@@ -105,7 +108,7 @@ public class RegisterResourceFunctionalTest {
             return TestEntry.anEntry(entryNumber, writeToString(r), Instant.parse(timestampISO), r.get("register").toString());
         }).collect(Collectors.toList());
 
-        FunctionalTestBase.dbSupport.publishEntries("register", registerEntries);
+        dbSupport.publishEntries("register", registerEntries);
     }
 
     private void assertAddressRegisterMapIsEqualTo(Map<?, ?> sutAddressRecordMapInRegisterRegister) {
