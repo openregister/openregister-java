@@ -14,6 +14,9 @@ credentials:
   user: foo
   password: bar
 
+jerseyClient:
+  timeout: 3000ms
+
 database:
   driverClass: org.postgresql.Driver
   url: jdbc:postgresql://localhost:5432/ft_openregister_java

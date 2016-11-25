@@ -2,27 +2,14 @@ package uk.gov.register.functional;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import uk.gov.register.RegisterApplication;
-import uk.gov.register.RegisterConfiguration;
-import uk.gov.register.functional.app.WipeDatabaseRule;
-import uk.gov.register.views.representations.ExtraMediaType;
+import uk.gov.register.functional.app.RegisterRule;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Arrays;
@@ -44,43 +31,16 @@ public class RepresentationsFunctionalTest {
     private final String expectedEntriesValue;
     private final String expectedRecordEntriesValue;
 
-    private static Client client;
-    private static Client authenticatingClient;
-
-    @Rule
-    public TestRule wipe = new WipeDatabaseRule();
-
     @ClassRule
-    public static final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,
-            ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-            ConfigOverride.config("jerseyClient.timeout", "3000ms"),
-            ConfigOverride.config("register", "register"));
-
-    @BeforeClass
-    public static void beforeClass() throws InterruptedException {
-        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-        JerseyClientBuilder clientBuilder = new JerseyClientBuilder(appRule.getEnvironment())
-                .using(appRule.getConfiguration().getJerseyClientConfiguration());
-        client = clientBuilder
-                .build("test client");
-        authenticatingClient = clientBuilder.build("authenticating client");
-        authenticatingClient.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
-    }
+    public static final RegisterRule register = new RegisterRule("register");
 
     @Before
     public void publishTestMessages() {
-        Entity<String> entity = Entity.entity("add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
+        register.wipe();
+        register.loadRsf("add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
                 "add-item\t{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}\n" +
                 "append-entry\t2016-03-01T01:02:03Z\tsha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18\tvalue1\n" +
-                "append-entry\t2016-03-02T02:03:04Z\tsha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7\tvalue2\n" +
-                "", ExtraMediaType.APPLICATION_RSF_TYPE);
-        authenticatingClient.target(String.format("http://localhost:%d/load-rsf", appRule.getLocalPort()))
-                .request()
-                .post(entity);
-    }
-
-    private Response getRequest(String path) {
-        return client.target(String.format("http://localhost:%d%s", appRule.getLocalPort(), path)).request().get();
+                "append-entry\t2016-03-02T02:03:04Z\tsha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7\tvalue2\n");
     }
 
     @Parameters(name = "{0}")
@@ -109,7 +69,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForEntryResource() {
         assumeThat(expectedEntryValue, notNullValue());
 
-        Response response = getRequest("/entry/1." + extension);
+        Response response = register.getRequest("/entry/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -120,7 +80,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForItemResource() {
         assumeThat(expectedItemValue, notNullValue());
 
-        Response response = getRequest("/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18." + extension);
+        Response response = register.getRequest("/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -131,7 +91,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordResource() {
         assumeThat(expectedRecordValue, notNullValue());
 
-        Response response = getRequest("/record/value1." + extension);
+        Response response = register.getRequest("/record/value1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -142,7 +102,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordsResource() {
         assumeThat(expectedRecordsValue, notNullValue());
 
-        Response response = getRequest("/records." + extension);
+        Response response = register.getRequest("/records." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -153,7 +113,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForEntriesResource() {
         assumeThat(expectedEntriesValue, notNullValue());
 
-        Response response = getRequest("/entries." + extension);
+        Response response = register.getRequest("/entries." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -164,7 +124,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordEntriesResource(){
         assumeThat(expectedRecordEntriesValue, notNullValue());
 
-        Response response = getRequest("/record/value1/entries." + extension);
+        Response response = register.getRequest("/record/value1/entries." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
