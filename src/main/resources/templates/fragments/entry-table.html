@@ -22,7 +22,7 @@
         <tr>
             <td th:text="item-hash"></td>
             <td>
-                <a th:href="${'/item/' + entry.itemHash}" th:text="${entry.itemHash}"></a>
+                <a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a>
             </td>
         </tr>
         <tr>

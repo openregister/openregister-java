@@ -35,7 +35,8 @@ public class Entry {
     }
 
     @SuppressWarnings("unused, used from DAO")
-    @JsonIgnore
+    @JsonProperty("item-hash")
+    @JsonSerialize(using = ToStringSerializer.class)
     public HashValue getSha256hex() {
         return hashValue;
     }
@@ -49,11 +50,6 @@ public class Entry {
     @JsonSerialize(using = ToStringSerializer.class)
     public Integer getEntryNumber() {
         return entryNumber;
-    }
-
-    @JsonProperty("item-hash")
-    public String getItemHash() {
-        return hashValue.toString();
     }
 
     @JsonProperty("entry-timestamp")

@@ -23,7 +23,7 @@ public class EntryTest {
     @Test
     public void getItemHash_returnsSha256AsItemHash() {
         Entry entry = new Entry(123, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.ofEpochSecond(1470403440), "sample-key");
-        assertThat(entry.getItemHash(), equalTo("sha-256:abc"));
+        assertThat(entry.getSha256hex().toString(), equalTo("sha-256:abc"));
     }
 
     @Test
