@@ -5,7 +5,9 @@ import io.dropwizard.jackson.Jackson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -14,13 +16,16 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class RecordResourceFunctionalTest extends FunctionalTestBase {
+public class RecordResourceFunctionalTest {
     private final static String item0 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
     private final static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
 
     @Before
     public void publishTestMessages() throws Throwable {
-        mintItems(item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
+        register.wipe();
+        register.mintLines(item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
     }
 
     @Test

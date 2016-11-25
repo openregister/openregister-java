@@ -5,7 +5,10 @@ import com.google.common.net.HttpHeaders;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -14,7 +17,15 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-public class ApplicationTest extends FunctionalTestBase {
+public class ApplicationTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
+
+    @Before
+    public void setup() {
+        register.wipe();
+    }
+
     @Test
     public void appSupportsCORS() {
         String origin = "http://originfortest.com";

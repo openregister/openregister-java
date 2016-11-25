@@ -1,11 +1,12 @@
 package uk.gov.register.db.mappers;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.functional.FunctionalTestBase;
+import uk.gov.register.functional.app.RegisterRule;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -13,7 +14,10 @@ import java.util.Collection;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class EntryMapperTest extends FunctionalTestBase {
+public class EntryMapperTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
+
     @Test
     public void map_returnsSameDateAndTimeInUTC() throws Exception {
         String expected = "2016-07-15T10:00:00Z";

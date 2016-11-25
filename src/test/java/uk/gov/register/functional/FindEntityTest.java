@@ -4,7 +4,9 @@ import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -13,15 +15,15 @@ import java.net.URI;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class FindEntityTest extends FunctionalTestBase {
+public class FindEntityTest {
+
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
 
     @Before
     public void publishTestMessages() {
-        mintItems(
-                "{\"street\":\"ellis\",\"address\":\"12345\"}",
-                "{\"street\":\"presley\",\"address\":\"6789\"}",
-                "{\"street\":\"ellis\",\"address\":\"145678\"}"
-        );
+        register.wipe();
+        register.mintLines("{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}");
     }
 
     @Test
@@ -44,5 +46,4 @@ public class FindEntityTest extends FunctionalTestBase {
 
         assertThat(doc.body().getElementById("main").getElementsByAttributeValue("class", "column-two-thirds").first().text(), equalTo("2 records"));
     }
-
 }

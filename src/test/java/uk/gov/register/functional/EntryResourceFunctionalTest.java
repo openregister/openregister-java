@@ -8,7 +8,9 @@ import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -23,7 +25,9 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertTrue;
 
-public class EntryResourceFunctionalTest extends FunctionalTestBase {
+public class EntryResourceFunctionalTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
     private final String item1 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
     private final String item2 = "{\"address\":\"6790\",\"street\":\"presley\"}";
     private final String item1Hash = "sha-256:" + DigestUtils.sha256Hex(item1);
@@ -31,7 +35,8 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
     
     @Before
     public void publishTestMessages() throws Throwable {
-        mintItems(item1, item2);
+        register.wipe();
+        register.mintLines(item1, item2);
     }
 
     @Test

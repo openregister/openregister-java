@@ -3,7 +3,9 @@ package uk.gov.register.functional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.core.MediaType;
@@ -24,8 +26,10 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DataDownloadFunctionalTest extends FunctionalTestBase {
+public class DataDownloadFunctionalTest {
 
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
     private final String item1 = "{\"street\":\"ellis\",\"address\":\"12345\"}";
     private final String item2 = "{\"street\":\"presley\",\"address\":\"6789\"}";
     private final String item3 =  "{\"street\":\"foo\",\"address\":\"12345\"}";
@@ -33,7 +37,8 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Before
     public void publishTestMessages() {
-        mintItems(item1, item2, item3, item4, item1);
+        register.wipe();
+        register.mintLines(item1, item2, item3, item4, item1);
     }
 
     @Test

@@ -3,21 +3,26 @@ package uk.gov.register.functional;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ItemResourceFunctionalTest extends FunctionalTestBase {
+public class ItemResourceFunctionalTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
     private static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";
     private static String item2 = "{\"address\":\"145678\",\"street\":\"ellis\"}";
 
     @Before
     public void publishTestMessages() throws Throwable {
-        mintItems(item1, item2);
+        register.wipe();
+        register.mintLines(item1, item2);
     }
 
     @Test
@@ -44,5 +49,4 @@ public class ItemResourceFunctionalTest extends FunctionalTestBase {
 
         assertThat(response.getStatus(), equalTo(404));
     }
-
 }
