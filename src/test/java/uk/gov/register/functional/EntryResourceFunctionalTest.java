@@ -8,7 +8,9 @@ import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -23,7 +25,9 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertTrue;
 
-public class EntryResourceFunctionalTest extends FunctionalTestBase {
+public class EntryResourceFunctionalTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
     private final String item1 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
     private final String item2 = "{\"address\":\"6790\",\"street\":\"presley\"}";
     private final String item1Hash = "sha-256:" + DigestUtils.sha256Hex(item1);
@@ -31,12 +35,13 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
     
     @Before
     public void publishTestMessages() throws Throwable {
-        mintItems(item1, item2);
+        register.wipe();
+        register.mintLines(item1, item2);
     }
 
     @Test
     public void getEntriesView_itemHashesAreRenderedAsLinks() {
-        Response response = getRequest("/entries");
+        Response response = register.getRequest("/entries");
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -50,17 +55,17 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getEntries_return400ResponseWhenStartIsNotANumber() {
-        assertThat(getRequest("/entries?start=not-a-number").getStatus(), equalTo(400));
+        assertThat(register.target().path("/entries").queryParam("start","not-a-number").request().get().getStatus(), equalTo(400));
     }
 
     @Test
     public void getEntries_return400ResponseWhenLimitIsNotANumber() {
-        assertThat(getRequest("/entries?limit=not-a-number").getStatus(), equalTo(400));
+        assertThat(register.target().path("/entries").queryParam("limit","not-a-number").request().get().getStatus(), equalTo(400));
     }
 
     @Test
     public void getEntriesAsJson() throws JSONException, IOException {
-        Response response = getRequest("/entries.json");
+        Response response = register.getRequest("/entries.json");
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -72,7 +77,7 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getEntryByEntryNumber() throws JSONException, IOException {
-        Response response = getRequest("/entry/1.json");
+        Response response = register.getRequest("/entry/1.json");
 
         assertThat(response.getStatus(), equalTo(200));
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
@@ -81,7 +86,7 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void entryView_itemHashIsRenderedAsALink() {
-        Response response = getRequest("/entry/1");
+        Response response = register.getRequest("/entry/1");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         String text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();
@@ -90,19 +95,19 @@ public class EntryResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void return404ResponseWhenEntryNotExist() {
-        assertThat(getRequest("/entry/5001").getStatus(), equalTo(404));
+        assertThat(register.getRequest("/entry/5001").getStatus(), equalTo(404));
     }
 
     @Test
     public void return404ResponseWhenEntryNumberIsNotAnIntegerValue() {
-        assertThat(getRequest("/entry/a2").getStatus(), equalTo(404));
+        assertThat(register.getRequest("/entry/a2").getStatus(), equalTo(404));
     }
 
     @Test
     public void entryResource_retrievesTimestampsInUTC() throws IOException {
         Instant now = Instant.now();
 
-        Response response = getRequest("/entry/1.json");
+        Response response = register.getRequest("/entry/1.json");
         Map<String, String> responseData = response.readEntity(Map.class);
         Instant entryTimestamp = Instant.parse(responseData.get("entry-timestamp"));
 

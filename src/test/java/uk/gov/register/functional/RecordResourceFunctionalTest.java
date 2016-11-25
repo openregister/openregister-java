@@ -5,7 +5,9 @@ import io.dropwizard.jackson.Jackson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -14,20 +16,23 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class RecordResourceFunctionalTest extends FunctionalTestBase {
+public class RecordResourceFunctionalTest {
     private final static String item0 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
     private final static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
 
     @Before
     public void publishTestMessages() throws Throwable {
-        mintItems(item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
+        register.wipe();
+        register.mintLines(item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
     }
 
     @Test
     public void getRecordByKey() throws JSONException, IOException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = getRequest("/record/6789.json");
+        Response response = register.getRequest("/record/6789.json");
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -43,22 +48,22 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void recordResource_return404ResponseWhenRecordNotExist() {
-        assertThat(getRequest("/record/5001.json").getStatus(), equalTo(404));
+        assertThat(register.getRequest("/record/5001.json").getStatus(), equalTo(404));
     }
 
     @Test
     public void recordResource_return400ResponseWhenPageSizeIsNotANumber() {
-        assertThat(getRequest("/records?page-size=not-a-number").getStatus(), equalTo(400));
+        assertThat(register.target().path("/records").queryParam("page-size","not-a-number").request().get().getStatus(), equalTo(400));
     }
 
     @Test
     public void recordResource_return400ResponseWhenPageIndexIsNotANumber() {
-        assertThat(getRequest("/records?page-index=not-a-number").getStatus(), equalTo(400));
+        assertThat(register.target().path("/records").queryParam("page-index","not-a-number").request().get().getStatus(), equalTo(400));
     }
 
     @Test
     public void historyResource_returnsHistoryOfARecord() throws IOException {
-        Response response = getRequest("/record/6789/entries.json");
+        Response response = register.getRequest("/record/6789/entries.json");
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -80,6 +85,6 @@ public class RecordResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void historyResource_return404ResponseWhenRecordNotExist() {
-        assertThat(getRequest("/record/5001/entries.json").getStatus(), equalTo(404));
+        assertThat(register.getRequest("/record/5001/entries.json").getStatus(), equalTo(404));
     }
 }
