@@ -32,16 +32,8 @@ public class TestEntry {
         }
     }
 
-    public long getTimestampAsLong() {
-        return entryTimestamp.getEpochSecond();
-    }
-
     public static TestEntry anEntry(int entryNumber, String itemJson, String key) {
         return new TestEntry(entryNumber, itemJson, Instant.now(), key);
-    }
-
-    public static TestEntry anEntry(int entryNumber, String itemJson, Instant entryTimestamp, String key) {
-        return new TestEntry(entryNumber, itemJson, entryTimestamp, key);
     }
 
     private String canonicalJson(String itemJson) throws IOException {
