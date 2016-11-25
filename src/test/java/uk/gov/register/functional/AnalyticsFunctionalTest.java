@@ -3,13 +3,12 @@ package uk.gov.register.functional;
 import io.dropwizard.testing.ConfigOverride;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.functional.app.RegisterRule;
-import uk.gov.register.functional.db.DBSupport;
-import uk.gov.register.functional.db.TestDAO;
 import uk.gov.register.functional.db.TestEntry;
 
 import javax.ws.rs.core.Response;
@@ -33,21 +32,20 @@ public class AnalyticsFunctionalTest {
     private static final String testEntry1Key = "st1";
     private static final String testEntry2Key = "st2";
 
-    private static final TestDAO testDAO;
-    private static final DBSupport dbSupport;
-
     static {
-        testDAO = TestDAO.get("ft_openregister_java", "postgres");
-        dbSupport = new DBSupport(testDAO);
-
-        dbSupport.cleanDb();
         testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}", "12345");
         testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}", "12346");
-        dbSupport.publishEntries("address", Arrays.asList(testEntry1, testEntry2));
     }
 
     @Rule
     public RegisterRule register;
+
+    @Before
+    public void setup() {
+        register.wipe();
+        register.mintLines(testEntry1.itemJson,
+                testEntry2.itemJson);
+    }
 
     private final String targetUrl;
     private final String trackingId;
@@ -68,8 +66,8 @@ public class AnalyticsFunctionalTest {
         sourceData.addAll(generateTestSetFor("/download"));
         sourceData.addAll(generateTestSetFor("/entries"));
         sourceData.addAll(generateTestSetFor("/entry/9999999999"));
-        sourceData.addAll(generateTestSetFor("/entry/" + testEntry1.entryNumber));
-        sourceData.addAll(generateTestSetFor("/entry/" + testEntry2.entryNumber));
+        sourceData.addAll(generateTestSetFor("/entry/1"));
+        sourceData.addAll(generateTestSetFor("/entry/2"));
 
         sourceData.addAll(generateTestSetFor("/records"));
         sourceData.addAll(generateTestSetFor("/records/non-existent-record"));
