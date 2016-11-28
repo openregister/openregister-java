@@ -155,6 +155,6 @@ public class CommandParser {
     }
 
     public String getFileExtension() {
-        return "tsv";
+        return "rsf";
     }
 }

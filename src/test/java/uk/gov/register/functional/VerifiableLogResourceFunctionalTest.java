@@ -1,7 +1,9 @@
 package uk.gov.register.functional;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -13,22 +15,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 
-public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
+public class VerifiableLogResourceFunctionalTest {
 
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
     private final String proofIdentifier = "merkle:sha-256";
 
     @Before
     public void publishTestMessages() throws Throwable {
-        mintItems("{\"address\":\"1111\",\"street\":\"elvis\"}",
-                "{\"address\":\"2222\",\"street\":\"presley\"}",
-                "{\"address\":\"3333\",\"street\":\"ellis\"}",
-                "{\"address\":\"4444\",\"street\":\"pretzel\"}",
-                "{\"address\":\"5555\",\"street\":\"elfsley\"}");
+        register.wipe();
+        register.mintLines("{\"address\":\"1111\",\"street\":\"elvis\"}", "{\"address\":\"2222\",\"street\":\"presley\"}", "{\"address\":\"3333\",\"street\":\"ellis\"}", "{\"address\":\"4444\",\"street\":\"pretzel\"}", "{\"address\":\"5555\",\"street\":\"elfsley\"}");
     }
 
     @Test
     public void getRegisterProof() {
-        Response response = getRequest("/proof/register/" + proofIdentifier);
+        Response response = register.getRequest("/proof/register/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -39,7 +40,7 @@ public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getEntryProof() {
-        Response response = getRequest("/proof/entry/1/5/" + proofIdentifier);
+        Response response = register.getRequest("/proof/entry/1/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -53,7 +54,7 @@ public class VerifiableLogResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void getConsistencyProof() {
-        Response response = getRequest("/proof/consistency/2/5/" + proofIdentifier);
+        Response response = register.getRequest("/proof/consistency/2/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 

@@ -134,7 +134,7 @@ void stopApp() {
     runningApp?.destroy()?.waitFor()
 }
 
-task(loadSchoolDataForConformance, type: JavaExec) {
+task(loadSchoolDataForConformance, type: Exec) {
     doFirst{
         exec{
             executable "$projectDir/drop_schema.sh" args 'src/test/resources/test-app-config.yaml'
@@ -143,9 +143,9 @@ task(loadSchoolDataForConformance, type: JavaExec) {
             executable "$projectDir/create_schema.sh" args 'src/test/resources/test-app-config.yaml'
         }
     }
-    main = 'uk.gov.register.functional.db.DBSupport'
-    classpath = sourceSets.test.runtimeClasspath
-    args = ["school", "school-data.jsonl", "ft_openregister_java"]
+    mustRunAfter startAppForConformance
+    commandLine 'curl', '-u', 'foo:bar', '-s', '-H', 'Content-type: application/uk-gov-rsf', '--data-binary', '@school-data.rsf',
+                'http://localhost:9090/load-rsf'
 }
 
 task createConformanceTestVenv(type: Exec) {
@@ -209,14 +209,6 @@ task(run, type: JavaExec, dependsOn: ['classes']) {
     classpath = sourceSets.main.runtimeClasspath
     args = ["server", "config.yaml"]
     jvmArgs = ["-DbaseDirForTemplates=$projectDir/src/main/resources"]
-}
-
-
-
-task(loadSchoolData, type: JavaExec) {
-    main = 'uk.gov.register.functional.db.DBSupport'
-    classpath = sourceSets.test.runtimeClasspath
-    args = ["school", "school-data.jsonl", "openregister_java"]
 }
 
 task stage(dependsOn: ['assemble'])

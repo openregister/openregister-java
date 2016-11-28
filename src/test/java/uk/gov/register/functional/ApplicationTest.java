@@ -5,7 +5,10 @@ import com.google.common.net.HttpHeaders;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -14,11 +17,19 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-public class ApplicationTest extends FunctionalTestBase {
+public class ApplicationTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
+
+    @Before
+    public void setup() {
+        register.wipe();
+    }
+
     @Test
     public void appSupportsCORS() {
         String origin = "http://originfortest.com";
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries?cors-test")
+        Response response = register.target().path("/entries")
                 .request()
                 .header(HttpHeaders.ORIGIN, origin)
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
@@ -37,18 +48,14 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appSupportsContentSecurityPolicy() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
-                .request()
-                .get();
+        Response response = register.getRequest("/entries");
 
         assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self' www.google-analytics.com")));
     }
 
     @Test
     public void appExplicitlySendsHtmlCharsetInHeader() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
-                .request()
-                .get();
+        Response response = register.getRequest("/entries");
 
         String contentType = (String) response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0);
         assertThat(contentType, containsString("text/html"));
@@ -57,27 +64,21 @@ public class ApplicationTest extends FunctionalTestBase {
 
     @Test
     public void appSupportsContentTypeOptions() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
-                .request()
-                .get();
+        Response response = register.getRequest("/entries");
 
         assertThat(response.getHeaders().get(HttpHeaders.X_CONTENT_TYPE_OPTIONS), equalTo(ImmutableList.of("nosniff")));
     }
 
     @Test
     public void appSupportsXssProtection() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/entries")
-                .request()
-                .get();
+        Response response = register.getRequest("/entries");
 
         assertThat(response.getHeaders().get(HttpHeaders.X_XSS_PROTECTION), equalTo(ImmutableList.of("1; mode=block")));
     }
 
     @Test
     public void app404PageHasXhtmlLangAttributes() throws Exception {
-        Response response = client.target("http://address.beta.openregister.org:" + APPLICATION_PORT + "/missing_page_to_force_a_404")
-                .request()
-                .get();
+        Response response = register.getRequest("/missing_page_to_force_a_404");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");

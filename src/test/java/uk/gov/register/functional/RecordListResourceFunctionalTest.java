@@ -7,32 +7,34 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class RecordListResourceFunctionalTest extends FunctionalTestBase {
+public class RecordListResourceFunctionalTest {
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
+
     @Before
     public void publishTestMessages() {
-        mintItems(
-                "{\"street\":\"ellis\",\"address\":\"12345\"}",
-                "{\"street\":\"presley\",\"address\":\"6789\"}",
-                "{\"street\":\"ellis\",\"address\":\"145678\"}",
-                "{\"street\":\"updatedEllisName\",\"address\":\"145678\"}",
-                "{\"street\":\"ellis\",\"address\":\"6789\"}"
-        );
+        register.wipe();
+        register.mintLines("{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}", "{\"street\":\"updatedEllisName\",\"address\":\"145678\"}", "{\"street\":\"ellis\",\"address\":\"6789\"}");
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void newRecords_shouldReturnAllCurrentVersionsOnly() throws Exception {
-        Response response = getRequest("/records.json");
+        Response response = register.getRequest("/records.json");
 
         Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
 
@@ -66,26 +68,29 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void newRecords_setsAppropriateFilenameForDownload() {
-        Response response = getRequest("address", "/records.json");
+        Response response = register.getRequest("/records.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
     }
 
     @Test
     public void newRecords_hasLinkHeaderForNextAndPreviousPage() {
-        Response response = getRequest("/records.json?page-index=1&page-size=1");
+        Response response = register.target().path("/records.json").queryParam("page-index",1).queryParam("page-size",1)
+                .request().get();
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\""));
 
-        response = getRequest("/records.json?page-index=2&page-size=1");
+        response = register.target().path("/records.json").queryParam("page-index",2).queryParam("page-size",1)
+                .request().get();
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\""));
 
-        response = getRequest("/records.json?page-index=3&page-size=1");
+        response = register.target().path("/records.json").queryParam("page-index",3).queryParam("page-size",1)
+                .request().get();
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\""));
     }
 
     @Test
     public void newRecordsPageHasXhtmlLangAttributes() {
-        Response response = getRequest("address", "/records");
+        Response response = register.getRequest("/records");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
@@ -96,8 +101,8 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void fetchAllRecordsForAKeyValueCombinatiion() throws JSONException {
-        Response response = getRequest("/records/street/ellis.json");
+    public void fetchAllRecordsForAKeyValueCombination() throws JSONException {
+        Response response = register.getRequest("/records/street/ellis.json");
         Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
 
         assertThat(responseMap.size(), equalTo(2));
@@ -119,14 +124,16 @@ public class RecordListResourceFunctionalTest extends FunctionalTestBase {
                 .put("key", "12345").build()));
     }
 
-
     //Note: tests below will be removed once the old resources are deleted
     @Test
     public void oldFacetedResourceRedirectsToNewResource(){
-        Response response = getRequest("/street/ellis.json");
+        WebTarget target = register.target();
+        target.property("jersey.config.client.followRedirects",false);
+        Response response = target.path("/street/ellis.json").request().get();
         assertThat(response.getStatus(), equalTo(301));
-        String expectedRedirect = "http://address.beta.openregister.org:" + app.getLocalPort() + "/records/street/ellis";
-        assertThat(response.getHeaders().get("Location").get(0), equalTo(expectedRedirect));
+        String expectedRedirect = "/records/street/ellis";
+        URI location = URI.create(response.getHeaderString("Location"));
+        assertThat(location.getPath(), equalTo(expectedRedirect));
     }
 }
 

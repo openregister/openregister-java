@@ -111,7 +111,7 @@ public class RegisterCommandWriterTest {
 
         verify(httpHeadersMock, times(1)).add(eq("Content-Disposition"), anyString());
         assertThat(actualContentDisposition[0], startsWith("attachment; filename="));
-        assertThat(actualContentDisposition[0], endsWith(".tsv"));
+        assertThat(actualContentDisposition[0], endsWith(".rsf"));
     }
 
     private RegisterCommandWriter createRegisterCommandWriter() {

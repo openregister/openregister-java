@@ -1,16 +1,12 @@
 package uk.gov.register.functional;
 
 import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import uk.gov.register.RegisterApplication;
-import uk.gov.register.RegisterConfiguration;
+import uk.gov.register.functional.app.RegisterRule;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,13 +18,13 @@ import static org.junit.Assert.assertThat;
 public class DataDownloadResourceFunctionalTest {
 
     @Rule
-    public DropwizardAppRule<RegisterConfiguration> appRule;
+    public RegisterRule register;
 
     private final String targetUrl;
     private final int expectedStatusCode;
 
     public DataDownloadResourceFunctionalTest(Boolean enableDownload, String targetUrl, int expectedStatusCode) {
-        this.appRule = createAppRule(enableDownload);
+        this.register = createRegister(enableDownload);
         this.targetUrl = targetUrl;
         this.expectedStatusCode = expectedStatusCode;
     }
@@ -45,24 +41,13 @@ public class DataDownloadResourceFunctionalTest {
 
     @Test
     public void checkDownloadResourceStatusCode() throws Exception {
-        Client client = getTestClient(this.appRule);
-        Response response = client.target(String.format("http://localhost:%d%s", this.appRule.getLocalPort(), targetUrl))
-                .request().get();
+        Response response = register.getRequest(targetUrl);
         
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
     }
 
-    private Client getTestClient(DropwizardAppRule<RegisterConfiguration> appRule) {
-        return new io.dropwizard.client.JerseyClientBuilder(appRule.getEnvironment())
-                .using(appRule.getConfiguration().getJerseyClientConfiguration())
-                .build("test client");
-    }
-
-    private static DropwizardAppRule<RegisterConfiguration> createAppRule(Boolean enableResourceDownload){
-        return new DropwizardAppRule<>(RegisterApplication.class,
-                ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-                ConfigOverride.config("jerseyClient.timeout", "3000ms"),
-                ConfigOverride.config("register", "register"),
+    private static RegisterRule createRegister(Boolean enableResourceDownload){
+        return new RegisterRule("register",
                 ConfigOverride.config("enableDownloadResource", enableResourceDownload.toString()));
     }
 }

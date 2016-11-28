@@ -1,31 +1,23 @@
 package uk.gov.register.functional;
 
-import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.apache.http.impl.conn.InMemoryDnsResolver;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import uk.gov.register.RegisterApplication;
-import uk.gov.register.RegisterConfiguration;
 import uk.gov.register.core.Entry;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestRecord;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -37,23 +29,13 @@ import static uk.gov.register.functional.db.TestDBSupport.*;
 
 public class LoadSerializedFunctionalTest {
     public static final int APPLICATION_PORT = 9000;
-    private static Client client;
     private static final String registerName = "register";
 
     @Rule
     public TestRule wipe = new WipeDatabaseRule();
 
     @ClassRule
-    public static final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,
-            ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-            ConfigOverride.config("jerseyClient.timeout", "3000ms"),
-            ConfigOverride.config("register", registerName));
-
-    @BeforeClass
-    public static void beforeClass() throws InterruptedException {
-        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-        client = testClient();
-    }
+    public static final RegisterRule register = new RegisterRule(registerName);
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
@@ -123,21 +105,5 @@ public class LoadSerializedFunctionalTest {
         ClientConfig configuration = new ClientConfig();
         configuration.register(HttpAuthenticationFeature.basic("foo", "bar"));
         return JerseyClientBuilder.createClient(configuration);
-    }
-
-    private static Client testClient() {
-        InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
-        customDnsResolver.add("address.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("postcode.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("register.beta.openregister.org", InetAddress.getLoopbackAddress());
-        customDnsResolver.add("localhost", InetAddress.getLoopbackAddress());
-        return new io.dropwizard.client.JerseyClientBuilder(appRule.getEnvironment())
-                .using(appRule.getConfiguration().getJerseyClientConfiguration())
-                .using(customDnsResolver)
-                .build("test client");
-    }
-
-    Response getRequest(String path) {
-        return client.target(String.format("http://localhost:%d%s", appRule.getLocalPort(), path)).request().get();
     }
 }

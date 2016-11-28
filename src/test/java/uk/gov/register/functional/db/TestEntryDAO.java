@@ -1,7 +1,6 @@
 package uk.gov.register.functional.db;
 
 import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -24,10 +23,6 @@ public interface TestEntryDAO {
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select entry_number, sha256hex, timestamp, key from entry")
     List<Entry> getAllEntries();
-
-    @SqlUpdate("insert into entry(entry_number, sha256hex, timestamp, key) values(:entry_number, :sha256hex, :timestamp, :key)")
-    void insert(@Bind("entry_number") int serialNumber, @Bind("sha256hex") String sha256, @Bind("timestamp") long timestamp, @Bind("key") String key);
-
 
     class EntryMapper implements ResultSetMapper<Entry> {
         @Override

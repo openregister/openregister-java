@@ -31,6 +31,10 @@ Run a local server with:
 
     ./run-application.sh
 
+To load some sample data:
+
+    ./load-school-data.sh
+
 # Update the govuk_frontend_toolkit and govuk_template
 
 - Add the toolkit and template as remotes

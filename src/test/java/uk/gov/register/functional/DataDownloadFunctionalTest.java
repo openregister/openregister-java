@@ -3,7 +3,9 @@ package uk.gov.register.functional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.core.MediaType;
@@ -24,8 +26,10 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DataDownloadFunctionalTest extends FunctionalTestBase {
+public class DataDownloadFunctionalTest {
 
+    @ClassRule
+    public static RegisterRule register = new RegisterRule("address");
     private final String item1 = "{\"street\":\"ellis\",\"address\":\"12345\"}";
     private final String item2 = "{\"street\":\"presley\",\"address\":\"6789\"}";
     private final String item3 =  "{\"street\":\"foo\",\"address\":\"12345\"}";
@@ -33,12 +37,13 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Before
     public void publishTestMessages() {
-        mintItems(item1, item2, item3, item4, item1);
+        register.wipe();
+        register.mintLines(item1, item2, item3, item4, item1);
     }
 
     @Test
     public void downloadRegister_shouldReturnAZipfile() throws IOException {
-        Response response = getRequest("/download-register");
+        Response response = register.getRequest("/download-register");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(MediaType.APPLICATION_OCTET_STREAM));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
@@ -54,7 +59,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void downloadRegister_shouldUseCorrectEntryAndItemJsonFormat() throws IOException {
-        Response response = getRequest("/download-register");
+        Response response = register.getRequest("/download-register");
         InputStream is = response.readEntity(InputStream.class);
 
         List<String> itemJson = getEntries(is).entrySet().stream()
@@ -78,7 +83,7 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void downloadRegister_shouldUseCorrectRegisterJsonFormat() throws IOException {
-        Response response = getRequest("/download-register");
+        Response response = register.getRequest("/download-register");
         InputStream is = response.readEntity(InputStream.class);
 
         JsonNode registerJson = getEntries(is).get("register.json");
@@ -92,11 +97,11 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void downloadRSF_shouldReturnRegisterAsRsfStream() throws IOException {
-        Response response = getRequest("/download-rsf");
+        Response response = register.getRequest("/download-rsf");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
-        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
+        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".rsf"));
 
         String[] rsfLines = getRsfLinesFrom(response);
 
@@ -118,11 +123,11 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void downloadPartialRSF_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
-        Response response = getRequest("/download-rsf/1/2");
+        Response response = register.getRequest("/download-rsf/1/2");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
-        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".tsv"));
+        assertThat(response.getHeaderString("Content-Disposition"), endsWith(".rsf"));
 
         String[] rsfLines = getRsfLinesFrom(response);
 
@@ -139,22 +144,22 @@ public class DataDownloadFunctionalTest extends FunctionalTestBase {
 
     @Test
     public void downloadPartialRSF_shouldReturnReturn404ForRsfBoundariesInTheIncorrectOrder() throws IOException {
-        Response response = getRequest("/download-rsf/4/1");
+        Response response = register.getRequest("/download-rsf/4/1");
         
         assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
     public void downloadPartialRSF_shouldReturnReturn404ForRsfBoundariesOutOfBound() throws IOException {
-        Response response = getRequest("/download-rsf/666/1000");
+        Response response = register.getRequest("/download-rsf/666/1000");
 
         assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
     public void downloadPartialRSF_shouldReturnSameRSFAsFullDownload() {
-        Response fullRsfResponse = getRequest("/download-rsf");
-        Response partialRsfResponse = getRequest("/download-rsf/1/5");
+        Response fullRsfResponse = register.getRequest("/download-rsf");
+        Response partialRsfResponse = register.getRequest("/download-rsf/1/5");
 
         String[] fullRsfLines = getRsfLinesFrom(fullRsfResponse);
         String[] partialRsfLines = getRsfLinesFrom(partialRsfResponse);

@@ -2,60 +2,37 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
-import io.dropwizard.testing.ConfigOverride;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.JerseyClient;
-import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
-import uk.gov.register.functional.app.CleanDatabaseRule;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestRecord;
-import uk.gov.register.core.Entry;
-import uk.gov.register.RegisterApplication;
-import uk.gov.register.RegisterConfiguration;
 import uk.gov.register.util.CanonicalJsonMapper;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import static javax.ws.rs.client.Entity.entity;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static uk.gov.register.functional.db.TestDBSupport.*;
 
 public class DataUploadFunctionalTest {
-    public static final int APPLICATION_PORT = 9000;
-
-    private final DropwizardAppRule<RegisterConfiguration> appRule = new DropwizardAppRule<>(RegisterApplication.class,
-            ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-            ConfigOverride.config("jerseyClient.timeout", "3000ms"),
-            ConfigOverride.config("register", "register"));
-
     @Rule
-    public TestRule ruleChain = RuleChain.
-            outerRule(new CleanDatabaseRule()).
-            around(appRule);
-
+    public final RegisterRule register = new RegisterRule("register");
 
     private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         JsonNode inputItem = canonicalJsonMapper.readFromBytes("{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}".getBytes());
-        Response r = send(inputItem.toString());
+        Response r = register.mintLines(inputItem.toString());
         assertThat(r.getStatus(), equalTo(204));
 
         TestDBItem storedItem = testItemDAO.getItems().get(0);
@@ -69,9 +46,7 @@ public class DataUploadFunctionalTest {
         assertThat(record.getEntryNumber(), equalTo(1));
         assertThat(record.getPrimaryKey(), equalTo("ft_openregister_test"));
 
-        Client client = testClient();
-        Response response = client.target(String.format("http://localhost:%d/record/ft_openregister_test.json", appRule.getLocalPort()))
-                .request().header("Host","address.test.register.gov.uk").get();
+        Response response = register.getRequest("/record/ft_openregister_test.json");
 
         assertThat(response.getStatus(), equalTo(200));
         Map actualJson = response.readEntity(Map.class);
@@ -90,7 +65,7 @@ public class DataUploadFunctionalTest {
         String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
         String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
 
-        Response r = send(item1 + "\n" + item2);
+        Response r = register.mintLines(item1 + "\n" + item2);
 
         assertThat(r.getStatus(), equalTo(204));
 
@@ -127,7 +102,7 @@ public class DataUploadFunctionalTest {
         String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
         String item2 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
 
-        Response r = send(item1 + "\n" + item2);
+        Response r = register.mintLines(item1 + "\n" + item2);
 
         assertThat(r.getStatus(), equalTo(204));
 
@@ -157,12 +132,12 @@ public class DataUploadFunctionalTest {
     @Test
     public void loadTwoNewItems_withOneItemPreexistsInDatabase_addsTwoRowsInEntryAndOnlyOneRowInItemTable() {
         String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
-        Response r = send(item1);
+        Response r = register.mintLines(item1);
         assertThat(r.getStatus(), equalTo(204));
 
         String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
 
-        r = send(item1 + "\n" + item2);
+        r = register.mintLines(item1 + "\n" + item2);
 
         assertThat(r.getStatus(), equalTo(204));
 
@@ -198,18 +173,18 @@ public class DataUploadFunctionalTest {
 
     @Test
     public void validation_FailsToLoadEntryWhenNonEmptyPrimaryKeyFieldIsNotExist() {
-        Response response = send("{}");
+        Response response = register.mintLines("{}");
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Entry does not contain primary key field 'register'. Error entry: '{}'"));
 
-        response = send("{\"register\":\"  \"}");
+        response = register.mintLines("{\"register\":\"  \"}");
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Primary key field 'register' must have a valid value. Error entry: '{\"register\":\"  \"}'"));
     }
 
     @Test
     public void validation_FailsToLoadEntryWhenEntryContainsInvalidFields() {
-        Response response = send("{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
+        Response response = register.mintLines("{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Entry contains invalid fields: [foo, foo1]. Error entry: '{\"foo\":\"bar\",\"foo1\":\"bar1\"}'"));
     }
@@ -217,35 +192,17 @@ public class DataUploadFunctionalTest {
     @Test
     public void validation_FailsToLoadEntryWhenFieldWithCardinalityManyIsNotAJsonArray() {
         String entry = "{\"register\":\"someregister\",\"fields\":\"value\"}";
-        Response response = send(entry);
+        Response response = register.mintLines(entry);
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'. Error entry: '" + entry + "'"));
     }
 
     @Test
     public void requestWithoutCredentials_isRejectedAsUnauthorized() throws Exception {
-        Response response = testClient().target("http://localhost:" + APPLICATION_PORT + "/load")
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json("{}"));
+        // register.target() is unauthenticated
+        Response response = register.target().path("/load")
+                .request()
+                .post(entity("{}", APPLICATION_JSON_TYPE));
         assertThat(response.getStatus(), equalTo(401));
-    }
-
-    private Response send(String... payload) {
-        return authenticatingClient().target("http://localhost:" + APPLICATION_PORT + "/load")
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(String.join("\n", payload)));
-
-    }
-
-    private JerseyClient authenticatingClient() {
-        ClientConfig configuration = new ClientConfig();
-        configuration.register(HttpAuthenticationFeature.basic("foo", "bar"));
-        return JerseyClientBuilder.createClient(configuration);
-    }
-
-    private Client testClient() {
-        return new io.dropwizard.client.JerseyClientBuilder(appRule.getEnvironment())
-                .using(appRule.getConfiguration().getJerseyClientConfiguration())
-                .build("test client");
     }
 }
