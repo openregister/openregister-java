@@ -39,7 +39,7 @@ public class CommandParser {
     private Integer position;
     private final HashMap<Integer, Item> items;
     private final HashMap<Integer, Entry> entries;
-    private final HashMap<String, Integer> itemHashToEntryCount;
+    private final HashMap<HashValue, Integer> itemHashToEntryCount;
     private final HashMap<Integer, RegisterProof> proofs;
 
     public CommandParser() {
@@ -63,9 +63,10 @@ public class CommandParser {
                         String jsonContent = parts[1];
                         canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
                         String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes(StandardCharsets.UTF_8));
-                        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, itemHash), objectReconstructor.reconstruct(jsonContent));
+                        HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
+                        Item item = new Item(hash, objectReconstructor.reconstruct(jsonContent));
                         items.put(position++, item);
-                        itemHashToEntryCount.put(itemHash, 0);
+                        itemHashToEntryCount.put(hash, 0);
                     } catch (JsonParseException jpe) {
                         LOG.error("failed to parse json: " + parts[1]);
                         throw new SerializedRegisterParseException("failed to parse json: " + parts[1], jpe);
@@ -80,9 +81,9 @@ public class CommandParser {
                 break;
             case "append-entry":
                 if (parts.length == 4) {
-                    Entry entry = new Entry(0, new HashValue(HashingAlgorithm.SHA256, stripPrefix(parts[2])), Instant.parse(parts[1]), parts[3]);
+                    Entry entry = new Entry(0, HashValue.decode(HashingAlgorithm.SHA256, parts[2]), Instant.parse(parts[1]), parts[3]);
                     entries.put(position++, entry);
-                    updateItemHashCount(entry.getSha256hex().getValue());
+                    updateItemHashCount(entry.getSha256hex());
                 } else {
                     LOG.error("append entry line must have 4 elements, was : " + s);
                     throw new SerializedRegisterParseException("append entry line must have 4 elements, was : " + s);
@@ -90,8 +91,8 @@ public class CommandParser {
                 break;
             case "assert-root-hash":
                 if (parts.length == 2) {
-                    HashValue hash = HashValue.decode(HashingAlgorithm.SHA256.toString(), parts[1]);
-                    RegisterProof registerProof = new RegisterProof(hash.getValue());
+                    HashValue hash = HashValue.decode(HashingAlgorithm.SHA256, parts[1]);
+                    RegisterProof registerProof = new RegisterProof(hash);
                     proofs.put(position++, registerProof);
                 } else {
                     LOG.error("assert root hash line must have 1 elements, was : " + s);
@@ -104,10 +105,10 @@ public class CommandParser {
         }
     }
 
-    private void updateItemHashCount(String sha256hex) {
-        if (itemHashToEntryCount.containsKey(sha256hex)) {
-            Integer count = itemHashToEntryCount.get(sha256hex);
-            itemHashToEntryCount.replace(sha256hex, count + 1);
+    private void updateItemHashCount(HashValue hash) {
+        if (itemHashToEntryCount.containsKey(hash)) {
+            Integer count = itemHashToEntryCount.get(hash);
+            itemHashToEntryCount.replace(hash, count + 1);
         }
     }
 
@@ -129,31 +130,20 @@ public class CommandParser {
     }
 
     private void validateOrphanItems() {
-
-        final Set<String> orphanItemHashes = itemHashToEntryCount.entrySet().stream().filter(kv -> kv.getValue() == 0)
+        final Set<HashValue> orphanItemHashes = itemHashToEntryCount.entrySet().stream().filter(kv -> kv.getValue() == 0)
                 .map(Map.Entry::getKey).collect(toSet());
 
         if (!orphanItemHashes.isEmpty()) {
 
-            Set<Item> orphanItems = items.values().stream().filter(i -> orphanItemHashes.contains(i.getSha256hex().getValue()))
+            Set<Item> orphanItems = items.values().stream().filter(i -> orphanItemHashes.contains(i.getSha256hex()))
                     .collect(toSet());
 
             throw new OrphanItemException("no corresponding entry for item(s): ", orphanItems);
         }
     }
 
-    private String stripPrefix(String hashField) {
-        String hashingAlgorithm = HashingAlgorithm.SHA256.toString();
-        if (!hashField.startsWith(hashingAlgorithm + ":")) {
-            LOG.error("hash field must start with "+ hashingAlgorithm +": not:" + hashField);
-            throw new SerializedRegisterParseException("hash field must start with sha-256: not: " + hashField);
-        } else {
-            return hashField.substring(8);
-        }
-    }
-
     public String serialise(Entry entry) {
-        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getSha256hex().encode() + TAB + entry.getKey() + NEW_LINE;
+        return "append-entry" + TAB + entry.getTimestampAsISOFormat() + TAB + entry.getSha256hex() + TAB + entry.getKey() + NEW_LINE;
     }
 
     public String serialise(Item item) {

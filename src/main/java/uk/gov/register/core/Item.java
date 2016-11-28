@@ -79,8 +79,7 @@ public class Item {
 
     @Override
     public int hashCode() {
-        String hash = hashValue.getValue();
-        int result = hash != null ? hash.hashCode() : 0;
+        int result = hashValue != null ? hashValue.hashCode() : 0;
         result = 31 * result + (content != null ? content.hashCode() : 0);
         return result;
     }

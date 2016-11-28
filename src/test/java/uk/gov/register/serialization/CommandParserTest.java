@@ -125,7 +125,7 @@ public class CommandParserTest {
 
     @Test
     public void serialise_shouldFormatProofAsTsvLine() {
-        RegisterProof registerProof = new RegisterProof("root-hash");
+        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"));
 
         String actualLine = commandParser.serialise(registerProof);
 

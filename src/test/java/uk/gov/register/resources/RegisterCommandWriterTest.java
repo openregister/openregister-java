@@ -53,12 +53,12 @@ public class RegisterCommandWriterTest {
     @Test
     public void writeTo_shouldCreateRegisterRepresentationWithEntriesAndItems() throws IOException {
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
-                new AssertRootHashCommand(new RegisterProof(EMPTY_REGISTER_ROOT_HASH)),
+                new AssertRootHashCommand(new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH))),
                 new AddItemCommand(item1),
                 new AddItemCommand(item2),
                 new AppendEntryCommand(entry1),
                 new AppendEntryCommand(entry2),
-                new AssertRootHashCommand(new RegisterProof("K3rfuFF1e"))).iterator());
+                new AssertRootHashCommand(new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "K3rfuFF1e")))).iterator());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         RegisterCommandWriter sutCommandWriter = createRegisterCommandWriter();

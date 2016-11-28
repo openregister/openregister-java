@@ -76,13 +76,12 @@ public class Entry {
         Entry entry = (Entry) o;
 
         if (entryNumber != entry.entryNumber) return false;
-        return hashValue == null ? entry.hashValue == null : hashValue.getValue().equals(entry.hashValue.getValue());
+        return hashValue == null ? entry.hashValue == null : hashValue.equals(entry.hashValue);
     }
 
     @Override
     public int hashCode() {
-        String hash = hashValue.getValue();
-        int result = hash != null ? hash.hashCode() : 0;
+        int result = hashValue != null ? hashValue.hashCode() : 0;
         result = 31 * entryNumber + result;
         return result;
     }

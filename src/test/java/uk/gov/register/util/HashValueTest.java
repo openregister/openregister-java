@@ -2,6 +2,7 @@ package uk.gov.register.util;
 
 import org.junit.Test;
 import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.exceptions.HashDecodeException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -29,9 +30,16 @@ public class HashValueTest {
         HashValue expectedHash = new HashValue(HashingAlgorithm.SHA256, "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
         String encodedHash = "sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592";
 
-        HashValue actualHash = HashValue.decode(HashingAlgorithm.SHA256.toString(), encodedHash);
+        HashValue actualHash = HashValue.decode(HashingAlgorithm.SHA256, encodedHash);
 
         assertThat(actualHash, equalTo(expectedHash));
+    }
+
+    @Test(expected = HashDecodeException.class)
+    public void decode_shouldThrowExceptionWhenHashingAlgorithmDoesNotMatch() {
+        String encodedHash = "sha-256notValid:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592";
+
+        HashValue.decode(HashingAlgorithm.SHA256, encodedHash);
     }
 
     @Test
@@ -43,9 +51,17 @@ public class HashValueTest {
     }
 
     @Test
-    public void equal_shouldReturnFalseWhenNotEqual() {
+    public void equal_shouldReturnFalseWhenHashNotEqual() {
         HashValue hash1 = new HashValue(HashingAlgorithm.SHA256, "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
         HashValue hash2 = new HashValue(HashingAlgorithm.SHA256, "dc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+
+        assertThat(hash1.equals(hash2), is(false));
+    }
+
+    @Test
+    public void equal_shouldReturnFalseWhenHashingAlgorithmNotEqual() {
+        HashValue hash1 = new HashValue(HashingAlgorithm.SHA256, "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+        HashValue hash2 = new HashValue("md5", "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
 
         assertThat(hash1.equals(hash2), is(false));
     }

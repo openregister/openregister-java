@@ -1,10 +1,12 @@
 package uk.gov.register.service;
 
 import org.apache.jena.ext.com.google.common.collect.Iterators;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.RootHashAssertionException;
 import uk.gov.register.serialization.*;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
@@ -23,7 +25,7 @@ public class RegisterSerialisationFormatService {
     public RegisterSerialisationFormatService(RegisterService registerService, RegisterReadOnly register) {
         this.registerService = registerService;
         this.register = register;
-        this.emptyRegisterProof = new RegisterProof(EMPTY_ROOT_HASH);
+        this.emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_ROOT_HASH));
     }
 
     public void processRegisterComponents(RegisterSerialisationFormat rsf) {

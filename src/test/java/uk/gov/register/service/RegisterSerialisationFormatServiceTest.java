@@ -63,7 +63,7 @@ public class RegisterSerialisationFormatServiceTest {
         item = new Item(content);
         entry1 = new Entry(1, getHash(content), Instant.now(), "9AQZJ3M");
         entry2 = new Entry(2, getHash(content), Instant.now().plusMillis(100), "9AQZJ3M");
-        emptyRegisterProof = new RegisterProof("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+        emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
         addItemCommand = new AddItemCommand(item);
         appendEntryCommand1 = new AppendEntryCommand(entry1);
@@ -109,7 +109,7 @@ public class RegisterSerialisationFormatServiceTest {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
-        RegisterProof expectedRegisterProof = new RegisterProof("1231234");
+        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"));
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat();
@@ -132,8 +132,8 @@ public class RegisterSerialisationFormatServiceTest {
 
     @Test
     public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
-        RegisterProof oneEntryRegisterProof = new RegisterProof("oneEntryInRegisterHash");
-        RegisterProof twoEntriesRegisterProof = new RegisterProof("twoEntriesInRegisterHash");
+        RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"));
+        RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"));
         RegisterCommand assertRootOneEntryInRegister = new AssertRootHashCommand(oneEntryRegisterProof);
         RegisterCommand assertRootTwoEntriesInRegister = new AssertRootHashCommand(twoEntriesRegisterProof);
 

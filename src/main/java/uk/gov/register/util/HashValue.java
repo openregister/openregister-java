@@ -1,6 +1,9 @@
 package uk.gov.register.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.exceptions.HashDecodeException;
 
 public class HashValue {
     private final String value;
@@ -11,26 +14,33 @@ public class HashValue {
         this.value = value;
     }
 
+    public HashValue(String hashingAlgorithm, String value) {
+        this.hashingAlgorithm = hashingAlgorithm;
+        this.value = value;
+    }
+
+    @JsonValue
     public String encode() {
         return hashingAlgorithm + ":" + value;
     }
 
+    @JsonIgnore
     public String getValue() {
         return value;
     }
 
-    public static HashValue decode(String hashingAlgorithm, String encodedHash) {
-        if (!encodedHash.startsWith(hashingAlgorithm)) {
-            throw new RuntimeException("Hash cannot be decoded");
+    public static HashValue decode(HashingAlgorithm hashingAlgorithm, String encodedHash) {
+        if (!encodedHash.startsWith(hashingAlgorithm.toString())) {
+            throw new HashDecodeException(String.format("Hash \"%s\" has not been encoded with hashing algorithm \"%s\"", hashingAlgorithm, encodedHash));
         }
 
         String[] parts = encodedHash.split(hashingAlgorithm + ":");
 
         if (parts.length != 2) {
-            throw new RuntimeException(String.format("Cannot create HashValue from encoded hash %s", encodedHash));
+            throw new HashDecodeException(String.format("Cannot decode hash %s", encodedHash));
         }
 
-        return new HashValue(HashingAlgorithm.SHA256, parts[1]);
+        return new HashValue(hashingAlgorithm, parts[1]);
     }
 
     @Override
@@ -40,12 +50,12 @@ public class HashValue {
 
         HashValue that = (HashValue) o;
 
-        return this.getValue().equals(that.getValue());
+        return this.encode().equals(that.encode());
     }
 
     @Override
     public int hashCode() {
-        return 31 * getValue().hashCode();
+        return 31 * encode().hashCode();
     }
 
     @Override

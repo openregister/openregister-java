@@ -2,7 +2,9 @@ package uk.gov.register.resources;
 
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -21,7 +23,7 @@ public class VerifiableLogResourceTest {
 
     @Test
     public void shouldUseServiceToGetRegisterProof() throws NoSuchAlgorithmException {
-        RegisterProof expectedProof = new RegisterProof(sampleHash1);
+        RegisterProof expectedProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, sampleHash1));
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getRegisterProof()).thenReturn(expectedProof);
 
@@ -37,7 +39,9 @@ public class VerifiableLogResourceTest {
     public void shouldUseServiceToGetEntryProof() throws NoSuchAlgorithmException {
         int entryNumber = 2;
         int totalEntries = 5;
-        List<String> expectedAuditPath = Arrays.asList(sampleHash1, sampleHash2);
+        HashValue expectedHash1 = new HashValue(HashingAlgorithm.SHA256, sampleHash1);
+        HashValue expectedHash2 = new HashValue(HashingAlgorithm.SHA256, sampleHash2);
+        List<HashValue> expectedAuditPath = Arrays.asList(expectedHash1, expectedHash2);
 
         EntryProof expectedProof = new EntryProof("3", expectedAuditPath);
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
@@ -49,14 +53,16 @@ public class VerifiableLogResourceTest {
         verify(registerMock, times(1)).getEntryProof(entryNumber, totalEntries);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
         assertThat(actualProof.getEntryNumber(), equalTo(expectedProof.getEntryNumber()));
-        assertThat(actualProof.getAuditPath(), IsIterableContainingInOrder.contains(sampleHash1, sampleHash2));
+        assertThat(actualProof.getAuditPath(), IsIterableContainingInOrder.contains(expectedHash1, expectedHash2));
     }
 
     @Test
     public void shouldUseServiceToGetConsistencyProof() throws NoSuchAlgorithmException {
         int totalEntries1 = 3;
         int totalEntries2 = 6;
-        List<String> expectedConsistencyNodes = Arrays.asList(sampleHash1, sampleHash2);
+        HashValue expectedHash1 = new HashValue(HashingAlgorithm.SHA256, sampleHash1);
+        HashValue expectedHash2 = new HashValue(HashingAlgorithm.SHA256, sampleHash2);
+        List<HashValue> expectedConsistencyNodes = Arrays.asList(expectedHash1, expectedHash2);
 
         ConsistencyProof expectedProof = new ConsistencyProof(expectedConsistencyNodes);
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
@@ -68,7 +74,7 @@ public class VerifiableLogResourceTest {
         verify(registerMock, times(1)).getConsistencyProof(totalEntries1, totalEntries2);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
 
-        assertThat(actualProof.getConsistencyNodes(), IsIterableContainingInOrder.contains(sampleHash1, sampleHash2));
+        assertThat(actualProof.getConsistencyNodes(), IsIterableContainingInOrder.contains(expectedHash1, expectedHash2));
     }
 }
 
