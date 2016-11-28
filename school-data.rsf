@@ -1,4 +1,4 @@
-assert-root-hash	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+assert-root-hash	sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 add-item	{"address":"43091070","end-date":"","name":"Pontlottyn Primary School","school":"401372","start-date":"","website":"http://www.pontlottynprimaryschool.com"}
 add-item	{"address":"200001853280","end-date":"","name":"Pwll C.P. Mixed School","school":"400826","start-date":""}
 add-item	{"address":"100101047041","end-date":"","name":"St Joseph's R.C. Primary School","school":"401550","start-date":"","website":"http://www.stjosephsprimarynewport.co.uk/"}
@@ -1999,4 +1999,4 @@ append-entry	2016-11-24T17:20:34Z	sha-256:1468a069db1a1fd7425cfdcea297060835ce4b
 append-entry	2016-11-24T17:20:34Z	sha-256:e5d75012bf97c56082d9cb67e9996d05e360fc1791af166de08f42bc37e6aabc	400675
 append-entry	2016-11-24T17:20:34Z	sha-256:41584e14141d4a2a62e1b571d7a086e10f81b44a29bd448d23ac4631f381f92b	400674
 append-entry	2016-11-24T17:20:34Z	sha-256:87ef5e37a5d9a6842c7e49ec9fa1e3fbd964cbd3771cc0418308feb24bdbbadc	400673
-assert-root-hash	6e170c5c920c031a0cd0b97672b3f99e9fbbc0f3b53203010827330e3999b3d1
+assert-root-hash	sha-256:6e170c5c920c031a0cd0b97672b3f99e9fbbc0f3b53203010827330e3999b3d1
