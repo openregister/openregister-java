@@ -14,6 +14,15 @@ aws s3 cp s3://${CONFIG_BUCKET}/registers.yaml /srv/openregister-java --region e
 aws s3 cp s3://${CONFIG_BUCKET}/fields.yaml /srv/openregister-java --region eu-west-1
 
 docker run \
+    --name=openregister-migrate \
+    --volume /srv/openregister-java:/srv/openregister-java \
+    jstepien/openjdk8 \
+    java \
+      -Xmx"${MAX_JVM_HEAP_SIZE}k" \
+      -Dfile.encoding=UTF-8 \
+      -jar /srv/openregister-java/openregister-java.jar \
+        db migrate /srv/openregister-java/config.yaml
+docker run \
     --detach \
     --name=openregister \
     --publish 80:8080 \
@@ -25,4 +34,5 @@ docker run \
       -Dfile.encoding=UTF-8 \
       -DregistersYaml=/srv/openregister-java/registers.yaml \
       -DfieldsYaml=/srv/openregister-java/fields.yaml \
-      -jar /srv/openregister-java/openregister-java.jar server /srv/openregister-java/config.yaml
+      -jar /srv/openregister-java/openregister-java.jar \
+        server /srv/openregister-java/config.yaml

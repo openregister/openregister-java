@@ -4,7 +4,9 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.flywaydb.core.Flyway;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.junit.rules.ExternalResource;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -25,6 +27,13 @@ public class RegisterRule implements TestRule {
     private final WipeDatabaseRule wipeRule;
     private DropwizardAppRule<RegisterConfiguration> appRule;
 
+    private class DbSetupRule extends ExternalResource {
+        @Override
+        protected void before() throws Throwable {
+            beforeTest();
+        }
+    }
+
     private TestRule wholeRule;
 
     private WebTarget authenticatedTarget;
@@ -37,7 +46,8 @@ public class RegisterRule implements TestRule {
         wipeRule = new WipeDatabaseRule();
         wholeRule = RuleChain
                 .outerRule(appRule)
-                .around(wipeRule);
+                .around(wipeRule)
+                .around(new DbSetupRule());
     }
 
     private ConfigOverride[] constructOverrides(String register, ConfigOverride[] overrides) {
@@ -49,16 +59,26 @@ public class RegisterRule implements TestRule {
 
     @Override
     public Statement apply(Statement base, Description description) {
-        Statement me = new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                client = clientBuilder().build("test client");
-                authenticatedTarget = client.target("http://localhost:" + appRule.getLocalPort());
-                authenticatedTarget.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
-                base.evaluate();
-            }
-        };
-        return wholeRule.apply(me, description);
+        return wholeRule.apply(base, description);
+    }
+
+    /*
+     * executed before each test, but after appRule has set up the dropwizard app
+     */
+    private void beforeTest() {
+        client = clientBuilder().build("test client");
+        authenticatedTarget = client.target("http://localhost:" + appRule.getLocalPort());
+        authenticatedTarget.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
+
+        migrateDb();
+        wipe();
+    }
+
+    private void migrateDb() {
+        RegisterConfiguration configuration = appRule.getConfiguration();
+        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(appRule.getEnvironment().metrics(), "flyway_db"));
+        flyway.setBaselineVersionAsString("0");
+        flyway.migrate();
     }
 
     public WebTarget target() {
