@@ -64,6 +64,7 @@ Example
 #### Notes
 
 - *add-item* must appear before the corresponding *append-entry*
+- see the definition our canonicalization algorithm [here]( http://openregister.github.io/specification/#sha-256-item-hash)
 
 ### append-entry
 
@@ -96,6 +97,7 @@ Example
 #### Notes
 
 - *assert-root-hash* can exist anywhere in the file
+- the argument is the root hash of the register after execution of all previous commands in the RSF on that register (whether it was initially empty or not)
 
 ## Status ##
 
