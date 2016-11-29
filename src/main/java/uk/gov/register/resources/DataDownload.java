@@ -72,24 +72,25 @@ public class DataDownload {
     }
 
     @GET
-    @Path("/download-rsf/{start-entry-no}/{end-entry-no}")
+    @Path("/download-rsf/{total-entries-1}/{total-entries-2}")
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
-    public RegisterSerialisationFormat downloadPartialRSF(@PathParam("start-entry-no") int startEntryNo, @PathParam("end-entry-no") int endEntryNo) {
-        if (startEntryNo < 1) {
-            throw new BadRequestException("start-entry-no must be greater than 0");
+    public RegisterSerialisationFormat downloadPartialRSF(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
+        if (totalEntries1 < 0) {
+            throw new BadRequestException("total-entries-1 must be positive");
         }
 
-        if (startEntryNo > endEntryNo) {
-            throw new BadRequestException("start-entry-no must be smaller than or equal to end-entry-no");
+        if (totalEntries2 < totalEntries1) {
+            throw new BadRequestException("total-entries-2 must be greater than or equal to total-entries-1");
         }
 
-        int totalEntries = register.getTotalEntries();
-        if(startEntryNo > totalEntries){
-            throw new BadRequestException("start-entry-no must be smaller than total entries in the register");
+        int totalEntriesInRegister = register.getTotalEntries();
+
+        if (totalEntries2 > totalEntriesInRegister){
+            throw new BadRequestException("total-entries-2 must not exceed number of total entries in the register");
         }
 
-        return rsfService.createRegisterSerialisationFormat(startEntryNo, endEntryNo);
+        return rsfService.createRegisterSerialisationFormat(totalEntries1, totalEntries2);
     }
 
     @GET

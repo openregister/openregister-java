@@ -48,17 +48,26 @@ public class RegisterSerialisationFormatService {
         }
     }
 
-    public RegisterSerialisationFormat createRegisterSerialisationFormat(int startEntryNo, int endEntryNo) {
-        Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(startEntryNo, endEntryNo), AddItemCommand::new);
-        Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(startEntryNo, endEntryNo), AppendEntryCommand::new);
+    public RegisterSerialisationFormat createRegisterSerialisationFormat(int totalEntries1, int totalEntries2) {
+        Iterator<RegisterCommand> iterators;
 
-        RegisterProof previousRegisterProof = startEntryNo == 1 ? emptyRegisterProof : register.getRegisterProof(startEntryNo - 1);
+        if (totalEntries1 == totalEntries2) {
+            iterators = Iterators.concat(
+                Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof(totalEntries1)))
+            );
+        }
+        else {
+            RegisterProof previousRegisterProof = totalEntries1 == 0 ? emptyRegisterProof : register.getRegisterProof(totalEntries1);
+            RegisterProof nextRegisterProof = register.getRegisterProof(totalEntries2);
 
-        return new RegisterSerialisationFormat(Iterators.concat(
-                Iterators.forArray(new AssertRootHashCommand(previousRegisterProof)),
-                itemCommandsIterator,
-                entryCommandIterator,
-                Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof(endEntryNo)))));
+            iterators = Iterators.concat(
+                    Iterators.forArray(new AssertRootHashCommand(previousRegisterProof)),
+                    Iterators.transform(register.getItemIterator(totalEntries1, totalEntries2), AddItemCommand::new),
+                    Iterators.transform(register.getEntryIterator(totalEntries1, totalEntries2), AppendEntryCommand::new),
+                    Iterators.forArray(new AssertRootHashCommand(nextRegisterProof)));
+        }
+
+        return new RegisterSerialisationFormat(iterators);
     }
 
     private void mintRegisterComponents(Iterator<RegisterCommand> commands, Register register) {
@@ -70,7 +79,6 @@ public class RegisterSerialisationFormatService {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-
         });
     }
 }

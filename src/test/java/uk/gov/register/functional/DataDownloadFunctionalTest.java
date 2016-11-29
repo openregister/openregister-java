@@ -123,7 +123,7 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadPartialRSF_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
-        Response response = register.getRequest("/download-rsf/1/2");
+        Response response = register.getRequest("/download-rsf/0/2");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
@@ -143,15 +143,29 @@ public class DataDownloadFunctionalTest {
     }
 
     @Test
-    public void downloadPartialRSF_shouldReturnReturn404ForRsfBoundariesInTheIncorrectOrder() throws IOException {
-        Response response = register.getRequest("/download-rsf/4/1");
-        
+    public void downloadPartialRSF_shouldReturn400ForRsfBoundariesOutOfBound() throws IOException {
+        Response response = register.getRequest("/download-rsf/666/1000");
+
         assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
-    public void downloadPartialRSF_shouldReturnReturn404ForRsfBoundariesOutOfBound() throws IOException {
-        Response response = register.getRequest("/download-rsf/666/1000");
+    public void downloadPartialRSF_shouldReturn400_whenStartEntryNumberBoundaryOutOfBounds() {
+        Response response = register.getRequest("/download-rsf/-1/2");
+
+        assertThat(response.getStatus(), equalTo(400));
+    }
+
+    @Test
+    public void downloadPartialRSF_shouldReturn400_whenRequestedTotalEntriesExceedsEntriesInRegister() {
+        Response response = register.getRequest("/download-rsf/0/6");
+
+        assertThat(response.getStatus(), equalTo(400));
+    }
+
+    @Test
+    public void downloadPartialRSF_shouldReturn400_whenGettingRequestedTotalEntriesFromStartEntryNumberIsOutOfBounds() {
+        Response response = register.getRequest("/download-rsf/4/2");
 
         assertThat(response.getStatus(), equalTo(400));
     }
@@ -159,7 +173,7 @@ public class DataDownloadFunctionalTest {
     @Test
     public void downloadPartialRSF_shouldReturnSameRSFAsFullDownload() {
         Response fullRsfResponse = register.getRequest("/download-rsf");
-        Response partialRsfResponse = register.getRequest("/download-rsf/1/5");
+        Response partialRsfResponse = register.getRequest("/download-rsf/0/5");
 
         String[] fullRsfLines = getRsfLinesFrom(fullRsfResponse);
         String[] partialRsfLines = getRsfLinesFrom(partialRsfResponse);

@@ -137,16 +137,16 @@ public class RegisterSerialisationFormatServiceTest {
         RegisterCommand assertRootOneEntryInRegister = new AssertRootHashCommand(oneEntryRegisterProof);
         RegisterCommand assertRootTwoEntriesInRegister = new AssertRootHashCommand(twoEntriesRegisterProof);
 
-        when(register.getItemIterator(2, 2)).thenReturn(Arrays.asList(item).iterator());
-        when(register.getEntryIterator(2, 2)).thenReturn(Arrays.asList(entry2).iterator());
+        when(register.getItemIterator(1, 2)).thenReturn(Arrays.asList(item).iterator());
+        when(register.getEntryIterator(1, 2)).thenReturn(Arrays.asList(entry2).iterator());
         when(register.getRegisterProof(1)).thenReturn(oneEntryRegisterProof);
         when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 
-        RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat(2, 2);
+        RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat(1, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
-        verify(register, times(1)).getItemIterator(2, 2);
-        verify(register, times(1)).getEntryIterator(2, 2);
+        verify(register, times(1)).getItemIterator(1, 2);
+        verify(register, times(1)).getEntryIterator(1, 2);
 
         assertThat(actualCommands.size(), equalTo(4));
         assertThat(actualCommands, contains(assertRootOneEntryInRegister, addItemCommand, appendEntryCommand2, assertRootTwoEntriesInRegister));
