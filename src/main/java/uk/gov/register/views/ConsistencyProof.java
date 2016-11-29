@@ -6,7 +6,6 @@ import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.util.HashValue;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @JsonPropertyOrder({"proof-identifier", "merkle-consistency-nodes"})
 public class ConsistencyProof {
@@ -27,8 +26,6 @@ public class ConsistencyProof {
     @SuppressWarnings("unused, used as jsonproperty")
     @JsonProperty("merkle-consistency-nodes")
     public List<HashValue> getConsistencyNodes() {
-        List<String> nodes = consistencyNodes.stream().map(p -> p.toString()).collect(Collectors.toList());
-
         return consistencyNodes;
     }
 }

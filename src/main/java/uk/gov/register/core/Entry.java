@@ -36,7 +36,6 @@ public class Entry {
 
     @SuppressWarnings("unused, used from DAO")
     @JsonProperty("item-hash")
-    @JsonSerialize(using = ToStringSerializer.class)
     public HashValue getSha256hex() {
         return hashValue;
     }

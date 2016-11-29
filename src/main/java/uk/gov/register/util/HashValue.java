@@ -48,14 +48,18 @@ public class HashValue {
         if (this == o) return true;
         if (o == null || o.getClass() != this.getClass()) return false;
 
-        HashValue that = (HashValue) o;
+        HashValue hashValue = (HashValue) o;
 
-        return this.encode().equals(that.encode());
+        if (value != null ? !value.equals(hashValue.value) : hashValue.value != null) return false;
+
+        return hashingAlgorithm != null ? hashingAlgorithm.equals(hashValue.hashingAlgorithm) : hashValue.hashingAlgorithm == null;
     }
 
     @Override
     public int hashCode() {
-        return 31 * encode().hashCode();
+        int result = value != null ? value.hashCode() : 0;
+        result = 31 * result + (hashingAlgorithm != null ? hashingAlgorithm.hashCode() : 0);
+        return result;
     }
 
     @Override

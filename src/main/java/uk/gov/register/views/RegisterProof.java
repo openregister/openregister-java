@@ -2,8 +2,6 @@ package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import uk.gov.register.util.HashValue;
 
 import java.util.Objects;
@@ -26,7 +24,6 @@ public class RegisterProof {
 
     @SuppressWarnings("unused, used as jsonproperty")
     @JsonProperty("root-hash")
-    @JsonSerialize(using = ToStringSerializer.class)
     public HashValue getRootHash() {
         return hash;
     }
