@@ -45,11 +45,11 @@ public class LoadSerializedFunctionalTest {
 
         TestDBItem storedItem = testItemDAO.getItems().get(0);
         assertThat(storedItem.contents.toString(), equalTo("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
-        assertThat(storedItem.sha256hex, equalTo("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        assertThat(storedItem.hashValue.getValue(), equalTo("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
 
         Entry entry = testEntryDAO.getAllEntries().get(0);
         assertThat(entry.getEntryNumber(), is(1));
-        assertThat(entry.getSha256hex(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        assertThat(entry.getSha256hex().getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
 
         TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
         assertThat(record.getEntryNumber(), equalTo(1));

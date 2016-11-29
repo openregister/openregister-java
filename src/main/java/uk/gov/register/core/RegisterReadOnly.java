@@ -1,5 +1,6 @@
 package uk.gov.register.core;
 
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RegisterReadOnly {
-    Optional<Item> getItemBySha256(String sha256hex);
+    Optional<Item> getItemBySha256(HashValue hash);
     Collection<Item> getAllItems();
 
     Optional<Entry> getEntry(int entryNumber);

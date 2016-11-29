@@ -2,6 +2,7 @@ package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import uk.gov.register.util.HashValue;
 
 import java.util.Objects;
 
@@ -9,10 +10,10 @@ import java.util.Objects;
 public class RegisterProof {
 
     private static final String proofIdentifier = "merkle:sha-256";
-    private final String rootHash;
+    private final HashValue hash;
 
-    public RegisterProof(String rootHash) {
-        this.rootHash = rootHash;
+    public RegisterProof(HashValue hash) {
+        this.hash = hash;
     }
 
     @SuppressWarnings("unused, used as jsonproperty")
@@ -23,8 +24,8 @@ public class RegisterProof {
 
     @SuppressWarnings("unused, used as jsonproperty")
     @JsonProperty("root-hash")
-    public String getRootHash() {
-        return rootHash;
+    public HashValue getRootHash() {
+        return hash;
     }
 
     @Override

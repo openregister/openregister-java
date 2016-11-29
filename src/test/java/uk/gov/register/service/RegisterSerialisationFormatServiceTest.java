@@ -14,10 +14,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.serialization.*;
 import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import java.security.NoSuchAlgorithmException;
@@ -61,7 +63,7 @@ public class RegisterSerialisationFormatServiceTest {
         item = new Item(content);
         entry1 = new Entry(1, getHash(content), Instant.now(), "9AQZJ3M");
         entry2 = new Entry(2, getHash(content), Instant.now().plusMillis(100), "9AQZJ3M");
-        emptyRegisterProof = new RegisterProof("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+        emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
 
         addItemCommand = new AddItemCommand(item);
         appendEntryCommand1 = new AppendEntryCommand(entry1);
@@ -107,7 +109,7 @@ public class RegisterSerialisationFormatServiceTest {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
-        RegisterProof expectedRegisterProof = new RegisterProof("1231234");
+        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"));
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat();
@@ -130,8 +132,8 @@ public class RegisterSerialisationFormatServiceTest {
 
     @Test
     public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
-        RegisterProof oneEntryRegisterProof = new RegisterProof("oneEntryInRegisterHash");
-        RegisterProof twoEntriesRegisterProof = new RegisterProof("twoEntriesInRegisterHash");
+        RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"));
+        RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"));
         RegisterCommand assertRootOneEntryInRegister = new AssertRootHashCommand(oneEntryRegisterProof);
         RegisterCommand assertRootTwoEntriesInRegister = new AssertRootHashCommand(twoEntriesRegisterProof);
 
@@ -150,7 +152,9 @@ public class RegisterSerialisationFormatServiceTest {
         assertThat(actualCommands, contains(assertRootOneEntryInRegister, addItemCommand, appendEntryCommand2, assertRootTwoEntriesInRegister));
     }
 
-    private String getHash(JsonNode content) {
-        return DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
+    private HashValue getHash(JsonNode content) {
+        String hash = DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
+
+        return new HashValue(HashingAlgorithm.SHA256, hash);
     }
 }

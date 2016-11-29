@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import uk.gov.register.store.BackingStoreDriver;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -60,28 +61,32 @@ public class EntryLog {
         String rootHash =  backingStoreDriver.withVerifiableLog(verifiableLog ->
                 bytesToString(verifiableLog.getCurrentRootHash()));
 
-        return new RegisterProof(rootHash);
+        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
     }
 
     public RegisterProof getRegisterProof(int entryNo) {
         String rootHash = backingStoreDriver.withVerifiableLog(verifiableLog ->
                 bytesToString(verifiableLog.getSpecificRootHash(entryNo)));
 
-        return new RegisterProof(rootHash);
+        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
     }
 
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        List<String> auditProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
+        List<HashValue> auditProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
                 verifiableLog.auditProof(entryNumber, totalEntries)
-                        .stream().map(this::bytesToString).collect(Collectors.toList()));
+                        .stream()
+                        .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
+                        .collect(Collectors.toList()));
 
         return new EntryProof(Integer.toString(entryNumber), auditProof);
     }
 
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        List<String> consistencyProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
+        List<HashValue> consistencyProof = backingStoreDriver.withVerifiableLog(verifiableLog ->
                 verifiableLog.consistencyProof(totalEntries1, totalEntries2))
-                .stream().map(this::bytesToString).collect(Collectors.toList());
+                .stream()
+                .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
+                .collect(Collectors.toList());
 
         return new ConsistencyProof(consistencyProof);
     }

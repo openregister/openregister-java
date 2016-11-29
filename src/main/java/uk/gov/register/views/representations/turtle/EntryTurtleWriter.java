@@ -35,7 +35,7 @@ public class EntryTurtleWriter extends TurtleRepresentationWriter<EntryView> {
                 .addProperty(entryNumberProperty, entryNumber)
                 .addProperty(entryTimestampProperty, entryView.getEntry().getTimestampAsISOFormat())
                 .addProperty(keyProperty, entryView.getEntry().getKey())
-                .addProperty(itemProperty, model.createResource(itemUri(entryView.getEntry().getItemHash()).toString()));
+                .addProperty(itemProperty, model.createResource(itemUri(entryView.getEntry().getSha256hex().encode()).toString()));
 
         model.setNsPrefix("register-metadata", SPEC_PREFIX);
         return model;

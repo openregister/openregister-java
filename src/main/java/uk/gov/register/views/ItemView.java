@@ -37,6 +37,6 @@ public class ItemView extends CsvRepresentationView {
     }
 
     public String getItemHash() {
-        return item.getItemHash();
+        return item.getSha256hex().encode();
     }
 }

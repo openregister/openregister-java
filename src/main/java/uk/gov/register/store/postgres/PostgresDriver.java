@@ -12,6 +12,7 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
 import uk.gov.register.store.BackingStoreDriver;
+import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -107,8 +108,8 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     }
 
     @Override
-    public Optional<Item> getItemBySha256(String sha256hex) {
-        return withHandle(handle -> itemQueryDAOFromHandle.apply(handle).getItemBySHA256(sha256hex));
+    public Optional<Item> getItemBySha256(HashValue hash) {
+        return withHandle(handle -> itemQueryDAOFromHandle.apply(handle).getItemBySHA256(hash.getValue()));
     }
 
     @Override

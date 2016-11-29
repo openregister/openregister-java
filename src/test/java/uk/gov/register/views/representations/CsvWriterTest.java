@@ -3,10 +3,8 @@ package uk.gov.register.views.representations;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.ListValue;
-import uk.gov.register.core.StringValue;
+import uk.gov.register.core.*;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ItemView;
 
@@ -32,7 +30,7 @@ public class CsvWriterTest {
     public void writes_EntryListView_to_output_stream() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         csvWriter.writeTo(new EntryListView(null, null, null, Optional.empty(),
-                        ImmutableList.of(new Entry(1, "1234abcd", Instant.ofEpochSecond(1400000000L), "abc")), () -> "test.register.gov.uk", null, () -> Optional.empty()),
+                        ImmutableList.of(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "1234abcd"), Instant.ofEpochSecond(1400000000L), "abc")), () -> "test.register.gov.uk", null, () -> Optional.empty()),
                 EntryListView.class,
                 null,
                 null,

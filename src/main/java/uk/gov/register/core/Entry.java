@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
 
 import java.time.Instant;
@@ -17,13 +18,13 @@ import java.time.Instant;
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
 public class Entry {
     private final int entryNumber;
-    private final String sha256hex;
+    private final HashValue hashValue;
     private final Instant timestamp;
     private String key;
 
-    public Entry(int entryNumber, String sha256hex, Instant timestamp, String key) {
+    public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key) {
         this.entryNumber = entryNumber;
-        this.sha256hex = sha256hex;
+        this.hashValue = hashValue;
         this.timestamp = timestamp;
         this.key = key;
     }
@@ -34,11 +35,10 @@ public class Entry {
     }
 
     @SuppressWarnings("unused, used from DAO")
-    @JsonIgnore
-    public String getSha256hex() {
-        return sha256hex;
+    @JsonProperty("item-hash")
+    public HashValue getSha256hex() {
+        return hashValue;
     }
-
 
     @JsonIgnore
     public long getTimestampAsLong() {
@@ -49,11 +49,6 @@ public class Entry {
     @JsonSerialize(using = ToStringSerializer.class)
     public Integer getEntryNumber() {
         return entryNumber;
-    }
-
-    @JsonProperty("item-hash")
-    public String getItemHash() {
-        return "sha-256:" + sha256hex;
     }
 
     @JsonProperty("entry-timestamp")
@@ -80,12 +75,12 @@ public class Entry {
         Entry entry = (Entry) o;
 
         if (entryNumber != entry.entryNumber) return false;
-        return sha256hex == null ? entry.sha256hex == null : sha256hex.equals(entry.sha256hex);
+        return hashValue == null ? entry.hashValue == null : hashValue.equals(entry.hashValue);
     }
 
     @Override
     public int hashCode() {
-        int result = sha256hex != null ? sha256hex.hashCode() : 0;
+        int result = hashValue != null ? hashValue.hashCode() : 0;
         result = 31 * entryNumber + result;
         return result;
     }
