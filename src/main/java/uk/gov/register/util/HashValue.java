@@ -31,7 +31,7 @@ public class HashValue {
 
     public static HashValue decode(HashingAlgorithm hashingAlgorithm, String encodedHash) {
         if (!encodedHash.startsWith(hashingAlgorithm.toString())) {
-            throw new HashDecodeException(String.format("Hash \"%s\" has not been encoded with hashing algorithm \"%s\"", hashingAlgorithm, encodedHash));
+            throw new HashDecodeException(String.format("Hash \"%s\" has not been encoded with hashing algorithm \"%s\"", encodedHash, hashingAlgorithm));
         }
 
         String[] parts = encodedHash.split(hashingAlgorithm + ":");
