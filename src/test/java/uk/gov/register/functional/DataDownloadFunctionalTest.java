@@ -164,8 +164,8 @@ public class DataDownloadFunctionalTest {
     }
 
     @Test
-    public void downloadPartialRSF_shouldReturn400_whenGettingRequestedTotalEntriesFromStartEntryNumberIsOutOfBounds() {
-        Response response = register.getRequest("/download-rsf/4/2");
+    public void downloadPartialRSF_shouldReturn400_whenRequestedTotalEntriesExceedsEntriesInRegister() {
+        Response response = register.getRequest("/download-rsf/0/6");
 
         assertThat(response.getStatus(), equalTo(400));
     }
