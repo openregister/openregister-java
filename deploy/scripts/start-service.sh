@@ -14,7 +14,7 @@ aws s3 cp s3://${CONFIG_BUCKET}/registers.yaml /srv/openregister-java --region e
 aws s3 cp s3://${CONFIG_BUCKET}/fields.yaml /srv/openregister-java --region eu-west-1
 
 docker run \
-    --name=openregister-migrate \
+    --rm \
     --volume /srv/openregister-java:/srv/openregister-java \
     jstepien/openjdk8 \
     java \
