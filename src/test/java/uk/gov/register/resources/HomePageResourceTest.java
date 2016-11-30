@@ -1,5 +1,7 @@
 package uk.gov.register.resources;
 
+import org.flywaydb.core.Flyway;
+import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.HomePageView;
@@ -15,6 +17,17 @@ import static org.mockito.Mockito.*;
 
 public class HomePageResourceTest {
 
+    private RegisterReadOnly registerMock;
+    private ViewFactory viewFactoryMock;
+    private Flyway flywayMock;
+
+    @Before
+    public void beforeEach(){
+        registerMock = mock(RegisterReadOnly.class);
+        viewFactoryMock = mock(ViewFactory.class);
+        flywayMock = mock(Flyway.class);
+    }
+
     @Test
     public void shouldReturnPageViewWithValidValues() throws NoSuchAlgorithmException {
         int totalRecords = 5;
@@ -22,15 +35,12 @@ public class HomePageResourceTest {
         Optional<Instant> lastUpdated = Optional.of(Instant.ofEpochMilli(1459241964336L));
         HomePageView homePageView = mock(HomePageView.class);
 
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        ViewFactory viewFactoryMock = mock(ViewFactory.class);
-
         when(registerMock.getTotalRecords()).thenReturn(totalRecords);
         when(registerMock.getTotalEntries()).thenReturn(totalEntries);
         when(registerMock.getLastUpdatedTime()).thenReturn(lastUpdated);
         when(viewFactoryMock.homePageView(totalRecords, totalEntries, lastUpdated)).thenReturn(homePageView);
 
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("trackingId"));
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("trackingId"), flywayMock);
         homePageResource.home();
 
         verify(registerMock, times(1)).getTotalRecords();
@@ -40,11 +50,8 @@ public class HomePageResourceTest {
 
     @Test
     public void shouldRenderAnalyticsCodeIfPresent() throws Exception {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        ViewFactory viewFactoryMock = mock(ViewFactory.class);
-
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("codeForTest"));
-
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("codeForTest"), flywayMock);
+        
         String s = homePageResource.analyticsTrackingId();
 
         assertThat(s, equalTo("var gaTrackingId = \"codeForTest\";\n"));
@@ -52,10 +59,7 @@ public class HomePageResourceTest {
 
     @Test
     public void shouldRenderEmptyJsFileIfCodeIsAbsent() throws Exception {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        ViewFactory viewFactoryMock = mock(ViewFactory.class);
-
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.empty());
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.empty(), flywayMock);
 
         String s = homePageResource.analyticsTrackingId();
 
