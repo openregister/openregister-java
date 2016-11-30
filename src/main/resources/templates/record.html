@@ -12,8 +12,7 @@
             <h1 class="entry-header" th:text="${primaryKey}">Record Header</h1>
             <p class="entry-source">A record in the <a href="/"
                                                        th:text="${friendlyRegisterName}"></a>.
-            <a th:href="https://${primaryKey}.${register.phase}.${registerDomain}"
-               th:text="View this register"></a>.
+            <a th:href="${'https://' + primaryKey + '.' + registerDomain}">View this register</a>.
             </p>
         </div>
         <div class="column-third" th:include="main.html :: attribution"></div>
