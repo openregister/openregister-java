@@ -59,6 +59,7 @@ public class HomePageResource {
     @DELETE
     @PermitAll
     @Path("/delete-register-data")
+    @DataDeleteNotAllowed
     public Response deleteRegisterData() {
         return Response.status(501).entity("Data has been deleted - not").build();
     }
