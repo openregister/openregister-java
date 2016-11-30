@@ -19,7 +19,7 @@ GOVUK.registers.analytics = (function () {
 
   sendEvent = function(category, action, targetLabel, fnHitCallback){
     checkTrackerAndExecute(function(){
-      callbackExecuted = false;
+      var callbackExecuted = false;
       var executeHitCallback = function () {
         if (!callbackExecuted) {
           callbackExecuted = true;
