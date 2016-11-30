@@ -1,6 +1,7 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
+import org.flywaydb.core.Flyway;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
@@ -21,12 +22,14 @@ public class HomePageResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
     private final RegisterTrackingConfiguration config;
+    private Flyway flyway;
 
     @Inject
-    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory, RegisterTrackingConfiguration config) {
+    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory, RegisterTrackingConfiguration config, Flyway flyway) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.config = config;
+        this.flyway = flyway;
     }
 
     @GET
@@ -61,6 +64,9 @@ public class HomePageResource {
     @Path("/delete-register-data")
     @DataDeleteNotAllowed
     public Response deleteRegisterData() {
-        return Response.status(501).entity("Data has been deleted - not").build();
+        flyway.clean();
+        flyway.setBaselineVersionAsString("0");
+        flyway.migrate();
+        return Response.status(200).entity("Data has been deleted").build();
     }
 }
