@@ -7,6 +7,7 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.HomePageView;
 import uk.gov.register.views.ViewFactory;
 
+import javax.ws.rs.core.Response;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public class HomePageResourceTest {
     private Flyway flywayMock;
 
     @Before
-    public void beforeEach(){
+    public void beforeEach() {
         registerMock = mock(RegisterReadOnly.class);
         viewFactoryMock = mock(ViewFactory.class);
         flywayMock = mock(Flyway.class);
@@ -51,7 +52,7 @@ public class HomePageResourceTest {
     @Test
     public void shouldRenderAnalyticsCodeIfPresent() throws Exception {
         HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("codeForTest"), flywayMock);
-        
+
         String s = homePageResource.analyticsTrackingId();
 
         assertThat(s, equalTo("var gaTrackingId = \"codeForTest\";\n"));
@@ -64,6 +65,17 @@ public class HomePageResourceTest {
         String s = homePageResource.analyticsTrackingId();
 
         assertThat(s, equalTo(""));
+    }
+
+    @Test
+    public void shouldUseFlywayToDeleteData() throws Exception {
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.empty(), flywayMock);
+
+        Response response = homePageResource.deleteRegisterData();
+
+        assertThat(response.getStatus(), equalTo(200));
+        verify(flywayMock, times(1)).clean();
+        verify(flywayMock, times(1)).migrate();
     }
 }
 
