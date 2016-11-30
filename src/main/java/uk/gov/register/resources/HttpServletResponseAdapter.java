@@ -13,8 +13,8 @@ class HttpServletResponseAdapter {
         this.httpServletResponse = httpServletResponse;
     }
 
-    void addContentDispositionHeader(String fileName) {
-        ContentDisposition contentDisposition = ContentDisposition.type("attachment").fileName(fileName).build();
+    void addInlineContentDispositionHeader(String fileName) {
+        ContentDisposition contentDisposition = ContentDisposition.type("inline").fileName(fileName).build();
         httpServletResponse.addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
     }
 

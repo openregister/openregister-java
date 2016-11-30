@@ -20,9 +20,9 @@ public class HttpServletResponseAdapterTest {
     public void addContentDispositionHeader_setsTheContentDispositionHeader() {
         HttpServletResponseAdapter httpServletResponseAdapter = new HttpServletResponseAdapter(httpServletResponse);
 
-        httpServletResponseAdapter.addContentDispositionHeader("foo");
+        httpServletResponseAdapter.addInlineContentDispositionHeader("foo");
 
-        verify(httpServletResponse).addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"foo\"");
+        verify(httpServletResponse).addHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"foo\"");
     }
 
     @Test
