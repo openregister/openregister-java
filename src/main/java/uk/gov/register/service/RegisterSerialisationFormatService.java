@@ -52,9 +52,7 @@ public class RegisterSerialisationFormatService {
         Iterator<RegisterCommand> iterators;
 
         if (totalEntries1 == totalEntries2) {
-            iterators = Iterators.concat(
-                Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof(totalEntries1)))
-            );
+            iterators = Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof(totalEntries1)));
         }
         else {
             RegisterProof previousRegisterProof = totalEntries1 == 0 ? emptyRegisterProof : register.getRegisterProof(totalEntries1);
