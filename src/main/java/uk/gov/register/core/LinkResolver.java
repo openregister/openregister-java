@@ -6,5 +6,8 @@ import java.net.URI;
 
 @Contract
 public interface LinkResolver {
-    URI resolve(LinkValue linkValue);
+    default URI resolve(LinkValue linkValue) {
+        return resolve(linkValue.getTargetRegister(), linkValue.getLinkKey());
+    }
+    URI resolve(String register, String linkKey);
 }

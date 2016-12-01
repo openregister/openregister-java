@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TurtleRepresentationWriterTest {
+    private final LinkResolver linkResolver = (register, value) -> URI.create("http://" + register + ".test.register.gov.uk/record/" + value);
     private RequestContext requestContext;
     private ItemConverter itemConverter;
     private ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
@@ -69,7 +70,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", x -> URI.create(""));
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", linkResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -102,7 +103,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", link -> URI.create("http://address.test.register.gov.uk/record/" + link.getValue()));
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", linkResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -125,7 +126,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", link -> URI.create("http://address.test.register.gov.uk/record/" + link.getValue()));
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", linkResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);

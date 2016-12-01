@@ -18,7 +18,7 @@ public class UriTemplateLinkResolver implements LinkResolver {
     }
 
     @Override
-    public URI resolve(LinkValue linkValue) {
-        return URI.create(String.format(template, schemeContext.getScheme(), linkValue.getTargetRegister(), registerDomain, linkValue.getLinkKey()));
+    public URI resolve(String register, String linkKey) {
+        return URI.create(String.format(template, schemeContext.getScheme(), register, registerDomain, linkKey));
     }
 }

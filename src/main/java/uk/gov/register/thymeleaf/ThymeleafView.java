@@ -4,9 +4,11 @@ import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
+import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.UriTemplateLinkResolver;
 import uk.gov.register.resources.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -60,6 +62,11 @@ public class ThymeleafView extends View {
 
     public RegisterMetadata getRegister() {
         return registerData.getRegister();
+    }
+
+    @SuppressWarnings("unused, used by templates")
+    public LinkResolver getLinkResolver() {
+        return new UriTemplateLinkResolver(requestContext, this::getRegisterDomain);
     }
 
     public Optional<String> getRenderedCopyrightText() {

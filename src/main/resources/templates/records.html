@@ -13,9 +13,9 @@
     <table th:if="${!records.isEmpty()}">
         <thead>
         <tr>
-            <th scope="col"><a th:href="${@uk.gov.register.util.HtmlViewSupport@fieldLink(registerId, registerDomain, scheme)}" th:text="${registerId}"></a></th>
+            <th scope="col"><a th:href="${linkResolver.resolve('field', registerId)}" th:text="${registerId}"></a></th>
             <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-                <th scope="col"><a th:href="${@uk.gov.register.util.HtmlViewSupport@fieldLink(fieldName, registerDomain, scheme)}" th:text="${fieldName}"></a></th>
+                <th scope="col"><a th:href="${linkResolver.resolve('field', fieldName)}" th:text="${fieldName}"></a></th>
             </th:block>
         </tr>
         </thead>

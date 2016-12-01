@@ -29,4 +29,8 @@ public class UriTemplateLinkResolverTest {
         assertThat(localResolver.resolve(companyCurieValue), is(URI.create("http://company.openregister.dev:8080/record/654321")));
     }
 
+    @Test
+    public void separateRegisterAndValueReturnsCorrectLink() throws Exception {
+        assertThat(localResolver.resolve("country","CZ"), is(URI.create("http://country.openregister.dev:8080/record/CZ")));
+    }
 }

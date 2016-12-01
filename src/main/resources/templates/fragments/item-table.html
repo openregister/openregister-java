@@ -18,18 +18,18 @@
             <th:block th:each="field : ${register.fields}">
                 <tr th:if="${content.containsKey(field)}">
                 <td>
-                    <a th:href="${@uk.gov.register.util.HtmlViewSupport@fieldLink(field, registerDomain, scheme)}"
+                    <a th:href="${linkResolver.resolve('field', field)}"
                        th:text="${field}"></a>
                 </td>
 
                 <td th:if="${content.get(field).isLink()}">
-                    <a th:href="${content.get(field).link()}" th:text="${content.get(field).value}"></a>
+                    <a th:href="${linkResolver.resolve(content.get(field))}" th:text="${content.get(field).value}"></a>
                 </td>
 
                 <td th:if="${content.get(field).isList()}" class="field-list field-list-in-table">
                     <ul>
                         <th:block th:each="fieldValue : ${content.get(field)}">
-                            <li th:if="${fieldValue.isLink()}"><a th:href="${fieldValue.link()}" th:text="${fieldValue.value}"></a></li>
+                            <li th:if="${fieldValue.isLink()}"><a th:href="${linkResolver.resolve(fieldValue)}" th:text="${fieldValue.value}"></a></li>
                             <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
                         </th:block>
                     </ul>

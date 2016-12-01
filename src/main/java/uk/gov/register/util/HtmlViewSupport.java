@@ -1,7 +1,5 @@
 package uk.gov.register.util;
 
-import uk.gov.register.core.LinkValue;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 import java.util.Map;
@@ -19,9 +17,5 @@ public class HtmlViewSupport {
         );
 
         return uriBuilder.build().toString();
-    }
-
-    public static String fieldLink(String fieldName, String registerDomain, String requestScheme) {
-        return new LinkValue("field", registerDomain, requestScheme, fieldName).link();
     }
 }
