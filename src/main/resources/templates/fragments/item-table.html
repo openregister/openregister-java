@@ -29,9 +29,7 @@
                 <td th:if="${content.get(field).isList()}" class="field-list field-list-in-table">
                     <ul>
                         <th:block th:each="fieldValue : ${content.get(field)}">
-                            <li th:if="${fieldValue.isLink()}">
-                                <a th:href="${fieldValue.link()}" th:text="${fieldValue.value}"></a>
-                            </li>
+                            <li th:if="${fieldValue.isLink()}"><a th:href="${fieldValue.link()}" th:text="${fieldValue.value}"></a></li>
                             <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
                         </th:block>
                     </ul>
