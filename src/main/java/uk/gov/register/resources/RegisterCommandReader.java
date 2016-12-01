@@ -39,10 +39,12 @@ public class RegisterCommandReader implements MessageBodyReader<RegisterSerialis
     }
 
     private RegisterSerialisationFormat parseCommands(InputStream commandStream) {
+        LOG.debug("reading commands");
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
         final CommandParser parser = new CommandParser();
         buffer.lines().forEach(s -> parser.addCommand(s));
         Iterator<RegisterCommand> commands = parser.getCommands();
+        LOG.debug("finished reading commands");
         // don't close the reader as the caller will close the input stream
         return new RegisterSerialisationFormat(commands);
 
