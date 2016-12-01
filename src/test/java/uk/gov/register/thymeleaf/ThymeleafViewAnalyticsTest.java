@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.resources.RequestContext;
 
+import java.net.URI;
 import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -20,7 +21,7 @@ public class ThymeleafViewAnalyticsTest {
 
     @Test
     public void shouldAnalyticsCode() {
-        ThymeleafView sutView = new ThymeleafView(mockRequestContext, "", null, () -> "test.register.gov.uk", () -> validCode);
+        ThymeleafView sutView = new ThymeleafView(mockRequestContext, "", null, () -> validCode, register -> URI.create("http://" + register + ".test.register.gov.uk"));
         assertThat(sutView.getRegisterTrackingId(), equalTo(Optional.of("UA-12345678-1")));
     }
 }

@@ -2,7 +2,6 @@ package uk.gov.register.views.representations.turtle;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.LinkResolver;
@@ -22,17 +21,15 @@ import javax.ws.rs.ext.Provider;
 public class RecordListTurtleWriter extends TurtleRepresentationWriter<RecordListView> {
 
     private final ItemConverter itemConverter;
-    private RegisterDomainConfiguration registerDomainConfiguration;
     private RegisterData registerData;
     private RegisterNameConfiguration registerNameConfiguration;
     private RegisterTrackingConfiguration registerTrackingConfiguration;
     private LinkResolver linkResolver;
 
     @Inject
-    public RecordListTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration, LinkResolver linkResolver, RegisterResolver registerResolver) {
+    public RecordListTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration, LinkResolver linkResolver, RegisterResolver registerResolver) {
         super(requestContext, registerNameConfiguration, registerResolver);
         this.itemConverter = itemConverter;
-        this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerData = registerData;
         this.registerNameConfiguration = registerNameConfiguration;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
@@ -42,7 +39,7 @@ public class RecordListTurtleWriter extends TurtleRepresentationWriter<RecordLis
     @Override
     protected Model rdfModelFor(RecordListView view) {
         Model model = ModelFactory.createDefaultModel();
-        view.getRecords().stream().forEach(r -> model.add(new RecordTurtleWriter(requestContext, itemConverter, registerDomainConfiguration, registerData, registerNameConfiguration, registerTrackingConfiguration, linkResolver, registerResolver).rdfModelFor(r)));
+        view.getRecords().stream().forEach(r -> model.add(new RecordTurtleWriter(requestContext, itemConverter, registerData, registerNameConfiguration, registerTrackingConfiguration, linkResolver, registerResolver).rdfModelFor(r)));
         return model;
     }
 }

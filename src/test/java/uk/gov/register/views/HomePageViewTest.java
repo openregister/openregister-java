@@ -37,7 +37,7 @@ public class HomePageViewTest {
                 "phase", new TextNode("alpha"),
                 "text", new TextNode(registerText)
         ));
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, () -> "test.register.gov.uk", registerData, registerContentPages, () -> Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, registerData, registerContentPages, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         String result = homePageView.getRegisterText();
 
@@ -48,14 +48,14 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
 
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", null, registerContentPages, () -> Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), null, registerContentPages, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
 
     @Test
     public void getLastUpdatedTime_returnsEmptyStringIfLastUpdatedTimeNotPresent() {
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages, () -> Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         assertThat(homePageView.getLastUpdatedTime(), isEmptyString());
     }
@@ -69,21 +69,21 @@ public class HomePageViewTest {
         RegisterData registerData = new RegisterData(ImmutableMap.of(
                 "register", new TextNode("school")
         ));
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", registerData, registerContentPages, () -> Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), registerData, registerContentPages, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
-        assertThat(homePageView.getLinkToRegisterRegister(), equalTo(URI.create("https://register.test.register.gov.uk/record/school")));
+        assertThat(homePageView.getLinkToRegisterRegister(), equalTo(URI.create("http://register.test.register.gov.uk/record/school")));
     }
 
     @Test
     public void shouldDisplayHistoryPageIfAvailable() {
         RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages, () -> Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(false));
 
         String historyUrl = "http://register-history.openregister.org";
         registerContentPages = new RegisterContentPages(Optional.of(historyUrl));
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), () -> "test.register.gov.uk", null, registerContentPages, () -> Optional.empty());
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(true));
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().get(), is(historyUrl));

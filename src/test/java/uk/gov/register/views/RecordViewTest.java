@@ -8,6 +8,7 @@ import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class RecordViewTest {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
         Record record = new Record(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b"), new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}")));
-        RecordView recordView = new RecordView(null, null, null, null, record, () -> "test.register.gov.uk", new RegisterData(Collections.emptyMap()), () -> Optional.empty());
+        RecordView recordView = new RecordView(null, null, null, null, record, new RegisterData(Collections.emptyMap()), () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         String result = objectMapper.writeValueAsString(recordView);
 
