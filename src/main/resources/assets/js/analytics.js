@@ -25,7 +25,7 @@ GOVUK.registers.analytics = (function () {
           callbackExecuted = true;
           fnHitCallback();
         }
-      };
+      }
       setTimeout(executeHitCallback, 1000);
 
       ga('send', 'event', category, action, targetLabel, { hitCallback: executeHitCallback });
