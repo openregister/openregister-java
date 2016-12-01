@@ -9,6 +9,7 @@ import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.UriTemplateLinkResolver;
+import uk.gov.register.core.UriTemplateRegisterResolver;
 import uk.gov.register.resources.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -66,7 +67,7 @@ public class ThymeleafView extends View {
 
     @SuppressWarnings("unused, used by templates")
     public LinkResolver getLinkResolver() {
-        return new UriTemplateLinkResolver(requestContext, this::getRegisterDomain);
+        return new UriTemplateLinkResolver(new UriTemplateRegisterResolver(requestContext, this::getRegisterDomain));
     }
 
     public Optional<String> getRenderedCopyrightText() {

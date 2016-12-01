@@ -9,8 +9,8 @@ import static org.junit.Assert.*;
 
 public class UriTemplateLinkResolverTest {
 
-    private final UriTemplateLinkResolver localResolver = new UriTemplateLinkResolver(() -> "http", () -> "openregister.dev:8080");
-    private final UriTemplateLinkResolver prodResolver = new UriTemplateLinkResolver(() -> "https", () -> "register.gov.uk");
+    private final UriTemplateLinkResolver localResolver = new UriTemplateLinkResolver(register -> URI.create("http://" + register + ".openregister.dev:8080"));
+    private final UriTemplateLinkResolver prodResolver = new UriTemplateLinkResolver(register -> URI.create("https://" + register + ".register.gov.uk"));
 
     @Test
     public void linkValueReturnsLink() {

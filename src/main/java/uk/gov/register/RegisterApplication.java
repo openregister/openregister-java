@@ -30,7 +30,9 @@ import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.core.UriTemplateLinkResolver;
+import uk.gov.register.core.UriTemplateRegisterResolver;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -136,6 +138,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(UriTemplateLinkResolver.class).to(LinkResolver.class);
+                bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);
             }

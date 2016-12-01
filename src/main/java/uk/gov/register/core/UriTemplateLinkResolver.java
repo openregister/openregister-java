@@ -1,24 +1,23 @@
 package uk.gov.register.core;
 
-import uk.gov.register.configuration.RegisterDomainConfiguration;
-import uk.gov.register.resources.SchemeContext;
-
 import javax.inject.Inject;
 import java.net.URI;
 
 public class UriTemplateLinkResolver implements LinkResolver {
-    private static final String template = "%1$s://%2$s.%3$s/record/%4$s";
-    private final SchemeContext schemeContext;
-    private final String registerDomain;
+    private static final String recordTemplate = "/record/%s";
+    private final RegisterResolver registerResolver;
 
     @Inject
-    public UriTemplateLinkResolver(SchemeContext schemeContext, RegisterDomainConfiguration registerDomainConfiguration) {
-        this.schemeContext = schemeContext;
-        this.registerDomain = registerDomainConfiguration.getRegisterDomain();
+    public UriTemplateLinkResolver(RegisterResolver registerResolver) {
+        this.registerResolver = registerResolver;
     }
 
     @Override
     public URI resolve(String register, String linkKey) {
-        return URI.create(String.format(template, schemeContext.getScheme(), register, registerDomain, linkKey));
+        URI baseUri = registerResolver.baseUriFor(register);
+
+        String record = String.format(recordTemplate, linkKey);
+        URI recordUri = URI.create(record);
+        return baseUri.resolve(recordUri);
     }
 }
