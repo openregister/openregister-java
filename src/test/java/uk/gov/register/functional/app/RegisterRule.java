@@ -70,7 +70,6 @@ public class RegisterRule implements TestRule {
     private void migrateDb() {
         RegisterConfiguration configuration = appRule.getConfiguration();
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(appRule.getEnvironment().metrics(), "flyway_db"));
-        flyway.setBaselineVersionAsString("0");
         flyway.migrate();
     }
 
