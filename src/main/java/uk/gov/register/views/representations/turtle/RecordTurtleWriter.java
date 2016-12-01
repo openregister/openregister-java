@@ -4,6 +4,7 @@ import org.apache.jena.rdf.model.*;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
+import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
@@ -26,15 +27,17 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
     private RegisterData registerData;
     private RegisterNameConfiguration registerNameConfiguration;
     private RegisterTrackingConfiguration registerTrackingConfiguration;
+    private LinkResolver linkResolver;
 
     @Inject
-    public RecordTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration) {
+    public RecordTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration, LinkResolver linkResolver) {
         super(requestContext, registerDomainConfiguration, registerNameConfiguration);
         this.itemConverter = itemConverter;
         this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerData = registerData;
         this.registerNameConfiguration = registerNameConfiguration;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
+        this.linkResolver = linkResolver;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(requestContext, registerDomainConfiguration, registerNameConfiguration).rdfModelFor(entryView);
-        Model itemModel = new ItemTurtleWriter(requestContext, registerDomainConfiguration, registerNameConfiguration).rdfModelFor(itemView);
+        Model itemModel = new ItemTurtleWriter(requestContext, registerDomainConfiguration, registerNameConfiguration, linkResolver).rdfModelFor(itemView);
 
         Resource recordResource = recordModel.createResource(recordUri(view.getPrimaryKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entryView.getEntry().getEntryNumber())).toString()));

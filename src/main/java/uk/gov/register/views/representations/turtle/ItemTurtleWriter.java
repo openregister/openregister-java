@@ -7,6 +7,7 @@ import org.apache.jena.rdf.model.Resource;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.FieldValue;
+import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
 import uk.gov.register.resources.RequestContext;
@@ -16,15 +17,18 @@ import uk.gov.register.views.representations.ExtraMediaType;
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Provider;
+import java.net.URI;
 import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
 public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
+    private final LinkResolver linkResolver;
 
     @Inject
-    public ItemTurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterNameConfiguration registerNameConfiguration) {
+    public ItemTurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterNameConfiguration registerNameConfiguration, LinkResolver linkResolver) {
         super(requestContext, registerDomainConfiguration, registerNameConfiguration);
+        this.linkResolver = linkResolver;
     }
 
     @Override
@@ -42,7 +46,7 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
         return model;
     }
 
-    private static class FieldRenderer {
+    private class FieldRenderer {
         private final Property fieldProperty;
 
         public FieldRenderer(Property fieldProperty) {
@@ -70,7 +74,8 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
 
         private void renderScalar(FieldValue value, Resource resource) {
             if (value.isLink()) {
-                resource.addProperty(fieldProperty, resource.getModel().createResource(((LinkValue) value).link()));
+                URI resolvedUri = linkResolver.resolve((LinkValue) value);
+                resource.addProperty(fieldProperty, resource.getModel().createResource(resolvedUri.toString()));
             } else {
                 resource.addProperty(fieldProperty, value.getValue());
             }
