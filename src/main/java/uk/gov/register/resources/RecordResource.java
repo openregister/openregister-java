@@ -79,7 +79,7 @@ public class RecordResource {
         IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
 
         requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addContentDispositionHeader(registerPrimaryKey + "-records." + ext)
+                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-records." + ext)
         );
 
         if (pagination.hasNextPage()) {

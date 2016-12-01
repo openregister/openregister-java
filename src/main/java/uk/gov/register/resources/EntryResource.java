@@ -58,7 +58,7 @@ public class EntryResource {
 
     private void setHeaders(StartLimitPagination startLimitPagination) {
         requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
+                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
         );
 
         if (startLimitPagination.hasNextPage()) {
