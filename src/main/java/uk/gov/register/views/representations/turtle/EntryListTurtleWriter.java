@@ -6,6 +6,7 @@ import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.EntryView;
@@ -26,8 +27,8 @@ public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListV
     private RegisterTrackingConfiguration registerTrackingConfiguration;
 
     @Inject
-    public EntryListTurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration) {
-        super(requestContext, registerDomainConfiguration, registerNameConfiguration);
+    public EntryListTurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, registerNameConfiguration, registerResolver);
         this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerData = registerData;
         this.registerNameConfiguration = registerNameConfiguration;
@@ -38,7 +39,7 @@ public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListV
     protected Model rdfModelFor(EntryListView view) {
         Model model = ModelFactory.createDefaultModel();
         for (EntryView entryView : view.getEntries().stream().map(e -> new EntryView(requestContext, view.getCustodian(), view.getBranding(), e, registerDomainConfiguration, registerData, registerTrackingConfiguration)).collect(Collectors.toList())) {
-            model.add(new EntryTurtleWriter(requestContext, registerDomainConfiguration, registerNameConfiguration).rdfModelFor(entryView));
+            model.add(new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entryView));
         }
         return model;
     }

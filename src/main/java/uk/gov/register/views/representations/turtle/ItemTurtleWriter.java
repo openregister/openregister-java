@@ -4,18 +4,19 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.Provider;
 import java.net.URI;
 import java.util.Map;
@@ -26,24 +27,27 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
     private final LinkResolver linkResolver;
 
     @Inject
-    public ItemTurtleWriter(RequestContext requestContext, RegisterDomainConfiguration registerDomainConfiguration, RegisterNameConfiguration registerNameConfiguration, LinkResolver linkResolver) {
-        super(requestContext, registerDomainConfiguration, registerNameConfiguration);
+    public ItemTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, LinkResolver linkResolver, RegisterResolver registerResolver) {
+        super(requestContext, registerNameConfiguration, registerResolver);
         this.linkResolver = linkResolver;
     }
 
     @Override
     protected Model rdfModelFor(ItemView view) {
-        String itemFieldPrefix = fieldUri().toString();
-
         Model model = ModelFactory.createDefaultModel();
         Resource resource = model.createResource(itemUri(view.getItemHash()).toString());
 
         for (Map.Entry<String, FieldValue> field : view.getContent().entrySet()) {
-            FieldRenderer fieldRenderer = new FieldRenderer(model.createProperty(itemFieldPrefix + field.getKey()));
+            FieldRenderer fieldRenderer = new FieldRenderer(model.createProperty(fieldUri(field.getKey())));
             fieldRenderer.render(field.getValue(), resource);
         }
-        model.setNsPrefix("field", itemFieldPrefix);
+        model.setNsPrefix("field", fieldUri("/"));
         return model;
+    }
+
+    private String fieldUri(String key) {
+        URI fieldBaseUri = registerResolver.baseUriFor("field");
+        return UriBuilder.fromUri(fieldBaseUri).path("record").path(key).build().toString();
     }
 
     private class FieldRenderer {

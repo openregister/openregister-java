@@ -29,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 public class TurtleRepresentationWriterTest {
     private final LinkResolver linkResolver = (register, value) -> URI.create("http://" + register + ".test.register.gov.uk/record/" + value);
+    private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
     private RequestContext requestContext;
     private ItemConverter itemConverter;
     private ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
@@ -70,7 +71,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", linkResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", linkResolver, registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -83,7 +84,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
+        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(entryView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -103,7 +104,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", linkResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", linkResolver, registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -126,7 +127,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address", linkResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", linkResolver, registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);

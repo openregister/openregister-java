@@ -7,6 +7,7 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.RecordListView;
@@ -28,8 +29,8 @@ public class RecordListTurtleWriter extends TurtleRepresentationWriter<RecordLis
     private LinkResolver linkResolver;
 
     @Inject
-    public RecordListTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration, LinkResolver linkResolver) {
-        super(requestContext, registerDomainConfiguration, registerNameConfiguration);
+    public RecordListTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration, LinkResolver linkResolver, RegisterResolver registerResolver) {
+        super(requestContext, registerNameConfiguration, registerResolver);
         this.itemConverter = itemConverter;
         this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerData = registerData;
@@ -41,7 +42,7 @@ public class RecordListTurtleWriter extends TurtleRepresentationWriter<RecordLis
     @Override
     protected Model rdfModelFor(RecordListView view) {
         Model model = ModelFactory.createDefaultModel();
-        view.getRecords().stream().forEach(r -> model.add(new RecordTurtleWriter(requestContext, itemConverter, registerDomainConfiguration, registerData, registerNameConfiguration, registerTrackingConfiguration, linkResolver).rdfModelFor(r)));
+        view.getRecords().stream().forEach(r -> model.add(new RecordTurtleWriter(requestContext, itemConverter, registerDomainConfiguration, registerData, registerNameConfiguration, registerTrackingConfiguration, linkResolver, registerResolver).rdfModelFor(r)));
         return model;
     }
 }
