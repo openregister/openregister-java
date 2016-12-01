@@ -93,6 +93,10 @@ public class RegisterRule implements TestRule {
         return target().path(path).request().get();
     }
 
+    public Response deleteRegisterData() {
+        return authenticatedTarget.path("/delete-register-data").request().delete();
+    }
+
     public void wipe() {
         testEntryDAO.wipeData();
         testItemDAO.wipeData();

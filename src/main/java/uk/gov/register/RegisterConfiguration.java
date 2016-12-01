@@ -23,7 +23,8 @@ public class RegisterConfiguration extends Configuration
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
         GovukClientConfiguration,
-        RegisterTrackingConfiguration {
+        RegisterTrackingConfiguration,
+        DeleteRegisterDataConfiguration {
     @Valid
     @NotNull
     @JsonProperty
@@ -74,9 +75,11 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private Optional<String> trackingId = Optional.empty();
 
-    @SuppressWarnings("unused")
     @Valid
     @JsonProperty
+    private boolean enableRegisterDataDelete = false;
+
+    @SuppressWarnings("unused")
     private FlywayFactory flywayFactory = new FlywayFactory();
 
     public DataSourceFactory getDatabase() {
@@ -117,11 +120,18 @@ public class RegisterConfiguration extends Configuration
         return enableDownloadResource;
     }
 
+    @Override
     public Optional<String> getRegisterHistoryPageUrl() {
         return historyPageUrl;
     }
 
+    @Override
     public Optional<String> getRegisterTrackingId() {
         return trackingId;
+    }
+
+    @Override
+    public boolean getEnableRegisterDataDelete() {
+        return enableRegisterDataDelete;
     }
 }
