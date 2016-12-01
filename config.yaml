@@ -34,3 +34,4 @@ logging:
   # Logger-specific levels.
   loggers:
     "uk.gov": DEBUG
+    "org.skife.jdbi.v2": TRACE

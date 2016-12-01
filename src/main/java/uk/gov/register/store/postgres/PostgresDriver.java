@@ -99,7 +99,7 @@ public abstract class PostgresDriver implements BackingStoreDriver {
 
     @Override
     public int getTotalEntries() {
-        return withHandle(handle -> entryQueryDAOFromHandle.apply(handle).getTotalEntries());
+        return withHandleRead(handle -> entryQueryDAOFromHandle.apply(handle).getTotalEntries());
     }
 
     @Override
@@ -178,6 +178,8 @@ public abstract class PostgresDriver implements BackingStoreDriver {
     protected abstract void useHandle(HandleConsumer callback);
 
     protected abstract <ReturnType> ReturnType withHandle(HandleCallback<ReturnType> callback);
+
+    protected abstract <ReturnType> ReturnType withHandleRead(HandleCallback<ReturnType> callback);
 
     protected abstract <ReturnType> ReturnType inTransaction(HandleCallback<ReturnType> callback);
 }
