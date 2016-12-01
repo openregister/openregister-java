@@ -20,7 +20,7 @@ import java.util.Optional;
 public class ThymeleafView extends View {
     protected final RequestContext requestContext;
     private final RegisterData registerData;
-    private final RegisterResolver uriTemplateRegisterResolver;
+    private final RegisterResolver registerResolver;
     private Optional<String> registerTrackingId;
     private String thymeleafTemplateName;
     protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
@@ -30,7 +30,7 @@ public class ThymeleafView extends View {
         this.requestContext = requestContext;
         this.registerData = registerData;
         this.registerTrackingId = registerTrackingConfiguration.getRegisterTrackingId();
-        this.uriTemplateRegisterResolver = registerResolver;
+        this.registerResolver = registerResolver;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ThymeleafView extends View {
     }
 
     public RegisterResolver getRegisterResolver() {
-        return uriTemplateRegisterResolver;
+        return registerResolver;
     }
 
     public Optional<String> getRenderedCopyrightText() {
