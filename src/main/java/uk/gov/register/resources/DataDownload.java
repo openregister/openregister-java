@@ -77,7 +77,7 @@ public class DataDownload {
     @DownloadNotAvailable
     public RegisterSerialisationFormat downloadPartialRSF(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
         if (totalEntries1 < 0) {
-            throw new BadRequestException("total-entries-1 must be positive");
+            throw new BadRequestException("total-entries-1 must be 0 or greater");
         }
 
         if (totalEntries2 < totalEntries1) {
