@@ -139,7 +139,7 @@ main {
 .field-list li {
   font-family: monospace;
   font-size: 16px;
-  display: inline-block;
+  display: inline;
 }
 
 .field-list li:after {
@@ -153,6 +153,10 @@ main {
 .field-list-in-table li {
   font-size: 14px;
   padding-right: 0px;
+
+  a {
+      display:table-cell;
+  }
 }
 
 // tables
