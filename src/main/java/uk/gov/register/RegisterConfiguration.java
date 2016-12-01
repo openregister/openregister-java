@@ -84,7 +84,6 @@ public class RegisterConfiguration extends Configuration
     }
 
     public FlywayFactory getFlywayFactory() {
-        flywayFactory.setBaselineOnMigrate(true);
         flywayFactory.setLocations(Collections.singletonList("/sql"));
         flywayFactory.setPlaceholders(Collections.singletonMap("registerName", getRegisterName()));
         flywayFactory.setOutOfOrder(true);

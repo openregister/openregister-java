@@ -106,7 +106,7 @@ void startApp() {
 }
 
 void waitForApplicationToStart() {
-    URL target = new URL('http://localhost:9090/')
+    URL target = new URL('http://localhost:9091/healthcheck')
 
     int counter = 0
     boolean appRunning = false
@@ -137,10 +137,10 @@ void stopApp() {
 task(loadSchoolDataForConformance, type: Exec) {
     doFirst{
         exec{
-            executable "$projectDir/drop_schema.sh" args 'src/test/resources/test-app-config.yaml'
+            executable "$projectDir/drop_schema.sh" args 'src/test/resources/conformance-app-config.yaml'
         }
         exec{
-            executable "$projectDir/create_schema.sh" args 'src/test/resources/test-app-config.yaml'
+            executable "$projectDir/create_schema.sh" args 'src/test/resources/conformance-app-config.yaml'
         }
     }
     mustRunAfter startAppForConformance
@@ -204,7 +204,13 @@ task createDeployableBundle(type: Zip) {
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
 
-task(run, type: JavaExec, dependsOn: ['classes']) {
+task migrateMainDb(type: JavaExec, dependsOn: ['classes']) {
+    main = 'uk.gov.register.RegisterApplication'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ["db", "migrate", "config.yaml"]
+}
+
+task(run, type: JavaExec, dependsOn: ['classes', 'migrateMainDb']) {
     main = 'uk.gov.register.RegisterApplication'
     classpath = sourceSets.main.runtimeClasspath
     args = ["server", "config.yaml"]
