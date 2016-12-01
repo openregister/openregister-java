@@ -67,7 +67,11 @@ public class ThymeleafView extends View {
 
     @SuppressWarnings("unused, used by templates")
     public LinkResolver getLinkResolver() {
-        return new UriTemplateLinkResolver(new UriTemplateRegisterResolver(requestContext, this::getRegisterDomain));
+        return new UriTemplateLinkResolver(getRegisterResolver());
+    }
+
+    public UriTemplateRegisterResolver getRegisterResolver() {
+        return new UriTemplateRegisterResolver(requestContext, this::getRegisterDomain);
     }
 
     public Optional<String> getRenderedCopyrightText() {
