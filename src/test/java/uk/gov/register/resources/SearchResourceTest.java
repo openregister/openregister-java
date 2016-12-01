@@ -3,14 +3,12 @@ package uk.gov.register.resources;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -27,9 +25,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SearchResourceTest {
-    @Mock
-    private HttpServletResponse servletResponse;
-
     SearchResource resource;
     RegisterData registerData;
     RegisterFieldsConfiguration registerFieldsConfiguration;
