@@ -17,13 +17,11 @@ import java.nio.charset.StandardCharsets;
 @Path("/")
 public class SearchResource {
 
-    protected final RequestContext requestContext;
     private final String registerPrimaryKey;
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Inject
-    public SearchResource(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterFieldsConfiguration registerFieldsConfiguration) {
-        this.requestContext = requestContext;
+    public SearchResource(RegisterNameConfiguration registerNameConfiguration, RegisterFieldsConfiguration registerFieldsConfiguration) {
         registerPrimaryKey = registerNameConfiguration.getRegisterName();
         this.registerFieldsConfiguration = registerFieldsConfiguration;
     }
