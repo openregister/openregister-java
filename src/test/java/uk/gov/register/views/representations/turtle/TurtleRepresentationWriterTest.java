@@ -55,7 +55,7 @@ public class TurtleRepresentationWriterTest {
                     ? fieldsConfigurationMap.get(fieldName) : new Field(fieldName, "", "", Cardinality.ONE, "");
         });
 
-        itemConverter = new ItemConverter(fieldsConfiguration, requestContext, () -> "test.register.gov.uk");
+        itemConverter = new ItemConverter(fieldsConfiguration);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class TurtleRepresentationWriterTest {
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "address", new LinkValue("address", "test.register.gov.uk", "http", "1111111"),
+                        "address", new LinkValue("address", "1111111"),
                         "location", new StringValue("location-value"),
                         "name", new StringValue("foo")
                 );
@@ -117,7 +117,7 @@ public class TurtleRepresentationWriterTest {
     public void rendersLists() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "link-values", new ListValue(asList(new LinkValue("address", "test.register.gov.uk", "http", "1111111"), new LinkValue("address", "test.register.gov.uk", "http", "2222222"))),
+                        "link-values", new ListValue(asList(new LinkValue("address", "1111111"), new LinkValue("address", "2222222"))),
                         "string-values", new ListValue(asList(new StringValue("value1"), new StringValue("value2"))),
                         "name", new StringValue("foo")
                 );
