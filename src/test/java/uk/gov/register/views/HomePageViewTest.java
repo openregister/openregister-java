@@ -10,6 +10,7 @@ import uk.gov.register.configuration.RegisterContentPages;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.resources.RequestContext;
 
+import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -70,7 +71,7 @@ public class HomePageViewTest {
         ));
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), () -> "test.register.gov.uk", registerData, registerContentPages, () -> Optional.empty());
 
-        assertThat(homePageView.getLinkToRegisterRegister(), equalTo("https://register.test.register.gov.uk/record/school"));
+        assertThat(homePageView.getLinkToRegisterRegister(), equalTo(URI.create("https://register.test.register.gov.uk/record/school")));
     }
 
     @Test
