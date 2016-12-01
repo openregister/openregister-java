@@ -8,7 +8,6 @@ import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.core.UriTemplateLinkResolver;
 import uk.gov.register.resources.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -66,7 +65,7 @@ public class ThymeleafView extends View {
 
     @SuppressWarnings("unused, used by templates")
     public LinkResolver getLinkResolver() {
-        return new UriTemplateLinkResolver(getRegisterResolver());
+        return getRegisterResolver().getLinkResolver();
     }
 
     public RegisterResolver getRegisterResolver() {

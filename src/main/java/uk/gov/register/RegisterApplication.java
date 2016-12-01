@@ -25,13 +25,11 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.core.UriTemplateLinkResolver;
 import uk.gov.register.core.UriTemplateRegisterResolver;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
@@ -137,7 +135,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
 
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
-                bind(UriTemplateLinkResolver.class).to(LinkResolver.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);

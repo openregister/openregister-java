@@ -6,7 +6,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.FieldValue;
-import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
 import uk.gov.register.core.RegisterResolver;
@@ -24,12 +23,10 @@ import java.util.Map;
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
 public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
-    private final LinkResolver linkResolver;
 
     @Inject
-    public ItemTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, LinkResolver linkResolver, RegisterResolver registerResolver) {
+    public ItemTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
         super(requestContext, registerNameConfiguration, registerResolver);
-        this.linkResolver = linkResolver;
     }
 
     @Override
@@ -78,7 +75,7 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
 
         private void renderScalar(FieldValue value, Resource resource) {
             if (value.isLink()) {
-                URI resolvedUri = linkResolver.resolve((LinkValue) value);
+                URI resolvedUri = registerResolver.getLinkResolver().resolve((LinkValue) value);
                 resource.addProperty(fieldProperty, resource.getModel().createResource(resolvedUri.toString()));
             } else {
                 resource.addProperty(fieldProperty, value.getValue());

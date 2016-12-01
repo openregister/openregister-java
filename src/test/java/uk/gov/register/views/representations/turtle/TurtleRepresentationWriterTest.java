@@ -28,7 +28,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TurtleRepresentationWriterTest {
-    private final LinkResolver linkResolver = (register, value) -> URI.create("http://" + register + ".test.register.gov.uk/record/" + value);
     private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
     private RequestContext requestContext;
     private ItemConverter itemConverter;
@@ -71,7 +70,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", linkResolver, registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -104,7 +103,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", linkResolver, registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -127,7 +126,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", linkResolver, registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);

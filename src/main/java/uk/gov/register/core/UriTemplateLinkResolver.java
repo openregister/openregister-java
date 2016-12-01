@@ -1,13 +1,11 @@
 package uk.gov.register.core;
 
-import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
 public class UriTemplateLinkResolver implements LinkResolver {
     private final RegisterResolver registerResolver;
 
-    @Inject
     public UriTemplateLinkResolver(RegisterResolver registerResolver) {
         this.registerResolver = registerResolver;
     }
