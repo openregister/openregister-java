@@ -1,10 +1,10 @@
 package uk.gov.register.core;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
 public class UriTemplateLinkResolver implements LinkResolver {
-    private static final String recordTemplate = "/record/%s";
     private final RegisterResolver registerResolver;
 
     @Inject
@@ -22,8 +22,6 @@ public class UriTemplateLinkResolver implements LinkResolver {
     public URI resolve(String register, String linkKey) {
         URI baseUri = registerResolver.baseUriFor(register);
 
-        String record = String.format(recordTemplate, linkKey);
-        URI recordUri = URI.create(record);
-        return baseUri.resolve(recordUri);
+        return UriBuilder.fromUri(baseUri).path("record").path(linkKey).build();
     }
 }
