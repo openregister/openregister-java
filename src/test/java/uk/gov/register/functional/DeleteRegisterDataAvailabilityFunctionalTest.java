@@ -43,7 +43,7 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
 
     @Test
     public void checkDeleteRegisterDataStatusCode() throws Exception {
-        Response response = isAuthenticated ? register.deleteRequest(DELETE_ENDPOINT) : makeUnauthenticatedDeleteCallTo(DELETE_ENDPOINT);
+        Response response = isAuthenticated ? register.deleteRegisterData() : makeUnauthenticatedDeleteCallTo(DELETE_ENDPOINT);
 
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
     }

@@ -30,7 +30,7 @@ public class DeleteRegisterDataFunctionalTest {
         assertThat(testItemDAO.getItems(), hasSize(2));
         assertThat(testEntryDAO.getAllEntries(), hasSize(2));
 
-        Response deleteResponse = register.deleteRequest("/delete-register-data");
+        Response deleteResponse = register.deleteRegisterData();
 
         assertThat(deleteResponse.getStatus(), equalTo(200));
         assertThat(testItemDAO.getItems(), is(empty()));

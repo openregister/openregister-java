@@ -93,8 +93,8 @@ public class RegisterRule implements TestRule {
         return target().path(path).request().get();
     }
 
-    public Response deleteRequest(String path) {
-        return authenticatedTarget.path(path).request().delete();
+    public Response deleteRegisterData() {
+        return authenticatedTarget.path("/delete-register-data").request().delete();
     }
 
     public void wipe() {
