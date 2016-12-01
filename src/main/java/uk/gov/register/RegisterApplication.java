@@ -13,12 +13,9 @@ import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
-import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.flywaydb.core.Flyway;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
@@ -32,6 +29,7 @@ import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
@@ -49,9 +47,7 @@ import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Singleton;
-import javax.servlet.DispatcherType;
 import javax.ws.rs.client.Client;
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -79,6 +75,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
         bootstrap.addBundle(new AuthBundle());
+        bootstrap.addBundle(new CorsBundle());
 
         bootstrap.addBundle(new FlywayBundle<RegisterConfiguration>() {
             @Override
@@ -153,19 +150,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getRegisterName()), 0, 10000, TimeUnit.MILLISECONDS);
         }
 
-        setCorsPreflight(environment.getApplicationContext());
-
         environment.getApplicationContext().setErrorHandler(new AssetsBundleCustomErrorHandler(environment));
-    }
-
-    private void setCorsPreflight(MutableServletContextHandler applicationContext) {
-        FilterHolder filterHolder = applicationContext
-                .addFilter(CrossOriginFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
-        filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
-        filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
-        filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,HEAD");
-
-        filterHolder.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "false");
     }
 }
 
