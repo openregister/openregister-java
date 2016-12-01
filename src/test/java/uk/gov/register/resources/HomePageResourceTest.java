@@ -66,16 +66,5 @@ public class HomePageResourceTest {
 
         assertThat(s, equalTo(""));
     }
-
-    @Test
-    public void shouldUseFlywayToDeleteData() throws Exception {
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.empty(), flywayMock);
-
-        Response response = homePageResource.deleteRegisterData();
-
-        assertThat(response.getStatus(), equalTo(200));
-        verify(flywayMock, times(1)).clean();
-        verify(flywayMock, times(1)).migrate();
-    }
 }
 

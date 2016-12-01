@@ -7,14 +7,11 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.security.NoSuchAlgorithmException;
 
 @Path("/")
@@ -57,16 +54,5 @@ public class HomePageResource {
         return config.getRegisterTrackingId().map(
                 trackingId -> "var gaTrackingId = \"" + trackingId + "\";\n"
         ).orElse("");
-    }
-
-    @DELETE
-    @PermitAll
-    @Path("/delete-register-data")
-    @DataDeleteNotAllowed
-    public Response deleteRegisterData() {
-        flyway.clean();
-        flyway.setBaselineVersionAsString("0");
-        flyway.migrate();
-        return Response.status(200).entity("Data has been deleted").build();
     }
 }
