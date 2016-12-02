@@ -29,7 +29,7 @@ public interface ItemQueryDAO {
     @FetchSize(262144)
     ResultIterator<Item> getIterator();
 
-    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex and entry_number between :startEntryNo and :endEntryNo) order by sha256hex")
+    @SqlQuery("select * from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex and entry_number > :startEntryNo and entry_number <= :endEntryNo) order by sha256hex")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(262144)
     ResultIterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);

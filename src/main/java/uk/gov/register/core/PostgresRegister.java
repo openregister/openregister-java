@@ -127,8 +127,8 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public RegisterProof getRegisterProof(int entryNo) {
-        return entryLog.getRegisterProof(entryNo);
+    public RegisterProof getRegisterProof(int totalEntries) {
+        return entryLog.getRegisterProof(totalEntries);
     }
 
     @Override

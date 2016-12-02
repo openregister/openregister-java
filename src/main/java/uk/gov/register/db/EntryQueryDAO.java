@@ -47,7 +47,7 @@ public interface EntryQueryDAO {
     @FetchSize(262144)
     ResultIterator<Entry> getIterator();
 
-    @SqlQuery("SELECT * FROM entry WHERE entry_number between :startEntryNo and :endEntryNo ORDER BY entry_number")
+    @SqlQuery("SELECT * FROM entry WHERE entry_number > :startEntryNo and entry_number <= :endEntryNo ORDER BY entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144)
     ResultIterator<Entry> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);

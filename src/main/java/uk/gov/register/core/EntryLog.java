@@ -64,9 +64,9 @@ public class EntryLog {
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
     }
 
-    public RegisterProof getRegisterProof(int entryNo) {
+    public RegisterProof getRegisterProof(int totalEntries) {
         String rootHash = backingStoreDriver.withVerifiableLog(verifiableLog ->
-                bytesToString(verifiableLog.getSpecificRootHash(entryNo)));
+                bytesToString(verifiableLog.getSpecificRootHash(totalEntries)));
 
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
     }
