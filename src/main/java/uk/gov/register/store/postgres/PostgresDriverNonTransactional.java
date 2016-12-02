@@ -6,6 +6,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
@@ -18,9 +19,9 @@ public class PostgresDriverNonTransactional extends PostgresDriver {
     private DBI dbi;
 
     @Inject
-    public PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore) {
-        super(memoizationStore);
-        this.dbi = dbi;
+    public PostgresDriverNonTransactional(EverythingAboutARegister everythingAboutARegister) {
+        super(everythingAboutARegister.getMemoizationStore());
+        this.dbi = everythingAboutARegister.getDbi();
     }
 
     protected PostgresDriverNonTransactional(DBI dbi, MemoizationStore memoizationStore,

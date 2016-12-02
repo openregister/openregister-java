@@ -18,13 +18,15 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.flywaydb.core.Flyway;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.EverythingAboutARegister;
+import uk.gov.register.core.AllTheRegisters;
+import uk.gov.register.core.EverythingAboutARegisterProvider;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
@@ -97,7 +99,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
     @Override
     public void run(RegisterConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
-        DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
@@ -108,6 +109,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
 
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, registersConfiguration, environment);
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
@@ -115,8 +117,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bindFactory(RegisterDataFactory.class).to(RegisterData.class);
+                bind(allTheRegisters);
+                bindFactory(EverythingAboutARegisterProvider.class).to(EverythingAboutARegister.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
-                bind(jdbi);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
