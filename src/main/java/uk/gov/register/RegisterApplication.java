@@ -18,7 +18,6 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.flywaydb.core.Flyway;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.*;
@@ -88,7 +87,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
     @Override
     public void run(RegisterConfiguration configuration, Environment environment) throws Exception {
         DBIFactory dbiFactory = new DBIFactory();
-        DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
@@ -104,6 +102,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegistersConfiguration registersConfiguration = configManager.createRegistersConfiguration();
         FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
 
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, registersConfiguration, environment);
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
@@ -112,11 +111,12 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bindFactory(RegisterDataFactory.class).to(RegisterData.class);
                 bindFactory(RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
+                bind(allTheRegisters);
+                bindFactory(EverythingAboutARegisterProvider.class).to(EverythingAboutARegister.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
-                bind(jdbi);
-                bind(jdbi.onDemand(ItemQueryDAO.class)).to(ItemQueryDAO.class);
-                bind(jdbi.onDemand(EntryQueryDAO.class)).to(EntryQueryDAO.class);
-                bind(jdbi.onDemand(RecordQueryDAO.class)).to(RecordQueryDAO.class);
+                bindFactory(Factories.EntryQueryDAOFactory.class).to(EntryQueryDAO.class);
+                bindFactory(Factories.ItemQueryDAOFactory.class).to(ItemQueryDAO.class);
+                bindFactory(Factories.RecordQueryDAOFactory.class).to(RecordQueryDAO.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);

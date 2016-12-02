@@ -9,6 +9,8 @@ import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.*;
+import uk.gov.register.core.AllTheRegistersFactory;
+import uk.gov.register.core.EverythingAboutARegisterFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -93,6 +95,14 @@ public class RegisterConfiguration extends Configuration
 
     public DataSourceFactory getDatabase() {
         return database;
+    }
+
+    public EverythingAboutARegisterFactory getDefaultRegister() {
+        return new EverythingAboutARegisterFactory(getRegisterName(), getDatabase(), flywayFactory);
+    }
+
+    public AllTheRegistersFactory getAllTheRegisters() {
+        return new AllTheRegistersFactory(getDefaultRegister());
     }
 
     public FlywayFactory getFlywayFactory() {

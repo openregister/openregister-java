@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.EntryLog;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.ItemStore;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.RecordIndex;
@@ -35,12 +36,12 @@ public class RegisterService {
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Inject
-    public RegisterService(RegisterData registerData, DBI dbi, MemoizationStore memoizationStore, ItemValidator itemValidator, RegisterFieldsConfiguration registerFieldsConfiguration) {
-        this.registerData = registerData;
-        this.dbi = dbi;
-        this.memoizationStore = memoizationStore;
+    public RegisterService(ItemValidator itemValidator, EverythingAboutARegister everythingAboutARegister) {
+        this.registerData = everythingAboutARegister.getRegisterData();
+        this.dbi = everythingAboutARegister.getDbi();
+        this.memoizationStore = everythingAboutARegister.getMemoizationStore();
         this.itemValidator = itemValidator;
-        this.registerFieldsConfiguration = registerFieldsConfiguration;
+        this.registerFieldsConfiguration = everythingAboutARegister.getFieldsConfiguration();
     }
 
     public void asAtomicRegisterOperation(Consumer<Register> callback) {

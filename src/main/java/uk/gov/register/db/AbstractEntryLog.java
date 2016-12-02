@@ -3,6 +3,7 @@ package uk.gov.register.db;
 import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryLog;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;

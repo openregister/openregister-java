@@ -1,6 +1,6 @@
 package uk.gov.register.resources;
 
-import org.flywaydb.core.Flyway;
+import uk.gov.register.core.EverythingAboutARegister;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
@@ -13,14 +13,14 @@ public class DeleteRegisterDataResourceTest {
 
     @Test
     public void shouldUseFlywayToDeleteData() throws Exception {
-        Flyway flywayMock = mock(Flyway.class);
-        DeleteRegisterDataResource sutResource = new DeleteRegisterDataResource(flywayMock);
+        EverythingAboutARegister registerMock = mock(EverythingAboutARegister.class, RETURNS_DEEP_STUBS);
+        DeleteRegisterDataResource sutResource = new DeleteRegisterDataResource(registerMock);
 
         Response response = sutResource.deleteRegisterData();
 
         assertThat(response.getStatus(), equalTo(200));
-        verify(flywayMock, times(1)).clean();
-        verify(flywayMock, times(1)).migrate();
+        verify(registerMock.getFlyway(), times(1)).clean();
+        verify(registerMock.getFlyway(), times(1)).migrate();
     }
 }
 
