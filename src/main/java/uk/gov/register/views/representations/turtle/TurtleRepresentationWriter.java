@@ -2,11 +2,12 @@ package uk.gov.register.views.representations.turtle;
 
 import io.dropwizard.views.View;
 import org.apache.jena.rdf.model.Model;
-import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.representations.RepresentationWriter;
 
+import javax.inject.Provider;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -19,13 +20,13 @@ import java.net.URI;
 
 public abstract class TurtleRepresentationWriter<T extends View> extends RepresentationWriter<T> {
     protected static final String SPEC_PREFIX = "https://openregister.github.io/specification/#";
+    private final Provider<RegisterData> register;
     protected RegisterResolver registerResolver;
-    private String registerPrimaryKey;
 
-    protected TurtleRepresentationWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+    protected TurtleRepresentationWriter(RequestContext requestContext, Provider<RegisterData> register, RegisterResolver registerResolver) {
+        this.register = register;
         this.registerResolver = registerResolver;
         this.requestContext = requestContext;
-        this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 
     @Override
@@ -40,7 +41,7 @@ public abstract class TurtleRepresentationWriter<T extends View> extends Represe
     }
 
     protected URI ourBaseUri() {
-        return registerResolver.baseUriFor(registerPrimaryKey);
+        return registerResolver.baseUriFor(register.get().getRegister().getRegisterName());
     }
 
     protected URI itemUri(String itemHash) {

@@ -2,6 +2,7 @@ package uk.gov.register.views.representations.turtle;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,7 @@ public class TurtleRepresentationWriterTest {
             "link-values", new Field("link-values", "", "address", Cardinality.MANY, ""),
             "string-values", new Field("string-values", "", "", Cardinality.MANY, "")
             );
+    private RegisterData registerData;
 
     @Before
     public void setUp() throws Exception {
@@ -46,6 +48,7 @@ public class TurtleRepresentationWriterTest {
             @Override
             public String getScheme() { return "http"; }
         };
+        registerData = new RegisterData(ImmutableMap.of("register", new TextNode("address")));
 
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
         when(fieldsConfiguration.getField(anyString())).thenAnswer(invocation -> {
@@ -70,7 +73,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> registerData, registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -83,7 +86,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> "address", registerResolver);
+        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> registerData, registerResolver);
         writer.writeTo(entryView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -103,7 +106,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> registerData, registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -126,7 +129,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> registerData, registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
