@@ -2,9 +2,11 @@ package uk.gov.register.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.exceptions.ItemValidationException;
 
 import java.io.IOException;
@@ -13,6 +15,8 @@ import java.util.Optional;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ItemValidatorTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -20,7 +24,14 @@ public class ItemValidatorTest {
     private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty());
     private RegistersConfiguration registerConfiguration = new RegistersConfiguration(Optional.empty());
 
-    private ItemValidator itemValidator = new ItemValidator(registerConfiguration, fieldsConfiguration, () -> "register");
+    private ItemValidator itemValidator;
+
+    @Before
+    public void setUp() throws Exception {
+        EverythingAboutARegister aboutARegister = mock(EverythingAboutARegister.class);
+        when(aboutARegister.getRegisterName()).thenReturn("register");
+        itemValidator = new ItemValidator(registerConfiguration, fieldsConfiguration, aboutARegister);
+    }
 
     @Test
     public void validateItem_throwsValidationException_givenPrimaryKeyOfRegisterNotExists() throws IOException {

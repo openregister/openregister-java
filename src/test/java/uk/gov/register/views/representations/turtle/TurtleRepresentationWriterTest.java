@@ -2,6 +2,7 @@ package uk.gov.register.views.representations.turtle;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
@@ -17,11 +18,20 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TurtleRepresentationWriterTest {
     private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
 
     private final Set<String> fields = ImmutableSet.of("address", "location", "link-values", "string-values");
+    private EverythingAboutARegister aboutARegister;
+
+    @Before
+    public void setUp() throws Exception {
+        aboutARegister = mock(EverythingAboutARegister.class);
+        when(aboutARegister.getRegisterName()).thenReturn("address");
+    }
 
     @Test
     public void rendersFieldPrefixFromConfiguration() throws Exception {
@@ -35,7 +45,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> "address", registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> aboutARegister, registerResolver);
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -48,7 +58,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        EntryTurtleWriter writer = new EntryTurtleWriter(() -> "address", registerResolver);
+        EntryTurtleWriter writer = new EntryTurtleWriter(() -> aboutARegister, registerResolver);
         writer.writeTo(entry, entry.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -68,7 +78,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> "address", registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> aboutARegister, registerResolver);
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -91,8 +101,9 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> "address", registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> aboutARegister, registerResolver);
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
 

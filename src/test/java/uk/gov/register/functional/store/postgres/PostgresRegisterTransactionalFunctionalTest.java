@@ -27,7 +27,9 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
 
@@ -134,7 +136,9 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
         TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
                 mock(ItemValidator.class));
-        return new PostgresRegister(() -> "address", new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore, new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)));
+        RegisterData registerData = mock(RegisterData.class, RETURNS_DEEP_STUBS);
+        when(registerData.getRegister().getRegisterName()).thenReturn("address");
+        return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore, new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)));
     }
 }
 

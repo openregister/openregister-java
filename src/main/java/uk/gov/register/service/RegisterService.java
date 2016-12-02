@@ -48,11 +48,10 @@ public class RegisterService {
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
         useTransaction(dbi, handle -> {
 
-            String registerName = registerData.getRegister().getRegisterName();
             EntryLog entryLog = new TransactionalEntryLog(transactionalMemoizationStore, handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
             ItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class), itemValidator);
             RecordIndex recordIndex = new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class));
-            Register register = new PostgresRegister(() -> registerName, registerFieldsConfiguration, entryLog, itemStore, recordIndex);
+            Register register = new PostgresRegister(registerData, registerFieldsConfiguration, entryLog, itemStore, recordIndex);
             callback.accept(register);
             register.commit();
         });

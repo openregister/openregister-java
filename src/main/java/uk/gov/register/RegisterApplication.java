@@ -36,8 +36,6 @@ import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.ViewFactory;
-import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
-import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Singleton;
 import javax.ws.rs.client.Client;
@@ -130,7 +128,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
-                bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
 
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(UnmodifiableEntryLog.class).to(EntryLog.class);
@@ -150,7 +147,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         if (configuration.cloudWatchEnvironmentName().isPresent()) {
             ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
-            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getRegisterName()), 0, 10000, TimeUnit.MILLISECONDS);
+            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getDefaultRegisterName()), 0, 10000, TimeUnit.MILLISECONDS);
         }
 
         environment.getApplicationContext().setErrorHandler(new AssetsBundleCustomErrorHandler(environment));

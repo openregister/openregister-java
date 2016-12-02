@@ -1,7 +1,6 @@
 package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.util.HashValue;
@@ -26,12 +25,12 @@ public class PostgresRegister implements Register {
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Inject
-    public PostgresRegister(RegisterNameConfiguration registerNameConfiguration,
+    public PostgresRegister(RegisterData registerData,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             RecordIndex recordIndex) {
-        registerName = registerNameConfiguration.getRegisterName();
+        registerName = registerData.getRegister().getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
