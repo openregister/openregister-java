@@ -129,31 +129,35 @@ main {
   @extend %outdent-to-full-width;
 }
 
-// comma-separated lists
+/* comma-separated lists */
+.field-list {
+  ul {
+    font-family: monospace;
+    letter-spacing: -1em;
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0;
 
-.field-list ul {
-  padding-left: 0;
-  margin-top: 0;
+    li {
+      display: inline-block;
+      letter-spacing: normal;
+      font-size: 16px;
+
+      &:after {
+        content: ",\a0";
+      }
+
+      &:last-child:after {
+        content: "";
+      }
+    }
+  }
+
+  &.field-list-in-table li {
+    font-size: 14px;
+  }
 }
 
-.field-list li {
-  font-family: monospace;
-  font-size: 16px;
-  display: inline-block;
-}
-
-.field-list li:after {
-  content: ",\a0";
-}
-
-.field-list li:last-child:after {
-  content: "";
-}
-
-.field-list-in-table li {
-  font-size: 14px;
-  padding-right: 0px;
-}
 
 // tables
 
