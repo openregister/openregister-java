@@ -1,13 +1,11 @@
 package uk.gov.register.resources;
 
-import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.HomePageView;
 import uk.gov.register.views.ViewFactory;
 
-import javax.ws.rs.core.Response;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Optional;
@@ -20,13 +18,11 @@ public class HomePageResourceTest {
 
     private RegisterReadOnly registerMock;
     private ViewFactory viewFactoryMock;
-    private Flyway flywayMock;
 
     @Before
     public void beforeEach() {
         registerMock = mock(RegisterReadOnly.class);
         viewFactoryMock = mock(ViewFactory.class);
-        flywayMock = mock(Flyway.class);
     }
 
     @Test
@@ -41,7 +37,7 @@ public class HomePageResourceTest {
         when(registerMock.getLastUpdatedTime()).thenReturn(lastUpdated);
         when(viewFactoryMock.homePageView(totalRecords, totalEntries, lastUpdated)).thenReturn(homePageView);
 
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("trackingId"), flywayMock);
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("trackingId"));
         homePageResource.home();
 
         verify(registerMock, times(1)).getTotalRecords();
@@ -51,7 +47,7 @@ public class HomePageResourceTest {
 
     @Test
     public void shouldRenderAnalyticsCodeIfPresent() throws Exception {
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("codeForTest"), flywayMock);
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("codeForTest"));
 
         String s = homePageResource.analyticsTrackingId();
 
@@ -60,7 +56,7 @@ public class HomePageResourceTest {
 
     @Test
     public void shouldRenderEmptyJsFileIfCodeIsAbsent() throws Exception {
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.empty(), flywayMock);
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.empty());
 
         String s = homePageResource.analyticsTrackingId();
 
