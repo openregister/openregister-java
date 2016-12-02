@@ -104,17 +104,15 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegistersConfiguration registersConfiguration = configManager.createRegistersConfiguration();
         FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
 
-        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
-        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData.getRegister().getFields());
-
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(flyway).to(Flyway.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
-                bind(registerData).to(RegisterData.class);
-                bind(registerFieldsConfiguration).to(RegisterFieldsConfiguration.class);
+                bindFactory(RegisterDataFactory.class).to(RegisterData.class);
+                bindFactory(RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
+                bindAsContract(RegisterFieldsConfiguration.class);
                 bind(jdbi);
                 bind(jdbi.onDemand(ItemQueryDAO.class)).to(ItemQueryDAO.class);
                 bind(jdbi.onDemand(EntryQueryDAO.class)).to(EntryQueryDAO.class);
