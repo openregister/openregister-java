@@ -7,10 +7,10 @@ import io.dropwizard.jackson.Jackson;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
-import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.representations.CsvRepresentation;
@@ -24,8 +24,8 @@ public class RecordView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private final Record record;
 
-    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record, RegisterDomainConfiguration registerDomainConfiguration, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration) {
-        super(requestContext, custodian, custodianBranding, "record.html", registerDomainConfiguration, registerData, registerTrackingConfiguration);
+    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, custodian, custodianBranding, "record.html", registerData, registerTrackingConfiguration, registerResolver);
         this.itemConverter = itemConverter;
         this.record = record;
         this.registerPrimaryKey = registerData.getRegister().getRegisterName();

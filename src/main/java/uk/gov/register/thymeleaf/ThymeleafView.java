@@ -4,9 +4,10 @@ import io.dropwizard.views.View;
 import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
+import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -18,17 +19,17 @@ import java.util.Optional;
 public class ThymeleafView extends View {
     protected final RequestContext requestContext;
     private final RegisterData registerData;
-    private final String registerDomain;
+    private final RegisterResolver registerResolver;
     private Optional<String> registerTrackingId;
     private String thymeleafTemplateName;
     protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    public ThymeleafView(RequestContext requestContext, String templateName, RegisterData registerData, RegisterDomainConfiguration registerDomainConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration) {
+    public ThymeleafView(RequestContext requestContext, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
         super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
         this.registerData = registerData;
-        this.registerDomain = registerDomainConfiguration.getRegisterDomain();
         this.registerTrackingId = registerTrackingConfiguration.getRegisterTrackingId();
+        this.registerResolver = registerResolver;
     }
 
     @Override
@@ -62,14 +63,19 @@ public class ThymeleafView extends View {
         return registerData.getRegister();
     }
 
+    @SuppressWarnings("unused, used by templates")
+    public LinkResolver getLinkResolver() {
+        return getRegisterResolver().getLinkResolver();
+    }
+
+    public RegisterResolver getRegisterResolver() {
+        return registerResolver;
+    }
+
     public Optional<String> getRenderedCopyrightText() {
         return getRegister().getCopyright().map(
                 markdownProcessor::markdown
         );
-    }
-
-    public String getRegisterDomain() {
-        return registerDomain;
     }
 
     public ServletContext getServletContext() {

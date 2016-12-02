@@ -3,14 +3,12 @@ package uk.gov.register.resources;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -27,22 +25,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SearchResourceTest {
-    @Mock
-    private HttpServletResponse servletResponse;
-
-    RequestContext requestContext;
     SearchResource resource;
     RegisterData registerData;
     RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Before
     public void setUp() throws Exception {
-        requestContext = new RequestContext(){
-            @Override
-            public HttpServletResponse getHttpServletResponse() {
-                return servletResponse;
-            }
-        };
         RegisterMetadata registerMetadata = mock(RegisterMetadata.class);
         registerData = mock(RegisterData.class);
         when(registerData.getRegister()).thenReturn(registerMetadata);
@@ -61,14 +49,14 @@ public class SearchResourceTest {
 
     @Test(expected = NotFoundException.class)
     public void find_doesNotRedirect_whenKeyDoesNotExistAsFieldInRegister() throws Exception {
-        resource = new SearchResource(requestContext, () -> "school", registerFieldsConfiguration);
+        resource = new SearchResource(() -> "school", registerFieldsConfiguration);
         resource.find("country-name", "United Kingdom");
     }
 
     @Test
     public void find_returns301_whenKeyExistsAsFieldInRegister() throws Exception {
         when(registerFieldsConfiguration.containsField("country-name")).thenReturn(true);
-        resource = new SearchResource(requestContext, () -> "school", registerFieldsConfiguration);
+        resource = new SearchResource(() -> "school", registerFieldsConfiguration);
 
         Response r = (Response) resource.find("country-name", "United Kingdom");
         assertThat(r.getStatus(), equalTo(301));

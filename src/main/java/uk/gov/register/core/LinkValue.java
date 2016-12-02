@@ -2,18 +2,26 @@ package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * A value representing a link. Its "value" is a string representation. It also knows
+ * its target register, and its primary key within the target register.
+ *
+ * For a regular LinkValue, the "value" and "linkKey" are the same. For a CurieValue, the "value"
+ * is the Curie as a string, while the "linkKey" is the second half of the Curie (after the colon).
+ */
 public class LinkValue implements FieldValue {
-    private static final String template = "%1$s://%2$s.%3$s/record/%4$s";
+    private final String targetRegister;
     private final String value;
-    private final String link;
+    private final String linkKey;
 
-    public LinkValue(String registerName, String registerDomain, String requestScheme, String value) {
-        this(registerName, registerDomain, requestScheme, value, value);
+    public LinkValue(String registerName, String value) {
+        this(registerName, value, value);
     }
 
-    private LinkValue(String registerName, String registerDomain, String requestScheme, String value, String linkKey){
+    private LinkValue(String registerName, String value, String linkKey){
+        this.targetRegister = registerName;
         this.value = value;
-        this.link = String.format(template, requestScheme, registerName, registerDomain, linkKey);
+        this.linkKey = linkKey;
     }
 
     @Override
@@ -27,17 +35,21 @@ public class LinkValue implements FieldValue {
         return value;
     }
 
-    public String link() {
-        return link;
-    }
-
     public boolean isList() {
         return false;
     }
 
+    public String getTargetRegister() {
+        return targetRegister;
+    }
+
+    public String getLinkKey() {
+        return linkKey;
+    }
+
     public static class CurieValue extends LinkValue {
-        public CurieValue(String curieValue, String registerDomain, String requestScheme) {
-            super(curieValue.split(":")[0], registerDomain, requestScheme, curieValue, curieValue.split(":")[1]);
+        public CurieValue(String curieValue) {
+            super(curieValue.split(":")[0], curieValue, curieValue.split(":")[1]);
         }
     }
 }

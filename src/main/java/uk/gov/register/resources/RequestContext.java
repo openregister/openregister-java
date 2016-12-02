@@ -10,7 +10,7 @@ import javax.ws.rs.core.Context;
 import java.util.Optional;
 
 @Service
-public class RequestContext {
+public class RequestContext implements SchemeContext {
 
     @Context
     HttpServletRequest httpServletRequest;
@@ -25,6 +25,7 @@ public class RequestContext {
     public RequestContext() {
     }
 
+    @Override
     public String getScheme() {
         Optional<String> header = Optional.ofNullable(httpServletRequest.getHeader("X-Forwarded-Proto"));
         return header.orElse(httpServletRequest.getScheme());

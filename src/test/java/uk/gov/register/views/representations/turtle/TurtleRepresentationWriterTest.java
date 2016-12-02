@@ -14,6 +14,7 @@ import uk.gov.register.views.EntryView;
 import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Map;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TurtleRepresentationWriterTest {
+    private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
     private RequestContext requestContext;
     private ItemConverter itemConverter;
     private ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
@@ -53,7 +55,7 @@ public class TurtleRepresentationWriterTest {
                     ? fieldsConfigurationMap.get(fieldName) : new Field(fieldName, "", "", Cardinality.ONE, "");
         });
 
-        itemConverter = new ItemConverter(fieldsConfiguration, requestContext, () -> "test.register.gov.uk");
+        itemConverter = new ItemConverter(fieldsConfiguration);
     }
 
     @Test
@@ -64,11 +66,11 @@ public class TurtleRepresentationWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), null, () -> Optional.empty(), registerResolver);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -77,11 +79,11 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key"), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key"), null, () -> Optional.empty(), registerResolver);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
+        EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(entryView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -92,16 +94,16 @@ public class TurtleRepresentationWriterTest {
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "address", new LinkValue("address", "test.register.gov.uk", "http", "1111111"),
+                        "address", new LinkValue("address", "1111111"),
                         "location", new StringValue("location-value"),
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash"), objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash"), objectMapper.valueToTree(map)), null, () -> Optional.empty(), registerResolver);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -115,16 +117,16 @@ public class TurtleRepresentationWriterTest {
     public void rendersLists() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "link-values", new ListValue(asList(new LinkValue("address", "test.register.gov.uk", "http", "1111111"), new LinkValue("address", "test.register.gov.uk", "http", "2222222"))),
+                        "link-values", new ListValue(asList(new LinkValue("address", "1111111"), new LinkValue("address", "2222222"))),
                         "string-values", new ListValue(asList(new StringValue("value1"), new StringValue("value2"))),
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), () -> "test.register.gov.uk", null, () -> Optional.empty());
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), null, () -> Optional.empty(), registerResolver);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "test.register.gov.uk", () -> "address");
+        ItemTurtleWriter writer = new ItemTurtleWriter(requestContext, () -> "address", registerResolver);
         writer.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
