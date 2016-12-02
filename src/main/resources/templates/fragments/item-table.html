@@ -15,11 +15,10 @@
             </tr>
         </thead>
         <tbody>
-            <th:block th:each="field : ${register.fields}">
-                <tr th:if="${content.containsKey(field)}">
+        <th:block th:each="field : ${register.fields}">
+            <tr th:if="${content.containsKey(field)}">
                 <td>
-                    <a th:href="${linkResolver.resolve('field', field)}"
-                       th:text="${field}"></a>
+                    <a th:href="${linkResolver.resolve('field', field)}" th:text="${field}"></a>
                 </td>
 
                 <td th:if="${content.get(field).isLink()}">
@@ -28,16 +27,15 @@
 
                 <td th:if="${content.get(field).isList()}" class="field-list field-list-in-table">
                     <ul>
-                        <th:block th:each="fieldValue : ${content.get(field)}">
-                            <li th:if="${fieldValue.isLink()}"><a th:href="${linkResolver.resolve(fieldValue)}" th:text="${fieldValue.value}"></a></li>
-                            <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
-                        </th:block>
+                    <th:block th:each="fieldValue : ${content.get(field)}">
+                        <li th:if="${fieldValue.isLink()}"><a th:href="${linkResolver.resolve(fieldValue)}" th:text="${fieldValue.value}"></a></li>
+                        <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
+                    </th:block>
                     </ul>
                 </td>
-
                 <td th:unless="${content.get(field).isLink() || content.get(field).isList()}" th:text="${content.get(field).value}"></td>
-                </tr>
-            </th:block>
+            </tr>
+        </th:block>
         </tbody>
     </table>
 </div>
