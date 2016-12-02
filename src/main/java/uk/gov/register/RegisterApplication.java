@@ -28,6 +28,7 @@ import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterDataFactory;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.core.UriTemplateRegisterResolver;
@@ -101,8 +102,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
-        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
-        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
 
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
@@ -115,8 +114,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(flyway).to(Flyway.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
-                bind(registerData).to(RegisterData.class);
-                bind(registerFieldsConfiguration).to(RegisterFieldsConfiguration.class);
+                bindFactory(RegisterDataFactory.class).to(RegisterData.class);
+                bindAsContract(RegisterFieldsConfiguration.class);
                 bind(jdbi);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
