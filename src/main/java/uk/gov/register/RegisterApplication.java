@@ -7,9 +7,6 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.flyway.FlywayBundle;
-import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -68,17 +65,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         bootstrap.addBundle(new AuthBundle());
         bootstrap.addBundle(new CorsBundle());
 
-        bootstrap.addBundle(new FlywayBundle<RegisterConfiguration>() {
-            @Override
-            public DataSourceFactory getDataSourceFactory(RegisterConfiguration configuration) {
-                return configuration.getDatabase();
-            }
-
-            @Override
-            public FlywayFactory getFlywayFactory(RegisterConfiguration configuration) {
-                return configuration.getFlywayFactory();
-            }
-        });
         System.setProperty("java.protocol.handler.pkgs", "uk.gov.register.protocols");
     }
 
