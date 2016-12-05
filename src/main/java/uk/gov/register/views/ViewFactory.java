@@ -60,7 +60,7 @@ public class ViewFactory {
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
         return new HomePageView(
-                getCustodian(),
+                getRegistry(),
                 getBranding(),
                 requestContext,
                 totalRecords,
@@ -81,30 +81,30 @@ public class ViewFactory {
     }
 
     public ItemView getItemView(Item item) {
-        return new ItemView(requestContext, getCustodian(), getBranding(), itemConverter, item, registerData, registerTrackingConfiguration, registerResolver);
+        return new ItemView(requestContext, getRegistry(), getBranding(), itemConverter, item, registerData, registerTrackingConfiguration, registerResolver);
     }
 
     public EntryView getEntryView(Entry entry) {
-        return new EntryView(requestContext, getCustodian(), getBranding(), entry, registerData, registerTrackingConfiguration, registerResolver);
+        return new EntryView(requestContext, getRegistry(), getBranding(), entry, registerData, registerTrackingConfiguration, registerResolver);
     }
 
     public EntryListView getEntriesView(Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, registerData, registerTrackingConfiguration, registerResolver);
+        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, registerData, registerTrackingConfiguration, registerResolver);
     }
 
     public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getCustodian(), getBranding(), entries, recordKey, registerData, registerTrackingConfiguration, registerResolver);
+        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, recordKey, registerData, registerTrackingConfiguration, registerResolver);
     }
 
     public RecordView getRecordView(Record record) {
-        return new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, record, registerData, registerTrackingConfiguration, registerResolver);
+        return new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, record, registerData, registerTrackingConfiguration, registerResolver);
     }
 
     public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
-        return new RecordListView(requestContext, getCustodian(), getBranding(), pagination, itemConverter, records, registerData, registerTrackingConfiguration, registerResolver);
+        return new RecordListView(requestContext, getRegistry(), getBranding(), pagination, itemConverter, records, registerData, registerTrackingConfiguration, registerResolver);
     }
 
-    private PublicBody getCustodian() {
+    private PublicBody getRegistry() {
         return publicBodiesConfiguration.getPublicBody(registerData.getRegister().getRegistry());
     }
 

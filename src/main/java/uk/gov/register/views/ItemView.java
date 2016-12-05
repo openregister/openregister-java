@@ -20,8 +20,8 @@ public class ItemView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private Item item;
 
-    public ItemView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Item item, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, custodian, branding, "item.html", registerData, registerTrackingConfiguration, registerResolver);
+    public ItemView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Item item, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, registry, branding, "item.html", registerData, registerTrackingConfiguration, registerResolver);
         this.itemConverter = itemConverter;
         this.item = item;
     }

@@ -24,8 +24,8 @@ public class RecordView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private final Record record;
 
-    public RecordView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, ItemConverter itemConverter, Record record, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, custodian, custodianBranding, "record.html", registerData, registerTrackingConfiguration, registerResolver);
+    public RecordView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Record record, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, registry, branding, "record.html", registerData, registerTrackingConfiguration, registerResolver);
         this.itemConverter = itemConverter;
         this.record = record;
         this.registerPrimaryKey = registerData.getRegister().getRegisterName();

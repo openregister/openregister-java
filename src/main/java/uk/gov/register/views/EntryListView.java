@@ -19,15 +19,15 @@ public class EntryListView extends CsvRepresentationView {
     private Collection<Entry> entries;
     private final Optional<String> recordKey;
 
-    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext,custodian, custodianBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
+    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Collection<Entry> entries, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext,registry, registryBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.empty();
     }
 
-    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Collection<Entry> entries, String recordKey, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, custodian, custodianBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
+    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Collection<Entry> entries, String recordKey, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, registry, registryBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.of(recordKey);

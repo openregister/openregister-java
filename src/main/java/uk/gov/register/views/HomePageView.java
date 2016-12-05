@@ -26,8 +26,8 @@ public class HomePageView extends AttributionView {
     private final RegisterContentPages registerContentPages;
 
     public HomePageView(
-            PublicBody custodian,
-            Optional<GovukOrganisation.Details> custodianBranding,
+            PublicBody registry,
+            Optional<GovukOrganisation.Details> registryBranding,
             RequestContext requestContext,
             int totalRecords,
             int totalEntries,
@@ -35,7 +35,7 @@ public class HomePageView extends AttributionView {
             RegisterData registerData,
             RegisterContentPages registerContentPages,
             RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, custodian, custodianBranding, "home.html", registerData, registerTrackingConfiguration, registerResolver);
+        super(requestContext, registry, registryBranding, "home.html", registerData, registerTrackingConfiguration, registerResolver);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;

@@ -26,8 +26,8 @@ public class RecordListView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private List<Record> records;
 
-    public RecordListView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Pagination pagination, ItemConverter itemConverter, List<Record> records, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, custodian, custodianBranding, "records.html", registerData, registerTrackingConfiguration, registerResolver);
+    public RecordListView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, Pagination pagination, ItemConverter itemConverter, List<Record> records, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, registry, branding, "records.html", registerData, registerTrackingConfiguration, registerResolver);
         this.pagination = pagination;
         this.itemConverter = itemConverter;
         this.records = records;
@@ -42,7 +42,7 @@ public class RecordListView extends CsvRepresentationView {
     }
 
     public List<RecordView> getRecords() {
-        return records.stream().map(r -> new RecordView(requestContext, getCustodian(), getBranding(), itemConverter, r, registerData, registerTrackingConfiguration, registerResolver)).collect(Collectors.toList());
+        return records.stream().map(r -> new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, r, registerData, registerTrackingConfiguration, registerResolver)).collect(Collectors.toList());
     }
 
     public Pagination getPagination() {

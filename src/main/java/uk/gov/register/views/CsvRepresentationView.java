@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public abstract class CsvRepresentationView<T> extends AttributionView {
 
-    public CsvRepresentationView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, custodian, custodianBranding, templateName, registerData, registerTrackingConfiguration, registerResolver);
+    public CsvRepresentationView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, registry, registryBranding, templateName, registerData, registerTrackingConfiguration, registerResolver);
     }
 
     public abstract CsvRepresentation<T> csvRepresentation();
