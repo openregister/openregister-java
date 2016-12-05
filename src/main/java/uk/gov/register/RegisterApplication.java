@@ -7,9 +7,6 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.flyway.FlywayBundle;
-import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -24,8 +21,8 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.AllTheRegisters;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.EverythingAboutARegisterProvider;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
@@ -80,18 +77,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         bootstrap.addBundle(new AssetsBundle("/assets"));
         bootstrap.addBundle(new AuthBundle());
         bootstrap.addBundle(new CorsBundle());
-
-        bootstrap.addBundle(new FlywayBundle<RegisterConfiguration>() {
-            @Override
-            public DataSourceFactory getDataSourceFactory(RegisterConfiguration configuration) {
-                return configuration.getDatabase();
-            }
-
-            @Override
-            public FlywayFactory getFlywayFactory(RegisterConfiguration configuration) {
-                return configuration.getFlywayFactory();
-            }
-        });
     }
 
     @Override
