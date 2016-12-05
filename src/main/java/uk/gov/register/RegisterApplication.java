@@ -90,6 +90,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
+        flyway.migrate();
 
         Optional<String> registersYamlFileUrl = Optional.ofNullable(System.getProperty("registersYaml"));
         Optional<String> fieldsYamlFileUrl = Optional.ofNullable(System.getProperty("fieldsYaml"));
