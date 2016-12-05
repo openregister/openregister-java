@@ -13,7 +13,6 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import org.flywaydb.core.Flyway;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
@@ -75,8 +74,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
-        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
-        flyway.migrate();
 
         Optional<String> registersYamlFileUrl = Optional.ofNullable(System.getProperty("registersYaml"));
         Optional<String> fieldsYamlFileUrl = Optional.ofNullable(System.getProperty("fieldsYaml"));
@@ -88,10 +85,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
 
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, registersConfiguration, environment);
+        allTheRegisters.stream().forEach(register -> register.getFlyway().migrate());
+
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(flyway).to(Flyway.class);
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
                 bindFactory(RegisterDataFactory.class).to(RegisterData.class);

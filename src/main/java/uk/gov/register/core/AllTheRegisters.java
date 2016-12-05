@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class AllTheRegisters {
     private EverythingAboutARegister defaultRegister;
@@ -15,4 +16,7 @@ public class AllTheRegisters {
         return otherRegisters.getOrDefault(name, defaultRegister);
     }
 
+    public Stream<EverythingAboutARegister> stream() {
+        return Stream.concat(Stream.of(defaultRegister),otherRegisters.values().stream());
+    }
 }
