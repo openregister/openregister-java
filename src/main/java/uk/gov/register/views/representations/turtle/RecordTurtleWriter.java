@@ -40,8 +40,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
     @Override
     protected Model rdfModelFor(RecordView view) {
-        EntryView entryView = new EntryView(requestContext, view.getCustodian(), view.getBranding(), view.getRecord().entry, registerData, registerTrackingConfiguration, registerResolver);
-        ItemView itemView = new ItemView(requestContext, view.getCustodian(), view.getBranding(), itemConverter, view.getRecord().item, registerData, registerTrackingConfiguration, registerResolver);
+        EntryView entryView = new EntryView(requestContext, view.getRegistry(), view.getBranding(), view.getRecord().entry, registerData, registerTrackingConfiguration, registerResolver);
+        ItemView itemView = new ItemView(requestContext, view.getRegistry(), view.getBranding(), itemConverter, view.getRecord().item, registerData, registerTrackingConfiguration, registerResolver);
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entryView);

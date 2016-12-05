@@ -12,24 +12,24 @@ import java.util.Optional;
 
 public class AttributionView extends ThymeleafView {
 
-    private final PublicBody custodian;
+    private final PublicBody registry;
 
-    private final Optional<GovukOrganisation.Details> custodianBranding;
+    private final Optional<GovukOrganisation.Details> registryBranding;
 
-    public AttributionView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+    public AttributionView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
         super(requestContext, templateName, registerData, registerTrackingConfiguration, registerResolver);
-        this.custodian = custodian;
-        this.custodianBranding = custodianBranding;
+        this.registry = registry;
+        this.registryBranding = registryBranding;
     }
 
     @SuppressWarnings("unused, used by templates")
-    public PublicBody getCustodian() {
-        return custodian;
+    public PublicBody getRegistry() {
+        return registry;
     }
 
     @SuppressWarnings("unused, used by templates")
     public Optional<GovukOrganisation.Details> getBranding() {
-        return custodianBranding;
+        return registryBranding;
     }
 }
 

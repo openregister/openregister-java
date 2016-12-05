@@ -35,7 +35,7 @@ public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListV
     @Override
     protected Model rdfModelFor(EntryListView view) {
         Model model = ModelFactory.createDefaultModel();
-        for (EntryView entryView : view.getEntries().stream().map(e -> new EntryView(requestContext, view.getCustodian(), view.getBranding(), e, registerData, registerTrackingConfiguration, registerResolver)).collect(Collectors.toList())) {
+        for (EntryView entryView : view.getEntries().stream().map(e -> new EntryView(requestContext, view.getRegistry(), view.getBranding(), e, registerData, registerTrackingConfiguration, registerResolver)).collect(Collectors.toList())) {
             model.add(new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entryView));
         }
         return model;

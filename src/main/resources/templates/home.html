@@ -11,7 +11,7 @@
             <div class="homepage-intro" th:utext="${registerText}">The register of UK government registers.</div>
             <dl class="primary-metadata">
                 <dt>Managed by:</dt>
-                <dd><th:block th:include="main.html :: organisation(${custodian}, ${branding})"></th:block></dd>
+                <dd><th:block th:include="main.html :: organisation(${registry}, ${branding})"></th:block></dd>
                 <dt>Total records:</dt>
                 <dd><a href="/records"><th:block th:text="${totalRecords}">Total</th:block><span class="visuallyhidden"> records</span></a></dd>
                 <dt>Total entries:</dt>

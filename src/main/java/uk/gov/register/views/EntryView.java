@@ -15,8 +15,8 @@ import java.util.Optional;
 public class EntryView extends CsvRepresentationView<Entry> {
     private Entry entry;
 
-    public EntryView(RequestContext requestContext, PublicBody custodian, Optional<GovukOrganisation.Details> custodianBranding, Entry entry, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, custodian, custodianBranding, "entry.html", registerData, registerTrackingConfiguration, registerResolver);
+    public EntryView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Entry entry, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+        super(requestContext, registry, registryBranding, "entry.html", registerData, registerTrackingConfiguration, registerResolver);
         this.entry = entry;
     }
 
