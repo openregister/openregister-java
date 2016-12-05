@@ -23,7 +23,6 @@ public class DeleteRegisterDataResource {
     @DataDeleteNotAllowed
     public Response deleteRegisterData() {
         flyway.clean();
-        flyway.setBaselineVersionAsString("0");
         flyway.migrate();
         return Response.status(200).entity("Data has been deleted").build();
     }
