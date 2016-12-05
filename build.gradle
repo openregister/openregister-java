@@ -204,13 +204,7 @@ task createDeployableBundle(type: Zip) {
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
 
-task migrateMainDb(type: JavaExec, dependsOn: ['classes']) {
-    main = 'uk.gov.register.RegisterApplication'
-    classpath = sourceSets.main.runtimeClasspath
-    args = ["db", "migrate", "config.yaml"]
-}
-
-task(run, type: JavaExec, dependsOn: ['classes', 'migrateMainDb']) {
+task(run, type: JavaExec, dependsOn: ['classes']) {
     main = 'uk.gov.register.RegisterApplication'
     classpath = sourceSets.main.runtimeClasspath
     args = ["server", "config.yaml"]
