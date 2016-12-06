@@ -12,7 +12,7 @@ import java.sql.SQLException;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface BindItem {
-    public static class ItemBinderFactory implements BinderFactory {
+    class ItemBinderFactory implements BinderFactory {
         public Binder build(Annotation annotation) {
             return (Binder<BindItem, Item>) (q, bind, arg) -> {
                 q.bind("sha256hex", arg.getSha256hex().getValue());

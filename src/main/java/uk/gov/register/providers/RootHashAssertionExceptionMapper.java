@@ -1,7 +1,6 @@
 package uk.gov.register.providers;
 
 import uk.gov.register.exceptions.RootHashAssertionException;
-import uk.gov.register.exceptions.SerializationFormatValidationException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface BindEntry {
-    public static class EntryBinderFactory implements BinderFactory {
+    class EntryBinderFactory implements BinderFactory {
         public Binder build(Annotation annotation) {
             return (Binder<BindEntry, Entry>) (q, bind, arg) -> {
                 q.bind("entry_number", arg.getEntryNumber());

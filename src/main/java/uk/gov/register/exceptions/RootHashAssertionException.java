@@ -6,8 +6,4 @@ public class RootHashAssertionException extends RuntimeException {
         super(message);
     }
 
-    public RootHashAssertionException(String message, Exception e) {
-        super(message, e);
-    }
-
 }

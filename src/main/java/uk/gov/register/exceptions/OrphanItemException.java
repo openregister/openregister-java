@@ -16,7 +16,7 @@ public class OrphanItemException extends RuntimeException {
         errorJson = JsonNodeFactory.instance.objectNode();
         errorJson.put("message", message);
         ArrayNode orphanArray = errorJson.putArray("orphanItems");
-        orphanItems.stream().forEach(i -> orphanArray.add(i.getContent()));
+        orphanItems.forEach(i -> orphanArray.add(i.getContent()));
     }
 
     public ObjectNode getErrorJson() {

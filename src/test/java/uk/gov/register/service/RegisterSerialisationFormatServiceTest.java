@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static java.util.Collections.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -106,7 +107,7 @@ public class RegisterSerialisationFormatServiceTest {
 
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() throws NoSuchAlgorithmException {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item).iterator());
+        when(register.getItemIterator()).thenReturn(singletonList(item).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"));
@@ -137,8 +138,8 @@ public class RegisterSerialisationFormatServiceTest {
         RegisterCommand assertRootOneEntryInRegister = new AssertRootHashCommand(oneEntryRegisterProof);
         RegisterCommand assertRootTwoEntriesInRegister = new AssertRootHashCommand(twoEntriesRegisterProof);
 
-        when(register.getItemIterator(1, 2)).thenReturn(Arrays.asList(item).iterator());
-        when(register.getEntryIterator(1, 2)).thenReturn(Arrays.asList(entry2).iterator());
+        when(register.getItemIterator(1, 2)).thenReturn(singletonList(item).iterator());
+        when(register.getEntryIterator(1, 2)).thenReturn(singletonList(entry2).iterator());
         when(register.getRegisterProof(1)).thenReturn(oneEntryRegisterProof);
         when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 

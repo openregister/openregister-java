@@ -1,16 +1,9 @@
 package uk.gov.register.resources;
 
 import org.flywaydb.core.Flyway;
-import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.views.HomePageView;
-import uk.gov.register.views.ViewFactory;
 
 import javax.ws.rs.core.Response;
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;

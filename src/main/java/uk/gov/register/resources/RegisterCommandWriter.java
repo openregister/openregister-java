@@ -4,7 +4,6 @@ import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
