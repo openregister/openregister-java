@@ -4,15 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.core.EverythingAboutARegister;
-import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
 
-import javax.inject.Inject;
 import java.util.Set;
 
 public class ItemValidator {
@@ -21,11 +19,10 @@ public class ItemValidator {
     private final RegistersConfiguration registersConfiguration;
     private final String registerName;
 
-    @Inject
-    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, EverythingAboutARegister aboutARegister) {
+    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, String registerName) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;
-        this.registerName = aboutARegister.getRegisterName();
+        this.registerName = registerName;
     }
 
     public void validateItem(JsonNode inputEntry) throws ItemValidationException {

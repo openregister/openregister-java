@@ -2,7 +2,6 @@ package uk.gov.register.resources;
 
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterData;
@@ -40,12 +39,12 @@ public class RecordResource {
     private Iterable<String> fields;
 
     @Inject
-    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, EverythingAboutARegister aboutThisRegister, ItemConverter itemConverter, RegisterData registerData) {
+    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterData registerData) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        registerPrimaryKey = aboutThisRegister.getRegisterName();
+        registerPrimaryKey = register.getRegisterName();
         this.itemConverter = itemConverter;
         this.fields = registerData.getRegister().getFields();
     }

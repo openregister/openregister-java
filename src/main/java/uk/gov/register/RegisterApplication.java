@@ -24,7 +24,6 @@ import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.service.RegisterService;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
@@ -104,7 +103,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
-                bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
                 bind(RegisterService.class).to(RegisterService.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);

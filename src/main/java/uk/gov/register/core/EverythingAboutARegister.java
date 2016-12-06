@@ -27,16 +27,12 @@ public class EverythingAboutARegister {
         this.flyway = flyway;
     }
 
-    public String getRegisterName() {
-        return registerName;
-    }
-
     public RegisterFieldsConfiguration getRegisterFieldsConfiguration() {
         return new RegisterFieldsConfiguration(getRegisterData().getRegister().getFields());
     }
 
     public RegisterData getRegisterData() {
-        return registersConfiguration.getRegisterData(getRegisterName());
+        return registersConfiguration.getRegisterData(registerName);
     }
 
     public MemoizationStore getMemoizationStore() {
@@ -69,7 +65,7 @@ public class EverythingAboutARegister {
                 new TransactionalItemStore(
                         handle.attach(ItemDAO.class),
                         handle.attach(ItemQueryDAO.class),
-                        new ItemValidator(registersConfiguration, fieldsConfiguration, this)),
+                        new ItemValidator(registersConfiguration, fieldsConfiguration, registerName)),
                 new TransactionalRecordIndex(
                         handle.attach(RecordQueryDAO.class),
                         handle.attach(CurrentKeysUpdateDAO.class)

@@ -41,4 +41,6 @@ public interface RegisterReadOnly {
 
     Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);
+
+    String getRegisterName();
 }

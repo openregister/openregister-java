@@ -2,10 +2,8 @@ package uk.gov.register.resources;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.EverythingAboutARegister;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.NotFoundException;
@@ -22,15 +20,14 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class SearchResourceTest {
     SearchResource resource;
     RegisterFieldsConfiguration registerFieldsConfiguration;
-    EverythingAboutARegister thisRegister;
+    RegisterReadOnly thisRegister;
 
     @Before
     public void setUp() throws Exception {
-        thisRegister = mock(EverythingAboutARegister.class);
+        thisRegister = mock(RegisterReadOnly.class);
         when(thisRegister.getRegisterName()).thenReturn("school");
         registerFieldsConfiguration = mock(RegisterFieldsConfiguration.class);
     }

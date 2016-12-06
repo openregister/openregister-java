@@ -25,11 +25,11 @@ public class TurtleRepresentationWriterTest {
     private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
 
     private final Set<String> fields = ImmutableSet.of("address", "location", "link-values", "string-values");
-    private EverythingAboutARegister aboutARegister;
+    private RegisterReadOnly aboutARegister;
 
     @Before
     public void setUp() throws Exception {
-        aboutARegister = mock(EverythingAboutARegister.class);
+        aboutARegister = mock(RegisterReadOnly.class);
         when(aboutARegister.getRegisterName()).thenReturn("address");
     }
 

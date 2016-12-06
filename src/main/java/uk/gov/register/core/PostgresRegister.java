@@ -11,9 +11,9 @@ import uk.gov.register.views.RegisterProof;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Iterator;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -162,5 +162,10 @@ public class PostgresRegister implements Register {
     @Override
     public Iterator<Item> getItemIterator(int start, int end) {
         return itemStore.getIterator(start, end);
+    }
+
+    @Override
+    public String getRegisterName() {
+        return registerName;
     }
 }

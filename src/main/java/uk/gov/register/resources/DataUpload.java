@@ -6,9 +6,9 @@ import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
@@ -33,11 +33,11 @@ public class DataUpload {
     private final RegisterService registerService;
     private final ObjectReconstructor objectReconstructor;
     private final RegisterSerialisationFormatService registerSerialisationFormatService;
-    private EverythingAboutARegister register;
+    private RegisterReadOnly register;
 
 
     @Inject
-    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService, EverythingAboutARegister register) {
+    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService, RegisterReadOnly register) {
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
         this.registerSerialisationFormatService = registerSerialisationFormatService;
