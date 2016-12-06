@@ -22,6 +22,7 @@ public class PostgresRegister implements Register {
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
+    private final RegisterMetadata registerMetadata;
 
     public PostgresRegister(RegisterData registerData,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
@@ -33,6 +34,7 @@ public class PostgresRegister implements Register {
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
+        this.registerMetadata = registerData.getRegister();
     }
 
     @Override
@@ -167,5 +169,10 @@ public class PostgresRegister implements Register {
     @Override
     public String getRegisterName() {
         return registerName;
+    }
+
+    @Override
+    public RegisterMetadata getRegisterMetadata() {
+        return registerMetadata;
     }
 }
