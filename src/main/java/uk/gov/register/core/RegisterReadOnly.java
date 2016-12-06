@@ -6,7 +6,6 @@ import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,7 +31,7 @@ public interface RegisterReadOnly extends RegisterNameConfiguration {
 
     List<Record> max100RecordsFacetedByKeyValue(String key, String value);
 
-    RegisterProof getRegisterProof() throws NoSuchAlgorithmException;
+    RegisterProof getRegisterProof();
     RegisterProof getRegisterProof(int entryNo);
     EntryProof getEntryProof(int entryNumber, int totalEntries);
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);

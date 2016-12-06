@@ -7,7 +7,6 @@ import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
 import javax.xml.bind.DatatypeConverter;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
@@ -57,7 +56,7 @@ public class EntryLog {
         return backingStoreDriver.getLastUpdatedTime();
     }
 
-    public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
+    public RegisterProof getRegisterProof() {
         String rootHash =  backingStoreDriver.withVerifiableLog(verifiableLog ->
                 bytesToString(verifiableLog.getCurrentRootHash()));
 

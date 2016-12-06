@@ -10,7 +10,6 @@ import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
-import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
 public class RegisterSerialisationFormatService {
@@ -36,16 +35,12 @@ public class RegisterSerialisationFormatService {
         Iterator<RegisterCommand> itemCommandsIterator = Iterators.transform(register.getItemIterator(), AddItemCommand::new);
         Iterator<RegisterCommand> entryCommandIterator = Iterators.transform(register.getEntryIterator(), AppendEntryCommand::new);
 
-        try {
-            return new RegisterSerialisationFormat(Iterators.concat(
-                    Iterators.forArray(new AssertRootHashCommand(emptyRegisterProof)),
-                    itemCommandsIterator,
-                    entryCommandIterator,
-                    Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof()))
-            ));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        return new RegisterSerialisationFormat(Iterators.concat(
+                Iterators.forArray(new AssertRootHashCommand(emptyRegisterProof)),
+                itemCommandsIterator,
+                entryCommandIterator,
+                Iterators.forArray(new AssertRootHashCommand(register.getRegisterProof()))
+        ));
     }
 
     public RegisterSerialisationFormat createRegisterSerialisationFormat(int totalEntries1, int totalEntries2) {
