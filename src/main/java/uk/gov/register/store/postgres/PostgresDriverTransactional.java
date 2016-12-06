@@ -30,6 +30,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final List<Entry> stagedEntries;
     private final HashMap<HashValue, Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
+    private final int initialEntryCount;
 
     private PostgresDriverTransactional(Handle handle, TransactionalMemoizationStore memoizationStore) {
         super(memoizationStore);
@@ -38,6 +39,8 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
+        this.initialEntryCount = super.getTotalEntries();
+
     }
 
     protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
@@ -50,6 +53,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
+        this.initialEntryCount = super.getTotalEntries();
     }
 
     public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
@@ -104,7 +108,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     @Override
     public int getTotalEntries() {
         OptionalInt maxStagedEntryNumber = getMaxStagedEntryNumber();
-        return maxStagedEntryNumber.orElseGet(super::getTotalEntries);
+        return maxStagedEntryNumber.orElse(initialEntryCount);
     }
 
     @Override
@@ -115,11 +119,6 @@ public class PostgresDriverTransactional extends PostgresDriver {
     @Override
     protected <ReturnType> ReturnType withHandle(HandleCallback<ReturnType> callback) {
         return writeDataUsingExistingHandle(callback);
-    }
-
-    @Override
-    protected <ReturnType> ReturnType withHandleRead(HandleCallback<ReturnType> callback) {
-        return readDataUsingExistingHandle(callback);
     }
 
     @Override
@@ -138,14 +137,6 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private <ReturnType> ReturnType writeDataUsingExistingHandle(HandleCallback<ReturnType> callback) {
         try {
             writeStagedData();
-            return callback.withHandle(handle);
-        } catch (Exception ex) {
-            throw new CallbackFailedException(ex);
-        }
-    }
-
-    private <ReturnType> ReturnType readDataUsingExistingHandle(HandleCallback<ReturnType> callback) {
-        try {
             return callback.withHandle(handle);
         } catch (Exception ex) {
             throw new CallbackFailedException(ex);
