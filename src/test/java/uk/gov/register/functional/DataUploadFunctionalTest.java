@@ -55,8 +55,7 @@ public class DataUploadFunctionalTest {
                 "entry-number", "1",
                 "item-hash", storedItem.hashValue.toString(),
                 "register", "ft_openregister_test",
-                "text", "SomeText",
-                "key", "ft_openregister_test"
+                "text", "SomeText"
         )));
     }
 
