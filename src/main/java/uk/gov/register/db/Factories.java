@@ -64,7 +64,7 @@ public abstract class Factories {
 
         @Override
         public Register provide() {
-            return aboutARegister.getOnDemandRegister();
+            return aboutARegister.buildOnDemandRegister();
         }
     }
 }

@@ -39,6 +39,7 @@ public class EverythingAboutARegisterFactory {
         return new EverythingAboutARegister(
                 registerName,
                 registersConfiguration,
+                fieldsConfiguration,
                 new InMemoryPowOfTwoNoLeaves(),
                 dbiFactory.build(environment, database, registerName),
                 getFlywayFactory(registerName).build(database.build(environment.metrics(), registerName + "_flyway")));
