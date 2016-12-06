@@ -122,6 +122,11 @@ public class PostgresDriverTransactional extends PostgresDriver {
     }
 
     @Override
+    protected <ReturnType> ReturnType withHandleRead(HandleCallback<ReturnType> callback) {
+        return readDataUsingExistingHandle(callback);
+    }
+
+    @Override
     protected <ReturnType> ReturnType inTransaction(HandleCallback<ReturnType> callback) {
         return writeDataUsingExistingHandle(callback);
     }
@@ -137,6 +142,14 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private <ReturnType> ReturnType writeDataUsingExistingHandle(HandleCallback<ReturnType> callback) {
         try {
             writeStagedData();
+            return callback.withHandle(handle);
+        } catch (Exception ex) {
+            throw new CallbackFailedException(ex);
+        }
+    }
+
+    private <ReturnType> ReturnType readDataUsingExistingHandle(HandleCallback<ReturnType> callback) {
+        try {
             return callback.withHandle(handle);
         } catch (Exception ex) {
             throw new CallbackFailedException(ex);
