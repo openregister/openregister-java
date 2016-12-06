@@ -18,7 +18,6 @@ import java.util.Optional;
 
 public class RegisterConfiguration extends Configuration
         implements AuthenticatorConfiguration,
-        RegisterNameConfiguration,
         RegisterDomainConfiguration,
         RegisterContentPagesConfiguration,
         ResourceConfiguration,

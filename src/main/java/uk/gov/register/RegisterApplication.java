@@ -24,6 +24,7 @@ import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
@@ -134,7 +135,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
                 bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
 
-                bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
+                bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class).to(RegisterNameConfiguration.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);

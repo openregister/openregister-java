@@ -160,4 +160,9 @@ public class PostgresRegister implements Register {
     public Iterator<Item> getItemIterator(int start, int end) {
         return itemStore.getIterator(start, end);
     }
+
+    @Override
+    public String getRegisterName() {
+        return registerName;
+    }
 }
