@@ -3,6 +3,7 @@ package uk.gov.register.db;
 import org.glassfish.hk2.api.Factory;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.core.EverythingAboutARegister;
+import uk.gov.register.core.Register;
 
 import javax.inject.Inject;
 
@@ -50,6 +51,20 @@ public abstract class Factories {
         @Override
         public RecordQueryDAO provide() {
             return dbi.onDemand(RecordQueryDAO.class);
+        }
+    }
+
+    public static class PostgresRegisterFactory extends SimpleFactory<Register> {
+        private final EverythingAboutARegister aboutARegister;
+
+        @Inject
+        public PostgresRegisterFactory(EverythingAboutARegister aboutARegister) {
+            this.aboutARegister = aboutARegister;
+        }
+
+        @Override
+        public Register provide() {
+            return aboutARegister.getOnDemandRegister();
         }
     }
 }

@@ -4,6 +4,7 @@ import org.flywaydb.core.Flyway;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 public class EverythingAboutARegister {
@@ -25,7 +26,7 @@ public class EverythingAboutARegister {
         return registerName;
     }
 
-    public RegisterFieldsConfiguration getFieldsConfiguration() {
+    public RegisterFieldsConfiguration getRegisterFieldsConfiguration() {
         return new RegisterFieldsConfiguration(getRegisterData().getRegister().getFields());
     }
 
@@ -43,5 +44,18 @@ public class EverythingAboutARegister {
 
     public Flyway getFlyway() {
         return flyway;
+    }
+
+    public Register getOnDemandRegister() {
+        DBI dbi = getDbi();
+        EntryQueryDAO entryQueryDAO = dbi.onDemand(EntryQueryDAO.class);
+        ItemQueryDAO itemQueryDAO = dbi.onDemand(ItemQueryDAO.class);
+        RecordQueryDAO recordQueryDAO = dbi.onDemand(RecordQueryDAO.class);
+        return new PostgresRegister(getRegisterData(),
+                getRegisterFieldsConfiguration(),
+                new UnmodifiableEntryLog(memoizationStore, entryQueryDAO),
+                new UnmodifiableItemStore(itemQueryDAO),
+                new UnmodifiableRecordIndex(recordQueryDAO)
+        );
     }
 }

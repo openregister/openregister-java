@@ -96,7 +96,7 @@ public class PostgresRegisterTest {
 
         verify(recordIndex, times(1)).updateRecordIndex(eq(entryNotDangling.getKey()), eq(entryNotDangling.getEntryNumber()));
     }
-    
+
     private RegisterData registerData(String registerName) {
         RegisterData mock = mock(RegisterData.class, RETURNS_DEEP_STUBS);
         when(mock.getRegister().getRegisterName()).thenReturn(registerName);

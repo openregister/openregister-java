@@ -2,6 +2,7 @@ package uk.gov.register.core;
 
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 
 import java.util.Map;
@@ -19,16 +20,16 @@ public class AllTheRegistersFactory {
         this.defaultRegisterName = defaultRegisterName;
     }
 
-    public AllTheRegisters build(DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, Environment environment) {
+    public AllTheRegisters build(DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
         Map<String, EverythingAboutARegister> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
-                e -> buildRegister(e.getKey(), e.getValue(), dbiFactory, registersConfiguration, environment)));
+                e -> buildRegister(e.getKey(), e.getValue(), dbiFactory, registersConfiguration, fieldsConfiguration, environment)));
         return new AllTheRegisters(
-                defaultRegisterFactory.build(defaultRegisterName, dbiFactory, registersConfiguration, environment),
+                defaultRegisterFactory.build(defaultRegisterName, dbiFactory, registersConfiguration, fieldsConfiguration, environment),
                 builtRegisters
         );
     }
 
-    public EverythingAboutARegister buildRegister(String registerName, EverythingAboutARegisterFactory registerFactory, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, Environment environment) {
-        return registerFactory.build(registerName, dbiFactory, registersConfiguration, environment);
+    private EverythingAboutARegister buildRegister(String registerName, EverythingAboutARegisterFactory registerFactory, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
+        return registerFactory.build(registerName, dbiFactory, registersConfiguration, fieldsConfiguration, environment);
     }
 }

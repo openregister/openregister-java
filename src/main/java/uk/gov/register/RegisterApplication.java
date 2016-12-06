@@ -84,7 +84,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegistersConfiguration registersConfiguration = configManager.createRegistersConfiguration();
         FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
 
-        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, registersConfiguration, environment);
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, registersConfiguration, mintFieldsConfiguration, environment);
         allTheRegisters.stream().forEach(register -> register.getFlyway().migrate());
 
         jersey.register(new AbstractBinder() {
@@ -114,7 +114,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
 
-                bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
+                bindFactory(Factories.PostgresRegisterFactory.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(UnmodifiableEntryLog.class).to(EntryLog.class);
                 bind(UnmodifiableItemStore.class).to(ItemStore.class);
                 bind(UnmodifiableRecordIndex.class).to(RecordIndex.class);

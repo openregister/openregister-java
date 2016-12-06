@@ -5,6 +5,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 
@@ -34,7 +35,7 @@ public class EverythingAboutARegisterFactory {
         return flywayFactory;
     }
 
-    public EverythingAboutARegister build(String registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, Environment environment) {
+    public EverythingAboutARegister build(String registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
         return new EverythingAboutARegister(
                 registerName,
                 registersConfiguration,

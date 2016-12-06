@@ -12,7 +12,6 @@ import uk.gov.register.core.ItemStore;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.RecordIndex;
 import uk.gov.register.core.Register;
-import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.TransactionalMemoizationStore;
 import uk.gov.register.db.CurrentKeysUpdateDAO;
 import uk.gov.register.db.EntryDAO;
@@ -23,35 +22,28 @@ import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.db.TransactionalEntryLog;
 import uk.gov.register.db.TransactionalItemStore;
 import uk.gov.register.db.TransactionalRecordIndex;
-import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Inject;
 import java.util.function.Consumer;
 
 public class RegisterService {
-    private final RegisterData registerData;
-    private final DBI dbi;
-    private final MemoizationStore memoizationStore;
     private final ItemValidator itemValidator;
-    private final RegisterFieldsConfiguration registerFieldsConfiguration;
+    private final EverythingAboutARegister aboutARegister;
 
     @Inject
-    public RegisterService(ItemValidator itemValidator, EverythingAboutARegister everythingAboutARegister) {
-        this.registerData = everythingAboutARegister.getRegisterData();
-        this.dbi = everythingAboutARegister.getDbi();
-        this.memoizationStore = everythingAboutARegister.getMemoizationStore();
+    public RegisterService(ItemValidator itemValidator, EverythingAboutARegister aboutARegister) {
         this.itemValidator = itemValidator;
-        this.registerFieldsConfiguration = everythingAboutARegister.getFieldsConfiguration();
+        this.aboutARegister = aboutARegister;
     }
 
     public void asAtomicRegisterOperation(Consumer<Register> callback) {
-        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
-        useTransaction(dbi, handle -> {
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(aboutARegister.getMemoizationStore());
+        useTransaction(aboutARegister.getDbi(), handle -> {
 
             EntryLog entryLog = new TransactionalEntryLog(transactionalMemoizationStore, handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
             ItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class), itemValidator);
             RecordIndex recordIndex = new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class));
-            Register register = new PostgresRegister(registerData, registerFieldsConfiguration, entryLog, itemStore, recordIndex);
+            Register register = new PostgresRegister(aboutARegister.getRegisterData(), aboutARegister.getRegisterFieldsConfiguration(), entryLog, itemStore, recordIndex);
             callback.accept(register);
             register.commit();
         });
