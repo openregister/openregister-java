@@ -12,7 +12,7 @@ public class HtmlViewSupport {
         UriBuilder uriBuilder = UriBuilder.fromPath(requestPath);
 
         Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
-        parameterMap.keySet().stream().forEach(key ->
+        parameterMap.keySet().forEach(key ->
                         uriBuilder.queryParam(key, parameterMap.get(key)[0])
         );
 

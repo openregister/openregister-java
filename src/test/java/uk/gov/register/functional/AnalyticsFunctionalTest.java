@@ -48,13 +48,11 @@ public class AnalyticsFunctionalTest {
     }
 
     private final String targetUrl;
-    private final String trackingId;
     private final Boolean shouldIncludeAnalytics;
 
     public AnalyticsFunctionalTest(String targetUrl, String trackingId, Boolean shouldIncludeAnalytics) {
         this.register = createRegister(trackingId);
         this.targetUrl = targetUrl;
-        this.trackingId = trackingId;
         this.shouldIncludeAnalytics = shouldIncludeAnalytics;
     }
 

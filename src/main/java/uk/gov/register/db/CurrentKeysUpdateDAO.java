@@ -5,7 +5,6 @@ import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlBatch;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
-import org.skife.jdbi.v2.unstable.BindIn;
 
 @UseStringTemplate3StatementLocator
 public interface CurrentKeysUpdateDAO {

@@ -1,6 +1,5 @@
 package uk.gov.register.store;
 
-import com.google.common.base.Function;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
@@ -12,6 +11,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public interface BackingStoreDriver {
 

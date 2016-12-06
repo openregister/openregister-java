@@ -6,12 +6,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
-import uk.gov.register.util.CanonicalJsonMapper;
-import uk.gov.register.util.CanonicalJsonValidator;
-import uk.gov.register.util.ObjectReconstructor;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
