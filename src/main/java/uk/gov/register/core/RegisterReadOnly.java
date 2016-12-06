@@ -41,4 +41,6 @@ public interface RegisterReadOnly extends RegisterNameConfiguration {
 
     Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);
+
+    RegisterMetadata getRegisterMetadata();
 }

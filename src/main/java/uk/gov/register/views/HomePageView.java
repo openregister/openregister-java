@@ -4,7 +4,7 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.RegisterContentPages;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 
@@ -32,10 +32,11 @@ public class HomePageView extends AttributionView {
             int totalRecords,
             int totalEntries,
             Optional<Instant> lastUpdated,
-            RegisterData registerData,
             RegisterContentPages registerContentPages,
-            RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registry, registryBranding, "home.html", registerData, registerTrackingConfiguration, registerResolver);
+            RegisterTrackingConfiguration registerTrackingConfiguration,
+            RegisterResolver registerResolver,
+            RegisterReadOnly register) {
+        super(requestContext, registry, registryBranding, "home.html", registerTrackingConfiguration, registerResolver, register);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;

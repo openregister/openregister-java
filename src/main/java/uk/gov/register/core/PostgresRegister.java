@@ -25,6 +25,7 @@ public class PostgresRegister implements Register {
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
+    private final RegisterMetadata registerMetadata;
 
     @Inject
     public PostgresRegister(RegisterData registerData,
@@ -37,6 +38,7 @@ public class PostgresRegister implements Register {
         this.itemStore = new ItemStore(backingStoreDriver, itemValidator, registerName);
         this.recordIndex = new RecordIndex(backingStoreDriver);
         this.registerFieldsConfiguration = registerFieldsConfiguration;
+        this.registerMetadata = registerData.getRegister();
     }
 
     @Override
@@ -158,6 +160,11 @@ public class PostgresRegister implements Register {
     @Override
     public Iterator<Item> getItemIterator(int start, int end) {
         return itemStore.getIterator(start, end);
+    }
+
+    @Override
+    public RegisterMetadata getRegisterMetadata() {
+        return registerMetadata;
     }
 
     @Override

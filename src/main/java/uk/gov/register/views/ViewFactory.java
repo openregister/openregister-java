@@ -27,6 +27,7 @@ public class ViewFactory {
     private final RegisterDomainConfiguration registerDomainConfiguration;
     private final RegisterContentPages registerContentPages;
     private final RegisterResolver registerResolver;
+    private final RegisterReadOnly register;
     private RegisterTrackingConfiguration registerTrackingConfiguration;
 
     @Inject
@@ -38,7 +39,8 @@ public class ViewFactory {
                        RegisterContentPagesConfiguration registerContentPagesConfiguration,
                        RegisterData registerData,
                        RegisterTrackingConfiguration registerTrackingConfiguration,
-                       RegisterResolver registerResolver) {
+                       RegisterResolver registerResolver,
+                       RegisterReadOnly register) {
         this.requestContext = requestContext;
         this.itemConverter = itemConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
@@ -48,14 +50,15 @@ public class ViewFactory {
         this.registerContentPages = new RegisterContentPages(registerContentPagesConfiguration.getRegisterHistoryPageUrl());
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
+        this.register = register;
     }
 
     public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, templateName, registerData, registerTrackingConfiguration, registerResolver);
+        return new ThymeleafView(requestContext, templateName, registerTrackingConfiguration, registerResolver, register);
     }
 
     public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, e, registerData, registerTrackingConfiguration, registerResolver);
+        return new BadRequestExceptionView(requestContext, e, registerTrackingConfiguration, registerResolver, register);
     }
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
@@ -66,14 +69,13 @@ public class ViewFactory {
                 totalRecords,
                 totalEntries,
                 lastUpdated,
-                registerData,
                 registerContentPages,
                 registerTrackingConfiguration,
-                registerResolver);
+                registerResolver, register);
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
-        return new DownloadPageView(requestContext, registerData, enableDownloadResource, registerTrackingConfiguration, registerResolver);
+        return new DownloadPageView(requestContext, enableDownloadResource, registerTrackingConfiguration, registerResolver, register);
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
@@ -81,27 +83,27 @@ public class ViewFactory {
     }
 
     public ItemView getItemView(Item item) {
-        return new ItemView(requestContext, getRegistry(), getBranding(), itemConverter, item, registerData, registerTrackingConfiguration, registerResolver);
+        return new ItemView(requestContext, getRegistry(), getBranding(), itemConverter, item, registerTrackingConfiguration, registerResolver, register);
     }
 
     public EntryView getEntryView(Entry entry) {
-        return new EntryView(requestContext, getRegistry(), getBranding(), entry, registerData, registerTrackingConfiguration, registerResolver);
+        return new EntryView(requestContext, getRegistry(), getBranding(), entry, registerTrackingConfiguration, registerResolver, register);
     }
 
     public EntryListView getEntriesView(Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, registerData, registerTrackingConfiguration, registerResolver);
+        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, registerTrackingConfiguration, registerResolver, register);
     }
 
     public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, recordKey, registerData, registerTrackingConfiguration, registerResolver);
+        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, recordKey, registerTrackingConfiguration, registerResolver, register);
     }
 
     public RecordView getRecordView(Record record) {
-        return new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, record, registerData, registerTrackingConfiguration, registerResolver);
+        return new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, record, registerTrackingConfiguration, registerResolver, register);
     }
 
     public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
-        return new RecordListView(requestContext, getRegistry(), getBranding(), pagination, itemConverter, records, registerData, registerTrackingConfiguration, registerResolver);
+        return new RecordListView(requestContext, getRegistry(), getBranding(), pagination, itemConverter, records, registerTrackingConfiguration, registerResolver, register);
     }
 
     private PublicBody getRegistry() {

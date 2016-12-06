@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mock;
+import uk.gov.register.core.EmptyRegister;
 import uk.gov.register.resources.RequestContext;
 
 import java.net.URI;
@@ -33,7 +34,7 @@ public class DownloadPageViewTest {
 
     @Test
     public void getDownloadEnabled_returnsTheSameValuePassedInConstructor() throws Exception {
-        DownloadPageView downloadPageView = new DownloadPageView(mockRequestContext, null , enableResourceDownload, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
+        DownloadPageView downloadPageView = new DownloadPageView(mockRequestContext, enableResourceDownload, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"), new EmptyRegister());
         assertThat(downloadPageView.getDownloadEnabled(), equalTo(enableResourceDownload));
     }
 }
