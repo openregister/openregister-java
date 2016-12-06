@@ -5,7 +5,7 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
 import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
@@ -19,21 +19,21 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RecordListView extends CsvRepresentationView {
-    private final RegisterData registerData;
     private final RegisterResolver registerResolver;
+    private final RegisterReadOnly register;
     private RegisterTrackingConfiguration registerTrackingConfiguration;
     private Pagination pagination;
     private ItemConverter itemConverter;
     private List<Record> records;
 
-    public RecordListView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, Pagination pagination, ItemConverter itemConverter, List<Record> records, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registry, branding, "records.html", registerData, registerTrackingConfiguration, registerResolver);
+    public RecordListView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, Pagination pagination, ItemConverter itemConverter, List<Record> records, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, RegisterReadOnly register) {
+        super(requestContext, registry, branding, "records.html", registerTrackingConfiguration, registerResolver, register);
         this.pagination = pagination;
         this.itemConverter = itemConverter;
         this.records = records;
-        this.registerData = registerData;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
+        this.register = register;
     }
 
     @JsonValue
@@ -42,7 +42,7 @@ public class RecordListView extends CsvRepresentationView {
     }
 
     public List<RecordView> getRecords() {
-        return records.stream().map(r -> new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, r, registerData, registerTrackingConfiguration, registerResolver)).collect(Collectors.toList());
+        return records.stream().map(r -> new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, r, registerTrackingConfiguration, registerResolver, register)).collect(Collectors.toList());
     }
 
     public Pagination getPagination() {

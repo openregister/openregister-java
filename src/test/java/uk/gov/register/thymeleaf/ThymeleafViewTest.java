@@ -1,16 +1,16 @@
 package uk.gov.register.thymeleaf;
 
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.EmptyRegister;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.resources.RequestContext;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -25,10 +25,9 @@ public class ThymeleafViewTest {
 
     @Before
     public void setUp() throws Exception {
-        RegisterData register = new RegisterData(ImmutableMap.of(
-                "register", new TextNode("company-limited-by-guarantee"),
-                "copyright", new TextNode("Copyright text [with link](http://www.example.com/copyright)")));
-        thymeleafView = new ThymeleafView(requestContext, "don't care", register, () -> Optional.empty(), registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"));
+        RegisterMetadata registerMetadata = new RegisterMetadata("company-limited-by-guarantee", Collections.emptyList(), "Copyright text [with link](http://www.example.com/copyright)", null, null, null);
+        EmptyRegister register = new EmptyRegister(registerMetadata);
+        thymeleafView = new ThymeleafView(requestContext, "don't care", () -> Optional.empty(), registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"), register);
     }
 
     @Test

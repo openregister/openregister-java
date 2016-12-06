@@ -1,18 +1,18 @@
 package uk.gov.register.core;
 
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-public interface RegisterReadOnly {
+public interface RegisterReadOnly extends RegisterNameConfiguration {
     Optional<Item> getItemBySha256(HashValue hash);
     Collection<Item> getAllItems();
 
@@ -31,7 +31,7 @@ public interface RegisterReadOnly {
 
     List<Record> max100RecordsFacetedByKeyValue(String key, String value);
 
-    RegisterProof getRegisterProof() throws NoSuchAlgorithmException;
+    RegisterProof getRegisterProof();
     RegisterProof getRegisterProof(int entryNo);
     EntryProof getEntryProof(int entryNumber, int totalEntries);
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
@@ -41,4 +41,6 @@ public interface RegisterReadOnly {
 
     Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);
+
+    RegisterMetadata getRegisterMetadata();
 }

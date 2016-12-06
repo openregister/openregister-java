@@ -6,7 +6,7 @@ import org.markdownj.MarkdownProcessor;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 
@@ -18,18 +18,18 @@ import java.util.Optional;
 
 public class ThymeleafView extends View {
     protected final RequestContext requestContext;
-    private final RegisterData registerData;
     private final RegisterResolver registerResolver;
+    private final RegisterReadOnly register;
     private Optional<String> registerTrackingId;
     private String thymeleafTemplateName;
     protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    public ThymeleafView(RequestContext requestContext, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+    public ThymeleafView(RequestContext requestContext, String templateName, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, RegisterReadOnly register) {
         super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
-        this.registerData = registerData;
         this.registerTrackingId = registerTrackingConfiguration.getRegisterTrackingId();
         this.registerResolver = registerResolver;
+        this.register = register;
     }
 
     @Override
@@ -56,11 +56,11 @@ public class ThymeleafView extends View {
     }
 
     public String getRegisterId() {
-        return registerData.getRegister().getRegisterName();
+        return register.getRegisterName();
     }
 
     public RegisterMetadata getRegister() {
-        return registerData.getRegister();
+        return register.getRegisterMetadata();
     }
 
     @SuppressWarnings("unused, used by templates")

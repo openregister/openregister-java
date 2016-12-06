@@ -1,7 +1,5 @@
 package uk.gov.register.views;
 
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
@@ -45,8 +43,8 @@ public class RecordListViewTest {
                         new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"))
                 )
         );
-        RegisterData registerData = new RegisterData(ImmutableMap.of("register", new TextNode("address")));
-        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty())), records, registerData, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
+        RegisterReadOnly register = new EmptyRegister("address");
+        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty())), records, () -> Optional.empty(), registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"), register);
 
         Map<String, RecordView> result = recordListView.recordsJson();
         assertThat(result.size(), equalTo(2));

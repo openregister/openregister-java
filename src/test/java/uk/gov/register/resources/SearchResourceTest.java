@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.RegisterData;
-import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.NotFoundException;
@@ -26,14 +24,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SearchResourceTest {
     SearchResource resource;
-    RegisterData registerData;
     RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Before
     public void setUp() throws Exception {
-        RegisterMetadata registerMetadata = mock(RegisterMetadata.class);
-        registerData = mock(RegisterData.class);
-        when(registerData.getRegister()).thenReturn(registerMetadata);
         registerFieldsConfiguration = mock(RegisterFieldsConfiguration.class);
     }
 

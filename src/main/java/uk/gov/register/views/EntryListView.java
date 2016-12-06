@@ -5,7 +5,7 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
@@ -19,15 +19,15 @@ public class EntryListView extends CsvRepresentationView {
     private Collection<Entry> entries;
     private final Optional<String> recordKey;
 
-    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Collection<Entry> entries, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext,registry, registryBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
+    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Collection<Entry> entries, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, RegisterReadOnly register) {
+        super(requestContext,registry, registryBranding, "entries.html", registerTrackingConfiguration, registerResolver, register);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.empty();
     }
 
-    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Collection<Entry> entries, String recordKey, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registry, registryBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
+    public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Collection<Entry> entries, String recordKey, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, RegisterReadOnly register) {
+        super(requestContext, registry, registryBranding, "entries.html", registerTrackingConfiguration, registerResolver, register);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.of(recordKey);

@@ -66,7 +66,7 @@ public class TurtleRepresentationWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), null, () -> Optional.empty(), registerResolver);
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), () -> Optional.empty(), registerResolver, new EmptyRegister());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -79,7 +79,7 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key"), null, () -> Optional.empty(), registerResolver);
+        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key"), () -> Optional.empty(), registerResolver, new EmptyRegister());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -99,7 +99,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash"), objectMapper.valueToTree(map)), null, () -> Optional.empty(), registerResolver);
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash"), objectMapper.valueToTree(map)), () -> Optional.empty(), registerResolver, new EmptyRegister());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -122,7 +122,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), null, () -> Optional.empty(), registerResolver);
+        ItemView itemView = new ItemView(requestContext, null, null, itemConverter, new Item(new HashValue(HashingAlgorithm.SHA256, "hash"), objectMapper.valueToTree(map)), () -> Optional.empty(), registerResolver, new EmptyRegister());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

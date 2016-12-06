@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.core.EmptyRegister;
 import uk.gov.register.resources.RequestContext;
 
 import java.net.URI;
@@ -21,7 +22,7 @@ public class ThymeleafViewAnalyticsTest {
 
     @Test
     public void shouldAnalyticsCode() {
-        ThymeleafView sutView = new ThymeleafView(mockRequestContext, "", null, () -> validCode, register -> URI.create("http://" + register + ".test.register.gov.uk"));
+        ThymeleafView sutView = new ThymeleafView(mockRequestContext, "", () -> validCode, register -> URI.create("http://" + register + ".test.register.gov.uk"), new EmptyRegister());
         assertThat(sutView.getRegisterTrackingId(), equalTo(Optional.of("UA-12345678-1")));
     }
 }

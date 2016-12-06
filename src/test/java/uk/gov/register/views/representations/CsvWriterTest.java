@@ -31,7 +31,7 @@ public class CsvWriterTest {
     public void writes_EntryListView_to_output_stream() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         csvWriter.writeTo(new EntryListView(null, null, null, Optional.empty(),
-                        ImmutableList.of(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "1234abcd"), Instant.ofEpochSecond(1400000000L), "abc")), null, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk")),
+                        ImmutableList.of(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "1234abcd"), Instant.ofEpochSecond(1400000000L), "abc")), () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"), new EmptyRegister()),
                 EntryListView.class,
                 null,
                 null,

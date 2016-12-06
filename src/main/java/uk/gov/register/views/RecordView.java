@@ -9,7 +9,7 @@ import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
@@ -24,11 +24,11 @@ public class RecordView extends CsvRepresentationView {
     private ItemConverter itemConverter;
     private final Record record;
 
-    public RecordView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Record record, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registry, branding, "record.html", registerData, registerTrackingConfiguration, registerResolver);
+    public RecordView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Record record, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, RegisterReadOnly register) {
+        super(requestContext, registry, branding, "record.html", registerTrackingConfiguration, registerResolver, register);
         this.itemConverter = itemConverter;
         this.record = record;
-        this.registerPrimaryKey = registerData.getRegister().getRegisterName();
+        this.registerPrimaryKey = register.getRegisterName();
     }
 
     public String getPrimaryKey() {
