@@ -9,16 +9,19 @@ import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.*;
+import uk.gov.register.core.AllTheRegistersFactory;
+import uk.gov.register.core.EverythingAboutARegisterFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class RegisterConfiguration extends Configuration
         implements AuthenticatorConfiguration,
-        RegisterNameConfiguration,
         RegisterDomainConfiguration,
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
@@ -82,18 +85,30 @@ public class RegisterConfiguration extends Configuration
     @SuppressWarnings("unused")
     private FlywayFactory flywayFactory = new FlywayFactory();
 
+    @Valid
+    @JsonProperty
+    private Map<String, EverythingAboutARegisterFactory> otherRegisters = new HashMap<>();
+
     public DataSourceFactory getDatabase() {
         return database;
     }
 
+    public EverythingAboutARegisterFactory getDefaultRegister() {
+        return new EverythingAboutARegisterFactory(getDatabase());
+    }
+
+    public AllTheRegistersFactory getAllTheRegisters() {
+        return new AllTheRegistersFactory(getDefaultRegister(), otherRegisters, getDefaultRegisterName());
+    }
+
     public FlywayFactory getFlywayFactory() {
         flywayFactory.setLocations(Collections.singletonList("/sql"));
-        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", getRegisterName()));
+        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", getDefaultRegisterName()));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }
 
-    public String getRegisterName() {
+    public String getDefaultRegisterName() {
         return register;
     }
 

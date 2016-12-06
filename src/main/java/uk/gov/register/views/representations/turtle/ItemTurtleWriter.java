@@ -4,10 +4,10 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.ItemView;
@@ -25,8 +25,8 @@ import java.util.Map;
 public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
 
     @Inject
-    public ItemTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registerNameConfiguration, registerResolver);
+    public ItemTurtleWriter(RequestContext requestContext, javax.inject.Provider<RegisterData> registerData, RegisterResolver registerResolver) {
+        super(requestContext, registerData, registerResolver);
     }
 
     @Override

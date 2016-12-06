@@ -5,8 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.RegisterData;
-import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.NotFoundException;
@@ -26,14 +25,13 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SearchResourceTest {
     SearchResource resource;
-    RegisterData registerData;
     RegisterFieldsConfiguration registerFieldsConfiguration;
+    EverythingAboutARegister thisRegister;
 
     @Before
     public void setUp() throws Exception {
-        RegisterMetadata registerMetadata = mock(RegisterMetadata.class);
-        registerData = mock(RegisterData.class);
-        when(registerData.getRegister()).thenReturn(registerMetadata);
+        thisRegister = mock(EverythingAboutARegister.class);
+        when(thisRegister.getRegisterName()).thenReturn("school");
         registerFieldsConfiguration = mock(RegisterFieldsConfiguration.class);
     }
 
@@ -49,14 +47,14 @@ public class SearchResourceTest {
 
     @Test(expected = NotFoundException.class)
     public void find_doesNotRedirect_whenKeyDoesNotExistAsFieldInRegister() throws Exception {
-        resource = new SearchResource(() -> "school", registerFieldsConfiguration);
+        resource = new SearchResource(thisRegister, registerFieldsConfiguration);
         resource.find("country-name", "United Kingdom");
     }
 
     @Test
     public void find_returns301_whenKeyExistsAsFieldInRegister() throws Exception {
         when(registerFieldsConfiguration.containsField("country-name")).thenReturn(true);
-        resource = new SearchResource(() -> "school", registerFieldsConfiguration);
+        resource = new SearchResource(thisRegister, registerFieldsConfiguration);
 
         Response r = (Response) resource.find("country-name", "United Kingdom");
         assertThat(r.getStatus(), equalTo(301));

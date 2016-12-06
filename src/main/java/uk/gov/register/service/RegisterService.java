@@ -2,6 +2,7 @@ package uk.gov.register.service;
 
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
@@ -19,12 +20,12 @@ public class RegisterService {
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Inject
-    public RegisterService(RegisterData registerData, DBI dbi, MemoizationStore memoizationStore, ItemValidator itemValidator, RegisterFieldsConfiguration registerFieldsConfiguration) {
-        this.registerData = registerData;
-        this.dbi = dbi;
-        this.memoizationStore = memoizationStore;
+    public RegisterService(ItemValidator itemValidator, EverythingAboutARegister everythingAboutARegister) {
+        this.registerData = everythingAboutARegister.getRegisterData();
+        this.dbi = everythingAboutARegister.getDbi();
+        this.memoizationStore = everythingAboutARegister.getMemoizationStore();
         this.itemValidator = itemValidator;
-        this.registerFieldsConfiguration = registerFieldsConfiguration;
+        this.registerFieldsConfiguration = everythingAboutARegister.getFieldsConfiguration();
     }
 
     public void asAtomicRegisterOperation(Consumer<Register> callback) {

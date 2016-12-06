@@ -30,3 +30,4 @@ database:
     charSet: UTF-8
 
 enableDownloadResource: true
+enableRegisterDataDelete: true

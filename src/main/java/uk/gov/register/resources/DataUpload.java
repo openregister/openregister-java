@@ -5,8 +5,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EverythingAboutARegister;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
@@ -33,15 +33,15 @@ public class DataUpload {
     private final RegisterService registerService;
     private final ObjectReconstructor objectReconstructor;
     private final RegisterSerialisationFormatService registerSerialisationFormatService;
-    private RegisterNameConfiguration registerNameConfiguration;
+    private EverythingAboutARegister register;
 
 
     @Inject
-    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService, RegisterNameConfiguration registerNameConfiguration) {
+    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService, EverythingAboutARegister register) {
         this.registerService = registerService;
         this.objectReconstructor = objectReconstructor;
         this.registerSerialisationFormatService = registerSerialisationFormatService;
-        this.registerNameConfiguration = registerNameConfiguration;
+        this.register = register;
     }
 
     @Context
@@ -77,7 +77,7 @@ public class DataUpload {
 
     private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
         register.putItem(item);
-        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), item.getValue(registerNameConfiguration.getRegisterName())));
+        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), item.getValue(this.register.getRegisterName())));
     }
 }
 
