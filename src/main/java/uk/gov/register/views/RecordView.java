@@ -40,6 +40,7 @@ public class RecordView extends CsvRepresentationView {
     public ObjectNode getRecordJson() {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         ObjectNode jsonNodes = objectMapper.convertValue(record.entry, ObjectNode.class);
+        jsonNodes.remove("key");
         jsonNodes.setAll((ObjectNode) record.item.getContent().deepCopy());
         return jsonNodes;
     }
