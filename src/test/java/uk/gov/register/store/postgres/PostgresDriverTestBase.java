@@ -51,6 +51,9 @@ public class PostgresDriverTestBase {
         dbi = mock(DBI.class);
         handle = mock(Handle.class);
         memoizationStore = mock(MemoizationStore.class);
+        when(dbi.open()).thenReturn(handle);
+        when(handle.attach(EntryQueryDAO.class)).thenReturn(entryQueryDAO);
+        when(handle.attach(EntryDAO.class)).thenReturn(entryDAO);
 
         mockDBI();
         mockEntryDAOInsert();

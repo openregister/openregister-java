@@ -30,7 +30,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final List<Entry> stagedEntries;
     private final HashMap<HashValue, Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
-    private final int initialEntryCount;
+    private int committedEntryCount;
 
     private PostgresDriverTransactional(Handle handle, TransactionalMemoizationStore memoizationStore) {
         super(memoizationStore);
@@ -39,7 +39,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
-        this.initialEntryCount = super.getTotalEntries();
+        this.committedEntryCount = super.getTotalEntries();
 
     }
 
@@ -53,7 +53,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
-        this.initialEntryCount = super.getTotalEntries();
+        this.committedEntryCount = super.getTotalEntries();
     }
 
     public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
@@ -108,7 +108,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     @Override
     public int getTotalEntries() {
         OptionalInt maxStagedEntryNumber = getMaxStagedEntryNumber();
-        return maxStagedEntryNumber.orElse(initialEntryCount);
+        return maxStagedEntryNumber.orElse(committedEntryCount);
     }
 
     @Override
@@ -157,6 +157,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
             return;
         }
         super.insertEntries(stagedEntries);
+        committedEntryCount = getMaxStagedEntryNumber().getAsInt();
         stagedEntries.clear();
     }
 

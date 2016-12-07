@@ -16,15 +16,14 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
@@ -235,6 +234,23 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
         assertThat(items, containsInAnyOrder(item1, item2, item3));
         assertThat(entries, contains(entry1, entry2, entry3));
+    }
+
+    @Test
+    public void notAllInsertsShouldInteractWithDb() {
+        Function<VerifiableLog, RegisterProof> func = mock(Function.class);
+        when(func.apply(mock(VerifiableLog.class))).thenReturn(mock(RegisterProof.class));
+
+        PostgresDriverTransactional.useTransaction(dbi, memoizationStore, postgresDriver -> {
+            IntStream.range(0, 2).forEach(i -> postgresDriver.insertEntry(mock(Entry.class)));
+            postgresDriver.withVerifiableLog(vl -> func);
+            IntStream.range(0, 2).forEach(i -> postgresDriver.insertEntry(mock(Entry.class)));
+
+        });
+
+        verify(entryQueryDAO, times(1)).getTotalEntries();
+        verify(entryDAO, times(2)).insertInBatch( anyCollectionOf(Entry.class));
+
     }
 
     private void assertStagedDataIsCommittedOnAction(Consumer<PostgresDriverTransactional> actionToTest) {
