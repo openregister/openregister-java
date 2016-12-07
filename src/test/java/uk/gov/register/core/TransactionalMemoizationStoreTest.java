@@ -117,7 +117,7 @@ public class TransactionalMemoizationStoreTest {
 
         verify(internalStore, never()).put(0, 1, hash);
         verify(internalStore, times(1)).put(0, 1, newHash);
-;    }
+    }
 
     @Test
     public void rollbackHashesFromStoreShouldRemoveAllStagedHashes() {

@@ -1,6 +1,5 @@
 package uk.gov.register.store.postgres;
 
-import com.google.common.base.Function;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleCallback;
@@ -12,7 +11,9 @@ import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Inject;
-import java.util.Arrays;
+import java.util.function.Function;
+
+import static java.util.Collections.singletonList;
 
 public class PostgresDriverNonTransactional extends PostgresDriver {
     private DBI dbi;
@@ -33,17 +34,17 @@ public class PostgresDriverNonTransactional extends PostgresDriver {
 
     @Override
     public void insertEntry(Entry entry) {
-        super.insertEntries(Arrays.asList(entry));
+        super.insertEntries(singletonList(entry));
     }
 
     @Override
     public void insertItem(Item item) {
-        super.insertItems(Arrays.asList(item));
+        super.insertItems(singletonList(item));
     }
 
     @Override
     public void insertRecord(Record record, String registerName) {
-        super.insertCurrentKeys(Arrays.asList(new CurrentKey(record.item.getValue(registerName), record.entry.getEntryNumber())));
+        super.insertCurrentKeys(singletonList(new CurrentKey(record.item.getValue(registerName), record.entry.getEntryNumber())));
     }
 
     @Override

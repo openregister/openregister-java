@@ -1,6 +1,5 @@
 package uk.gov.register.store.postgres;
 
-import com.google.common.base.Function;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
@@ -19,6 +18,7 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PostgresDriverTransactional extends PostgresDriver {

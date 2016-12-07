@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
@@ -53,13 +53,13 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void getEntriesShouldAlwaysCommitStagedData() {
-        when(entryQueryDAO.getEntries(1, 10)).thenReturn(asList());
+        when(entryQueryDAO.getEntries(1, 10)).thenReturn(emptyList());
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.getEntries(1, 10));
     }
 
     @Test
     public void getAllEntriesShouldAlwaysCommitStagedData() {
-        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
+        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(emptyList());
         assertStagedDataIsCommittedOnAction(PostgresDriverTransactional::getAllEntries);
     }
 
@@ -109,7 +109,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void getAllItemsShouldAlwaysCommitStagedData() {
-        when(itemQueryDAO.getAllItemsNoPagination()).thenReturn(asList());
+        when(itemQueryDAO.getAllItemsNoPagination()).thenReturn(emptyList());
         assertStagedDataIsCommittedOnAction(PostgresDriverTransactional::getAllItems);
     }
 
@@ -127,20 +127,20 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void getRecordsShouldAlwaysCommitStagedData() {
-        when(recordQueryDAO.getRecords(10, 0)).thenReturn(asList());
+        when(recordQueryDAO.getRecords(10, 0)).thenReturn(emptyList());
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.getRecords(10, 0));
     }
 
     @Test
     public void findMax100RecordsByKeyValueShouldAlwaysCommitStagedData() {
-        when(recordQueryDAO.findMax100RecordsByKeyValue("name", "Germany")).thenReturn(asList());
+        when(recordQueryDAO.findMax100RecordsByKeyValue("name", "Germany")).thenReturn(emptyList());
 
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findMax100RecordsByKeyValue("name", "Germany"));
     }
 
     @Test
     public void findAllEntriesOfRecordByShouldAlwaysCommitStagedData() {
-        when(recordQueryDAO.findAllEntriesOfRecordBy("country", "DE")).thenReturn(asList());
+        when(recordQueryDAO.findAllEntriesOfRecordBy("country", "DE")).thenReturn(emptyList());
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.findAllEntriesOfRecordBy("country", "DE"));
     }
 
@@ -151,7 +151,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertStagedDataIsCommittedOnAction(postgresDriver -> postgresDriver.withVerifiableLog(verifiableLog -> func));
     }
 
-    @Test
+    @Test //TODO: equals problem here
     public void getItemBySha256ShouldCommitStagedDataOnlyIfItemNotStaged() {
         ArgumentCaptor<String> hashArgumentCaptor = ArgumentCaptor.forClass(String.class);
         when(itemQueryDAO.getItemBySHA256(hashArgumentCaptor.capture()))
@@ -187,7 +187,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void insertRecordWithSameKeyValueDoesNotStageBothCurrentKeys() {
-        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
+        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(emptyList());
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
@@ -212,7 +212,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
 
     @Test
     public void entryAndItemDataShouldBeCommittedInOrder() throws Exception {
-        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(asList());
+        when(entryQueryDAO.getAllEntriesNoPagination()).thenReturn(emptyList());
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, memoizationStore, h -> entryQueryDAO, h -> entryDAO, h -> itemQueryDAO, h -> itemDAO, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 

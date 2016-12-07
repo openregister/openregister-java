@@ -1,6 +1,5 @@
 package uk.gov.register.store.postgres;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -18,6 +17,7 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public abstract class PostgresDriver implements BackingStoreDriver {
@@ -163,7 +163,7 @@ public abstract class PostgresDriver implements BackingStoreDriver {
         useHandle(handle -> {
             CurrentKeysUpdateDAO dao = currentKeysUpdateDAOFromHandle.apply(handle);
 
-            int[] noOfRecordsDeletedPerBatch = dao.removeRecordWithKeys(Lists.transform(currentKeys, r -> r.getKey()));
+            int[] noOfRecordsDeletedPerBatch = dao.removeRecordWithKeys(Lists.transform(currentKeys, CurrentKey::getKey));
             int noOfRecordsDeleted = IntStream.of(noOfRecordsDeletedPerBatch).sum();
             dao.writeCurrentKeys(currentKeys);
             dao.updateTotalRecords(currentKeys.size() - noOfRecordsDeleted);
