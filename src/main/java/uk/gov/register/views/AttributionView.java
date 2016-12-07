@@ -17,7 +17,7 @@ public class AttributionView<T> extends ThymeleafView {
     private final Optional<GovukOrganisation.Details> registryBranding;
     private final T baseView;
 
-    public AttributionView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, T baseView) {
+    public AttributionView(String templateName, RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, T baseView) {
         super(requestContext, templateName, registerData, registerTrackingConfiguration, registerResolver);
         this.registry = registry;
         this.registryBranding = registryBranding;

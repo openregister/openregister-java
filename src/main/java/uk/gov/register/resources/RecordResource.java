@@ -12,7 +12,8 @@ import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ItemView;
-import uk.gov.register.views.RecordListView;
+import uk.gov.register.views.PaginatedView;
+import uk.gov.register.views.RecordsView;
 import uk.gov.register.views.RecordView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -86,24 +87,44 @@ public class RecordResource {
 
     @GET
     @Path("/records/{key}/{value}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
+    @Produces(ExtraMediaType.TEXT_HTML)
+    public PaginatedView<RecordsView> facetedRecordsHtml(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         Pagination pagination
                 = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
+        return viewFactory.getRecordListView(pagination, facetedRecords(key, value));
+    }
+
+    @GET
+    @Path("/records/{key}/{value}")
+    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
+        List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return viewFactory.getRecordListView(recordViews, pagination);
+        return new RecordsView(recordViews, registerData.getRegister().getFields());
     }
 
     @GET
     @Path("/records")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
+    @Produces(ExtraMediaType.TEXT_HTML)
+    public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+        setContentDisposition();
+        RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset());
+        return viewFactory.getRecordListView(pagination, recordsView);
+    }
 
-        requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-records." + ext)
-        );
+    @GET
+    @Path("/records")
+    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+        setContentDisposition();
+        return getRecordsView(pagination.pageSize(), pagination.offset());
+    }
+
+    private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
 
         if (pagination.hasNextPage()) {
             httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
@@ -112,10 +133,19 @@ public class RecordResource {
         if (pagination.hasPreviousPage()) {
             httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
         }
+        return pagination;
+    }
 
-        List<Record> records = register.getRecords(pagination.pageSize(), pagination.offset());
+    private void setContentDisposition() {
+        requestContext.resourceExtension().ifPresent(
+                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-records." + ext)
+        );
+    }
+
+    private RecordsView getRecordsView(int limit, int offset) {
+        List<Record> records = register.getRecords(limit, offset);
         List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return viewFactory.getRecordListView(recordViews, pagination);
+        return new RecordsView(recordViews, registerData.getRegister().getFields());
     }
 
     private RecordView toRecordView(Record r) {

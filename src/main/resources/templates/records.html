@@ -10,7 +10,7 @@
         <div class="column-two-thirds" th:include="pagination.html::pagination-top('records')"></div>
         <div class="column-third" th:include="main.html :: attribution"></div>
     </div>
-    <table th:if="${!records.isEmpty()}">
+    <table th:if="${!content.records.isEmpty()}">
         <thead>
         <tr>
             <th scope="col"><a th:href="${linkResolver.resolve('field', registerId)}" th:text="${registerId}"></a></th>
@@ -20,7 +20,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="record : ${records}">
+        <tr th:each="record : ${content.records}">
             <td><a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a></td>
             <th:block th:each="fieldName : ${register.nonPrimaryFields}">
                 <td th:if="${record.getField(fieldName).present}" class="field-list field-list-in-table">

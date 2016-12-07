@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -78,7 +77,7 @@ public class ViewFactory {
     }
 
     public <T> AttributionView<T> getAttributionView(String templateName, T fieldValueMap) {
-        return new AttributionView<>(requestContext, getRegistry(), getBranding(), templateName, registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
+        return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
     }
 
     public AttributionView<Map<String, FieldValue>> getItemView(Map<String, FieldValue> fieldValueMap) {
@@ -101,8 +100,9 @@ public class ViewFactory {
         return getAttributionView("record.html", record);
     }
 
-    public RecordListView getRecordListView(List<RecordView> records, Pagination pagination) {
-        return new RecordListView(requestContext, getRegistry(), getBranding(), pagination, records, registerData, registerTrackingConfiguration, registerResolver);
+    public PaginatedView<RecordsView> getRecordListView(Pagination pagination, RecordsView recordsView) {
+        return new PaginatedView<>("records.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination,
+                recordsView);
     }
 
     private PublicBody getRegistry() {
