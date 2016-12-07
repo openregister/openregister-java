@@ -3,6 +3,7 @@ package uk.gov.register.views.representations.turtle;
 import org.apache.jena.rdf.model.*;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
+import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
@@ -41,7 +42,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
     @Override
     protected Model rdfModelFor(RecordView view) {
         EntryView entryView = new EntryView(requestContext, view.getRegistry(), view.getBranding(), view.getRecord().entry, registerData, registerTrackingConfiguration, registerResolver);
-        ItemView itemView = new ItemView(requestContext, view.getRegistry(), view.getBranding(), itemConverter, view.getRecord().item, registerData, registerTrackingConfiguration, registerResolver);
+        Item item = view.getRecord().item;
+        ItemView itemView = new ItemView(registerData.getRegister().getFields(), itemConverter.convertItem(item), item.getSha256hex());
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entryView, false);
@@ -49,7 +51,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
         Resource recordResource = recordModel.createResource(recordUri(view.getPrimaryKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entryView.getEntry().getEntryNumber())).toString()));
-        addPropertiesToResource(recordResource, itemModel.getResource(itemUri(itemView.getItemHash()).toString()));
+        addPropertiesToResource(recordResource, itemModel.getResource(itemUri(itemView.getItemHash().encode()).toString()));
 
         Map<String, String> prefixes = entryModel.getNsPrefixMap();
         prefixes.putAll(itemModel.getNsPrefixMap());

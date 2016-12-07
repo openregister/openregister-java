@@ -18,14 +18,11 @@ import java.util.Optional;
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CsvWriterTest {
 
     CsvWriter csvWriter = new CsvWriter();
-    RegisterMetadata registerMetadata = new RegisterMetadata("register1", ImmutableList.of("key1", "key2", "key3", "key4"),
-            "copyright", "registry1", "text1", "phase1");
+    private final ImmutableList<String> fields = ImmutableList.of("key1", "key2", "key3", "key4");
 
     @Test
     public void writes_EntryListView_to_output_stream() throws IOException {
@@ -45,20 +42,18 @@ public class CsvWriterTest {
 
     @Test
     public void writeEntriesTo_writesCsvEscapedEntries() throws IOException {
-        ItemView itemView = mock(ItemView.class);
 
-        when(itemView.getContent()).thenReturn(ImmutableMap.of(
+        ImmutableMap<String, FieldValue> fieldValueMap = ImmutableMap.of(
                 "key1", new StringValue("valu\te1"),
                 "key2", new StringValue("val,ue2"),
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("val\nue4")
-        ));
-        when(itemView.getRegister()).thenReturn(registerMetadata);
-        when(itemView.csvRepresentation()).thenCallRealMethod();
+        );
+        ItemView itemView = new ItemView(fields, fieldValueMap, null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        csvWriter.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
+        csvWriter.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1,key2,key3,key4\r\n\"valu\te1\",\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
@@ -66,9 +61,7 @@ public class CsvWriterTest {
 
     @Test
     public void writeEntriesTo_writesLists() throws IOException {
-        ItemView itemView = mock(ItemView.class);
-
-        when(itemView.getContent()).thenReturn(ImmutableMap.of("key1",
+        ImmutableMap<String, FieldValue> fieldValueMap = ImmutableMap.of("key1",
                 new ListValue(asList(
                         new StringValue("value1"),
                         new StringValue("value2"),
@@ -79,13 +72,13 @@ public class CsvWriterTest {
                         new StringValue("value4"),
                         new StringValue("value5"),
                         new StringValue("value6"))
-                )));
-        when(itemView.getRegister()).thenReturn(registerMetadata);
-        when(itemView.csvRepresentation()).thenCallRealMethod();
+                ));
+
+        ItemView itemView = new ItemView(fields, fieldValueMap, null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        csvWriter.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
+        csvWriter.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1;value2;value3,value4;value5;value6,,\r\n"));
@@ -93,20 +86,18 @@ public class CsvWriterTest {
 
     @Test
     public void writeEntriesTo_includesAllColumnsEvenWhenValuesAreNotPresent() throws Exception {
-        ItemView itemView = mock(ItemView.class);
 
-        when(itemView.getContent()).thenReturn(ImmutableMap.of(
+        ImmutableMap<String, FieldValue> fieldValueMap = ImmutableMap.of(
                 "key1", new StringValue("value1"),
                 "key2", new StringValue(""),
                 "key3", new StringValue(""),
                 "key4", new StringValue("")
-        ));
-        when(itemView.getRegister()).thenReturn(registerMetadata);
-        when(itemView.csvRepresentation()).thenCallRealMethod();
+        );
+        ItemView itemView = new ItemView(fields, fieldValueMap, null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        csvWriter.writeTo(itemView, ItemView.class, null, null, null, null, outputStream);
+        csvWriter.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1,,,\r\n"));

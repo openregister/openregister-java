@@ -10,18 +10,16 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 
 import java.util.Optional;
 
-public class AttributionView<T> extends ThymeleafView {
+public class OldAttributionView extends ThymeleafView {
 
     private final PublicBody registry;
 
     private final Optional<GovukOrganisation.Details> registryBranding;
-    private final T baseView;
 
-    public AttributionView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, T baseView) {
+    public OldAttributionView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, String templateName, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
         super(requestContext, templateName, registerData, registerTrackingConfiguration, registerResolver);
         this.registry = registry;
         this.registryBranding = registryBranding;
-        this.baseView = baseView;
     }
 
     @SuppressWarnings("unused, used by templates")
@@ -32,10 +30,6 @@ public class AttributionView<T> extends ThymeleafView {
     @SuppressWarnings("unused, used by templates")
     public Optional<GovukOrganisation.Details> getBranding() {
         return registryBranding;
-    }
-
-    public T getContent() {
-        return baseView;
     }
 }
 

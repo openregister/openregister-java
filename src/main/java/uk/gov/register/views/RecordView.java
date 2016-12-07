@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class RecordView extends CsvRepresentationView {
+public class RecordView extends OldAttributionView implements CsvRepresentationView {
     private final String registerPrimaryKey;
     private ItemConverter itemConverter;
     private final Record record;

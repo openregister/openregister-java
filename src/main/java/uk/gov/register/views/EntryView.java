@@ -12,7 +12,7 @@ import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Optional;
 
-public class EntryView extends CsvRepresentationView<Entry> {
+public class EntryView extends OldAttributionView implements CsvRepresentationView<Entry> {
     private Entry entry;
 
     public EntryView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Entry entry, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {

@@ -15,6 +15,7 @@ import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -80,8 +81,8 @@ public class ViewFactory {
         return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData, registerDomainConfiguration.getRegisterDomain());
     }
 
-    public ItemView getItemView(Item item) {
-        return new ItemView(requestContext, getRegistry(), getBranding(), itemConverter, item, registerData, registerTrackingConfiguration, registerResolver);
+    public AttributionView<Map<String, FieldValue>> getItemView(Map<String, FieldValue> fieldValueMap) {
+        return new AttributionView<>(requestContext, getRegistry(), getBranding(), "item.html", registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
     }
 
     public EntryView getEntryView(Entry entry) {

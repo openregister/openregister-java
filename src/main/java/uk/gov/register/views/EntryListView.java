@@ -14,13 +14,13 @@ import uk.gov.register.views.representations.CsvRepresentation;
 import java.util.Collection;
 import java.util.Optional;
 
-public class EntryListView extends CsvRepresentationView {
+public class EntryListView extends OldAttributionView implements CsvRepresentationView {
     private Pagination pagination;
     private Collection<Entry> entries;
     private final Optional<String> recordKey;
 
     public EntryListView(RequestContext requestContext, Pagination pagination, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, Collection<Entry> entries, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext,registry, registryBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
+        super(requestContext, registry, registryBranding, "entries.html", registerData, registerTrackingConfiguration, registerResolver);
         this.pagination = pagination;
         this.entries = entries;
         this.recordKey = Optional.empty();

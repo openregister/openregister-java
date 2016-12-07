@@ -5,7 +5,7 @@ import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
-import uk.gov.register.views.AttributionView;
+import uk.gov.register.views.OldAttributionView;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -37,7 +37,7 @@ public class EntryResource {
     @GET
     @Path("/entry/{entry-number}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public AttributionView findByEntryNumber(@PathParam("entry-number") int entryNumber) {
+    public OldAttributionView findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = register.getEntry(entryNumber);
         return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
     }

@@ -14,7 +14,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class HomePageView extends AttributionView {
+public class HomePageView extends OldAttributionView {
     /* Formatter for friendly (ie human-readable) dates
        based on guidance at https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#dates
      */

@@ -32,7 +32,7 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
     @Override
     protected Model rdfModelFor(ItemView view) {
         Model model = ModelFactory.createDefaultModel();
-        Resource resource = model.createResource(itemUri(view.getItemHash()).toString());
+        Resource resource = model.createResource(itemUri(view.getItemHash().encode()).toString());
 
         for (Map.Entry<String, FieldValue> field : view.getContent().entrySet()) {
             FieldRenderer fieldRenderer = new FieldRenderer(model.createProperty(fieldUri(field.getKey())));

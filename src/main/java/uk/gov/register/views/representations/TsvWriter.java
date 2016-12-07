@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TSV)
-public class TsvWriter extends RepresentationWriter<CsvRepresentationView> {
+public class TsvWriter extends RepresentationWriter<CsvRepresentationView<?>> {
     private final CsvMapper objectMapper;
 
     @Inject
@@ -25,8 +25,8 @@ public class TsvWriter extends RepresentationWriter<CsvRepresentationView> {
     }
 
     @Override
-    public void writeTo(CsvRepresentationView view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        CsvRepresentation csvRepresentation = view.csvRepresentation();
+    public void writeTo(CsvRepresentationView<?> view, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+        CsvRepresentation<?> csvRepresentation = view.csvRepresentation();
         objectMapper.writerFor(csvRepresentation.contentType)
                 .with(csvRepresentation.csvSchema.withColumnSeparator('\t').withHeader().withoutQuoteChar())
                 .writeValue(entityStream, csvRepresentation.contents);
