@@ -49,7 +49,7 @@ public class CsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("val\nue4")
         );
-        ItemView itemView = new ItemView(fields, fieldValueMap, null);
+        ItemView itemView = new ItemView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -74,7 +74,7 @@ public class CsvWriterTest {
                         new StringValue("value6"))
                 ));
 
-        ItemView itemView = new ItemView(fields, fieldValueMap, null);
+        ItemView itemView = new ItemView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -93,7 +93,7 @@ public class CsvWriterTest {
                 "key3", new StringValue(""),
                 "key4", new StringValue("")
         );
-        ItemView itemView = new ItemView(fields, fieldValueMap, null);
+        ItemView itemView = new ItemView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

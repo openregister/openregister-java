@@ -29,7 +29,7 @@ public class TsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(fields, fieldValueMap, null);
+        ItemView itemView = new ItemView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -53,7 +53,7 @@ public class TsvWriterTest {
                         new StringValue("value5"),
                         new StringValue("value6"))
                 ));
-        ItemView itemView = new ItemView(fields, fieldValueMap, null);
+        ItemView itemView = new ItemView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -68,7 +68,7 @@ public class TsvWriterTest {
         ImmutableMap<String, FieldValue> fieldValueMap = ImmutableMap.of(
                 "key1", new StringValue("value1")
         );
-        ItemView itemView = new ItemView(fields, fieldValueMap, null);
+        ItemView itemView = new ItemView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

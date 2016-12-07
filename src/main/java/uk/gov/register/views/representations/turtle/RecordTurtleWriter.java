@@ -3,11 +3,8 @@ package uk.gov.register.views.representations.turtle;
 import org.apache.jena.rdf.model.*;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.RecordView;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -23,24 +20,19 @@ import java.util.Map;
 @Produces(ExtraMediaType.TEXT_TTL)
 public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
-    private final ItemConverter itemConverter;
-    private RegisterData registerData;
     private RegisterNameConfiguration registerNameConfiguration;
 
     @Inject
-    public RecordTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+    public RecordTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
         super(requestContext, registerNameConfiguration, registerResolver);
-        this.itemConverter = itemConverter;
-        this.registerData = registerData;
         this.registerNameConfiguration = registerNameConfiguration;
         this.registerResolver = registerResolver;
     }
 
     @Override
     protected Model rdfModelFor(RecordView view) {
-        Entry entry = view.getRecord().entry;
-        Item item = view.getRecord().item;
-        ItemView itemView = new ItemView(registerData.getRegister().getFields(), itemConverter.convertItem(item), item.getSha256hex());
+        Entry entry = view.getEntry();
+        ItemView itemView = view.getItemView();
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entry, false);

@@ -3,10 +3,15 @@ package uk.gov.register.resources;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
+import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
+import uk.gov.register.service.ItemConverter;
+import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.EntryListView;
+import uk.gov.register.views.ItemView;
 import uk.gov.register.views.RecordListView;
 import uk.gov.register.views.RecordView;
 import uk.gov.register.views.ViewFactory;
@@ -17,35 +22,52 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Path("/")
 public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
     private final RequestContext requestContext;
+    private final RegisterData registerData;
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
     private final String registerPrimaryKey;
+    private final ItemConverter itemConverter;
 
     @Inject
-    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration) {
+    public RecordResource(RegisterData registerData, RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, ItemConverter itemConverter) {
+        this.registerData = registerData;
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
         registerPrimaryKey = registerNameConfiguration.getRegisterName();
+        this.itemConverter = itemConverter;
     }
 
     @GET
     @Path("/record/{record-key}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces(ExtraMediaType.TEXT_HTML)
+    public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) {
+        return viewFactory.getRecordView(getRecordByKey(key));
+    }
+
+    @GET
+    @Path("/record/{record-key}")
+    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
-        return register
-                .getRecord(key)
-                .map(viewFactory::getRecordView)
+        return register.getRecord(key).map(this::toRecordView)
                 .orElseThrow(NotFoundException::new);
+    }
+
+    public Map<String, FieldValue> itemContent(Record record) {
+        return record.item.getFieldsStream().collect(Collectors.toMap(Map.Entry::getKey, itemConverter::convert));
     }
 
     @GET
@@ -69,7 +91,8 @@ public class RecordResource {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         Pagination pagination
                 = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
-        return viewFactory.getRecordListView(records, pagination);
+        List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
+        return viewFactory.getRecordListView(recordViews, pagination);
     }
 
     @GET
@@ -90,7 +113,15 @@ public class RecordResource {
             httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
         }
 
-        return viewFactory.getRecordListView(register.getRecords(pagination.pageSize(), pagination.offset()), pagination);
+        List<Record> records = register.getRecords(pagination.pageSize(), pagination.offset());
+        List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
+        return viewFactory.getRecordListView(recordViews, pagination);
+    }
+
+    private RecordView toRecordView(Record r) {
+        Map<String, FieldValue> itemContent = itemContent(r);
+        ItemView itemView = new ItemView(r.item.getSha256hex(), itemContent, registerData.getRegister().getFields());
+        return new RecordView(r.entry, itemView, registerData.getRegister().getFields());
     }
 
 }

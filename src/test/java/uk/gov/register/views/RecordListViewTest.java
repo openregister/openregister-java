@@ -1,6 +1,7 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
@@ -10,10 +11,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.skyscreamer.jsonassert.JSONAssert;
-import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -35,18 +34,27 @@ public class RecordListViewTest {
     public void recordsJson_returnsTheMapOfRecords() throws IOException, JSONException {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
-        List<Record> records = Lists.newArrayList(
-                new Record(
+        ImmutableList<String> fields = ImmutableList.of("address", "street");
+        List<RecordView> records = Lists.newArrayList(
+                new RecordView(
                         new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123"),
-                        new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), Jackson.newObjectMapper().readTree("{\"address\":\"123\", \"street\":\"foo\"}"))
+                        new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"),
+                                ImmutableMap.of("address", new StringValue("123"),
+                                        "street", new StringValue("foo")),
+                                fields),
+                        fields
                 ),
-                new Record(
+                new RecordView(
                         new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456"),
-                        new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), Jackson.newObjectMapper().readTree("{\"address\":\"456\", \"street\":\"bar\"}"))
+                        new ItemView(new HashValue(HashingAlgorithm.SHA256, "cd"),
+                                ImmutableMap.of("address", new StringValue("456"),
+                                        "street", new StringValue("bar")),
+                                fields),
+                        fields
                 )
         );
         RegisterData registerData = new RegisterData(ImmutableMap.of("register", new TextNode("address")));
-        RecordListView recordListView = new RecordListView(requestContext, null, null, null, new ItemConverter(new FieldsConfiguration(Optional.empty())), records, registerData, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
+        RecordListView recordListView = new RecordListView(requestContext, null, null, null, records, registerData, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         Map<String, RecordView> result = recordListView.recordsJson();
         assertThat(result.size(), equalTo(2));

@@ -51,8 +51,9 @@ public class ItemResource {
     }
 
     private ItemView makeItemView(Item item) {
-        return new ItemView(registerData.getRegister().getFields(),
+        return new ItemView(item.getSha256hex(),
                 itemConverter.convertItem(item),
-                item.getSha256hex());
+                registerData.getRegister().getFields()
+        );
     }
 }

@@ -7,7 +7,6 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
@@ -21,7 +20,6 @@ import java.util.Optional;
 @Service
 public class ViewFactory {
     private final RequestContext requestContext;
-    private final ItemConverter itemConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
     private final RegisterData registerData;
@@ -32,7 +30,6 @@ public class ViewFactory {
 
     @Inject
     public ViewFactory(RequestContext requestContext,
-                       ItemConverter itemConverter,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
@@ -41,7 +38,6 @@ public class ViewFactory {
                        RegisterTrackingConfiguration registerTrackingConfiguration,
                        RegisterResolver registerResolver) {
         this.requestContext = requestContext;
-        this.itemConverter = itemConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
@@ -81,12 +77,16 @@ public class ViewFactory {
         return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData, registerDomainConfiguration.getRegisterDomain());
     }
 
+    public <T> AttributionView<T> getAttributionView(String templateName, T fieldValueMap) {
+        return new AttributionView<>(requestContext, getRegistry(), getBranding(), templateName, registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
+    }
+
     public AttributionView<Map<String, FieldValue>> getItemView(Map<String, FieldValue> fieldValueMap) {
-        return new AttributionView<>(requestContext, getRegistry(), getBranding(), "item.html", registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
+        return getAttributionView("item.html", fieldValueMap);
     }
 
     public AttributionView<Entry> getEntryView(Entry entry) {
-        return new AttributionView<>(requestContext, getRegistry(), getBranding(), "entry.html", registerData, registerTrackingConfiguration, registerResolver, entry);
+        return getAttributionView("entry.html", entry);
     }
 
     public EntryListView getEntriesView(Collection<Entry> entries, Pagination pagination) {
@@ -97,12 +97,12 @@ public class ViewFactory {
         return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, recordKey, registerData, registerTrackingConfiguration, registerResolver);
     }
 
-    public RecordView getRecordView(Record record) {
-        return new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, record, registerData, registerTrackingConfiguration, registerResolver);
+    public AttributionView<RecordView> getRecordView(RecordView record) {
+        return getAttributionView("record.html", record);
     }
 
-    public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
-        return new RecordListView(requestContext, getRegistry(), getBranding(), pagination, itemConverter, records, registerData, registerTrackingConfiguration, registerResolver);
+    public RecordListView getRecordListView(List<RecordView> records, Pagination pagination) {
+        return new RecordListView(requestContext, getRegistry(), getBranding(), pagination, records, registerData, registerTrackingConfiguration, registerResolver);
     }
 
     private PublicBody getRegistry() {

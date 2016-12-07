@@ -13,7 +13,7 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
     private Map<String, FieldValue> fieldValueMap;
     private final HashValue sha256hex;
 
-    public ItemView(Iterable<String> fields, Map<String, FieldValue> fieldValueMap, HashValue sha256hex) {
+    public ItemView(HashValue sha256hex, Map<String, FieldValue> fieldValueMap, Iterable<String> fields) {
         this.fields = fields;
         this.fieldValueMap = fieldValueMap;
         this.sha256hex = sha256hex;

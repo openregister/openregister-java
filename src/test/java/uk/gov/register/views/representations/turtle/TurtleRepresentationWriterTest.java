@@ -42,7 +42,7 @@ public class TurtleRepresentationWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(fields, map, new HashValue(HashingAlgorithm.SHA256, "hash"));
+        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -75,7 +75,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(fields, map, new HashValue(HashingAlgorithm.SHA256, "itemhash"));
+        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "itemhash"), map, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -98,7 +98,7 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(fields, map, new HashValue(HashingAlgorithm.SHA256, "hash"));
+        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

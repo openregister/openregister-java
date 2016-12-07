@@ -9,7 +9,6 @@ import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Collection;
@@ -19,21 +18,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RecordListView extends OldAttributionView implements CsvRepresentationView {
-    private final RegisterData registerData;
-    private final RegisterResolver registerResolver;
-    private RegisterTrackingConfiguration registerTrackingConfiguration;
     private Pagination pagination;
-    private ItemConverter itemConverter;
-    private List<Record> records;
+    private List<RecordView> records;
 
-    public RecordListView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, Pagination pagination, ItemConverter itemConverter, List<Record> records, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+    public RecordListView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, Pagination pagination, List<RecordView> records, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
         super(requestContext, registry, branding, "records.html", registerData, registerTrackingConfiguration, registerResolver);
         this.pagination = pagination;
-        this.itemConverter = itemConverter;
         this.records = records;
-        this.registerData = registerData;
-        this.registerTrackingConfiguration = registerTrackingConfiguration;
-        this.registerResolver = registerResolver;
     }
 
     @JsonValue
@@ -42,7 +33,7 @@ public class RecordListView extends OldAttributionView implements CsvRepresentat
     }
 
     public List<RecordView> getRecords() {
-        return records.stream().map(r -> new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, r, registerData, registerTrackingConfiguration, registerResolver)).collect(Collectors.toList());
+        return records;
     }
 
     public Pagination getPagination() {
