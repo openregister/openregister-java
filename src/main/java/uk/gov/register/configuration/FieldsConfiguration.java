@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import uk.gov.register.core.Field;
 import uk.gov.register.util.ResourceYamlFileReader;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +18,13 @@ public class FieldsConfiguration {
         fields = new ResourceYamlFileReader().readResource(
                 fieldsResourceYamlPath,
                 "config/fields.yaml",
+                new TypeReference<Map<String, Field>>() {
+                });
+    }
+
+    public FieldsConfiguration(InputStream fieldsResourceInputStream) {
+        fields = new ResourceYamlFileReader().readResource(
+                fieldsResourceInputStream,
                 new TypeReference<Map<String, Field>>() {
                 });
     }

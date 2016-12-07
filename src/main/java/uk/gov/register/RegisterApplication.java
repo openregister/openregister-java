@@ -1,5 +1,8 @@
 package uk.gov.register;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
@@ -25,12 +28,7 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.PostgresRegister;
-import uk.gov.register.core.Register;
-import uk.gov.register.core.RegisterData;
-import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.core.UriTemplateRegisterResolver;
+import uk.gov.register.core.*;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -98,16 +96,21 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
-        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
-        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
-        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
-        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
-
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
-
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
+
+        String bucketName = System.getProperty("configBucket");
+
+        AmazonS3 s3Client = new AmazonS3Client();
+        S3Object registersConfig = s3Client.getObject(bucketName, "registers.yaml");
+        S3Object fieldsConfig = s3Client.getObject(bucketName, "fields.yaml");
+
+        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
+        RegistersConfiguration registersConfiguration = new RegistersConfiguration(registersConfig.getObjectContent());
+        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(fieldsConfig.getObjectContent());
+        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
+        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
 
         jersey.register(new AbstractBinder() {
             @Override

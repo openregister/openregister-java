@@ -5,6 +5,7 @@ import uk.gov.register.core.RegisterData;
 import uk.gov.register.util.ResourceYamlFileReader;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -19,6 +20,14 @@ public class RegistersConfiguration {
         registers = new ResourceYamlFileReader().readResource(
                 registersResourceYamlPath,
                 "config/registers.yaml",
+                new TypeReference<Map<String, RegisterData>>() {
+                }
+        );
+    }
+
+    public RegistersConfiguration(InputStream registersResourceInputStream) {
+        registers = new ResourceYamlFileReader().readResource(
+                registersResourceInputStream,
                 new TypeReference<Map<String, RegisterData>>() {
                 }
         );

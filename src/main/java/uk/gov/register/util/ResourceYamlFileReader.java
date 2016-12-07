@@ -27,6 +27,14 @@ public class ResourceYamlFileReader {
         }
     }
 
+    public <N> Collection<N> readResource(InputStream resourceYamlInputStream, TypeReference<Map<String, N>> typeReference) {
+        try {
+            return yamlObjectMapper.<Map<String, N>>readValue(resourceYamlInputStream, typeReference).values();
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading resources configuration file.", e);
+        }
+    }
+
     private InputStream getStreamFromFile(Optional<String> resourceYamlPath, String defaultResourceYamlFilePath) throws FileNotFoundException {
         if (resourceYamlPath.isPresent()) {
             logger.info("Loading external file '" + resourceYamlPath.get() + ".");

@@ -34,5 +34,6 @@ docker run \
       -Dfile.encoding=UTF-8 \
       -DregistersYaml=/srv/openregister-java/registers.yaml \
       -DfieldsYaml=/srv/openregister-java/fields.yaml \
+      -DconfigBucket=${CONFIG_BUCKET} \
       -jar /srv/openregister-java/openregister-java.jar \
         server /srv/openregister-java/config.yaml
