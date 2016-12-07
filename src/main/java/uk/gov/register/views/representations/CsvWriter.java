@@ -1,6 +1,5 @@
 package uk.gov.register.views.representations;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import uk.gov.register.views.CsvRepresentationView;
 
@@ -28,7 +27,6 @@ public class CsvWriter extends RepresentationWriter<CsvRepresentationView> {
         CsvRepresentation csvRepresentation = view.csvRepresentation();
 
         objectMapper.writerFor(csvRepresentation.contentType)
-                .with(JsonGenerator.Feature.IGNORE_UNKNOWN)
                 .with(csvRepresentation.csvSchema.withLineSeparator("\r\n").withHeader())
                 .writeValue(entityStream, csvRepresentation.contents);
     }
