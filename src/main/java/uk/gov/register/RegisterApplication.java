@@ -1,5 +1,8 @@
 package uk.gov.register;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
@@ -102,8 +105,19 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
-
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
+
+        String bucketName = System.getProperty("configBucket");
+
+        AmazonS3 s3Client = new AmazonS3Client();
+        S3Object registersConfig = s3Client.getObject(bucketName, "registers.yaml");
+        S3Object fieldsConfig = s3Client.getObject(bucketName, "fields.yaml");
+
+        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
+        RegistersConfiguration registersConfiguration = new RegistersConfiguration(registersConfig.getObjectContent());
+        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(fieldsConfig.getObjectContent());
+        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
+        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
 
         jersey.register(new AbstractBinder() {
             @Override
