@@ -3,7 +3,6 @@ package uk.gov.register.views.representations.turtle;
 import org.apache.jena.rdf.model.Model;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.representations.RepresentationWriter;
 
 import javax.ws.rs.WebApplicationException;
@@ -21,9 +20,8 @@ public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter
     protected RegisterResolver registerResolver;
     private String registerPrimaryKey;
 
-    protected TurtleRepresentationWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+    protected TurtleRepresentationWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
         this.registerResolver = registerResolver;
-        this.requestContext = requestContext;
         this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 

@@ -7,7 +7,6 @@ import org.apache.jena.rdf.model.Resource;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -19,8 +18,8 @@ import javax.ws.rs.ext.Provider;
 public class EntryTurtleWriter extends TurtleRepresentationWriter<Entry> {
 
     @Inject
-    public EntryTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registerNameConfiguration, registerResolver);
+    public EntryTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+        super(registerNameConfiguration, registerResolver);
     }
 
     @Override

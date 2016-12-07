@@ -4,7 +4,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.RecordsView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -19,15 +18,15 @@ public class RecordsTurtleWriter extends TurtleRepresentationWriter<RecordsView>
     private RegisterNameConfiguration registerNameConfiguration;
 
     @Inject
-    public RecordsTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registerNameConfiguration, registerResolver);
+    public RecordsTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+        super(registerNameConfiguration, registerResolver);
         this.registerNameConfiguration = registerNameConfiguration;
     }
 
     @Override
     protected Model rdfModelFor(RecordsView view) {
         Model model = ModelFactory.createDefaultModel();
-        RecordTurtleWriter recordTurtleWriter = new RecordTurtleWriter(requestContext, registerNameConfiguration, registerResolver);
+        RecordTurtleWriter recordTurtleWriter = new RecordTurtleWriter(registerNameConfiguration, registerResolver);
         view.getRecords().forEach(r -> model.add(recordTurtleWriter.rdfModelFor(r)));
         return model;
     }

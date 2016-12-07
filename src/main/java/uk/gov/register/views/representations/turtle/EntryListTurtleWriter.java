@@ -5,7 +5,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -20,8 +19,8 @@ public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListV
     private RegisterNameConfiguration registerNameConfiguration;
 
     @Inject
-    public EntryListTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registerNameConfiguration, registerResolver);
+    public EntryListTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+        super(registerNameConfiguration, registerResolver);
         this.registerNameConfiguration = registerNameConfiguration;
     }
 
@@ -29,7 +28,7 @@ public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListV
     protected Model rdfModelFor(EntryListView view) {
         Model model = ModelFactory.createDefaultModel();
         for (Entry entry : view.getEntries()) {
-            model.add(new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entry));
+            model.add(new EntryTurtleWriter(registerNameConfiguration, registerResolver).rdfModelFor(entry));
         }
         return model;
     }

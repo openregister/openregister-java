@@ -4,7 +4,6 @@ import org.apache.jena.rdf.model.*;
 import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.RecordView;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -23,8 +22,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
     private RegisterNameConfiguration registerNameConfiguration;
 
     @Inject
-    public RecordTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registerNameConfiguration, registerResolver);
+    public RecordTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+        super(registerNameConfiguration, registerResolver);
         this.registerNameConfiguration = registerNameConfiguration;
         this.registerResolver = registerResolver;
     }
@@ -35,8 +34,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
         ItemView itemView = view.getItemView();
 
         Model recordModel = ModelFactory.createDefaultModel();
-        Model entryModel = new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entry, false);
-        Model itemModel = new ItemTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(itemView);
+        Model entryModel = new EntryTurtleWriter(registerNameConfiguration, registerResolver).rdfModelFor(entry, false);
+        Model itemModel = new ItemTurtleWriter(registerNameConfiguration, registerResolver).rdfModelFor(itemView);
 
         Resource recordResource = recordModel.createResource(recordUri(view.getPrimaryKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));

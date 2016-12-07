@@ -9,7 +9,6 @@ import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -25,8 +24,8 @@ import java.util.Map;
 public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
 
     @Inject
-    public ItemTurtleWriter(RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registerNameConfiguration, registerResolver);
+    public ItemTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+        super(registerNameConfiguration, registerResolver);
     }
 
     @Override
