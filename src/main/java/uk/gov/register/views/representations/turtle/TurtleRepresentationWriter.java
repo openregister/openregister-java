@@ -17,12 +17,12 @@ import java.net.URI;
 
 public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter<T> {
     protected static final String SPEC_PREFIX = "https://openregister.github.io/specification/#";
-    protected RegisterResolver registerResolver;
-    private String registerPrimaryKey;
+    protected final RegisterNameConfiguration registerNameConfiguration;
+    protected final RegisterResolver registerResolver;
 
     protected TurtleRepresentationWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
+        this.registerNameConfiguration = registerNameConfiguration;
         this.registerResolver = registerResolver;
-        this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
     }
 
     @Override
@@ -37,7 +37,7 @@ public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter
     }
 
     protected URI ourBaseUri() {
-        return registerResolver.baseUriFor(registerPrimaryKey);
+        return registerResolver.baseUriFor(registerNameConfiguration.getRegisterName());
     }
 
     protected URI itemUri(String itemHash) {

@@ -19,13 +19,9 @@ import java.util.Map;
 @Produces(ExtraMediaType.TEXT_TTL)
 public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
-    private RegisterNameConfiguration registerNameConfiguration;
-
     @Inject
     public RecordTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
         super(registerNameConfiguration, registerResolver);
-        this.registerNameConfiguration = registerNameConfiguration;
-        this.registerResolver = registerResolver;
     }
 
     @Override

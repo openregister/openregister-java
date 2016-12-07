@@ -16,12 +16,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(ExtraMediaType.TEXT_TTL)
 public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListView> {
 
-    private RegisterNameConfiguration registerNameConfiguration;
-
     @Inject
     public EntryListTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
         super(registerNameConfiguration, registerResolver);
-        this.registerNameConfiguration = registerNameConfiguration;
     }
 
     @Override

@@ -15,12 +15,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(ExtraMediaType.TEXT_TTL)
 public class RecordsTurtleWriter extends TurtleRepresentationWriter<RecordsView> {
 
-    private RegisterNameConfiguration registerNameConfiguration;
-
     @Inject
     public RecordsTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
         super(registerNameConfiguration, registerResolver);
-        this.registerNameConfiguration = registerNameConfiguration;
     }
 
     @Override
