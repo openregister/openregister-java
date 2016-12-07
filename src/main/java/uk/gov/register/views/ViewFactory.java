@@ -85,8 +85,8 @@ public class ViewFactory {
         return new AttributionView<>(requestContext, getRegistry(), getBranding(), "item.html", registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
     }
 
-    public EntryView getEntryView(Entry entry) {
-        return new EntryView(requestContext, getRegistry(), getBranding(), entry, registerData, registerTrackingConfiguration, registerResolver);
+    public AttributionView<Entry> getEntryView(Entry entry) {
+        return new AttributionView<>(requestContext, getRegistry(), getBranding(), "entry.html", registerData, registerTrackingConfiguration, registerResolver, entry);
     }
 
     public EntryListView getEntriesView(Collection<Entry> entries, Pagination pagination) {

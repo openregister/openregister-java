@@ -7,7 +7,6 @@ import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.EntryView;
 import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +14,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -57,12 +55,12 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        EntryView entryView = new EntryView(requestContext, null, null, new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key"), null, () -> Optional.empty(), registerResolver);
+        Entry entry = new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key");
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         EntryTurtleWriter writer = new EntryTurtleWriter(requestContext, () -> "address", registerResolver);
-        writer.writeTo(entryView, entryView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(entry, entry.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/entry/52>"));

@@ -2,13 +2,12 @@ package uk.gov.register.views.representations.turtle;
 
 import org.apache.jena.rdf.model.*;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.configuration.RegisterTrackingConfiguration;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.views.EntryView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.RecordView;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -27,30 +26,28 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
     private final ItemConverter itemConverter;
     private RegisterData registerData;
     private RegisterNameConfiguration registerNameConfiguration;
-    private RegisterTrackingConfiguration registerTrackingConfiguration;
 
     @Inject
-    public RecordTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
+    public RecordTurtleWriter(RequestContext requestContext, ItemConverter itemConverter, RegisterData registerData, RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
         super(requestContext, registerNameConfiguration, registerResolver);
         this.itemConverter = itemConverter;
         this.registerData = registerData;
         this.registerNameConfiguration = registerNameConfiguration;
-        this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
     }
 
     @Override
     protected Model rdfModelFor(RecordView view) {
-        EntryView entryView = new EntryView(requestContext, view.getRegistry(), view.getBranding(), view.getRecord().entry, registerData, registerTrackingConfiguration, registerResolver);
+        Entry entry = view.getRecord().entry;
         Item item = view.getRecord().item;
         ItemView itemView = new ItemView(registerData.getRegister().getFields(), itemConverter.convertItem(item), item.getSha256hex());
 
         Model recordModel = ModelFactory.createDefaultModel();
-        Model entryModel = new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entryView, false);
+        Model entryModel = new EntryTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(entry, false);
         Model itemModel = new ItemTurtleWriter(requestContext, registerNameConfiguration, registerResolver).rdfModelFor(itemView);
 
         Resource recordResource = recordModel.createResource(recordUri(view.getPrimaryKey()).toString());
-        addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entryView.getEntry().getEntryNumber())).toString()));
+        addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));
         addPropertiesToResource(recordResource, itemModel.getResource(itemUri(itemView.getItemHash().encode()).toString()));
 
         Map<String, String> prefixes = entryModel.getNsPrefixMap();
