@@ -88,12 +88,12 @@ public class ViewFactory {
         return getAttributionView("entry.html", entry);
     }
 
-    public EntryListView getEntriesView(Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, registerData, registerTrackingConfiguration, registerResolver);
+    public PaginatedView<EntryListView> getEntriesView(Collection<Entry> entries, Pagination pagination) {
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries));
     }
 
-    public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, recordKey, registerData, registerTrackingConfiguration, registerResolver);
+    public PaginatedView<EntryListView> getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries, recordKey));
     }
 
     public AttributionView<RecordView> getRecordView(RecordView record) {

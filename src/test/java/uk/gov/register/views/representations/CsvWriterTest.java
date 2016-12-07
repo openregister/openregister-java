@@ -10,10 +10,8 @@ import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
@@ -27,8 +25,8 @@ public class CsvWriterTest {
     @Test
     public void writes_EntryListView_to_output_stream() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        csvWriter.writeTo(new EntryListView(null, null, null, Optional.empty(),
-                        ImmutableList.of(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "1234abcd"), Instant.ofEpochSecond(1400000000L), "abc")), null, () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk")),
+        csvWriter.writeTo(new EntryListView(
+                        ImmutableList.of(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "1234abcd"), Instant.ofEpochSecond(1400000000L), "abc"))),
                 EntryListView.class,
                 null,
                 null,

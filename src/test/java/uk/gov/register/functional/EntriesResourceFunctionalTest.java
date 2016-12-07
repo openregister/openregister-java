@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class EntriesResourceFunctionalTest {
     @ClassRule
@@ -47,7 +48,7 @@ public class EntriesResourceFunctionalTest {
 
     @Test
     public void entriesPageHasXhtmlLangAttributes() throws Throwable {
-        Response response = register.getRequest("/entries");
+        Response response = register.getRequest("/entries", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");

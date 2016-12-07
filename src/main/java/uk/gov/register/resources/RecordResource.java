@@ -73,8 +73,8 @@ public class RecordResource {
 
     @GET
     @Path("/record/{record-key}/entries")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
+    @Produces(ExtraMediaType.TEXT_HTML)
+    public PaginatedView<EntryListView> getAllEntriesOfARecordHtml(@PathParam("record-key") String key) {
         Collection<Entry> allEntries = register.allEntriesOfRecord(key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
@@ -83,6 +83,17 @@ public class RecordResource {
                 key, allEntries,
                 new IndexSizePagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
         );
+    }
+
+    @GET
+    @Path("/record/{record-key}/entries")
+    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
+        Collection<Entry> allEntries = register.allEntriesOfRecord(key);
+        if (allEntries.isEmpty()) {
+            throw new NotFoundException();
+        }
+        return new EntryListView(allEntries, key);
     }
 
     @GET
