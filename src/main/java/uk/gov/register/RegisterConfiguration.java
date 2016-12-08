@@ -10,7 +10,7 @@ import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.AllTheRegistersFactory;
-import uk.gov.register.core.EverythingAboutARegisterFactory;
+import uk.gov.register.core.RegisterContextFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -96,25 +96,18 @@ public class RegisterConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private Map<String, EverythingAboutARegisterFactory> otherRegisters = new HashMap<>();
+    private Map<String, RegisterContextFactory> otherRegisters = new HashMap<>();
 
     public DataSourceFactory getDatabase() {
         return database;
     }
 
-    public EverythingAboutARegisterFactory getDefaultRegister() {
-        return new EverythingAboutARegisterFactory(getDatabase());
+    public RegisterContextFactory getDefaultRegister() {
+        return new RegisterContextFactory(getDatabase());
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
         return new AllTheRegistersFactory(getDefaultRegister(), otherRegisters, getDefaultRegisterName());
-    }
-
-    public FlywayFactory getFlywayFactory() {
-        flywayFactory.setLocations(Collections.singletonList("/sql"));
-        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", getDefaultRegisterName()));
-        flywayFactory.setOutOfOrder(true);
-        return flywayFactory;
     }
 
     public String getDefaultRegisterName() {

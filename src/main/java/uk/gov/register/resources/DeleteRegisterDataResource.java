@@ -1,7 +1,7 @@
 package uk.gov.register.resources;
 
 import org.flywaydb.core.Flyway;
-import uk.gov.register.core.EverythingAboutARegister;
+import uk.gov.register.core.RegisterContext;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -14,8 +14,8 @@ public class DeleteRegisterDataResource {
     private Flyway flyway;
 
     @Inject
-    public DeleteRegisterDataResource(EverythingAboutARegister everythingAboutARegister) {
-        this.flyway = everythingAboutARegister.getFlyway();
+    public DeleteRegisterDataResource(RegisterContext registerContext) {
+        this.flyway = registerContext.getFlyway();
     }
 
     @DELETE

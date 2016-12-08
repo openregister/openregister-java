@@ -10,18 +10,18 @@ import java.util.Map;
 import static java.util.stream.Collectors.toMap;
 
 public class AllTheRegistersFactory {
-    private EverythingAboutARegisterFactory defaultRegisterFactory;
-    private final Map<String, EverythingAboutARegisterFactory> otherRegisters;
+    private RegisterContextFactory defaultRegisterFactory;
+    private final Map<String, RegisterContextFactory> otherRegisters;
     private final String defaultRegisterName;
 
-    public AllTheRegistersFactory(EverythingAboutARegisterFactory defaultRegisterFactory, Map<String, EverythingAboutARegisterFactory> otherRegisters, String defaultRegisterName) {
+    public AllTheRegistersFactory(RegisterContextFactory defaultRegisterFactory, Map<String, RegisterContextFactory> otherRegisters, String defaultRegisterName) {
         this.defaultRegisterFactory = defaultRegisterFactory;
         this.otherRegisters = otherRegisters;
         this.defaultRegisterName = defaultRegisterName;
     }
 
     public AllTheRegisters build(DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
-        Map<String, EverythingAboutARegister> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
+        Map<String, RegisterContext> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
                 e -> buildRegister(e.getKey(), e.getValue(), dbiFactory, registersConfiguration, fieldsConfiguration, environment)));
         return new AllTheRegisters(
                 defaultRegisterFactory.build(defaultRegisterName, dbiFactory, registersConfiguration, fieldsConfiguration, environment),
@@ -29,7 +29,7 @@ public class AllTheRegistersFactory {
         );
     }
 
-    private EverythingAboutARegister buildRegister(String registerName, EverythingAboutARegisterFactory registerFactory, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
+    private RegisterContext buildRegister(String registerName, RegisterContextFactory registerFactory, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
         return registerFactory.build(registerName, dbiFactory, registersConfiguration, fieldsConfiguration, environment);
     }
 }

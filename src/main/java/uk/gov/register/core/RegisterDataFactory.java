@@ -6,10 +6,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class RegisterDataFactory implements Factory<RegisterData> {
-    private final Provider<EverythingAboutARegister> everythingAboutARegister;
+    private final Provider<RegisterContext> everythingAboutARegister;
 
     @Inject
-    public RegisterDataFactory(Provider<EverythingAboutARegister> everythingAboutARegister) {
+    public RegisterDataFactory(Provider<RegisterContext> everythingAboutARegister) {
         this.everythingAboutARegister = everythingAboutARegister;
     }
 

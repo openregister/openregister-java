@@ -13,7 +13,6 @@ import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBSupport;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.register.service.RegisterService;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
@@ -44,7 +43,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
-        RegisterService.useTransaction(dbi, handle -> {
+        RegisterContext.useTransaction(dbi, handle -> {
             PostgresRegister postgresRegister = getPostgresRegister(handle);
             postgresRegister.putItem(item1);
 
@@ -74,7 +73,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         try {
-            RegisterService.useTransaction(dbi, handle -> {
+            RegisterContext.useTransaction(dbi, handle -> {
                 PostgresRegister postgresRegister = getPostgresRegister(handle);
                 postgresRegister.putItem(item1);
                 postgresRegister.commit();
@@ -116,7 +115,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "bbb");
         Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "ccc");
 
-        RegisterService.useTransaction(dbi, handle -> {
+        RegisterContext.useTransaction(dbi, handle -> {
             PostgresRegister postgresRegister = getPostgresRegister(handle);
             postgresRegister.putItem(item1);
             postgresRegister.putItem(item2);

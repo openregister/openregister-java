@@ -7,6 +7,7 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
@@ -19,10 +20,10 @@ public class ItemValidator {
     private final RegistersConfiguration registersConfiguration;
     private final String registerName;
 
-    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, String registerName) {
+    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, RegisterContext registerContext) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;
-        this.registerName = registerName;
+        this.registerName = registerContext.getRegisterName();
     }
 
     public void validateItem(JsonNode inputEntry) throws ItemValidationException {

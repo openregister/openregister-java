@@ -1,6 +1,6 @@
 package uk.gov.register.resources;
 
-import uk.gov.register.core.EverythingAboutARegister;
+import uk.gov.register.core.RegisterContext;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
@@ -13,7 +13,7 @@ public class DeleteRegisterDataResourceTest {
 
     @Test
     public void shouldUseFlywayToDeleteData() throws Exception {
-        EverythingAboutARegister registerMock = mock(EverythingAboutARegister.class, RETURNS_DEEP_STUBS);
+        RegisterContext registerMock = mock(RegisterContext.class, RETURNS_DEEP_STUBS);
         DeleteRegisterDataResource sutResource = new DeleteRegisterDataResource(registerMock);
 
         Response response = sutResource.deleteRegisterData();

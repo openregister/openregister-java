@@ -11,7 +11,7 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 import uk.gov.register.core.AllTheRegisters;
-import uk.gov.register.core.EverythingAboutARegister;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.thymeleaf.ThymeleafResourceResolver;
 
@@ -61,7 +61,7 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         // FIXME this duplicates RequestContext.getHost() because we can't inject a RequestContext here
         String host = firstNonNull(request.getHeader("X-Forwarded-Host"),request.getHeader("Host"));
         String registerId = host.split("\\.")[0];
-        EverythingAboutARegister register = registers.getRegisterByName(registerId);
+        RegisterContext register = registers.getRegisterByName(registerId);
 
         RegisterData rd = register.getRegisterData();
         String registerName = registerId.replace('-', ' ');

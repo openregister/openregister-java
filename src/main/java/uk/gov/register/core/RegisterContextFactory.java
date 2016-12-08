@@ -13,17 +13,17 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 
-public class EverythingAboutARegisterFactory {
+public class RegisterContextFactory {
     @Valid
     @NotNull
     @JsonProperty
     private DataSourceFactory database;
 
     @SuppressWarnings("unused, used by Jackson")
-    public EverythingAboutARegisterFactory() {
+    public RegisterContextFactory() {
     }
 
-    public EverythingAboutARegisterFactory(DataSourceFactory database) {
+    public RegisterContextFactory(DataSourceFactory database) {
         this.database = database;
     }
 
@@ -35,8 +35,8 @@ public class EverythingAboutARegisterFactory {
         return flywayFactory;
     }
 
-    public EverythingAboutARegister build(String registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
-        return new EverythingAboutARegister(
+    public RegisterContext build(String registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
+        return new RegisterContext(
                 registerName,
                 registersConfiguration,
                 fieldsConfiguration,

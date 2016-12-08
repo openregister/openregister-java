@@ -25,7 +25,6 @@ import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterSerialisationFormatService;
-import uk.gov.register.service.RegisterService;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
@@ -94,17 +93,13 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bindFactory(RegisterDataFactory.class).to(RegisterData.class);
                 bindFactory(RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
                 bind(allTheRegisters);
-                bindFactory(EverythingAboutARegisterProvider.class).to(EverythingAboutARegister.class);
+                bindFactory(RegisterContextProvider.class).to(RegisterContext.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
-                bindFactory(Factories.EntryQueryDAOFactory.class).to(EntryQueryDAO.class);
-                bindFactory(Factories.ItemQueryDAOFactory.class).to(ItemQueryDAO.class);
-                bindFactory(Factories.RecordQueryDAOFactory.class).to(RecordQueryDAO.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
-                bind(RegisterService.class).to(RegisterService.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
                 bind(RequestContext.class).to(RequestContext.class).to(SchemeContext.class);
@@ -113,9 +108,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
 
                 bindFactory(Factories.PostgresRegisterFactory.class).to(Register.class).to(RegisterReadOnly.class);
-                bind(UnmodifiableEntryLog.class).to(EntryLog.class);
-                bind(UnmodifiableItemStore.class).to(ItemStore.class);
-                bind(UnmodifiableRecordIndex.class).to(RecordIndex.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);
