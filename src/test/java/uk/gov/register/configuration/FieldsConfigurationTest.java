@@ -1,10 +1,7 @@
 package uk.gov.register.configuration;
 
 import org.junit.Test;
-import uk.gov.register.configuration.FieldsConfiguration;
 
-import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Optional;

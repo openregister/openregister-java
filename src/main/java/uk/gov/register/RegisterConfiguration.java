@@ -20,6 +20,7 @@ public class RegisterConfiguration extends Configuration
         implements AuthenticatorConfiguration,
         RegisterNameConfiguration,
         RegisterDomainConfiguration,
+        RegisterDefaultConfigConfiguration,
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
         GovukClientConfiguration,
@@ -79,6 +80,14 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private boolean enableRegisterDataDelete = false;
 
+    @Valid
+    @JsonProperty
+    private String defaultRegistersConfig = "config/registers.yaml";
+
+    @Valid
+    @JsonProperty
+    private String defaultFieldsConfig = "config/fields.yaml";
+
     @SuppressWarnings("unused")
     private FlywayFactory flywayFactory = new FlywayFactory();
 
@@ -133,5 +142,15 @@ public class RegisterConfiguration extends Configuration
     @Override
     public boolean getEnableRegisterDataDelete() {
         return enableRegisterDataDelete;
+    }
+
+    @Override
+    public String getDefaultRegistersConfig() {
+        return defaultRegistersConfig;
+    }
+
+    @Override
+    public String getDefaultFieldsConfig() {
+        return defaultFieldsConfig;
     }
 }
