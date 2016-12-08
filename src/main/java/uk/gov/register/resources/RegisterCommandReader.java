@@ -1,5 +1,7 @@
 package uk.gov.register.resources;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
@@ -22,6 +24,9 @@ import java.util.Iterator;
 @Provider
 @Consumes(ExtraMediaType.APPLICATION_RSF)
 public class RegisterCommandReader implements MessageBodyReader<RegisterSerialisationFormat> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RegisterCommandReader.class);
+
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
