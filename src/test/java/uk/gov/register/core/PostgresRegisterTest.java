@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
@@ -42,14 +44,14 @@ public class PostgresRegisterTest {
 
     @Test(expected = NoSuchFieldException.class)
     public void findMax100RecordsByKeyValueShouldFailWhenKeyDoesNotExist() {
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration, new InMemoryEntryLog());
         register.max100RecordsFacetedByKeyValue("citizen-name", "British");
     }
 
     @Test
     public void findMax100RecordsByKeyValueShouldReturnValueWhenKeyExists() {
         when(registerFieldsConfiguration.containsField("name")).thenReturn(true);
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration, new InMemoryEntryLog());
         register.max100RecordsFacetedByKeyValue("name", "United Kingdom");
         verify(backingStoreDriver, times(1)).findMax100RecordsByKeyValue("name", "United Kingdom");
     }
@@ -60,7 +62,7 @@ public class PostgresRegisterTest {
 
         when(backingStoreDriver.getItemBySha256(any(HashValue.class))).thenReturn(Optional.empty());
 
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration, new InMemoryEntryLog());
         register.appendEntry(entryDangling);
     }
 
@@ -74,7 +76,8 @@ public class PostgresRegisterTest {
                 .thenReturn(Optional.of(item))
                 .thenReturn(Optional.empty());
 
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
+        InMemoryEntryLog entryLog = new InMemoryEntryLog();
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration, entryLog);
 
         try {
             register.appendEntry(entryNotDangling);
@@ -82,8 +85,7 @@ public class PostgresRegisterTest {
         } catch (NoSuchItemForEntryException ex) {
         }
 
-        verify(backingStoreDriver, times(1)).insertEntry(entryNotDangling);
-        verify(backingStoreDriver, never()).insertEntry(entryDangling);
+        assertThat(entryLog.getAllEntries(), equalTo(ImmutableList.of(entryNotDangling)));
     }
 
     @Test
@@ -100,7 +102,7 @@ public class PostgresRegisterTest {
         when(registerMetadata.getRegisterName()).thenReturn("country");
         when(registerData.getRegister()).thenReturn(registerMetadata);
 
-        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration);
+        PostgresRegister register = new PostgresRegister(registerData, backingStoreDriver, itemValidator, registerFieldsConfiguration, new InMemoryEntryLog());
 
         try {
             register.appendEntry(entryNotDangling);

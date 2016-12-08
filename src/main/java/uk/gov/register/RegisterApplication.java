@@ -25,12 +25,14 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.core.UriTemplateRegisterResolver;
+import uk.gov.register.db.OnDemandEntryLog;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -124,7 +126,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
-                bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
+                bindAsContract(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
                 bind(RegisterService.class).to(RegisterService.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
@@ -135,6 +137,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
 
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
+                bind(OnDemandEntryLog.class).to(EntryLog.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);

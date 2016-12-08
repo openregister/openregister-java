@@ -5,6 +5,10 @@ import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.TransactionalMemoizationStore;
+import uk.gov.register.db.EntryDAO;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.TransactionalEntryLog;
 import uk.gov.register.store.postgres.PostgresDriverTransactional;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -29,8 +33,11 @@ public class RegisterService {
 
     public void asAtomicRegisterOperation(Consumer<Register> callback) {
         PostgresDriverTransactional.useTransaction(dbi, memoizationStore, postgresDriver -> {
-            Register register = new PostgresRegister(registerData, postgresDriver, itemValidator, registerFieldsConfiguration);
+            TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
+
+            Register register = new PostgresRegister(registerData, postgresDriver, itemValidator, registerFieldsConfiguration, new TransactionalEntryLog(transactionalMemoizationStore, postgresDriver.getHandle().attach(EntryQueryDAO.class), postgresDriver.getHandle().attach(EntryDAO.class)));
             callback.accept(register);
+            register.commit();
         });
     }
 }

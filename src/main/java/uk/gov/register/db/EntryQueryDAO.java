@@ -12,6 +12,7 @@ import uk.gov.register.db.mappers.LongTimestampToInstantMapper;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 
 public interface EntryQueryDAO {
@@ -45,10 +46,10 @@ public interface EntryQueryDAO {
     @SqlQuery("SELECT * FROM entry ORDER BY entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144)
-    ResultIterator<Entry> getIterator();
+    Iterator<Entry> getIterator();
 
     @SqlQuery("SELECT * FROM entry WHERE entry_number > :startEntryNo and entry_number <= :endEntryNo ORDER BY entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144)
-    ResultIterator<Entry> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);
+    Iterator<Entry> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);
 }
