@@ -9,10 +9,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.google.common.collect.Lists;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
 
 import java.time.Instant;
+import java.util.Iterator;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
@@ -65,6 +68,16 @@ public class Entry {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
         return csvMapper.schemaFor(Entry.class);
+    }
+
+    public static CsvSchema csvSchemaWithOmittedFields(List<String> fieldsToRemove) {
+        CsvSchema originalSchema = csvSchema();
+        Iterator<CsvSchema.Column> columns = originalSchema.rebuild().getColumns();
+
+        List<CsvSchema.Column> updatedColumns = Lists.newArrayList(columns);
+        updatedColumns.removeIf(c -> fieldsToRemove.contains(c.getName()));
+
+        return CsvSchema.builder().addColumns(updatedColumns).build();
     }
 
     @Override

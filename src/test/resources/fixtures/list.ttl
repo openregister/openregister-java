@@ -10,9 +10,7 @@
       register-metadata:entry-timestamp-field
               "2016-03-01T01:02:03Z" ;
       register-metadata:item-resource
-              <http://register.test.register.gov.uk/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18> ;
-      register-metadata:key-field
-              "value1" .
+              <http://register.test.register.gov.uk/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18> .
 
 <http://register.test.register.gov.uk/record/value2>
       field:fields field:field1 , field:field2 ;
@@ -23,6 +21,4 @@
       register-metadata:entry-timestamp-field
               "2016-03-02T02:03:04Z" ;
       register-metadata:item-resource
-              <http://register.test.register.gov.uk/item/sha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7> ;
-      register-metadata:key-field
-              "value2" .
+              <http://register.test.register.gov.uk/item/sha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7> .

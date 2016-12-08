@@ -45,24 +45,21 @@ public class RecordListResourceFunctionalTest {
                 .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"))
                 .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
                 .put("street", "ellis")
-                .put("address", "6789")
-                .put("key", "6789").build()));
+                .put("address", "6789").build()));
 
         assertThat(responseMap.get("145678"), equalTo(ImmutableMap.builder()
                 .put("entry-number", "4")
                 .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"145678\",\"street\":\"updatedEllisName\"}"))
                 .put("entry-timestamp", responseMap.get("145678").get("entry-timestamp"))
                 .put("street", "updatedEllisName")
-                .put("address", "145678")
-                .put("key", "145678").build()));
+                .put("address", "145678").build()));
 
         assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
                 .put("entry-number", "1")
                 .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"))
                 .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
                 .put("street", "ellis")
-                .put("address", "12345")
-                .put("key", "12345").build()));
+                .put("address", "12345").build()));
 
     }
 
@@ -112,16 +109,14 @@ public class RecordListResourceFunctionalTest {
                 .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"))
                 .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
                 .put("street", "ellis")
-                .put("address", "6789")
-                .put("key", "6789").build()));
+                .put("address", "6789").build()));
 
         assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
                 .put("entry-number", "1")
                 .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"))
                 .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
                 .put("street", "ellis")
-                .put("address", "12345")
-                .put("key", "12345").build()));
+                .put("address", "12345").build()));
     }
 
     //Note: tests below will be removed once the old resources are deleted
