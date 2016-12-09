@@ -7,20 +7,18 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class ViewFactory {
     private final RequestContext requestContext;
-    private final ItemConverter itemConverter;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
     private final RegisterData registerData;
@@ -31,7 +29,6 @@ public class ViewFactory {
 
     @Inject
     public ViewFactory(RequestContext requestContext,
-                       ItemConverter itemConverter,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
@@ -40,7 +37,6 @@ public class ViewFactory {
                        RegisterTrackingConfiguration registerTrackingConfiguration,
                        RegisterResolver registerResolver) {
         this.requestContext = requestContext;
-        this.itemConverter = itemConverter;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
@@ -80,28 +76,33 @@ public class ViewFactory {
         return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData, registerDomainConfiguration.getRegisterDomain());
     }
 
-    public ItemView getItemView(Item item) {
-        return new ItemView(requestContext, getRegistry(), getBranding(), itemConverter, item, registerData, registerTrackingConfiguration, registerResolver);
+    public <T> AttributionView<T> getAttributionView(String templateName, T fieldValueMap) {
+        return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
     }
 
-    public EntryView getEntryView(Entry entry) {
-        return new EntryView(requestContext, getRegistry(), getBranding(), entry, registerData, registerTrackingConfiguration, registerResolver);
+    public AttributionView<Map<String, FieldValue>> getItemView(Map<String, FieldValue> fieldValueMap) {
+        return getAttributionView("item.html", fieldValueMap);
     }
 
-    public EntryListView getEntriesView(Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, registerData, registerTrackingConfiguration, registerResolver);
+    public AttributionView<Entry> getEntryView(Entry entry) {
+        return getAttributionView("entry.html", entry);
     }
 
-    public EntryListView getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
-        return new EntryListView(requestContext, pagination, getRegistry(), getBranding(), entries, recordKey, registerData, registerTrackingConfiguration, registerResolver);
+    public PaginatedView<EntryListView> getEntriesView(Collection<Entry> entries, Pagination pagination) {
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries));
     }
 
-    public RecordView getRecordView(Record record) {
-        return new RecordView(requestContext, getRegistry(), getBranding(), itemConverter, record, registerData, registerTrackingConfiguration, registerResolver);
+    public PaginatedView<EntryListView> getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries, recordKey));
     }
 
-    public RecordListView getRecordListView(List<Record> records, Pagination pagination) {
-        return new RecordListView(requestContext, getRegistry(), getBranding(), pagination, itemConverter, records, registerData, registerTrackingConfiguration, registerResolver);
+    public AttributionView<RecordView> getRecordView(RecordView record) {
+        return getAttributionView("record.html", record);
+    }
+
+    public PaginatedView<RecordsView> getRecordListView(Pagination pagination, RecordsView recordsView) {
+        return new PaginatedView<>("records.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination,
+                recordsView);
     }
 
     private PublicBody getRegistry() {

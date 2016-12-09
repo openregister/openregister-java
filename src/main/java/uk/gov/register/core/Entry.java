@@ -12,6 +12,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.collect.Lists;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
+import uk.gov.register.views.CsvRepresentationView;
+import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.time.Instant;
 import java.util.Iterator;
@@ -19,7 +21,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
-public class Entry {
+public class Entry implements CsvRepresentationView<Entry> {
     private final int entryNumber;
     private final HashValue hashValue;
     private final Instant timestamp;
@@ -78,6 +80,11 @@ public class Entry {
         updatedColumns.removeIf(c -> fieldsToRemove.contains(c.getName()));
 
         return CsvSchema.builder().addColumns(updatedColumns).build();
+    }
+
+    @Override
+    public CsvRepresentation<Entry> csvRepresentation() {
+        return new CsvRepresentation<>(csvSchema(), this);
     }
 
     @Override

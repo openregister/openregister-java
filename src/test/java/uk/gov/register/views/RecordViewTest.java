@@ -1,6 +1,7 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
 import org.junit.Test;
@@ -8,11 +9,9 @@ import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
-import java.net.URI;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -21,8 +20,9 @@ public class RecordViewTest {
     public void recordJsonRepresentation_isFlatJsonOfEntryAndItemContent() throws IOException, JSONException {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-        Record record = new Record(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b"), new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}")));
-        RecordView recordView = new RecordView(null, null, null, null, record, new RegisterData(Collections.emptyMap()), () -> Optional.empty(), register -> URI.create("http://" + register + ".test.register.gov.uk"));
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b");
+        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"), ImmutableMap.of("a", new StringValue("b")), emptyList());
+        RecordView recordView = new RecordView(entry, itemView, emptyList());
 
         String result = objectMapper.writeValueAsString(recordView);
 

@@ -20,6 +20,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class RecordListResourceFunctionalTest {
     @ClassRule
@@ -87,7 +88,7 @@ public class RecordListResourceFunctionalTest {
 
     @Test
     public void newRecordsPageHasXhtmlLangAttributes() {
-        Response response = register.getRequest("/records");
+        Response response = register.getRequest("/records", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");

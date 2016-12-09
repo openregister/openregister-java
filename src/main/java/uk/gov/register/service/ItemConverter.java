@@ -8,6 +8,7 @@ import uk.gov.register.core.*;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static uk.gov.register.core.Cardinality.ONE;
 
@@ -25,6 +26,10 @@ public class ItemConverter {
         JsonNode value = mapEntry.getValue();
         FieldConverter fieldConverter = new FieldConverter(fieldsConfiguration.getField(fieldName));
         return fieldConverter.convert(value);
+    }
+
+    public Map<String, FieldValue> convertItem(Item item) {
+        return item.getFieldsStream().collect(Collectors.toMap(Map.Entry::getKey, this::convert));
     }
 
     private class FieldConverter {

@@ -19,6 +19,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 @RunWith(Parameterized.class)
 public class AnalyticsFunctionalTest {
@@ -86,7 +87,7 @@ public class AnalyticsFunctionalTest {
 
     @Test
     public void checkAnalyticsScriptsPresence() throws Exception {
-        Response response = register.getRequest(targetUrl);
+        Response response = register.getRequest(targetUrl, TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));

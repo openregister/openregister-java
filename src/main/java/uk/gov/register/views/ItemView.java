@@ -1,42 +1,36 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.configuration.RegisterTrackingConfiguration;
-import uk.gov.register.core.PublicBody;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Item;
-import uk.gov.register.core.RegisterData;
-import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class ItemView extends CsvRepresentationView {
-    private ItemConverter itemConverter;
-    private Item item;
+public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> {
+    private Iterable<String> fields;
+    private Map<String, FieldValue> fieldValueMap;
+    private final HashValue sha256hex;
 
-    public ItemView(RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> branding, ItemConverter itemConverter, Item item, RegisterData registerData, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registry, branding, "item.html", registerData, registerTrackingConfiguration, registerResolver);
-        this.itemConverter = itemConverter;
-        this.item = item;
+    public ItemView(HashValue sha256hex, Map<String, FieldValue> fieldValueMap, Iterable<String> fields) {
+        this.fields = fields;
+        this.fieldValueMap = fieldValueMap;
+        this.sha256hex = sha256hex;
     }
 
     @JsonValue
     public Map<String, FieldValue> getContent() {
-        return item.getFieldsStream().collect(Collectors.toMap(Map.Entry::getKey, itemConverter::convert));
+        return fieldValueMap;
     }
 
     @Override
-    public CsvRepresentation<Map> csvRepresentation() {
-        return new CsvRepresentation<>(Item.csvSchema(getRegister().getFields()), getContent());
+    public CsvRepresentation<Map<String, FieldValue>> csvRepresentation() {
+        return new CsvRepresentation<>(Item.csvSchema(fields),
+                fieldValueMap);
     }
 
-    public String getItemHash() {
-        return item.getSha256hex().encode();
+    public HashValue getItemHash() {
+        return sha256hex;
     }
 }

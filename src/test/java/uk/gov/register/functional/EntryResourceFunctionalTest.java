@@ -24,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertTrue;
+import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class EntryResourceFunctionalTest {
     @ClassRule
@@ -41,7 +42,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void getEntriesView_itemHashesAreRenderedAsLinks() {
-        Response response = register.getRequest("/entries");
+        Response response = register.getRequest("/entries", TEXT_HTML);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -94,7 +95,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void entryView_itemHashIsRenderedAsALink() {
-        Response response = register.getRequest("/entry/1");
+        Response response = register.getRequest("/entry/1", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         String text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();

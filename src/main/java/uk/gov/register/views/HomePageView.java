@@ -14,7 +14,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class HomePageView extends AttributionView {
+public class HomePageView extends AttributionView<Object> {
     /* Formatter for friendly (ie human-readable) dates
        based on guidance at https://www.gov.uk/guidance/style-guide/a-to-z-of-gov-uk-style#dates
      */
@@ -35,7 +35,7 @@ public class HomePageView extends AttributionView {
             RegisterData registerData,
             RegisterContentPages registerContentPages,
             RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver) {
-        super(requestContext, registry, registryBranding, "home.html", registerData, registerTrackingConfiguration, registerResolver);
+        super("home.html", requestContext, registry, registryBranding, registerData, registerTrackingConfiguration, registerResolver, null);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;

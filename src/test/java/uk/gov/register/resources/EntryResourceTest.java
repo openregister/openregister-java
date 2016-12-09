@@ -18,11 +18,18 @@ import static org.hamcrest.Matchers.hasItems;
 public class EntryResourceTest {
 
     @Test
-    public void findByEntryNumberSupportsHtmlAndJson() throws Exception {
+    public void findByEntryNumberHtmlSupportsHtml() throws Exception {
+        Method findBySerialMethod = EntryResource.class.getDeclaredMethod("findByEntryNumberHtml", int.class);
+        List<String> declaredMediaTypes = asList(findBySerialMethod.getDeclaredAnnotation(Produces.class).value());
+        assertThat(declaredMediaTypes,
+                hasItems(ExtraMediaType.TEXT_HTML));
+    }
+
+    @Test
+    public void findByEntryNumberSupportsJson() throws Exception {
         Method findBySerialMethod = EntryResource.class.getDeclaredMethod("findByEntryNumber", int.class);
         List<String> declaredMediaTypes = asList(findBySerialMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
-                hasItems(ExtraMediaType.TEXT_HTML,
-                        MediaType.APPLICATION_JSON));
+                hasItems(MediaType.APPLICATION_JSON));
     }
 }

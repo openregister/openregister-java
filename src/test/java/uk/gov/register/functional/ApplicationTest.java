@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class ApplicationTest {
     @ClassRule
@@ -55,7 +56,7 @@ public class ApplicationTest {
 
     @Test
     public void appExplicitlySendsHtmlCharsetInHeader() throws Exception {
-        Response response = register.getRequest("/entries");
+        Response response = register.getRequest("/entries", TEXT_HTML);
 
         String contentType = (String) response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0);
         assertThat(contentType, containsString("text/html"));
