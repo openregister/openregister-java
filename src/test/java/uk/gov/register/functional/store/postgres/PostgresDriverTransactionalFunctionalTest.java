@@ -5,16 +5,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBSupport;
 import uk.gov.register.store.postgres.PostgresDriverTransactional;
 import uk.gov.register.util.HashValue;
-import uk.gov.verifiablelog.store.memoization.DoNothing;
-
-import java.time.Instant;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -32,37 +28,24 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
-        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "key1");
-        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "key2");
-        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "key3");
 
-        PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
+        PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
             postgresDriver.insertItem(item1);
-            postgresDriver.insertEntry(entry1);
 
-            assertThat(postgresDriver.getAllEntries().size(), is(1));
             assertThat(postgresDriver.getAllItems().size(), is(1));
-            assertThat(testEntryDAO.getAllEntries(), is(empty()));
             assertThat(testItemDAO.getItems(), is(empty()));
 
             postgresDriver.insertItem(item2);
-            postgresDriver.insertEntry(entry2);
 
-            assertThat(postgresDriver.getAllEntries().size(), is(2));
             assertThat(postgresDriver.getAllItems().size(), is(2));
-            assertThat(testEntryDAO.getAllEntries(), is(empty()));
             assertThat(testItemDAO.getItems(), is(empty()));
 
             postgresDriver.insertItem(item3);
-            postgresDriver.insertEntry(entry3);
 
-            assertThat(postgresDriver.getAllEntries().size(), is(3));
             assertThat(postgresDriver.getAllItems().size(), is(3));
-            assertThat(testEntryDAO.getAllEntries(), is(empty()));
             assertThat(testItemDAO.getItems(), is(empty()));
         });
 
-        assertThat(testEntryDAO.getAllEntries().size(), is(3));
         assertThat(testItemDAO.getItems().size(), is(3));
     }
 
@@ -73,34 +56,22 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
-        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "key1");
-        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "key2");
-        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "key3");
 
         try {
-            PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
+            PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
                 postgresDriver.insertItem(item1);
-                postgresDriver.insertEntry(entry1);
 
-                assertThat(postgresDriver.getAllEntries().size(), is(1));
                 assertThat(postgresDriver.getAllItems().size(), is(1));
-                assertThat(testEntryDAO.getAllEntries(), is(empty()));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 postgresDriver.insertItem(item2);
-                postgresDriver.insertEntry(entry2);
 
-                assertThat(postgresDriver.getAllEntries().size(), is(2));
                 assertThat(postgresDriver.getAllItems().size(), is(2));
-                assertThat(testEntryDAO.getAllEntries(), is(empty()));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 postgresDriver.insertItem(item3);
-                postgresDriver.insertEntry(entry3);
 
-                assertThat(postgresDriver.getAllEntries().size(), is(3));
                 assertThat(postgresDriver.getAllItems().size(), is(3));
-                assertThat(testEntryDAO.getAllEntries(), is(empty()));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 throw new RuntimeException();

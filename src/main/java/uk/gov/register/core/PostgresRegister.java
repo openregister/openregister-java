@@ -31,10 +31,11 @@ public class PostgresRegister implements Register {
     public PostgresRegister(RegisterData registerData,
                             BackingStoreDriver backingStoreDriver,
                             ItemValidator itemValidator,
-                            RegisterFieldsConfiguration registerFieldsConfiguration) {
+                            RegisterFieldsConfiguration registerFieldsConfiguration,
+                            EntryLog entryLog) {
         RegisterMetadata registerMetadata = registerData.getRegister();
         registerName = registerMetadata.getRegisterName();
-        this.entryLog = new EntryLog(backingStoreDriver);
+        this.entryLog = entryLog;
         this.itemStore = new ItemStore(backingStoreDriver, itemValidator, registerName);
         this.recordIndex = new RecordIndex(backingStoreDriver);
         this.registerFieldsConfiguration = registerFieldsConfiguration;
@@ -50,6 +51,11 @@ public class PostgresRegister implements Register {
         Item item = itemStore.getItemBySha256(entry.getSha256hex()).orElseThrow(() -> new NoSuchItemForEntryException(entry));
         entryLog.appendEntry(entry);
         recordIndex.updateRecordIndex(registerName, new Record(entry, item));
+    }
+
+    public void commit() {
+        entryLog.checkpoint();
+        // TODO: commit transactional memoization store?
     }
 
     @Override

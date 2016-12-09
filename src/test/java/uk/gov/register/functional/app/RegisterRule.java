@@ -78,9 +78,13 @@ public class RegisterRule implements TestRule {
     }
 
     public Response loadRsf(String rsf) {
-        return authenticatedTarget.path("/load-rsf")
+        Response post = authenticatedTarget.path("/load-rsf")
                 .request()
                 .post(entity(rsf, APPLICATION_RSF_TYPE));
+        if (post.getStatus() >= 400) {
+            throw new RuntimeException("Failed to load RSF, got response " + post);
+        }
+        return post;
     }
 
     public Response mintLines(String... payload) {
