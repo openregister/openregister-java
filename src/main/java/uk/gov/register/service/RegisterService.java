@@ -33,7 +33,7 @@ public class RegisterService {
 
     public void asAtomicRegisterOperation(Consumer<Register> callback) {
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
-        PostgresDriverTransactional.useTransaction(dbi, memoizationStore, postgresDriver -> {
+        PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
 
             Register register = new PostgresRegister(registerData, postgresDriver, itemValidator, registerFieldsConfiguration, new TransactionalEntryLog(transactionalMemoizationStore, postgresDriver.getHandle().attach(EntryQueryDAO.class), postgresDriver.getHandle().attach(EntryDAO.class)));
             callback.accept(register);

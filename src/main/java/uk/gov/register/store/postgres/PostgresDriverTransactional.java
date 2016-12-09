@@ -57,8 +57,7 @@ public class PostgresDriverTransactional implements BackingStoreDriver {
         this.stagedCurrentKeys = new HashMap<>();
     }
 
-    public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
-        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
+    public static void useTransaction(DBI dbi, Consumer<PostgresDriverTransactional> callback) {
         Handle handle = dbi.open();
 
         try {
@@ -69,12 +68,10 @@ public class PostgresDriverTransactional implements BackingStoreDriver {
             callback.accept(postgresDriver);
             postgresDriver.writeStagedData();
 
-            transactionalMemoizationStore.commitHashesToStore();
             handle.commit();
         } catch (Exception ex) {
             LOG.error("", ex);
             handle.rollback();
-            transactionalMemoizationStore.rollbackHashesFromStore();
             throw ex;
         } finally {
             handle.close();

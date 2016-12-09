@@ -11,7 +11,6 @@ import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBSupport;
 import uk.gov.register.store.postgres.PostgresDriverTransactional;
 import uk.gov.register.util.HashValue;
-import uk.gov.verifiablelog.store.memoization.DoNothing;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -30,7 +29,7 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
-        PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
+        PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
             postgresDriver.insertItem(item1);
 
             assertThat(postgresDriver.getAllItems().size(), is(1));
@@ -59,7 +58,7 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         try {
-            PostgresDriverTransactional.useTransaction(dbi, new DoNothing(), postgresDriver -> {
+            PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
                 postgresDriver.insertItem(item1);
 
                 assertThat(postgresDriver.getAllItems().size(), is(1));
