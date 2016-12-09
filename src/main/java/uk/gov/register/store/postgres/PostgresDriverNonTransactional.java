@@ -58,6 +58,11 @@ public class PostgresDriverNonTransactional extends PostgresDriver {
     }
 
     @Override
+    protected <ReturnType> ReturnType withHandleRead(HandleCallback<ReturnType> callback) {
+        return dbi.withHandle(callback);
+    }
+
+    @Override
     protected <ReturnType> ReturnType inTransaction(HandleCallback<ReturnType> callback) {
         return dbi.inTransaction((handle, status) -> callback.withHandle(handle));
     }

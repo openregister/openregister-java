@@ -28,8 +28,9 @@ public class PostgresDriverTransactional extends PostgresDriver {
     private final Handle handle;
 
     private final List<Entry> stagedEntries;
-    private final HashMap<HashValue,Item> stagedItems;
+    private final HashMap<HashValue, Item> stagedItems;
     private final HashMap<String, Integer> stagedCurrentKeys;
+    private final int initialEntryCount;
 
     private PostgresDriverTransactional(Handle handle, TransactionalMemoizationStore memoizationStore) {
         super(memoizationStore);
@@ -38,18 +39,21 @@ public class PostgresDriverTransactional extends PostgresDriver {
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
+        this.initialEntryCount = super.getTotalEntries();
+
     }
 
     protected PostgresDriverTransactional(Handle handle, MemoizationStore memoizationStore,
                                           Function<Handle, EntryQueryDAO> entryQueryDAO, Function<Handle, EntryDAO> entryDAO,
                                           Function<Handle, ItemQueryDAO> itemQueryDAO, Function<Handle, ItemDAO> itemDAO,
                                           Function<Handle, RecordQueryDAO> recordQueryDAO, Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAO) {
-        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO,  recordQueryDAO, currentKeysUpdateDAO, memoizationStore);
+        super(entryQueryDAO, entryDAO, itemQueryDAO, itemDAO, recordQueryDAO, currentKeysUpdateDAO, memoizationStore);
 
         this.handle = handle;
         this.stagedEntries = new ArrayList<>();
         this.stagedItems = new HashMap<>();
         this.stagedCurrentKeys = new HashMap<>();
+        this.initialEntryCount = super.getTotalEntries();
     }
 
     public static void useTransaction(DBI dbi, MemoizationStore memoizationStore, Consumer<PostgresDriverTransactional> callback) {
@@ -58,16 +62,20 @@ public class PostgresDriverTransactional extends PostgresDriver {
 
         try {
             handle.setTransactionIsolation(TransactionIsolationLevel.SERIALIZABLE);
+            LOG.debug("beginning transaction");
             handle.begin();
 
             PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(handle, transactionalMemoizationStore);
+            LOG.debug("invoking callback");
             callback.accept(postgresDriver);
+            LOG.debug("writing staged data");
             postgresDriver.writeStagedData();
 
             transactionalMemoizationStore.commitHashesToStore();
+            LOG.debug("committing transaction");
             handle.commit();
         } catch (Exception ex) {
-            LOG.error("",ex);
+            LOG.error("", ex);
             handle.rollback();
             transactionalMemoizationStore.rollbackHashesFromStore();
             throw ex;
@@ -100,7 +108,7 @@ public class PostgresDriverTransactional extends PostgresDriver {
     @Override
     public int getTotalEntries() {
         OptionalInt maxStagedEntryNumber = getMaxStagedEntryNumber();
-        return maxStagedEntryNumber.orElseGet(super::getTotalEntries);
+        return maxStagedEntryNumber.orElse(initialEntryCount);
     }
 
     @Override
@@ -111,6 +119,11 @@ public class PostgresDriverTransactional extends PostgresDriver {
     @Override
     protected <ReturnType> ReturnType withHandle(HandleCallback<ReturnType> callback) {
         return writeDataUsingExistingHandle(callback);
+    }
+
+    @Override
+    protected <ReturnType> ReturnType withHandleRead(HandleCallback<ReturnType> callback) {
+        return readDataUsingExistingHandle(callback);
     }
 
     @Override
@@ -135,9 +148,20 @@ public class PostgresDriverTransactional extends PostgresDriver {
         }
     }
 
+    private <ReturnType> ReturnType readDataUsingExistingHandle(HandleCallback<ReturnType> callback) {
+        try {
+            return callback.withHandle(handle);
+        } catch (Exception ex) {
+            throw new CallbackFailedException(ex);
+        }
+    }
+
     private void writeStagedData() {
+        LOG.debug("writing entries");
         writeEntries();
+        LOG.debug("writing items");
         writeItems();
+        LOG.debug("writing keys");
         writeCurrentKeys();
     }
 
