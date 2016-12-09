@@ -128,7 +128,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     }
 
     @Test
-    @Ignore("needs to be replicated on PostgresDriver")
+    @Ignore("needs to be replicated on PostgresRegister")
     public void entryAndItemDataShouldBeCommittedInOrder() throws Exception {
     }
 
