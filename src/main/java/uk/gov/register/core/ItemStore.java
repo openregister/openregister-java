@@ -11,16 +11,14 @@ import java.util.Optional;
 public class ItemStore {
     private final BackingStoreDriver backingStoreDriver;
     private final ItemValidator itemValidator;
-    private final String registerName;
 
-    public ItemStore(BackingStoreDriver backingStoreDriver, ItemValidator itemValidator, String registerName) {
+    public ItemStore(BackingStoreDriver backingStoreDriver, ItemValidator itemValidator) {
         this.backingStoreDriver = backingStoreDriver;
         this.itemValidator = itemValidator;
-        this.registerName = registerName;
     }
 
     public void putItem(Item item) {
-        itemValidator.validateItem(registerName, item.getContent());
+        itemValidator.validateItem(item.getContent());
         backingStoreDriver.insertItem(item);
     }
 

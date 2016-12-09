@@ -36,7 +36,7 @@ public class PostgresRegister implements Register {
         RegisterMetadata registerMetadata = registerData.getRegister();
         registerName = registerMetadata.getRegisterName();
         this.entryLog = entryLog;
-        this.itemStore = new ItemStore(backingStoreDriver, itemValidator, registerName);
+        this.itemStore = new ItemStore(backingStoreDriver, itemValidator);
         this.recordIndex = new RecordIndex(backingStoreDriver);
         this.registerFieldsConfiguration = registerFieldsConfiguration;
     }
