@@ -2,10 +2,8 @@ package uk.gov.register.views.representations.turtle;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
-import uk.gov.register.resources.RequestContext;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ItemView;
 
@@ -22,17 +20,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TurtleRepresentationWriterTest {
     private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
-    private RequestContext requestContext;
 
     private final Set<String> fields = ImmutableSet.of("address", "location", "link-values", "string-values");
-
-    @Before
-    public void setUp() throws Exception {
-        requestContext = new RequestContext() {
-            @Override
-            public String getScheme() { return "http"; }
-        };
-    }
 
     @Test
     public void rendersFieldPrefixFromConfiguration() throws Exception {
