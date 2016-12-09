@@ -95,7 +95,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void entryView_itemHashIsRenderedAsALink() {
-        Response response = register.getRequest("/entry/1");
+        Response response = register.getRequest("/entry/1", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         String text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();
