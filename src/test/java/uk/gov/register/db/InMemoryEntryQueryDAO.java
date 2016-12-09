@@ -58,8 +58,8 @@ public class InMemoryEntryQueryDAO implements EntryQueryDAO {
     }
 
     @Override
-    public Iterator<Entry> getIterator(int startEntryNo, int endEntryNo) {
-        return entries.subList(startEntryNo-1, endEntryNo-1).iterator();
+    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2) {
+        return entries.subList(totalEntries1 -1, totalEntries2 -1).iterator();
     }
 
     private class FakeResultIterator implements ResultIterator<Entry> {

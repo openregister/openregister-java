@@ -60,8 +60,8 @@ public class TransactionalEntryLog implements EntryLog {
     }
 
     @Override
-    public Iterator<Entry> getIterator(int start, int end) {
-        return entryQueryDAO.getIterator(start, end);
+    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2) {
+        return entryQueryDAO.getIterator(totalEntries1, totalEntries2);
     }
 
     @Override

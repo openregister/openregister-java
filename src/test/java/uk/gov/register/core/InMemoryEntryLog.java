@@ -36,8 +36,8 @@ public class InMemoryEntryLog implements EntryLog {
     }
 
     @Override
-    public Iterator<Entry> getIterator(int start, int end) {
-        return entries.subList(start-1, end-1).iterator();
+    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2) {
+        return entries.subList(totalEntries1 -1, totalEntries2 -1).iterator();
     }
 
     @Override

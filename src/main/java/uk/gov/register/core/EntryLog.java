@@ -21,7 +21,7 @@ public interface EntryLog {
 
     Iterator<Entry> getIterator();
 
-    Iterator<Entry> getIterator(int start, int end);
+    Iterator<Entry> getIterator(int totalEntries1, int totalEntries2);
 
     Collection<Entry> getAllEntries();
 
