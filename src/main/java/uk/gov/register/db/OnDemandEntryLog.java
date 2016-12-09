@@ -1,7 +1,6 @@
 package uk.gov.register.db;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.skife.jdbi.v2.DBI;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.HashingAlgorithm;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 /**
  * An append-only log of Entries, together with proofs
  */
@@ -29,9 +29,9 @@ public class OnDemandEntryLog implements EntryLog {
     private final VerifiableLog verifiableLog;
 
     @Inject
-    public OnDemandEntryLog(DBI dbi, MemoizationStore memoizationStore) {
-        entryQueryDAO = dbi.onDemand(EntryQueryDAO.class);
-        verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new EntryMerkleLeafStore(entryQueryDAO), memoizationStore);
+    public OnDemandEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO) {
+        this.entryQueryDAO = entryQueryDAO;
+        verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new EntryMerkleLeafStore(this.entryQueryDAO), memoizationStore);
     }
 
     @Override public void appendEntry(Entry entry) {

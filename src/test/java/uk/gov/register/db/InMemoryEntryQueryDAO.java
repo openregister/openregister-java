@@ -1,7 +1,9 @@
 package uk.gov.register.db;
 
 import org.skife.jdbi.v2.ResultIterator;
+import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.core.Entry;
+import uk.gov.register.store.postgres.BindEntry;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -9,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-public class InMemoryEntryQueryDAO implements EntryQueryDAO {
+public class InMemoryEntryQueryDAO implements EntryQueryDAO, EntryDAO {
     private final List<Entry> entries;
 
     public InMemoryEntryQueryDAO(List<Entry> entries) {
@@ -59,7 +61,24 @@ public class InMemoryEntryQueryDAO implements EntryQueryDAO {
 
     @Override
     public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2) {
-        return entries.subList(totalEntries1 -1, totalEntries2 -1).iterator();
+        return entries.subList(totalEntries1, totalEntries2).iterator();
+    }
+
+    @Override
+    public void insertInBatch(@BindEntry Iterable<Entry> entries) {
+        for (Entry entry : entries) {
+            this.entries.add(entry);
+        }
+    }
+
+    @Override
+    public int currentEntryNumber() {
+        return entries.size();
+    }
+
+    @Override
+    public void setEntryNumber(@Bind("entryNumber") int currentEntryNumber) {
+        // ignored. probably shouldn't be
     }
 
     private class FakeResultIterator implements ResultIterator<Entry> {

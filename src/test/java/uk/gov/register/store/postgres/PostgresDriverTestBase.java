@@ -23,8 +23,6 @@ public class PostgresDriverTestBase {
     protected List<Item> items;
     protected List<CurrentKey> currentKeys;
 
-    protected ItemQueryDAO itemQueryDAO;
-    protected ItemDAO itemDAO;
     protected RecordQueryDAO recordQueryDAO;
     protected CurrentKeysUpdateDAO currentKeysUpdateDAO;
 
@@ -37,8 +35,6 @@ public class PostgresDriverTestBase {
         items = new ArrayList<>();
         currentKeys = new ArrayList<>();
 
-        itemQueryDAO = mock(ItemQueryDAO.class);
-        itemDAO = mock(ItemDAO.class);
         recordQueryDAO = mock(RecordQueryDAO.class);
         currentKeysUpdateDAO = mock(CurrentKeysUpdateDAO.class);
 
@@ -47,7 +43,6 @@ public class PostgresDriverTestBase {
         memoizationStore = mock(MemoizationStore.class);
 
         mockDBI();
-        mockItemDAOInsert();
         mockCurrentKeysUpdateDAOInsert();
     }
 
@@ -65,14 +60,6 @@ public class PostgresDriverTestBase {
             argumentCaptor.getValue().useHandle(handle);
             return null;
         }).when(dbi).useHandle(argumentCaptor.capture());
-    }
-
-    private void mockItemDAOInsert() {
-        ArgumentCaptor<Collection> argumentCaptor = ArgumentCaptor.forClass(Collection.class);
-        doAnswer(invocation -> {
-            items.addAll(argumentCaptor.getValue());
-            return null;
-        }).when(itemDAO).insertInBatch(argumentCaptor.capture());
     }
 
     private void mockCurrentKeysUpdateDAOInsert() {

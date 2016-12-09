@@ -25,14 +25,8 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.PublicBodiesConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.EntryLog;
-import uk.gov.register.core.PostgresRegister;
-import uk.gov.register.core.Register;
-import uk.gov.register.core.RegisterData;
-import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.core.UriTemplateRegisterResolver;
-import uk.gov.register.db.OnDemandEntryLog;
+import uk.gov.register.core.*;
+import uk.gov.register.db.*;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -104,7 +98,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
         FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
         RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
-        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
+        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData.getRegister().getFields());
 
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
@@ -120,6 +114,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(registerData).to(RegisterData.class);
                 bind(registerFieldsConfiguration).to(RegisterFieldsConfiguration.class);
                 bind(jdbi);
+                bind(jdbi.onDemand(ItemQueryDAO.class)).to(ItemQueryDAO.class);
+                bind(jdbi.onDemand(ItemDAO.class)).to(ItemDAO.class);
+                bind(jdbi.onDemand(EntryQueryDAO.class)).to(EntryQueryDAO.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
@@ -138,6 +135,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(OnDemandEntryLog.class).to(EntryLog.class);
+                bind(OnDemandItemStore.class).to(ItemStore.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);

@@ -1,6 +1,7 @@
 package uk.gov.register.service;
 
 import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.PostgresRegister;
 import uk.gov.register.core.Register;
@@ -8,7 +9,10 @@ import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.TransactionalMemoizationStore;
 import uk.gov.register.db.EntryDAO;
 import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.ItemDAO;
+import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.TransactionalEntryLog;
+import uk.gov.register.db.TransactionalItemStore;
 import uk.gov.register.store.postgres.PostgresDriverTransactional;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -35,7 +39,11 @@ public class RegisterService {
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
         PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
 
-            Register register = new PostgresRegister(registerData, postgresDriver, itemValidator, registerFieldsConfiguration, new TransactionalEntryLog(transactionalMemoizationStore, postgresDriver.getHandle().attach(EntryQueryDAO.class), postgresDriver.getHandle().attach(EntryDAO.class)));
+            String registerName = registerData.getRegister().getRegisterName();
+            Handle handle = postgresDriver.getHandle();
+            TransactionalEntryLog entryLog = new TransactionalEntryLog(transactionalMemoizationStore, handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
+            TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class), itemValidator);
+            Register register = new PostgresRegister(() -> registerName, postgresDriver, registerFieldsConfiguration, entryLog, itemStore);
             callback.accept(register);
             register.commit();
         });
