@@ -90,6 +90,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 return configuration.getFlywayFactory();
             }
         });
+        System.setProperty("java.protocol.handler.pkgs", "uk.gov.register.protocols");
     }
 
     @Override
@@ -107,15 +108,10 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
 
-        String bucketName = System.getProperty("configBucket");
-
-        AmazonS3 s3Client = new AmazonS3Client();
-        S3Object registersConfig = s3Client.getObject(bucketName, "registers.yaml");
-        S3Object fieldsConfig = s3Client.getObject(bucketName, "fields.yaml");
-
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
-        RegistersConfiguration registersConfiguration = new RegistersConfiguration(registersConfig.getObjectContent());
-        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(fieldsConfig.getObjectContent());
+
+        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
+        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
         RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
         RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
 
