@@ -25,14 +25,6 @@ public class RegistersConfiguration {
         );
     }
 
-    public RegistersConfiguration(InputStream registersResourceInputStream) {
-        registers = new ResourceYamlFileReader().readResource(
-                registersResourceInputStream,
-                new TypeReference<Map<String, RegisterData>>() {
-                }
-        );
-    }
-
     public RegisterData getRegisterData(String registerName) {
         try {
             return registers.stream().filter(f -> Objects.equals(f.getRegister().getRegisterName(), registerName)).findFirst().get();

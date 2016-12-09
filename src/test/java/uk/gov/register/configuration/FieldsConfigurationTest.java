@@ -4,7 +4,9 @@ import org.junit.Test;
 import uk.gov.register.configuration.FieldsConfiguration;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -21,9 +23,9 @@ public class FieldsConfigurationTest {
     @Test
     public void loadConfigurationWithExternalPathOfFieldsResourceFile() throws URISyntaxException {
         @SuppressWarnings("ConstantConditions")
-        String absolutePath = new File(this.getClass().getClassLoader().getResource("config/fields.yaml").toURI()).getAbsolutePath();
+        String fileUrl = Paths.get("src/main/resources/config","fields.yaml").toUri().toString();
 
-        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.of(absolutePath));
+        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.of(fileUrl));
 
         assertThat(fieldsConfiguration.getField("register").fieldName, equalTo("register"));
     }

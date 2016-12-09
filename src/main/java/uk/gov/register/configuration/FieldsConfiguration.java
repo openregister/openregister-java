@@ -22,13 +22,6 @@ public class FieldsConfiguration {
                 });
     }
 
-    public FieldsConfiguration(InputStream fieldsResourceInputStream) {
-        fields = new ResourceYamlFileReader().readResource(
-                fieldsResourceInputStream,
-                new TypeReference<Map<String, Field>>() {
-                });
-    }
-
     public Field getField(String fieldName) {
         return fields.stream().filter(f -> Objects.equals(f.fieldName, fieldName)).findFirst().get();
     }
