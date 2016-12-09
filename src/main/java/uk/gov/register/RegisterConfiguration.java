@@ -82,11 +82,11 @@ public class RegisterConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private String defaultRegistersConfig = "config/registers.yaml";
+    private String defaultRegistersConfig = "registers.yaml";
 
     @Valid
     @JsonProperty
-    private String defaultFieldsConfig = "config/fields.yaml";
+    private String defaultFieldsConfig = "fields.yaml";
 
     @SuppressWarnings("unused")
     private FlywayFactory flywayFactory = new FlywayFactory();

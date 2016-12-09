@@ -1,8 +1,5 @@
 package uk.gov.register;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
@@ -24,10 +21,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
-import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.PublicBodiesConfiguration;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.filters.CorsBundle;
@@ -107,6 +101,18 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
+
+        RegistersConfiguration registersConfiguration;
+        FieldsConfiguration mintFieldsConfiguration;
+
+        Optional<String> registersYaml = Optional.ofNullable(System.getProperty("registersYaml"));
+        Optional<String> fieldsYaml = Optional.ofNullable(System.getProperty("fieldsYaml"));
+
+        ConfigManager configManager = new AwsConfigManager(configuration);
+        configManager.tryUpdateConfigs(registersYaml, fieldsYaml);
+
+        registersConfiguration = new RegistersConfiguration(registersYaml, "config/" + configuration.getDefaultRegistersConfig());
+        mintFieldsConfiguration = new FieldsConfiguration(fieldsYaml, "config/" + configuration.getDefaultFieldsConfig());
 
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
 
