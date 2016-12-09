@@ -126,7 +126,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
-                bindAsContract(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
+                bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
                 bind(RegisterService.class).to(RegisterService.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
