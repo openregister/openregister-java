@@ -7,21 +7,17 @@ import uk.gov.register.core.RecordIndex;
 import javax.inject.Inject;
 import java.util.*;
 
-import static java.util.Collections.singletonList;
-
 public class OnDemandRecordIndex implements RecordIndex {
     private final RecordQueryDAO recordQueryDAO;
-    private final CurrentKeysUpdateDAO currentKeysUpdateDAO;
 
     @Inject
-    public OnDemandRecordIndex(RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO) {
+    public OnDemandRecordIndex(RecordQueryDAO recordQueryDAO) {
         this.recordQueryDAO = recordQueryDAO;
-        this.currentKeysUpdateDAO = currentKeysUpdateDAO;
     }
 
     @Override
     public void updateRecordIndex(String key, Integer entryNumber) {
-        currentKeysUpdateDAO.writeCurrentKeys(singletonList(new CurrentKey(key, entryNumber)));
+        throw new UnsupportedOperationException();
     }
 
     @Override

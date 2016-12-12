@@ -113,10 +113,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(registerFieldsConfiguration).to(RegisterFieldsConfiguration.class);
                 bind(jdbi);
                 bind(jdbi.onDemand(ItemQueryDAO.class)).to(ItemQueryDAO.class);
-                bind(jdbi.onDemand(ItemDAO.class)).to(ItemDAO.class);
                 bind(jdbi.onDemand(EntryQueryDAO.class)).to(EntryQueryDAO.class);
                 bind(jdbi.onDemand(RecordQueryDAO.class)).to(RecordQueryDAO.class);
-                bind(jdbi.onDemand(CurrentKeysUpdateDAO.class)).to(CurrentKeysUpdateDAO.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
