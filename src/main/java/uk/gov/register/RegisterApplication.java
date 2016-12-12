@@ -90,10 +90,10 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             protected void configure() {
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
-                bindFactory(RegisterDataFactory.class).to(RegisterData.class);
-                bindFactory(RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
+                bindFactory(Factories.RegisterDataFactory.class).to(RegisterData.class);
+                bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
                 bind(allTheRegisters);
-                bindFactory(RegisterContextProvider.class).to(RegisterContext.class);
+                bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
