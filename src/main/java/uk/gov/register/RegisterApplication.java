@@ -102,17 +102,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
 
-        RegistersConfiguration registersConfiguration;
-        FieldsConfiguration mintFieldsConfiguration;
-
         Optional<String> registersYaml = Optional.ofNullable(System.getProperty("registersYaml"));
         Optional<String> fieldsYaml = Optional.ofNullable(System.getProperty("fieldsYaml"));
 
         ConfigManager configManager = new AwsConfigManager(configuration);
         configManager.tryUpdateConfigs(registersYaml, fieldsYaml);
-
-        registersConfiguration = new RegistersConfiguration(registersYaml, "config/" + configuration.getDefaultRegistersConfig());
-        mintFieldsConfiguration = new FieldsConfiguration(fieldsYaml, "config/" + configuration.getDefaultFieldsConfig());
 
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
 

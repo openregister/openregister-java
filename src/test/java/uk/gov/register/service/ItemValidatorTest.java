@@ -17,8 +17,8 @@ import static org.junit.Assert.fail;
 public class ItemValidatorTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty(), "config/fields.yaml");
-    private RegistersConfiguration registerConfiguration = new RegistersConfiguration(Optional.empty(), "config/registers.yaml");
+    private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty());
+    private RegistersConfiguration registerConfiguration = new RegistersConfiguration(Optional.empty());
 
     private ItemValidator itemValidator = new ItemValidator(registerConfiguration, fieldsConfiguration, () -> "register");
 
