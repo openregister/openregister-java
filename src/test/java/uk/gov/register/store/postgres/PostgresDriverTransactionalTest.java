@@ -99,6 +99,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         assertThat(currentKeys.size(), is(1));
 
         assertThat(postgresDriver.getTotalEntries(), is(3));
+
     }
 
     @Test
@@ -237,20 +238,40 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
     }
 
     @Test
-    public void notAllInsertsShouldInteractWithDb() {
-        Function<VerifiableLog, RegisterProof> func = mock(Function.class);
-        when(func.apply(mock(VerifiableLog.class))).thenReturn(mock(RegisterProof.class));
+    public void getTotalEntriesShouldUseStagedEntriesOrMaxCommitted() {
+
+        when(entryQueryDAO.getTotalEntries()).thenReturn(1);
 
         PostgresDriverTransactional.useTransaction(dbi, memoizationStore, postgresDriver -> {
-            IntStream.range(0, 2).forEach(i -> postgresDriver.insertEntry(mock(Entry.class)));
-            postgresDriver.withVerifiableLog(vl -> func);
-            IntStream.range(0, 2).forEach(i -> postgresDriver.insertEntry(mock(Entry.class)));
-
+            int initialEntryCount = postgresDriver.getTotalEntries();
+            assertThat(initialEntryCount, is(1));
+            Entry entry = new Entry( initialEntryCount + 1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "aaa" );
+            postgresDriver.insertEntry(entry);
+            assertThat(postgresDriver.getTotalEntries(), is(2));
         });
 
         verify(entryQueryDAO, times(1)).getTotalEntries();
-        verify(entryDAO, times(2)).insertInBatch( anyCollectionOf(Entry.class));
 
+    }
+
+    @Test
+    public void withVerifiableLogShouldFlushStagedEntriesAndStoreMaxEntry(){
+        Function<VerifiableLog, RegisterProof> func = mock(Function.class);
+        when(func.apply(mock(VerifiableLog.class))).thenReturn(mock(RegisterProof.class));
+        when(entryQueryDAO.getTotalEntries()).thenReturn(1);
+
+        PostgresDriverTransactional.useTransaction(dbi, memoizationStore, postgresDriver -> {
+            int initialEntryCount = postgresDriver.getTotalEntries();
+            assertThat(initialEntryCount, is(1));
+            Entry entry = new Entry( initialEntryCount + 1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.now(), "aaa" );
+            postgresDriver.insertEntry(entry);
+            assertThat(postgresDriver.getTotalEntries(), is(2));
+            postgresDriver.withVerifiableLog(vl -> func);
+            assertThat(postgresDriver.getTotalEntries(), is(2));
+        });
+
+        verify(entryQueryDAO, times(1)).getTotalEntries();
+        verify(entryDAO, times(1)).insertInBatch( anyCollectionOf(Entry.class));
     }
 
     private void assertStagedDataIsCommittedOnAction(Consumer<PostgresDriverTransactional> actionToTest) {
