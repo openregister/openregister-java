@@ -44,10 +44,4 @@ public class OnDemandItemStore implements ItemStore {
     @Override public Iterator<Item> getIterator(int start, int end){
         return itemQueryDao.getIterator(start, end);
     }
-
-    @Override
-    public void checkpoint() {
-
-    }
-
 }
