@@ -1,7 +1,6 @@
 package uk.gov.register.store.postgres;
 
 import org.junit.Test;
-import uk.gov.register.core.Record;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -19,7 +18,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        postgresDriver.insertRecord(mockRecord("country", "DE", 1), "country");
+        postgresDriver.insertRecord("DE", 1);
 
         assertThat(currentKeys, is(empty()));
     }
@@ -60,13 +59,9 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        Record record1 = mockRecord("country", "DE", 1);
-        Record record2 = mockRecord("country", "VA", 2);
-        Record record3 = mockRecord("country", "DE", 3);
-
-        postgresDriver.insertRecord(record1, "country");
-        postgresDriver.insertRecord(record2, "country");
-        postgresDriver.insertRecord(record3, "country");
+        postgresDriver.insertRecord("DE", 1);
+        postgresDriver.insertRecord("VA", 2);
+        postgresDriver.insertRecord("DE", 3);
 
         assertThat(currentKeys, is(empty()));
 
@@ -83,7 +78,7 @@ public class PostgresDriverTransactionalTest extends PostgresDriverTestBase {
         PostgresDriverTransactional postgresDriver = new PostgresDriverTransactional(
                 handle, h -> recordQueryDAO, h -> currentKeysUpdateDAO);
 
-        postgresDriver.insertRecord(mockRecord("country", "DE", 1), "country");
+        postgresDriver.insertRecord("DE", 1);
 
         assertThat(currentKeys, is(empty()));
 

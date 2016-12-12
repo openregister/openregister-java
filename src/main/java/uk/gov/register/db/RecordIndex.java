@@ -14,7 +14,7 @@ public class RecordIndex {
     }
 
     public void updateRecordIndex(String registerName, Record record) {
-        backingStoreDriver.insertRecord(record, registerName);
+        backingStoreDriver.insertRecord(record.item.getValue(registerName), record.entry.getEntryNumber());
     }
 
     public Optional<Record> getRecord(String key) {

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface BackingStoreDriver {
 
-    void insertRecord(Record record, String registerName);
+    void insertRecord(String key, Integer entryNumber);
 
     Optional<Record> getRecord(String key);
     int getTotalRecords();

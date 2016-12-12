@@ -39,8 +39,8 @@ public class PostgresDriverNonTransactional implements BackingStoreDriver {
     }
 
     @Override
-    public void insertRecord(Record record, String registerName) {
-        insertCurrentKeys(singletonList(new CurrentKey(record.item.getValue(registerName), record.entry.getEntryNumber())));
+    public void insertRecord(String key, Integer entryNumber) {
+        insertCurrentKeys(singletonList(new CurrentKey(key, entryNumber)));
     }
 
     @Override

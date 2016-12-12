@@ -5,9 +5,7 @@ import org.mockito.ArgumentCaptor;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.tweak.HandleConsumer;
-import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -44,14 +42,6 @@ public class PostgresDriverTestBase {
 
         mockDBI();
         mockCurrentKeysUpdateDAOInsert();
-    }
-
-    protected Record mockRecord(String registerName, String key, Integer entryNumber) {
-        Entry entry = mock(Entry.class);
-        Item item = mock(Item.class);
-        when(entry.getEntryNumber()).thenReturn(entryNumber);
-        when(item.getValue(registerName)).thenReturn(key);
-        return new Record(entry, item);
     }
 
     private void mockDBI() {

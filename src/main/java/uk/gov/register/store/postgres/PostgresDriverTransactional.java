@@ -66,8 +66,8 @@ public class PostgresDriverTransactional implements BackingStoreDriver {
     }
 
     @Override
-    public void insertRecord(Record record, String registerName) {
-        stagedCurrentKeys.put(record.item.getValue(registerName), record.entry.getEntryNumber());
+    public void insertRecord(String key, Integer entryNumber) {
+        stagedCurrentKeys.put(key, entryNumber);
     }
 
     private void useExistingHandle(HandleConsumer callback) {
