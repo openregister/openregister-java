@@ -35,7 +35,6 @@ import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.service.RegisterService;
-import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
@@ -116,13 +115,14 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(jdbi.onDemand(ItemQueryDAO.class)).to(ItemQueryDAO.class);
                 bind(jdbi.onDemand(ItemDAO.class)).to(ItemDAO.class);
                 bind(jdbi.onDemand(EntryQueryDAO.class)).to(EntryQueryDAO.class);
+                bind(jdbi.onDemand(RecordQueryDAO.class)).to(RecordQueryDAO.class);
+                bind(jdbi.onDemand(CurrentKeysUpdateDAO.class)).to(CurrentKeysUpdateDAO.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
-                bindAsContract(PostgresDriverNonTransactional.class);
                 bind(RegisterService.class).to(RegisterService.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
