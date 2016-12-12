@@ -13,8 +13,8 @@ public class RecordIndex {
         this.backingStoreDriver = backingStoreDriver;
     }
 
-    public void updateRecordIndex(String registerName, Record record) {
-        backingStoreDriver.insertRecord(record.item.getValue(registerName), record.entry.getEntryNumber());
+    public void updateRecordIndex(String key, Integer entryNumber) {
+        backingStoreDriver.insertRecord(key, entryNumber);
     }
 
     public Optional<Record> getRecord(String key) {
