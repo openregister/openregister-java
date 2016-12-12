@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public class InMemoryEntryQueryDAO implements EntryQueryDAO, EntryDAO {
     private final List<Entry> entries;
+    private int currentEntryNumber = 0;
 
     public InMemoryEntryQueryDAO(List<Entry> entries) {
         this.entries = entries;
@@ -36,7 +37,7 @@ public class InMemoryEntryQueryDAO implements EntryQueryDAO, EntryDAO {
 
     @Override
     public int getTotalEntries() {
-        return entries.size();
+        return currentEntryNumber;
     }
 
     @Override
@@ -73,12 +74,12 @@ public class InMemoryEntryQueryDAO implements EntryQueryDAO, EntryDAO {
 
     @Override
     public int currentEntryNumber() {
-        return entries.size();
+        return currentEntryNumber;
     }
 
     @Override
     public void setEntryNumber(@Bind("entryNumber") int currentEntryNumber) {
-        // ignored. probably shouldn't be
+        this.currentEntryNumber = currentEntryNumber;
     }
 
     private class FakeResultIterator implements ResultIterator<Entry> {
