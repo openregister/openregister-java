@@ -13,7 +13,7 @@ import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBSupport;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.register.store.postgres.PostgresDriverTransactional;
+import uk.gov.register.service.RegisterService;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 
-public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
+public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
 
     @Rule
     public TestRule wipe = new WipeDatabaseRule();
@@ -42,8 +42,8 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
-        PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
-            PostgresRegister postgresRegister = getPostgresRegister(postgresDriver);
+        RegisterService.useTransaction(dbi, handle -> {
+            PostgresRegister postgresRegister = getPostgresRegister(handle);
             postgresRegister.putItem(item1);
 
             assertThat(postgresRegister.getAllItems().size(), is(1));
@@ -72,26 +72,29 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         try {
-            PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
-                PostgresRegister postgresRegister = getPostgresRegister(postgresDriver);
+            RegisterService.useTransaction(dbi, handle -> {
+                PostgresRegister postgresRegister = getPostgresRegister(handle);
                 postgresRegister.putItem(item1);
+                postgresRegister.commit();
 
                 assertThat(postgresRegister.getAllItems().size(), is(1));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 postgresRegister.putItem(item2);
+                postgresRegister.commit();
 
                 assertThat(postgresRegister.getAllItems().size(), is(2));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 postgresRegister.putItem(item3);
+                postgresRegister.commit();
 
                 assertThat(postgresRegister.getAllItems().size(), is(3));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 throw new RuntimeException();
             });
-        } catch (RuntimeException ex) {
+        } catch (RuntimeException ignored) {
             // intentionally thrown
         }
 
@@ -111,8 +114,8 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "bbb");
         Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "ccc");
 
-        PostgresDriverTransactional.useTransaction(dbi, postgresDriver -> {
-            PostgresRegister postgresRegister = getPostgresRegister(postgresDriver);
+        RegisterService.useTransaction(dbi, handle -> {
+            PostgresRegister postgresRegister = getPostgresRegister(handle);
             postgresRegister.putItem(item1);
             postgresRegister.putItem(item2);
             postgresRegister.putItem(item3);
@@ -127,12 +130,11 @@ public class PostgresDriverTransactionalFunctionalTest extends TestDBSupport {
         assertThat(testEntryDAO.getAllEntries(), contains(entry1, entry2, entry3));
     }
 
-    public PostgresRegister getPostgresRegister(PostgresDriverTransactional postgresDriver) {
-        Handle handle = postgresDriver.getHandle();
+    public PostgresRegister getPostgresRegister(Handle handle) {
         TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
         TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
                 mock(ItemValidator.class));
-        return new PostgresRegister(() -> "address", postgresDriver, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore);
+        return new PostgresRegister(() -> "address", new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore, new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)));
     }
 }
 

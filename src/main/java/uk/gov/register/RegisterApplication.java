@@ -35,7 +35,6 @@ import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.service.RegisterService;
-import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.store.postgres.PostgresDriverNonTransactional;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.CanonicalJsonMapper;
@@ -123,7 +122,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ItemValidator.class).to(ItemValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
-                bind(PostgresDriverNonTransactional.class).to(BackingStoreDriver.class);
+                bindAsContract(PostgresDriverNonTransactional.class);
                 bind(RegisterService.class).to(RegisterService.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
@@ -136,6 +135,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(OnDemandEntryLog.class).to(EntryLog.class);
                 bind(OnDemandItemStore.class).to(ItemStore.class);
+                bind(OnDemandRecordIndex.class).to(RecordIndex.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);

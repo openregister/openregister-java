@@ -8,7 +8,6 @@ import org.skife.jdbi.v2.tweak.HandleConsumer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
-import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import javax.inject.Inject;
@@ -18,7 +17,7 @@ import java.util.stream.IntStream;
 
 import static java.util.Collections.singletonList;
 
-public class PostgresDriverNonTransactional implements BackingStoreDriver {
+public class PostgresDriverNonTransactional {
     protected final MemoizationStore memoizationStore;
     private final Function<Handle, RecordQueryDAO> recordQueryDAOFromHandle;
     private final Function<Handle, CurrentKeysUpdateDAO> currentKeysUpdateDAOFromHandle;
@@ -38,36 +37,30 @@ public class PostgresDriverNonTransactional implements BackingStoreDriver {
         this.dbi = dbi;
     }
 
-    @Override
     public void insertRecord(String key, Integer entryNumber) {
         insertCurrentKeys(singletonList(new CurrentKey(key, entryNumber)));
     }
 
-    @Override
     public Optional<Record> getRecord(String key) {
         HandleCallback<Optional<Record>> callback = handle -> recordQueryDAOFromHandle.apply(handle).findByPrimaryKey(key);
         return dbi.withHandle(callback);
     }
 
-    @Override
     public int getTotalRecords() {
         HandleCallback<Integer> callback = handle -> recordQueryDAOFromHandle.apply(handle).getTotalRecords();
         return dbi.withHandle(callback);
     }
 
-    @Override
     public List<Record> getRecords(int limit, int offset) {
         HandleCallback<List<Record>> callback = handle -> recordQueryDAOFromHandle.apply(handle).getRecords(limit, offset);
         return dbi.withHandle(callback);
     }
 
-    @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
         HandleCallback<List<Record>> callback = handle -> recordQueryDAOFromHandle.apply(handle).findMax100RecordsByKeyValue(key, value);
         return dbi.withHandle(callback);
     }
 
-    @Override
     public Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key) {
         HandleCallback<Collection<Entry>> callback = handle -> recordQueryDAOFromHandle.apply(handle).findAllEntriesOfRecordBy(registerName, key);
         return dbi.withHandle(callback);

@@ -23,4 +23,22 @@ public class Record {
         }
         return schemaBuilder.build();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Record record = (Record) o;
+
+        if (!entry.equals(record.entry)) return false;
+        return item.equals(record.item);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = entry.hashCode();
+        result = 31 * result + item.hashCode();
+        return result;
+    }
 }

@@ -2,10 +2,8 @@ package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
-import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -29,14 +27,14 @@ public class PostgresRegister implements Register {
 
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfiguration,
-                            BackingStoreDriver backingStoreDriver,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
                             EntryLog entryLog,
-                            ItemStore itemStore) {
+                            ItemStore itemStore,
+                            RecordIndex recordIndex) {
         registerName = registerNameConfiguration.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
-        this.recordIndex = new RecordIndex(backingStoreDriver);
+        this.recordIndex = recordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
     }
 
@@ -57,6 +55,7 @@ public class PostgresRegister implements Register {
     public void commit() {
         itemStore.checkpoint();
         entryLog.checkpoint();
+        recordIndex.checkpoint();
     }
 
     @Override
