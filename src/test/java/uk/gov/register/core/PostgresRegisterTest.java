@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.db.InMemoryEntryQueryDAO;
+import uk.gov.register.db.InMemoryEntryDAO;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.service.ItemValidator;
@@ -24,7 +24,7 @@ import static uk.gov.register.db.InMemoryStubs.inMemoryEntryLog;
 import static uk.gov.register.db.InMemoryStubs.inMemoryItemStore;
 
 public class PostgresRegisterTest {
-    private final InMemoryEntryQueryDAO entryQueryDAO = new InMemoryEntryQueryDAO(new ArrayList<>());
+    private final InMemoryEntryDAO entryQueryDAO = new InMemoryEntryDAO(new ArrayList<>());
     private BackingStoreDriver backingStoreDriver;
     private ItemValidator itemValidator;
     private RegisterFieldsConfiguration registerFieldsConfiguration;

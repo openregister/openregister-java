@@ -42,7 +42,7 @@ public class TransactionalItemStoreTest {
     @Before
     public void setUp() throws Exception {
         itemMap = new HashMap<>();
-        itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryQueryDAO(entries));
+        itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
         itemValidator = mock(ItemValidator.class);
         itemStore = new TransactionalItemStore(itemDAO, itemDAO, itemValidator);
         item1 = new Item(new HashValue(SHA256, "abcd"), objectMapper.readTree("{}"));

@@ -9,11 +9,11 @@ import uk.gov.verifiablelog.store.memoization.DoNothing;
 import java.util.HashMap;
 
 public abstract class InMemoryStubs {
-    public static EntryLog inMemoryEntryLog(InMemoryEntryQueryDAO entryQueryDAO) {
+    public static EntryLog inMemoryEntryLog(InMemoryEntryDAO entryQueryDAO) {
         return new InMemoryEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO);
     }
 
-    public static ItemStore inMemoryItemStore(ItemValidator itemValidator, InMemoryEntryQueryDAO entryQueryDao) {
+    public static ItemStore inMemoryItemStore(ItemValidator itemValidator, InMemoryEntryDAO entryQueryDao) {
         InMemoryItemDAO itemDao = new InMemoryItemDAO(new HashMap<>(), entryQueryDao);
         return new OnDemandItemStore(itemValidator, itemDao, itemDao);
     }

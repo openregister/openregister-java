@@ -11,11 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-public class InMemoryEntryQueryDAO implements EntryQueryDAO, EntryDAO {
+public class InMemoryEntryDAO implements EntryQueryDAO, EntryDAO {
     private final List<Entry> entries;
     private int currentEntryNumber = 0;
 
-    public InMemoryEntryQueryDAO(List<Entry> entries) {
+    public InMemoryEntryDAO(List<Entry> entries) {
         this.entries = entries;
     }
 
