@@ -92,12 +92,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
-        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
-        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
-        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
-        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData.getRegister().getFields());
-
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
@@ -113,7 +107,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
 
         RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
-        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
+        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData.getRegister().getFields());
 
         jersey.register(new AbstractBinder() {
             @Override
