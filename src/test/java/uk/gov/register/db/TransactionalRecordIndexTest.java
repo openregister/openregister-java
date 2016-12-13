@@ -5,9 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Record;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -35,7 +36,55 @@ public class TransactionalRecordIndexTest {
         assertThat(currentKeys.entrySet(), is(empty()));
     }
 
-    // TODO: more tests
+    @Test
+    public void getRecord_shouldCauseCheckpoint() {
+        recordIndex.updateRecordIndex("foo", 5);
+
+        Optional<Record> ignored = recordIndex.getRecord("foo");
+
+        // ignore the result, but check that we flushed out to currentKeys
+        assertThat(currentKeys.get("foo"), is(5));
+    }
+
+    @Test
+    public void getRecords_shouldCauseCheckpoint() {
+        recordIndex.updateRecordIndex("foo", 5);
+
+        List<Record> ignored = recordIndex.getRecords(1,0);
+
+        // ignore the result, but check that we flushed out to currentKeys
+        assertThat(currentKeys.get("foo"), is(5));
+    }
+
+    @Test
+    public void findMax100RecordsByKeyValue_shouldCauseCheckpoint() {
+        recordIndex.updateRecordIndex("foo", 5);
+
+        List<Record> ignored = recordIndex.findMax100RecordsByKeyValue("foo", "bar");
+
+        // ignore the result, but check that we flushed out to currentKeys
+        assertThat(currentKeys.get("foo"), is(5));
+    }
+
+    @Test
+    public void findAllEntriesOfRecordBy_shouldCauseCheckpoint() {
+        recordIndex.updateRecordIndex("foo", 5);
+
+        Collection<Entry> ignored = recordIndex.findAllEntriesOfRecordBy("foo", "bar");
+
+        // ignore the result, but check that we flushed out to currentKeys
+        assertThat(currentKeys.get("foo"), is(5));
+    }
+
+    @Test
+    public void getTotalRecords_shouldCauseCheckpoint() {
+        recordIndex.updateRecordIndex("foo", 5);
+
+        int ignored = recordIndex.getTotalRecords();
+
+        // ignore the result, but check that we flushed out to currentKeys
+        assertThat(currentKeys.get("foo"), is(5));
+    }
 
     @Test
     public void insertRecordWithSameKeyValueDoesNotStageBothCurrentKeys() {

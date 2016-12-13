@@ -23,6 +23,7 @@ public abstract class AbstractRecordIndex implements RecordIndex {
 
     @Override
     public int getTotalRecords() {
+        checkpoint();
         return recordQueryDAO.getTotalRecords();
     }
 
