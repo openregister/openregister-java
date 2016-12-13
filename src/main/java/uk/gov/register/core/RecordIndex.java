@@ -17,7 +17,5 @@ public interface RecordIndex {
 
     Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key);
 
-    default void checkpoint() {
-        // do nothing
-    }
+    void checkpoint();
 }
