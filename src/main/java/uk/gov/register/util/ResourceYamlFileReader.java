@@ -7,9 +7,11 @@ import io.dropwizard.jackson.Jackson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -31,14 +33,23 @@ public class ResourceYamlFileReader {
         }
     }
 
-    private InputStream getStreamFromUrl(Optional<String> resourceYamlUrl, String defaultResourceYamlFilePath) {
-        LOGGER.info("reading " + resourceYamlUrl.orElse(defaultResourceYamlFilePath));
-        return resourceYamlUrl.map(this::getStreamForUrlStr).orElse(getStreamForResource(defaultResourceYamlFilePath));
+    public <N> Collection<N> readResource(byte[] bytes,
+                                          TypeReference<Map<String, N>> typeReference) {
+        try {
+            return YAML_OBJECT_MAPPER.<Map<String, N>>readValue(bytes, typeReference).values();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error loading resources configuration file.", e);
+        }
     }
 
-    private InputStream getStreamForUrlStr(String urlStr) {
+    private InputStream getStreamFromUrl(Optional<String> resourceYamlUrl, String defaultResourceYamlFilePath) {
+        LOGGER.info("reading " + resourceYamlUrl.orElse(defaultResourceYamlFilePath));
+        return resourceYamlUrl.map(this::getStreamForFile).orElse(getStreamForResource(defaultResourceYamlFilePath));
+    }
+
+    private InputStream getStreamForFile(String filePath) {
         try {
-            return new URL(urlStr).openStream();
+            return Files.newInputStream(Paths.get(filePath));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

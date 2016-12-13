@@ -26,9 +26,9 @@ enableDownloadResource: true
 
 historyPageUrl: https://registers-history.herokuapp.com/school-eng
 
-defaultRegistersConfig: registers.yaml
+externalConfigDirectory: /tmp/openregister-java/external
 
-defaultFieldsConfig: fields.yaml
+downloadConfigs: true
 
 # Logging settings.
 logging:

@@ -101,17 +101,17 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
-
-        Optional<String> registersYaml = Optional.ofNullable(System.getProperty("registersYaml"));
-        Optional<String> fieldsYaml = Optional.ofNullable(System.getProperty("fieldsYaml"));
-
-        ConfigManager configManager = new AwsConfigManager(configuration);
-        configManager.tryUpdateConfigs(registersYaml, fieldsYaml);
-
         Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
 
-        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
-        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
+        Optional<String> registersYamlFileUrl = Optional.ofNullable(System.getProperty("registersYaml"));
+        Optional<String> fieldsYamlFileUrl = Optional.ofNullable(System.getProperty("fieldsYaml"));
+
+        ConfigManager configManager = new ConfigManager(configuration, registersYamlFileUrl, fieldsYamlFileUrl);
+        configManager.refreshConfig();
+
+        RegistersConfiguration registersConfiguration = configManager.createRegistersConfiguration();
+        FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
+
         RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
         RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData);
 

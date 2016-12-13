@@ -20,7 +20,7 @@ public class RegisterConfiguration extends Configuration
         implements AuthenticatorConfiguration,
         RegisterNameConfiguration,
         RegisterDomainConfiguration,
-        RegisterDefaultConfigConfiguration,
+        RegisterConfigConfiguration,
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
         GovukClientConfiguration,
@@ -82,11 +82,11 @@ public class RegisterConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private String defaultRegistersConfig = "registers.yaml";
+    private String externalConfigDirectory = "/tmp/openregister_java/external";
 
     @Valid
     @JsonProperty
-    private String defaultFieldsConfig = "fields.yaml";
+    private boolean downloadConfigs = true;
 
     @SuppressWarnings("unused")
     private FlywayFactory flywayFactory = new FlywayFactory();
@@ -145,12 +145,8 @@ public class RegisterConfiguration extends Configuration
     }
 
     @Override
-    public String getDefaultRegistersConfig() {
-        return defaultRegistersConfig;
-    }
+    public String getExternalConfigDirectory() { return externalConfigDirectory; }
 
     @Override
-    public String getDefaultFieldsConfig() {
-        return defaultFieldsConfig;
-    }
+    public boolean getDownloadConfigs() { return downloadConfigs; }
 }

@@ -20,7 +20,7 @@ public class FieldsConfigurationTest {
     @Test
     public void loadConfigurationWithExternalPathOfFieldsResourceFile() throws URISyntaxException {
         @SuppressWarnings("ConstantConditions")
-        String fileUrl = Paths.get("src/main/resources/config","fields.yaml").toUri().toString();
+        String fileUrl = Paths.get("src/main/resources/config","fields.yaml").toString();
 
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.of(fileUrl));
 
