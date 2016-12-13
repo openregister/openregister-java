@@ -15,7 +15,7 @@ public class EntryIteratorDAO {
     }
 
     public Entry findByEntryNumber(int entryNumber) {
-        if (iterator == null || entryNumber != nextValidEntryNumber) {
+        if (iterator == null || !iterator.hasNext() || entryNumber != nextValidEntryNumber) {
             if (iterator != null) {
                 iterator.close();
             }
