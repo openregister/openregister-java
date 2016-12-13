@@ -21,8 +21,7 @@ import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class TransactionalEntryLogTest {
 
-    EntryDAO entryDAO;
-    EntryQueryDAO entryQueryDAO;
+    InMemoryEntryDAO entryQueryDAO;
     List<Entry> entries;
     private TransactionalEntryLog entryLog;
     private final Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1");
@@ -31,9 +30,8 @@ public class TransactionalEntryLogTest {
     @Before
     public void setUp() throws Exception {
         entries = new ArrayList<>();
-        entryDAO = new InMemoryEntryDAO(entries);
-        entryQueryDAO = new InMemoryEntryQueryDAO(entries);
-        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryDAO);
+        entryQueryDAO = new InMemoryEntryDAO(entries);
+        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO);
     }
 
     @Test

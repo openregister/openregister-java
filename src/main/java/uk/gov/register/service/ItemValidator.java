@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.configuration.FieldsConfiguration;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Cardinality;
@@ -18,24 +19,26 @@ public class ItemValidator {
 
     private final FieldsConfiguration fieldsConfiguration;
     private final RegistersConfiguration registersConfiguration;
+    private final String registerName;
 
     @Inject
-    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration) {
+    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, RegisterNameConfiguration registerNameConfiguration) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;
+        this.registerName = registerNameConfiguration.getRegisterName();
     }
 
-    public void validateItem(String registerName, JsonNode inputEntry) throws ItemValidationException {
+    public void validateItem(JsonNode inputEntry) throws ItemValidationException {
         RegisterMetadata registerMetadata = registersConfiguration.getRegisterData(registerName).getRegister();
 
         validateFields(inputEntry, registerMetadata);
 
-        validatePrimaryKeyExists(inputEntry, registerMetadata.getRegisterName());
+        validatePrimaryKeyExists(inputEntry);
 
         validateFieldsValue(inputEntry);
     }
 
-    private void validatePrimaryKeyExists(JsonNode inputEntry, String registerName) throws ItemValidationException {
+    private void validatePrimaryKeyExists(JsonNode inputEntry) throws ItemValidationException {
         JsonNode primaryKeyNode = inputEntry.get(registerName);
         throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerName + "'");
         validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerName + "' must have a valid value");

@@ -1,15 +1,14 @@
 package uk.gov.register.configuration;
 
 import com.google.common.collect.Lists;
-import uk.gov.register.core.RegisterData;
 
 import java.util.ArrayList;
 
 public class RegisterFieldsConfiguration {
     private final ArrayList<String> registerFields;
 
-    public RegisterFieldsConfiguration(RegisterData registerData) {
-        this.registerFields = Lists.newArrayList(registerData.getRegister().getFields());
+    public RegisterFieldsConfiguration(Iterable<String> fields) {
+        this.registerFields = Lists.newArrayList(fields);
     }
 
     public boolean containsField(String fieldName) {

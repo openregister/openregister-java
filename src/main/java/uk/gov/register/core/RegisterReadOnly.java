@@ -37,7 +37,7 @@ public interface RegisterReadOnly {
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
 
     Iterator<Entry> getEntryIterator();
-    Iterator<Entry> getEntryIterator(int start, int end);
+    Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2);
 
     Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);

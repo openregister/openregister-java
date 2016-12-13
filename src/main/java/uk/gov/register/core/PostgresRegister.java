@@ -1,10 +1,10 @@
 package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
-import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
@@ -28,15 +28,14 @@ public class PostgresRegister implements Register {
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Inject
-    public PostgresRegister(RegisterData registerData,
+    public PostgresRegister(RegisterNameConfiguration registerNameConfiguration,
                             BackingStoreDriver backingStoreDriver,
-                            ItemValidator itemValidator,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
-                            EntryLog entryLog) {
-        RegisterMetadata registerMetadata = registerData.getRegister();
-        registerName = registerMetadata.getRegisterName();
+                            EntryLog entryLog,
+                            ItemStore itemStore) {
+        registerName = registerNameConfiguration.getRegisterName();
         this.entryLog = entryLog;
-        this.itemStore = new ItemStore(backingStoreDriver, itemValidator, registerName);
+        this.itemStore = itemStore;
         this.recordIndex = new RecordIndex(backingStoreDriver);
         this.registerFieldsConfiguration = registerFieldsConfiguration;
     }
@@ -54,8 +53,8 @@ public class PostgresRegister implements Register {
     }
 
     public void commit() {
+        itemStore.checkpoint();
         entryLog.checkpoint();
-        // TODO: commit transactional memoization store?
     }
 
     @Override
@@ -153,8 +152,8 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(int start, int end) {
-        return entryLog.getIterator(start, end);
+    public Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2) {
+        return entryLog.getIterator(totalEntries1, totalEntries2);
     }
 
     @Override
