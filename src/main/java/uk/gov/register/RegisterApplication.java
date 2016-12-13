@@ -131,7 +131,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(InMemoryPowOfTwoNoLeaves.class).to(MemoizationStore.class).in(Singleton.class);
 
                 bind(PostgresRegister.class).to(Register.class).to(RegisterReadOnly.class);
-                bind(OnDemandEntryLog.class).to(EntryLog.class);
+                bind(UnmodifiableEntryLog.class).to(EntryLog.class);
                 bind(OnDemandItemStore.class).to(ItemStore.class);
                 bind(OnDemandRecordIndex.class).to(RecordIndex.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);

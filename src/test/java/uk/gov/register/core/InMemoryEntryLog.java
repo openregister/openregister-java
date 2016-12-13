@@ -1,17 +1,17 @@
 package uk.gov.register.core;
 
+import uk.gov.register.db.AbstractEntryLog;
 import uk.gov.register.db.EntryDAO;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.OnDemandEntryLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import static java.util.Collections.singletonList;
 
-public class InMemoryEntryLog extends OnDemandEntryLog {
+public class InMemoryEntryLog extends AbstractEntryLog {
     private final EntryDAO entryDAO;
 
     public InMemoryEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO) {
-        super(memoizationStore, entryQueryDAO);
+        super(entryQueryDAO, memoizationStore);
         this.entryDAO = entryDAO;
     }
 
@@ -19,5 +19,4 @@ public class InMemoryEntryLog extends OnDemandEntryLog {
     public void appendEntry(Entry entry) {
         entryDAO.insertInBatch(singletonList(entry));
     }
-
 }

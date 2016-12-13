@@ -38,7 +38,5 @@ public interface EntryLog {
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
 
     // for transactional logs, flushes added entries out to database
-    default void checkpoint() {
-        // by default, do nothing
-    }
+    void checkpoint();
 }
