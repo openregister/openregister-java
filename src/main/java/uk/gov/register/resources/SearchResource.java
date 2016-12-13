@@ -1,7 +1,7 @@
 package uk.gov.register.resources;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -17,12 +17,12 @@ import java.nio.charset.StandardCharsets;
 @Path("/")
 public class SearchResource {
 
-    private final String registerPrimaryKey;
+    private final RegisterName registerPrimaryKey;
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Inject
-    public SearchResource(RegisterReadOnly register, RegisterFieldsConfiguration registerFieldsConfiguration) {
-        registerPrimaryKey = register.getRegisterName();
+    public SearchResource(RegisterName registerName, RegisterFieldsConfiguration registerFieldsConfiguration) {
+        registerPrimaryKey = registerName;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
     }
 
@@ -30,11 +30,11 @@ public class SearchResource {
     @Path("/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public Object find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
-        if (!key.equals(registerPrimaryKey) && !registerFieldsConfiguration.containsField(key)) {
+        if (!key.equals(registerPrimaryKey.value()) && !registerFieldsConfiguration.containsField(key)) {
             throw new NotFoundException();
         }
 
-        String redirectUrl = key.equals(registerPrimaryKey) ?
+        String redirectUrl = key.equals(registerPrimaryKey.value()) ?
                 String.format("/record/%s", encodeUrlValue(value)) :
                 String.format("/records/%s/%s", key, encodeUrlValue(value));
 

@@ -103,6 +103,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
                 bind(RequestContext.class).to(RequestContext.class).to(SchemeContext.class);
+                bindFactory(Factories.RegisterNameProvider.class).to(RegisterName.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
@@ -122,7 +123,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         if (configuration.cloudWatchEnvironmentName().isPresent()) {
             ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
-            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getDefaultRegisterName()), 0, 10000, TimeUnit.MILLISECONDS);
+            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getDefaultRegisterName().value()), 0, 10000, TimeUnit.MILLISECONDS);
         }
 
         environment.getApplicationContext().setErrorHandler(new AssetsBundleCustomErrorHandler(environment));

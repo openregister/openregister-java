@@ -5,6 +5,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.service.ItemConverter;
@@ -34,7 +35,7 @@ public class RecordResource {
     private final RequestContext requestContext;
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final String registerPrimaryKey;
+    private final RegisterName registerPrimaryKey;
     private final ItemConverter itemConverter;
     private Iterable<String> fields;
 

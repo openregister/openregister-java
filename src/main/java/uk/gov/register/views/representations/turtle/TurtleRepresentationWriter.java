@@ -1,7 +1,7 @@
 package uk.gov.register.views.representations.turtle;
 
 import org.apache.jena.rdf.model.Model;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.representations.RepresentationWriter;
 
@@ -19,10 +19,10 @@ import java.net.URI;
 public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter<T> {
     protected static final String SPEC_PREFIX = "https://openregister.github.io/specification/#";
     protected final RegisterResolver registerResolver;
-    protected final Provider<RegisterReadOnly> registerProvider;
+    protected final Provider<RegisterName> registerNameProvider;
 
-    protected TurtleRepresentationWriter(javax.inject.Provider<RegisterReadOnly> registerProvider, RegisterResolver registerResolver) {
-        this.registerProvider = registerProvider;
+    protected TurtleRepresentationWriter(javax.inject.Provider<RegisterName> registerNameProvider, RegisterResolver registerResolver) {
+        this.registerNameProvider = registerNameProvider;
         this.registerResolver = registerResolver;
     }
 
@@ -38,7 +38,7 @@ public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter
     }
 
     protected URI ourBaseUri() {
-        return registerResolver.baseUriFor(registerProvider.get().getRegisterName());
+        return registerResolver.baseUriFor(registerNameProvider.get());
     }
 
     protected URI itemUri(String itemHash) {

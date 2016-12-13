@@ -5,6 +5,7 @@ import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterDetail;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterSerialisationFormatService;
@@ -24,7 +25,7 @@ public class DataDownload {
 
     private final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
-    private String registerPrimaryKey;
+    private RegisterName registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
     private RegisterSerialisationFormatService rsfService;
 

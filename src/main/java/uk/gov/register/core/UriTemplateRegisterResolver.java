@@ -18,7 +18,7 @@ public class UriTemplateRegisterResolver implements RegisterResolver {
     }
 
     @Override
-    public URI baseUriFor(String name) {
+    public URI baseUriFor(RegisterName name) {
         return URI.create(String.format(template, schemeContext.getScheme(), name, registerDomain));
     }
 }

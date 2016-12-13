@@ -11,11 +11,11 @@ import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.AllTheRegistersFactory;
 import uk.gov.register.core.RegisterContextFactory;
+import uk.gov.register.core.RegisterName;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -53,7 +53,7 @@ public class RegisterConfiguration extends Configuration
     @Valid
     @NotNull
     @JsonProperty
-    private String register;
+    private RegisterName register;
 
     @SuppressWarnings("unused")
     @Valid
@@ -96,7 +96,7 @@ public class RegisterConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private Map<String, RegisterContextFactory> otherRegisters = new HashMap<>();
+    private Map<RegisterName, RegisterContextFactory> otherRegisters = new HashMap<>();
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -110,7 +110,7 @@ public class RegisterConfiguration extends Configuration
         return new AllTheRegistersFactory(getDefaultRegister(), otherRegisters, getDefaultRegisterName());
     }
 
-    public String getDefaultRegisterName() {
+    public RegisterName getDefaultRegisterName() {
         return register;
     }
 

@@ -7,7 +7,7 @@ import org.apache.jena.rdf.model.Resource;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -24,8 +24,8 @@ import java.util.Map;
 public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
 
     @Inject
-    public ItemTurtleWriter(javax.inject.Provider<RegisterReadOnly> registerProvider, RegisterResolver registerResolver) {
-        super(registerProvider, registerResolver);
+    public ItemTurtleWriter(javax.inject.Provider<RegisterName> registerNameProvider, RegisterResolver registerResolver) {
+        super(registerNameProvider, registerResolver);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
     }
 
     private String fieldUri(String key) {
-        URI fieldBaseUri = registerResolver.baseUriFor("field");
+        URI fieldBaseUri = registerResolver.baseUriFor(new RegisterName("field"));
         return UriBuilder.fromUri(fieldBaseUri).path("record").path(key).build().toString();
     }
 

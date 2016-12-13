@@ -11,17 +11,17 @@ import static java.util.stream.Collectors.toMap;
 
 public class AllTheRegistersFactory {
     private RegisterContextFactory defaultRegisterFactory;
-    private final Map<String, RegisterContextFactory> otherRegisters;
-    private final String defaultRegisterName;
+    private final Map<RegisterName, RegisterContextFactory> otherRegisters;
+    private final RegisterName defaultRegisterName;
 
-    public AllTheRegistersFactory(RegisterContextFactory defaultRegisterFactory, Map<String, RegisterContextFactory> otherRegisters, String defaultRegisterName) {
+    public AllTheRegistersFactory(RegisterContextFactory defaultRegisterFactory, Map<RegisterName, RegisterContextFactory> otherRegisters, RegisterName defaultRegisterName) {
         this.defaultRegisterFactory = defaultRegisterFactory;
         this.otherRegisters = otherRegisters;
         this.defaultRegisterName = defaultRegisterName;
     }
 
     public AllTheRegisters build(DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
-        Map<String, RegisterContext> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
+        Map<RegisterName, RegisterContext> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
                 e -> buildRegister(e.getKey(), e.getValue(), dbiFactory, registersConfiguration, fieldsConfiguration, environment)));
         return new AllTheRegisters(
                 defaultRegisterFactory.build(defaultRegisterName, dbiFactory, registersConfiguration, fieldsConfiguration, environment),
@@ -29,7 +29,7 @@ public class AllTheRegistersFactory {
         );
     }
 
-    private RegisterContext buildRegister(String registerName, RegisterContextFactory registerFactory, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
+    private RegisterContext buildRegister(RegisterName registerName, RegisterContextFactory registerFactory, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
         return registerFactory.build(registerName, dbiFactory, registersConfiguration, fieldsConfiguration, environment);
     }
 }

@@ -16,7 +16,7 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 import java.util.function.Consumer;
 
 public class RegisterContext {
-    private String registerName;
+    private RegisterName registerName;
 
     private RegistersConfiguration registersConfiguration;
     private FieldsConfiguration fieldsConfiguration;
@@ -25,7 +25,7 @@ public class RegisterContext {
     private Flyway flyway;
     private RegisterMetadata registerMetadata;
 
-    public RegisterContext(String registerName, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, MemoizationStore memoizationStore, DBI dbi, Flyway flyway) {
+    public RegisterContext(RegisterName registerName, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, MemoizationStore memoizationStore, DBI dbi, Flyway flyway) {
         this.registerName = registerName;
         this.registersConfiguration = registersConfiguration;
         this.fieldsConfiguration = fieldsConfiguration;
@@ -35,7 +35,7 @@ public class RegisterContext {
         this.registerMetadata = registersConfiguration.getRegisterMetadata(registerName);
     }
 
-    public String getRegisterName() {
+    public RegisterName getRegisterName() {
         return registerName;
     }
 
@@ -77,7 +77,7 @@ public class RegisterContext {
                 new TransactionalItemStore(
                         handle.attach(ItemDAO.class),
                         handle.attach(ItemQueryDAO.class),
-                        new ItemValidator(registersConfiguration, fieldsConfiguration, this)),
+                        new ItemValidator(registersConfiguration, fieldsConfiguration, registerName)),
                 new TransactionalRecordIndex(
                         handle.attach(RecordQueryDAO.class),
                         handle.attach(CurrentKeysUpdateDAO.class)

@@ -1,7 +1,6 @@
 package uk.gov.register;
 
 import io.dropwizard.setup.Environment;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -13,6 +12,8 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 import uk.gov.register.core.AllTheRegisters;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
+import uk.gov.register.db.Factories;
 import uk.gov.register.thymeleaf.ThymeleafResourceResolver;
 
 import javax.servlet.ServletContext;
@@ -21,8 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class AssetsBundleCustomErrorHandler extends ErrorHandler {
     private final Environment environment;
@@ -57,23 +56,23 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
 
         ServletContext sc = baseRequest.getContext();
         ServiceLocator sl = ((ServletContainer) environment.getJerseyServletContainer()).getApplicationHandler().getServiceLocator();
-        AllTheRegisters registers = sl.getService(AllTheRegisters.class);
+        AllTheRegisters allTheRegisters = sl.getService(AllTheRegisters.class);
+        // We can't get the RegisterContext from the ServiceLocator because we're no longer in the request scope
+        // so we have to manually new up the factory
+        RegisterContext register = new Factories.RegisterContextProvider(allTheRegisters, () -> request).provide();
 
-        // FIXME this duplicates RequestContext.getHost() because we can't inject a RequestContext here
-        String host = firstNonNull(request.getHeader("X-Forwarded-Host"),request.getHeader("Host"));
-        String registerId = host.split("\\.")[0];
-        RegisterContext register = registers.getRegisterByName(registerId);
+        RegisterName registerName = register.getRegisterName();
 
         RegisterMetadata rm = register.getRegisterMetadata();
-        String registerName = registerId.replace('-', ' ');
 
         WebContext wc = new WebContext(request, response, sc,
                 request.getLocale());
         wc.setVariable("register", rm);
-        wc.setVariable("friendlyRegisterName", StringUtils.capitalize(registerName) + " register");
-        wc.setVariable("renderedCopyrightText", Optional.ofNullable(rm.getCopyright()));
+        wc.setVariable("friendlyRegisterName", registerName.getFriendlyRegisterName() + " register");
+        wc.setVariable("renderedCopyrightText",  Optional.ofNullable(rm.getCopyright()));
 
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
         engine.process("404.html", wc, response.getWriter());
     }
+
 }

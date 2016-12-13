@@ -27,21 +27,21 @@ public class RegisterContextFactory {
         this.database = database;
     }
 
-    private FlywayFactory getFlywayFactory(String registerName) {
+    private FlywayFactory getFlywayFactory(RegisterName registerName) {
         FlywayFactory flywayFactory = new FlywayFactory();
         flywayFactory.setLocations(Collections.singletonList("/sql"));
-        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", registerName));
+        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", registerName.value()));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }
 
-    public RegisterContext build(String registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
+    public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
         return new RegisterContext(
                 registerName,
                 registersConfiguration,
                 fieldsConfiguration,
                 new InMemoryPowOfTwoNoLeaves(),
-                dbiFactory.build(environment, database, registerName),
+                dbiFactory.build(environment, database, registerName.value()),
                 getFlywayFactory(registerName).build(database.build(environment.metrics(), registerName + "_flyway")));
     }
 }

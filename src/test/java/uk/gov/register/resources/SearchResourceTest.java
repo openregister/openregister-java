@@ -3,7 +3,7 @@ package uk.gov.register.resources;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.NotFoundException;
@@ -23,12 +23,9 @@ import static org.mockito.Mockito.when;
 public class SearchResourceTest {
     SearchResource resource;
     RegisterFieldsConfiguration registerFieldsConfiguration;
-    RegisterReadOnly thisRegister;
 
     @Before
     public void setUp() throws Exception {
-        thisRegister = mock(RegisterReadOnly.class);
-        when(thisRegister.getRegisterName()).thenReturn("school");
         registerFieldsConfiguration = mock(RegisterFieldsConfiguration.class);
     }
 
@@ -44,14 +41,14 @@ public class SearchResourceTest {
 
     @Test(expected = NotFoundException.class)
     public void find_doesNotRedirect_whenKeyDoesNotExistAsFieldInRegister() throws Exception {
-        resource = new SearchResource(thisRegister, registerFieldsConfiguration);
+        resource = new SearchResource(new RegisterName("school"), registerFieldsConfiguration);
         resource.find("country-name", "United Kingdom");
     }
 
     @Test
     public void find_returns301_whenKeyExistsAsFieldInRegister() throws Exception {
         when(registerFieldsConfiguration.containsField("country-name")).thenReturn(true);
-        resource = new SearchResource(thisRegister, registerFieldsConfiguration);
+        resource = new SearchResource(new RegisterName("school"), registerFieldsConfiguration);
 
         Response r = (Response) resource.find("country-name", "United Kingdom");
         assertThat(r.getStatus(), equalTo(301));
