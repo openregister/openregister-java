@@ -1,9 +1,9 @@
 package uk.gov.register.configuration;
 
+import io.dropwizard.testing.ResourceHelpers;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -20,12 +20,10 @@ public class FieldsConfigurationTest {
     @Test
     public void loadConfigurationWithExternalPathOfFieldsResourceFile() throws URISyntaxException {
         @SuppressWarnings("ConstantConditions")
-        String fileUrl = Paths.get("src/main/resources/config","fields.yaml").toString();
+        String fileUrl = ResourceHelpers.resourceFilePath("config/fields.yaml");
 
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.of(fileUrl));
 
         assertThat(fieldsConfiguration.getField("register").fieldName, equalTo("register"));
     }
-
-
 }
