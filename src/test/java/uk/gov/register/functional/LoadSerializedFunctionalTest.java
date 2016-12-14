@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
@@ -43,17 +44,24 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
         assertThat(r.getStatus(), equalTo(204));
 
-        TestDBItem storedItem = testItemDAO.getItems().get(0);
-        assertThat(storedItem.contents.toString(), equalTo("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
-        assertThat(storedItem.hashValue.getValue(), equalTo("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        List<TestDBItem> storedItems = testItemDAO.getItems();
+        assertThat(storedItems.get(0).contents.toString(), equalTo("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
+        assertThat(storedItems.get(0).hashValue.getValue(), equalTo("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        assertThat(storedItems.get(1).contents.toString(), equalTo("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test2\"}"));
+        assertThat(storedItems.get(1).hashValue.getValue(), equalTo("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
-        Entry entry = testEntryDAO.getAllEntries().get(0);
-        assertThat(entry.getEntryNumber(), is(1));
-        assertThat(entry.getSha256hex().getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        List<Entry> entries = testEntryDAO.getAllEntries();
+        assertThat(entries.get(0).getEntryNumber(), is(1));
+        assertThat(entries.get(0).getSha256hex().getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        assertThat(entries.get(1).getEntryNumber(), is(2));
+        assertThat(entries.get(1).getSha256hex().getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
-        TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
-        assertThat(record.getEntryNumber(), equalTo(1));
-        assertThat(record.getPrimaryKey(), equalTo("ft_openregister_test"));
+        TestRecord record1 = testRecordDAO.getRecord("ft_openregister_test");
+        assertThat(record1.getEntryNumber(), equalTo(1));
+        assertThat(record1.getPrimaryKey(), equalTo("ft_openregister_test"));
+        TestRecord record2 = testRecordDAO.getRecord("ft_openregister_test2");
+        assertThat(record2.getEntryNumber(), equalTo(2));
+        assertThat(record2.getPrimaryKey(), equalTo("ft_openregister_test2"));
     }
 
     @Test
