@@ -49,7 +49,7 @@ public class RegisterCommandReaderTest {
             RegisterSerialisationFormat registerSerialisationFormat = registerCommandReader.readFrom(type, genericType, annotations, mediaType, httpHeaders, serializerRegisterStream);
             RegisterCommand[] registerCommands = Iterators.toArray(registerSerialisationFormat.getCommands(), RegisterCommand.class);
 
-            assertThat(registerCommands.length, is(4));
+            assertThat(registerCommands.length, is(7));
         }
     }
 
