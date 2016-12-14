@@ -2,10 +2,8 @@ package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegisterNameConfiguration;
-import uk.gov.register.db.RecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
-import uk.gov.register.store.BackingStoreDriver;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -29,14 +27,14 @@ public class PostgresRegister implements Register {
 
     @Inject
     public PostgresRegister(RegisterNameConfiguration registerNameConfiguration,
-                            BackingStoreDriver backingStoreDriver,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
                             EntryLog entryLog,
-                            ItemStore itemStore) {
+                            ItemStore itemStore,
+                            RecordIndex recordIndex) {
         registerName = registerNameConfiguration.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
-        this.recordIndex = new RecordIndex(backingStoreDriver);
+        this.recordIndex = recordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
     }
 
@@ -47,14 +45,17 @@ public class PostgresRegister implements Register {
 
     @Override
     public void appendEntry(Entry entry) {
-        Item item = itemStore.getItemBySha256(entry.getSha256hex()).orElseThrow(() -> new NoSuchItemForEntryException(entry));
+        if (!itemStore.getItemBySha256(entry.getSha256hex()).isPresent()) {
+            throw new NoSuchItemForEntryException(entry);
+        }
         entryLog.appendEntry(entry);
-        recordIndex.updateRecordIndex(registerName, new Record(entry, item));
+        recordIndex.updateRecordIndex(entry.getKey(), entry.getEntryNumber());
     }
 
     public void commit() {
         itemStore.checkpoint();
         entryLog.checkpoint();
+        recordIndex.checkpoint();
     }
 
     @Override
