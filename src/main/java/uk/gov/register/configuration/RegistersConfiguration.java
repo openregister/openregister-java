@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import uk.gov.register.core.RegisterData;
 import uk.gov.register.util.ResourceYamlFileReader;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -14,11 +13,18 @@ public class RegistersConfiguration {
 
     private final Collection<RegisterData> registers;
 
-    @Inject
     public RegistersConfiguration(Optional<String> registersResourceYamlPath) {
         registers = new ResourceYamlFileReader().readResource(
                 registersResourceYamlPath,
                 "config/registers.yaml",
+                new TypeReference<Map<String, RegisterData>>() {
+                }
+        );
+    }
+
+    public RegistersConfiguration(byte[] registersConfig) {
+        registers = new ResourceYamlFileReader().readResource(
+                registersConfig,
                 new TypeReference<Map<String, RegisterData>>() {
                 }
         );

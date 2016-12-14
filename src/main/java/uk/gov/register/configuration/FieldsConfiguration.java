@@ -21,6 +21,13 @@ public class FieldsConfiguration {
                 });
     }
 
+    public FieldsConfiguration(byte[] fieldsConfig) {
+        fields = new ResourceYamlFileReader().readResource(
+                fieldsConfig,
+                new TypeReference<Map<String, Field>>() {
+                });
+    }
+
     public Field getField(String fieldName) {
         return fields.stream().filter(f -> Objects.equals(f.fieldName, fieldName)).findFirst().get();
     }

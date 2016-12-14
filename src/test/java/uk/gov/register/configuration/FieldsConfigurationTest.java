@@ -1,9 +1,8 @@
 package uk.gov.register.configuration;
 
+import io.dropwizard.testing.ResourceHelpers;
 import org.junit.Test;
-import uk.gov.register.configuration.FieldsConfiguration;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
@@ -21,12 +20,10 @@ public class FieldsConfigurationTest {
     @Test
     public void loadConfigurationWithExternalPathOfFieldsResourceFile() throws URISyntaxException {
         @SuppressWarnings("ConstantConditions")
-        String absolutePath = new File(this.getClass().getClassLoader().getResource("config/fields.yaml").toURI()).getAbsolutePath();
+        String fileUrl = ResourceHelpers.resourceFilePath("config/fields.yaml");
 
-        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.of(absolutePath));
+        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.of(fileUrl));
 
         assertThat(fieldsConfiguration.getField("register").fieldName, equalTo("register"));
     }
-
-
 }

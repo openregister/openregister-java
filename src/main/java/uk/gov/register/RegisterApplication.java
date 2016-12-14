@@ -21,10 +21,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
-import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.PublicBodiesConfiguration;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.filters.CorsBundle;
@@ -85,6 +82,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 return configuration.getFlywayFactory();
             }
         });
+        System.setProperty("java.protocol.handler.pkgs", "uk.gov.register.protocols");
     }
 
     @Override
@@ -92,16 +90,22 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DBI jdbi = dbiFactory.build(environment, configuration.getDatabase(), "postgres");
 
-        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
-        RegistersConfiguration registersConfiguration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));
-        FieldsConfiguration mintFieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
-        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
-        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData.getRegister().getFields());
-
         JerseyEnvironment jersey = environment.jersey();
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
-
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
+        Flyway flyway = configuration.getFlywayFactory().build(configuration.getDatabase().build(environment.metrics(), "flyway_db"));
+
+        Optional<String> registersYamlFileUrl = Optional.ofNullable(System.getProperty("registersYaml"));
+        Optional<String> fieldsYamlFileUrl = Optional.ofNullable(System.getProperty("fieldsYaml"));
+
+        ConfigManager configManager = new ConfigManager(configuration, registersYamlFileUrl, fieldsYamlFileUrl);
+        configManager.refreshConfig();
+
+        RegistersConfiguration registersConfiguration = configManager.createRegistersConfiguration();
+        FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
+
+        RegisterData registerData = registersConfiguration.getRegisterData(configuration.getRegisterName());
+        RegisterFieldsConfiguration registerFieldsConfiguration = new RegisterFieldsConfiguration(registerData.getRegister().getFields());
 
         jersey.register(new AbstractBinder() {
             @Override

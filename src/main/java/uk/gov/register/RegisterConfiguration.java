@@ -20,6 +20,7 @@ public class RegisterConfiguration extends Configuration
         implements AuthenticatorConfiguration,
         RegisterNameConfiguration,
         RegisterDomainConfiguration,
+        RegisterConfigConfiguration,
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
         GovukClientConfiguration,
@@ -79,6 +80,14 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private boolean enableRegisterDataDelete = false;
 
+    @Valid
+    @JsonProperty
+    private String externalConfigDirectory = "/tmp/openregister_java/external";
+
+    @Valid
+    @JsonProperty
+    private boolean downloadConfigs = true;
+
     @SuppressWarnings("unused")
     private FlywayFactory flywayFactory = new FlywayFactory();
 
@@ -134,4 +143,10 @@ public class RegisterConfiguration extends Configuration
     public boolean getEnableRegisterDataDelete() {
         return enableRegisterDataDelete;
     }
+
+    @Override
+    public String getExternalConfigDirectory() { return externalConfigDirectory; }
+
+    @Override
+    public boolean getDownloadConfigs() { return downloadConfigs; }
 }
