@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import uk.gov.register.core.*;
 
@@ -45,14 +45,15 @@ public class ArchiveCreatorTest {
             .add("field-1")
             .add("field-2");
 
-        RegisterData registerData = new RegisterData(ImmutableMap.of(
-            "register", jsonFactory.textNode("test-register"),
-            "phase", jsonFactory.textNode("alpha"),
-            "text", jsonFactory.textNode("test register"),
-            "fields", registerFields
-        ));
+        RegisterMetadata registerMetadata = new RegisterMetadata(
+                "test-register",
+                ImmutableList.of("field-1","field-2"),
+                null,
+                null,
+                "test register",
+                "alpha");
 
-        RegisterDetail registerDetail = new RegisterDetail("test-domain", 2, 2, Optional.empty(), registerData);
+        RegisterDetail registerDetail = new RegisterDetail("test-domain", 2, 2, Optional.empty(), registerMetadata);
 
         StreamingOutput streamingOutput = sutArchiveCreator.create(
             registerDetail,

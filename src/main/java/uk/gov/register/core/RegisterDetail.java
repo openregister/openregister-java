@@ -13,19 +13,19 @@ public class RegisterDetail {
     private final int totalRecords;
     private final int totalEntries;
     private final Optional<Instant> lastUpdated;
-    private RegisterData registerData;
+    private RegisterMetadata registerMetadata;
 
     public RegisterDetail(
             String domain,
             int totalRecords,
             int totalEntries,
             Optional<Instant> lastUpdated,
-            RegisterData registerData) {
+            RegisterMetadata registerMetadata) {
         this.domain = domain;
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
-        this.registerData = registerData;
+        this.registerMetadata = registerMetadata;
     }
 
     @JsonProperty("domain")
@@ -41,8 +41,8 @@ public class RegisterDetail {
 
     @SuppressWarnings("unused, used to serialize in register json")
     @JsonProperty("register-record")
-    public RegisterData getRegisterData() {
-        return registerData;
+    public RegisterMetadata getRegisterMetadata() {
+        return registerMetadata;
     }
 
     @SuppressWarnings("unused, used from template")

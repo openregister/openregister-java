@@ -4,7 +4,7 @@ import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.service.ItemConverter;
@@ -39,14 +39,14 @@ public class RecordResource {
     private Iterable<String> fields;
 
     @Inject
-    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterData registerData) {
+    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
         registerPrimaryKey = register.getRegisterName();
         this.itemConverter = itemConverter;
-        this.fields = registerData.getRegister().getFields();
+        this.fields = registerMetadata.getFields();
     }
 
     @GET

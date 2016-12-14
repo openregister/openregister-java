@@ -1,8 +1,8 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import uk.gov.register.core.RegisterData;
 import uk.gov.register.core.RegisterDetail;
+import uk.gov.register.core.RegisterMetadata;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -11,19 +11,19 @@ public class RegisterDetailView {
     private final int totalRecords;
     private final int totalEntries;
     private final Optional<Instant> lastUpdated;
-    private final RegisterData registerData;
+    private final RegisterMetadata registerMetadata;
     private final String registerDomain;
 
     public RegisterDetailView(
             int totalRecords,
             int totalEntries,
             Optional<Instant> lastUpdated,
-            RegisterData registerData,
+            RegisterMetadata registerMetadata,
             String registerDomain) {
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
-        this.registerData = registerData;
+        this.registerMetadata = registerMetadata;
         this.registerDomain = registerDomain;
     }
 
@@ -34,7 +34,7 @@ public class RegisterDetailView {
                 totalRecords,
                 totalEntries,
                 lastUpdated,
-                registerData
+                registerMetadata
         );
     }
 }

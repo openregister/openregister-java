@@ -90,7 +90,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             protected void configure() {
                 bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
                 bind(registersConfiguration).to(RegistersConfiguration.class);
-                bindFactory(Factories.RegisterDataFactory.class).to(RegisterData.class);
+                bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
                 bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
                 bind(allTheRegisters);
                 bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class);

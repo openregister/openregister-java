@@ -5,7 +5,7 @@ import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.AllTheRegisters;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.resources.RequestContext;
 
 import javax.inject.Inject;
@@ -54,31 +54,31 @@ public abstract class Factories {
         }
     }
 
-    public static class RegisterDataFactory extends SimpleFactory<RegisterData> {
+    public static class RegisterMetadataFactory extends SimpleFactory<RegisterMetadata> {
         private final Provider<RegisterContext> registerContextProvider;
 
         @Inject
-        public RegisterDataFactory(Provider<RegisterContext> registerContextProvider) {
+        public RegisterMetadataFactory(Provider<RegisterContext> registerContextProvider) {
             this.registerContextProvider = registerContextProvider;
         }
 
         @Override
-        public RegisterData provide() {
-            return registerContextProvider.get().getRegisterData();
+        public RegisterMetadata provide() {
+            return registerContextProvider.get().getRegisterMetadata();
         }
     }
 
     public static class RegisterFieldsConfigurationFactory extends SimpleFactory<RegisterFieldsConfiguration> {
-        private final RegisterData registerData;
+        private final RegisterMetadata registerMetadata;
 
         @Inject
-        public RegisterFieldsConfigurationFactory(RegisterData registerData) {
-            this.registerData = registerData;
+        public RegisterFieldsConfigurationFactory(RegisterMetadata registerMetadata) {
+            this.registerMetadata = registerMetadata;
         }
 
         @Override
         public RegisterFieldsConfiguration provide() {
-            return new RegisterFieldsConfiguration(newArrayList(registerData.getRegister().getFields()));
+            return new RegisterFieldsConfiguration(newArrayList(registerMetadata.getFields()));
         }
     }
 }

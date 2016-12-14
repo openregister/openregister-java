@@ -73,7 +73,7 @@ public class ThymeleafView extends View {
     }
 
     public Optional<String> getRenderedCopyrightText() {
-        return getRegister().getCopyright().map(
+        return Optional.ofNullable(getRegister().getCopyright()).map(
                 markdownProcessor::markdown
         );
     }

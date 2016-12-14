@@ -19,14 +19,14 @@ public class ItemResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
     private final ItemConverter itemConverter;
-    private final RegisterData registerData;
+    private final RegisterMetadata registerMetadata;
 
     @Inject
-    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter, RegisterData registerData) {
+    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.itemConverter = itemConverter;
-        this.registerData = registerData;
+        this.registerMetadata = registerMetadata;
     }
 
     @GET
@@ -53,7 +53,7 @@ public class ItemResource {
     private ItemView makeItemView(Item item) {
         return new ItemView(item.getSha256hex(),
                 itemConverter.convertItem(item),
-                registerData.getRegister().getFields()
+                registerMetadata.getFields()
         );
     }
 }

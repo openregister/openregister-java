@@ -1,0 +1,17 @@
+---
+# downloaded from https://register.register.gov.uk/record/local-authority-eng.yaml
+# at register size 6
+entry-number: "6"
+entry-timestamp: "2016-10-21T15:20:42Z"
+item-hash: "sha-256:c1762331b777d5f820735a693cc9443eebefc076fa7f2ce0ceaeea9d0f52a5d4"
+phase: "beta"
+registry: "department-for-communities-and-local-government"
+text: "Local authorities in England"
+fields:
+- "local-authority-eng"
+- "local-authority-type"
+- "name"
+- "official-name"
+- "start-date"
+- "end-date"
+register: "local-authority-eng"

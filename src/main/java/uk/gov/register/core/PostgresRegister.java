@@ -24,17 +24,17 @@ public class PostgresRegister implements Register {
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
     private final RegisterMetadata registerMetadata;
 
-    public PostgresRegister(RegisterData registerData,
+    public PostgresRegister(RegisterMetadata registerMetadata,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             RecordIndex recordIndex) {
-        registerName = registerData.getRegister().getRegisterName();
+        registerName = registerMetadata.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
-        this.registerMetadata = registerData.getRegister();
+        this.registerMetadata = registerMetadata;
     }
 
     @Override
