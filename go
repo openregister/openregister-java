@@ -12,6 +12,7 @@ function ensure_user_exists {
 
 # Set up postgres
 ensure_db_exists openregister_java
+ensure_db_exists register
 ensure_db_exists ft_openregister_java
 ensure_user_exists postgres
 
