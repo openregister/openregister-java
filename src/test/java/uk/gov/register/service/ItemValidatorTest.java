@@ -3,9 +3,9 @@ package uk.gov.register.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.RegisterConfigConfiguration;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.exceptions.ItemValidationException;
 
 import java.io.IOException;
@@ -18,10 +18,17 @@ import static org.junit.Assert.fail;
 public class ItemValidatorTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty());
-    private RegistersConfiguration registerConfiguration = new RegistersConfiguration(Optional.empty());
+    private RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
+    private ConfigManager configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.empty());
 
-    private ItemValidator itemValidator = new ItemValidator(registerConfiguration, fieldsConfiguration, new RegisterName("register"));
+    private ItemValidator itemValidator = new ItemValidator(configManager, new RegisterName("register"));
+
+    @Before
+    public void setUp() throws Exception {
+        RegisterContext registerContext = mock(RegisterContext.class);
+        when(registerContext.getRegisterName()).thenReturn("register");
+        itemValidator = new ItemValidator(configManager, registerContext);
+    }
 
     @Test
     public void validateItem_throwsValidationException_givenPrimaryKeyOfRegisterNotExists() throws IOException {

@@ -6,9 +6,8 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
-import uk.gov.register.configuration.FieldsConfiguration;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.db.*;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
@@ -17,18 +16,15 @@ import java.util.function.Consumer;
 
 public class RegisterContext {
     private RegisterName registerName;
-
-    private RegistersConfiguration registersConfiguration;
-    private FieldsConfiguration fieldsConfiguration;
+    private ConfigManager configManager;
     private MemoizationStore memoizationStore;
     private DBI dbi;
     private Flyway flyway;
     private RegisterMetadata registerMetadata;
 
-    public RegisterContext(RegisterName registerName, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, MemoizationStore memoizationStore, DBI dbi, Flyway flyway) {
+    public RegisterContext(RegisterName registerName, ConfigManager configManager, MemoizationStore memoizationStore, DBI dbi, Flyway flyway) {
         this.registerName = registerName;
-        this.registersConfiguration = registersConfiguration;
-        this.fieldsConfiguration = fieldsConfiguration;
+        this.configManager = configManager;
         this.memoizationStore = memoizationStore;
         this.dbi = dbi;
         this.flyway = flyway;
@@ -77,7 +73,7 @@ public class RegisterContext {
                 new TransactionalItemStore(
                         handle.attach(ItemDAO.class),
                         handle.attach(ItemQueryDAO.class),
-                        new ItemValidator(registersConfiguration, fieldsConfiguration, registerName)),
+                        new ItemValidator(configManager, this)),
                 new TransactionalRecordIndex(
                         handle.attach(RecordQueryDAO.class),
                         handle.attach(CurrentKeysUpdateDAO.class)

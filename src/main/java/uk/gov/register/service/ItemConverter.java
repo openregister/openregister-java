@@ -3,7 +3,7 @@ package uk.gov.register.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.configuration.FieldsConfiguration;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.core.*;
 
 import javax.inject.Inject;
@@ -14,17 +14,17 @@ import static uk.gov.register.core.Cardinality.ONE;
 
 @Service
 public class ItemConverter {
-    private final FieldsConfiguration fieldsConfiguration;
+    private final ConfigManager configManager;
 
     @Inject
-    public ItemConverter(FieldsConfiguration fieldsConfiguration) {
-        this.fieldsConfiguration = fieldsConfiguration;
+    public ItemConverter(ConfigManager configManager) {
+        this.configManager = configManager;
     }
 
     public FieldValue convert(Map.Entry<String, JsonNode> mapEntry) {
         String fieldName = mapEntry.getKey();
         JsonNode value = mapEntry.getValue();
-        FieldConverter fieldConverter = new FieldConverter(fieldsConfiguration.getField(fieldName));
+        FieldConverter fieldConverter = new FieldConverter(configManager.getFieldsConfiguration().getField(fieldName));
         return fieldConverter.convert(value);
     }
 

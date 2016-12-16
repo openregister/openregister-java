@@ -1,7 +1,8 @@
 package uk.gov.register.resources;
 
-import uk.gov.register.core.RegisterContext;
 import org.junit.Test;
+import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.core.RegisterContext;
 
 import javax.ws.rs.core.Response;
 
@@ -14,7 +15,8 @@ public class DeleteRegisterDataResourceTest {
     @Test
     public void shouldUseFlywayToDeleteData() throws Exception {
         RegisterContext registerMock = mock(RegisterContext.class, RETURNS_DEEP_STUBS);
-        DeleteRegisterDataResource sutResource = new DeleteRegisterDataResource(registerMock);
+        ConfigManager configManager = mock(ConfigManager.class);
+        DeleteRegisterDataResource sutResource = new DeleteRegisterDataResource(registerMock, configManager);
 
         Response response = sutResource.deleteRegisterData();
 

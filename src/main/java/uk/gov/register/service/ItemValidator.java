@@ -3,8 +3,7 @@ package uk.gov.register.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.RegisterMetadata;
@@ -15,19 +14,16 @@ import uk.gov.register.exceptions.ItemValidationException;
 import java.util.Set;
 
 public class ItemValidator {
-
-    private final FieldsConfiguration fieldsConfiguration;
-    private final RegistersConfiguration registersConfiguration;
+    private final ConfigManager configManager;
     private final RegisterName registerName;
 
-    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, RegisterName registerName) {
-        this.fieldsConfiguration = fieldsConfiguration;
-        this.registersConfiguration = registersConfiguration;
+    public ItemValidator(ConfigManager configManager, RegisterName registerName) {
+        this.configManager = configManager;
         this.registerName = registerName;
     }
 
     public void validateItem(JsonNode inputEntry) throws ItemValidationException {
-        RegisterMetadata registerMetadata = registersConfiguration.getRegisterMetadata(registerName);
+        RegisterMetadata registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
 
         validateFields(inputEntry, registerMetadata);
 
@@ -52,7 +48,7 @@ public class ItemValidator {
 
     private void validateFieldsValue(JsonNode inputEntry) throws ItemValidationException {
         inputEntry.fieldNames().forEachRemaining(fieldName -> {
-            Field field = fieldsConfiguration.getField(fieldName);
+            Field field = configManager.getFieldsConfiguration().getField(fieldName);
 
             Datatype datatype = field.getDatatype();
 

@@ -18,7 +18,7 @@ import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.AuthBundle;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
-import uk.gov.register.db.*;
+import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
@@ -79,22 +79,19 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         ConfigManager configManager = new ConfigManager(configuration, registersYamlFileUrl, fieldsYamlFileUrl);
         configManager.refreshConfig();
 
-        RegistersConfiguration registersConfiguration = configManager.createRegistersConfiguration();
-        FieldsConfiguration mintFieldsConfiguration = configManager.createFieldsConfiguration();
-
-        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, registersConfiguration, mintFieldsConfiguration, environment);
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, configManager, environment);
         allTheRegisters.stream().forEach(register -> register.getFlyway().migrate());
 
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bind(mintFieldsConfiguration).to(FieldsConfiguration.class);
-                bind(registersConfiguration).to(RegistersConfiguration.class);
-                bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
                 bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
+                bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
                 bind(allTheRegisters);
                 bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
+
+                bind(configManager).to(ConfigManager.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);

@@ -37,7 +37,7 @@ server:
 
 registerDomain: openregister.dev:8080
 
-register: school
+register: school-eng
 
 enableDownloadResource: true
 
