@@ -1,7 +1,7 @@
 package uk.gov.register.resources;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegisterNameConfiguration;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -21,8 +21,8 @@ public class SearchResource {
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
 
     @Inject
-    public SearchResource(RegisterNameConfiguration registerNameConfiguration, RegisterFieldsConfiguration registerFieldsConfiguration) {
-        registerPrimaryKey = registerNameConfiguration.getRegisterName();
+    public SearchResource(RegisterReadOnly register, RegisterFieldsConfiguration registerFieldsConfiguration) {
+        registerPrimaryKey = register.getRegisterName();
         this.registerFieldsConfiguration = registerFieldsConfiguration;
     }
 

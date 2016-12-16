@@ -1,7 +1,6 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
@@ -13,8 +12,8 @@ import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.PaginatedView;
-import uk.gov.register.views.RecordsView;
 import uk.gov.register.views.RecordView;
+import uk.gov.register.views.RecordsView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -33,21 +32,21 @@ import static java.util.stream.Collectors.toList;
 public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
     private final RequestContext requestContext;
-    private final RegisterData registerData;
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
     private final String registerPrimaryKey;
     private final ItemConverter itemConverter;
+    private Iterable<String> fields;
 
     @Inject
-    public RecordResource(RegisterData registerData, RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, RegisterNameConfiguration registerNameConfiguration, ItemConverter itemConverter) {
-        this.registerData = registerData;
+    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterData registerData) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        registerPrimaryKey = registerNameConfiguration.getRegisterName();
+        registerPrimaryKey = register.getRegisterName();
         this.itemConverter = itemConverter;
+        this.fields = registerData.getRegister().getFields();
     }
 
     @GET
@@ -112,7 +111,7 @@ public class RecordResource {
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return new RecordsView(recordViews, registerData.getRegister().getFields());
+        return new RecordsView(recordViews, fields);
     }
 
     @GET
@@ -156,13 +155,13 @@ public class RecordResource {
     private RecordsView getRecordsView(int limit, int offset) {
         List<Record> records = register.getRecords(limit, offset);
         List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return new RecordsView(recordViews, registerData.getRegister().getFields());
+        return new RecordsView(recordViews, fields);
     }
 
     private RecordView toRecordView(Record r) {
         Map<String, FieldValue> itemContent = itemContent(r);
-        ItemView itemView = new ItemView(r.item.getSha256hex(), itemContent, registerData.getRegister().getFields());
-        return new RecordView(r.entry, itemView, registerData.getRegister().getFields());
+        ItemView itemView = new ItemView(r.item.getSha256hex(), itemContent, fields);
+        return new RecordView(r.entry, itemView, fields);
     }
 
 }

@@ -10,6 +10,7 @@ import uk.gov.register.resources.RequestContext;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.util.Collection;
@@ -21,10 +22,11 @@ public class ViewFactory {
     private final RequestContext requestContext;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
-    private final RegisterData registerData;
+    private final Provider<RegisterData> registerData;
     private final RegisterDomainConfiguration registerDomainConfiguration;
     private final RegisterContentPages registerContentPages;
     private final RegisterResolver registerResolver;
+    private final Provider<RegisterReadOnly> register;
     private RegisterTrackingConfiguration registerTrackingConfiguration;
 
     @Inject
@@ -33,9 +35,10 @@ public class ViewFactory {
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
                        RegisterContentPagesConfiguration registerContentPagesConfiguration,
-                       RegisterData registerData,
+                       Provider<RegisterData> registerData,
                        RegisterTrackingConfiguration registerTrackingConfiguration,
-                       RegisterResolver registerResolver) {
+                       RegisterResolver registerResolver,
+                       Provider<RegisterReadOnly> register) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
@@ -44,14 +47,15 @@ public class ViewFactory {
         this.registerContentPages = new RegisterContentPages(registerContentPagesConfiguration.getRegisterHistoryPageUrl());
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
+        this.register = register;
     }
 
     public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, templateName, registerData, registerTrackingConfiguration, registerResolver);
+        return new ThymeleafView(requestContext, templateName, registerTrackingConfiguration, registerResolver, register.get());
     }
 
     public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, e, registerData, registerTrackingConfiguration, registerResolver);
+        return new BadRequestExceptionView(requestContext, e, register.get(), registerTrackingConfiguration, registerResolver);
     }
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
@@ -62,22 +66,22 @@ public class ViewFactory {
                 totalRecords,
                 totalEntries,
                 lastUpdated,
-                registerData,
+                register.get(),
                 registerContentPages,
                 registerTrackingConfiguration,
                 registerResolver);
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
-        return new DownloadPageView(requestContext, registerData, enableDownloadResource, registerTrackingConfiguration, registerResolver);
+        return new DownloadPageView(requestContext, register.get(), enableDownloadResource, registerTrackingConfiguration, registerResolver);
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
-        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData, registerDomainConfiguration.getRegisterDomain());
+        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerData.get(), registerDomainConfiguration.getRegisterDomain());
     }
 
     public <T> AttributionView<T> getAttributionView(String templateName, T fieldValueMap) {
-        return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, fieldValueMap);
+        return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerTrackingConfiguration, registerResolver, fieldValueMap);
     }
 
     public AttributionView<Map<String, FieldValue>> getItemView(Map<String, FieldValue> fieldValueMap) {
@@ -89,11 +93,11 @@ public class ViewFactory {
     }
 
     public PaginatedView<EntryListView> getEntriesView(Collection<Entry> entries, Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries));
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), register.get(), registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries));
     }
 
     public PaginatedView<EntryListView> getRecordEntriesView(String recordKey, Collection<Entry> entries, Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries, recordKey));
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), register.get(), registerTrackingConfiguration, registerResolver, pagination, new EntryListView(entries, recordKey));
     }
 
     public AttributionView<RecordView> getRecordView(RecordView record) {
@@ -101,16 +105,16 @@ public class ViewFactory {
     }
 
     public PaginatedView<RecordsView> getRecordListView(Pagination pagination, RecordsView recordsView) {
-        return new PaginatedView<>("records.html", requestContext, getRegistry(), getBranding(), registerData, registerTrackingConfiguration, registerResolver, pagination,
+        return new PaginatedView<>("records.html", requestContext, getRegistry(), getBranding(), register.get(), registerTrackingConfiguration, registerResolver, pagination,
                 recordsView);
     }
 
     private PublicBody getRegistry() {
-        return publicBodiesConfiguration.getPublicBody(registerData.getRegister().getRegistry());
+        return publicBodiesConfiguration.getPublicBody(registerData.get().getRegister().getRegistry());
     }
 
     private Optional<GovukOrganisation.Details> getBranding() {
-        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(registerData.getRegister().getRegistry());
+        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(registerData.get().getRegister().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
     }
 }

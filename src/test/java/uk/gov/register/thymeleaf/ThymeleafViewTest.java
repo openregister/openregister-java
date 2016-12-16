@@ -1,13 +1,12 @@
 package uk.gov.register.thymeleaf;
 
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.resources.RequestContext;
 
 import java.net.URI;
@@ -16,6 +15,8 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ThymeleafViewTest {
@@ -25,10 +26,12 @@ public class ThymeleafViewTest {
 
     @Before
     public void setUp() throws Exception {
-        RegisterData register = new RegisterData(ImmutableMap.of(
-                "register", new TextNode("company-limited-by-guarantee"),
-                "copyright", new TextNode("Copyright text [with link](http://www.example.com/copyright)")));
-        thymeleafView = new ThymeleafView(requestContext, "don't care", register, () -> Optional.empty(), registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"));
+        RegisterMetadata metadata = new RegisterMetadata("company-limited-by-guarantee", null, "Copyright text [with link](http://www.example.com/copyright)", null, null, null);
+        RegisterReadOnly register = mock(RegisterReadOnly.class);
+        when(register.getRegisterName()).thenReturn("company-limited-by-guarantee");
+        when(register.getRegisterMetadata()).thenReturn(metadata);
+
+        thymeleafView = new ThymeleafView(requestContext, "don't care", () -> Optional.empty(), registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"), register);
     }
 
     @Test

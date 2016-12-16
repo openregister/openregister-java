@@ -12,6 +12,23 @@ database:
   properties:
     charSet: UTF-8
 
+otherRegisters:
+  register:
+    database:
+      driverClass: org.postgresql.Driver
+      url: jdbc:postgresql://localhost:5432/register
+      user: postgres
+      password:
+
+      #db connection properties
+      initialSize: 1
+      minSize: 1
+      maxSize: 4
+
+      properties:
+        charSet: UTF-8
+
+
 server:
   registerDefaultExceptionMappers: false
   adminConnectors:

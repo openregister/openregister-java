@@ -1,7 +1,6 @@
 package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.util.HashValue;
@@ -9,13 +8,12 @@ import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
-import javax.inject.Inject;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Iterator;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -24,18 +22,19 @@ public class PostgresRegister implements Register {
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
+    private final RegisterMetadata registerMetadata;
 
-    @Inject
-    public PostgresRegister(RegisterNameConfiguration registerNameConfiguration,
+    public PostgresRegister(RegisterData registerData,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             RecordIndex recordIndex) {
-        registerName = registerNameConfiguration.getRegisterName();
+        registerName = registerData.getRegister().getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
+        this.registerMetadata = registerData.getRegister();
     }
 
     @Override
@@ -165,5 +164,15 @@ public class PostgresRegister implements Register {
     @Override
     public Iterator<Item> getItemIterator(int start, int end) {
         return itemStore.getIterator(start, end);
+    }
+
+    @Override
+    public String getRegisterName() {
+        return registerName;
+    }
+
+    @Override
+    public RegisterMetadata getRegisterMetadata() {
+        return registerMetadata;
     }
 }

@@ -17,6 +17,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.serialization.*;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.HashValue;
@@ -40,7 +41,7 @@ public class RegisterSerialisationFormatServiceTest {
     private CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
     @Mock
-    private RegisterService registerService;
+    private RegisterContext registerContext;
 
     @Mock
     private Register register;
@@ -71,7 +72,8 @@ public class RegisterSerialisationFormatServiceTest {
         appendEntryCommand2 = new AppendEntryCommand(entry2);
         assertRootEmptyRegister = new AssertRootHashCommand(emptyRegisterProof);
 
-        sutService = new RegisterSerialisationFormatService(registerService, register);
+        when(registerContext.buildOnDemandRegister()).thenReturn(register);
+        sutService = new RegisterSerialisationFormatService(registerContext);
     }
 
     @Test
@@ -85,7 +87,7 @@ public class RegisterSerialisationFormatServiceTest {
                 callback.accept(register);
                 return null;
             }
-        }).when(registerService).asAtomicRegisterOperation(any(Consumer.class));
+        }).when(registerContext).transactionalRegisterOperation(any(Consumer.class));
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 assertRootEmptyRegister,

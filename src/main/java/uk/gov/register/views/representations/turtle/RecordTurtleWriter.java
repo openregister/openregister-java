@@ -1,8 +1,12 @@
 package uk.gov.register.views.representations.turtle;
 
-import org.apache.jena.rdf.model.*;
-import uk.gov.register.configuration.RegisterNameConfiguration;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.RecordView;
@@ -20,8 +24,8 @@ import java.util.Map;
 public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
     @Inject
-    public RecordTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(registerNameConfiguration, registerResolver);
+    public RecordTurtleWriter(javax.inject.Provider<RegisterReadOnly> registerProvider, RegisterResolver registerResolver) {
+        super(registerProvider, registerResolver);
     }
 
     @Override
@@ -30,8 +34,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
         ItemView itemView = view.getItemView();
 
         Model recordModel = ModelFactory.createDefaultModel();
-        Model entryModel = new EntryTurtleWriter(registerNameConfiguration, registerResolver).rdfModelFor(entry, false);
-        Model itemModel = new ItemTurtleWriter(registerNameConfiguration, registerResolver).rdfModelFor(itemView);
+        Model entryModel = new EntryTurtleWriter(registerProvider, registerResolver).rdfModelFor(entry, false);
+        Model itemModel = new ItemTurtleWriter(registerProvider, registerResolver).rdfModelFor(itemView);
 
         Resource recordResource = recordModel.createResource(recordUri(view.getPrimaryKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));

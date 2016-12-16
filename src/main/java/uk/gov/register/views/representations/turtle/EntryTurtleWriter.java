@@ -4,8 +4,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -18,8 +18,8 @@ import javax.ws.rs.ext.Provider;
 public class EntryTurtleWriter extends TurtleRepresentationWriter<Entry> {
 
     @Inject
-    public EntryTurtleWriter(RegisterNameConfiguration registerNameConfiguration, RegisterResolver registerResolver) {
-        super(registerNameConfiguration, registerResolver);
+    public EntryTurtleWriter(javax.inject.Provider<RegisterReadOnly> registerProvider, RegisterResolver registerResolver) {
+        super(registerProvider, registerResolver);
     }
 
     @Override

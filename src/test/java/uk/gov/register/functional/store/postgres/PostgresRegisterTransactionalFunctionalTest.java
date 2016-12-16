@@ -13,7 +13,6 @@ import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBSupport;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.register.service.RegisterService;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
@@ -27,7 +26,9 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
 
@@ -42,7 +43,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
-        RegisterService.useTransaction(dbi, handle -> {
+        RegisterContext.useTransaction(dbi, handle -> {
             PostgresRegister postgresRegister = getPostgresRegister(handle);
             postgresRegister.putItem(item1);
 
@@ -72,7 +73,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         try {
-            RegisterService.useTransaction(dbi, handle -> {
+            RegisterContext.useTransaction(dbi, handle -> {
                 PostgresRegister postgresRegister = getPostgresRegister(handle);
                 postgresRegister.putItem(item1);
                 postgresRegister.commit();
@@ -114,7 +115,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.now(), "bbb");
         Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.now(), "ccc");
 
-        RegisterService.useTransaction(dbi, handle -> {
+        RegisterContext.useTransaction(dbi, handle -> {
             PostgresRegister postgresRegister = getPostgresRegister(handle);
             postgresRegister.putItem(item1);
             postgresRegister.putItem(item2);
@@ -134,7 +135,9 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
         TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
                 mock(ItemValidator.class));
-        return new PostgresRegister(() -> "address", new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore, new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)));
+        RegisterData registerData = mock(RegisterData.class, RETURNS_DEEP_STUBS);
+        when(registerData.getRegister().getRegisterName()).thenReturn("address");
+        return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore, new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)));
     }
 }
 

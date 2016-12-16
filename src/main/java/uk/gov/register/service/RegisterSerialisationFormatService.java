@@ -3,6 +3,7 @@ package uk.gov.register.service;
 import org.apache.jena.ext.com.google.common.collect.Iterators;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.RootHashAssertionException;
 import uk.gov.register.serialization.*;
@@ -18,18 +19,18 @@ public class RegisterSerialisationFormatService {
     private final String EMPTY_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
     private final RegisterProof emptyRegisterProof;
 
-    private final RegisterService registerService;
+    private final RegisterContext registerContext;
     private RegisterReadOnly register;
 
     @Inject
-    public RegisterSerialisationFormatService(RegisterService registerService, RegisterReadOnly register) {
-        this.registerService = registerService;
-        this.register = register;
+    public RegisterSerialisationFormatService(RegisterContext registerContext) {
+        this.registerContext = registerContext;
+        this.register = registerContext.buildOnDemandRegister();
         this.emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_ROOT_HASH));
     }
 
     public void processRegisterComponents(RegisterSerialisationFormat rsf) {
-        registerService.asAtomicRegisterOperation(register -> mintRegisterComponents(rsf.getCommands(), register));
+        registerContext.transactionalRegisterOperation(register -> mintRegisterComponents(rsf.getCommands(), register));
     }
 
     public RegisterSerialisationFormat createRegisterSerialisationFormat() {

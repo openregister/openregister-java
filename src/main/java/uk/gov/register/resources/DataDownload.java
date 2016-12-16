@@ -1,7 +1,6 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
@@ -30,10 +29,10 @@ public class DataDownload {
     private RegisterSerialisationFormatService rsfService;
 
     @Inject
-    public DataDownload(RegisterReadOnly register, ViewFactory viewFactory, RegisterNameConfiguration registerNameConfiguration, ResourceConfiguration resourceConfiguration, RegisterSerialisationFormatService rsfService) {
+    public DataDownload(RegisterReadOnly register, ViewFactory viewFactory, ResourceConfiguration resourceConfiguration, RegisterSerialisationFormatService rsfService) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.registerPrimaryKey = registerNameConfiguration.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterName();
         this.resourceConfiguration = resourceConfiguration;
         this.rsfService = rsfService;
     }

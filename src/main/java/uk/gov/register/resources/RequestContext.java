@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
 @Service
 public class RequestContext implements SchemeContext {
 
@@ -29,6 +31,11 @@ public class RequestContext implements SchemeContext {
     public String getScheme() {
         Optional<String> header = Optional.ofNullable(httpServletRequest.getHeader("X-Forwarded-Proto"));
         return header.orElse(httpServletRequest.getScheme());
+    }
+
+    public String getHost() {
+        return firstNonNull(httpServletRequest.getHeader("X-Forwarded-Host"),
+                httpServletRequest.getHeader("Host"));
     }
 
     public HttpServletRequest getHttpServletRequest() {

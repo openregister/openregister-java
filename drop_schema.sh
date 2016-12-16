@@ -2,6 +2,7 @@
 
 set -eu
 
-config_file=$1
+base_uri=$1
+user_pass=$2
 
-java -jar build/libs/openregister-java-all.jar db clean $config_file
+curl -f -s -u $user_pass -XDELETE $base_uri/delete-register-data

@@ -5,12 +5,11 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.configuration.RegisterNameConfiguration;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
-import uk.gov.register.service.RegisterService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ObjectReconstructor;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -30,18 +29,16 @@ public class DataUpload {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final RegisterService registerService;
     private final ObjectReconstructor objectReconstructor;
     private final RegisterSerialisationFormatService registerSerialisationFormatService;
-    private RegisterNameConfiguration registerNameConfiguration;
+    private final RegisterContext registerContext;
 
 
     @Inject
-    public DataUpload(RegisterService registerService, ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService, RegisterNameConfiguration registerNameConfiguration) {
-        this.registerService = registerService;
+    public DataUpload(ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService, RegisterContext registerContext) {
         this.objectReconstructor = objectReconstructor;
         this.registerSerialisationFormatService = registerSerialisationFormatService;
-        this.registerNameConfiguration = registerNameConfiguration;
+        this.registerContext = registerContext;
     }
 
     @Context
@@ -69,7 +66,7 @@ public class DataUpload {
     }
 
     private void mintItems(Iterable<JsonNode> objects) {
-        registerService.asAtomicRegisterOperation(register -> {
+        registerContext.transactionalRegisterOperation(register -> {
             AtomicInteger currentEntryNumber = new AtomicInteger(register.getTotalEntries());
             Iterables.transform(objects, Item::new).forEach(item -> mintItem(register, currentEntryNumber, item));
         });
@@ -77,7 +74,7 @@ public class DataUpload {
 
     private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
         register.putItem(item);
-        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), item.getValue(registerNameConfiguration.getRegisterName())));
+        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), item.getValue(this.registerContext.getRegisterName())));
     }
 }
 
