@@ -27,7 +27,7 @@ public class ItemValidator {
     }
 
     public void validateItem(JsonNode inputEntry) throws ItemValidationException {
-        RegisterMetadata registerMetadata = registersConfiguration.getRegisterData(registerName).getRegister();
+        RegisterMetadata registerMetadata = registersConfiguration.getRegisterMetadata(registerName);
 
         validateFields(inputEntry, registerMetadata);
 

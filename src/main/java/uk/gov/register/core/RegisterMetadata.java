@@ -1,37 +1,65 @@
 package uk.gov.register.core;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(NON_NULL)
 public class RegisterMetadata {
-    final String registerName;
-    final List<String> fields;
-    final Optional<String> copyright;
-    final String registry;
-    final String text;
-    final String phase;
+    @JsonProperty("register")
+    private String registerName;
+    @JsonProperty
+    private List<String> fields;
+    @JsonProperty
+    private String copyright;
+    @JsonProperty
+    private String registry;
+    @JsonProperty
+    private String text;
+    @JsonProperty
+    private String phase;
 
-    @JsonCreator
-    public RegisterMetadata(@JsonProperty("register") String registerName,
-                            @JsonProperty("fields") List<String> fields,
-                            @JsonProperty("copyright") String copyright,
-                            @JsonProperty("registry") String registry,
-                            @JsonProperty("text") String text,
-                            @JsonProperty("phase") String phase) {
+    private Map<String, JsonNode> otherProperties = new HashMap<>();
+
+    @SuppressWarnings("unused, used by jackson")
+    @JsonAnyGetter
+    public Map<String, JsonNode> getOtherProperties() {
+        return otherProperties;
+    }
+
+    @SuppressWarnings("unused, used by jackson")
+    @JsonAnySetter
+    public void setOtherProperty(String name, JsonNode value) {
+        otherProperties.put(name, value);
+    }
+
+    @SuppressWarnings("unused, used by jackson")
+    public RegisterMetadata() {
+    }
+
+    public RegisterMetadata(String registerName,
+                            List<String> fields,
+                            String copyright,
+                            String registry,
+                            String text,
+                            String phase) {
         this.registerName = registerName;
         this.phase = phase;
         this.fields = fields;
-        this.copyright = StringUtils.isNotEmpty(copyright) ? Optional.of(copyright) : Optional.empty();
+        this.copyright = StringUtils.isNotEmpty(copyright) ? copyright : null;
         this.registry = registry;
         this.text = text;
     }
@@ -40,10 +68,11 @@ public class RegisterMetadata {
         return registerName;
     }
 
-    public Optional<String> getCopyright() {
+    public String getCopyright() {
         return copyright;
     }
 
+    @JsonIgnore
     public Iterable<String> getNonPrimaryFields() {
         return Iterables.filter(fields, not(equalTo(registerName)));
     }

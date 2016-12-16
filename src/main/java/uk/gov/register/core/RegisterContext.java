@@ -23,7 +23,7 @@ public class RegisterContext {
     private MemoizationStore memoizationStore;
     private DBI dbi;
     private Flyway flyway;
-    private RegisterData registerData;
+    private RegisterMetadata registerMetadata;
 
     public RegisterContext(String registerName, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, MemoizationStore memoizationStore, DBI dbi, Flyway flyway) {
         this.registerName = registerName;
@@ -32,7 +32,7 @@ public class RegisterContext {
         this.memoizationStore = memoizationStore;
         this.dbi = dbi;
         this.flyway = flyway;
-        this.registerData = registersConfiguration.getRegisterData(registerName);
+        this.registerMetadata = registersConfiguration.getRegisterMetadata(registerName);
     }
 
     public String getRegisterName() {
@@ -40,11 +40,11 @@ public class RegisterContext {
     }
 
     private RegisterFieldsConfiguration getRegisterFieldsConfiguration() {
-        return new RegisterFieldsConfiguration(getRegisterData().getRegister().getFields());
+        return new RegisterFieldsConfiguration(getRegisterMetadata().getFields());
     }
 
-    public RegisterData getRegisterData() {
-        return registerData;
+    public RegisterMetadata getRegisterMetadata() {
+        return registerMetadata;
     }
 
     public MemoizationStore getMemoizationStore() {
@@ -60,7 +60,7 @@ public class RegisterContext {
     }
 
     public Register buildOnDemandRegister() {
-        return new PostgresRegister(getRegisterData(),
+        return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
                 new UnmodifiableEntryLog(memoizationStore, getDbi().onDemand(EntryQueryDAO.class)),
                 new UnmodifiableItemStore(getDbi().onDemand(ItemQueryDAO.class)),
@@ -69,7 +69,7 @@ public class RegisterContext {
     }
 
     public Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
-        return new PostgresRegister(getRegisterData(),
+        return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
                 new TransactionalEntryLog(memoizationStore,
                         handle.attach(EntryQueryDAO.class),

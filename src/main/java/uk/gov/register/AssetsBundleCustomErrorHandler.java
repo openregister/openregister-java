@@ -12,7 +12,7 @@ import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 import uk.gov.register.core.AllTheRegisters;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterData;
+import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.thymeleaf.ThymeleafResourceResolver;
 
 import javax.servlet.ServletContext;
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
@@ -63,14 +64,14 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         String registerId = host.split("\\.")[0];
         RegisterContext register = registers.getRegisterByName(registerId);
 
-        RegisterData rd = register.getRegisterData();
+        RegisterMetadata rm = register.getRegisterMetadata();
         String registerName = registerId.replace('-', ' ');
 
         WebContext wc = new WebContext(request, response, sc,
                 request.getLocale());
-        wc.setVariable("register", rd.getRegister());
+        wc.setVariable("register", rm);
         wc.setVariable("friendlyRegisterName", StringUtils.capitalize(registerName) + " register");
-        wc.setVariable("renderedCopyrightText", rd.getRegister().getCopyright());
+        wc.setVariable("renderedCopyrightText", Optional.ofNullable(rm.getCopyright()));
 
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
         engine.process("404.html", wc, response.getWriter());
