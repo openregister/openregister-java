@@ -23,6 +23,7 @@ public class RegisterContext {
     private MemoizationStore memoizationStore;
     private DBI dbi;
     private Flyway flyway;
+    private RegisterData registerData;
 
     public RegisterContext(String registerName, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, MemoizationStore memoizationStore, DBI dbi, Flyway flyway) {
         this.registerName = registerName;
@@ -31,6 +32,7 @@ public class RegisterContext {
         this.memoizationStore = memoizationStore;
         this.dbi = dbi;
         this.flyway = flyway;
+        this.registerData = registersConfiguration.getRegisterData(registerName);
     }
 
     public String getRegisterName() {
@@ -42,7 +44,7 @@ public class RegisterContext {
     }
 
     public RegisterData getRegisterData() {
-        return registersConfiguration.getRegisterData(registerName);
+        return registerData;
     }
 
     public MemoizationStore getMemoizationStore() {
