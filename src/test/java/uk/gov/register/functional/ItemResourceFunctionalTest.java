@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ItemResourceFunctionalTest {
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
     private static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";
     private static String item2 = "{\"address\":\"145678\",\"street\":\"ellis\"}";
 

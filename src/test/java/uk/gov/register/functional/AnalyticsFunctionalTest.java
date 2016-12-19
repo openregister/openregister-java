@@ -1,10 +1,9 @@
 package uk.gov.register.functional;
 
-import io.dropwizard.testing.ConfigOverride;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -13,7 +12,6 @@ import uk.gov.register.functional.db.TestEntry;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -24,9 +22,9 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 @RunWith(Parameterized.class)
 public class AnalyticsFunctionalTest {
 
-    private static final String TRACKING_ID_NOT_PRESENT = null;
-    private static final String TRACKING_ID_EMPTY = "";
-    private static final String TRACKING_ID_VALID = "UA-12345678-1";
+    private static final String REGISTER_WITH_MISSING_TRACKING_ID = "register";
+    private static final String REGISTER_WITH_EMPTY_TRACKING_ID = "postcode";
+    private static final String REGISTER_WITH_VALID_TRACKING_ID = "address";
 
     private static final TestEntry testEntry1;
     private static final TestEntry testEntry2;
@@ -38,57 +36,49 @@ public class AnalyticsFunctionalTest {
         testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}", "12346");
     }
 
-    @Rule
-    public RegisterRule register;
+    @ClassRule
+    public static RegisterRule register = new RegisterRule();
 
     @Before
     public void setup() {
         register.wipe();
-        register.mintLines("address",
-                testEntry1.itemJson,
-                testEntry2.itemJson);
+        register.mintLines("address", testEntry1.itemJson, testEntry2.itemJson);
     }
 
     private final String targetUrl;
-    private final Boolean shouldIncludeAnalytics;
 
-    public AnalyticsFunctionalTest(String targetUrl, String trackingId, Boolean shouldIncludeAnalytics) {
-        this.register = createRegister(trackingId);
+    public AnalyticsFunctionalTest(String targetUrl) {
         this.targetUrl = targetUrl;
-        this.shouldIncludeAnalytics = shouldIncludeAnalytics;
     }
 
-    @Parameterized.Parameters(name = "{index} - url: {0} with code: {1} should include analytics: {2}")
+    @Parameterized.Parameters(name = "{index} - url: {0}")
     public static List data() {
-        List sourceData = new ArrayList();
+        List<Object[]> sourceData = new ArrayList<>();
 
-        sourceData.addAll(generateTestSetFor("/"));
-        sourceData.addAll(generateTestSetFor("/download"));
-        sourceData.addAll(generateTestSetFor("/entries"));
-        sourceData.addAll(generateTestSetFor("/entry/9999999999"));
-        sourceData.addAll(generateTestSetFor("/entry/1"));
-        sourceData.addAll(generateTestSetFor("/entry/2"));
-
-        sourceData.addAll(generateTestSetFor("/records"));
-        sourceData.addAll(generateTestSetFor("/records/non-existent-record"));
-        sourceData.addAll(generateTestSetFor("/records/non-existent-record/entries"));
-        sourceData.addAll(generateTestSetFor("/records/" + testEntry1Key));
-        sourceData.addAll(generateTestSetFor("/records/" + testEntry2Key));
-        sourceData.addAll(generateTestSetFor("/records/" + testEntry1Key + "/entries"));
-        sourceData.addAll(generateTestSetFor("/records/" + testEntry2Key + "/entries"));
-
-        sourceData.addAll(generateTestSetFor("/item/sha-256:non-existent-item"));
-        sourceData.addAll(generateTestSetFor("/item/" + testEntry1.sha256hex));
-        sourceData.addAll(generateTestSetFor("/item/" + testEntry2.sha256hex));
-
-        sourceData.addAll(generateTestSetFor("/not-found-page"));
+        sourceData.add(generateTestSetFor("/"));
+        sourceData.add(generateTestSetFor("/download"));
+        sourceData.add(generateTestSetFor("/entries"));
+        sourceData.add(generateTestSetFor("/entry/9999999999"));
+        sourceData.add(generateTestSetFor("/entry/1"));
+        sourceData.add(generateTestSetFor("/entry/2"));
+        sourceData.add(generateTestSetFor("/records"));
+        sourceData.add(generateTestSetFor("/records/non-existent-record"));
+        sourceData.add(generateTestSetFor("/records/non-existent-record/entries"));
+        sourceData.add(generateTestSetFor("/records/" + testEntry1Key));
+        sourceData.add(generateTestSetFor("/records/" + testEntry2Key));
+        sourceData.add(generateTestSetFor("/records/" + testEntry1Key + "/entries"));
+        sourceData.add(generateTestSetFor("/records/" + testEntry2Key + "/entries"));
+        sourceData.add(generateTestSetFor("/item/sha-256:non-existent-item"));
+        sourceData.add(generateTestSetFor("/item/" + testEntry1.sha256hex));
+        sourceData.add(generateTestSetFor("/item/" + testEntry2.sha256hex));
+        sourceData.add(generateTestSetFor("/not-found-page"));
 
         return sourceData;
     }
 
     @Test
-    public void checkAnalyticsScriptsPresence() throws Exception {
-        Response response = register.getRequest("address", targetUrl, TEXT_HTML);
+    public void emptyTrackingId_shouldNotIncludeAnalyticsCode() throws Exception {
+        Response response = register.getRequest(REGISTER_WITH_EMPTY_TRACKING_ID, targetUrl, TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));
@@ -97,24 +87,44 @@ public class AnalyticsFunctionalTest {
         Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
         Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
 
-        assertThat(docIncludesAnalyticsId, equalTo(shouldIncludeAnalytics));
-        assertThat(docIncludesMainAnalytics, equalTo(shouldIncludeAnalytics));
-        assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
+        assertThat(docIncludesAnalyticsId, equalTo(false));
+        assertThat(docIncludesMainAnalytics, equalTo(false));
+        assertThat(docIncludesExtLinksAnalytics, equalTo(false));
     }
 
-    private static RegisterRule createRegister(String trackingId) {
-        if (trackingId != null) {
-            return new RegisterRule("address", ConfigOverride.config("trackingId", trackingId));
-        }
-        return new RegisterRule("address");
+    @Test
+    public void missingTrackingId_shouldNotIncludeAnalyticsCode() throws Exception {
+        Response response = register.getRequest(REGISTER_WITH_MISSING_TRACKING_ID, targetUrl, TEXT_HTML);
+
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+        assertThat(response.getStatus(), lessThan(500));
+
+        Boolean docIncludesAnalyticsId = doc.getElementById("analytics-tracking-id") != null;
+        Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
+        Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
+
+        assertThat(docIncludesAnalyticsId, equalTo(false));
+        assertThat(docIncludesMainAnalytics, equalTo(false));
+        assertThat(docIncludesExtLinksAnalytics, equalTo(false));
     }
 
-    private static List<Object> generateTestSetFor(String url) {
-        return Arrays.asList(
-                new Object[]{url, TRACKING_ID_NOT_PRESENT, false},
-                new Object[]{url, TRACKING_ID_EMPTY, false},
-                new Object[]{url, TRACKING_ID_VALID, true}
-        );
+    @Test
+    public void validTrackingId_shouldIncludeAnalyticsCode() throws Exception {
+        Response response = register.getRequest(REGISTER_WITH_VALID_TRACKING_ID, targetUrl, TEXT_HTML);
+
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+        assertThat(response.getStatus(), lessThan(500));
+
+        Boolean docIncludesAnalyticsId = doc.getElementById("analytics-tracking-id") != null;
+        Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
+        Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
+
+        assertThat(docIncludesAnalyticsId, equalTo(true));
+        assertThat(docIncludesMainAnalytics, equalTo(true));
+        assertThat(docIncludesExtLinksAnalytics, equalTo(true));
     }
 
+    private static Object[] generateTestSetFor(String url) {
+        return new Object[]{url};
+    }
 }

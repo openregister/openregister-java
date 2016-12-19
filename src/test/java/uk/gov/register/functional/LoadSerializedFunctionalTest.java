@@ -1,14 +1,19 @@
 package uk.gov.register.functional;
 
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBItem;
+import uk.gov.register.functional.db.TestEntryDAO;
+import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.functional.db.TestRecord;
+import uk.gov.register.functional.db.TestRecordDAO;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -20,7 +25,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static uk.gov.register.functional.db.TestDBSupport.*;
 
 public class LoadSerializedFunctionalTest {
     private static final String registerName = "register";
@@ -29,7 +33,18 @@ public class LoadSerializedFunctionalTest {
     public TestRule wipe = new WipeDatabaseRule();
 
     @ClassRule
-    public static final RegisterRule register = new RegisterRule(registerName);
+    public static final RegisterRule register = new RegisterRule();
+    private static TestItemCommandDAO testItemDAO;
+    private static TestEntryDAO testEntryDAO;
+    private static TestRecordDAO testRecordDAO;
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        Handle handle = register.handleFor(registerName);
+        testItemDAO = handle.attach(TestItemCommandDAO.class);
+        testEntryDAO = handle.attach(TestEntryDAO.class);
+        testRecordDAO = handle.attach(TestRecordDAO.class);
+    }
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {

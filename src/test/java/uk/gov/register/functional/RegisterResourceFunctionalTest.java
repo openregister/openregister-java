@@ -5,6 +5,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -21,7 +22,7 @@ import static org.hamcrest.core.IsNot.not;
 public class RegisterResourceFunctionalTest {
 
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
 
     @Before
     public void setup() {
@@ -57,7 +58,7 @@ public class RegisterResourceFunctionalTest {
         Response registerResourceFromAddressRegisterResponse = register.getRequest("address","/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
-        Map<String,?> registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
+        Map<String,?> registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(new GenericType<Map<String, ?>>(){});
 
         assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(0));
         assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(0));

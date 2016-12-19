@@ -28,7 +28,10 @@ before_script:
 - sudo sh -c 'echo -n "host all all 127.0.0.1/32 trust" >> /etc/postgresql/9.5/main/pg_hba.conf'
 - sudo service postgresql restart 9.5
 - psql --version
-- psql -c 'create database ft_openregister_java;' -U postgres
+- psql -c 'create database ft_openregister_java_address;' -U postgres
+- psql -c 'create database ft_openregister_java_postcode;' -U postgres
+- psql -c 'create database ft_openregister_java_register;' -U postgres
+- psql -c 'create database conformance_openregister_java;' -U postgres
 after_failure:
 - cat $TRAVIS_BUILD_DIR/stderr.txt
 - cat $TRAVIS_BUILD_DIR/stdout.txt

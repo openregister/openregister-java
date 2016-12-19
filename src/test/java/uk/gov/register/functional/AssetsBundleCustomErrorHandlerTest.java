@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AssetsBundleCustomErrorHandlerTest {
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
 
     @Test
     public void displays404pageForNonexistentAssets() {

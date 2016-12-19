@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 public class VerifiableLogResourceFunctionalTest {
 
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
     private final String proofIdentifier = "merkle:sha-256";
 
     @Before

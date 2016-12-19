@@ -12,6 +12,7 @@ import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
+import java.util.Optional;
 
 public class RegisterContextFactory {
     @Valid
@@ -19,12 +20,17 @@ public class RegisterContextFactory {
     @JsonProperty
     private DataSourceFactory database;
 
+    @Valid
+    @JsonProperty
+    private String trackingId;
+
     @SuppressWarnings("unused, used by Jackson")
     public RegisterContextFactory() {
     }
 
-    public RegisterContextFactory(DataSourceFactory database) {
+    public RegisterContextFactory(DataSourceFactory database, Optional<String> trackingId) {
         this.database = database;
+        this.trackingId = trackingId.orElse(null);
     }
 
     private FlywayFactory getFlywayFactory(RegisterName registerName) {
@@ -46,6 +52,7 @@ public class RegisterContextFactory {
                 configManager,
                 new InMemoryPowOfTwoNoLeaves(),
                 dbiFactory.build(environment, database, managedDataSource, registerName.value()),
-                getFlywayFactory(registerName).build(managedDataSource));
+                getFlywayFactory(registerName).build(managedDataSource),
+                trackingId);
     }
 }

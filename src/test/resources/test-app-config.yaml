@@ -17,9 +17,45 @@ credentials:
 jerseyClient:
   timeout: 3000ms
 
+trackingId: "UA-12345678-1"
+
+otherRegisters:
+  postcode:
+    database:
+      driverClass: org.postgresql.Driver
+      url: jdbc:postgresql://localhost:5432/ft_openregister_java_postcode
+      user: postgres
+      properties:
+        charSet: UTF-8
+
+      #db connection properties
+      initialSize: 1
+      minSize: 1
+      maxSize: 3
+
+      properties:
+        charSet: UTF-8
+    trackingId: ""
+  register:
+    database:
+      driverClass: org.postgresql.Driver
+      url: jdbc:postgresql://localhost:5432/ft_openregister_java_register
+      user: postgres
+      properties:
+        charSet: UTF-8
+
+      #db connection properties
+      initialSize: 1
+      minSize: 1
+      maxSize: 3
+
+      properties:
+        charSet: UTF-8
+
+
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/ft_openregister_java
+  url: jdbc:postgresql://localhost:5432/ft_openregister_java_address
   user: postgres
   properties:
     charSet: UTF-8

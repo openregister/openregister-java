@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 public class DataDownloadFunctionalTest {
 
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
     private final String item1 = "{\"street\":\"ellis\",\"address\":\"12345\"}";
     private final String item2 = "{\"street\":\"presley\",\"address\":\"6789\"}";
     private final String item3 =  "{\"street\":\"foo\",\"address\":\"12345\"}";

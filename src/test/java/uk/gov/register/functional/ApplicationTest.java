@@ -20,7 +20,7 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class ApplicationTest {
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
 
     @Before
     public void setup() {

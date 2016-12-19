@@ -2,13 +2,19 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Rule;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.db.TestDBItem;
+import uk.gov.register.functional.db.TestEntryDAO;
+import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.functional.db.TestRecord;
+import uk.gov.register.functional.db.TestRecordDAO;
 import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.ws.rs.core.Response;
@@ -21,13 +27,28 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static uk.gov.register.functional.db.TestDBSupport.*;
 
 public class DataUploadFunctionalTest {
-    @Rule
-    public final RegisterRule register = new RegisterRule("register");
+    @ClassRule
+    public static final RegisterRule register = new RegisterRule();
 
     private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
+    private static TestRecordDAO testRecordDAO;
+    private static TestEntryDAO testEntryDAO;
+    private static TestItemCommandDAO testItemDAO;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Handle handle = register.handleFor("register");
+        testRecordDAO = handle.attach(TestRecordDAO.class);
+        testEntryDAO = handle.attach(TestEntryDAO.class);
+        testItemDAO = handle.attach(TestItemCommandDAO.class);
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        register.wipe();
+    }
 
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {

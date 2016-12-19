@@ -32,7 +32,7 @@ public class RepresentationsFunctionalTest {
     private final String expectedRecordEntriesValue;
 
     @ClassRule
-    public static final RegisterRule register = new RegisterRule("register");
+    public static final RegisterRule register = new RegisterRule();
 
     @Before
     public void publishTestMessages() {

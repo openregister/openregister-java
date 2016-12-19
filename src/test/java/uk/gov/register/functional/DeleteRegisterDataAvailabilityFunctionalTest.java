@@ -49,8 +49,7 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
     }
 
     private static RegisterRule createRegister(Boolean enableRegisterDataDelete) {
-        return new RegisterRule("register",
-                ConfigOverride.config("enableRegisterDataDelete", enableRegisterDataDelete.toString()));
+        return new RegisterRule(ConfigOverride.config("enableRegisterDataDelete", enableRegisterDataDelete.toString()));
     }
 
     private Response makeUnauthenticatedDeleteCallTo(String endpoint) {

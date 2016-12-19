@@ -47,7 +47,7 @@ public class DataDownloadResourceFunctionalTest {
     }
 
     private static RegisterRule createRegister(Boolean enableResourceDownload){
-        return new RegisterRule("register",
+        return new RegisterRule(
                 ConfigOverride.config("enableDownloadResource", enableResourceDownload.toString()));
     }
 }

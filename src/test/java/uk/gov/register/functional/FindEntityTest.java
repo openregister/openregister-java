@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class FindEntityTest {
 
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
 
     @Before
     public void publishTestMessages() {

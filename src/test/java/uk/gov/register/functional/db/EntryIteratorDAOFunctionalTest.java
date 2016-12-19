@@ -3,10 +3,7 @@ package uk.gov.register.functional.db;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.skife.jdbi.v2.ResultIterator;
-import uk.gov.register.core.Entry;
+import org.skife.jdbi.v2.Handle;
 import uk.gov.register.db.EntryIteratorDAO;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.functional.app.RegisterRule;
@@ -16,26 +13,24 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.gov.register.functional.db.TestDBSupport.*;
 
 public class EntryIteratorDAOFunctionalTest {
 
     private EntryIteratorDAO entryIteratorDAO;
 
     @ClassRule
-    public static final RegisterRule register = new RegisterRule("register");
+    public static final RegisterRule register = new RegisterRule();
+    private TestEntryDAO testEntryDAO;
 
     @Before
     public void publishTestMessages() {
         register.wipe();
+        Handle handle = register.handleFor("register");
+        testEntryDAO = handle.attach(TestEntryDAO.class);
 
         EntryQueryDAO entryQueryDAO = mock(EntryQueryDAO.class);
-        when(entryQueryDAO.entriesIteratorFrom(anyInt())).thenAnswer(new Answer<ResultIterator<Entry>>() {
-            @Override
-            public ResultIterator<Entry> answer(InvocationOnMock invocation) throws Throwable {
-                return testEntryDAO.entriesIteratorFrom(invocation.getArgument(0));
-            }
-        });
+        when(entryQueryDAO.entriesIteratorFrom(anyInt())).thenAnswer(invocation ->
+                testEntryDAO.entriesIteratorFrom(invocation.getArgument(0)));
 
         entryIteratorDAO = new EntryIteratorDAO(entryQueryDAO);
     }

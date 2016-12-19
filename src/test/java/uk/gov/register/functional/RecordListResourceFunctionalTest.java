@@ -24,7 +24,7 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class RecordListResourceFunctionalTest {
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
     private WebTarget addressTarget;
 
     @Before

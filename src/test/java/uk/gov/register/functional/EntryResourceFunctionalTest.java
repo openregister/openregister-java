@@ -29,7 +29,7 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class EntryResourceFunctionalTest {
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
     private final String item1 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
     private final String item2 = "{\"address\":\"6790\",\"street\":\"presley\"}";
     private final String item1Hash = "sha-256:" + DigestUtils.sha256Hex(item1);

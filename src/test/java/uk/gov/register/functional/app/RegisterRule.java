@@ -11,6 +11,8 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 import uk.gov.register.RegisterApplication;
 import uk.gov.register.RegisterConfiguration;
 
@@ -20,6 +22,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.InetAddress;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.ws.rs.client.Entity.entity;
 import static uk.gov.register.views.representations.ExtraMediaType.APPLICATION_RSF_TYPE;
@@ -37,22 +42,16 @@ public class RegisterRule implements TestRule {
     private TestRule wholeRule;
 
     private Client client;
-    public RegisterRule(String register, ConfigOverride... overrides) {
-        ConfigOverride[] configOverrides = constructOverrides(register, overrides);
+    private List<Handle> handles = new ArrayList<>();
+
+    public RegisterRule(ConfigOverride... overrides) {
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
                 ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-                configOverrides);
-        wipeRule = new WipeDatabaseRule();
+                overrides);
+        wipeRule = new WipeDatabaseRule("address", "register");
         wholeRule = RuleChain
                 .outerRule(appRule)
                 .around(wipeRule);
-    }
-
-    private ConfigOverride[] constructOverrides(String register, ConfigOverride[] overrides) {
-        ConfigOverride[] allOverrides = new ConfigOverride[overrides.length+1];
-        allOverrides[0] = ConfigOverride.config("register", register);
-        System.arraycopy(overrides, 0, allOverrides, 1, overrides.length);
-        return allOverrides;
     }
 
     @Override
@@ -62,6 +61,7 @@ public class RegisterRule implements TestRule {
             public void evaluate() throws Throwable {
                 client = clientBuilder().build("test client");
                 base.evaluate();
+                handles.forEach(Handle::close);
             }
         };
         return wholeRule.apply(me, description);
@@ -123,5 +123,19 @@ public class RegisterRule implements TestRule {
         return new JerseyClientBuilder(appRule.getEnvironment())
                 .using(appRule.getConfiguration().getJerseyClientConfiguration())
                 .using(customDnsResolver);
+    }
+
+    /**
+     * provides a DBI Handle for the given register
+     * the handle will automatically be closed by the RegisterRule
+     */
+    public Handle handleFor(String register) {
+        Handle handle = new DBI(postgresConnectionString(register)).open();
+        handles.add(handle);
+        return handle;
+    }
+
+    private String postgresConnectionString(String register) {
+        return String.format("jdbc:postgresql://localhost:5432/ft_openregister_java_%s?user=postgres&ApplicationName=RegisterRule", register);
     }
 }

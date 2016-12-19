@@ -20,7 +20,7 @@ public class RecordResourceFunctionalTest {
     private final static String item0 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
     private final static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
 
     @Before
     public void publishTestMessages() throws Throwable {

@@ -3,7 +3,7 @@ package uk.gov.register.functional;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 
@@ -17,8 +17,8 @@ public class HomePageFunctionalTest {
 
     private final String registerName = "postcode";
 
-    @Rule
-    public final RegisterRule register = new RegisterRule(registerName);
+    @ClassRule
+    public static final RegisterRule register = new RegisterRule();
 
     @Test
     public void homePageIsAvailableWhenNoDataInRegister() {
