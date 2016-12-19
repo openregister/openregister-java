@@ -135,7 +135,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
                 mock(ItemValidator.class));
         RegisterMetadata registerData = mock(RegisterMetadata.class);
-        when(registerData.getRegisterName()).thenReturn("address");
+        when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
         return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore, new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)));
     }
 }

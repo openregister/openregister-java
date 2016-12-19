@@ -1,11 +1,11 @@
 package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
-import org.apache.commons.lang3.StringUtils;
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.LinkResolver;
 import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
@@ -50,12 +50,11 @@ public class ThymeleafView extends View {
 
     @SuppressWarnings("unused, used by templates")
     public String getFriendlyRegisterName() {
-        String registerId = getRegisterId();
-        String registerName = registerId.replace('-',' ');
-        return StringUtils.capitalize(registerName) + " register";
+        // FIXME: this string concat should be in the template?
+        return getRegisterId().getFriendlyRegisterName() + " register";
     }
 
-    public String getRegisterId() {
+    public RegisterName getRegisterId() {
         return register.getRegisterName();
     }
 

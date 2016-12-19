@@ -18,7 +18,7 @@ import java.util.Optional;
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
 
-    private final String registerName;
+    private final RegisterName registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
@@ -167,7 +167,7 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public String getRegisterName() {
+    public RegisterName getRegisterName() {
         return registerName;
     }
 

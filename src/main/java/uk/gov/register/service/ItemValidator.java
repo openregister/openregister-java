@@ -7,8 +7,8 @@ import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
-import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
 
@@ -18,12 +18,12 @@ public class ItemValidator {
 
     private final FieldsConfiguration fieldsConfiguration;
     private final RegistersConfiguration registersConfiguration;
-    private final String registerName;
+    private final RegisterName registerName;
 
-    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, RegisterContext registerContext) {
+    public ItemValidator(RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, RegisterName registerName) {
         this.fieldsConfiguration = fieldsConfiguration;
         this.registersConfiguration = registersConfiguration;
-        this.registerName = registerContext.getRegisterName();
+        this.registerName = registerName;
     }
 
     public void validateItem(JsonNode inputEntry) throws ItemValidationException {
@@ -37,7 +37,7 @@ public class ItemValidator {
     }
 
     private void validatePrimaryKeyExists(JsonNode inputEntry) throws ItemValidationException {
-        JsonNode primaryKeyNode = inputEntry.get(registerName);
+        JsonNode primaryKeyNode = inputEntry.get(registerName.value());
         throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerName + "'");
         validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerName + "' must have a valid value");
     }

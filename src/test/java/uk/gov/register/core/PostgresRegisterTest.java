@@ -83,7 +83,7 @@ public class PostgresRegisterTest {
         Entry entryDangling = new Entry(106, new HashValue(HashingAlgorithm.SHA256, "item-hash-2"), Instant.now(), "key-2");
 
         RegisterMetadata registerMetadata = mock(RegisterMetadata.class);
-        when(registerMetadata.getRegisterName()).thenReturn("country");
+        when(registerMetadata.getRegisterName()).thenReturn(new RegisterName("country"));
 
         PostgresRegister register = new PostgresRegister(registerMetadata("country"), registerFieldsConfiguration, inMemoryEntryLog(entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex);
 
@@ -99,7 +99,7 @@ public class PostgresRegisterTest {
 
     private RegisterMetadata registerMetadata(String registerName) {
         RegisterMetadata mock = mock(RegisterMetadata.class);
-        when(mock.getRegisterName()).thenReturn(registerName);
+        when(mock.getRegisterName()).thenReturn(new RegisterName(registerName));
         return mock;
     }
 }

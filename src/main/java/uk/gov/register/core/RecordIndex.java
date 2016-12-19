@@ -15,7 +15,7 @@ public interface RecordIndex {
 
     List<Record> findMax100RecordsByKeyValue(String key, String value);
 
-    Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key);
+    Collection<Entry> findAllEntriesOfRecordBy(RegisterName registerName, String key);
 
     void checkpoint();
 }

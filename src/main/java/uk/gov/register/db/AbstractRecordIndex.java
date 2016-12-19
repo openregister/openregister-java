@@ -3,6 +3,7 @@ package uk.gov.register.db;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RecordIndex;
+import uk.gov.register.core.RegisterName;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,8 +41,8 @@ public abstract class AbstractRecordIndex implements RecordIndex {
     }
 
     @Override
-    public Collection<Entry> findAllEntriesOfRecordBy(String registerName, String key) {
+    public Collection<Entry> findAllEntriesOfRecordBy(RegisterName registerName, String key) {
         checkpoint();
-        return recordQueryDAO.findAllEntriesOfRecordBy(registerName, key);
+        return recordQueryDAO.findAllEntriesOfRecordBy(registerName.value(), key);
     }
 }

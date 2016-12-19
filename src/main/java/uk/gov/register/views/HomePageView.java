@@ -4,6 +4,7 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.RegisterContentPages;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
@@ -65,7 +66,7 @@ public class HomePageView extends AttributionView<Object> {
 
     @SuppressWarnings("unused, used from template")
     public URI getLinkToRegisterRegister() {
-        return getLinkResolver().resolve("register", getRegisterId());
+        return getLinkResolver().resolve(new RegisterName("register"), getRegisterId().value());
     }
 
     @SuppressWarnings("unused, used from template")

@@ -2,6 +2,7 @@ package uk.gov.register.resources;
 
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.AttributionView;
@@ -23,7 +24,7 @@ public class EntryResource {
     private final ViewFactory viewFactory;
     private final RequestContext requestContext;
     private final HttpServletResponseAdapter httpServletResponseAdapter;
-    private final String registerPrimaryKey;
+    private final RegisterName registerPrimaryKey;
 
     @Inject
     public EntryResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {

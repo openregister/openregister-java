@@ -2,6 +2,7 @@ package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.util.ResourceYamlFileReader;
 
 import java.util.Collection;
@@ -30,7 +31,7 @@ public class RegistersConfiguration {
         );
     }
 
-    public RegisterMetadata getRegisterMetadata(String registerName) {
+    public RegisterMetadata getRegisterMetadata(RegisterName registerName) {
         try {
             return registers.stream().filter(f -> Objects.equals(f.getRegisterName(), registerName)).findFirst().get();
         } catch (RuntimeException e) {

@@ -6,5 +6,5 @@ public interface LinkResolver {
     default URI resolve(LinkValue linkValue) {
         return resolve(linkValue.getTargetRegister(), linkValue.getLinkKey());
     }
-    URI resolve(String register, String linkKey);
+    URI resolve(RegisterName register, String linkKey);
 }

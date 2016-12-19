@@ -74,7 +74,7 @@ public class DataUpload {
 
     private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
         register.putItem(item);
-        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), item.getValue(this.registerContext.getRegisterName())));
+        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), item.getValue(this.registerContext.getRegisterName().value())));
     }
 }
 

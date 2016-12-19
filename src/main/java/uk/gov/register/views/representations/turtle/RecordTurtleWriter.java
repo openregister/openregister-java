@@ -6,7 +6,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.RecordView;
@@ -24,8 +24,8 @@ import java.util.Map;
 public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
     @Inject
-    public RecordTurtleWriter(javax.inject.Provider<RegisterReadOnly> registerProvider, RegisterResolver registerResolver) {
-        super(registerProvider, registerResolver);
+    public RecordTurtleWriter(javax.inject.Provider<RegisterName> registerNameProvider, RegisterResolver registerResolver) {
+        super(registerNameProvider, registerResolver);
     }
 
     @Override
@@ -34,8 +34,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
         ItemView itemView = view.getItemView();
 
         Model recordModel = ModelFactory.createDefaultModel();
-        Model entryModel = new EntryTurtleWriter(registerProvider, registerResolver).rdfModelFor(entry, false);
-        Model itemModel = new ItemTurtleWriter(registerProvider, registerResolver).rdfModelFor(itemView);
+        Model entryModel = new EntryTurtleWriter(registerNameProvider, registerResolver).rdfModelFor(entry, false);
+        Model itemModel = new ItemTurtleWriter(registerNameProvider, registerResolver).rdfModelFor(itemView);
 
         Resource recordResource = recordModel.createResource(recordUri(view.getPrimaryKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));

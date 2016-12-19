@@ -17,7 +17,7 @@ public class UriTemplateLinkResolver implements LinkResolver {
     }
 
     @Override
-    public URI resolve(String register, String linkKey) {
+    public URI resolve(RegisterName register, String linkKey) {
         URI baseUri = registerResolver.baseUriFor(register);
 
         return UriBuilder.fromUri(baseUri).path("record").path(linkKey).build();

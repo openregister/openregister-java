@@ -46,7 +46,7 @@ public class ArchiveCreatorTest {
             .add("field-2");
 
         RegisterMetadata registerMetadata = new RegisterMetadata(
-                "test-register",
+                new RegisterName("test-register"),
                 ImmutableList.of("field-1","field-2"),
                 null,
                 null,

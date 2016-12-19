@@ -20,7 +20,7 @@ import static com.google.common.base.Predicates.not;
 @JsonInclude(NON_NULL)
 public class RegisterMetadata {
     @JsonProperty("register")
-    private String registerName;
+    private RegisterName registerName;
     @JsonProperty
     private List<String> fields;
     @JsonProperty
@@ -50,7 +50,7 @@ public class RegisterMetadata {
     public RegisterMetadata() {
     }
 
-    public RegisterMetadata(String registerName,
+    public RegisterMetadata(RegisterName registerName,
                             List<String> fields,
                             String copyright,
                             String registry,
@@ -64,7 +64,7 @@ public class RegisterMetadata {
         this.text = text;
     }
 
-    public String getRegisterName() {
+    public RegisterName getRegisterName() {
         return registerName;
     }
 
@@ -74,7 +74,7 @@ public class RegisterMetadata {
 
     @JsonIgnore
     public Iterable<String> getNonPrimaryFields() {
-        return Iterables.filter(fields, not(equalTo(registerName)));
+        return Iterables.filter(fields, not(equalTo(registerName.value())));
     }
 
     public Iterable<String> getFields() {

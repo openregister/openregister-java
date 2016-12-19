@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.configuration.RegisterContentPages;
 import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
@@ -36,8 +37,8 @@ public class HomePageViewTest {
         String registerText = "foo *bar* [baz](/quux)";
 
         RegisterReadOnly register = mock(RegisterReadOnly.class);
-        when(register.getRegisterName()).thenReturn("widget");
-        when(register.getRegisterMetadata()).thenReturn(new RegisterMetadata("widget", null, null, null, registerText, "alpha"));
+        when(register.getRegisterName()).thenReturn(new RegisterName("widget"));
+        when(register.getRegisterMetadata()).thenReturn(new RegisterMetadata(new RegisterName("widget"), null, null, null, registerText, "alpha"));
 
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, register, registerContentPages, () -> Optional.empty(), registerResolver);
 
@@ -69,7 +70,7 @@ public class HomePageViewTest {
         when(mockRequestContext.getScheme()).thenReturn("https");
 
         RegisterReadOnly register = mock(RegisterReadOnly.class);
-        when(register.getRegisterName()).thenReturn("school");
+        when(register.getRegisterName()).thenReturn(new RegisterName("school"));
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), register, registerContentPages, () -> Optional.empty(), registerResolver);
 
         assertThat(homePageView.getLinkToRegisterRegister(), equalTo(URI.create("http://register.test.register.gov.uk/record/school")));
