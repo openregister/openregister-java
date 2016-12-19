@@ -28,7 +28,7 @@ public class RegisterContext {
         this.memoizationStore = memoizationStore;
         this.dbi = dbi;
         this.flyway = flyway;
-        this.registerMetadata = registersConfiguration.getRegisterMetadata(registerName);
+        this.registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
     }
 
     public RegisterName getRegisterName() {
@@ -73,7 +73,7 @@ public class RegisterContext {
                 new TransactionalItemStore(
                         handle.attach(ItemDAO.class),
                         handle.attach(ItemQueryDAO.class),
-                        new ItemValidator(configManager, this)),
+                        new ItemValidator(configManager, registerName)),
                 new TransactionalRecordIndex(
                         handle.attach(RecordQueryDAO.class),
                         handle.attach(CurrentKeysUpdateDAO.class)

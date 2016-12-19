@@ -2,10 +2,11 @@ package uk.gov.register.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
-import uk.gov.register.core.RegisterContext;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.exceptions.ItemValidationException;
 
 import java.io.IOException;
@@ -14,20 +15,23 @@ import java.util.Optional;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ItemValidatorTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
-    private ConfigManager configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.empty());
-
-    private ItemValidator itemValidator = new ItemValidator(configManager, new RegisterName("register"));
+    private RegisterConfigConfiguration registerConfigConfiguration;
+    private ConfigManager configManager;
+    private ItemValidator itemValidator;
 
     @Before
-    public void setUp() throws Exception {
-        RegisterContext registerContext = mock(RegisterContext.class);
-        when(registerContext.getRegisterName()).thenReturn("register");
-        itemValidator = new ItemValidator(configManager, registerContext);
+    public void setup() {
+        registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
+        when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
+
+        configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.empty());
+        itemValidator = new ItemValidator(configManager, new RegisterName("register"));
     }
 
     @Test

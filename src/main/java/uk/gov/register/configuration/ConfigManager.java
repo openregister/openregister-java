@@ -25,6 +25,8 @@ public class ConfigManager {
         this.externalConfigDirectory = registerConfigConfiguration.getExternalConfigDirectory();
         this.registersConfigFilePath = externalConfigDirectory + "/" + "registers.yaml";
         this.fieldsConfigFilePath = externalConfigDirectory + "/" + "fields.yaml";
+        this.registersConfiguration = createRegistersConfiguration();
+        this.fieldsConfiguration = createFieldsConfiguration();
     }
 
     public void refreshConfig() {
