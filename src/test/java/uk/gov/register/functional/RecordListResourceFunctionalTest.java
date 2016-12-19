@@ -25,17 +25,19 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 public class RecordListResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule("address");
+    private WebTarget addressTarget;
 
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.mintLines("{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}", "{\"street\":\"updatedEllisName\",\"address\":\"145678\"}", "{\"street\":\"ellis\",\"address\":\"6789\"}");
+        register.mintLines("address", "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}", "{\"street\":\"updatedEllisName\",\"address\":\"145678\"}", "{\"street\":\"ellis\",\"address\":\"6789\"}");
+        addressTarget = register.targetRegister("address");
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void newRecords_shouldReturnAllCurrentVersionsOnly() throws Exception {
-        Response response = register.getRequest("/records.json");
+        Response response = register.getRequest("address", "/records.json");
 
         Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
 
@@ -66,29 +68,29 @@ public class RecordListResourceFunctionalTest {
 
     @Test
     public void newRecords_setsAppropriateFilenameForDownload() {
-        Response response = register.getRequest("/records.json");
+        Response response = register.getRequest("address", "/records.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
     }
 
     @Test
     public void newRecords_hasLinkHeaderForNextAndPreviousPage() {
-        Response response = register.target().path("/records.json").queryParam("page-index",1).queryParam("page-size",1)
+        Response response = addressTarget.path("/records.json").queryParam("page-index",1).queryParam("page-size",1)
                 .request().get();
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\""));
 
-        response = register.target().path("/records.json").queryParam("page-index",2).queryParam("page-size",1)
+        response = addressTarget.path("/records.json").queryParam("page-index",2).queryParam("page-size",1)
                 .request().get();
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\""));
 
-        response = register.target().path("/records.json").queryParam("page-index",3).queryParam("page-size",1)
+        response = addressTarget.path("/records.json").queryParam("page-index",3).queryParam("page-size",1)
                 .request().get();
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\""));
     }
 
     @Test
     public void newRecordsPageHasXhtmlLangAttributes() {
-        Response response = register.getRequest("/records", TEXT_HTML);
+        Response response = register.getRequest("address", "/records", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
@@ -100,7 +102,7 @@ public class RecordListResourceFunctionalTest {
     @SuppressWarnings("unchecked")
     @Test
     public void fetchAllRecordsForAKeyValueCombination() throws JSONException {
-        Response response = register.getRequest("/records/street/ellis.json");
+        Response response = register.getRequest("address","/records/street/ellis.json");
         Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
 
         assertThat(responseMap.size(), equalTo(2));
@@ -123,9 +125,8 @@ public class RecordListResourceFunctionalTest {
     //Note: tests below will be removed once the old resources are deleted
     @Test
     public void oldFacetedResourceRedirectsToNewResource(){
-        WebTarget target = register.target();
-        target.property("jersey.config.client.followRedirects",false);
-        Response response = target.path("/street/ellis.json").request().get();
+        addressTarget.property("jersey.config.client.followRedirects",false);
+        Response response = addressTarget.path("/street/ellis.json").request().get();
         assertThat(response.getStatus(), equalTo(301));
         String expectedRedirect = "/records/street/ellis";
         URI location = URI.create(response.getHeaderString("Location"));

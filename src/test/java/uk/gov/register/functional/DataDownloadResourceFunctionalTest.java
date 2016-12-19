@@ -41,7 +41,7 @@ public class DataDownloadResourceFunctionalTest {
 
     @Test
     public void checkDownloadResourceStatusCode() throws Exception {
-        Response response = register.getRequest(targetUrl);
+        Response response = register.getRequest("register", targetUrl);
         
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
     }

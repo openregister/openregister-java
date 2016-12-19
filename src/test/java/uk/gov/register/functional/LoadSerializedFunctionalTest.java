@@ -1,9 +1,5 @@
 package uk.gov.register.functional;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.JerseyClient;
-import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,9 +9,7 @@ import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestRecord;
-import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +23,6 @@ import static org.junit.Assert.assertThat;
 import static uk.gov.register.functional.db.TestDBSupport.*;
 
 public class LoadSerializedFunctionalTest {
-    public static final int APPLICATION_PORT = 9000;
     private static final String registerName = "register";
 
     @Rule
@@ -103,15 +96,6 @@ public class LoadSerializedFunctionalTest {
     }
 
     private Response send(String payload) {
-        return authenticatingClient().target("http://localhost:" + APPLICATION_PORT + "/load-rsf")
-                .request(ExtraMediaType.APPLICATION_RSF_TYPE)
-                .post(Entity.entity(payload, ExtraMediaType.APPLICATION_RSF_TYPE));
-
-    }
-
-    private JerseyClient authenticatingClient() {
-        ClientConfig configuration = new ClientConfig();
-        configuration.register(HttpAuthenticationFeature.basic("foo", "bar"));
-        return JerseyClientBuilder.createClient(configuration);
+        return register.loadRsf(registerName, payload);
     }
 }

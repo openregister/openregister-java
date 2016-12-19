@@ -32,7 +32,7 @@ public class DataUploadFunctionalTest {
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         JsonNode inputItem = canonicalJsonMapper.readFromBytes("{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}".getBytes());
-        Response r = register.mintLines(inputItem.toString());
+        Response r = register.mintLines("register", inputItem.toString());
         assertThat(r.getStatus(), equalTo(204));
 
         TestDBItem storedItem = testItemDAO.getItems().get(0);
@@ -46,7 +46,7 @@ public class DataUploadFunctionalTest {
         assertThat(record.getEntryNumber(), equalTo(1));
         assertThat(record.getPrimaryKey(), equalTo("ft_openregister_test"));
 
-        Response response = register.getRequest("/record/ft_openregister_test.json");
+        Response response = register.getRequest("register", "/record/ft_openregister_test.json");
 
         assertThat(response.getStatus(), equalTo(200));
         Map actualJson = response.readEntity(Map.class);
@@ -64,7 +64,7 @@ public class DataUploadFunctionalTest {
         String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
         String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
 
-        Response r = register.mintLines(item1 + "\n" + item2);
+        Response r = register.mintLines("register", item1 + "\n" + item2);
 
         assertThat(r.getStatus(), equalTo(204));
 
@@ -101,7 +101,7 @@ public class DataUploadFunctionalTest {
         String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
         String item2 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
 
-        Response r = register.mintLines(item1 + "\n" + item2);
+        Response r = register.mintLines("register",item1 + "\n" + item2);
 
         assertThat(r.getStatus(), equalTo(204));
 
@@ -131,12 +131,12 @@ public class DataUploadFunctionalTest {
     @Test
     public void loadTwoNewItems_withOneItemPreexistsInDatabase_addsTwoRowsInEntryAndOnlyOneRowInItemTable() {
         String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
-        Response r = register.mintLines(item1);
+        Response r = register.mintLines("register", item1);
         assertThat(r.getStatus(), equalTo(204));
 
         String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
 
-        r = register.mintLines(item1 + "\n" + item2);
+        r = register.mintLines("register", item1 + "\n" + item2);
 
         assertThat(r.getStatus(), equalTo(204));
 
@@ -172,18 +172,18 @@ public class DataUploadFunctionalTest {
 
     @Test
     public void validation_FailsToLoadEntryWhenNonEmptyPrimaryKeyFieldIsNotExist() {
-        Response response = register.mintLines("{}");
+        Response response = register.mintLines("register", "{}");
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Entry does not contain primary key field 'register'. Error entry: '{}'"));
 
-        response = register.mintLines("{\"register\":\"  \"}");
+        response = register.mintLines("register", "{\"register\":\"  \"}");
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Primary key field 'register' must have a valid value. Error entry: '{\"register\":\"  \"}'"));
     }
 
     @Test
     public void validation_FailsToLoadEntryWhenEntryContainsInvalidFields() {
-        Response response = register.mintLines("{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
+        Response response = register.mintLines("register", "{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Entry contains invalid fields: [foo, foo1]. Error entry: '{\"foo\":\"bar\",\"foo1\":\"bar1\"}'"));
     }
@@ -191,7 +191,7 @@ public class DataUploadFunctionalTest {
     @Test
     public void validation_FailsToLoadEntryWhenFieldWithCardinalityManyIsNotAJsonArray() {
         String entry = "{\"register\":\"someregister\",\"fields\":\"value\"}";
-        Response response = register.mintLines(entry);
+        Response response = register.mintLines("register", entry);
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'. Error entry: '" + entry + "'"));
     }
@@ -199,7 +199,7 @@ public class DataUploadFunctionalTest {
     @Test
     public void requestWithoutCredentials_isRejectedAsUnauthorized() throws Exception {
         // register.target() is unauthenticated
-        Response response = register.target().path("/load")
+        Response response = register.targetRegister("register").path("/load")
                 .request()
                 .post(entity("{}", APPLICATION_JSON_TYPE));
         assertThat(response.getStatus(), equalTo(401));

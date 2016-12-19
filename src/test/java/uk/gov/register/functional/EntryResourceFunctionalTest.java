@@ -12,6 +12,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.Instant;
@@ -33,16 +34,18 @@ public class EntryResourceFunctionalTest {
     private final String item2 = "{\"address\":\"6790\",\"street\":\"presley\"}";
     private final String item1Hash = "sha-256:" + DigestUtils.sha256Hex(item1);
     private final String item2Hash = "sha-256:" + DigestUtils.sha256Hex(item2);
-    
+    private WebTarget addressTarget;
+
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.mintLines(item1, item2);
+        register.mintLines("address", item1, item2);
+        addressTarget = register.targetRegister("address");
     }
 
     @Test
     public void getEntriesView_itemHashesAreRenderedAsLinks() {
-        Response response = register.getRequest("/entries", TEXT_HTML);
+        Response response = register.getRequest("address", "/entries", TEXT_HTML);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -56,7 +59,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void getEntries_return400ResponseWhenStartIsNotANumber() {
-        Response response = register.target().path("/entries").queryParam("start", "not-a-number").request().get();
+        Response response = addressTarget.path("/entries").queryParam("start", "not-a-number").request().get();
 
         assertThat(response.getMediaType().getType(), equalTo("text"));
         assertThat(response.getMediaType().getSubtype(), equalTo("html"));
@@ -65,7 +68,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void getEntries_return400ResponseWhenLimitIsNotANumber() {
-        Response response = register.target().path("/entries").queryParam("limit", "not-a-number").request().get();
+        Response response = addressTarget.path("/entries").queryParam("limit", "not-a-number").request().get();
 
         assertThat(response.getMediaType().getType(), equalTo("text"));
         assertThat(response.getMediaType().getSubtype(), equalTo("html"));
@@ -74,7 +77,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void getEntriesAsJson() throws JSONException, IOException {
-        Response response = register.getRequest("/entries.json");
+        Response response = register.getRequest("address", "/entries.json");
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -86,7 +89,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void getEntryByEntryNumber() throws JSONException, IOException {
-        Response response = register.getRequest("/entry/1.json");
+        Response response = register.getRequest("address","/entry/1.json");
 
         assertThat(response.getStatus(), equalTo(200));
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
@@ -95,7 +98,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void entryView_itemHashIsRenderedAsALink() {
-        Response response = register.getRequest("/entry/1", TEXT_HTML);
+        Response response = register.getRequest("address", "/entry/1", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         String text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();
@@ -104,19 +107,19 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void return404ResponseWhenEntryNotExist() {
-        assertThat(register.getRequest("/entry/5001").getStatus(), equalTo(404));
+        assertThat(register.getRequest("address", "/entry/5001").getStatus(), equalTo(404));
     }
 
     @Test
     public void return404ResponseWhenEntryNumberIsNotAnIntegerValue() {
-        assertThat(register.getRequest("/entry/a2").getStatus(), equalTo(404));
+        assertThat(register.getRequest("address", "/entry/a2").getStatus(), equalTo(404));
     }
 
     @Test
     public void entryResource_retrievesTimestampsInUTC() throws IOException {
         Instant now = Instant.now();
 
-        Response response = register.getRequest("/entry/1.json");
+        Response response = register.getRequest("address", "/entry/1.json");
         Map<String, String> responseData = response.readEntity(Map.class);
         Instant entryTimestamp = Instant.parse(responseData.get("entry-timestamp"));
 

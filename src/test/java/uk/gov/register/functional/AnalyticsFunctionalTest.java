@@ -44,7 +44,8 @@ public class AnalyticsFunctionalTest {
     @Before
     public void setup() {
         register.wipe();
-        register.mintLines(testEntry1.itemJson,
+        register.mintLines("address",
+                testEntry1.itemJson,
                 testEntry2.itemJson);
     }
 
@@ -87,7 +88,7 @@ public class AnalyticsFunctionalTest {
 
     @Test
     public void checkAnalyticsScriptsPresence() throws Exception {
-        Response response = register.getRequest(targetUrl, TEXT_HTML);
+        Response response = register.getRequest("address", targetUrl, TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));

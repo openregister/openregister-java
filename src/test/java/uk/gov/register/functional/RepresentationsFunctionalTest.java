@@ -37,7 +37,7 @@ public class RepresentationsFunctionalTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.loadRsf("add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
+        register.loadRsf("register", "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
                 "add-item\t{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}\n" +
                 "append-entry\t2016-03-01T01:02:03Z\tsha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18\tvalue1\n" +
                 "append-entry\t2016-03-02T02:03:04Z\tsha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7\tvalue2\n");
@@ -69,7 +69,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForEntryResource() {
         assumeThat(expectedEntryValue, notNullValue());
 
-        Response response = register.getRequest("/entry/1." + extension);
+        Response response = register.getRequest("register", "/entry/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -80,7 +80,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForItemResource() {
         assumeThat(expectedItemValue, notNullValue());
 
-        Response response = register.getRequest("/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18." + extension);
+        Response response = register.getRequest("register","/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -91,7 +91,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordResource() {
         assumeThat(expectedRecordValue, notNullValue());
 
-        Response response = register.getRequest("/record/value1." + extension);
+        Response response = register.getRequest("register", "/record/value1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -102,7 +102,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordsResource() {
         assumeThat(expectedRecordsValue, notNullValue());
 
-        Response response = register.getRequest("/records." + extension);
+        Response response = register.getRequest("register", "/records." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -113,7 +113,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForEntriesResource() {
         assumeThat(expectedEntriesValue, notNullValue());
 
-        Response response = register.getRequest("/entries." + extension);
+        Response response = register.getRequest("register", "/entries." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -124,7 +124,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordEntriesResource(){
         assumeThat(expectedRecordEntriesValue, notNullValue());
 
-        Response response = register.getRequest("/record/value1/entries." + extension);
+        Response response = register.getRequest("register", "/record/value1/entries." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));

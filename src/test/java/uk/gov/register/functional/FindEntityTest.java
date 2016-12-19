@@ -23,12 +23,12 @@ public class FindEntityTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.mintLines("{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}");
+        register.mintLines("address", "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}");
     }
 
     @Test
     public void find_shouldReturnEntryWithThPrimaryKey_whenSearchForPrimaryKey() throws JSONException {
-        WebTarget target = register.target();
+        WebTarget target = register.targetRegister("address");
         target.property("jersey.config.client.followRedirects",false);
         Response response = target.path("/address/12345.json").request().get();
 
@@ -40,7 +40,7 @@ public class FindEntityTest {
 
     @Test
     public void find_returnsTheCorrectTotalRecordsInPaginationHeader() {
-        Response response = register.getRequest("/records/street/ellis");
+        Response response = register.getRequest("address", "/records/street/ellis");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
 

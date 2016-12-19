@@ -31,13 +31,13 @@ public class RegisterResourceFunctionalTest {
 
     @Test
     public void registerJsonShouldContainEntryViewRegisterRegister() throws Throwable {
-        register.mintLines("{\"address\":\"12345\"}",
+        register.mintLines("address", "{\"address\":\"12345\"}",
                 "{\"address\":\"6789\"}",
                 "{\"address\":\"145678\"}",
                 "{\"address\":\"145678\"}",
                 "{\"address\":\"6789\"}");
 
-        Response registerResourceFromAddressRegisterResponse = register.getRequest("/register.json");
+        Response registerResourceFromAddressRegisterResponse = register.getRequest("address","/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
@@ -54,7 +54,7 @@ public class RegisterResourceFunctionalTest {
 
     @Test
     public void registerJsonShouldGenerateValidResponseForEmptyDB(){
-        Response registerResourceFromAddressRegisterResponse = register.getRequest("/register.json");
+        Response registerResourceFromAddressRegisterResponse = register.getRequest("address","/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
         Map<String,?> registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);

@@ -1,9 +1,11 @@
 package uk.gov.register.functional.app;
 
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.apache.http.impl.conn.InMemoryDnsResolver;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
@@ -17,17 +19,23 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.InetAddress;
 
 import static javax.ws.rs.client.Entity.entity;
 import static uk.gov.register.views.representations.ExtraMediaType.APPLICATION_RSF_TYPE;
 
 public class RegisterRule implements TestRule {
+    private static final String REGISTER_DOMAIN = "test.register.gov.uk";
+    private static final ImmutableMap<String, String> registerHostnames = ImmutableMap.of(
+            "address", "address." + REGISTER_DOMAIN,
+            "postcode", "postcode." + REGISTER_DOMAIN,
+            "register", "register." + REGISTER_DOMAIN
+    );
     private final WipeDatabaseRule wipeRule;
     private DropwizardAppRule<RegisterConfiguration> appRule;
 
     private TestRule wholeRule;
 
-    private WebTarget authenticatedTarget;
     private Client client;
     public RegisterRule(String register, ConfigOverride... overrides) {
         ConfigOverride[] configOverrides = constructOverrides(register, overrides);
@@ -53,44 +61,53 @@ public class RegisterRule implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 client = clientBuilder().build("test client");
-                authenticatedTarget = client.target("http://localhost:" + appRule.getLocalPort());
-                authenticatedTarget.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
                 base.evaluate();
             }
         };
         return wholeRule.apply(me, description);
     }
 
-    public WebTarget target() {
-        return client.target("http://localhost:" + appRule.getLocalPort());
+    private WebTarget authenticatedTarget(String registerName) {
+        WebTarget authenticatedTarget = targetRegister(registerName);
+        authenticatedTarget.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
+        return authenticatedTarget;
     }
 
-    public Response loadRsf(String rsf) {
-        Response post = authenticatedTarget.path("/load-rsf")
+    private WebTarget target(String targetHost) {
+        return client.target("http://" + targetHost + ":" + appRule.getLocalPort());
+    }
+
+    /**
+     * get a WebTarget pointing at a particular register.
+     * if the registerName is recognized, the Host: will be set appropriately for that register
+     * if not, it will default to a Host: of localhost (which will hit the default register)
+     */
+    public WebTarget targetRegister(String registerName) { // TODO: use RegisterName here
+        return target(registerHostnames.getOrDefault(registerName, "localhost"));
+    }
+
+    public Response loadRsf(String registerName, String rsf) {
+        return authenticatedTarget(registerName).path("/load-rsf")
                 .request()
                 .post(entity(rsf, APPLICATION_RSF_TYPE));
-        if (post.getStatus() >= 400) {
-            throw new RuntimeException("Failed to load RSF, got response " + post);
-        }
-        return post;
     }
 
-    public Response mintLines(String... payload) {
-        return authenticatedTarget.path("/load")
+    public Response mintLines(String registerName, String... payload) {
+        return authenticatedTarget(registerName).path("/load")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(String.join("\n", payload)));
     }
 
-    public Response getRequest(String path) {
-        return target().path(path).request().get();
+    public Response getRequest(String registerName, String path) {
+        return targetRegister(registerName).path(path).request().get();
     }
 
-    public Response getRequest(String path, String acceptedResponseType) {
-        return target().path(path).request(acceptedResponseType).get();
+    public Response getRequest(String registerName, String path, String acceptedResponseType) {
+        return targetRegister(registerName).path(path).request(acceptedResponseType).get();
     }
 
-    public Response deleteRegisterData() {
-        return authenticatedTarget.path("/delete-register-data").request().delete();
+    public Response deleteRegisterData(String registerName) {
+        return authenticatedTarget(registerName).path("/delete-register-data").request().delete();
     }
 
     public void wipe() {
@@ -98,7 +115,13 @@ public class RegisterRule implements TestRule {
     }
 
     private JerseyClientBuilder clientBuilder() {
+        InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
+        for (String registerHostname : registerHostnames.values()) {
+            customDnsResolver.add(registerHostname, InetAddress.getLoopbackAddress());
+        }
+        customDnsResolver.add("localhost", InetAddress.getLoopbackAddress());
         return new JerseyClientBuilder(appRule.getEnvironment())
-                .using(appRule.getConfiguration().getJerseyClientConfiguration());
+                .using(appRule.getConfiguration().getJerseyClientConfiguration())
+                .using(customDnsResolver);
     }
 }

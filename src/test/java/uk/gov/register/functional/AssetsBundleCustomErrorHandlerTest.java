@@ -20,7 +20,7 @@ public class AssetsBundleCustomErrorHandlerTest {
 
     @Test
     public void displays404pageForNonexistentAssets() {
-        Response response = register.getRequest("/assets/not-an-assets");
+        Response response = register.getRequest("address","/assets/not-an-assets");
 
         assertThat(response.getStatus(), equalTo(404));
         assertThat(response.getMediaType().isCompatible(MediaType.TEXT_HTML_TYPE), equalTo(true));

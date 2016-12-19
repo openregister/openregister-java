@@ -25,13 +25,13 @@ public class DeleteRegisterDataFunctionalTest {
         String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
         String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
 
-        Response mintResponse = register.mintLines(item1 + "\n" + item2);
+        Response mintResponse = register.mintLines("register", item1, item2);
         assertThat(mintResponse.getStatus(), equalTo(204));
         assertThat(testItemDAO.getItems(), hasSize(2));
         assertThat(testEntryDAO.getAllEntries(), hasSize(2));
 
-        Response deleteResponse = register.deleteRegisterData();
 
+        Response deleteResponse = register.deleteRegisterData("register");
         assertThat(deleteResponse.getStatus(), equalTo(200));
         assertThat(testItemDAO.getItems(), is(empty()));
         assertThat(testEntryDAO.getAllEntries(), is(empty()));
