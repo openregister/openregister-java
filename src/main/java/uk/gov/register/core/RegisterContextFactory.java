@@ -36,6 +36,7 @@ public class RegisterContextFactory {
     }
 
     public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
+        database.getProperties().put("ApplicationName", "openregister");
         return new RegisterContext(
                 registerName,
                 registersConfiguration,

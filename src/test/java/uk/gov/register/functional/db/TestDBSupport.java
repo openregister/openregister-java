@@ -4,7 +4,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
 public class TestDBSupport {
-    public static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_openregister_java?user=postgres";
+    public static String postgresConnectionString = "jdbc:postgresql://localhost:5432/ft_openregister_java?user=postgres&ApplicationName=TestDBSupport";
     public static final TestEntryDAO testEntryDAO;
     public static final TestItemCommandDAO testItemDAO;
     public static final TestRecordDAO testRecordDAO;
