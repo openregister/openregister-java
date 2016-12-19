@@ -97,9 +97,10 @@ public class RegisterContext {
 
     public static void useTransaction(DBI dbi, Consumer<Handle> callback) {
         try {
-            dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) ->
-                    callback.accept(handle)
-            );
+            dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
+                handle.getConnection().setClientInfo("ApplicationName", "openregister_transactional");
+                callback.accept(handle);
+            });
         } catch (CallbackFailedException e) {
             throw Throwables.propagate(e.getCause());
         }
