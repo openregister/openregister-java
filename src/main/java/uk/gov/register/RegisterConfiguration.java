@@ -99,7 +99,6 @@ public class RegisterConfiguration extends Configuration
     private Map<RegisterName, RegisterContextFactory> otherRegisters = new HashMap<>();
 
     public DataSourceFactory getDatabase() {
-        database.getProperties().put("ApplicationName", "openregister");
         return database;
     }
 
