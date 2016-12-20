@@ -27,7 +27,7 @@ public class ViewFactory {
     private final RegisterContentPages registerContentPages;
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
-    private Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
+    private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
