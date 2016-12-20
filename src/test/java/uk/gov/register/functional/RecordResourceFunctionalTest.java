@@ -72,7 +72,7 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void recordResource_return200ResponseForTextHtmlMediaTypeWhenRecordExists() {
-        Response response = register.getRequest("/record/6789", MediaType.TEXT_HTML);
+        Response response = register.getRequest("address", "/record/6789", MediaType.TEXT_HTML);
 
         assertThat(response.getStatus(), equalTo(200));
     }
