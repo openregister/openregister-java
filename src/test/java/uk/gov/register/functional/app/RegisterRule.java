@@ -1,6 +1,7 @@
 package uk.gov.register.functional.app;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
@@ -48,7 +49,8 @@ public class RegisterRule implements TestRule {
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
                 ResourceHelpers.resourceFilePath("test-app-config.yaml"),
                 overrides);
-        wipeRule = new WipeDatabaseRule("address", "register");
+        ImmutableSet<String> registers = registerHostnames.keySet();
+        wipeRule = new WipeDatabaseRule(registers.toArray(new String[registers.size()]));
         wholeRule = RuleChain
                 .outerRule(appRule)
                 .around(wipeRule);
