@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.functional.app.RegisterRule;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -34,6 +35,15 @@ public class ItemResourceFunctionalTest {
         assertThat(response.getStatus(), equalTo(200));
 
         JSONAssert.assertEquals(item1, response.readEntity(String.class), false);
+    }
+
+    @Test
+    public void return200ResponseForTextHtmlMediaTypeWhenItemExists() {
+        String sha256Hex = DigestUtils.sha256Hex(item1);
+
+        Response response = register.getRequest(String.format("/item/sha-256:%s.json", sha256Hex), MediaType.TEXT_HTML);
+
+        assertThat(response.getStatus(), equalTo(200));
     }
 
     @Test

@@ -13,6 +13,7 @@ import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.Instant;
@@ -102,6 +103,11 @@ public class EntryResourceFunctionalTest {
         Document doc = Jsoup.parse(response.readEntity(String.class));
         String text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();
         assertThat(text, equalTo(item1Hash));
+    }
+
+    @Test
+    public void return200ResponseForTextHtmlMediaTypeWhenItemExists() {
+        assertThat(register.getRequest("/entry/1", MediaType.TEXT_HTML).getStatus(), equalTo(200));
     }
 
     @Test
