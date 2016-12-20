@@ -38,4 +38,8 @@ public class RegistersConfiguration {
             throw new RuntimeException("Cannot get register data for " + registerName, e);
         }
     }
+
+    public Collection<RegisterMetadata> getAllRegisterMetaData() {
+        return registers;
+    }
 }

@@ -31,4 +31,8 @@ public class FieldsConfiguration {
     public Field getField(String fieldName) {
         return fields.stream().filter(f -> Objects.equals(f.fieldName, fieldName)).findFirst().get();
     }
+
+    public Collection<Field> getAllFields() {
+        return fields;
+    }
 }

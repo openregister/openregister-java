@@ -92,4 +92,33 @@ public class RegisterMetadata {
     public String getText() {
         return text;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RegisterMetadata that = (RegisterMetadata) o;
+
+        if (registerName != null ? !registerName.equals(that.registerName) : that.registerName != null) return false;
+        if (fields != null ? !fields.equals(that.fields) : that.fields != null) return false;
+        if (copyright != null ? !copyright.equals(that.copyright) : that.copyright != null) return false;
+        if (registry != null ? !registry.equals(that.registry) : that.registry != null) return false;
+        if (text != null ? !text.equals(that.text) : that.text != null) return false;
+        if (phase != null ? !phase.equals(that.phase) : that.phase != null) return false;
+        return otherProperties != null ? otherProperties.equals(that.otherProperties) : that.otherProperties == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = registerName != null ? registerName.hashCode() : 0;
+        result = 31 * result + (fields != null ? fields.hashCode() : 0);
+        result = 31 * result + (copyright != null ? copyright.hashCode() : 0);
+        result = 31 * result + (registry != null ? registry.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (phase != null ? phase.hashCode() : 0);
+        result = 31 * result + (otherProperties != null ? otherProperties.hashCode() : 0);
+        return result;
+    }
 }

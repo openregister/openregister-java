@@ -41,4 +41,28 @@ public class Field {
     public Datatype getDatatype() {
         return datatype;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Field field = (Field) o;
+
+        if (fieldName != null ? !fieldName.equals(field.fieldName) : field.fieldName != null) return false;
+        if (datatype != null ? !datatype.equals(field.datatype) : field.datatype != null) return false;
+        if (register != null ? !register.equals(field.register) : field.register != null) return false;
+        if (cardinality != field.cardinality) return false;
+        return text != null ? text.equals(field.text) : field.text == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fieldName != null ? fieldName.hashCode() : 0;
+        result = 31 * result + (datatype != null ? datatype.hashCode() : 0);
+        result = 31 * result + (register != null ? register.hashCode() : 0);
+        result = 31 * result + (cardinality != null ? cardinality.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        return result;
+    }
 }

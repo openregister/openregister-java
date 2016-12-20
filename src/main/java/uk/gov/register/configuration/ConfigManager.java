@@ -1,5 +1,8 @@
 package uk.gov.register.configuration;
 
+import uk.gov.register.exceptions.NoSuchConfigException;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -25,11 +28,9 @@ public class ConfigManager {
         this.externalConfigDirectory = registerConfigConfiguration.getExternalConfigDirectory();
         this.registersConfigFilePath = externalConfigDirectory + "/" + "registers.yaml";
         this.fieldsConfigFilePath = externalConfigDirectory + "/" + "fields.yaml";
-        this.registersConfiguration = createRegistersConfiguration();
-        this.fieldsConfiguration = createFieldsConfiguration();
     }
 
-    public void refreshConfig() {
+    public synchronized void refreshConfig() throws NoSuchConfigException, IOException {
         if (refresh) {
             try {
                 if (registersConfigFileUrl.isPresent()) {
@@ -41,17 +42,17 @@ public class ConfigManager {
 
                 registersConfiguration = createRegistersConfiguration();
                 fieldsConfiguration = createFieldsConfiguration();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                throw new NoSuchConfigException(e);
             }
         }
     }
 
-    public RegistersConfiguration getRegistersConfiguration() {
+    public synchronized RegistersConfiguration getRegistersConfiguration() {
         return registersConfiguration;
     }
 
-    public FieldsConfiguration getFieldsConfiguration() {
+    public synchronized FieldsConfiguration getFieldsConfiguration() {
         return fieldsConfiguration;
     }
 

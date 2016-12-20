@@ -8,6 +8,7 @@ import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -26,11 +27,12 @@ public class ItemValidatorTest {
     private ItemValidator itemValidator;
 
     @Before
-    public void setup() {
+    public void setup() throws NoSuchConfigException, IOException {
         registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
 
         configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.empty());
+        configManager.refreshConfig();
         itemValidator = new ItemValidator(configManager, new RegisterName("register"));
     }
 
