@@ -13,6 +13,7 @@ import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.time.Instant;
@@ -49,8 +50,8 @@ public class EntryResourceFunctionalTest {
         assertThat(response.getStatus(), equalTo(200));
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
-        String entry1Text = doc.getElementsByTag("table").select("a[href=/item/"+ item1Hash + "]").first().text();
-        String entry2Text = doc.getElementsByTag("table").select("a[href=/item/"+ item2Hash + "]").first().text();
+        String entry1Text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();
+        String entry2Text = doc.getElementsByTag("table").select("a[href=/item/" + item2Hash + "]").first().text();
 
         assertThat(entry1Text, equalTo(item1Hash));
         assertThat(entry2Text, equalTo(item2Hash));
@@ -88,7 +89,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void getEntryByEntryNumber() throws JSONException, IOException {
-        Response response = register.getRequest("address","/entry/1.json");
+        Response response = register.getRequest("address", "/entry/1.json");
 
         assertThat(response.getStatus(), equalTo(200));
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
@@ -102,6 +103,11 @@ public class EntryResourceFunctionalTest {
         Document doc = Jsoup.parse(response.readEntity(String.class));
         String text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();
         assertThat(text, equalTo(item1Hash));
+    }
+
+    @Test
+    public void return200ResponseForTextHtmlMediaTypeWhenItemExists() {
+        assertThat(register.getRequest("address", "/entry/1", MediaType.TEXT_HTML).getStatus(), equalTo(200));
     }
 
     @Test
@@ -125,7 +131,7 @@ public class EntryResourceFunctionalTest {
         assertThat(entryTimestamp, between(now.minus(30, SECONDS), now.plus(30, SECONDS)));
     }
 
-    private void assertEntryInJsonNode(JsonNode actualJsonNode, int expectedEntryNumber, String expectedHash){
+    private void assertEntryInJsonNode(JsonNode actualJsonNode, int expectedEntryNumber, String expectedHash) {
         assertThat(actualJsonNode.get("entry-number").asInt(), equalTo(expectedEntryNumber));
         assertThat(actualJsonNode.get("item-hash").textValue(), equalTo(expectedHash));
         assertTrue(actualJsonNode.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));

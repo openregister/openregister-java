@@ -9,6 +9,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
@@ -67,6 +68,13 @@ public class RecordResourceFunctionalTest {
         assertThat(response.getMediaType().getType(), equalTo("text"));
         assertThat(response.getMediaType().getSubtype(), equalTo("html"));
         assertThat(response.getStatus(), equalTo(400));
+    }
+
+    @Test
+    public void recordResource_return200ResponseForTextHtmlMediaTypeWhenRecordExists() {
+        Response response = register.getRequest("address", "/record/6789", MediaType.TEXT_HTML);
+
+        assertThat(response.getStatus(), equalTo(200));
     }
 
     @Test
