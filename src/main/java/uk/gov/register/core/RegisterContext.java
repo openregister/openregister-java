@@ -8,26 +8,30 @@ import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.db.*;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
-public class RegisterContext {
+public class RegisterContext implements RegisterTrackingConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;
     private MemoizationStore memoizationStore;
     private DBI dbi;
     private Flyway flyway;
+    private final String trackingId;
     private RegisterMetadata registerMetadata;
 
-    public RegisterContext(RegisterName registerName, ConfigManager configManager, MemoizationStore memoizationStore, DBI dbi, Flyway flyway) {
+    public RegisterContext(RegisterName registerName, ConfigManager configManager, MemoizationStore memoizationStore, DBI dbi, Flyway flyway, String trackingId) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.memoizationStore = memoizationStore;
         this.dbi = dbi;
         this.flyway = flyway;
+        this.trackingId = trackingId;
         this.registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
     }
 
@@ -43,14 +47,6 @@ public class RegisterContext {
         return registerMetadata;
     }
 
-    public MemoizationStore getMemoizationStore() {
-        return memoizationStore;
-    }
-
-    public DBI getDbi() {
-        return dbi;
-    }
-
     public Flyway getFlyway() {
         return flyway;
     }
@@ -58,13 +54,13 @@ public class RegisterContext {
     public Register buildOnDemandRegister() {
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
-                new UnmodifiableEntryLog(memoizationStore, getDbi().onDemand(EntryQueryDAO.class)),
-                new UnmodifiableItemStore(getDbi().onDemand(ItemQueryDAO.class)),
-                new UnmodifiableRecordIndex(getDbi().onDemand(RecordQueryDAO.class))
+                new UnmodifiableEntryLog(memoizationStore, dbi.onDemand(EntryQueryDAO.class)),
+                new UnmodifiableItemStore(dbi.onDemand(ItemQueryDAO.class)),
+                new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class))
         );
     }
 
-    public Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
+    private Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
                 new TransactionalEntryLog(memoizationStore,
@@ -82,8 +78,8 @@ public class RegisterContext {
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
-        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(getMemoizationStore());
-        useTransaction(getDbi(), handle -> {
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
+        useTransaction(dbi, handle -> {
             Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
             consumer.accept(register);
             register.commit();
@@ -93,12 +89,14 @@ public class RegisterContext {
 
     public static void useTransaction(DBI dbi, Consumer<Handle> callback) {
         try {
-            dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> {
-                handle.getConnection().setClientInfo("ApplicationName", "openregister_transactional");
-                callback.accept(handle);
-            });
+            dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callback.accept(handle));
         } catch (CallbackFailedException e) {
             throw Throwables.propagate(e.getCause());
         }
+    }
+
+    @Override
+    public Optional<String> getRegisterTrackingId() {
+        return Optional.ofNullable(trackingId);
     }
 }

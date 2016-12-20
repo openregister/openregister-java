@@ -43,18 +43,17 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
 
     @Test
     public void checkDeleteRegisterDataStatusCode() throws Exception {
-        Response response = isAuthenticated ? register.deleteRegisterData() : makeUnauthenticatedDeleteCallTo(DELETE_ENDPOINT);
+        Response response = isAuthenticated ? register.deleteRegisterData("register") : makeUnauthenticatedDeleteCallTo(DELETE_ENDPOINT);
 
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
     }
 
     private static RegisterRule createRegister(Boolean enableRegisterDataDelete) {
-        return new RegisterRule("register",
-                ConfigOverride.config("enableRegisterDataDelete", enableRegisterDataDelete.toString()));
+        return new RegisterRule(ConfigOverride.config("enableRegisterDataDelete", enableRegisterDataDelete.toString()));
     }
 
     private Response makeUnauthenticatedDeleteCallTo(String endpoint) {
-        // register.target() is unauthenticated
-        return register.target().path(endpoint).request().delete();
+        // register.targetRegister() is unauthenticated
+        return register.targetRegister("register").path(endpoint).request().delete();
     }
 }

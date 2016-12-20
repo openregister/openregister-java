@@ -27,7 +27,6 @@ public class RegisterConfiguration extends Configuration
         RegisterContentPagesConfiguration,
         ResourceConfiguration,
         GovukClientConfiguration,
-        RegisterTrackingConfiguration,
         DeleteRegisterDataConfiguration {
     @Valid
     @NotNull
@@ -103,7 +102,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase());
+        return new RegisterContextFactory(getDatabase(), trackingId);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
@@ -140,11 +139,6 @@ public class RegisterConfiguration extends Configuration
     @Override
     public Optional<String> getRegisterHistoryPageUrl() {
         return historyPageUrl;
-    }
-
-    @Override
-    public Optional<String> getRegisterTrackingId() {
-        return trackingId;
     }
 
     @Override

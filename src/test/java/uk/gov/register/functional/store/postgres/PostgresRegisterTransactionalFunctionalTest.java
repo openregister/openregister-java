@@ -2,6 +2,8 @@ package uk.gov.register.functional.store.postgres;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jdbi.OptionalContainerFactory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -11,7 +13,8 @@ import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
-import uk.gov.register.functional.db.TestDBSupport;
+import uk.gov.register.functional.db.TestEntryDAO;
+import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
@@ -29,14 +32,31 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
+public class PostgresRegisterTransactionalFunctionalTest {
 
     @Rule
-    public TestRule wipe = new WipeDatabaseRule();
+    public TestRule wipe = new WipeDatabaseRule("address");
+    private TestItemCommandDAO testItemDAO;
+    private DBI dbi;
+    private TestEntryDAO testEntryDAO;
+    private Handle handle;
+
+    @Before
+    public void setUp() throws Exception {
+        dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=PGRegisterTxnFT");
+        dbi.registerContainerFactory(new OptionalContainerFactory());
+        handle = dbi.open();
+        testItemDAO = handle.attach(TestItemCommandDAO.class);
+        testEntryDAO = handle.attach(TestEntryDAO.class);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        dbi.close(handle);
+    }
 
     @Test
     public void useTransactionShouldApplyChangesAtomicallyToDatabase() {
-        DBI dbi = new DBI(postgresConnectionString);
 
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
@@ -65,8 +85,6 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
 
     @Test
     public void useTransactionShouldRollbackIfExceptionThrown() {
-        DBI dbi = new DBI(postgresConnectionString);
-
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
@@ -104,9 +122,6 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
 
     @Test
     public void entryAndItemDataShouldBeCommittedInOrder() throws Exception {
-        DBI dbi = new DBI(postgresConnectionString);
-        dbi.registerContainerFactory(new OptionalContainerFactory());
-
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
@@ -130,7 +145,7 @@ public class PostgresRegisterTransactionalFunctionalTest extends TestDBSupport {
         assertThat(testEntryDAO.getAllEntries(), contains(entry1, entry2, entry3));
     }
 
-    public PostgresRegister getPostgresRegister(Handle handle) {
+    private PostgresRegister getPostgresRegister(Handle handle) {
         TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
         TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
                 mock(ItemValidator.class));

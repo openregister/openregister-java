@@ -18,18 +18,18 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 public class VerifiableLogResourceFunctionalTest {
 
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
     private final String proofIdentifier = "merkle:sha-256";
 
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.mintLines("{\"address\":\"1111\",\"street\":\"elvis\"}", "{\"address\":\"2222\",\"street\":\"presley\"}", "{\"address\":\"3333\",\"street\":\"ellis\"}", "{\"address\":\"4444\",\"street\":\"pretzel\"}", "{\"address\":\"5555\",\"street\":\"elfsley\"}");
+        register.mintLines("address", "{\"address\":\"1111\",\"street\":\"elvis\"}", "{\"address\":\"2222\",\"street\":\"presley\"}", "{\"address\":\"3333\",\"street\":\"ellis\"}", "{\"address\":\"4444\",\"street\":\"pretzel\"}", "{\"address\":\"5555\",\"street\":\"elfsley\"}");
     }
 
     @Test
     public void getRegisterProof() {
-        Response response = register.getRequest("/proof/register/" + proofIdentifier);
+        Response response = register.getRequest("address", "/proof/register/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -40,7 +40,7 @@ public class VerifiableLogResourceFunctionalTest {
 
     @Test
     public void getEntryProof() {
-        Response response = register.getRequest("/proof/entry/1/5/" + proofIdentifier);
+        Response response = register.getRequest("address", "/proof/entry/1/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -54,7 +54,7 @@ public class VerifiableLogResourceFunctionalTest {
 
     @Test
     public void getConsistencyProof() {
-        Response response = register.getRequest("/proof/consistency/2/5/" + proofIdentifier);
+        Response response = register.getRequest("address","/proof/consistency/2/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 

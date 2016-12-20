@@ -15,21 +15,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ItemResourceFunctionalTest {
     @ClassRule
-    public static RegisterRule register = new RegisterRule("address");
+    public static RegisterRule register = new RegisterRule();
     private static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";
     private static String item2 = "{\"address\":\"145678\",\"street\":\"ellis\"}";
 
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.mintLines(item1, item2);
+        register.mintLines("address", item1, item2);
     }
 
     @Test
     public void jsonRepresentationOfAnItem() throws JSONException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = register.getRequest(String.format("/item/sha-256:%s.json", sha256Hex));
+        Response response = register.getRequest("address", String.format("/item/sha-256:%s.json", sha256Hex));
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -38,14 +38,14 @@ public class ItemResourceFunctionalTest {
 
     @Test
     public void return404ResponseWhenItemNotExist() throws JSONException {
-        Response response = register.getRequest("/item/sha-256:notExistHexValue");
+        Response response = register.getRequest("address", "/item/sha-256:notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }
 
     @Test
     public void return404ResponseWhenItemHexIsNotInProperFormat() throws JSONException {
-        Response response = register.getRequest("/item/notExistHexValue");
+        Response response = register.getRequest("address", "/item/notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }

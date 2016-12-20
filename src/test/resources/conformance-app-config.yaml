@@ -16,7 +16,7 @@ credentials:
 
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/ft_openregister_java
+  url: jdbc:postgresql://localhost:5432/conformance_openregister_java
   user: postgres
   properties:
     charSet: UTF-8
