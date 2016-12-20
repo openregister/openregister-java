@@ -11,7 +11,7 @@ import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.db.TestEntry;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -26,15 +26,10 @@ public class AnalyticsFunctionalTest {
     private static final String REGISTER_WITH_EMPTY_TRACKING_ID = "postcode";
     private static final String REGISTER_WITH_VALID_TRACKING_ID = "address";
 
-    private static final TestEntry testEntry1;
-    private static final TestEntry testEntry2;
     private static final String testEntry1Key = "st1";
     private static final String testEntry2Key = "st2";
-
-    static {
-        testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}", "12345");
-        testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}", "12346");
-    }
+    private static final TestEntry testEntry1 = TestEntry.anEntry(1, "{\"street\":\"" + testEntry1Key + "\",\"address\":\"12345\"}", "12345");
+    private static final TestEntry testEntry2 = TestEntry.anEntry(2, "{\"street\":\"" + testEntry2Key + "\",\"address\":\"12346\"}", "12346");
 
     @ClassRule
     public static RegisterRule register = new RegisterRule();
@@ -53,27 +48,24 @@ public class AnalyticsFunctionalTest {
 
     @Parameterized.Parameters(name = "{index} - url: {0}")
     public static List data() {
-        List<Object[]> sourceData = new ArrayList<>();
-
-        sourceData.add(generateTestSetFor("/"));
-        sourceData.add(generateTestSetFor("/download"));
-        sourceData.add(generateTestSetFor("/entries"));
-        sourceData.add(generateTestSetFor("/entry/9999999999"));
-        sourceData.add(generateTestSetFor("/entry/1"));
-        sourceData.add(generateTestSetFor("/entry/2"));
-        sourceData.add(generateTestSetFor("/records"));
-        sourceData.add(generateTestSetFor("/records/non-existent-record"));
-        sourceData.add(generateTestSetFor("/records/non-existent-record/entries"));
-        sourceData.add(generateTestSetFor("/records/" + testEntry1Key));
-        sourceData.add(generateTestSetFor("/records/" + testEntry2Key));
-        sourceData.add(generateTestSetFor("/records/" + testEntry1Key + "/entries"));
-        sourceData.add(generateTestSetFor("/records/" + testEntry2Key + "/entries"));
-        sourceData.add(generateTestSetFor("/item/sha-256:non-existent-item"));
-        sourceData.add(generateTestSetFor("/item/" + testEntry1.sha256hex));
-        sourceData.add(generateTestSetFor("/item/" + testEntry2.sha256hex));
-        sourceData.add(generateTestSetFor("/not-found-page"));
-
-        return sourceData;
+        return Arrays.asList(
+                "/",
+                "/download",
+                "/entries",
+                "/entry/9999999999",
+                "/entry/1",
+                "/entry/2",
+                "/records",
+                "/records/non-existent-record",
+                "/records/non-existent-record/entries",
+                "/records/" + testEntry1Key,
+                "/records/" + testEntry2Key,
+                "/records/" + testEntry1Key + "/entries",
+                "/records/" + testEntry2Key + "/entries",
+                "/item/sha-256:non-existent-item",
+                "/item/" + testEntry1.sha256hex,
+                "/item/" + testEntry2.sha256hex,
+                "/not-found-page");
     }
 
     @Test
@@ -91,7 +83,7 @@ public class AnalyticsFunctionalTest {
         assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_VALID_TRACKING_ID, true);
     }
 
-    public void assertUrlHasResponseWithAppropriateAnalytics(String registerName, boolean shouldIncludeAnalytics) {
+    private void assertUrlHasResponseWithAppropriateAnalytics(String registerName, boolean shouldIncludeAnalytics) {
         Response response = register.getRequest(registerName, targetUrl, TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
@@ -104,9 +96,5 @@ public class AnalyticsFunctionalTest {
         assertThat(docIncludesAnalyticsId, equalTo(shouldIncludeAnalytics));
         assertThat(docIncludesMainAnalytics, equalTo(shouldIncludeAnalytics));
         assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
-    }
-
-    private static Object[] generateTestSetFor(String url) {
-        return new Object[]{url};
     }
 }
