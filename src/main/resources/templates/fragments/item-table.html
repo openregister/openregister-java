@@ -18,7 +18,7 @@
         <th:block th:each="field : ${register.fields}">
             <tr th:if="${content.containsKey(field)}">
                 <td>
-                    <a th:href="${linkResolver.resolve('field', field)}" th:text="${field}"></a>
+                    <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), field)}" th:text="${field}"></a>
                 </td>
 
                 <td th:if="${content.get(field).isLink()}">
