@@ -27,12 +27,11 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 public class EntriesResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
-    private WebTarget addressTarget;
+    private final WebTarget addressTarget = register.targetRegister("address");
 
     @Before
     public void setup() {
         register.wipe();
-        addressTarget = register.targetRegister("address");
     }
 
     @Test
