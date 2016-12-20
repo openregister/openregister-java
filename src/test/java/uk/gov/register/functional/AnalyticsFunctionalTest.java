@@ -78,39 +78,21 @@ public class AnalyticsFunctionalTest {
 
     @Test
     public void emptyTrackingId_shouldNotIncludeAnalyticsCode() throws Exception {
-        Response response = register.getRequest(REGISTER_WITH_EMPTY_TRACKING_ID, targetUrl, TEXT_HTML);
-
-        Document doc = Jsoup.parse(response.readEntity(String.class));
-        assertThat(response.getStatus(), lessThan(500));
-
-        Boolean docIncludesAnalyticsId = doc.getElementById("analytics-tracking-id") != null;
-        Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
-        Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
-
-        assertThat(docIncludesAnalyticsId, equalTo(false));
-        assertThat(docIncludesMainAnalytics, equalTo(false));
-        assertThat(docIncludesExtLinksAnalytics, equalTo(false));
+        assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_EMPTY_TRACKING_ID, false);
     }
 
     @Test
     public void missingTrackingId_shouldNotIncludeAnalyticsCode() throws Exception {
-        Response response = register.getRequest(REGISTER_WITH_MISSING_TRACKING_ID, targetUrl, TEXT_HTML);
-
-        Document doc = Jsoup.parse(response.readEntity(String.class));
-        assertThat(response.getStatus(), lessThan(500));
-
-        Boolean docIncludesAnalyticsId = doc.getElementById("analytics-tracking-id") != null;
-        Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
-        Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
-
-        assertThat(docIncludesAnalyticsId, equalTo(false));
-        assertThat(docIncludesMainAnalytics, equalTo(false));
-        assertThat(docIncludesExtLinksAnalytics, equalTo(false));
+        assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_MISSING_TRACKING_ID, false);
     }
 
     @Test
     public void validTrackingId_shouldIncludeAnalyticsCode() throws Exception {
-        Response response = register.getRequest(REGISTER_WITH_VALID_TRACKING_ID, targetUrl, TEXT_HTML);
+        assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_VALID_TRACKING_ID, true);
+    }
+
+    public void assertUrlHasResponseWithAppropriateAnalytics(String registerName, boolean shouldIncludeAnalytics) {
+        Response response = register.getRequest(registerName, targetUrl, TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));
@@ -119,9 +101,9 @@ public class AnalyticsFunctionalTest {
         Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
         Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
 
-        assertThat(docIncludesAnalyticsId, equalTo(true));
-        assertThat(docIncludesMainAnalytics, equalTo(true));
-        assertThat(docIncludesExtLinksAnalytics, equalTo(true));
+        assertThat(docIncludesAnalyticsId, equalTo(shouldIncludeAnalytics));
+        assertThat(docIncludesMainAnalytics, equalTo(shouldIncludeAnalytics));
+        assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
     }
 
     private static Object[] generateTestSetFor(String url) {
