@@ -14,26 +14,27 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class DeleteRegisterDataFunctionalTest {
+    public static final String REGISTER_WHICH_ALLOWS_DELETING = "postcode";
     @ClassRule
     public static final RegisterRule register = new RegisterRule(
             ConfigOverride.config("enableRegisterDataDelete", "true"));
 
     @Test
     public void deleteRegisterData_deletesAllDataFromDb() throws Exception {
-        String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
-        String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
+        String item1 = "{\"postcode\":\"P1\"}";
+        String item2 = "{\"postcode\":\"P2\"}";
 
-        Response mintResponse = register.mintLines("register", item1, item2);
+        Response mintResponse = register.mintLines(REGISTER_WHICH_ALLOWS_DELETING, item1, item2);
         assertThat(mintResponse.getStatus(), equalTo(204));
 
-        Response entriesResponse1 = register.getRequest("register", "/entries.json");
+        Response entriesResponse1 = register.getRequest(REGISTER_WHICH_ALLOWS_DELETING, "/entries.json");
         List<?> entriesList = entriesResponse1.readEntity(List.class);
         assertThat(entriesList, hasSize(2));
 
-        Response deleteResponse = register.deleteRegisterData("register");
+        Response deleteResponse = register.deleteRegisterData(REGISTER_WHICH_ALLOWS_DELETING);
         assertThat(deleteResponse.getStatus(), equalTo(200));
 
-        Response entriesResponse2 = register.getRequest("register", "/entries.json");
+        Response entriesResponse2 = register.getRequest(REGISTER_WHICH_ALLOWS_DELETING, "/entries.json");
         String entriesRawJSON = entriesResponse2.readEntity(String.class);
 
         assertThat(entriesRawJSON, is("[]"));
