@@ -41,7 +41,7 @@ public class ItemResourceFunctionalTest {
     public void return200ResponseForTextHtmlMediaTypeWhenItemExists() {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = register.getRequest("address", String.format("/item/sha-256:%s.json", sha256Hex), MediaType.TEXT_HTML);
+        Response response = register.getRequest("address", String.format("/item/sha-256:%s", sha256Hex), MediaType.TEXT_HTML);
 
         assertThat(response.getStatus(), equalTo(200));
     }
