@@ -2,11 +2,13 @@ package uk.gov.register.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -14,14 +16,25 @@ import java.util.Optional;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ItemValidatorTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty());
-    private RegistersConfiguration registerConfiguration = new RegistersConfiguration(Optional.empty());
+    private RegisterConfigConfiguration registerConfigConfiguration;
+    private ConfigManager configManager;
+    private ItemValidator itemValidator;
 
-    private ItemValidator itemValidator = new ItemValidator(registerConfiguration, fieldsConfiguration, new RegisterName("register"));
+    @Before
+    public void setup() throws NoSuchConfigException, IOException {
+        registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
+        when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
+
+        configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.empty());
+        configManager.refreshConfig();
+        itemValidator = new ItemValidator(configManager, new RegisterName("register"));
+    }
 
     @Test
     public void validateItem_throwsValidationException_givenPrimaryKeyOfRegisterNotExists() throws IOException {

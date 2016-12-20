@@ -6,8 +6,7 @@ import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
-import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.RegistersConfiguration;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 
 import javax.validation.Valid;
@@ -36,7 +35,7 @@ public class RegisterContextFactory {
         return flywayFactory;
     }
 
-    public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, RegistersConfiguration registersConfiguration, FieldsConfiguration fieldsConfiguration, Environment environment) {
+    public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, ConfigManager configManager, Environment environment) {
         database.getProperties().put("ApplicationName", "openregister_" + registerName);
         // dbiFactory.build() will ensure that this dataSource is correctly shut down
         // it will also be shared with flyway
@@ -44,8 +43,7 @@ public class RegisterContextFactory {
 
         return new RegisterContext(
                 registerName,
-                registersConfiguration,
-                fieldsConfiguration,
+                configManager,
                 new InMemoryPowOfTwoNoLeaves(),
                 dbiFactory.build(environment, database, managedDataSource, registerName.value()),
                 getFlywayFactory(registerName).build(managedDataSource));

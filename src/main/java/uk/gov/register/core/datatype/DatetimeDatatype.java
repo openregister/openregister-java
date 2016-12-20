@@ -15,6 +15,22 @@ public class DatetimeDatatype implements Datatype {
         return true;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DatetimeDatatype that = (DatetimeDatatype) o;
+
+        return datatypeName != null ? datatypeName.equals(that.datatypeName) : that.datatypeName == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return datatypeName != null ? datatypeName.hashCode() : 0;
+    }
+
     public String getName() {
         return datatypeName;
     }
