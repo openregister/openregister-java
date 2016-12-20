@@ -28,14 +28,19 @@ public class RegisterContextFactory {
     @JsonProperty
     private boolean enableRegisterDataDelete = false;
 
+    @Valid
+    @JsonProperty
+    private boolean enableDownloadResource = false;
+
     @SuppressWarnings("unused, used by Jackson")
     public RegisterContextFactory() {
     }
 
-    public RegisterContextFactory(DataSourceFactory database, Optional<String> trackingId, boolean enableRegisterDataDelete) {
+    public RegisterContextFactory(DataSourceFactory database, Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource) {
         this.database = database;
         this.trackingId = trackingId.orElse(null);
         this.enableRegisterDataDelete = enableRegisterDataDelete;
+        this.enableDownloadResource = enableDownloadResource;
     }
 
     private FlywayFactory getFlywayFactory(RegisterName registerName) {
@@ -59,6 +64,7 @@ public class RegisterContextFactory {
                 dbiFactory.build(environment, database, managedDataSource, registerName.value()),
                 getFlywayFactory(registerName).build(managedDataSource),
                 trackingId,
-                enableRegisterDataDelete);
+                enableRegisterDataDelete,
+                enableDownloadResource);
     }
 }

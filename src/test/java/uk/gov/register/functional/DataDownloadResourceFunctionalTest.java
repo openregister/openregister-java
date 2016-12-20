@@ -1,7 +1,6 @@
 package uk.gov.register.functional;
 
-import io.dropwizard.testing.ConfigOverride;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,14 +16,17 @@ import static org.junit.Assert.assertThat;
 @RunWith(Parameterized.class)
 public class DataDownloadResourceFunctionalTest {
 
-    @Rule
-    public RegisterRule register;
+    public static final String REGISTER_WITH_DOWNLOAD_ENABLED = "address";
+    public static final String REGISTER_WITH_DOWNLOAD_DISABLED = "register";
+    @ClassRule
+    public static RegisterRule register = new RegisterRule();
 
     private final String targetUrl;
     private final int expectedStatusCode;
+    private final Boolean enableDownload;
 
     public DataDownloadResourceFunctionalTest(Boolean enableDownload, String targetUrl, int expectedStatusCode) {
-        this.register = createRegister(enableDownload);
+        this.enableDownload = enableDownload;
         this.targetUrl = targetUrl;
         this.expectedStatusCode = expectedStatusCode;
     }
@@ -41,13 +43,10 @@ public class DataDownloadResourceFunctionalTest {
 
     @Test
     public void checkDownloadResourceStatusCode() throws Exception {
-        Response response = register.getRequest("register", targetUrl);
+        String registerName = enableDownload ? REGISTER_WITH_DOWNLOAD_ENABLED : REGISTER_WITH_DOWNLOAD_DISABLED;
+
+        Response response = register.getRequest(registerName, targetUrl);
         
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
-    }
-
-    private static RegisterRule createRegister(Boolean enableResourceDownload){
-        return new RegisterRule(
-                ConfigOverride.config("enableDownloadResource", enableResourceDownload.toString()));
     }
 }

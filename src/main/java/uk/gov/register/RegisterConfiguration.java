@@ -25,7 +25,6 @@ public class RegisterConfiguration extends Configuration
         RegisterDomainConfiguration,
         RegisterConfigConfiguration,
         RegisterContentPagesConfiguration,
-        ResourceConfiguration,
         GovukClientConfiguration {
     @Valid
     @NotNull
@@ -101,7 +100,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete);
+        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
@@ -128,11 +127,6 @@ public class RegisterConfiguration extends Configuration
     @Override
     public URI getGovukEndpoint() {
         return URI.create("https://www.gov.uk");
-    }
-
-    @Override
-    public boolean getEnableDownloadResource() {
-        return enableDownloadResource;
     }
 
     @Override

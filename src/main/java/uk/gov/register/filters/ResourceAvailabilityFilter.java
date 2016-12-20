@@ -15,18 +15,18 @@ import java.io.IOException;
 @DownloadNotAvailable
 public class ResourceAvailabilityFilter implements ContainerRequestFilter {
 
-    private final ResourceConfiguration resourceConfiguration;
+    private final javax.inject.Provider<ResourceConfiguration> resourceConfiguration;
     private final ViewFactory viewFactory;
 
     @Inject
-    public ResourceAvailabilityFilter(ResourceConfiguration resourceConfiguration, ViewFactory viewFactory) {
+    public ResourceAvailabilityFilter(javax.inject.Provider<ResourceConfiguration> resourceConfiguration, ViewFactory viewFactory) {
         this.resourceConfiguration = resourceConfiguration;
         this.viewFactory = viewFactory;
     }
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        if (!resourceConfiguration.getEnableDownloadResource()) {
+        if (!resourceConfiguration.get().getEnableDownloadResource()) {
             Response response = Response
                     .status(Response.Status.NOT_IMPLEMENTED)
                     .entity(viewFactory.thymeleafView("not-implemented.html"))
