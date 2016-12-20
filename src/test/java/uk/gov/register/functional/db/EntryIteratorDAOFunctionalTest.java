@@ -3,7 +3,6 @@ package uk.gov.register.functional.db;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.skife.jdbi.v2.Handle;
 import uk.gov.register.db.EntryIteratorDAO;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.functional.app.RegisterRule;
@@ -20,13 +19,11 @@ public class EntryIteratorDAOFunctionalTest {
 
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
-    private TestEntryDAO testEntryDAO;
+    private static final TestEntryDAO testEntryDAO = register.handleFor("register").attach(TestEntryDAO.class);
 
     @Before
     public void publishTestMessages() {
         register.wipe();
-        Handle handle = register.handleFor("register");
-        testEntryDAO = handle.attach(TestEntryDAO.class);
 
         EntryQueryDAO entryQueryDAO = mock(EntryQueryDAO.class);
         when(entryQueryDAO.entriesIteratorFrom(anyInt())).thenAnswer(invocation ->

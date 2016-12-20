@@ -25,13 +25,12 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 public class RecordListResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
-    private WebTarget addressTarget;
+    private final WebTarget addressTarget = register.targetRegister("address");
 
     @Before
     public void publishTestMessages() {
         register.wipe();
         register.mintLines("address", "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}", "{\"street\":\"updatedEllisName\",\"address\":\"145678\"}", "{\"street\":\"ellis\",\"address\":\"6789\"}");
-        addressTarget = register.targetRegister("address");
     }
 
     @SuppressWarnings("unchecked")

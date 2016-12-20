@@ -27,7 +27,7 @@ public class FindEntityTest {
     }
 
     @Test
-    public void find_shouldReturnEntryWithThPrimaryKey_whenSearchForPrimaryKey() throws JSONException {
+    public void shouldRedirectCorrectly_whenUsingOldUrlForFindByPrimaryKey() throws JSONException {
         WebTarget target = register.targetRegister("address");
         target.property("jersey.config.client.followRedirects",false);
         Response response = target.path("/address/12345.json").request().get();

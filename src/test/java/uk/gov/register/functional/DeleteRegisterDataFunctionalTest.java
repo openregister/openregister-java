@@ -1,7 +1,7 @@
 package uk.gov.register.functional;
 
 import io.dropwizard.testing.ConfigOverride;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 
@@ -14,8 +14,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class DeleteRegisterDataFunctionalTest {
-    @Rule
-    public final RegisterRule register = new RegisterRule(
+    @ClassRule
+    public static final RegisterRule register = new RegisterRule(
             ConfigOverride.config("enableRegisterDataDelete", "true"));
 
     @Test
