@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class ApplicationTest {
@@ -30,7 +31,7 @@ public class ApplicationTest {
     @Test
     public void appSupportsCORS() {
         String origin = "http://originfortest.com";
-        Response response = register.targetRegister("address").path("/entries")
+        Response response = register.target(address).path("/entries")
                 .request()
                 .header(HttpHeaders.ORIGIN, origin)
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
@@ -49,14 +50,14 @@ public class ApplicationTest {
 
     @Test
     public void appSupportsContentSecurityPolicy() throws Exception {
-        Response response = register.getRequest("address", "/entries");
+        Response response = register.getRequest(address, "/entries");
 
         assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self' www.google-analytics.com")));
     }
 
     @Test
     public void appExplicitlySendsHtmlCharsetInHeader() throws Exception {
-        Response response = register.getRequest("address", "/entries", TEXT_HTML);
+        Response response = register.getRequest(address, "/entries", TEXT_HTML);
 
         String contentType = (String) response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0);
         assertThat(contentType, containsString("text/html"));
@@ -65,21 +66,21 @@ public class ApplicationTest {
 
     @Test
     public void appSupportsContentTypeOptions() throws Exception {
-        Response response = register.getRequest("address", "/entries");
+        Response response = register.getRequest(address, "/entries");
 
         assertThat(response.getHeaders().get(HttpHeaders.X_CONTENT_TYPE_OPTIONS), equalTo(ImmutableList.of("nosniff")));
     }
 
     @Test
     public void appSupportsXssProtection() throws Exception {
-        Response response = register.getRequest("address", "/entries");
+        Response response = register.getRequest(address, "/entries");
 
         assertThat(response.getHeaders().get(HttpHeaders.X_XSS_PROTECTION), equalTo(ImmutableList.of("1; mode=block")));
     }
 
     @Test
     public void app404PageHasXhtmlLangAttributes() throws Exception {
-        Response response = register.getRequest("address", "/missing_page_to_force_a_404");
+        Response response = register.getRequest(address, "/missing_page_to_force_a_404");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");

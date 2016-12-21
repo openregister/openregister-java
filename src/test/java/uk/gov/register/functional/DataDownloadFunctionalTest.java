@@ -25,6 +25,7 @@ import java.util.zip.ZipInputStream;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class DataDownloadFunctionalTest {
 
@@ -38,12 +39,12 @@ public class DataDownloadFunctionalTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.mintLines("address", item1, item2, item3, item4, item1);
+        register.mintLines(address, item1, item2, item3, item4, item1);
     }
 
     @Test
     public void downloadRegister_shouldReturnAZipfile() throws IOException {
-        Response response = register.getRequest("address","/download-register");
+        Response response = register.getRequest(address, "/download-register");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(MediaType.APPLICATION_OCTET_STREAM));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
@@ -59,7 +60,7 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadRegister_shouldUseCorrectEntryAndItemJsonFormat() throws IOException {
-        Response response = register.getRequest("address", "/download-register");
+        Response response = register.getRequest(address, "/download-register");
         InputStream is = response.readEntity(InputStream.class);
 
         List<String> itemJson = getEntries(is).entrySet().stream()
@@ -83,7 +84,7 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadRegister_shouldUseCorrectRegisterJsonFormat() throws IOException {
-        Response response = register.getRequest("address", "/download-register");
+        Response response = register.getRequest(address, "/download-register");
         InputStream is = response.readEntity(InputStream.class);
 
         JsonNode registerJson = getEntries(is).get("register.json");
@@ -97,7 +98,7 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadRSF_shouldReturnRegisterAsRsfStream() throws IOException {
-        Response response = register.getRequest("address", "/download-rsf");
+        Response response = register.getRequest(address, "/download-rsf");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
@@ -123,7 +124,7 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadPartialRSF_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
-        Response response = register.getRequest("address", "/download-rsf/0/2");
+        Response response = register.getRequest(address, "/download-rsf/0/2");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
@@ -144,28 +145,28 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadPartialRSF_shouldReturn400ForRsfBoundariesOutOfBound() throws IOException {
-        Response response = register.getRequest("address", "/download-rsf/666/1000");
+        Response response = register.getRequest(address, "/download-rsf/666/1000");
 
         assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
     public void downloadPartialRSF_shouldReturn400_whenTotalEntries1OutOfBounds() {
-        Response response = register.getRequest("address", "/download-rsf/-1/2");
+        Response response = register.getRequest(address, "/download-rsf/-1/2");
 
         assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
     public void downloadPartialRSF_shouldReturn400_whenTotalEntries2LessThanTotalEntries1() {
-        Response response = register.getRequest("address", "/download-rsf/2/1");
+        Response response = register.getRequest(address, "/download-rsf/2/1");
 
         assertThat(response.getStatus(), equalTo(400));
     }
 
     @Test
     public void downloadPartialRSF_shouldReturn400_whenRequestedTotalEntriesExceedsEntriesInRegister() {
-        Response response = register.getRequest("address", "/download-rsf/0/6");
+        Response response = register.getRequest(address, "/download-rsf/0/6");
 
         assertThat(response.getStatus(), equalTo(400));
     }
@@ -173,8 +174,8 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadPartialRSF_shouldReturnSameRSFAsFullDownload() {
-        Response fullRsfResponse = register.getRequest("address", "/download-rsf");
-        Response partialRsfResponse = register.getRequest("address", "/download-rsf/0/5");
+        Response fullRsfResponse = register.getRequest(address, "/download-rsf");
+        Response partialRsfResponse = register.getRequest(address, "/download-rsf/0/5");
 
         String[] fullRsfLines = getRsfLinesFrom(fullRsfResponse);
         String[] partialRsfLines = getRsfLinesFrom(partialRsfResponse);

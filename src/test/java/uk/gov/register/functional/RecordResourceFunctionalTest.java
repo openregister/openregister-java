@@ -16,6 +16,7 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class RecordResourceFunctionalTest {
     private final static String item0 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
@@ -26,14 +27,14 @@ public class RecordResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.mintLines("address", item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
+        register.mintLines(address, item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
     }
 
     @Test
     public void getRecordByKey() throws JSONException, IOException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = register.getRequest("address","/record/6789.json");
+        Response response = register.getRequest(address, "/record/6789.json");
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -49,12 +50,12 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void recordResource_return404ResponseWhenRecordNotExist() {
-        assertThat(register.getRequest("address","/record/5001.json").getStatus(), equalTo(404));
+        assertThat(register.getRequest(address, "/record/5001.json").getStatus(), equalTo(404));
     }
 
     @Test
     public void recordResource_return400ResponseWhenPageSizeIsNotANumber() {
-        Response response = register.targetRegister("address").path("/records").queryParam("page-size", "not-a-number").request().get();
+        Response response = register.target(address).path("/records").queryParam("page-size", "not-a-number").request().get();
 
         assertThat(response.getMediaType().getType(), equalTo("text"));
         assertThat(response.getMediaType().getSubtype(), equalTo("html"));
@@ -63,7 +64,7 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void recordResource_return400ResponseWhenPageIndexIsNotANumber() {
-        Response response = register.targetRegister("address").path("/records").queryParam("page-index", "not-a-number").request().get();
+        Response response = register.target(address).path("/records").queryParam("page-index", "not-a-number").request().get();
 
         assertThat(response.getMediaType().getType(), equalTo("text"));
         assertThat(response.getMediaType().getSubtype(), equalTo("html"));
@@ -72,14 +73,14 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void recordResource_return200ResponseForTextHtmlMediaTypeWhenRecordExists() {
-        Response response = register.getRequest("address", "/record/6789", MediaType.TEXT_HTML);
+        Response response = register.getRequest(address, "/record/6789", MediaType.TEXT_HTML);
 
         assertThat(response.getStatus(), equalTo(200));
     }
 
     @Test
     public void historyResource_returnsHistoryOfARecord() throws IOException {
-        Response response = register.getRequest("address","/record/6789/entries.json");
+        Response response = register.getRequest(address, "/record/6789/entries.json");
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -101,6 +102,6 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void historyResource_return404ResponseWhenRecordNotExist() {
-        assertThat(register.getRequest("address","/record/5001/entries.json").getStatus(), equalTo(404));
+        assertThat(register.getRequest(address, "/record/5001/entries.json").getStatus(), equalTo(404));
     }
 }

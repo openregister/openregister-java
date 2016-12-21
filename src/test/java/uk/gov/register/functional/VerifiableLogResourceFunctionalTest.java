@@ -14,6 +14,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class VerifiableLogResourceFunctionalTest {
 
@@ -24,12 +25,12 @@ public class VerifiableLogResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.mintLines("address", "{\"address\":\"1111\",\"street\":\"elvis\"}", "{\"address\":\"2222\",\"street\":\"presley\"}", "{\"address\":\"3333\",\"street\":\"ellis\"}", "{\"address\":\"4444\",\"street\":\"pretzel\"}", "{\"address\":\"5555\",\"street\":\"elfsley\"}");
+        register.mintLines(address, "{\"address\":\"1111\",\"street\":\"elvis\"}", "{\"address\":\"2222\",\"street\":\"presley\"}", "{\"address\":\"3333\",\"street\":\"ellis\"}", "{\"address\":\"4444\",\"street\":\"pretzel\"}", "{\"address\":\"5555\",\"street\":\"elfsley\"}");
     }
 
     @Test
     public void getRegisterProof() {
-        Response response = register.getRequest("address", "/proof/register/" + proofIdentifier);
+        Response response = register.getRequest(address, "/proof/register/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -40,7 +41,7 @@ public class VerifiableLogResourceFunctionalTest {
 
     @Test
     public void getEntryProof() {
-        Response response = register.getRequest("address", "/proof/entry/1/5/" + proofIdentifier);
+        Response response = register.getRequest(address, "/proof/entry/1/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -54,7 +55,7 @@ public class VerifiableLogResourceFunctionalTest {
 
     @Test
     public void getConsistencyProof() {
-        Response response = register.getRequest("address","/proof/consistency/2/5/" + proofIdentifier);
+        Response response = register.getRequest(address, "/proof/consistency/2/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 

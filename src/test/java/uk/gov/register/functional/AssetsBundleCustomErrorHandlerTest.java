@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class AssetsBundleCustomErrorHandlerTest {
     @ClassRule
@@ -20,7 +21,7 @@ public class AssetsBundleCustomErrorHandlerTest {
 
     @Test
     public void displays404pageForNonexistentAssets() {
-        Response response = register.getRequest("address","/assets/not-an-assets");
+        Response response = register.getRequest(address, "/assets/not-an-assets");
 
         assertThat(response.getStatus(), equalTo(404));
         assertThat(response.getMediaType().isCompatible(MediaType.TEXT_HTML_TYPE), equalTo(true));

@@ -6,16 +6,18 @@ import org.jsoup.select.Elements;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.postcode;
 
 public class HomePageFunctionalTest {
 
-    private static final String REGISTER_WITH_COPYRIGHT_FIELD = "postcode";
+    private static final TestRegister REGISTER_WITH_COPYRIGHT_FIELD = postcode;
 
     @ClassRule
     public static final RegisterRule register = new RegisterRule();

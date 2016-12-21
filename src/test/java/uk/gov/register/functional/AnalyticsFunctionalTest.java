@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.db.TestEntry;
 
 import javax.ws.rs.core.Response;
@@ -22,9 +23,9 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 @RunWith(Parameterized.class)
 public class AnalyticsFunctionalTest {
 
-    private static final String REGISTER_WITH_MISSING_TRACKING_ID = "register";
-    private static final String REGISTER_WITH_EMPTY_TRACKING_ID = "postcode";
-    private static final String REGISTER_WITH_VALID_TRACKING_ID = "address";
+    private static final TestRegister REGISTER_WITH_MISSING_TRACKING_ID = TestRegister.register;
+    private static final TestRegister REGISTER_WITH_EMPTY_TRACKING_ID = TestRegister.postcode;
+    private static final TestRegister REGISTER_WITH_VALID_TRACKING_ID = TestRegister.address;
 
     private static final String testEntry1Key = "st1";
     private static final String testEntry2Key = "st2";
@@ -37,7 +38,9 @@ public class AnalyticsFunctionalTest {
     @Before
     public void setup() {
         register.wipe();
-        register.mintLines("address", testEntry1.itemJson, testEntry2.itemJson);
+        register.mintLines(REGISTER_WITH_MISSING_TRACKING_ID, testEntry1.itemJson, testEntry2.itemJson);
+        register.mintLines(REGISTER_WITH_EMPTY_TRACKING_ID, testEntry1.itemJson, testEntry2.itemJson);
+        register.mintLines(REGISTER_WITH_VALID_TRACKING_ID, testEntry1.itemJson, testEntry2.itemJson);
     }
 
     private final String targetUrl;
@@ -83,8 +86,8 @@ public class AnalyticsFunctionalTest {
         assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_VALID_TRACKING_ID, true);
     }
 
-    private void assertUrlHasResponseWithAppropriateAnalytics(String registerName, boolean shouldIncludeAnalytics) {
-        Response response = register.getRequest(registerName, targetUrl, TEXT_HTML);
+    private void assertUrlHasResponseWithAppropriateAnalytics(TestRegister testRegister, boolean shouldIncludeAnalytics) {
+        Response response = register.getRequest(testRegister, targetUrl, TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));
