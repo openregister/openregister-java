@@ -27,14 +27,14 @@ public class RegisterContext implements
     private MemoizationStore memoizationStore;
     private DBI dbi;
     private Flyway flyway;
-    private final String trackingId;
+    private final Optional<String> trackingId;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterMetadata registerMetadata;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager,
                            MemoizationStore memoizationStore, DBI dbi, Flyway flyway,
-                           String trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource) {
+                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.memoizationStore = memoizationStore;
@@ -108,7 +108,7 @@ public class RegisterContext implements
 
     @Override
     public Optional<String> getRegisterTrackingId() {
-        return Optional.ofNullable(trackingId);
+        return trackingId;
     }
 
     @Override
