@@ -10,6 +10,10 @@ function ensure_user_exists {
   psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='$1'" | grep -q 1 || createuser $1
 }
 
+# Set up submodules
+
+git submodule init
+
 # Set up postgres
 ensure_db_exists openregister_java
 ensure_db_exists register

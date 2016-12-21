@@ -1,0 +1,6 @@
+[submodule "src/main/resources/assets/govuk_template"]
+	path = src/main/resources/assets/govuk_template
+	url = https://github.com/alphagov/govuk_template.git
+[submodule "src/main/resources/assets/govuk_frontend_toolkit"]
+	path = src/main/resources/assets/govuk_frontend_toolkit
+	url = https://github.com/alphagov/govuk_frontend_toolkit.git
