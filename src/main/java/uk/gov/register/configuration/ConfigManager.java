@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ConfigManager {
     private final Optional<String> registersConfigFileUrl;
@@ -18,8 +19,8 @@ public class ConfigManager {
     private final boolean refresh;
     private final String externalConfigDirectory;
 
-    private RegistersConfiguration registersConfiguration;
-    private FieldsConfiguration fieldsConfiguration;
+    private AtomicReference<RegistersConfiguration> registersConfiguration = new AtomicReference<>();
+    private AtomicReference<FieldsConfiguration> fieldsConfiguration = new AtomicReference<>();
 
     public ConfigManager(RegisterConfigConfiguration registerConfigConfiguration, Optional<String> registersConfigFileUrl, Optional<String> fieldsConfigFileUrl) {
         this.registersConfigFileUrl = registersConfigFileUrl;
@@ -30,7 +31,7 @@ public class ConfigManager {
         this.fieldsConfigFilePath = externalConfigDirectory + "/" + "fields.yaml";
     }
 
-    public synchronized void refreshConfig() throws NoSuchConfigException, IOException {
+    public void refreshConfig() throws NoSuchConfigException, IOException {
         if (refresh) {
             try {
                 if (registersConfigFileUrl.isPresent()) {
@@ -40,20 +41,20 @@ public class ConfigManager {
                     Files.copy(new URL(fieldsConfigFileUrl.get()).openStream(), Paths.get(fieldsConfigFilePath), StandardCopyOption.REPLACE_EXISTING);
                 }
 
-                registersConfiguration = createRegistersConfiguration();
-                fieldsConfiguration = createFieldsConfiguration();
+                registersConfiguration.set(createRegistersConfiguration());
+                fieldsConfiguration.set(createFieldsConfiguration());
             } catch (FileNotFoundException e) {
                 throw new NoSuchConfigException(e);
             }
         }
     }
 
-    public synchronized RegistersConfiguration getRegistersConfiguration() {
-        return registersConfiguration;
+    public RegistersConfiguration getRegistersConfiguration() {
+        return registersConfiguration.get();
     }
 
-    public synchronized FieldsConfiguration getFieldsConfiguration() {
-        return fieldsConfiguration;
+    public FieldsConfiguration getFieldsConfiguration() {
+        return fieldsConfiguration.get();
     }
 
     private RegistersConfiguration createRegistersConfiguration() {
