@@ -2,42 +2,44 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <body>
-<div th:fragment="item-table(content)">
-    <table class="entry">
-        <colgroup>
-            <col class="field-column" />
-            <col class="value-column" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th scope="col">Field</th>
-                <th scope="col">Value</th>
-            </tr>
-        </thead>
-        <tbody>
-        <th:block th:each="field : ${register.fields}">
-            <tr th:if="${content.containsKey(field)}">
-                <td>
-                    <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), field)}" th:text="${field}"></a>
-                </td>
+<div th:fragment="item-table(content)" class="table-wrapper">
+  <table class="entry">
+    <colgroup>
+      <col class="field-column"/>
+      <col class="value-column"/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">Field</th>
+        <th scope="col">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <th:block th:each="field : ${register.fields}">
+        <tr th:if="${content.containsKey(field)}">
+          <td>
+            <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), field)}" th:text="${field}"></a>
+          </td>
 
-                <td th:if="${content.get(field).isLink()}">
-                    <a th:href="${linkResolver.resolve(content.get(field))}" th:text="${content.get(field).value}"></a>
-                </td>
+          <td th:if="${content.get(field).isLink()}">
+            <a th:href="${linkResolver.resolve(content.get(field))}" th:text="${content.get(field).value}"></a>
+          </td>
 
-                <td th:if="${content.get(field).isList()}" class="field-list field-list-in-table">
-                    <ul>
-                    <th:block th:each="fieldValue : ${content.get(field)}">
-                        <li th:if="${fieldValue.isLink()}"><a th:href="${linkResolver.resolve(fieldValue)}" th:text="${fieldValue.value}"></a></li>
-                        <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
-                    </th:block>
-                    </ul>
-                </td>
-                <td th:unless="${content.get(field).isLink() || content.get(field).isList()}" th:text="${content.get(field).value}"></td>
-            </tr>
-        </th:block>
-        </tbody>
-    </table>
+          <td th:if="${content.get(field).isList()}" class="field-list field-list-in-table">
+            <ul>
+            <th:block th:each="fieldValue : ${content.get(field)}">
+                <li th:if="${fieldValue.isLink()}">
+                  <a th:href="${linkResolver.resolve(fieldValue)}" th:text="${fieldValue.value}"></a>
+                </li>
+                <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
+            </th:block>
+            </ul>
+          </td>
+          <td th:unless="${content.get(field).isLink() || content.get(field).isList()}" th:text="${content.get(field).value}"></td>
+        </tr>
+      </th:block>
+    </tbody>
+  </table>
 </div>
 </body>
 </html>
