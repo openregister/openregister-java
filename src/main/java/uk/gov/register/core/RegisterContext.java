@@ -6,16 +6,16 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
-import uk.gov.register.configuration.ConfigManager;
-import uk.gov.register.configuration.DeleteRegisterDataConfiguration;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegisterTrackingConfiguration;
-import uk.gov.register.configuration.ResourceConfiguration;
+import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
+import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
+import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class RegisterContext implements
@@ -24,7 +24,7 @@ public class RegisterContext implements
         ResourceConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;
-    private MemoizationStore memoizationStore;
+    private AtomicReference<MemoizationStore> memoizationStore;
     private DBI dbi;
     private Flyway flyway;
     private final Optional<String> trackingId;
@@ -33,13 +33,13 @@ public class RegisterContext implements
     private RegisterMetadata registerMetadata;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager,
-                           MemoizationStore memoizationStore, DBI dbi, Flyway flyway,
-                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource) {
+                           DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
+                           boolean enableDownloadResource) {
         this.registerName = registerName;
         this.configManager = configManager;
-        this.memoizationStore = memoizationStore;
         this.dbi = dbi;
         this.flyway = flyway;
+        this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
@@ -65,7 +65,7 @@ public class RegisterContext implements
     public Register buildOnDemandRegister() {
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
-                new UnmodifiableEntryLog(memoizationStore, dbi.onDemand(EntryQueryDAO.class)),
+                new UnmodifiableEntryLog(memoizationStore.get(), dbi.onDemand(EntryQueryDAO.class)),
                 new UnmodifiableItemStore(dbi.onDemand(ItemQueryDAO.class)),
                 new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class))
         );
@@ -89,13 +89,22 @@ public class RegisterContext implements
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
-        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore);
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
         useTransaction(dbi, handle -> {
             Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
             consumer.accept(register);
             register.commit();
         });
         transactionalMemoizationStore.commitHashesToStore();
+    }
+
+    public void resetRegister() throws IOException, NoSuchConfigException {
+        if (enableRegisterDataDelete) {
+            flyway.clean();
+            configManager.refreshConfig();
+            memoizationStore.set(new InMemoryPowOfTwoNoLeaves());
+            flyway.migrate();
+        }
     }
 
     public static void useTransaction(DBI dbi, Consumer<Handle> callback) {

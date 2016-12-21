@@ -1,7 +1,5 @@
 package uk.gov.register.resources;
 
-import org.flywaydb.core.Flyway;
-import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
@@ -14,13 +12,11 @@ import java.io.IOException;
 
 @Path("/")
 public class DeleteRegisterDataResource {
-    private Flyway flyway;
-    private ConfigManager configManager;
+    private RegisterContext registerContext;
 
     @Inject
-    public DeleteRegisterDataResource(RegisterContext registerContext, ConfigManager configManager) {
-        this.flyway = registerContext.getFlyway();
-        this.configManager = configManager;
+    public DeleteRegisterDataResource(RegisterContext registerContext) {
+        this.registerContext = registerContext;
     }
 
     @DELETE
@@ -28,9 +24,7 @@ public class DeleteRegisterDataResource {
     @Path("/delete-register-data")
     @DataDeleteNotAllowed
     public Response deleteRegisterData() throws NoSuchConfigException, IOException {
-        flyway.clean();
-        configManager.refreshConfig();
-        flyway.migrate();
+        registerContext.resetRegister();
 
         return Response.status(200).entity("Data has been deleted").build();
     }
