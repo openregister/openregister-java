@@ -19,7 +19,7 @@ jerseyClient:
 
 trackingId: "UA-12345678-1"
 
-otherRegisters:
+registers:
   postcode:
     database:
       driverClass: org.postgresql.Driver

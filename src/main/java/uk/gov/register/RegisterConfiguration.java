@@ -93,7 +93,7 @@ public class RegisterConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private Map<RegisterName, RegisterContextFactory> otherRegisters = new HashMap<>();
+    private Map<RegisterName, RegisterContextFactory> registers = new HashMap<>();
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -104,7 +104,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
-        return new AllTheRegistersFactory(getDefaultRegister(), otherRegisters, getDefaultRegisterName());
+        return new AllTheRegistersFactory(getDefaultRegister(), registers, getDefaultRegisterName());
     }
 
     public RegisterName getDefaultRegisterName() {
