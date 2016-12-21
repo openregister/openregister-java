@@ -88,7 +88,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
                 bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
                 bind(allTheRegisters);
-                bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class).to(RegisterTrackingConfiguration.class);
+                bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class)
+                        .to(RegisterTrackingConfiguration.class).to(DeleteRegisterDataConfiguration.class)
+                        .to(ResourceConfiguration.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
 
                 bind(configManager).to(ConfigManager.class);

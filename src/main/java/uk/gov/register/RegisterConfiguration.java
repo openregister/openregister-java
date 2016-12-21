@@ -25,9 +25,7 @@ public class RegisterConfiguration extends Configuration
         RegisterDomainConfiguration,
         RegisterConfigConfiguration,
         RegisterContentPagesConfiguration,
-        ResourceConfiguration,
-        GovukClientConfiguration,
-        DeleteRegisterDataConfiguration {
+        GovukClientConfiguration {
     @Valid
     @NotNull
     @JsonProperty
@@ -102,7 +100,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase(), trackingId);
+        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
@@ -132,18 +130,8 @@ public class RegisterConfiguration extends Configuration
     }
 
     @Override
-    public boolean getEnableDownloadResource() {
-        return enableDownloadResource;
-    }
-
-    @Override
     public Optional<String> getRegisterHistoryPageUrl() {
         return historyPageUrl;
-    }
-
-    @Override
-    public boolean getEnableRegisterDataDelete() {
-        return enableRegisterDataDelete;
     }
 
     @Override

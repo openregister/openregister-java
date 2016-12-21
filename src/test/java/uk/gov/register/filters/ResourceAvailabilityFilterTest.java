@@ -49,6 +49,6 @@ public class ResourceAvailabilityFilterTest {
         ViewFactory viewFactory = mock(ViewFactory.class);
         ResourceConfiguration resourceConfiguration = mock(ResourceConfiguration.class);
         when(resourceConfiguration.getEnableDownloadResource()).thenReturn(available);
-        return new ResourceAvailabilityFilter(resourceConfiguration, viewFactory);
+        return new ResourceAvailabilityFilter(() -> resourceConfiguration, viewFactory);
     }
 }

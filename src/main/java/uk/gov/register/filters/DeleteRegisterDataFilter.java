@@ -15,18 +15,18 @@ import java.io.IOException;
 @DataDeleteNotAllowed
 public class DeleteRegisterDataFilter implements ContainerRequestFilter {
 
-    private final DeleteRegisterDataConfiguration deleteRegisterDataConfiguration;
+    private final javax.inject.Provider<DeleteRegisterDataConfiguration> deleteRegisterDataConfiguration;
     private final ViewFactory viewFactory;
 
     @Inject
-    public DeleteRegisterDataFilter(DeleteRegisterDataConfiguration deleteRegisterDataConfiguration, ViewFactory viewFactory) {
+    public DeleteRegisterDataFilter(javax.inject.Provider<DeleteRegisterDataConfiguration> deleteRegisterDataConfiguration, ViewFactory viewFactory) {
         this.deleteRegisterDataConfiguration = deleteRegisterDataConfiguration;
         this.viewFactory = viewFactory;
     }
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        if (!deleteRegisterDataConfiguration.getEnableRegisterDataDelete()) {
+        if (!deleteRegisterDataConfiguration.get().getEnableRegisterDataDelete()) {
             Response response = Response
                     .status(Response.Status.NOT_FOUND)
                     .entity(viewFactory.thymeleafView("404.html"))

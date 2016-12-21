@@ -36,6 +36,7 @@ otherRegisters:
       properties:
         charSet: UTF-8
     trackingId: ""
+    enableRegisterDataDelete: true
   register:
     database:
       driverClass: org.postgresql.Driver
@@ -67,5 +68,4 @@ database:
 
   properties:
     charSet: UTF-8
-
 enableDownloadResource: true

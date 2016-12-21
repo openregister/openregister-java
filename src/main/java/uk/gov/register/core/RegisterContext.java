@@ -7,8 +7,10 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.DeleteRegisterDataConfiguration;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.db.*;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
@@ -16,22 +18,31 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class RegisterContext implements RegisterTrackingConfiguration {
+public class RegisterContext implements
+        RegisterTrackingConfiguration,
+        DeleteRegisterDataConfiguration,
+        ResourceConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;
     private MemoizationStore memoizationStore;
     private DBI dbi;
     private Flyway flyway;
     private final String trackingId;
+    private final boolean enableRegisterDataDelete;
+    private final boolean enableDownloadResource;
     private RegisterMetadata registerMetadata;
 
-    public RegisterContext(RegisterName registerName, ConfigManager configManager, MemoizationStore memoizationStore, DBI dbi, Flyway flyway, String trackingId) {
+    public RegisterContext(RegisterName registerName, ConfigManager configManager,
+                           MemoizationStore memoizationStore, DBI dbi, Flyway flyway,
+                           String trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.memoizationStore = memoizationStore;
         this.dbi = dbi;
         this.flyway = flyway;
         this.trackingId = trackingId;
+        this.enableRegisterDataDelete = enableRegisterDataDelete;
+        this.enableDownloadResource = enableDownloadResource;
         this.registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
     }
 
@@ -98,5 +109,15 @@ public class RegisterContext implements RegisterTrackingConfiguration {
     @Override
     public Optional<String> getRegisterTrackingId() {
         return Optional.ofNullable(trackingId);
+    }
+
+    @Override
+    public boolean getEnableRegisterDataDelete() {
+        return enableRegisterDataDelete;
+    }
+
+    @Override
+    public boolean getEnableDownloadResource() {
+        return enableDownloadResource;
     }
 }
