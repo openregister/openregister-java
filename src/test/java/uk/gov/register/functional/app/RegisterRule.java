@@ -1,7 +1,5 @@
 package uk.gov.register.functional.app;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
@@ -25,18 +23,23 @@ import javax.ws.rs.core.Response;
 import java.net.InetAddress;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static javax.ws.rs.client.Entity.entity;
 import static uk.gov.register.views.representations.ExtraMediaType.APPLICATION_RSF_TYPE;
 
 public class RegisterRule implements TestRule {
-    private static final String REGISTER_DOMAIN = "test.register.gov.uk";
-    private static final ImmutableMap<String, String> registerHostnames = ImmutableMap.of(
-            "address", "address." + REGISTER_DOMAIN,
-            "postcode", "postcode." + REGISTER_DOMAIN,
-            "register", "register." + REGISTER_DOMAIN
-    );
+    public enum TestRegister {
+        address, postcode, register;
+
+        private static final String REGISTER_DOMAIN = "test.register.gov.uk";
+        private final String hostname = name() + "." + REGISTER_DOMAIN;
+
+        public String getHostname() {
+            return hostname;
+        }
+    }
     private final WipeDatabaseRule wipeRule;
     private DropwizardAppRule<RegisterConfiguration> appRule;
 
@@ -49,8 +52,10 @@ public class RegisterRule implements TestRule {
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
                 ResourceHelpers.resourceFilePath("test-app-config.yaml"),
                 overrides);
-        ImmutableSet<String> registers = registerHostnames.keySet();
-        wipeRule = new WipeDatabaseRule(registers.toArray(new String[registers.size()]));
+        String[] registers = Arrays.stream(TestRegister.values())
+                .map(TestRegister::name)
+                .toArray(String[]::new);
+        wipeRule = new WipeDatabaseRule(registers);
         wholeRule = RuleChain
                 .outerRule(appRule)
                 .around(wipeRule);
@@ -84,8 +89,9 @@ public class RegisterRule implements TestRule {
      * if the registerName is recognized, the Host: will be set appropriately for that register
      * if not, it will default to a Host: of localhost (which will hit the default register)
      */
-    public WebTarget targetRegister(String registerName) { // TODO: use RegisterName here
-        return target(registerHostnames.getOrDefault(registerName, "localhost"));
+    public WebTarget targetRegister(String registerName) {
+        TestRegister register = TestRegister.valueOf(registerName);
+        return target(register.getHostname());
     }
 
     public Response loadRsf(String registerName, String rsf) {
@@ -118,8 +124,8 @@ public class RegisterRule implements TestRule {
 
     private JerseyClientBuilder clientBuilder() {
         InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
-        for (String registerHostname : registerHostnames.values()) {
-            customDnsResolver.add(registerHostname, InetAddress.getLoopbackAddress());
+        for (TestRegister register : TestRegister.values()) {
+            customDnsResolver.add(register.getHostname(), InetAddress.getLoopbackAddress());
         }
         customDnsResolver.add("localhost", InetAddress.getLoopbackAddress());
         return new JerseyClientBuilder(appRule.getEnvironment())
