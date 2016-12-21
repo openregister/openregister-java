@@ -11,7 +11,7 @@
     }
   }
 
-  GOVUK.registers.analytics.setupEvent(filtered, "Link", "external", function(e){ 
-    return e.target.href; 
+  GOVUK.registers.analytics.setupEvent(filtered, "Link", "external", function(e) {
+    return e.target.href;
   });
 })();

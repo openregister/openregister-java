@@ -4,6 +4,7 @@
 @mixin remove-link-underline {
   a {
     text-decoration: none;
+
     &:focus, &:hover {
       text-decoration: underline;
     }
@@ -21,6 +22,7 @@
   dt {
     @include core-16;
     padding: ($gutter/6 + $gutter-half) 0 $gutter/6 0;
+
     &:first-child {
       padding-top: $gutter/6;
     }
@@ -33,6 +35,7 @@
     p, strong {
       font-weight: bold;
     }
+
     .show-other-content {
       @include bold-24;
     }
@@ -40,15 +43,15 @@
 }
 
 .technical-information {
-    @include remove-link-underline;
-    margin-top: 35px;
-    margin-bottom: 15px;
-    padding: 25px;
-    background-color: $pale-grey;
-    border: 1px solid $dark-grey;
-    a {
-        font-weight: 700;
-        list-style-type: none;
-        line-height: 30px;
-    }
- }
+  @include remove-link-underline;
+  margin-top: 35px;
+  margin-bottom: 15px;
+  padding: 25px;
+  background-color: $pale-grey;
+  border: 1px solid $dark-grey;
+  a {
+    font-weight: 700;
+    list-style-type: none;
+    line-height: 30px;
+  }
+}
