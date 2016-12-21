@@ -37,13 +37,4 @@ To load some sample data:
 
 # Update the govuk_frontend_toolkit and govuk_template
 
-- Add the toolkit and template as remotes
-```
-    git remote add -f govuk-frontend-toolkit git@github.com:alphagov/govuk_frontend_toolkit.git
-    git remote add -f govuk-template git@github.com:alphagov/govuk_template.git
-```
-- Update the toolkit and template to the latest version (using git subtree)
-```
-    git subtree pull --prefix src/main/govuk_frontend_toolkit govuk-frontend-toolkit -m "Update govuk_frontend_toolkit" master --squash
-    git subtree pull --prefix src/main/govuk_template govuk-template -m "Update govuk_template" master --squash
-```
+    $ git submodule update
