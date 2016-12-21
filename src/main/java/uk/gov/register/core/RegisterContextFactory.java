@@ -1,5 +1,6 @@
 package uk.gov.register.core;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 public class RegisterContextFactory {
+
     @Valid
     @NotNull
     @JsonProperty
@@ -22,7 +24,7 @@ public class RegisterContextFactory {
 
     @Valid
     @JsonProperty
-    private String trackingId;
+    private Optional<String> trackingId;
 
     @Valid
     @JsonProperty
@@ -32,13 +34,14 @@ public class RegisterContextFactory {
     @JsonProperty
     private boolean enableDownloadResource = false;
 
-    @SuppressWarnings("unused, used by Jackson")
-    public RegisterContextFactory() {
-    }
-
-    public RegisterContextFactory(DataSourceFactory database, Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource) {
+    @JsonCreator
+    public RegisterContextFactory(
+            @JsonProperty("database") DataSourceFactory database,
+            @JsonProperty("trackingId") Optional<String> trackingId,
+            @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
+            @JsonProperty("enableDownloadResource") boolean enableDownloadResource) {
         this.database = database;
-        this.trackingId = trackingId.orElse(null);
+        this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
     }
