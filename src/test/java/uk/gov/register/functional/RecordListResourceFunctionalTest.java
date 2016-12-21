@@ -20,23 +20,24 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class RecordListResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
-    private final WebTarget addressTarget = register.targetRegister("address");
+    private final WebTarget addressTarget = register.target(address);
 
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.mintLines("address", "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}", "{\"street\":\"updatedEllisName\",\"address\":\"145678\"}", "{\"street\":\"ellis\",\"address\":\"6789\"}");
+        register.mintLines(address, "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}", "{\"street\":\"updatedEllisName\",\"address\":\"145678\"}", "{\"street\":\"ellis\",\"address\":\"6789\"}");
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void newRecords_shouldReturnAllCurrentVersionsOnly() throws Exception {
-        Response response = register.getRequest("address", "/records.json");
+        Response response = register.getRequest(address, "/records.json");
 
         Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
 
@@ -67,7 +68,7 @@ public class RecordListResourceFunctionalTest {
 
     @Test
     public void newRecords_setsAppropriateFilenameForDownload() {
-        Response response = register.getRequest("address", "/records.json");
+        Response response = register.getRequest(address, "/records.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
     }
@@ -89,7 +90,7 @@ public class RecordListResourceFunctionalTest {
 
     @Test
     public void newRecordsPageHasXhtmlLangAttributes() {
-        Response response = register.getRequest("address", "/records", TEXT_HTML);
+        Response response = register.getRequest(address, "/records", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
@@ -101,7 +102,7 @@ public class RecordListResourceFunctionalTest {
     @SuppressWarnings("unchecked")
     @Test
     public void fetchAllRecordsForAKeyValueCombination() throws JSONException {
-        Response response = register.getRequest("address","/records/street/ellis.json");
+        Response response = register.getRequest(address, "/records/street/ellis.json");
         Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
 
         assertThat(responseMap.size(), equalTo(2));

@@ -8,6 +8,7 @@ import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestEntryDAO;
@@ -27,7 +28,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class LoadSerializedFunctionalTest {
-    private static final String registerName = "register";
+    private static final TestRegister testRegister = TestRegister.register;
 
     @Rule
     public TestRule wipe = new WipeDatabaseRule();
@@ -40,7 +41,7 @@ public class LoadSerializedFunctionalTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Handle handle = register.handleFor(registerName);
+        Handle handle = register.handleFor(testRegister);
         testItemDAO = handle.attach(TestItemCommandDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
         testRecordDAO = handle.attach(TestRecordDAO.class);
@@ -111,6 +112,6 @@ public class LoadSerializedFunctionalTest {
     }
 
     private Response send(String payload) {
-        return register.loadRsf(registerName, payload);
+        return register.loadRsf(testRegister, payload);
     }
 }

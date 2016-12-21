@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class ItemResourceFunctionalTest {
     @ClassRule
@@ -23,14 +24,14 @@ public class ItemResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.mintLines("address", item1, item2);
+        register.mintLines(address, item1, item2);
     }
 
     @Test
     public void jsonRepresentationOfAnItem() throws JSONException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = register.getRequest("address", String.format("/item/sha-256:%s.json", sha256Hex));
+        Response response = register.getRequest(address, String.format("/item/sha-256:%s.json", sha256Hex));
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -41,21 +42,21 @@ public class ItemResourceFunctionalTest {
     public void return200ResponseForTextHtmlMediaTypeWhenItemExists() {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = register.getRequest("address", String.format("/item/sha-256:%s", sha256Hex), MediaType.TEXT_HTML);
+        Response response = register.getRequest(address, String.format("/item/sha-256:%s", sha256Hex), MediaType.TEXT_HTML);
 
         assertThat(response.getStatus(), equalTo(200));
     }
 
     @Test
     public void return404ResponseWhenItemNotExist() throws JSONException {
-        Response response = register.getRequest("address", "/item/sha-256:notExistHexValue");
+        Response response = register.getRequest(address, "/item/sha-256:notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }
 
     @Test
     public void return404ResponseWhenItemHexIsNotInProperFormat() throws JSONException {
-        Response response = register.getRequest("address", "/item/notExistHexValue");
+        Response response = register.getRequest(address, "/item/notExistHexValue");
 
         assertThat(response.getStatus(), equalTo(404));
     }

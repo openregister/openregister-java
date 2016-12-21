@@ -4,6 +4,7 @@ import io.dropwizard.testing.ConfigOverride;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -13,9 +14,10 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.postcode;
 
 public class DeleteRegisterDataFunctionalTest {
-    public static final String REGISTER_WHICH_ALLOWS_DELETING = "postcode";
+    public static final TestRegister REGISTER_WHICH_ALLOWS_DELETING = postcode;
     @ClassRule
     public static final RegisterRule register = new RegisterRule(
             ConfigOverride.config("enableRegisterDataDelete", "true"));

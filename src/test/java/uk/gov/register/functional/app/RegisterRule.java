@@ -1,7 +1,5 @@
 package uk.gov.register.functional.app;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
@@ -25,18 +23,13 @@ import javax.ws.rs.core.Response;
 import java.net.InetAddress;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static javax.ws.rs.client.Entity.entity;
 import static uk.gov.register.views.representations.ExtraMediaType.APPLICATION_RSF_TYPE;
 
 public class RegisterRule implements TestRule {
-    private static final String REGISTER_DOMAIN = "test.register.gov.uk";
-    private static final ImmutableMap<String, String> registerHostnames = ImmutableMap.of(
-            "address", "address." + REGISTER_DOMAIN,
-            "postcode", "postcode." + REGISTER_DOMAIN,
-            "register", "register." + REGISTER_DOMAIN
-    );
     private final WipeDatabaseRule wipeRule;
     private DropwizardAppRule<RegisterConfiguration> appRule;
 
@@ -49,8 +42,10 @@ public class RegisterRule implements TestRule {
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
                 ResourceHelpers.resourceFilePath("test-app-config.yaml"),
                 overrides);
-        ImmutableSet<String> registers = registerHostnames.keySet();
-        wipeRule = new WipeDatabaseRule(registers.toArray(new String[registers.size()]));
+        String[] registers = Arrays.stream(TestRegister.values())
+                .map(TestRegister::name)
+                .toArray(String[]::new);
+        wipeRule = new WipeDatabaseRule(registers);
         wholeRule = RuleChain
                 .outerRule(appRule)
                 .around(wipeRule);
@@ -69,47 +64,40 @@ public class RegisterRule implements TestRule {
         return wholeRule.apply(me, description);
     }
 
-    private WebTarget authenticatedTarget(String registerName) {
-        WebTarget authenticatedTarget = targetRegister(registerName);
-        authenticatedTarget.register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
-        return authenticatedTarget;
+    private WebTarget authenticatedTarget(TestRegister register) {
+        return target(register).register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
     }
 
     private WebTarget target(String targetHost) {
         return client.target("http://" + targetHost + ":" + appRule.getLocalPort());
     }
 
-    /**
-     * get a WebTarget pointing at a particular register.
-     * if the registerName is recognized, the Host: will be set appropriately for that register
-     * if not, it will default to a Host: of localhost (which will hit the default register)
-     */
-    public WebTarget targetRegister(String registerName) { // TODO: use RegisterName here
-        return target(registerHostnames.getOrDefault(registerName, "localhost"));
+    public WebTarget target(TestRegister register) {
+        return target(register.getHostname());
     }
 
-    public Response loadRsf(String registerName, String rsf) {
-        return authenticatedTarget(registerName).path("/load-rsf")
+    public Response loadRsf(TestRegister register, String rsf) {
+        return authenticatedTarget(register).path("/load-rsf")
                 .request()
                 .post(entity(rsf, APPLICATION_RSF_TYPE));
     }
 
-    public Response mintLines(String registerName, String... payload) {
-        return authenticatedTarget(registerName).path("/load")
+    public Response mintLines(TestRegister register, String... payload) {
+        return authenticatedTarget(register).path("/load")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.json(String.join("\n", payload)));
     }
 
-    public Response getRequest(String registerName, String path) {
-        return targetRegister(registerName).path(path).request().get();
+    public Response getRequest(TestRegister register, String path) {
+        return target(register).path(path).request().get();
     }
 
-    public Response getRequest(String registerName, String path, String acceptedResponseType) {
-        return targetRegister(registerName).path(path).request(acceptedResponseType).get();
+    public Response getRequest(TestRegister register, String path, String acceptedResponseType) {
+        return target(register).path(path).request(acceptedResponseType).get();
     }
 
-    public Response deleteRegisterData(String registerName) {
-        return authenticatedTarget(registerName).path("/delete-register-data").request().delete();
+    public Response deleteRegisterData(TestRegister register) {
+        return authenticatedTarget(register).path("/delete-register-data").request().delete();
     }
 
     public void wipe() {
@@ -118,8 +106,8 @@ public class RegisterRule implements TestRule {
 
     private JerseyClientBuilder clientBuilder() {
         InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
-        for (String registerHostname : registerHostnames.values()) {
-            customDnsResolver.add(registerHostname, InetAddress.getLoopbackAddress());
+        for (TestRegister register : TestRegister.values()) {
+            customDnsResolver.add(register.getHostname(), InetAddress.getLoopbackAddress());
         }
         customDnsResolver.add("localhost", InetAddress.getLoopbackAddress());
         return new JerseyClientBuilder(appRule.getEnvironment())
@@ -131,13 +119,13 @@ public class RegisterRule implements TestRule {
      * provides a DBI Handle for the given register
      * the handle will automatically be closed by the RegisterRule
      */
-    public Handle handleFor(String register) {
+    public Handle handleFor(TestRegister register) {
         Handle handle = new DBI(postgresConnectionString(register)).open();
         handles.add(handle);
         return handle;
     }
 
-    private String postgresConnectionString(String register) {
-        return String.format("jdbc:postgresql://localhost:5432/ft_openregister_java_%s?user=postgres&ApplicationName=RegisterRule", register);
+    private String postgresConnectionString(TestRegister register) {
+        return String.format("jdbc:postgresql://localhost:5432/ft_openregister_java_%s?user=postgres&ApplicationName=RegisterRule", register.name());
     }
 }

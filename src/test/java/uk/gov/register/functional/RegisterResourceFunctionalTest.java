@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.core.IsNot.not;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class RegisterResourceFunctionalTest {
 
@@ -32,13 +33,13 @@ public class RegisterResourceFunctionalTest {
 
     @Test
     public void registerJsonShouldContainEntryViewRegisterRegister() throws Throwable {
-        register.mintLines("address", "{\"address\":\"12345\"}",
+        register.mintLines(address, "{\"address\":\"12345\"}",
                 "{\"address\":\"6789\"}",
                 "{\"address\":\"145678\"}",
                 "{\"address\":\"145678\"}",
                 "{\"address\":\"6789\"}");
 
-        Response registerResourceFromAddressRegisterResponse = register.getRequest("address","/register.json");
+        Response registerResourceFromAddressRegisterResponse = register.getRequest(address, "/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
@@ -55,7 +56,7 @@ public class RegisterResourceFunctionalTest {
 
     @Test
     public void registerJsonShouldGenerateValidResponseForEmptyDB(){
-        Response registerResourceFromAddressRegisterResponse = register.getRequest("address","/register.json");
+        Response registerResourceFromAddressRegisterResponse = register.getRequest(address, "/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
 
         Map<String,?> registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(new GenericType<Map<String, ?>>(){});

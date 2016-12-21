@@ -14,6 +14,7 @@ import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class FindEntityTest {
 
@@ -23,12 +24,12 @@ public class FindEntityTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.mintLines("address", "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}");
+        register.mintLines(address, "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}");
     }
 
     @Test
     public void shouldRedirectCorrectly_whenUsingOldUrlForFindByPrimaryKey() throws JSONException {
-        WebTarget target = register.targetRegister("address");
+        WebTarget target = register.target(address);
         target.property("jersey.config.client.followRedirects",false);
         Response response = target.path("/address/12345.json").request().get();
 
@@ -40,7 +41,7 @@ public class FindEntityTest {
 
     @Test
     public void find_returnsTheCorrectTotalRecordsInPaginationHeader() {
-        Response response = register.getRequest("address", "/records/street/ellis");
+        Response response = register.getRequest(address, "/records/street/ellis");
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
 

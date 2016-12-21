@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
@@ -12,12 +13,14 @@ import java.util.Collection;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
+import static uk.gov.register.functional.app.TestRegister.postcode;
 
 @RunWith(Parameterized.class)
 public class DeleteRegisterDataAvailabilityFunctionalTest {
 
-    private static final String REGISTER_WHICH_ALLOWS_DELETE = "postcode";
-    private static final String REGISTER_WHICH_DENIES_DELETE = "address";
+    private static final TestRegister REGISTER_WHICH_ALLOWS_DELETE = postcode;
+    private static final TestRegister REGISTER_WHICH_DENIES_DELETE = address;
     private static final String DELETE_ENDPOINT = "/delete-register-data";
     private final Boolean enableRegisterDataDelete;
 
@@ -45,14 +48,14 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
 
     @Test
     public void checkDeleteRegisterDataStatusCode() throws Exception {
-        String registerName = enableRegisterDataDelete ? REGISTER_WHICH_ALLOWS_DELETE : REGISTER_WHICH_DENIES_DELETE;
-        Response response = isAuthenticated ? register.deleteRegisterData(registerName) : makeUnauthenticatedDeleteCallTo(registerName, DELETE_ENDPOINT);
+        TestRegister testRegister = enableRegisterDataDelete ? REGISTER_WHICH_ALLOWS_DELETE : REGISTER_WHICH_DENIES_DELETE;
+        Response response = isAuthenticated ? register.deleteRegisterData(testRegister) : makeUnauthenticatedDeleteCallTo(testRegister, DELETE_ENDPOINT);
 
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
     }
 
-    private Response makeUnauthenticatedDeleteCallTo(String registerName, String endpoint) {
-        // register.targetRegister() is unauthenticated
-        return register.targetRegister(registerName).path(endpoint).request().delete();
+    private Response makeUnauthenticatedDeleteCallTo(TestRegister testRegister, String endpoint) {
+        // register.target() is unauthenticated
+        return register.target(testRegister).path(endpoint).request().delete();
     }
 }

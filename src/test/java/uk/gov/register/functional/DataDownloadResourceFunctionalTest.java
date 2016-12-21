@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
@@ -16,8 +17,8 @@ import static org.junit.Assert.assertThat;
 @RunWith(Parameterized.class)
 public class DataDownloadResourceFunctionalTest {
 
-    public static final String REGISTER_WITH_DOWNLOAD_ENABLED = "address";
-    public static final String REGISTER_WITH_DOWNLOAD_DISABLED = "register";
+    public static final TestRegister REGISTER_WITH_DOWNLOAD_ENABLED = TestRegister.address;
+    public static final TestRegister REGISTER_WITH_DOWNLOAD_DISABLED = TestRegister.register;
     @ClassRule
     public static RegisterRule register = new RegisterRule();
 
@@ -43,9 +44,9 @@ public class DataDownloadResourceFunctionalTest {
 
     @Test
     public void checkDownloadResourceStatusCode() throws Exception {
-        String registerName = enableDownload ? REGISTER_WITH_DOWNLOAD_ENABLED : REGISTER_WITH_DOWNLOAD_DISABLED;
+        TestRegister testRegister = enableDownload ? REGISTER_WITH_DOWNLOAD_ENABLED : REGISTER_WITH_DOWNLOAD_DISABLED;
 
-        Response response = register.getRequest(registerName, targetUrl);
+        Response response = register.getRequest(testRegister, targetUrl);
         
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
     }

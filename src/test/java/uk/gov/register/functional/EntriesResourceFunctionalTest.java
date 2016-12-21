@@ -22,12 +22,13 @@ import java.time.format.DateTimeFormatter;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class EntriesResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
-    private final WebTarget addressTarget = register.targetRegister("address");
+    private final WebTarget addressTarget = register.target(address);
 
     @Before
     public void setup() {
@@ -36,21 +37,21 @@ public class EntriesResourceFunctionalTest {
 
     @Test
     public void entries_returnsEmptyResultJsonWhenNoEntryIsAvailable() {
-        Response response = register.getRequest("address", "/entries.json");
+        Response response = register.getRequest(address, "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.readEntity(ArrayNode.class).size(), equalTo(0));
     }
 
     @Test
     public void entries_setsAppropriateFilenameForDownload() {
-        Response response = register.getRequest("address", "/entries.json");
+        Response response = register.getRequest(address, "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-entries.json\""));
     }
 
     @Test
     public void entriesPageHasXhtmlLangAttributes() throws Throwable {
-        Response response = register.getRequest("address", "/entries", TEXT_HTML);
+        Response response = register.getRequest(address, "/entries", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
@@ -64,9 +65,9 @@ public class EntriesResourceFunctionalTest {
         String item1 = "{\"address\":\"1234\",\"street\":\"elvis\"}";
         String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
 
-        register.mintLines("address", item1, item2);
+        register.mintLines(address, item1, item2);
 
-        Response response = register.getRequest("address","/entries.json");
+        Response response = register.getRequest(address, "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         ArrayNode jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(2));
@@ -93,7 +94,7 @@ public class EntriesResourceFunctionalTest {
         String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
         String item3 = "{\"address\":\"567\",\"street\":\"john\"}";
 
-        register.mintLines("address", item1, item2, item3);
+        register.mintLines(address, item1, item2, item3);
 
         Response response = addressTarget.path("/entries.json").queryParam("start",1).queryParam("limit",2)
                 .request().get();
