@@ -8,7 +8,6 @@ import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import uk.gov.register.configuration.ConfigManager;
-import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -63,7 +62,6 @@ public class RegisterContextFactory {
         return new RegisterContext(
                 registerName,
                 configManager,
-                new InMemoryPowOfTwoNoLeaves(),
                 dbiFactory.build(environment, database, managedDataSource, registerName.value()),
                 getFlywayFactory(registerName).build(managedDataSource),
                 trackingId,
