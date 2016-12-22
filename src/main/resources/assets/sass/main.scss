@@ -65,23 +65,9 @@ main {
   @extend %site-width-container;
 }
 
-.phase-banner-alpha {
-  @include phase-banner($state: alpha);
+.phase-banner {
+  @include phase-banner();
   margin-bottom: $gutter;
-}
-
-.phase-banner-beta {
-  @include phase-banner($state: beta);
-  margin-bottom: $gutter;
-}
-
-.phase-banner-discovery {
-  @include phase-banner($state: discovery);
-  margin-bottom: $gutter;
-
-  .phase-tag {
-      background-color: $discovery-colour;
-  }
 }
 
 #footer .footer-meta .footer-meta-inner {
