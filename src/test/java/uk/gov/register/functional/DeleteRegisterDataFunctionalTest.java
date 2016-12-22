@@ -1,6 +1,5 @@
 package uk.gov.register.functional;
 
-import io.dropwizard.testing.ConfigOverride;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
@@ -19,8 +18,7 @@ import static uk.gov.register.functional.app.TestRegister.postcode;
 public class DeleteRegisterDataFunctionalTest {
     public static final TestRegister REGISTER_WHICH_ALLOWS_DELETING = postcode;
     @ClassRule
-    public static final RegisterRule register = new RegisterRule(
-            ConfigOverride.config("enableRegisterDataDelete", "true"));
+    public static final RegisterRule register = new RegisterRule();
 
     @Test
     public void deleteRegisterData_deletesAllDataFromDb() throws Exception {

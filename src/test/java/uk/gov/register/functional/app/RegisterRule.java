@@ -1,7 +1,6 @@
 package uk.gov.register.functional.app;
 
 import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.apache.http.impl.conn.InMemoryDnsResolver;
@@ -38,10 +37,9 @@ public class RegisterRule implements TestRule {
     private Client client;
     private List<Handle> handles = new ArrayList<>();
 
-    public RegisterRule(ConfigOverride... overrides) {
+    public RegisterRule() {
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
-                ResourceHelpers.resourceFilePath("test-app-config.yaml"),
-                overrides);
+                ResourceHelpers.resourceFilePath("test-app-config.yaml"));
         String[] registers = Arrays.stream(TestRegister.values())
                 .map(TestRegister::name)
                 .toArray(String[]::new);
