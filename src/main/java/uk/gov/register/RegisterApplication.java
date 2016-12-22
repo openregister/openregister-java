@@ -15,7 +15,8 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import uk.gov.organisation.client.GovukOrganisationClient;
-import uk.gov.register.auth.AuthBundle;
+import uk.gov.register.auth.BasicAuthFilter;
+import uk.gov.register.auth.RegisterAuthDynamicFeature;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.Factories;
@@ -59,7 +60,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                         new EnvironmentVariableSubstitutor(false)
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
-        bootstrap.addBundle(new AuthBundle());
         bootstrap.addBundle(new CorsBundle());
 
         System.setProperty("java.protocol.handler.pkgs", "uk.gov.register.protocols");
@@ -119,6 +119,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 "uk.gov.register.views.representations",
                 "uk.gov.register.resources",
                 "uk.gov.register.providers");
+        jersey.register(new RegisterAuthDynamicFeature(BasicAuthFilter.class));
 
         if (configuration.cloudWatchEnvironmentName().isPresent()) {
             ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();

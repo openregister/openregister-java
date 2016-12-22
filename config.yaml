@@ -27,6 +27,9 @@ registers:
 
       properties:
         charSet: UTF-8
+    credentials:
+      user: sasine
+      password: inhibition
 
 
 server:
@@ -46,6 +49,10 @@ historyPageUrl: https://registers-history.herokuapp.com/school-eng
 externalConfigDirectory: /tmp/openregister-java/external
 
 downloadConfigs: true
+
+credentials:
+  user: foo
+  password: bar
 
 # Logging settings.
 logging:

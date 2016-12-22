@@ -4,6 +4,7 @@ import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
@@ -28,7 +29,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), false, false, Optional.empty());
+        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), false, false, Optional.empty(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -38,7 +39,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), true, false, Optional.empty());
+        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), true, false, Optional.empty(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();

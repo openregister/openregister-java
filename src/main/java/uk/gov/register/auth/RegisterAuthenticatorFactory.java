@@ -1,32 +1,26 @@
 package uk.gov.register.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.basic.BasicCredentials;
+import uk.gov.register.auth.RegisterAuthenticator.User;
 
 import javax.validation.Valid;
-import java.util.Optional;
+import javax.validation.constraints.NotNull;
 
 public class RegisterAuthenticatorFactory {
     @Valid
+    @NotNull
     @JsonProperty
     private String user;
 
     @Valid
+    @NotNull
     @JsonProperty
     private String password;
 
-    public Optional<AuthDynamicFeature> build() {
-        if (user != null && password != null) {
-            RegisterAuthenticator registerAuthenticator = new RegisterAuthenticator(user, password);
-            AuthDynamicFeature authFeature = new AuthDynamicFeature(
-                    new BasicCredentialAuthFilter.Builder<RegisterAuthenticator.User>()
-                            .setAuthenticator(registerAuthenticator)
-                            .buildAuthFilter()
-            );
-            return Optional.of(authFeature);
-        }
-        return Optional.empty();
+    public RegisterAuthenticator buildAuthenticator() {
+        return new RegisterAuthenticator(user, password);
     }
 
 }

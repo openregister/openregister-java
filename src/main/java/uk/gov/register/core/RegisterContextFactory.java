@@ -7,6 +7,7 @@ import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
+import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.ConfigManager;
 
 import javax.validation.Valid;
@@ -38,18 +39,25 @@ public class RegisterContextFactory {
     @JsonProperty
     private Optional<String> historyPageUrl = Optional.empty();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private RegisterAuthenticatorFactory credentials;
+
     @JsonCreator
     public RegisterContextFactory(
             @JsonProperty("database") DataSourceFactory database,
             @JsonProperty("trackingId") Optional<String> trackingId,
             @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
-            @JsonProperty("historyPageUrl") Optional<String> historyPageUrl) {
+            @JsonProperty("historyPageUrl") Optional<String> historyPageUrl,
+            @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
         this.database = database;
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.historyPageUrl = historyPageUrl;
+        this.credentials = credentials;
     }
 
     private FlywayFactory getFlywayFactory(RegisterName registerName) {
@@ -74,6 +82,7 @@ public class RegisterContextFactory {
                 trackingId,
                 enableRegisterDataDelete,
                 enableDownloadResource,
-                historyPageUrl);
+                historyPageUrl,
+                credentials.buildAuthenticator());
     }
 }
