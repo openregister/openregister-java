@@ -24,17 +24,17 @@ public class ViewFactory {
     private final GovukOrganisationClient organisationClient;
     private final Provider<RegisterMetadata> registerMetadata;
     private final RegisterDomainConfiguration registerDomainConfiguration;
-    private final RegisterContentPages registerContentPages;
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
     private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
+    private final Provider<RegisterContentPagesConfiguration> registerContentPagesConfiguration;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
-                       RegisterContentPagesConfiguration registerContentPagesConfiguration,
+                       Provider<RegisterContentPagesConfiguration> registerContentPagesConfiguration,
                        Provider<RegisterMetadata> registerMetadata,
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
@@ -44,7 +44,7 @@ public class ViewFactory {
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerMetadata = registerMetadata;
-        this.registerContentPages = new RegisterContentPages(registerContentPagesConfiguration.getRegisterHistoryPageUrl());
+        this.registerContentPagesConfiguration = registerContentPagesConfiguration;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
@@ -67,7 +67,7 @@ public class ViewFactory {
                 totalEntries,
                 lastUpdated,
                 register.get(),
-                registerContentPages,
+                new RegisterContentPages(registerContentPagesConfiguration.get().getRegisterHistoryPageUrl()),
                 registerTrackingConfiguration.get(),
                 registerResolver);
     }

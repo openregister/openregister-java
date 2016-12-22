@@ -21,12 +21,14 @@ import java.util.function.Consumer;
 public class RegisterContext implements
         RegisterTrackingConfiguration,
         DeleteRegisterDataConfiguration,
+        RegisterContentPagesConfiguration,
         ResourceConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;
     private AtomicReference<MemoizationStore> memoizationStore;
     private DBI dbi;
     private Flyway flyway;
+    private final Optional<String> historyPageUrl;
     private final Optional<String> trackingId;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
@@ -34,11 +36,12 @@ public class RegisterContext implements
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager,
                            DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
-                           boolean enableDownloadResource) {
+                           boolean enableDownloadResource, Optional<String> historyPageUrl) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.dbi = dbi;
         this.flyway = flyway;
+        this.historyPageUrl = historyPageUrl;
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
@@ -128,5 +131,10 @@ public class RegisterContext implements
     @Override
     public boolean getEnableDownloadResource() {
         return enableDownloadResource;
+    }
+
+    @Override
+    public Optional<String> getRegisterHistoryPageUrl() {
+        return historyPageUrl;
     }
 }
