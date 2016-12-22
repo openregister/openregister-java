@@ -149,12 +149,14 @@ main {
 $table-header: #f5f5f5;
 $table-row: #f9f9f9;
 
+.table-wrapper {
+  overflow-x: scroll;
+}
+
 table {
   @include core-14;
   border-collapse: collapse;
   border: 1px solid $border-colour;
-  display: block;
-  overflow: scroll;
   width: 100%;
 
   margin-top: $gutter;

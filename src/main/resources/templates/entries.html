@@ -5,37 +5,45 @@
 <body>
 <header th:replace="main.html::global-header"></header>
 <main id="main" role="main">
-    <div th:replace="main.html::phase"></div>
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <div th:include="pagination.html::pagination-top('entries')"></div>
-            <div th:if="${content.recordKey.present}">Part of <a th:href="${'/record/' + content.recordKey.get()}" th:text="${'Record: ' + content.recordKey.get()}">Record: GM</a></div>
-        </div>
-        <div class="column-third" th:include="main.html :: attribution"></div>
+  <div th:replace="main.html::phase"></div>
+  <div class="grid-row">
+    <div class="column-two-thirds">
+      <div th:include="pagination.html::pagination-top('entries')"></div>
+      <div th:if="${content.recordKey.present}">
+        Part of <a th:href="${'/record/' + content.recordKey.get()}" th:text="${'Record: ' + content.recordKey.get()}">Record: GM</a>
+      </div>
     </div>
+    <div class="column-third" th:include="main.html :: attribution"></div>
+  </div>
 
+  <div class="table-wrapper">
     <table th:if="${#lists.isEmpty(content.entries) == false}">
-        <thead>
-        <tr>
-            <th scope="col">Entry</th>
-            <th scope="col">item-hash</th>
-            <th scope="col">entry-timestamp</th>
-            <th scope="col">key</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="entry : ${content.entries}">
-            <td><a th:href="${'/entry/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a></td>
-            <td><a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a></td>
-            <td th:text="${entry.timestamp}"></td>
-            <td th:text="${entry.key}"></td>
-        </tr>
-        </tbody>
+      <thead>
+      <tr>
+        <th scope="col">Entry</th>
+        <th scope="col">item-hash</th>
+        <th scope="col">entry-timestamp</th>
+        <th scope="col">key</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="entry : ${content.entries}">
+        <td>
+            <a th:href="${'/entry/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
+          </td>
+        <td>
+          <a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a>
+        </td>
+        <td th:text="${entry.timestamp}"></td>
+        <td th:text="${entry.key}"></td>
+      </tr>
+      </tbody>
     </table>
+  </div>
 
-    <nav th:replace="pagination.html::pagination-bottom"></nav>
+  <nav th:replace="pagination.html::pagination-bottom"></nav>
 
-    <div th:include="data-formats.html::data-formats"></div>
+  <div th:include="data-formats.html::data-formats"></div>
 </main>
 
 <footer th:replace="main.html::footer"></footer>
