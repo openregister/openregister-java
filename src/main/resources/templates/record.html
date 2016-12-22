@@ -12,7 +12,7 @@
             <h1 class="entry-header" th:text="${primaryKey}">Record Header</h1>
             <p class="entry-source">A record in the <a href="/"
                                                        th:text="${friendlyRegisterName}"></a>.
-                <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(content.primaryKey)}">View this register.</a>
+                <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}">View this register.</a>
             </p>
         </div>
         <div class="column-third" th:include="main.html :: attribution"></div>
