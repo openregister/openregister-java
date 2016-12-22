@@ -33,16 +33,23 @@ public class RegisterContextFactory {
     @JsonProperty
     private boolean enableDownloadResource = false;
 
+    @SuppressWarnings("unused")
+    @Valid
+    @JsonProperty
+    private Optional<String> historyPageUrl = Optional.empty();
+
     @JsonCreator
     public RegisterContextFactory(
             @JsonProperty("database") DataSourceFactory database,
             @JsonProperty("trackingId") Optional<String> trackingId,
             @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
-            @JsonProperty("enableDownloadResource") boolean enableDownloadResource) {
+            @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
+            @JsonProperty("historyPageUrl") Optional<String> historyPageUrl) {
         this.database = database;
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
+        this.historyPageUrl = historyPageUrl;
     }
 
     private FlywayFactory getFlywayFactory(RegisterName registerName) {
@@ -66,6 +73,7 @@ public class RegisterContextFactory {
                 getFlywayFactory(registerName).build(managedDataSource),
                 trackingId,
                 enableRegisterDataDelete,
-                enableDownloadResource);
+                enableDownloadResource,
+                historyPageUrl);
     }
 }
