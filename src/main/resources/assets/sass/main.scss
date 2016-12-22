@@ -150,6 +150,8 @@ $table-header: #f5f5f5;
 $table-row: #f9f9f9;
 
 .table-wrapper {
+  margin-top: $gutter;
+  margin-bottom: $gutter;
   overflow-x: scroll;
 }
 
@@ -158,9 +160,6 @@ table {
   border-collapse: collapse;
   border: 1px solid $border-colour;
   width: 100%;
-
-  margin-top: $gutter;
-  margin-bottom: $gutter;
 
   td, th {
     vertical-align: top;
