@@ -9,7 +9,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             Record:
-            <h1 class="entry-header" th:text="${primaryKey}">Record Header</h1>
+            <h1 class="entry-header" th:text="${content.primaryKey}">Record Header</h1>
             <p class="entry-source">A record in the <a href="/"
                                                        th:text="${friendlyRegisterName}"></a>.
                 <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}">View this register.</a>
