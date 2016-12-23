@@ -42,7 +42,7 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
                 {true, true, 200},
                 {true, false, 401},
                 {false, true, 404},
-                {false, false, 401}
+                {false, false, 404}
         });
     }
 

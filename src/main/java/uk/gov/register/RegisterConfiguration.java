@@ -6,7 +6,6 @@ import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
-import uk.gov.register.auth.AuthenticatorConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.AllTheRegistersFactory;
@@ -21,8 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RegisterConfiguration extends Configuration
-        implements AuthenticatorConfiguration,
-        RegisterDomainConfiguration,
+        implements RegisterDomainConfiguration,
         RegisterConfigConfiguration,
         GovukClientConfiguration {
     @Valid
@@ -42,6 +40,7 @@ public class RegisterConfiguration extends Configuration
     private String registerDomain = "openregister.org";
 
     @Valid
+    @NotNull
     @JsonProperty
     private RegisterAuthenticatorFactory credentials = new RegisterAuthenticatorFactory();
 
@@ -99,7 +98,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl);
+        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
@@ -108,11 +107,6 @@ public class RegisterConfiguration extends Configuration
 
     public RegisterName getDefaultRegisterName() {
         return register;
-    }
-
-    @Override
-    public RegisterAuthenticatorFactory getAuthenticator() {
-        return credentials;
     }
 
     public Optional<String> cloudWatchEnvironmentName() {

@@ -4,7 +4,6 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.apache.http.impl.conn.InMemoryDnsResolver;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -63,7 +62,7 @@ public class RegisterRule implements TestRule {
     }
 
     private WebTarget authenticatedTarget(TestRegister register) {
-        return target(register).register(HttpAuthenticationFeature.basicBuilder().credentials("foo", "bar").build());
+        return target(register).register(register.httpAuthFeature());
     }
 
     private WebTarget target(String targetHost) {

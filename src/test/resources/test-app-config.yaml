@@ -37,6 +37,9 @@ registers:
         charSet: UTF-8
     trackingId: ""
     enableRegisterDataDelete: true
+    credentials:
+      user: pat
+      password: goggins
   register:
     database:
       driverClass: org.postgresql.Driver
@@ -52,6 +55,9 @@ registers:
 
       properties:
         charSet: UTF-8
+    credentials:
+      user: sasine
+      password: inhibition
 
 
 database:

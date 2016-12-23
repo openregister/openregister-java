@@ -6,6 +6,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
+import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
@@ -33,10 +34,11 @@ public class RegisterContext implements
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterMetadata registerMetadata;
+    private RegisterAuthenticator authenticator;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager,
                            DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
-                           boolean enableDownloadResource, Optional<String> historyPageUrl) {
+                           boolean enableDownloadResource, Optional<String> historyPageUrl, RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.dbi = dbi;
@@ -47,6 +49,7 @@ public class RegisterContext implements
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
+        this.authenticator = authenticator;
     }
 
     public RegisterName getRegisterName() {
@@ -131,6 +134,10 @@ public class RegisterContext implements
     @Override
     public boolean getEnableDownloadResource() {
         return enableDownloadResource;
+    }
+
+    public RegisterAuthenticator getAuthenticator() {
+        return authenticator;
     }
 
     @Override
