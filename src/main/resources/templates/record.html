@@ -19,7 +19,7 @@
       <div class="column-third" th:include="main.html :: attribution"></div>
     </div>
 
-    <div th:include="fragments/item-table.html :: item-table (content = ${content.content})"></div>
+    <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>
 
     <div th:include="data-formats.html::data-formats"></div>
 

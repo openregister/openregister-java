@@ -132,6 +132,13 @@ main {
       display: inline-block;
       letter-spacing: normal;
       font-size: 16px;
+      overflow: hidden;
+
+      // Remove white space before comma which is added below
+      a {
+        float: left;
+        line-height: 1.5;
+      }
 
       &:after {
         content: ",\a0";
