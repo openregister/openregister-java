@@ -3,57 +3,60 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head th:include="main.html::head"></head>
 <body>
-<header th:replace="main.html::global-header"></header>
+  <header th:replace="main.html::global-header"></header>
 
-<div class="content-grid-row">
+  <div class="content-grid-row">
     <main id="content" role="main">
-        <div th:replace="main.html::phase"></div>
-        <a href="/">&lt; back</a>
-        <header th:replace="main.html::page-header(title='Download register data')"></header>
-        <article role="article" class="article-container group content-two-thirds">
-            <p>
-                Registers are arranged into pages. There are 100 records per page.
-                You can download up to 5000 records from this register in bulk as:
-            </p>
-            <ul>
-                <li><a href="/records.json?page-size=5000" rel="alternate" class="js-download" data-download-type="JSON">JSON</a></li>
-                <li><a href="/records.ttl?page-size=5000" rel="alternate" class="js-download" data-download-type="TTL">TTL</a></li>
-                <li><a href="/records.tsv?page-size=5000" rel="alternate" class="js-download" data-download-type="TSV">TSV</a></li>
-                <li><a href="/records.csv?page-size=5000" rel="alternate" class="js-download" data-download-type="CSV">CSV</a></li>
-            </ul>
-            <p>You can download a section of a register by navigating to the page of records you need and selecting ‘Download this data’ at the bottom of the page.</p>
-            <p>
-                You can download more entries or select a portion of the register by amending your URL. Use <code class="url-param">page-size</code> to define the number of records you want to download.
-                You can use <code class="url-param">page-index</code> to specify a particular page of the register.
-            </p>
-            <p>For example, in a register of 1000 entries, you could download 250 entries in a JSON format at a time using the at the following URLs.</p>
-            <p>
-                <ul class="url-list">
-                    <li>/records.json?page-size=250</li>
-                    <li>/records.json?page-index=2&amp;page-size=250</li>
-                    <li>/records.json?page-index=3&amp;page-size=250</li>
-                    <li>/records.json?page-index=4&amp;page-size=250</li>
-                </ul>
-            </p>
+      <div th:replace="main.html::phase"></div>
+      <a href="/">&lt; back</a>
+      <header th:replace="main.html::page-header(title='Download register data')"></header>
+      <article role="article" class="article-container group content-two-thirds">
+        <p>
+          Registers are arranged into pages. There are 100 records per page.
+          You can download up to 5000 records from this register in bulk as:
+        </p>
+        <ul>
+          <li><a href="/records.json?page-size=5000" rel="alternate" class="js-download" data-download-type="JSON">JSON</a></li>
+          <li><a href="/records.ttl?page-size=5000" rel="alternate" class="js-download" data-download-type="TTL">TTL</a></li>
+          <li><a href="/records.tsv?page-size=5000" rel="alternate" class="js-download" data-download-type="TSV">TSV</a></li>
+          <li><a href="/records.csv?page-size=5000" rel="alternate" class="js-download" data-download-type="CSV">CSV</a></li>
+        </ul>
+        <p>You can download a section of a register by navigating to the page of records you need and selecting ‘Download this data’ at the bottom of the page.</p>
+        <p>
+            You can download more entries or select a portion of the register by amending your URL. Use <code class="url-param">page-size</code> to define the number of records you want to download.
+            You can use <code class="url-param">page-index</code> to specify a particular page of the register.
+        </p>
+        <p>For example, in a register of 1000 entries, you could download 250 entries in a JSON format at a time using the at the following URLs.</p>
+        <p>
+          <ul class="url-list">
+            <li>/records.json?page-size=250</li>
+            <li>/records.json?page-index=2&amp;page-size=250</li>
+            <li>/records.json?page-index=3&amp;page-size=250</li>
+            <li>/records.json?page-index=4&amp;page-size=250</li>
+          </ul>
+        </p>
 
-            <p>You can also download the data in CSV, TTL, or TSV formats by amending <code class="url-param">.json</code> to the format of your choice.</p>
+        <p>
+          You can also download the data in CSV, TTL, or TSV formats by amending <code class="url-param">.json</code> to the format of your choice.
+        </p>
 
-            <p th:if="${#bools.isTrue(downloadEnabled)}">
-                You can also download the full contents of this register <a href="/download-register" class="js-download" data-download-type="ZIP">in JSON as a zip file</a>.
-                Please note, each entry will be downloaded as a separate file.
-            </p>
+        <p th:if="${#bools.isTrue(downloadEnabled)}">
+          You can also download the full contents of this register
+          <a href="/download-register" class="js-download" data-download-type="ZIP">in JSON as a zip file</a>.
+          Please note, each entry will be downloaded as a separate file.
+        </p>
 
-            <h2>Updates</h2>
-            <p>Once you have downloaded your copy of the register you can check for new entries on the <a href="/entries">entries page</a>.</p>
-        </article>
+        <h2>Updates</h2>
+        <p>Once you have downloaded your copy of the register you can check for new entries on the <a href="/entries">entries page</a>.</p>
+      </article>
     </main>
-</div>
+  </div>
 
-<footer th:replace="main.html::footer"></footer>
+  <footer th:replace="main.html::footer"></footer>
 
-<th:block th:if="${registerTrackingId.present}">
+  <th:block th:if="${registerTrackingId.present}">
     <script type="text/javascript" src="/assets/js/analytics-download-type.js"></script>
-</th:block>
+  </th:block>
 
 </body>
 </html>

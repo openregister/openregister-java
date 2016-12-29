@@ -3,29 +3,30 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head th:include="main.html::head"></head>
 <body>
-<header th:replace="main.html::global-header"></header>
-<main id="main" role="main">
+  <header th:replace="main.html::global-header"></header>
+
+  <main id="main" role="main">
     <div th:replace="main.html::phase"></div>
     <div class="grid-row">
-        <div class="column-two-thirds">
-            Entry:
-            <h1 th:text="${content.entryNumber}">Entry Number Header</h1>
-
-            <p class="entry-source">
-                An entry in the
-                <a href="/" th:text="${friendlyRegisterName}"></a>
-            </p>
-        </div>
-        <div class="column-third" th:include="main.html :: attribution"></div>
+      <div class="column-two-thirds">
+        Entry:
+        <h1 th:text="${content.entryNumber}">Entry Number Header</h1>
+        <p class="entry-source">
+          An entry in the
+          <a href="/" th:text="${friendlyRegisterName}"></a>
+        </p>
+      </div>
+      <div class="column-third" th:include="main.html :: attribution"></div>
     </div>
 
-    <div th:include="fragments/entry-table.html :: entry-table (entry = ${content})"></div>
+    <div th:include="fragments/entry-table.html :: entry-table (entry = ${content})" class="table-wrapper"></div>
 
     <div th:include="data-formats.html::data-formats"></div>
 
     <div th:replace="copyright.html::copyright"></div>
+  </main>
 
-</main>
-<footer th:replace="main.html::footer"></footer>
+  <footer th:replace="main.html::footer"></footer>
+
 </body>
 </html>

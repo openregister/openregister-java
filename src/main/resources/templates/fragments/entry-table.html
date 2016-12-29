@@ -2,39 +2,39 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <body>
-<div th:fragment="entry-table(entry)" class="table-wrapper">
-  <table class="entry">
-    <colgroup>
-      <col class="field-column"/>
-      <col class="value-column"/>
-    </colgroup>
-    <thead>
-      <tr>
-        <th scope="col">Field</th>
-        <th scope="col">Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td th:text="entry-number"></td>
-        <td th:text="${entry.entryNumber}"></td>
-      </tr>
-      <tr>
-        <td th:text="item-hash"></td>
-        <td>
-          <a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a>
-        </td>
-      </tr>
-      <tr>
-        <td th:text="entry-timestamp"></td>
-        <td th:text="${entry.timestampAsISOFormat}"></td>
-      </tr>
-      <tr>
-        <td th:text="key"></td>
-        <td th:text="${entry.key}"></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <div th:fragment="entry-table(entry)">
+    <table class="entry">
+      <colgroup>
+        <col class="field-column"/>
+        <col class="value-column"/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">Field</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td th:text="entry-number"></td>
+          <td th:text="${entry.entryNumber}"></td>
+        </tr>
+        <tr>
+          <td th:text="item-hash"></td>
+          <td>
+            <a th:href="${'/item/' + entry.sha256hex}" th:text="${entry.sha256hex}"></a>
+          </td>
+        </tr>
+        <tr>
+          <td th:text="entry-timestamp"></td>
+          <td th:text="${entry.timestampAsISOFormat}"></td>
+        </tr>
+        <tr>
+          <td th:text="key"></td>
+          <td th:text="${entry.key}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
