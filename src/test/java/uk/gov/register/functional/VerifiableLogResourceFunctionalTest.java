@@ -69,6 +69,9 @@ public class VerifiableLogResourceFunctionalTest {
 
     @Test
     public void entryProofsAreDifferentForEntriesInSameSubtree() {
+        // This tests that we are mapping entry numbers (one-indexed) to leaf indexes correctly (zero-indexed).
+        // In the case that we accidentally map to zero-indexed entry nubers this test would fail
+
         Response entry1Proof = register.getRequest(address, "/proof/entry/1/2/" + proofIdentifier);
         Response entry2Proof = register.getRequest(address, "/proof/entry/2/2/" + proofIdentifier);
 
@@ -83,7 +86,7 @@ public class VerifiableLogResourceFunctionalTest {
 
         assertThat(entry1Path, hasSize(1));
         assertThat(entry2Path, hasSize(1));
-        assertThat(entry1Path, not(contains(entry2Path)));
+        assertThat(entry1Path, not(equalTo(entry2Path)));
     }
 
     @SuppressWarnings("unchecked")
