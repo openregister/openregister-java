@@ -14,6 +14,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.CommonProperties;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.BasicAuthFilter;
 import uk.gov.register.auth.RegisterAuthDynamicFeature;
@@ -70,6 +71,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
 
         JerseyEnvironment jersey = environment.jersey();
+        jersey.property(CommonProperties.OUTBOUND_CONTENT_LENGTH_BUFFER, 0);
+
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
 
