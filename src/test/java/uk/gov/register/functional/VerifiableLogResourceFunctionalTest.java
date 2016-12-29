@@ -12,10 +12,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.isIn;
+import static org.hamcrest.Matchers.*;
 import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.functional.app.TestRegister.postcode;
 
@@ -68,6 +65,25 @@ public class VerifiableLogResourceFunctionalTest {
 
         List<?> auditPath = (List)(responseData.get("merkle-consistency-nodes"));
         assertThat(auditPath, hasSize(2));
+    }
+
+    @Test
+    public void entryProofsAreDifferentForEntriesInSameSubtree() {
+        Response entry1Proof = register.getRequest(address, "/proof/entry/1/2/" + proofIdentifier);
+        Response entry2Proof = register.getRequest(address, "/proof/entry/2/2/" + proofIdentifier);
+
+        assertThat(entry1Proof.getStatus(), equalTo(200));
+        assertThat(entry2Proof.getStatus(), equalTo(200));
+
+        Map<?,?> entry1ProofData = entry1Proof.readEntity(Map.class);
+        Map<?,?> entry2ProofData = entry2Proof.readEntity(Map.class);
+
+        List<?> entry1Path = (List)(entry1ProofData.get("merkle-audit-path"));
+        List<?> entry2Path = (List)(entry2ProofData.get("merkle-audit-path"));
+
+        assertThat(entry1Path, hasSize(1));
+        assertThat(entry2Path, hasSize(1));
+        assertThat(entry1Path, not(contains(entry2Path)));
     }
 
     @SuppressWarnings("unchecked")
