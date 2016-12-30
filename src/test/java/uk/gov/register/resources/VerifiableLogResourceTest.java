@@ -81,15 +81,6 @@ public class VerifiableLogResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void entryProofShouldThrowBadRequestExceptionIfTotalEntriesTooSmall() throws NoSuchAlgorithmException {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
-
-        vlResource.entryProof(0, 5);
-    }
-
-    @Test(expected = BadRequestException.class)
     public void entryProofShouldThrowBadRequestExceptionIfEntryNumberTooSmall() throws NoSuchAlgorithmException {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getTotalEntries()).thenReturn(8);
