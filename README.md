@@ -19,6 +19,8 @@ A java implementation of a register
 
 # Working on the frontend
 
+[![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 ## Updating the styles
 
 Recompile the `.scss` files to `.css` via Gradle task:
