@@ -2,12 +2,8 @@ package uk.gov.register.resources;
 
 import io.dropwizard.views.View;
 import uk.gov.register.configuration.ResourceConfiguration;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.RegisterDetail;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.serialization.RegisterSerialisationFormat;
+import uk.gov.register.core.*;
+import uk.gov.register.serialization.CommandParser;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.views.ViewFactory;
@@ -18,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.util.Collection;
 
 @Path("/")
@@ -25,17 +22,23 @@ public class DataDownload {
 
     private final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
-    private RegisterName registerPrimaryKey;
+    private final RegisterName registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
-    private RegisterSerialisationFormatService rsfService;
+    private final RegisterSerialisationFormatService rsfService;
+    private final CommandParser commandParser;
+
 
     @Inject
-    public DataDownload(RegisterReadOnly register, ViewFactory viewFactory, ResourceConfiguration resourceConfiguration, RegisterSerialisationFormatService rsfService) {
+    public DataDownload(RegisterReadOnly register,
+                        ViewFactory viewFactory,
+                        ResourceConfiguration resourceConfiguration,
+                        RegisterSerialisationFormatService rsfService) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.registerPrimaryKey = register.getRegisterName();
         this.resourceConfiguration = resourceConfiguration;
         this.rsfService = rsfService;
+        this.commandParser = new CommandParser();
     }
 
     @GET
@@ -67,15 +70,18 @@ public class DataDownload {
     @Path("/download-rsf")
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
-    public RegisterSerialisationFormat downloadRSF() {
-        return rsfService.createRegisterSerialisationFormat();
+    public Response downloadRSF() {
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), commandParser.getFileExtension());
+        return Response
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, commandParser))
+                .header("Content-Disposition", rsfFileName).build();
     }
 
     @GET
     @Path("/download-rsf/{total-entries-1}/{total-entries-2}")
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
-    public RegisterSerialisationFormat downloadPartialRSF(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
+    public Response downloadPartialRSF(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
         if (totalEntries1 < 0) {
             throw new BadRequestException("total-entries-1 must be 0 or greater");
         }
@@ -86,11 +92,14 @@ public class DataDownload {
 
         int totalEntriesInRegister = register.getTotalEntries();
 
-        if (totalEntries2 > totalEntriesInRegister){
+        if (totalEntries2 > totalEntriesInRegister) {
             throw new BadRequestException("total-entries-2 must not exceed number of total entries in the register");
         }
 
-        return rsfService.createRegisterSerialisationFormat(totalEntries1, totalEntries2);
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), commandParser.getFileExtension());
+        return Response
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, commandParser, totalEntries1, totalEntries2))
+                .header("Content-Disposition", rsfFileName).build();
     }
 
     @GET
