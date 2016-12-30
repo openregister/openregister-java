@@ -17,15 +17,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractEntryLog implements EntryLog {
     protected final EntryQueryDAO entryQueryDAO;
-    protected final VerifiableLog verifiableLog;
+    private final MemoizationStore memoizationStore;
 
     protected AbstractEntryLog(EntryQueryDAO entryQueryDAO, MemoizationStore memoizationStore) {
         this.entryQueryDAO = entryQueryDAO;
-        verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new EntryMerkleLeafStore(this.entryQueryDAO), memoizationStore);
+        this.memoizationStore = memoizationStore;
     }
 
     @Override
@@ -73,7 +74,7 @@ public abstract class AbstractEntryLog implements EntryLog {
     @Override
     public RegisterProof getRegisterProof() {
         checkpoint();
-        String rootHash = bytesToString(verifiableLog.getCurrentRootHash());
+        String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getCurrentRootHash()));
 
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
     }
@@ -81,7 +82,7 @@ public abstract class AbstractEntryLog implements EntryLog {
     @Override
     public RegisterProof getRegisterProof(int totalEntries) {
         checkpoint();
-        String rootHash = bytesToString(verifiableLog.getSpecificRootHash(totalEntries));
+        String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getSpecificRootHash(totalEntries)));
 
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
     }
@@ -89,11 +90,11 @@ public abstract class AbstractEntryLog implements EntryLog {
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
         checkpoint();
-        List<HashValue> auditProof =
+        List<HashValue> auditProof = withVerifiableLog(verifiableLog ->
                 verifiableLog.auditProof(entryNumber, totalEntries)
                         .stream()
                         .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toList()));
 
         return new EntryProof(Integer.toString(entryNumber), auditProof);
     }
@@ -101,11 +102,11 @@ public abstract class AbstractEntryLog implements EntryLog {
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
         checkpoint();
-        List<HashValue> consistencyProof =
-                verifiableLog.consistencyProof(totalEntries1, totalEntries2)
-                        .stream()
-                        .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
-                        .collect(Collectors.toList());
+        List<HashValue> consistencyProof = withVerifiableLog(verifiableLog ->
+            verifiableLog.consistencyProof(totalEntries1, totalEntries2)
+                    .stream()
+                    .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
+                    .collect(Collectors.toList()));
 
         return new ConsistencyProof(consistencyProof);
     }
@@ -117,5 +118,12 @@ public abstract class AbstractEntryLog implements EntryLog {
     @Override
     public void checkpoint() {
         // by default, do nothing
+    }
+
+    private <R> R withVerifiableLog(Function<VerifiableLog, R> callback) {
+        return EntryIterator.withEntryIterator(entryQueryDAO, entryIterator -> {
+            VerifiableLog verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new EntryMerkleLeafStore(entryQueryDAO, entryIterator), memoizationStore);
+            return callback.apply(verifiableLog);
+        });
     }
 }
