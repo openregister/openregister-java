@@ -91,7 +91,7 @@ public abstract class AbstractEntryLog implements EntryLog {
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
         checkpoint();
         List<HashValue> auditProof = withVerifiableLog(verifiableLog ->
-                verifiableLog.auditProof(entryNumber, totalEntries)
+                verifiableLog.auditProof(entryNumber - 1, totalEntries)
                         .stream()
                         .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
                         .collect(Collectors.toList()));
