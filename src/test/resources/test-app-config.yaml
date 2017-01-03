@@ -75,3 +75,5 @@ database:
   properties:
     charSet: UTF-8
 enableDownloadResource: true
+
+propertyToTestUnknownPropertiesAllowed: true
