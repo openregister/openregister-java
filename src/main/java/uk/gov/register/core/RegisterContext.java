@@ -30,6 +30,7 @@ public class RegisterContext implements
     private DBI dbi;
     private Flyway flyway;
     private final Optional<String> historyPageUrl;
+    private final Optional<String> custodianName;
     private final Optional<String> trackingId;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
@@ -38,12 +39,14 @@ public class RegisterContext implements
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager,
                            DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
-                           boolean enableDownloadResource, Optional<String> historyPageUrl, RegisterAuthenticator authenticator) {
+                           boolean enableDownloadResource, Optional<String> historyPageUrl,
+                           Optional<String> custodianName, RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.dbi = dbi;
         this.flyway = flyway;
         this.historyPageUrl = historyPageUrl;
+        this.custodianName = custodianName;
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
@@ -144,4 +147,7 @@ public class RegisterContext implements
     public Optional<String> getRegisterHistoryPageUrl() {
         return historyPageUrl;
     }
+
+    @Override
+    public Optional<String> getCustodianName() { return custodianName; }
 }

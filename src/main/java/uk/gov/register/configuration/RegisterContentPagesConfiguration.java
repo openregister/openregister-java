@@ -7,4 +7,5 @@ import java.util.Optional;
 @Contract
 public interface RegisterContentPagesConfiguration {
     Optional<String> getRegisterHistoryPageUrl();
+    Optional<String> getCustodianName();
 }

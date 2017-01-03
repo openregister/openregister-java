@@ -30,7 +30,7 @@ public class HomePageViewTest {
     private final RegisterResolver registerResolver = registerName -> URI.create("http://" + registerName + ".test.register.gov.uk");
     @Mock
     RequestContext mockRequestContext;
-    RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty());
+    RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty());
 
     @Test
     public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
@@ -77,17 +77,32 @@ public class HomePageViewTest {
     }
 
     @Test
-    public void shouldDisplayHistoryPageIfAvailable() {
-        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty());
+    public void shouldGetHistoryPageIfAvailable() {
+        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), registerResolver);
 
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(false));
 
         String historyUrl = "http://register-history.openregister.org";
-        registerContentPages = new RegisterContentPages(Optional.of(historyUrl));
+        registerContentPages = new RegisterContentPages(Optional.of(historyUrl), Optional.empty());
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), registerResolver);
 
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(true));
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().get(), is(historyUrl));
+    }
+
+    @Test
+    public void shouldGetCustodianNameIfAvailable() {
+        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), registerResolver);
+
+        assertThat(homePageView.getContentPages().getCustodianName().isPresent(), is(false));
+
+        String custodianName = "John Smith";
+        registerContentPages = new RegisterContentPages(Optional.empty(), Optional.of(custodianName));
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), registerResolver);
+
+        assertThat(homePageView.getContentPages().getCustodianName().isPresent(), is(true));
+        assertThat(homePageView.getContentPages().getCustodianName().get(), is(custodianName));
     }
 }

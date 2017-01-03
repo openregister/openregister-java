@@ -67,7 +67,8 @@ public class ViewFactory {
                 totalEntries,
                 lastUpdated,
                 register.get(),
-                new RegisterContentPages(registerContentPagesConfiguration.get().getRegisterHistoryPageUrl()),
+                new RegisterContentPages(registerContentPagesConfiguration.get().getRegisterHistoryPageUrl(),
+                        registerContentPagesConfiguration.get().getCustodianName()),
                 registerTrackingConfiguration.get(),
                 registerResolver);
     }
