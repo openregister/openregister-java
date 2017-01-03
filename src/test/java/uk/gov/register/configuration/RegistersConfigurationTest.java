@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
-public class RegistersConfigurationFunctionalTest {
+public class RegistersConfigurationTest {
     @Test
     public void configuration_shouldReturnRegisterData_whenRegisterExists() {
         RegistersConfiguration configuration = new RegistersConfiguration(Optional.ofNullable(System.getProperty("registersYaml")));

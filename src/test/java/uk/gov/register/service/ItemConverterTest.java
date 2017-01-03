@@ -4,17 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.RegisterConfiguration;
 import uk.gov.register.configuration.ConfigManager;
-import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
-import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
 import uk.gov.register.core.StringValue;
 import uk.gov.register.exceptions.NoSuchConfigException;
-import uk.gov.register.resources.RequestContext;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,10 +22,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ItemConverterFunctionalTest {
-    private FieldsConfiguration fieldsConfiguration;
-    private RequestContext requestContext;
-    private RegisterDomainConfiguration registerDomainConfiguration;
+public class ItemConverterTest {
     private ConfigManager configManager;
     private ItemConverter itemConverter;
 
@@ -38,13 +31,6 @@ public class ItemConverterFunctionalTest {
         RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
 
-        fieldsConfiguration = new FieldsConfiguration(Optional.ofNullable(System.getProperty("fieldsYaml")));
-        requestContext = new RequestContext() {
-            @Override
-            public String getScheme() { return "http"; }
-        };
-
-        registerDomainConfiguration = new RegisterConfiguration();
         configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.empty());
         configManager.refreshConfig();
         itemConverter = new ItemConverter(configManager);
