@@ -4,9 +4,11 @@ import java.util.Optional;
 
 public class RegisterContentPages {
     private final Optional<String> registerHistoryUrl;
+    private final Optional<String> custodianName;
 
-    public RegisterContentPages(Optional<String> registerHistoryUrl) {
+    public RegisterContentPages(Optional<String> registerHistoryUrl, Optional<String> custodianName) {
         this.registerHistoryUrl = registerHistoryUrl;
+        this.custodianName = custodianName;
     }
 
     @SuppressWarnings("unused, used from template")
@@ -28,4 +30,6 @@ public class RegisterContentPages {
     public Optional<String> getRegisterHistoryPageUrl() {
         return registerHistoryUrl;
     }
+
+    public Optional<String> getCustodianName() { return custodianName; }
 }

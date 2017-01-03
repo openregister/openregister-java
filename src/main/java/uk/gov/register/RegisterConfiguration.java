@@ -43,6 +43,10 @@ public class RegisterConfiguration extends Configuration
     private String registerDomain = "openregister.org";
 
     @Valid
+    @JsonProperty
+    private Optional<String> custodianName = Optional.empty();
+
+    @Valid
     @NotNull
     @JsonProperty
     private RegisterAuthenticatorFactory credentials = new RegisterAuthenticatorFactory();
@@ -101,7 +105,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, credentials);
+        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, custodianName, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
