@@ -121,8 +121,6 @@ public class RegisterSerialisationFormatServiceTest {
         verify(register, times(1)).getEntryIterator();
         verify(register, times(1)).getRegisterProof();
 
-        AssertRootHashCommand expectedRootHashCommand = new AssertRootHashCommand(expectedRegisterProof);
-
         assertThat(actualCommands.size(), equalTo(6));
         assertThat(actualCommands, contains(
                 new AssertRootHashCommand(emptyRegisterProof),
@@ -130,15 +128,13 @@ public class RegisterSerialisationFormatServiceTest {
                 new AddItemCommand(item2),
                 new AppendEntryCommand(entry1),
                 new AppendEntryCommand(entry2),
-                expectedRootHashCommand));
+                new AssertRootHashCommand(expectedRegisterProof)));
     }
 
     @Test
     public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
         RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"));
         RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"));
-        RegisterCommand assertRootOneEntryInRegister = new AssertRootHashCommand(oneEntryRegisterProof);
-        RegisterCommand assertRootTwoEntriesInRegister = new AssertRootHashCommand(twoEntriesRegisterProof);
 
         when(register.getItemIterator(1, 2)).thenReturn(singletonList(item1).iterator());
         when(register.getEntryIterator(1, 2)).thenReturn(singletonList(entry2).iterator());
@@ -153,10 +149,10 @@ public class RegisterSerialisationFormatServiceTest {
 
         assertThat(actualCommands.size(), equalTo(4));
         assertThat(actualCommands, contains(
-                assertRootOneEntryInRegister,
+                new AssertRootHashCommand(oneEntryRegisterProof),
                 new AddItemCommand(item1),
                 new AppendEntryCommand(entry2),
-                assertRootTwoEntriesInRegister));
+                new AssertRootHashCommand(twoEntriesRegisterProof)));
     }
 
     @Test
