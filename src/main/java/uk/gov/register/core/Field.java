@@ -42,6 +42,10 @@ public class Field {
         return datatype;
     }
 
+    public String getText() {
+        return text;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
