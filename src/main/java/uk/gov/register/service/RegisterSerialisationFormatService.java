@@ -11,6 +11,7 @@ import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -50,7 +51,7 @@ public class RegisterSerialisationFormatService {
                     entryCommandIterator,
                     Iterators.singletonIterator(new AssertRootHashCommand(register.getRegisterProof()))
             ));
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
