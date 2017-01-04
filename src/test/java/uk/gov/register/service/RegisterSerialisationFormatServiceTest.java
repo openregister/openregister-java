@@ -60,7 +60,7 @@ public class RegisterSerialisationFormatServiceTest {
         item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "item1sha"), jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
-        item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "entry2sha"), jsonFactory.objectNode()
+        item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "item2sha"), jsonFactory.objectNode()
                 .put("field-1", "entry2-field-1-value")
                 .put("field-2", "entry2-field-2-value"));
 
