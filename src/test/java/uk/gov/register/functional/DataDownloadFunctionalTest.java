@@ -33,8 +33,8 @@ public class DataDownloadFunctionalTest {
     public static RegisterRule register = new RegisterRule();
     private final String item1 = "{\"street\":\"ellis\",\"address\":\"12345\"}";
     private final String item2 = "{\"street\":\"presley\",\"address\":\"6789\"}";
-    private final String item3 =  "{\"street\":\"foo\",\"address\":\"12345\"}";
-    private final String item4 =  "{\"street\":\"ellis\",\"address\":\"145678\"}";
+    private final String item3 = "{\"street\":\"foo\",\"address\":\"12345\"}";
+    private final String item4 = "{\"street\":\"ellis\",\"address\":\"145678\"}";
 
     @Before
     public void publishTestMessages() {
@@ -182,15 +182,18 @@ public class DataDownloadFunctionalTest {
         List<String> fullRsfLines = getRsfLinesFrom(fullRsfResponse);
         List<String> partialRsfLines = getRsfLinesFrom(partialRsfResponse);
 
-        assertThat(fullRsfLines, equalTo(partialRsfLines));
+        assertThat(partialRsfLines.get(0), is(fullRsfLines.get(0)));
+        assertThat(partialRsfLines.subList(1, 5), hasItems(fullRsfLines.subList(1, 5).toArray(new String[4])));
+        assertThat(partialRsfLines.subList(5, 9), equalTo(fullRsfLines.subList(5, 9)));
+        assertThat(partialRsfLines.get(10), is(fullRsfLines.get(10)));
     }
 
-    private List<String> getRsfLinesFrom(Response response){
+    private List<String> getRsfLinesFrom(Response response) {
         InputStream is = response.readEntity(InputStream.class);
         return new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.toList());
     }
 
-    private void assertFormattedEntry(String actualEntry, String expectedLine){
+    private void assertFormattedEntry(String actualEntry, String expectedLine) {
         assertThat(actualEntry, startsWith("append-entry"));
         assertThat(actualEntry, endsWith(expectedLine));
     }
