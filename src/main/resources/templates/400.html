@@ -4,13 +4,15 @@
 <head th:include="main.html::head"></head>
 <body>
   <header th:replace="main.html::global-header"></header>
+  <div id="global-header-bar"></div>
 
-  <main id="main" role="main">
-    <div th:replace="main.html::phase"></div>
-    <h1>Bad Request</h1>
-    <p th:text="${exception.message}"></p>
-    <div th:replace="copyright.html::copyright"></div>
-  </main>
+  <div id="wrapper">
+    <main id="main" role="main">
+      <div th:replace="main.html::phase"></div>
+      <h1 class="heading-large">Bad Request</h1>
+      <p class="lede" th:text="${exception.message}"></p>
+    </main>
+  </div>
 
   <footer th:replace="main.html::footer"></footer>
 </body>

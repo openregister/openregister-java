@@ -4,53 +4,60 @@
 <head th:include="main.html::head"></head>
 <body>
   <header th:replace="main.html::global-header"></header>
+  <div id="global-header-bar"></div>
 
-  <main id="main" role="main">
-    <div th:replace="main.html::phase"></div>
-    <div class="grid-row">
-      <div class="column-two-thirds" th:include="pagination.html::pagination-top('records')"></div>
-      <div class="column-third" th:include="main.html :: attribution"></div>
-    </div>
-    <div class="table-wrapper">
-      <table th:if="${!content.records.isEmpty()}">
-        <thead>
-          <tr>
-            <th scope="col">
-              <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}" th:text="${registerId}"></a>
-            </th>
-            <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+  <div id="wrapper">
+
+    <main id="main" role="main">
+      <div th:replace="main.html::phase"></div>
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="heading-large" th:include="pagination.html::pagination-top('records')">
+          </h1>
+        </div>
+        <div class="column-third" th:include="main.html :: attribution"></div>
+      </div>
+      <div class="table-wrapper">
+        <table th:if="${!content.records.isEmpty()}">
+          <thead>
+            <tr>
               <th scope="col">
-                <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}" th:text="${fieldName}"></a>
+                <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}" th:text="${registerId}"></a>
               </th>
-            </th:block>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="record : ${content.records}">
-            <td>
-              <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
-            </td>
-            <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-              <td th:if="${record.getField(fieldName).present}" class="field-list field-list-in-table">
-                <ul th:if="${record.getField(fieldName).get().isList()}">
-                  <th:block th:each="fieldValue: ${record.getField(fieldName).get()}">
-                    <li th:text="${fieldValue.value}"></li>
-                  </th:block>
-                </ul>
-                <th:block th:unless="${record.getField(fieldName).get().isList()}" th:text="${record.getField(fieldName).get().value}">
-                </th:block>
+              <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+                <th scope="col">
+                  <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}" th:text="${fieldName}"></a>
+                </th>
+              </th:block>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="record : ${content.records}">
+              <td>
+                <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
               </td>
-              <td th:unless="${record.getField(fieldName).present}"></td>
-            </th:block>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+              <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+                <td th:if="${record.getField(fieldName).present}" class="field-list field-list-in-table">
+                  <ul th:if="${record.getField(fieldName).get().isList()}">
+                    <th:block th:each="fieldValue: ${record.getField(fieldName).get()}">
+                      <li th:text="${fieldValue.value}"></li>
+                    </th:block>
+                  </ul>
+                  <th:block th:unless="${record.getField(fieldName).get().isList()}" th:text="${record.getField(fieldName).get().value}">
+                  </th:block>
+                </td>
+                <td th:unless="${record.getField(fieldName).present}"></td>
+              </th:block>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <nav th:replace="pagination.html::pagination-bottom"></nav>
+      <nav th:replace="pagination.html::pagination-bottom"></nav>
 
-    <div th:include="data-formats.html::data-formats"></div>
-  </main>
+      <div th:include="data-formats.html::data-formats"></div>
+    </main>
+  </div>
 
   <footer th:replace="main.html::footer"></footer>
 

@@ -21,19 +21,24 @@
     <link rel="stylesheet" href="/assets/css/main.css"/>
   </head>
 
-  <header th:fragment="global-header" id="global-header" role="banner">
+  <header th:fragment="global-header" id="global-header" role="banner" class=" with-proposition">
     <div class="header-wrapper">
       <div class="header-global">
         <div class="header-logo">
-          <a id="logo" class="content" href="/" th:text="${friendlyRegisterName}"></a>
+          <a id="logo" class="content" href="https://www.gov.uk">
+            GOV.UK
+          </a>
         </div>
       </div>
-    </div>
-  </header>
 
-  <header th:fragment="page-header(title)" class="page-header">
-    <div>
-      <h1 th:text="${title}"></h1>
+      <div class="header-proposition">
+        <div class="content">
+          <a href="#proposition-links" class="js-header-toggle menu">Menu</a>
+          <nav id="proposition-menu" role="navigation">
+            <a id="proposition-name" href="/" th:text="${friendlyRegisterName}"></a>
+          </nav>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -41,7 +46,7 @@
     <p>
       <strong class="phase-tag" th:text="${#strings.toUpperCase(register.phase)}">ALPHA</strong>
       <span>
-        This is a new service – your
+        This is a new register – your
         <a href="mailto:data-infrastructure@digital.cabinet-office.gov.uk">feedback</a>
         will help us to improve it.
       </span>
@@ -53,12 +58,12 @@
     <span th:unless="${branding.present}" th:text="${organisation.name}" class="organisation-logo organisation-logo-no-identity">Cabinet Office</span>
   </th:block>
 
-  <div th:fragment="attribution">
+  <th:block th:fragment="attribution">
     <div class="organisation">
-      <span class="managed-by">Managed by:</span>
+      <h3 class="heading-medium">Managed by:</h3>
       <th:block th:include="main.html::organisation(${registry}, ${branding})"></th:block>
     </div>
-  </div>
+  </th:block>
 
   <footer th:fragment="footer" id="footer" class="group" role="contentinfo">
     <div class="footer-wrapper">
@@ -87,7 +92,6 @@
         </div>
       </div>
     </div>
-    <script type="text/javascript" src="/assets/js/details.polyfill.js"></script>
 
     <th:block th:if="${registerTrackingId != null and registerTrackingId.present and !#strings.isEmpty(registerTrackingId.get())}">
       <script id="analytics-tracking-id" src="/analytics-code.js"></script>
