@@ -1,12 +1,11 @@
 package uk.gov.register.views;
 
+import com.google.common.collect.Iterables;
 import uk.gov.organisation.client.GovukOrganisation;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegisterContentPages;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
-import uk.gov.register.core.PublicBody;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.core.RegisterResolver;
+import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
 
 import java.net.URI;
@@ -25,6 +24,7 @@ public class HomePageView extends AttributionView<Object> {
     private final int totalRecords;
     private final int totalEntries;
     private final RegisterContentPages registerContentPages;
+    private final Iterable<Field> fields;
 
     public HomePageView(
             PublicBody registry,
@@ -36,12 +36,14 @@ public class HomePageView extends AttributionView<Object> {
             RegisterReadOnly register,
             RegisterContentPages registerContentPages,
             RegisterTrackingConfiguration registerTrackingConfiguration,
-            RegisterResolver registerResolver) {
+            RegisterResolver registerResolver,
+            FieldsConfiguration fieldsConfiguration) {
         super("home.html", requestContext, registry, registryBranding, register, registerTrackingConfiguration, registerResolver, null);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
         this.registerContentPages = registerContentPages;
+        this.fields = Iterables.transform(getRegister().getFields(), f -> fieldsConfiguration.getField(f));
     }
 
     @SuppressWarnings("unused, used from template")
@@ -72,5 +74,9 @@ public class HomePageView extends AttributionView<Object> {
     @SuppressWarnings("unused, used from template")
     public RegisterContentPages getContentPages() {
         return registerContentPages;
+    }
+
+    public Iterable<Field> getFields() {
+        return fields;
     }
 }

@@ -28,6 +28,7 @@ public class ViewFactory {
     private final Provider<RegisterReadOnly> register;
     private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
     private final Provider<RegisterContentPagesConfiguration> registerContentPagesConfiguration;
+    private final Provider<ConfigManager> configManager;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
@@ -38,7 +39,8 @@ public class ViewFactory {
                        Provider<RegisterMetadata> registerMetadata,
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
-                       Provider<RegisterReadOnly> register) {
+                       Provider<RegisterReadOnly> register,
+                       Provider<ConfigManager> configManager) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
@@ -48,6 +50,7 @@ public class ViewFactory {
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
+        this.configManager = configManager;
     }
 
     public ThymeleafView thymeleafView(String templateName) {
@@ -70,7 +73,8 @@ public class ViewFactory {
                 new RegisterContentPages(registerContentPagesConfiguration.get().getRegisterHistoryPageUrl(),
                         registerContentPagesConfiguration.get().getCustodianName()),
                 registerTrackingConfiguration.get(),
-                registerResolver);
+                registerResolver,
+                configManager.get().getFieldsConfiguration());
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
