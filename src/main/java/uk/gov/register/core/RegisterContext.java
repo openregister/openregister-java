@@ -15,6 +15,7 @@ import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -32,6 +33,7 @@ public class RegisterContext implements
     private final Optional<String> historyPageUrl;
     private final Optional<String> custodianName;
     private final Optional<String> trackingId;
+    private final Optional<List<String>> similarRegisters;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterMetadata registerMetadata;
@@ -40,13 +42,15 @@ public class RegisterContext implements
     public RegisterContext(RegisterName registerName, ConfigManager configManager,
                            DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
-                           Optional<String> custodianName, RegisterAuthenticator authenticator) {
+                           Optional<String> custodianName, Optional<List<String>> similarRegisters,
+                           RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.dbi = dbi;
         this.flyway = flyway;
         this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
+        this.similarRegisters = similarRegisters;
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
@@ -150,4 +154,9 @@ public class RegisterContext implements
 
     @Override
     public Optional<String> getCustodianName() { return custodianName; }
+
+    @Override
+    public Optional<List<String>> getSimilarRegisters() {
+        return similarRegisters;
+    }
 }

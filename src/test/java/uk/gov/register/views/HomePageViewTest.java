@@ -1,5 +1,6 @@
 package uk.gov.register.views;
 
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +40,7 @@ public class HomePageViewTest {
     @Mock
     FieldsConfiguration fieldsConfiguration;
 
-    RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty());
+    RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty(), Optional.empty());
 
     @Test
     public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
@@ -101,13 +104,13 @@ public class HomePageViewTest {
         RegisterReadOnly register = mock(RegisterReadOnly.class);
         when(register.getRegisterMetadata()).thenReturn(registerMetadata);
 
-        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty());
+        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty(), Optional.empty());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), register, registerContentPages, () -> Optional.empty(), registerResolver, fieldsConfiguration);
 
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(false));
 
         String historyUrl = "http://register-history.openregister.org";
-        registerContentPages = new RegisterContentPages(Optional.of(historyUrl), Optional.empty());
+        registerContentPages = new RegisterContentPages(Optional.of(historyUrl), Optional.empty(), Optional.empty());
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), register, registerContentPages, () -> Optional.empty(), registerResolver, fieldsConfiguration);
 
         assertThat(homePageView.getContentPages().getRegisterHistoryPageUrl().isPresent(), is(true));
@@ -120,13 +123,13 @@ public class HomePageViewTest {
         RegisterReadOnly register = mock(RegisterReadOnly.class);
         when(register.getRegisterMetadata()).thenReturn(registerMetadata);
 
-        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty());
+        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty(), Optional.empty());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), register, registerContentPages, () -> Optional.empty(), registerResolver, fieldsConfiguration);
 
         assertThat(homePageView.getContentPages().getCustodianName().isPresent(), is(false));
 
         String custodianName = "John Smith";
-        registerContentPages = new RegisterContentPages(Optional.empty(), Optional.of(custodianName));
+        registerContentPages = new RegisterContentPages(Optional.empty(), Optional.of(custodianName), Optional.empty());
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), register, registerContentPages, () -> Optional.empty(), registerResolver, fieldsConfiguration);
 
         assertThat(homePageView.getContentPages().getCustodianName().isPresent(), is(true));
@@ -153,5 +156,21 @@ public class HomePageViewTest {
         List<Field> actualFields = Lists.newArrayList(homePageView.getFields());
 
         assertThat(actualFields, IsIterableContainingInOrder.contains(height, width, title));
+    }
+
+    @Test
+    public void shouldGetSimilarRegistersIfAvailable() {
+        RegisterContentPages registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty(), Optional.empty());
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), registerResolver);
+
+        assertThat(homePageView.getContentPages().getSimilarRegisters().isPresent(), is(false));
+
+        List<String> similarRegisters = Arrays.asList("address", "territory");
+        registerContentPages = new RegisterContentPages(Optional.empty(), Optional.empty(), Optional.of(similarRegisters));
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), null, registerContentPages, () -> Optional.empty(), registerResolver);
+
+        assertThat(homePageView.getContentPages().getSimilarRegisters().isPresent(), is(true));
+        assertThat(homePageView.getContentPages().getSimilarRegisters().get(), IsIterableContainingInOrder.contains("address", "territory"));
+
     }
 }

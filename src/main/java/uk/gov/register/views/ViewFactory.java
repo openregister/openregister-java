@@ -13,9 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ViewFactory {
@@ -71,7 +69,8 @@ public class ViewFactory {
                 lastUpdated,
                 register.get(),
                 new RegisterContentPages(registerContentPagesConfiguration.get().getRegisterHistoryPageUrl(),
-                        registerContentPagesConfiguration.get().getCustodianName()),
+                        registerContentPagesConfiguration.get().getCustodianName(),
+                        registerContentPagesConfiguration.get().getSimilarRegisters()),
                 registerTrackingConfiguration.get(),
                 registerResolver,
                 configManager.get().getFieldsConfiguration());
