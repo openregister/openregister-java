@@ -39,7 +39,7 @@ public class RegisterLinkServiceTest {
         when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
-        List<String> registers = registerLinkService.getRegistersLinkedFrom(localAuthorityRegisterName);
+        List<String> registers = registerLinkService.getRegisterLinks(localAuthorityRegisterName).getRegistersLinkedFrom();
 
         assertThat(registers, is(empty()));
     }
@@ -74,7 +74,7 @@ public class RegisterLinkServiceTest {
         when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
-        List<String> registers = registerLinkService.getRegistersLinkedFrom(addressRegisterName);
+        List<String> registers = registerLinkService.getRegisterLinks(addressRegisterName).getRegistersLinkedFrom();
 
         assertThat(registers, contains("company", "local-authority"));
     }
@@ -100,7 +100,7 @@ public class RegisterLinkServiceTest {
         when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
-        List<String> registers = registerLinkService.getRegistersLinkedTo(registerName);
+        List<String> registers = registerLinkService.getRegisterLinks(registerName).getRegistersLinkedTo();
 
         assertThat(registers, is(empty()));
     }
@@ -108,7 +108,7 @@ public class RegisterLinkServiceTest {
     @Test
     public void getRegistersLinkedTo_shouldReturnRegisters_whenCurrentRegisterLinksToOtherRegisters() {
         RegisterName registerName = new RegisterName("address");
-        RegisterMetadata registerMetadata = new RegisterMetadata(registerName, Arrays.asList("address", "property", "street", "postcode", "country"), "", "", "", "");
+        RegisterMetadata registerMetadata = new RegisterMetadata(registerName, Arrays.asList("address", "property", "street", "postcode", "country", "registry"), "", "", "", "");
 
         RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
         when(registersConfiguration.getRegisterMetadata(registerName)).thenReturn(registerMetadata);
@@ -120,7 +120,8 @@ public class RegisterLinkServiceTest {
                 new Field("property", "string", null, Cardinality.ONE, ""),
                 new Field("street", "string", null, Cardinality.ONE, ""),
                 new Field("postcode", "string", new RegisterName("postcode"), Cardinality.ONE, ""),
-                new Field("country", "string", new RegisterName("country"), Cardinality.ONE, "")
+                new Field("country", "string", new RegisterName("country"), Cardinality.ONE, ""),
+                new Field("registry", "string", new RegisterName("public-body"), Cardinality.ONE, "")
         ));
 
         ConfigManager configManager = mock(ConfigManager.class);
@@ -128,8 +129,8 @@ public class RegisterLinkServiceTest {
         when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
-        List<String> registers = registerLinkService.getRegistersLinkedTo(registerName);
+        List<String> registers = registerLinkService.getRegisterLinks(registerName).getRegistersLinkedTo();
 
-        assertThat(registers, contains("postcode", "country"));
+        assertThat(registers, contains("postcode", "country", "public-body"));
     }
 }

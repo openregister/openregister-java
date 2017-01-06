@@ -25,12 +25,8 @@ public class RegisterLinkService {
         this.configManager.getRegistersConfiguration().getAllRegisterMetaData().forEach(m -> updateRegisterLinks(m.getRegisterName()));
     }
 
-    public List<String> getRegistersLinkedTo(RegisterName registerName) {
-        return registersLinks.get(registerName).getRegistersLinkedTo();
-    }
-
-    public List<String> getRegistersLinkedFrom(RegisterName registerName) {
-        return registersLinks.get(registerName).getRegistersLinkedFrom();
+    public RegisterLinks getRegisterLinks(RegisterName registerName) {
+        return registersLinks.get(registerName);
     }
 
     public void updateRegisterLinks(RegisterName registerName) {
@@ -50,7 +46,7 @@ public class RegisterLinkService {
 
         // Next, get the registers which contain the fields matched above, excluding the current register
         List<String> registers = registersMetadata.stream()
-                .filter(m -> m.getFields().stream().anyMatch(f -> fieldsMatchingRegister.contains(f) && !m.getRegisterName().value().equalsIgnoreCase(f)))//  !f.equalsIgnoreCase(registerName.value())))
+                .filter(m -> m.getFields().stream().anyMatch(f -> fieldsMatchingRegister.contains(f) && !m.getRegisterName().value().equalsIgnoreCase(f)))
                 .map(m -> m.getRegisterName().value())
                 .collect(Collectors.toList());
 
@@ -65,7 +61,7 @@ public class RegisterLinkService {
 
         return allFields.stream()
                 .filter(f -> registerFields.contains(f.fieldName) && f.getRegister().isPresent() && !f.fieldName.equalsIgnoreCase(registerName.value()))
-                .map(f -> f.fieldName)
+                .map(f -> f.getRegister().get().value())
                 .collect(Collectors.toList());
     }
 }

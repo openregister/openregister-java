@@ -7,6 +7,7 @@ import uk.gov.register.configuration.HomepageContent;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
+import uk.gov.register.service.RegisterLinkService;
 
 import java.net.URI;
 import java.time.Instant;
@@ -25,6 +26,7 @@ public class HomePageView extends AttributionView<Object> {
     private final int totalEntries;
     private final HomepageContent homepageContent;
     private final Iterable<Field> fields;
+    private final RegisterLinks registerLinks;
 
     public HomePageView(
             PublicBody registry,
@@ -37,13 +39,15 @@ public class HomePageView extends AttributionView<Object> {
             HomepageContent homepageContent,
             RegisterTrackingConfiguration registerTrackingConfiguration,
             RegisterResolver registerResolver,
-            FieldsConfiguration fieldsConfiguration) {
+            FieldsConfiguration fieldsConfiguration,
+            RegisterLinkService registerLinkService) {
         super("home.html", requestContext, registry, registryBranding, register, registerTrackingConfiguration, registerResolver, null);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
         this.homepageContent = homepageContent;
         this.fields = Iterables.transform(getRegister().getFields(), f -> fieldsConfiguration.getField(f));
+        this.registerLinks = registerLinkService.getRegisterLinks(getRegisterId());
     }
 
     @SuppressWarnings("unused, used from template")
@@ -79,4 +83,6 @@ public class HomePageView extends AttributionView<Object> {
     public Iterable<Field> getFields() {
         return fields;
     }
+
+    public RegisterLinks getRegisterLinks() { return registerLinks; }
 }

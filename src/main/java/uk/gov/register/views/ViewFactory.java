@@ -7,6 +7,7 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
+import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
@@ -27,6 +28,7 @@ public class ViewFactory {
     private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
     private final Provider<ConfigManager> configManager;
+    private final Provider<RegisterLinkService> registerLinkService;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
@@ -38,7 +40,8 @@ public class ViewFactory {
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
                        Provider<RegisterReadOnly> register,
-                       Provider<ConfigManager> configManager) {
+                       Provider<ConfigManager> configManager,
+                       Provider<RegisterLinkService> registerLinkService) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
@@ -49,6 +52,7 @@ public class ViewFactory {
         this.registerResolver = registerResolver;
         this.register = register;
         this.configManager = configManager;
+        this.registerLinkService = registerLinkService;
     }
 
     public ThymeleafView thymeleafView(String templateName) {
@@ -73,7 +77,8 @@ public class ViewFactory {
                         homepageContentConfiguration.get().getSimilarRegisters()),
                 registerTrackingConfiguration.get(),
                 registerResolver,
-                configManager.get().getFieldsConfiguration());
+                configManager.get().getFieldsConfiguration(),
+                registerLinkService.get());
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
