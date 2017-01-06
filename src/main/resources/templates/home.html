@@ -53,17 +53,17 @@
             <li>
               <a href="/download">Download data</a>
             </li>
-            <li th:if="${#bools.isTrue(contentPages.registerHistoryPageUrl.isPresent())}">
-              <a th:href="${contentPages.registerHistoryPageUrl.get()}">Register history</a>
+            <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
+              <a th:href="${homepageContent.registerHistoryPageUrl.get()}">Register history</a>
             </li>
             <li>
-              <a th:href="${contentPages.registersIntroductionUrl}">About registers</a>
+              <a th:href="${homepageContent.registersIntroductionUrl}">About registers</a>
             </li>
             <li>
-              <a th:href="${contentPages.usingRegistersGuidanceUrl}">Guidance for using registers</a>
+              <a th:href="${homepageContent.usingRegistersGuidanceUrl}">Guidance for using registers</a>
             </li>
             <li>
-              <a th:href="${contentPages.specificationUrl}">Technical specification</a>
+              <a th:href="${homepageContent.specificationUrl}">Technical specification</a>
             </li>
           </ul>
         </div>

@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,6 +46,10 @@ public class RegisterConfiguration extends Configuration
     @Valid
     @JsonProperty
     private Optional<String> custodianName = Optional.empty();
+
+    @Valid
+    @JsonProperty
+    private Optional<List<String>> similarRegisters = Optional.empty();
 
     @Valid
     @NotNull
@@ -105,7 +110,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, custodianName, credentials);
+        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, custodianName, similarRegisters, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {

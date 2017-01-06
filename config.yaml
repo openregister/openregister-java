@@ -51,6 +51,9 @@ externalConfigDirectory: /tmp/openregister-java/external
 
 downloadConfigs: true
 
+similarRegisters:
+  - address
+
 credentials:
   user: foo
   password: bar
