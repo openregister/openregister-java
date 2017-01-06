@@ -25,6 +25,7 @@ import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.CanonicalJsonMapper;
@@ -79,7 +80,9 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         ConfigManager configManager = new ConfigManager(configuration, registersYamlFileUrl, fieldsYamlFileUrl);
         configManager.refreshConfig();
 
-        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, configManager, environment);
+        RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
+
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, configManager, environment, registerLinkService);
         allTheRegisters.stream().forEach(register -> register.getFlyway().migrate());
 
         jersey.register(new AbstractBinder() {
@@ -94,6 +97,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bindAsContract(RegisterFieldsConfiguration.class);
 
                 bind(configManager).to(ConfigManager.class);
+                bind(registerLinkService).to(RegisterLinkService.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);

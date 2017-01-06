@@ -1,10 +1,6 @@
 package uk.gov.register.core;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +73,7 @@ public class RegisterMetadata {
         return Iterables.filter(fields, not(equalTo(registerName.value())));
     }
 
-    public Iterable<String> getFields() {
+    public List<String> getFields() {
         return fields;
     }
 

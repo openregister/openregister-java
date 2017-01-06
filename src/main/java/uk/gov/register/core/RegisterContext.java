@@ -11,6 +11,7 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.service.RegisterLinkService;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -27,6 +28,7 @@ public class RegisterContext implements
         ResourceConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;
+    private RegisterLinkService registerLinkService;
     private AtomicReference<MemoizationStore> memoizationStore;
     private DBI dbi;
     private Flyway flyway;
@@ -39,13 +41,14 @@ public class RegisterContext implements
     private RegisterMetadata registerMetadata;
     private RegisterAuthenticator authenticator;
 
-    public RegisterContext(RegisterName registerName, ConfigManager configManager,
+    public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
                            DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
                            Optional<String> custodianName, Optional<List<String>> similarRegisters,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
+        this.registerLinkService = registerLinkService;
         this.dbi = dbi;
         this.flyway = flyway;
         this.historyPageUrl = historyPageUrl;
@@ -115,6 +118,7 @@ public class RegisterContext implements
         if (enableRegisterDataDelete) {
             flyway.clean();
             configManager.refreshConfig();
+            registerLinkService.updateRegisterLinks(registerName);
             memoizationStore.set(new InMemoryPowOfTwoNoLeaves());
             flyway.migrate();
         }

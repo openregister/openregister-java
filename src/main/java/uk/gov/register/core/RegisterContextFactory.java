@@ -9,6 +9,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.service.RegisterLinkService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -81,7 +82,7 @@ public class RegisterContextFactory {
         return flywayFactory;
     }
 
-    public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, ConfigManager configManager, Environment environment) {
+    public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, ConfigManager configManager, Environment environment, RegisterLinkService registerLinkService) {
         database.getProperties().put("ApplicationName", "openregister_" + registerName);
         // dbiFactory.build() will ensure that this dataSource is correctly shut down
         // it will also be shared with flyway
@@ -90,6 +91,7 @@ public class RegisterContextFactory {
         return new RegisterContext(
                 registerName,
                 configManager,
+                registerLinkService,
                 dbiFactory.build(environment, database, managedDataSource, registerName.value()),
                 getFlywayFactory(registerName).build(managedDataSource),
                 trackingId,
