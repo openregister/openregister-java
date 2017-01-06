@@ -83,6 +83,11 @@ public class RegisterContextFactory {
 
     public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, ConfigManager configManager, Environment environment) {
         database.getProperties().put("ApplicationName", "openregister_" + registerName);
+
+        // this is to enable JDBI Postgres @FetchSize which requires autoCommit set to false
+        // https://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor
+        database.setAutoCommitByDefault(false);
+
         // dbiFactory.build() will ensure that this dataSource is correctly shut down
         // it will also be shared with flyway
         ManagedDataSource managedDataSource = database.build(environment.metrics(), registerName.value());
