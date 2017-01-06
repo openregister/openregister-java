@@ -3,7 +3,7 @@ package uk.gov.register.views;
 import com.google.common.collect.Iterables;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.RegisterContentPages;
+import uk.gov.register.configuration.HomepageContent;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
@@ -23,7 +23,7 @@ public class HomePageView extends AttributionView<Object> {
     private final Optional<Instant> lastUpdated;
     private final int totalRecords;
     private final int totalEntries;
-    private final RegisterContentPages registerContentPages;
+    private final HomepageContent homepageContent;
     private final Iterable<Field> fields;
 
     public HomePageView(
@@ -34,7 +34,7 @@ public class HomePageView extends AttributionView<Object> {
             int totalEntries,
             Optional<Instant> lastUpdated,
             RegisterReadOnly register,
-            RegisterContentPages registerContentPages,
+            HomepageContent homepageContent,
             RegisterTrackingConfiguration registerTrackingConfiguration,
             RegisterResolver registerResolver,
             FieldsConfiguration fieldsConfiguration) {
@@ -42,7 +42,7 @@ public class HomePageView extends AttributionView<Object> {
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
-        this.registerContentPages = registerContentPages;
+        this.homepageContent = homepageContent;
         this.fields = Iterables.transform(getRegister().getFields(), f -> fieldsConfiguration.getField(f));
     }
 
@@ -72,8 +72,8 @@ public class HomePageView extends AttributionView<Object> {
     }
 
     @SuppressWarnings("unused, used from template")
-    public RegisterContentPages getContentPages() {
-        return registerContentPages;
+    public HomepageContent getHomepageContent() {
+        return homepageContent;
     }
 
     public Iterable<Field> getFields() {

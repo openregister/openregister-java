@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 public class RegisterContext implements
         RegisterTrackingConfiguration,
         DeleteRegisterDataConfiguration,
-        RegisterContentPagesConfiguration,
+        HomepageContentConfiguration,
         ResourceConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;

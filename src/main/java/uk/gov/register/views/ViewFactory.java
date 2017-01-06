@@ -25,7 +25,7 @@ public class ViewFactory {
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
     private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
-    private final Provider<RegisterContentPagesConfiguration> registerContentPagesConfiguration;
+    private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
     private final Provider<ConfigManager> configManager;
 
     @Inject
@@ -33,7 +33,7 @@ public class ViewFactory {
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
-                       Provider<RegisterContentPagesConfiguration> registerContentPagesConfiguration,
+                       Provider<HomepageContentConfiguration> homepageContentConfiguration,
                        Provider<RegisterMetadata> registerMetadata,
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
@@ -44,7 +44,7 @@ public class ViewFactory {
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerMetadata = registerMetadata;
-        this.registerContentPagesConfiguration = registerContentPagesConfiguration;
+        this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
@@ -68,9 +68,9 @@ public class ViewFactory {
                 totalEntries,
                 lastUpdated,
                 register.get(),
-                new RegisterContentPages(registerContentPagesConfiguration.get().getRegisterHistoryPageUrl(),
-                        registerContentPagesConfiguration.get().getCustodianName(),
-                        registerContentPagesConfiguration.get().getSimilarRegisters()),
+                new HomepageContent(homepageContentConfiguration.get().getRegisterHistoryPageUrl(),
+                        homepageContentConfiguration.get().getCustodianName(),
+                        homepageContentConfiguration.get().getSimilarRegisters()),
                 registerTrackingConfiguration.get(),
                 registerResolver,
                 configManager.get().getFieldsConfiguration());
