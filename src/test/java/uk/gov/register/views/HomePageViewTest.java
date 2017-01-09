@@ -176,7 +176,7 @@ public class HomePageViewTest {
         List<String> expectedLinkedToRegisters = Arrays.asList("company", "industry");
 
         when(registerLinkService.getRegisterLinks(registerName)).thenReturn(new RegisterLinks(expectedLinkedFromRegisters, expectedLinkedToRegisters));
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), register, registerContentPages, () -> Optional.empty(), registerResolver, fieldsConfiguration, registerLinkService);
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), register, homepageContent, () -> Optional.empty(), registerResolver, fieldsConfiguration, registerLinkService);
 
         assertThat(homePageView.getRegisterLinks().getRegistersLinkedFrom(), equalTo(expectedLinkedFromRegisters));
         assertThat(homePageView.getRegisterLinks().getRegistersLinkedTo(), equalTo(expectedLinkedToRegisters));
