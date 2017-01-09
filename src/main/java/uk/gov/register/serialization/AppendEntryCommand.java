@@ -19,7 +19,7 @@ public class AppendEntryCommand extends RegisterCommand {
     }
 
     @Override
-    public String serialise(CommandParser parser) {
+    public String serialise(RSFFormat parser) {
         return parser.serialise(entry);
     }
 

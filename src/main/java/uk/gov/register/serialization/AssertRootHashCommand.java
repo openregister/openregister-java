@@ -23,8 +23,8 @@ public class AssertRootHashCommand extends RegisterCommand {
     }
 
     @Override
-    public String serialise(CommandParser commandParser) {
-        return commandParser.serialise(registerProof);
+    public String serialise(RSFFormat RSFFormat) {
+        return RSFFormat.serialise(registerProof);
     }
 
     @Override

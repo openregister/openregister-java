@@ -1,19 +1,27 @@
 package uk.gov.register.service;
 
 import org.apache.jena.ext.com.google.common.collect.Iterators;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.exceptions.RootHashAssertionException;
 import uk.gov.register.serialization.*;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
+
 
 public class RegisterSerialisationFormatService {
 
@@ -21,23 +29,25 @@ public class RegisterSerialisationFormatService {
     private final RegisterProof emptyRegisterProof;
 
     private final RegisterContext registerContext;
+    private CommandExecutor commandExecutor;
+
+    private static final Logger LOG = LoggerFactory.getLogger(RegisterSerialisationFormatService.class);
+
 
     @Inject
-    public RegisterSerialisationFormatService(RegisterContext registerContext) {
+    public RegisterSerialisationFormatService(RegisterContext registerContext, CommandExecutor commandExecutor) {
         this.registerContext = registerContext;
+        this.commandExecutor = commandExecutor;
         this.emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_ROOT_HASH));
     }
 
-    public void processRegisterComponents(RegisterSerialisationFormat rsf) {
-        registerContext.transactionalRegisterOperation(register -> mintRegisterComponents(rsf.getCommands(), register));
+
+    public void writeTo(OutputStream output, RSFFormat RSFFormat) {
+        writeTo(output, RSFFormat, this::createRegisterSerialisationFormat);
     }
 
-    public void writeTo(OutputStream output, CommandParser commandParser) {
-        writeTo(output, commandParser, this::createRegisterSerialisationFormat);
-    }
-
-    public void writeTo(OutputStream output, CommandParser commandParser, int totalEntries1, int totalEntries2) {
-        writeTo(output, commandParser, register -> createRegisterSerialisationFormat(register, totalEntries1, totalEntries2));
+    public void writeTo(OutputStream output, RSFFormat RSFFormat, int totalEntries1, int totalEntries2) {
+        writeTo(output, RSFFormat, register -> createRegisterSerialisationFormat(register, totalEntries1, totalEntries2));
     }
 
     public RegisterSerialisationFormat createRegisterSerialisationFormat(Register register) {
@@ -75,26 +85,66 @@ public class RegisterSerialisationFormatService {
         return new RegisterSerialisationFormat(iterators);
     }
 
-    private void mintRegisterComponents(Iterator<RegisterCommand> commands, Register register) {
-        commands.forEachRemaining(c -> {
+    public List<Exception> processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
+        List<Exception> results = new ArrayList<>();
+        registerContext.transactionalRegisterOperation(register -> {
+            Iterator<RegisterCommand2> commands = rsf.getCommands2();
+
+            LOG.debug("in processing");
             try {
-                c.execute(register);
-            } catch (RootHashAssertionException e) {
-                throw e;
+                LOG.debug("before executing commands");
+                List<Exception> cmResults = commandExecutor.execute(commands, register);
+                results.addAll(cmResults);
+                LOG.debug("after executing commands");
+
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                results.add(e);
+            }
+
+            if (!results.isEmpty()) {
+                throw new RuntimeException(results.get(0));
+//                throw new RuntimeException("RSF processing failed with exceptions");
             }
         });
+        return results;
     }
 
-    private void writeTo(OutputStream output, CommandParser commandParser, Function<Register, RegisterSerialisationFormat> rsfCreator) {
+    public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormat rsfFormat) {
+        LOG.debug("reading commands");
+
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
+        LOG.debug("pass the buffer");
+
+        Stream<String> lines = buffer.lines();
+        LOG.debug("pass the buffer.lines()");
+
+        Iterator<RegisterCommand2> commandsIterator = lines.map(line -> {
+            LOG.debug("-------- lazy converting :) -------");
+            LOG.debug(line);
+            return rsfFormat.parse(line);
+        }).filter(i -> i != null).iterator();
+
+
+        LOG.debug("pass the conversion");
+
+//        Iterator<RegisterCommand> commands = parser.getCommands();
+        LOG.debug("finished reading commands");
+        // don't close the reader as the caller will close the input stream
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(null, commandsIterator);
+//        processRegisterSerialisationFormat(rsf);
+        LOG.debug("pass processing");
+        return rsf;
+
+    }
+
+    private void writeTo(OutputStream output, RSFFormat RSFFormat, Function<Register, RegisterSerialisationFormat> rsfCreator) {
         registerContext.transactionalRegisterOperation(register -> {
             Iterator<RegisterCommand> commands = rsfCreator.apply(register).getCommands();
 
             int commandCount = 0;
             try {
                 while (commands.hasNext()) {
-                    output.write(commands.next().serialise(commandParser).getBytes());
+                    output.write(commands.next().serialise(RSFFormat).getBytes());
 
                     // TODO: is flushing every 10000 commands ok?
                     if (++commandCount >= 10000) {

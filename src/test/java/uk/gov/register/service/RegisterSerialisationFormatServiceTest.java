@@ -43,7 +43,7 @@ public class RegisterSerialisationFormatServiceTest {
     @Mock
     private Register register;
 
-    private CommandParser commandParser;
+    private RSFFormat RSFFormat;
     private RegisterSerialisationFormatService sutService;
 
     private Entry entry1;
@@ -79,8 +79,9 @@ public class RegisterSerialisationFormatServiceTest {
             }
         }).when(registerContext).transactionalRegisterOperation(any(Consumer.class));
 
-        sutService = new RegisterSerialisationFormatService(registerContext);
-        commandParser = new CommandParser();
+                                                                    // whoa whoa whoa
+        sutService = new RegisterSerialisationFormatService(registerContext, null);
+        RSFFormat = new RSFFormat();
     }
 
     @Test
@@ -96,7 +97,7 @@ public class RegisterSerialisationFormatServiceTest {
 
         InOrder inOrder = Mockito.inOrder(register);
 
-        sutService.processRegisterComponents(rsf);
+        sutService.processRegisterSerialisationFormat(rsf);
 
         verify(register, times(1)).getRegisterProof();
         verify(register, times(1)).putItem(item1);
@@ -163,7 +164,7 @@ public class RegisterSerialisationFormatServiceTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        sutService.writeTo(outputStream, commandParser);
+        sutService.writeTo(outputStream, RSFFormat);
 
         verify(register, times(1)).getItemIterator();
         verify(register, times(1)).getEntryIterator();
@@ -190,7 +191,7 @@ public class RegisterSerialisationFormatServiceTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        sutService.writeTo(outputStream, commandParser, 1, 2);
+        sutService.writeTo(outputStream, RSFFormat, 1, 2);
 
         verify(register, times(1)).getItemIterator(1, 2);
         verify(register, times(1)).getEntryIterator(1, 2);

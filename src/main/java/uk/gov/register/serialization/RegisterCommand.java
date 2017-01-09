@@ -6,7 +6,7 @@ public abstract class RegisterCommand {
 
     public abstract void execute(Register register) throws Exception;
 
-    public abstract String serialise(CommandParser commandParser);
+    public abstract String serialise(RSFFormat RSFFormat);
 
 }
 

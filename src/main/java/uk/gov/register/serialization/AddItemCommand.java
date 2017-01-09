@@ -17,8 +17,8 @@ public class AddItemCommand extends RegisterCommand {
     }
 
     @Override
-    public String serialise(CommandParser commandParser) {
-        return commandParser.serialise(item);
+    public String serialise(RSFFormat RSFFormat) {
+        return RSFFormat.serialise(item);
     }
 
     @Override

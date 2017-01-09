@@ -2,6 +2,7 @@ package uk.gov.register.serialization;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
@@ -18,17 +19,15 @@ import uk.gov.register.views.RegisterProof;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toSet;
 
-public class CommandParser {
-    private static final Logger LOG = LoggerFactory.getLogger(CommandParser.class);
+public class RSFFormat {
+    private static final Logger LOG = LoggerFactory.getLogger(RSFFormat.class);
 
     private final String TAB = "\t";
     private final String NEW_LINE = System.lineSeparator();
@@ -42,7 +41,7 @@ public class CommandParser {
     private final HashMap<HashValue, Integer> itemHashToEntryCount;
     private final HashMap<Integer, RegisterProof> proofs;
 
-    public CommandParser() {
+    public RSFFormat() {
         position = 0;
         objectReconstructor = new ObjectReconstructor();
         canonicalJsonMapper = new CanonicalJsonMapper();
@@ -104,6 +103,53 @@ public class CommandParser {
                 throw new SerializedRegisterParseException("line must begin with legal command not: " + commandName);
         }
     }
+
+    public String format(RegisterCommand2 command) {
+        throw new NotImplementedException("here be not implemented dragons");
+    }
+
+    public RegisterCommand2 parse(String str) {
+        List<String> parts = Arrays.asList(str.split(TAB));
+
+        String commandName = parts.get(0);
+//        switch (commandName) {
+//            case "add-item":
+//                if (parts.size() == 2) {
+////                    try {
+//                        String jsonContent = parts.get(1);
+//                        canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
+//                        String itemHash = DigestUtils.sha256Hex(jsonContent.getBytes(StandardCharsets.UTF_8));
+//                        HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
+//                        itemHashToEntryCount.put(hash, 0);
+//
+////                    } catch (JsonParseException jpe) {
+////                        LOG.error("failed to parse json: " + parts.get(1));
+////                        throw new SerializedRegisterParseException("failed to parse json: " + parts.get(1), jpe);
+////                    } catch (IOException e) {
+////                        LOG.error("", e);
+////                        throw new UncheckedIOException(e);
+////                    }
+//                } else {
+//                    LOG.error("add item line must have 2 elements, was: " + str);
+//                    throw new SerializedRegisterParseException("add item line must have 2 elements, was: " + str);
+//                }
+//                break;
+//            case "append-entry":
+//                if (parts.size() == 4) {
+//                    HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, parts.get(2));
+//                } else {
+//                    LOG.error("append entry line must have 4 elements, was : " + str);
+//                    throw new SerializedRegisterParseException("append entry line must have 4 elements, was : " + str);
+//                }
+//            default:
+//                LOG.error("line must begin with legal command not:" + commandName);
+////                throw new SerializedRegisterParseException("line must begin with legal command not: " + commandName);
+//        }
+//
+
+        return new RegisterCommand2(commandName, parts.subList(1, parts.size()));
+    }
+
 
     private void updateItemHashCount(HashValue hash) {
         if (itemHashToEntryCount.containsKey(hash)) {

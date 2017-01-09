@@ -9,6 +9,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
+import uk.gov.register.serialization.RSFFormat;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ObjectReconstructor;
@@ -21,8 +22,14 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
+import java.io.InputStream;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import javax.ws.rs.core.Response;
+
 
 @Path("/")
 public class DataUpload {
@@ -30,15 +37,17 @@ public class DataUpload {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ObjectReconstructor objectReconstructor;
-    private final RegisterSerialisationFormatService registerSerialisationFormatService;
+    private final RegisterSerialisationFormatService rsfService;
     private final RegisterContext registerContext;
+    private final RSFFormat rsfFormat;
 
 
     @Inject
-    public DataUpload(ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService registerSerialisationFormatService, RegisterContext registerContext) {
+    public DataUpload(ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService rsfService, RegisterContext registerContext) {
         this.objectReconstructor = objectReconstructor;
-        this.registerSerialisationFormatService = registerSerialisationFormatService;
+        this.rsfService = rsfService;
         this.registerContext = registerContext;
+        this.rsfFormat = new RSFFormat();
     }
 
     @Context
@@ -61,8 +70,23 @@ public class DataUpload {
     @PermitAll
     @Consumes(ExtraMediaType.APPLICATION_RSF)
     @Path("/load-rsf")
-    public void loadRsf(RegisterSerialisationFormat registerSerialisationFormat) {
-        registerSerialisationFormatService.processRegisterComponents(registerSerialisationFormat);
+    public Response loadRsf(InputStream inputStream) {
+        // parsing exceptions try catch ok
+        List<Exception> exceptions = new ArrayList();
+        try {
+            RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormat);
+            exceptions.addAll(rsfService.processRegisterSerialisationFormat(rsf));
+        } catch (Exception e) {
+            exceptions.add(e);
+        }
+        // better handling
+
+        exceptions.forEach(e -> System.out.println(e.getMessage()));
+        String exceptionMessages = exceptions.stream().map(e -> e.getMessage()).collect(Collectors.joining(", "));
+
+        return exceptions.isEmpty() ? Response.status(Response.Status.OK).build() : Response.status(500).entity(exceptionMessages).build();
+
+
     }
 
     private void mintItems(Iterable<JsonNode> objects) {
