@@ -29,7 +29,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), false, false, Optional.empty(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -39,7 +39,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), true, false, Optional.empty(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();

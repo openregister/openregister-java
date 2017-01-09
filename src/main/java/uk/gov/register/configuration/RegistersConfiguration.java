@@ -23,14 +23,6 @@ public class RegistersConfiguration {
         );
     }
 
-    public RegistersConfiguration(byte[] registersConfig) {
-        registers = new ResourceYamlFileReader().readResource(
-                registersConfig,
-                new TypeReference<Map<String, RegisterMetadata>>() {
-                }
-        );
-    }
-
     public RegisterMetadata getRegisterMetadata(RegisterName registerName) {
         try {
             return registers.stream().filter(f -> Objects.equals(f.getRegisterName(), registerName)).findFirst().get();

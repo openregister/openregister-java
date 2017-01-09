@@ -1,5 +1,6 @@
 package uk.gov.register;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
@@ -7,7 +8,8 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
-import uk.gov.register.configuration.*;
+import uk.gov.register.configuration.RegisterConfigConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.AllTheRegistersFactory;
 import uk.gov.register.core.RegisterContextFactory;
 import uk.gov.register.core.RegisterName;
@@ -16,9 +18,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterConfiguration extends Configuration
         implements RegisterDomainConfiguration,
         RegisterConfigConfiguration,
@@ -38,6 +42,14 @@ public class RegisterConfiguration extends Configuration
     @NotNull
     @JsonProperty
     private String registerDomain = "openregister.org";
+
+    @Valid
+    @JsonProperty
+    private Optional<String> custodianName = Optional.empty();
+
+    @Valid
+    @JsonProperty
+    private Optional<List<String>> similarRegisters = Optional.empty();
 
     @Valid
     @NotNull
@@ -98,7 +110,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, credentials);
+        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, custodianName, similarRegisters, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {

@@ -13,9 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.BadRequestException;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ViewFactory {
@@ -27,27 +25,30 @@ public class ViewFactory {
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
     private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
-    private final Provider<RegisterContentPagesConfiguration> registerContentPagesConfiguration;
+    private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
+    private final Provider<ConfigManager> configManager;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
                        PublicBodiesConfiguration publicBodiesConfiguration,
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
-                       Provider<RegisterContentPagesConfiguration> registerContentPagesConfiguration,
+                       Provider<HomepageContentConfiguration> homepageContentConfiguration,
                        Provider<RegisterMetadata> registerMetadata,
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
-                       Provider<RegisterReadOnly> register) {
+                       Provider<RegisterReadOnly> register,
+                       Provider<ConfigManager> configManager) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
         this.registerMetadata = registerMetadata;
-        this.registerContentPagesConfiguration = registerContentPagesConfiguration;
+        this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
+        this.configManager = configManager;
     }
 
     public ThymeleafView thymeleafView(String templateName) {
@@ -67,9 +68,12 @@ public class ViewFactory {
                 totalEntries,
                 lastUpdated,
                 register.get(),
-                new RegisterContentPages(registerContentPagesConfiguration.get().getRegisterHistoryPageUrl()),
+                new HomepageContent(homepageContentConfiguration.get().getRegisterHistoryPageUrl(),
+                        homepageContentConfiguration.get().getCustodianName(),
+                        homepageContentConfiguration.get().getSimilarRegisters()),
                 registerTrackingConfiguration.get(),
-                registerResolver);
+                registerResolver,
+                configManager.get().getFieldsConfiguration());
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {

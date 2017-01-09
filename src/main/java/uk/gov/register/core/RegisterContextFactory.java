@@ -13,6 +13,7 @@ import uk.gov.register.configuration.ConfigManager;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class RegisterContextFactory {
@@ -40,6 +41,14 @@ public class RegisterContextFactory {
     private Optional<String> historyPageUrl = Optional.empty();
 
     @Valid
+    @JsonProperty
+    private Optional<String> custodianName = Optional.empty();
+
+    @Valid
+    @JsonProperty
+    private Optional<List<String>> similarRegisters = Optional.empty();
+
+    @Valid
     @NotNull
     @JsonProperty
     private RegisterAuthenticatorFactory credentials;
@@ -51,12 +60,16 @@ public class RegisterContextFactory {
             @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("historyPageUrl") Optional<String> historyPageUrl,
+            @JsonProperty("custodianName") Optional<String> custodianName,
+            @JsonProperty("similarRegisters") Optional<List<String>> similarRegisters,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
         this.database = database;
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.historyPageUrl = historyPageUrl;
+        this.custodianName = custodianName;
+        this.similarRegisters = similarRegisters;
         this.credentials = credentials;
     }
 
@@ -83,6 +96,8 @@ public class RegisterContextFactory {
                 enableRegisterDataDelete,
                 enableDownloadResource,
                 historyPageUrl,
+                custodianName,
+                similarRegisters,
                 credentials.buildAuthenticator());
     }
 }
