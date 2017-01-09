@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface EntryQueryDAO {
     @RegisterMapper(EntryMapper.class)
     @SingleValueResult(Entry.class)
-    @SqlQuery("select * from entry where entry_number=:entryNumber")
+    @SqlQuery("select entry_number, sha256hex, timestamp, key from entry where entry_number=:entryNumber")
     Optional<Entry> findByEntryNumber(@Bind("entryNumber") int entryNumber);
 
     @RegisterMapper(LongTimestampToInstantMapper.class)
@@ -31,25 +31,25 @@ public interface EntryQueryDAO {
 
     //Note: This is fine for small data registers like country
     @RegisterMapper(EntryMapper.class)
-    @SqlQuery("SELECT * from entry order by entry_number desc")
+    @SqlQuery("SELECT entry_number, sha256hex, timestamp, key from entry order by entry_number desc")
     Collection<Entry> getAllEntriesNoPagination();
 
     @RegisterMapper(EntryMapper.class)
-    @SqlQuery("select * from entry where entry_number >= :start and entry_number \\< :start + :limit order by entry_number asc")
+    @SqlQuery("select entry_number, sha256hex, timestamp, key from entry where entry_number >= :start and entry_number \\< :start + :limit order by entry_number asc")
     Collection<Entry> getEntries(@Bind("start") int start, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT * FROM entry WHERE entry_number >= :entryNumber ORDER BY entry_number")
+    @SqlQuery("SELECT entry_number, sha256hex, timestamp, key FROM entry WHERE entry_number >= :entryNumber ORDER BY entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144) // Has to be non-zero to enable cursor mode https://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor
     ResultIterator<Entry> entriesIteratorFrom(@Bind("entryNumber") int entryNumber);
 
-    @SqlQuery("SELECT * FROM entry ORDER BY entry_number")
+    @SqlQuery("SELECT entry_number, sha256hex, timestamp, key FROM entry ORDER BY entry_number")
     @RegisterMapper(EntryMapper.class)
-    @FetchSize(262144)
+    @FetchSize(10000)
     Iterator<Entry> getIterator();
 
-    @SqlQuery("SELECT * FROM entry WHERE entry_number > :totalEntries1 and entry_number <= :totalEntries2 ORDER BY entry_number")
+    @SqlQuery("SELECT entry_number, sha256hex, timestamp, key FROM entry WHERE entry_number > :totalEntries1 and entry_number <= :totalEntries2 ORDER BY entry_number")
     @RegisterMapper(EntryMapper.class)
-    @FetchSize(262144)
+    @FetchSize(10000)
     Iterator<Entry> getIterator(@Bind("totalEntries1") int totalEntries1, @Bind("totalEntries2") int totalEntries2);
 }
