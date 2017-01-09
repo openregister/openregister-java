@@ -21,22 +21,11 @@
     <link rel="stylesheet" href="/assets/css/main.css"/>
   </head>
 
-  <header th:fragment="global-header" id="global-header" role="banner" class=" with-proposition">
+  <header th:fragment="global-header" id="global-header" role="banner">
     <div class="header-wrapper">
       <div class="header-global">
         <div class="header-logo">
-          <a id="logo" class="content" href="https://www.gov.uk">
-            GOV.UK
-          </a>
-        </div>
-      </div>
-
-      <div class="header-proposition">
-        <div class="content">
-          <a href="#proposition-links" class="js-header-toggle menu">Menu</a>
-          <nav id="proposition-menu" role="navigation">
-            <a id="proposition-name" href="/" th:text="${friendlyRegisterName}"></a>
-          </nav>
+          <a id="logo" class="content" href="/" th:text="${friendlyRegisterName}"></a>
         </div>
       </div>
     </div>
@@ -60,7 +49,7 @@
 
   <th:block th:fragment="attribution">
     <div class="organisation">
-      <h3 class="heading-medium">Managed by:</h3>
+      <h3 class="heading-small">Managed by:</h3>
       <th:block th:include="main.html::organisation(${registry}, ${branding})"></th:block>
     </div>
   </th:block>

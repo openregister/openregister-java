@@ -24,7 +24,7 @@
           <li th:each="field : ${register.fields}" th:text="${field}"></li>
         </ul>
         <h3 class="heading-small">Using this register</h3>
-        <p>Download a copy of this register. You'll need to regularly uodate it to make sure you have the most current version of the data.</p>
+        <p>Download a copy of this register. You'll need to regularly update it to make sure you have the most current version of the data.</p>
         <p>If you're building a service, you can use this data to create elements for forms.</p>
         <p>You might need to combine data from this register with data from another source to do this.</p>
       </main>
@@ -33,12 +33,23 @@
         <aside class="govuk-related-items" role="complementary">
           <h2 class="heading-medium">About this register</h2>
           <th:block th:replace="main.html::attribution"></th:block>
-          <h3 class="heading-medium">Last updated:</h3>
+          <h3 class="heading-small">Last updated:</h3>
           <p th:text="${lastUpdatedTime}">Last updated</p>
-          <h3 class="heading-medium">Elsewhere on GOV.UK</h3>
-          <p>
-            <a th:href="${homepageContent.registersIntroductionUrl}" target="_blank">Introducing registers</a>
-          </p>
+          <h3 class="heading-medium">More information</h3>
+          <ul class="list">
+            <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
+              <a th:href="${homepageContent.registerHistoryPageUrl.get()}">Register history</a>
+            </li>
+            <li>
+              <a th:href="${homepageContent.registersIntroductionUrl}">Introducing registers</a>
+            </li>
+            <li>
+              <a th:href="${homepageContent.usingRegistersGuidanceUrl}">Guidance for using registers</a>
+            </li>
+            <li>
+              <a th:href="${homepageContent.specificationUrl}">Technical specification</a>
+            </li>
+          </ul>
         </aside>
       </div>
 

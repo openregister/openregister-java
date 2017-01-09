@@ -66,7 +66,6 @@ body {
 
 .phase-banner {
   @include phase-banner();
-  margin-bottom: $gutter;
 }
 
 .button{
@@ -74,8 +73,8 @@ body {
 }
 
 .govuk-related-items {
-  margin-top: $gutter;
   border-top: $gutter-one-third solid $govuk-blue;
+  margin-top: 50px;
   padding-top: $gutter-one-quarter;
 
   .heading-medium {
@@ -87,6 +86,14 @@ body {
     margin-bottom: $gutter-one-third;
     list-style-type: none;
   }
+
+  .organisation {
+    margin-top: 0;
+  }
+}
+
+.organisation {
+  margin-top: 50px;
 }
 
 #footer .footer-meta .footer-meta-inner {
