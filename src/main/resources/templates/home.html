@@ -21,7 +21,10 @@
         <p class="text">You can also <a href="/download">download a copy</a> of the register.</p>
         <p class="text">The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span> records and includes the following fields:</p>
         <ul class="list-bullet">
-          <li th:each="field : ${register.fields}" th:text="${field}"></li>
+          <li th:each="field : ${fields}">
+            <th:block th:text="${field.fieldName}"></th:block>
+            (<th:block th:text="${field.text}"></th:block>)
+          </li>
         </ul>
         <h3 class="heading-small">Using this register</h3>
         <p>Download a copy of this register. You'll need to regularly update it to make sure you have the most current version of the data.</p>
@@ -39,6 +42,7 @@
           <th:block th:replace="main.html::attribution"></th:block>
           <h3 class="heading-small">Last updated</h3>
           <p th:text="${lastUpdatedTime}">Last updated</p>
+          <p><a href="/entries">View recent updates</a></p>
           <h3 class="heading-medium">More information</h3>
           <ul class="list">
             <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
