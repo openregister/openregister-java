@@ -18,7 +18,7 @@ public class CommandExecutor {
             CommandHandler commandHandler = registeredHandlers.get(command.getCommandName());
             return commandHandler.execute(command, register);
         } else {
-            return Arrays.asList(new Exception("Handler not register for command: " + command.getCommandName()));
+            return Arrays.asList(new Exception("Handler not registered for command: " + command.getCommandName()));
         }
     }
 

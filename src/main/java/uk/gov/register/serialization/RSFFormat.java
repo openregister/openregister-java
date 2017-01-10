@@ -108,7 +108,7 @@ public class RSFFormat {
         throw new NotImplementedException("here be not implemented dragons");
     }
 
-    public RegisterCommand2 parse(String str) {
+    public RegisterCommand2 parse(String str) throws IllegalArgumentException {
         List<String> parts = Arrays.asList(str.split(TAB));
 
         String commandName = parts.get(0);
@@ -147,7 +147,18 @@ public class RSFFormat {
 //        }
 //
 
-        return new RegisterCommand2(commandName, parts.subList(1, parts.size()));
+
+
+        RegisterCommand2 parsedCommand = new RegisterCommand2(commandName, parts.subList(1, parts.size()));
+
+        validate(parsedCommand);
+
+
+        return parsedCommand;
+    }
+
+    private void validate(RegisterCommand2 command) throws IllegalArgumentException {
+
     }
 
 
