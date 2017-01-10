@@ -4,15 +4,18 @@
 <head th:include="main.html::head"></head>
 <body>
   <header th:replace="main.html::global-header"></header>
+  <div id="global-header-bar"></div>
 
-  <main id="main" role="main">
-    <div th:replace="main.html::phase"></div>
-    <a href="/">&lt; back</a>
-    <header th:replace="main.html::page-header(title='This page has not been implemented yet')"></header>
-    <p>
-      We haven’t prioritised this work yet. If you are interested in this feature, please let us know so we can adjust our priorities.
-    </p>
-  </main>
+  <div id="wrapper">
+    <main id="main" role="main">
+      <div th:replace="main.html::phase"></div>
+      <a href="/" class="link-back">Back</a>
+      <header th:replace="main.html::page-header(title='This page has not been implemented yet')"></header>
+      <p>
+        We haven’t prioritised this work yet. If you are interested in this feature, please let us know so we can adjust our priorities.
+      </p>
+    </main>
+  </div>
 
   <footer th:replace="main.html::footer"></footer>
 

@@ -4,60 +4,44 @@
 <head th:include="main.html::head"></head>
 <body>
   <header th:replace="main.html::global-header"></header>
+  <div id="global-header-bar"></div>
 
-  <main id="main" role="main">
+  <div id="wrapper">
+
     <div th:replace="main.html::phase"></div>
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <div class="homepage-intro" th:utext="${registerText}">The register of UK government registers.</div>
-        <dl class="primary-metadata">
-          <dt>Managed by:</dt>
-          <dd>
-            <th:block th:include="main.html :: organisation(${registry}, ${branding})"></th:block>
-          </dd>
-          <dt>Total records:</dt>
-          <dd>
-            <a href="/records">
-              <th:block th:text="${totalRecords}">Total</th:block>
-              <span class="visuallyhidden"> records</span>
-            </a>
-          </dd>
-          <dt>Total entries:</dt>
-          <dd>
-            <a href="/entries">
-              <th:block th:text="${totalEntries}">Total</th:block>
-              <span class="visuallyhidden"> entries</span>
-            </a>
-          </dd>
-          <dt>Last updated:</dt>
-          <dd th:text="${lastUpdatedTime}">Last updated</dd>
-        </dl>
-      </div>
-    </div>
-    <div class="technical-information">
-      <div class="grid-row">
-        <div class="column-two-thirds">
-          <h2 class="heading-large">Technical information</h2>
-          <p>Registers are made up of entries containing fields of data. To build services on top of these registers you can access the data in a variety of formats.</p>
-          <h3>Fields in this register:</h3>
-          <div class="field-list">
-            <ul>
-              <li th:each="field : ${register.fields}" th:text="${field}"></li>
-            </ul>
-          </div>
 
-          <a th:href="${linkToRegisterRegister}">View this record in the register of registers</a>
-        </div>
-        <div class="column-third">
-          <ul>
-            <li>
-              <a href="/download">Download data</a>
-            </li>
+    <div class="grid-row">
+
+      <main class="column-two-thirds" id="main" role="main">
+        <h1 class="heading-large" th:utext="${friendlyRegisterName}"></h1>
+        <th:block th:utext="${registerText}"></th:block>
+        <p>
+          <a href="/records" class="button">View Register</a>
+        </p>
+        <p class="text">You can also <a href="/download">download a copy</a> of the register.</p>
+        <p class="text">The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span> records and includes the following fields:</p>
+        <ul class="list-bullet">
+          <li th:each="field : ${register.fields}" th:text="${field}"></li>
+        </ul>
+        <h3 class="heading-small">Using this register</h3>
+        <p>Download a copy of this register. You'll need to regularly update it to make sure you have the most current version of the data.</p>
+        <p>If you're building a service, you can use this data to create elements for forms.</p>
+        <p>You might need to combine data from this register with data from another source to do this.</p>
+      </main>
+
+      <div class="column-third">
+        <aside class="govuk-related-items" role="complementary">
+          <h2 class="heading-medium">About this register</h2>
+          <th:block th:replace="main.html::attribution"></th:block>
+          <h3 class="heading-small">Last updated:</h3>
+          <p th:text="${lastUpdatedTime}">Last updated</p>
+          <h3 class="heading-medium">More information</h3>
+          <ul class="list">
             <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
               <a th:href="${homepageContent.registerHistoryPageUrl.get()}">Register history</a>
             </li>
             <li>
-              <a th:href="${homepageContent.registersIntroductionUrl}">About registers</a>
+              <a th:href="${homepageContent.registersIntroductionUrl}">Introducing registers</a>
             </li>
             <li>
               <a th:href="${homepageContent.usingRegistersGuidanceUrl}">Guidance for using registers</a>
@@ -66,51 +50,11 @@
               <a th:href="${homepageContent.specificationUrl}">Technical specification</a>
             </li>
           </ul>
-        </div>
+        </aside>
       </div>
+
     </div>
-
-    <details>
-      <summary>View register fingerprint</summary>
-      <div class="fingerprint-container">
-        <span class="fingerprint-explanation">
-          <a href="https://gdstechnology.blog.gov.uk/2015/10/13/guaranteeing-the-integrity-of-a-register/">
-            See how the fingerprint works
-          </a>
-        </span>
-<pre class="fingerprint">
-  <code>{
-    "tree_size": 9803348,
-    "timestamp": 1447421303202,
-    "sha256_root_hash": "JATHxRF5gczvNPP1S1WuhD8jSx2bl+WoTt8bIE3YKvU=",
-    "tree_head_signature":
-    "BAMARzBFAiEAkKM3aRUBKhShdCyrGLdd8lYBV52FLrwqjHa5/YuzK7ECIFTlRmNuKLqbVQv0QS8nq0pAUwgbilKOR5piBAIC8LpS"
-  }</code>
-</pre>
-      </div>
-    </details>
-
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <h2>About registers</h2>
-        <p>A register is a list of data that comes from a reliable source and is the only list of its kind.</p>
-        <p>
-          Each register is made up of records. Each record is made up of ‘fields’ and ‘values’.
-          When any of the information in a register changes, a new entry is added to the record.
-          The most recent entry is shown as the current version of the record.
-          Older entries are also kept as part of the record to show when it was changed.
-        </p>
-        <p>
-          You can find
-          <a href="https://www.gov.uk/government/publications/registers/registers">more information about registers on GOV.UK</a>
-          and
-          <a href="https://register.register.gov.uk">view all registers</a>.
-        </p>
-      </div>
-    </div>
-
-    <div th:replace="copyright.html::copyright">Copyright text</div>
-  </main>
+  </div>
 
   <footer th:replace="main.html::footer"></footer>
 

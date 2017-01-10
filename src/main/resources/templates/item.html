@@ -4,22 +4,24 @@
 <head th:include="main.html::head"></head>
 <body>
   <header th:replace="main.html::global-header"></header>
+  <div id="global-header-bar"></div>
 
-  <main id="main" role="main">
-    <div th:replace="main.html::phase"></div>
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <p></p>
+  <div id="wrapper">
+    <main id="main" role="main">
+      <div th:replace="main.html::phase"></div>
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <p></p>
+        </div>
+        <div class="column-third" th:include="main.html :: attribution"></div>
       </div>
-      <div class="column-third" th:include="main.html :: attribution"></div>
-    </div>
 
-    <div th:include="fragments/item-table.html :: item-table (content = ${content})" class="table-wrapper"></div>
+      <div th:include="fragments/item-table.html :: item-table (content = ${content})" class="table-wrapper"></div>
 
-    <div th:include="data-formats.html::data-formats"></div>
+      <div th:include="data-formats.html::data-formats"></div>
 
-    <div th:replace="copyright.html::copyright"></div>
-  </main>
+    </main>
+  </div>
 
   <footer th:replace="main.html::footer"></footer>
 

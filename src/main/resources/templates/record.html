@@ -4,31 +4,36 @@
 <head th:include="main.html::head"></head>
 <body>
   <header th:replace="main.html::global-header"></header>
+  <div id="global-header-bar"></div>
 
-  <main id="main" role="main">
-    <div th:replace="main.html::phase"></div>
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        Record:
-        <h1 class="entry-header" th:text="${content.primaryKey}">Record Header</h1>
-        <p class="entry-source">
-          A record in the <a href="/" th:text="${friendlyRegisterName}"></a>.
-          <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}">View this register.</a>
-        </p>
+  <div id="wrapper">
+    <main id="main" role="main">
+      <div th:replace="main.html::phase"></div>
+
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="heading-large">
+            <span class="heading-secondary">Record</span>
+            <th:block th:utext="${content.primaryKey}"></th:block>
+          </h1>
+          <p>
+            A record in the <a href="/" th:text="${friendlyRegisterName}"></a>.
+            <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}">View this register.</a>
+          </p>
+        </div>
+        <div class="column-third" th:include="main.html :: attribution"></div>
       </div>
-      <div class="column-third" th:include="main.html :: attribution"></div>
-    </div>
 
-    <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>
+      <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>
 
-    <div th:include="data-formats.html::data-formats"></div>
+      <div th:include="data-formats.html::data-formats"></div>
 
-    <p>
-      <a th:href="${'/record/' + content.primaryKey +'/entries'}">View all versions of this record</a>
-    </p>
+      <p>
+        <a th:href="${'/record/' + content.primaryKey +'/entries'}">View all versions of this record</a>
+      </p>
 
-    <div th:replace="copyright.html::copyright"></div>
-  </main>
+    </main>
+  </div>
 
   <footer th:replace="main.html::footer"></footer>
 

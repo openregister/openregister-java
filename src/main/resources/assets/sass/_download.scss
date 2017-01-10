@@ -11,21 +11,7 @@
 	font-family: monospace;
 }
 
-.content-two-thirds {
-  @include grid-column( 2/3 );
-  padding: 0;
-}
-
-.content-grid-row {
-  @extend %grid-row;
-  margin: 0;
-}
-
-ul {
-  padding-left: 20px;
-}
-
-.url-param{
+.url-param {
   @include font-code;
   @include border;
 }

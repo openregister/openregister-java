@@ -1,17 +1,18 @@
-/* libSass doesn’t implement image-url that govuk_template uses so polyfill that */
+// libSass doesn’t implement image-url that govuk_template uses so polyfill that
 
 $image-url-path: '/assets/' !default;
 @function image-url($url) {
   @return url("#{$image-url-path}#{$url}");
 }
 
-/* Import from govuk_frontend_toolkit */
+// Needed for elements-typography
+@function em($px, $base: 19) {
+  @return ($px / $base) + em;
+}
 
+// Import from govuk_frontend_toolkit
 @import "colours";
-@import "conditionals";
 @import "css3";
-@import "device-pixels";
-@import "font_stack";
 @import "grid_layout";
 @import "measurements";
 @import "shims";
@@ -19,25 +20,25 @@ $image-url-path: '/assets/' !default;
 @import "design-patterns/alpha-beta";
 @import "design-patterns/buttons";
 
-/* Import from govuk_template */
-
+// Import from govuk_template
 @import "styleguide/colours";
-
 @import "basic";
 @import "accessibility";
 @import "header";
 @import "footer";
 
-/* Register styles */
+// Taken from govuk_elements
+@import "elements-typography";
+@import "lists";
+
+// Register styles
 
 $pale-grey: #f5f5f5;
 $dark-grey: #BFC1C3;
 $register: #2372b5;
+$light-gray: #f9f9f9;
 $NTA-Light: $Helvetica-Regular;
 
-@import "details";
-@import "fingerprint";
-@import "home";
 @import "organisations";
 @import "page-navigation";
 @import "download";
@@ -50,13 +51,7 @@ body {
   background-color: $register;
 
   .header-wrapper {
-
     background-color: $register;
-
-    .header-global .header-logo {
-      width: auto;
-      float: none;
-    }
   }
 
   #logo {
@@ -64,13 +59,41 @@ body {
   }
 }
 
-main {
+#wrapper {
   @extend %site-width-container;
+  padding-bottom: $gutter*3;
 }
 
 .phase-banner {
   @include phase-banner();
-  margin-bottom: $gutter;
+}
+
+.button{
+  @include button;
+}
+
+.govuk-related-items {
+  border-top: $gutter-one-third solid $govuk-blue;
+  margin-top: 50px;
+  padding-top: $gutter-one-quarter;
+
+  .heading-medium {
+    margin-top: 0.3em;
+    margin-bottom: 0.5em;
+  }
+
+  li {
+    margin-bottom: $gutter-one-third;
+    list-style-type: none;
+  }
+
+  .organisation {
+    margin-top: 0;
+  }
+}
+
+.organisation {
+  margin-top: 50px;
 }
 
 #footer .footer-meta .footer-meta-inner {
@@ -78,20 +101,14 @@ main {
     @extend .open-government-licence;
 
     @include media(tablet) {
-      padding-left: 0px;
+      padding-left: 0;
     }
   }
 }
 
 .registry-copyright {
-  white-space: pre; /* fallback for IE 6-7 */
+  white-space: pre; // fallback for IE 6-7
   white-space: pre-line;
-}
-
-// attribution in top-right of many pages
-.managed-by {
-  display: block;
-  margin-bottom: $gutter/2;
 }
 
 .field-column {
@@ -101,7 +118,7 @@ main {
   width: 67%;
 }
 
-//grids
+// Grids
 
 .grid-row {
   @extend %grid-row;
@@ -115,11 +132,7 @@ main {
   }
 }
 
-.hero-image {
-  @extend %outdent-to-full-width;
-}
-
-/* comma-separated lists */
+// Comma-separated lists
 .field-list {
   ul {
     font-family: monospace;
@@ -131,7 +144,7 @@ main {
     li {
       display: inline-block;
       letter-spacing: normal;
-      font-size: 16px;
+      font-size: 14px;
       overflow: hidden;
 
       // Remove white space before comma which is added below
@@ -149,17 +162,9 @@ main {
       }
     }
   }
-
-  &.field-list-in-table li {
-    font-size: 14px;
-  }
 }
 
-// tables
-
-$table-header: #f5f5f5;
-$table-row: #f9f9f9;
-
+// Tables
 .table-wrapper {
   margin-top: $gutter;
   margin-bottom: $gutter;
@@ -180,16 +185,16 @@ table {
   }
 
   th {
-    background-color: $table-header;
+    background-color: $pale-grey;
   }
 
   tr:nth-child(2n) {
-    background-color: $table-row;
+    background-color: $light-gray;
   }
 
   &.entry {
     tr {
-      background-color: $table-header;
+      background-color: $pale-grey;
     }
     th, td {
       border-bottom: 1px solid $border-colour;
