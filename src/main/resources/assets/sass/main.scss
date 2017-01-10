@@ -10,6 +10,13 @@ $image-url-path: '/assets/' !default;
   @return ($px / $base) + em;
 }
 
+// Variables
+$pale-grey: #f5f5f5;
+$dark-grey: #BFC1C3;
+$register: #005abb;
+$light-gray: #f9f9f9;
+$toolkit-font-stack: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
+
 // Import from govuk_frontend_toolkit
 @import "colours";
 @import "css3";
@@ -32,12 +39,6 @@ $image-url-path: '/assets/' !default;
 @import "lists";
 
 // Register styles
-
-$pale-grey: #f5f5f5;
-$dark-grey: #BFC1C3;
-$register: #2372b5;
-$light-gray: #f9f9f9;
-$NTA-Light: $Helvetica-Regular;
 
 @import "organisations";
 @import "page-navigation";
@@ -73,14 +74,7 @@ body {
 }
 
 .govuk-related-items {
-  border-top: $gutter-one-third solid $govuk-blue;
   margin-top: 50px;
-  padding-top: $gutter-one-quarter;
-
-  .heading-medium {
-    margin-top: 0.3em;
-    margin-bottom: 0.5em;
-  }
 
   li {
     margin-bottom: $gutter-one-third;
