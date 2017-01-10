@@ -4,7 +4,6 @@
 <head th:include="main.html::head"></head>
 <body>
   <header th:replace="main.html::global-header"></header>
-  <div id="global-header-bar"></div>
 
   <div id="wrapper">
 
@@ -41,8 +40,12 @@
           </th:block>
           <th:block th:replace="main.html::attribution"></th:block>
           <h3 class="heading-small">Last updated</h3>
-          <p th:text="${lastUpdatedTime}">Last updated</p>
-          <p><a href="/entries">View recent updates</a></p>
+          <ul class="list">
+            <li th:text="${lastUpdatedTime}">Last updated</li>
+            <li>
+              <a href="/entries">View recent updates</a>
+            </li>
+          </ul>
           <h3 class="heading-medium">More information</h3>
           <ul class="list">
             <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
