@@ -46,6 +46,22 @@
               <a href="/entries">View recent updates</a>
             </li>
           </ul>
+          <th:block th:unless="${registerLinks.registersLinkedTo.empty}">
+            <h3 class="medium-small">Links to</h3>
+            <ul class="list">
+              <li th:each="registerLinkTo : ${registerLinks.registersLinkedTo}">
+                <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkTo))}" th:text="${#strings.capitalize(registerLinkTo)} + ' register'"></a>
+              </li>
+            </ul>
+          </th:block>
+          <th:block th:unless="${registerLinks.registersLinkedFrom.empty}">
+            <h3 class="medium-small">Links from</h3>
+            <ul class="list">
+              <li th:each="registerLinkFrom : ${registerLinks.registersLinkedFrom}">
+                <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkFrom))}" th:text="${#strings.capitalize(registerLinkFrom)} + ' register'"></a>
+              </li>
+            </ul>
+          </th:block>
           <th:block th:unless="${homepageContent.similarRegisters.empty}">
             <h3 class="heading-small">Similar registers</h3>
             <ul class="list">
