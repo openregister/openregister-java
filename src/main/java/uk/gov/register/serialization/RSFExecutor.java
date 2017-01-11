@@ -5,15 +5,15 @@ import uk.gov.register.core.Register;
 
 import java.util.*;
 
-public class CommandExecutor {
+public class RSFExecutor {
 
     private Map<String, CommandHandler> registeredHandlers;
 
-    public CommandExecutor() {
+    public RSFExecutor() {
         registeredHandlers = new HashMap<>();
     }
 
-    public List<Exception> execute(RegisterCommand2 command, Register register) {
+    private List<Exception> execute(RegisterCommand2 command, Register register) {
         if (registeredHandlers.containsKey(command.getCommandName())) {
             CommandHandler commandHandler = registeredHandlers.get(command.getCommandName());
             return commandHandler.execute(command, register);
@@ -22,8 +22,9 @@ public class CommandExecutor {
         }
     }
 
-    public List<Exception> execute(Iterator<RegisterCommand2> commands, Register register) {
+    public List<Exception> execute(RegisterSerialisationFormat rsf, Register register) {
         List<Exception> errors = new ArrayList<>();
+        Iterator<RegisterCommand2> commands = rsf.getCommands2();
         while (commands.hasNext() && errors.isEmpty()) {
             RegisterCommand2 command = commands.next();
             errors.addAll(execute(command, register));

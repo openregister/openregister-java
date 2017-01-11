@@ -29,15 +29,15 @@ public class RegisterSerialisationFormatService {
     private final RegisterProof emptyRegisterProof;
 
     private final RegisterContext registerContext;
-    private CommandExecutor commandExecutor;
+    private RSFExecutor RSFExecutor;
 
     private static final Logger LOG = LoggerFactory.getLogger(RegisterSerialisationFormatService.class);
 
 
     @Inject
-    public RegisterSerialisationFormatService(RegisterContext registerContext, CommandExecutor commandExecutor) {
+    public RegisterSerialisationFormatService(RegisterContext registerContext, RSFExecutor RSFExecutor) {
         this.registerContext = registerContext;
-        this.commandExecutor = commandExecutor;
+        this.RSFExecutor = RSFExecutor;
         this.emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_ROOT_HASH));
     }
 
@@ -88,13 +88,15 @@ public class RegisterSerialisationFormatService {
     public List<Exception> processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
         List<Exception> results = new ArrayList<>();
         registerContext.transactionalRegisterOperation(register -> {
-            Iterator<RegisterCommand2> commands = rsf.getCommands2();
 
-            LOG.debug("in processing");
             try {
+
                 LOG.debug("before executing commands");
-                List<Exception> cmResults = commandExecutor.execute(commands, register);
+
+                List<Exception> cmResults = RSFExecutor.execute(rsf, register);
+
                 results.addAll(cmResults);
+
                 LOG.debug("after executing commands");
 
             } catch (Exception e) {

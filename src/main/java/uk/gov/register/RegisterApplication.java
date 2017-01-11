@@ -28,7 +28,7 @@ import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.serialization.AddItemCommandHandler;
 import uk.gov.register.serialization.AppendEntryCommandHandler;
 import uk.gov.register.serialization.AssertRootHashCommandHandler;
-import uk.gov.register.serialization.CommandExecutor;
+import uk.gov.register.serialization.RSFExecutor;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
@@ -92,7 +92,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, configManager, environment, registerLinkService);
         allTheRegisters.stream().forEach(register -> register.getFlyway().migrate());
 
-        CommandExecutor cm = new CommandExecutor();
+        RSFExecutor cm = new RSFExecutor();
         cm.register(new AddItemCommandHandler());
         cm.register(new AppendEntryCommandHandler());
         cm.register(new AssertRootHashCommandHandler());
@@ -116,7 +116,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
-                bind(cm).to(CommandExecutor.class);
+                bind(cm).to(RSFExecutor.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
                 bind(RequestContext.class).to(RequestContext.class).to(SchemeContext.class);
