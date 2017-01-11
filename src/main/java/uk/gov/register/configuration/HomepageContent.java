@@ -6,9 +6,9 @@ import java.util.Optional;
 public class HomepageContent {
     private final Optional<String> registerHistoryUrl;
     private final Optional<String> custodianName;
-    private final Optional<List<String>> similarRegisters;
+    private final List<String> similarRegisters;
 
-    public HomepageContent(Optional<String> registerHistoryUrl, Optional<String> custodianName, Optional<List<String>> similarRegisters) {
+    public HomepageContent(Optional<String> registerHistoryUrl, Optional<String> custodianName, List<String> similarRegisters) {
         this.registerHistoryUrl = registerHistoryUrl;
         this.custodianName = custodianName;
         this.similarRegisters = similarRegisters;
@@ -36,5 +36,5 @@ public class HomepageContent {
 
     public Optional<String> getCustodianName() { return custodianName; }
 
-    public Optional<List<String>> getSimilarRegisters() { return similarRegisters; }
+    public List<String> getSimilarRegisters() { return similarRegisters; }
 }

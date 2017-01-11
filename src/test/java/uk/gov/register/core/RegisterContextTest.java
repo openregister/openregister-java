@@ -12,6 +12,7 @@ import uk.gov.register.service.RegisterLinkService;
 import java.io.IOException;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.*;
 
 public class RegisterContextTest {
@@ -32,7 +33,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -42,7 +43,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();

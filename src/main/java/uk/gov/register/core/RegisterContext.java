@@ -35,7 +35,7 @@ public class RegisterContext implements
     private final Optional<String> historyPageUrl;
     private final Optional<String> custodianName;
     private final Optional<String> trackingId;
-    private final Optional<List<String>> similarRegisters;
+    private final List<String> similarRegisters;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterMetadata registerMetadata;
@@ -44,7 +44,7 @@ public class RegisterContext implements
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
                            DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
-                           Optional<String> custodianName, Optional<List<String>> similarRegisters,
+                           Optional<String> custodianName, List<String> similarRegisters,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
@@ -160,7 +160,7 @@ public class RegisterContext implements
     public Optional<String> getCustodianName() { return custodianName; }
 
     @Override
-    public Optional<List<String>> getSimilarRegisters() {
+    public List<String> getSimilarRegisters() {
         return similarRegisters;
     }
 }

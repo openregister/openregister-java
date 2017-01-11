@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface HomepageContentConfiguration {
     Optional<String> getRegisterHistoryPageUrl();
     Optional<String> getCustodianName();
-    Optional<List<String>> getSimilarRegisters();
+    List<String> getSimilarRegisters();
 }
