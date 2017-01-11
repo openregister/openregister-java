@@ -7,6 +7,7 @@ import org.skife.jdbi.v2.DBI;
 import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.exceptions.NoSuchConfigException;
+import uk.gov.register.service.RegisterLinkService;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.*;
 public class RegisterContextTest {
     private RegisterName registerName;
     private ConfigManager configManager;
+    private RegisterLinkService registerLinkService;
     private DBI dbi;
     private Flyway flyway;
 
@@ -23,13 +25,14 @@ public class RegisterContextTest {
     public void setup() {
         registerName = new RegisterName("register");
         configManager = mock(ConfigManager.class, RETURNS_DEEP_STUBS);
+        registerLinkService = mock(RegisterLinkService.class);
         dbi = mock(DBI.class);
         flyway = mock(Flyway.class);
     }
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -39,7 +42,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), Optional.empty(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();
