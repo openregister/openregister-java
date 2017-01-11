@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
+
 public class RegisterContextFactory {
 
     @Valid
@@ -47,7 +49,7 @@ public class RegisterContextFactory {
 
     @Valid
     @JsonProperty
-    private Optional<List<String>> similarRegisters = Optional.empty();
+    private List<String> similarRegisters = emptyList();
 
     @Valid
     @NotNull
@@ -62,7 +64,7 @@ public class RegisterContextFactory {
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("historyPageUrl") Optional<String> historyPageUrl,
             @JsonProperty("custodianName") Optional<String> custodianName,
-            @JsonProperty("similarRegisters") Optional<List<String>> similarRegisters,
+            @JsonProperty("similarRegisters") List<String> similarRegisters,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
         this.database = database;
         this.trackingId = trackingId;
@@ -70,7 +72,7 @@ public class RegisterContextFactory {
         this.enableDownloadResource = enableDownloadResource;
         this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
-        this.similarRegisters = similarRegisters;
+        this.similarRegisters = similarRegisters != null ? similarRegisters : emptyList();
         this.credentials = credentials;
     }
 

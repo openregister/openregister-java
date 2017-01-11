@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterConfiguration extends Configuration
         implements RegisterDomainConfiguration,
@@ -49,7 +51,7 @@ public class RegisterConfiguration extends Configuration
 
     @Valid
     @JsonProperty
-    private Optional<List<String>> similarRegisters = Optional.empty();
+    private List<String> similarRegisters = emptyList();
 
     @Valid
     @NotNull
