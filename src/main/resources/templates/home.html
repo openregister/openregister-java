@@ -46,7 +46,7 @@
               <a href="/entries">View recent updates</a>
             </li>
           </ul>
-          <th:block th:if="${#bools.isFalse(homepageContent.similarRegisters.empty)}">
+          <th:block th:unless="${homepageContent.similarRegisters.empty}">
             <h3 class="heading-small">Similar registers</h3>
             <ul class="list">
               <li th:each="similarRegister : ${homepageContent.similarRegisters}">
