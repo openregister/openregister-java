@@ -46,6 +46,14 @@
               <a href="/entries">View recent updates</a>
             </li>
           </ul>
+          <th:block th:if="${#bools.isTrue(homepageContent.similarRegisters.isPresent())}">
+            <h3 class="heading-small">Similar registers</h3>
+            <ul class="list">
+              <li th:each="similarRegister : ${homepageContent.similarRegisters.get()}">
+                <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(similarRegister))}" th:text="${#strings.capitalize(similarRegister)} + ' register'"></a>
+              </li>
+            </ul>
+          </th:block>
           <h3 class="heading-medium">More information</h3>
           <ul class="list">
             <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
