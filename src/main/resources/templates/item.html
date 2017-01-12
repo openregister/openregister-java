@@ -12,7 +12,7 @@
         <div class="column-two-thirds">
           <p></p>
         </div>
-        <div class="column-third" th:include="main.html :: attribution"></div>
+        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/item-table.html :: item-table (content = ${content})" class="table-wrapper"></div>

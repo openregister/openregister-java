@@ -20,7 +20,7 @@
             <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}">View this register.</a>
           </p>
         </div>
-        <div class="column-third" th:include="main.html :: attribution"></div>
+        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>

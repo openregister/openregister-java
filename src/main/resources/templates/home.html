@@ -38,7 +38,7 @@
             <h3 class="heading-small">Custodian</h3>
             <p th:text="${homepageContent.custodianName.get()}"></p>
           </th:block>
-          <th:block th:replace="main.html::attribution"></th:block>
+          <th:block th:replace="fragments/attribution.html::attribution"></th:block>
           <h3 class="heading-small">Last updated</h3>
           <ul class="list">
             <li th:text="${lastUpdatedTime}">Last updated</li>

@@ -21,7 +21,7 @@
             <a href="/" th:text="${friendlyRegisterName}"></a>
           </p>
         </div>
-        <div class="column-third" th:include="main.html :: attribution"></div>
+        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/entry-table.html :: entry-table (entry = ${content})" class="table-wrapper"></div>
