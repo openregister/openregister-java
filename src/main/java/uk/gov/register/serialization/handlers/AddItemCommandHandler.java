@@ -1,15 +1,16 @@
-package uk.gov.register.serialization;
+package uk.gov.register.serialization.handlers;
 
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.ObjectReconstructor;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AddItemCommandHandler extends CommandHandler {
+public class AddItemCommandHandler extends RegisterCommandHandler {
 
 
     private final ObjectReconstructor objectReconstructor;
@@ -20,7 +21,7 @@ public class AddItemCommandHandler extends CommandHandler {
     }
 
     @Override
-    protected List<Exception> executeCommand(RegisterCommand2 command, Register register) {
+    protected List<Exception> executeCommand(RegisterCommand command, Register register) {
         try {
             String jsonContent = command.getCommandArguments().get(0);
             Item item = new Item(objectReconstructor.reconstruct(jsonContent));

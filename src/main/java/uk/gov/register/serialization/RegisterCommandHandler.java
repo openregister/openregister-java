@@ -5,11 +5,11 @@ import uk.gov.register.core.Register;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class CommandHandler {
-    protected abstract List<Exception> executeCommand(RegisterCommand2 command, Register register);
+public abstract class RegisterCommandHandler {
+    protected abstract List<Exception> executeCommand(RegisterCommand command, Register register);
     public abstract String getCommandName();
 
-    public List<Exception> execute(RegisterCommand2 command, Register register){
+    public List<Exception> execute(RegisterCommand command, Register register){
         if (command.getCommandName().equals(getCommandName())){
 
             return executeCommand(command, register);

@@ -1,23 +1,21 @@
-package uk.gov.register.serialization;
+package uk.gov.register.serialization.handlers;
 
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.util.ObjectReconstructor;
 
-import java.io.IOException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AppendEntryCommandHandler extends CommandHandler {
+public class AppendEntryCommandHandler extends RegisterCommandHandler {
 
 
     @Override
-    protected List<Exception> executeCommand(RegisterCommand2 command, Register register) {
+    protected List<Exception> executeCommand(RegisterCommand command, Register register) {
         try {
             List<String> parts = command.getCommandArguments();
             int newEntryNo = register.getTotalEntries() + 1;

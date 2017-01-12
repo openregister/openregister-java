@@ -12,7 +12,7 @@ import java.util.*;
 
 public class RSFExecutor {
 
-    private Map<String, CommandHandler> registeredHandlers;
+    private Map<String, RegisterCommandHandler> registeredHandlers;
     private Map<String, Integer> shaRefCount;
 
     public RSFExecutor() {
@@ -20,10 +20,10 @@ public class RSFExecutor {
         shaRefCount = new HashMap<>();
     }
 
-    private List<Exception> execute(RegisterCommand2 command, Register register) {
+    private List<Exception> execute(RegisterCommand command, Register register) {
         if (registeredHandlers.containsKey(command.getCommandName())) {
-            CommandHandler commandHandler = registeredHandlers.get(command.getCommandName());
-            return commandHandler.execute(command, register);
+            RegisterCommandHandler registerCommandHandler = registeredHandlers.get(command.getCommandName());
+            return registerCommandHandler.execute(command, register);
         } else {
             return Arrays.asList(new Exception("Handler not registered for command: " + command.getCommandName()));
         }
@@ -31,9 +31,9 @@ public class RSFExecutor {
 
     public List<Exception> execute(RegisterSerialisationFormat rsf, Register register) {
         List<Exception> errors = new ArrayList<>();
-        Iterator<RegisterCommand2> commands = rsf.getCommands2();
+        Iterator<RegisterCommand> commands = rsf.getCommands();
         while (commands.hasNext() && errors.isEmpty()) {
-            RegisterCommand2 command = commands.next();
+            RegisterCommand command = commands.next();
 
             // this can be bettah
             errors.addAll(validate(command, register));
@@ -49,7 +49,7 @@ public class RSFExecutor {
     }
 
 
-    private List<Exception> validate(RegisterCommand2 command, Register register) {
+    private List<Exception> validate(RegisterCommand command, Register register) {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
         List<Exception> result = new ArrayList<>();
@@ -85,8 +85,8 @@ public class RSFExecutor {
         return result;
     }
 
-    public void register(CommandHandler commandHandler) {
-        registeredHandlers.put(commandHandler.getCommandName(), commandHandler);
+    public void register(RegisterCommandHandler registerCommandHandler) {
+        registeredHandlers.put(registerCommandHandler.getCommandName(), registerCommandHandler);
     }
 
 }

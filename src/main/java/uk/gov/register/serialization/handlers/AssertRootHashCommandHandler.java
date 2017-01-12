@@ -1,7 +1,9 @@
-package uk.gov.register.serialization;
+package uk.gov.register.serialization.handlers;
 
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
+import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
@@ -10,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AssertRootHashCommandHandler extends CommandHandler {
+public class AssertRootHashCommandHandler extends RegisterCommandHandler {
     @Override
-    protected List<Exception> executeCommand(RegisterCommand2 command, Register register) {
+    protected List<Exception> executeCommand(RegisterCommand command, Register register) {
         try {
             HashValue hash = HashValue.decode(HashingAlgorithm.SHA256, command.getCommandArguments().get(0));
             RegisterProof expectedProof = new RegisterProof(hash);

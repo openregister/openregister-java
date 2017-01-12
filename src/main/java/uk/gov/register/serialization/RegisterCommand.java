@@ -1,12 +1,21 @@
 package uk.gov.register.serialization;
 
-import uk.gov.register.core.Register;
+import java.util.List;
 
-public abstract class RegisterCommand {
+public class RegisterCommand {
+    private final String commandName;
+    private final List<String> arguments;
 
-    public abstract void execute(Register register) throws Exception;
+    public RegisterCommand(String commandName, List<String> arguments) {
+        this.commandName = commandName;
+        this.arguments = arguments;
+    }
 
-    public abstract String serialise(RSFFormatter RSFFormatter);
+    public String getCommandName() {
+        return commandName;
+    }
 
+    public List<String> getCommandArguments() {
+        return arguments;
+    }
 }
-
