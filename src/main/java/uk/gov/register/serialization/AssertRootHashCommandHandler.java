@@ -22,13 +22,11 @@ public class AssertRootHashCommandHandler extends CommandHandler {
                 result.add(new Exception("Root hashes don't match. Expected: " +
                         expectedProof.getRootHash().toString() + " actual: " + actualProof.getRootHash().toString()));
             }
-
             return result;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return Collections.singletonList(e);
         }
-
     }
 
     @Override

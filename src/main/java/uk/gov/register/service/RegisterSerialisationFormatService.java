@@ -107,13 +107,9 @@ public class RegisterSerialisationFormatService {
     }
 
     public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormatter rsfFormatter) {
-        LOG.debug("reading commands");
-
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
-        LOG.debug("pass the buffer");
 
         Stream<String> lines = buffer.lines();
-        LOG.debug("pass the buffer.lines()");
 
         Iterator<RegisterCommand2> commandsIterator = lines.map(line -> {
             LOG.debug("-------- lazy converting :) -------");
@@ -121,17 +117,7 @@ public class RegisterSerialisationFormatService {
             return rsfFormatter.parse(line);
         }).filter(i -> i != null).iterator();
 
-
-        LOG.debug("pass the conversion");
-
-//        Iterator<RegisterCommand> commands = parser.getCommands();
-        LOG.debug("finished reading commands");
-        // don't close the reader as the caller will close the input stream
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(null, commandsIterator);
-//        processRegisterSerialisationFormat(rsf);
-        LOG.debug("pass processing");
-        return rsf;
-
+        return new RegisterSerialisationFormat(null, commandsIterator);
     }
 
     private void writeTo(OutputStream output, RSFFormatter RSFFormatter, Function<Register, RegisterSerialisationFormat> rsfCreator) {

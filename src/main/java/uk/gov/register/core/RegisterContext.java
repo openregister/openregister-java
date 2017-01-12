@@ -19,11 +19,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import org.skife.jdbi.v2.TransactionStatus;
 
 public class RegisterContext implements
         RegisterTrackingConfiguration,
