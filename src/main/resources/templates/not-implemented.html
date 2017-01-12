@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="main.html::head"></head>
+<head th:include="fragments/head.html::head"></head>
 <body>
-  <header th:replace="main.html::global-header"></header>
+  <header th:replace="fragments/global-header.html::global-header"></header>
 
   <div id="wrapper">
     <main id="main" role="main">
-      <div th:replace="main.html::phase"></div>
+      <div th:replace="fragments/phase-banner.html::phase"></div>
       <a href="/" class="link-back">Back</a>
-      <header th:replace="main.html::page-header(title='This page has not been implemented yet')"></header>
+      <h1 class="heading-large">This page has not been implemented yet</h1>
       <p>
         We haven’t prioritised this work yet. If you are interested in this feature, please let us know so we can adjust our priorities.
       </p>
     </main>
   </div>
 
-  <footer th:replace="main.html::footer"></footer>
+  <footer th:replace="fragments/footer.html::footer"></footer>
 
 </body>
 </html>

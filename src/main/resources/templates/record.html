@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="main.html::head"></head>
+<head th:include="fragments/head.html::head"></head>
 <body>
-  <header th:replace="main.html::global-header"></header>
+  <header th:replace="fragments/global-header.html::global-header"></header>
 
   <div id="wrapper">
     <main id="main" role="main">
-      <div th:replace="main.html::phase"></div>
+      <div th:replace="fragments/phase-banner.html::phase"></div>
 
       <div class="grid-row">
         <div class="column-two-thirds">
@@ -20,12 +20,12 @@
             <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}">View this register.</a>
           </p>
         </div>
-        <div class="column-third" th:include="main.html :: attribution"></div>
+        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>
 
-      <div th:include="data-formats.html::data-formats"></div>
+      <div th:include="fragments/data-formats.html::data-formats"></div>
 
       <p>
         <a th:href="${'/record/' + content.primaryKey +'/entries'}">View all versions of this record</a>
@@ -34,7 +34,7 @@
     </main>
   </div>
 
-  <footer th:replace="main.html::footer"></footer>
+  <footer th:replace="fragments/footer.html::footer"></footer>
 
 </body>
 </html>

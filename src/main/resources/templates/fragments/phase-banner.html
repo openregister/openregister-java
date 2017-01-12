@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<body>
+  <div th:fragment="phase" th:class="phase-banner">
+    <p>
+      <strong class="phase-tag" th:text="${#strings.toUpperCase(register.phase)}">ALPHA</strong>
+      <span>
+        This is a new register – your
+        <a href="mailto:data-infrastructure@digital.cabinet-office.gov.uk">feedback</a>
+        will help us to improve it.
+      </span>
+    </p>
+  </div>
+</body>
+</html>
