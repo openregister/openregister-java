@@ -67,6 +67,10 @@ public class RegisterConfiguration extends Configuration
     @SuppressWarnings("unused")
     @Valid
     @JsonProperty
+    @Deprecated
+    /**
+     * no longer used.
+     */
     private String cloudWatchEnvironmentName;
 
     @Override
@@ -121,10 +125,6 @@ public class RegisterConfiguration extends Configuration
 
     public RegisterName getDefaultRegisterName() {
         return register;
-    }
-
-    public Optional<String> cloudWatchEnvironmentName() {
-        return Optional.ofNullable(cloudWatchEnvironmentName);
     }
 
     public JerseyClientConfiguration getJerseyClientConfiguration() {

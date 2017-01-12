@@ -22,7 +22,6 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
-import uk.gov.register.monitoring.CloudWatchHeartbeater;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.service.ItemConverter;
@@ -37,8 +36,6 @@ import uk.gov.register.views.ViewFactory;
 import javax.inject.Singleton;
 import javax.ws.rs.client.Client;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class RegisterApplication extends Application<RegisterConfiguration> {
     public static void main(String[] args) {
@@ -127,11 +124,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 "uk.gov.register.resources",
                 "uk.gov.register.providers");
         jersey.register(new RegisterAuthDynamicFeature(BasicAuthFilter.class));
-
-        if (configuration.cloudWatchEnvironmentName().isPresent()) {
-            ScheduledExecutorService cloudwatch = environment.lifecycle().scheduledExecutorService("cloudwatch").threads(1).build();
-            cloudwatch.scheduleAtFixedRate(new CloudWatchHeartbeater(configuration.cloudWatchEnvironmentName().get(), configuration.getDefaultRegisterName().value()), 0, 10000, TimeUnit.MILLISECONDS);
-        }
 
         environment.getApplicationContext().setErrorHandler(new AssetsBundleCustomErrorHandler(environment));
     }
