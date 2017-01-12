@@ -55,6 +55,10 @@ body {
     background-color: $register;
   }
 
+  .header-logo {
+    width: 100%;
+  }
+
   #logo {
     background: none;
   }
@@ -67,10 +71,15 @@ body {
 
 .phase-banner {
   @include phase-banner();
+
+  .phase-tag {
+    padding: 2px 5px;
+  }
 }
 
 .button {
   @include button;
+  padding: 0.526315em 0.789473em;
 }
 
 .govuk-related-items {
