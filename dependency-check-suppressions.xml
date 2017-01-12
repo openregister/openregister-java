@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+        <notes><![CDATA[
+      file name: markdownj-core-0.4.jar
+      ]]></notes>
+        <gav regex="true">^org\.markdownj:markdownj-core:.*$</gav>
+        <cpe>cpe:/a:jcore:jcore</cpe>
+    </suppress>
+</suppressions>
