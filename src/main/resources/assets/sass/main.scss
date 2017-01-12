@@ -53,10 +53,10 @@ body {
 
   .header-wrapper {
     background-color: $register;
-  }
 
-  .header-logo {
-    width: 100%;
+    .header-global .header-logo {
+      width: 100%;
+    }
   }
 
   #logo {
