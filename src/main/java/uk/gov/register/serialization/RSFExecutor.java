@@ -78,7 +78,6 @@ public class RSFExecutor {
         List<Exception> result = new ArrayList<>();
         shaRefCount.forEach((hash, count) -> {
             if (count < 1) {
-                // this means it has not been referenced after it occurred
                 result.add(new Exception("OMG orphan item, hash: " + hash));
             }
         });

@@ -1,6 +1,5 @@
 package uk.gov.register.serialization.mappers;
 
-import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandMapper;

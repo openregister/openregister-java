@@ -14,7 +14,6 @@ public abstract class RegisterCommandHandler {
 
             return executeCommand(command, register);
         } else {
-            // incopatible
             return Arrays.asList(new Exception("Incompatible handler and command type"));
         }
     }

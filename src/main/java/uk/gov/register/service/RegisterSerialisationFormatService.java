@@ -1,13 +1,8 @@
 package uk.gov.register.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.serialization.*;
-import uk.gov.register.util.HashValue;
-import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -20,22 +15,16 @@ import java.util.List;
 import java.util.function.Function;
 
 public class RegisterSerialisationFormatService {
-
-    private final String EMPTY_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-    private final RegisterProof emptyRegisterProof;
-
     private final RegisterContext registerContext;
-    private RSFExecutor rsfExecutor;
-    private RSFCreator rsfCreator;
+    private final RSFExecutor rsfExecutor;
+    private final RSFCreator rsfCreator;
 
     @Inject
     public RegisterSerialisationFormatService(RegisterContext registerContext, RSFExecutor rsfExecutor, RSFCreator rsfCreator) {
         this.registerContext = registerContext;
         this.rsfExecutor = rsfExecutor;
         this.rsfCreator = rsfCreator;
-        this.emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_ROOT_HASH));
     }
-
 
     public void writeTo(OutputStream output, RSFFormatter RSFFormatter) {
         writeTo(output, RSFFormatter, rsfCreator::create);

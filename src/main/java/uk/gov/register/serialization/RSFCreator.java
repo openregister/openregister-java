@@ -31,7 +31,7 @@ public class RSFCreator {
                     register.getEntryIterator(),
                     Iterators.singletonIterator(register.getRegisterProof()));
 
-            Iterator<RegisterCommand> commands = Iterators.transform(iterators, bit -> (RegisterCommand) registeredMappers.get(bit.getClass()).apply(bit));
+            Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj));
 
             return new RegisterSerialisationFormat(commands);
         } catch (NoSuchAlgorithmException e) {
@@ -55,7 +55,7 @@ public class RSFCreator {
                     register.getEntryIterator(totalEntries1, totalEntries2),
                     Iterators.singletonIterator(nextRegisterProof));
         }
-        Iterator<RegisterCommand> commands = Iterators.transform(iterators, bit -> (RegisterCommand) registeredMappers.get(bit.getClass()).apply(bit));
+        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);
     }
 

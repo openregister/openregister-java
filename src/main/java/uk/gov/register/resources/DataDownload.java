@@ -25,7 +25,7 @@ public class DataDownload {
     private final RegisterName registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
     private final RegisterSerialisationFormatService rsfService;
-    private final RSFFormatter RSFFormatter;
+    private final RSFFormatter rsfFormatter;
 
 
     @Inject
@@ -38,7 +38,7 @@ public class DataDownload {
         this.registerPrimaryKey = register.getRegisterName();
         this.resourceConfiguration = resourceConfiguration;
         this.rsfService = rsfService;
-        this.RSFFormatter = new RSFFormatter();
+        this.rsfFormatter = new RSFFormatter();
     }
 
     @GET
@@ -71,9 +71,9 @@ public class DataDownload {
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Response downloadRSF() {
-        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), RSFFormatter.getFileExtension());
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
         return Response
-                .ok((StreamingOutput) output -> rsfService.writeTo(output, RSFFormatter))
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter))
                 .header("Content-Disposition", rsfFileName).build();
     }
 
@@ -96,9 +96,9 @@ public class DataDownload {
             throw new BadRequestException("total-entries-2 must not exceed number of total entries in the register");
         }
 
-        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), RSFFormatter.getFileExtension());
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
         return Response
-                .ok((StreamingOutput) output -> rsfService.writeTo(output, RSFFormatter, totalEntries1, totalEntries2))
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, totalEntries1, totalEntries2))
                 .header("Content-Disposition", rsfFileName).build();
     }
 
