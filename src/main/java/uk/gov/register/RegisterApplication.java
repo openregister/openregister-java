@@ -86,7 +86,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
 
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, configManager, environment, registerLinkService);
-        allTheRegisters.stream().forEach(register -> register.getFlyway().migrate());
+        allTheRegisters.stream().parallel().forEach(RegisterContext::migrate);
 
         jersey.register(new AbstractBinder() {
             @Override
