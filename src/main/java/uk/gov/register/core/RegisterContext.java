@@ -74,8 +74,8 @@ public class RegisterContext implements
         return registerMetadata;
     }
 
-    public Flyway getFlyway() {
-        return flyway;
+    public int migrate() {
+        return flyway.migrate();
     }
 
     public Register buildOnDemandRegister() {
