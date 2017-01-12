@@ -8,7 +8,7 @@
         <div class="footer-meta-inner">
 
           <div th:if="${renderedCopyrightText.present}" class="custom-government-licence">
-            <div th:replace="copyright.html::copyright">Copyright text</div>
+            <div th:replace="fragments/copyright.html::copyright">Copyright text</div>
           </div>
             <div th:unless="${renderedCopyrightText.present}" class="open-government-licence">
               <p class="logo">
