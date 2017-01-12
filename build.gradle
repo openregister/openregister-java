@@ -38,6 +38,7 @@ compass {
 }
 
 dependencyCheck {
+    failBuildOnCVSS = 0
     skipConfigurations = ['jrubyExec']
     suppressionFile = 'dependency-check-suppressions.xml'
 }
@@ -174,6 +175,7 @@ task runConformanceTests(type: Exec) {
 
 check {
     dependsOn << runConformanceTests
+    dependsOn << 'dependencyCheck'
 }
 
 test {
