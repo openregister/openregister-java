@@ -42,12 +42,12 @@ public class RegisterSerialisationFormatService {
     }
 
 
-    public void writeTo(OutputStream output, RSFFormat RSFFormat) {
-        writeTo(output, RSFFormat, this::createRegisterSerialisationFormat);
+    public void writeTo(OutputStream output, RSFFormatter RSFFormatter) {
+        writeTo(output, RSFFormatter, this::createRegisterSerialisationFormat);
     }
 
-    public void writeTo(OutputStream output, RSFFormat RSFFormat, int totalEntries1, int totalEntries2) {
-        writeTo(output, RSFFormat, register -> createRegisterSerialisationFormat(register, totalEntries1, totalEntries2));
+    public void writeTo(OutputStream output, RSFFormatter RSFFormatter, int totalEntries1, int totalEntries2) {
+        writeTo(output, RSFFormatter, register -> createRegisterSerialisationFormat(register, totalEntries1, totalEntries2));
     }
 
     public RegisterSerialisationFormat createRegisterSerialisationFormat(Register register) {
@@ -106,7 +106,7 @@ public class RegisterSerialisationFormatService {
         return results;
     }
 
-    public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormat rsfFormat) {
+    public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormatter rsfFormatter) {
         LOG.debug("reading commands");
 
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
@@ -118,7 +118,7 @@ public class RegisterSerialisationFormatService {
         Iterator<RegisterCommand2> commandsIterator = lines.map(line -> {
             LOG.debug("-------- lazy converting :) -------");
             LOG.debug(line);
-            return rsfFormat.parse(line);
+            return rsfFormatter.parse(line);
         }).filter(i -> i != null).iterator();
 
 
@@ -134,14 +134,14 @@ public class RegisterSerialisationFormatService {
 
     }
 
-    private void writeTo(OutputStream output, RSFFormat RSFFormat, Function<Register, RegisterSerialisationFormat> rsfCreator) {
+    private void writeTo(OutputStream output, RSFFormatter RSFFormatter, Function<Register, RegisterSerialisationFormat> rsfCreator) {
         registerContext.transactionalRegisterOperation(register -> {
             Iterator<RegisterCommand> commands = rsfCreator.apply(register).getCommands();
 
             int commandCount = 0;
             try {
                 while (commands.hasNext()) {
-                    output.write(commands.next().serialise(RSFFormat).getBytes());
+                    output.write(commands.next().serialise(RSFFormatter).getBytes());
 
                     // TODO: is flushing every 10000 commands ok?
                     if (++commandCount >= 10000) {

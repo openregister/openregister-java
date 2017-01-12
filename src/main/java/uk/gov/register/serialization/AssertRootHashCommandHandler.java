@@ -19,7 +19,7 @@ public class AssertRootHashCommandHandler extends CommandHandler {
             RegisterProof actualProof = register.getRegisterProof();
             List<Exception> result = new ArrayList<>();
             if (!actualProof.equals(expectedProof)) {
-                result.add(new Exception("The root hashes don't match. Expected: " +
+                result.add(new Exception("Root hashes don't match. Expected: " +
                         expectedProof.getRootHash().toString() + " actual: " + actualProof.getRootHash().toString()));
             }
 

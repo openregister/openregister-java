@@ -123,6 +123,7 @@ public class RegisterContext implements
         Handle handle = null;
         try {
             handle = dbi.open();
+            handle.begin();
 
             Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
             Boolean shouldCommit = registerOperationFunc.apply(register);

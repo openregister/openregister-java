@@ -3,7 +3,7 @@ package uk.gov.register.resources;
 import io.dropwizard.views.View;
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.*;
-import uk.gov.register.serialization.RSFFormat;
+import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.views.ViewFactory;
@@ -25,7 +25,7 @@ public class DataDownload {
     private final RegisterName registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
     private final RegisterSerialisationFormatService rsfService;
-    private final RSFFormat RSFFormat;
+    private final RSFFormatter RSFFormatter;
 
 
     @Inject
@@ -38,7 +38,7 @@ public class DataDownload {
         this.registerPrimaryKey = register.getRegisterName();
         this.resourceConfiguration = resourceConfiguration;
         this.rsfService = rsfService;
-        this.RSFFormat = new RSFFormat();
+        this.RSFFormatter = new RSFFormatter();
     }
 
     @GET
@@ -71,9 +71,9 @@ public class DataDownload {
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     public Response downloadRSF() {
-        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), RSFFormat.getFileExtension());
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), RSFFormatter.getFileExtension());
         return Response
-                .ok((StreamingOutput) output -> rsfService.writeTo(output, RSFFormat))
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, RSFFormatter))
                 .header("Content-Disposition", rsfFileName).build();
     }
 
@@ -96,9 +96,9 @@ public class DataDownload {
             throw new BadRequestException("total-entries-2 must not exceed number of total entries in the register");
         }
 
-        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), RSFFormat.getFileExtension());
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), RSFFormatter.getFileExtension());
         return Response
-                .ok((StreamingOutput) output -> rsfService.writeTo(output, RSFFormat, totalEntries1, totalEntries2))
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, RSFFormatter, totalEntries1, totalEntries2))
                 .header("Content-Disposition", rsfFileName).build();
     }
 

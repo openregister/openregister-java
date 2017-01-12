@@ -43,7 +43,7 @@ public class RegisterSerialisationFormatServiceTest {
     @Mock
     private Register register;
 
-    private RSFFormat RSFFormat;
+    private RSFFormatter RSFFormatter;
     private RegisterSerialisationFormatService sutService;
 
     private Entry entry1;
@@ -81,7 +81,7 @@ public class RegisterSerialisationFormatServiceTest {
 
                                                                     // whoa whoa whoa
         sutService = new RegisterSerialisationFormatService(registerContext, null);
-        RSFFormat = new RSFFormat();
+        RSFFormatter = new RSFFormatter();
     }
 
     @Test
@@ -164,7 +164,7 @@ public class RegisterSerialisationFormatServiceTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        sutService.writeTo(outputStream, RSFFormat);
+        sutService.writeTo(outputStream, RSFFormatter);
 
         verify(register, times(1)).getItemIterator();
         verify(register, times(1)).getEntryIterator();
@@ -191,7 +191,7 @@ public class RegisterSerialisationFormatServiceTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        sutService.writeTo(outputStream, RSFFormat, 1, 2);
+        sutService.writeTo(outputStream, RSFFormatter, 1, 2);
 
         verify(register, times(1)).getItemIterator(1, 2);
         verify(register, times(1)).getEntryIterator(1, 2);

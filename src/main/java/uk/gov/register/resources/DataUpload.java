@@ -9,7 +9,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.serialization.RSFFormat;
+import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ObjectReconstructor;
@@ -39,7 +39,7 @@ public class DataUpload {
     private final ObjectReconstructor objectReconstructor;
     private final RegisterSerialisationFormatService rsfService;
     private final RegisterContext registerContext;
-    private final RSFFormat rsfFormat;
+    private final RSFFormatter rsfFormatter;
 
 
     @Inject
@@ -47,7 +47,7 @@ public class DataUpload {
         this.objectReconstructor = objectReconstructor;
         this.rsfService = rsfService;
         this.registerContext = registerContext;
-        this.rsfFormat = new RSFFormat();
+        this.rsfFormatter = new RSFFormatter();
     }
 
     @Context
@@ -74,7 +74,7 @@ public class DataUpload {
         // parsing exceptions try catch ok
         List<Exception> exceptions = new ArrayList();
         try {
-            RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormat);
+            RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
             List<Exception> rsfServiceExp = rsfService.processRegisterSerialisationFormat(rsf);
             exceptions.addAll(rsfServiceExp);
         } catch (Exception e) {
