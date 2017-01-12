@@ -7,7 +7,7 @@
 
   <div id="wrapper">
     <main id="main" role="main">
-      <div th:replace="main.html::phase"></div>
+      <div th:replace="fragments/phase-banner.html::phase"></div>
       <h1 class="heading-large">Bad Request</h1>
       <p class="lede" th:text="${exception.message}"></p>
     </main>

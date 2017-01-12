@@ -31,17 +31,6 @@
     </div>
   </header>
 
-  <div th:fragment="phase" th:class="phase-banner">
-    <p>
-      <strong class="phase-tag" th:text="${#strings.toUpperCase(register.phase)}">ALPHA</strong>
-      <span>
-        This is a new register – your
-        <a href="mailto:data-infrastructure@digital.cabinet-office.gov.uk">feedback</a>
-        will help us to improve it.
-      </span>
-    </p>
-  </div>
-
   <th:block th:fragment="organisation(organisation, branding)">
     <span th:if="${branding.present}" th:utext="${#strings.replace(branding.get().logoFormattedName,'\r\n','&lt;br/&gt;')}" class="organisation-logo" th:classappend="|organisation-logo-${branding.get().logoClassName} ${branding.get().colourClassName}|">Cabinet Office</span>
     <span th:unless="${branding.present}" th:text="${organisation.name}" class="organisation-logo organisation-logo-no-identity">Cabinet Office</span>
