@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<body>
+  <header th:fragment="global-header" id="global-header" role="banner">
+    <div class="header-wrapper">
+      <div class="header-global">
+        <div class="header-logo">
+          <a id="logo" class="content" href="/" th:text="${friendlyRegisterName}"></a>
+        </div>
+      </div>
+    </div>
+  </header>
+</body>
+</html>
