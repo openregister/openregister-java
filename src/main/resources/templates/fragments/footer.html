@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<body>
+  <footer th:fragment="footer" id="footer" class="group" role="contentinfo">
+    <div class="footer-wrapper">
+      <div class="footer-meta">
+        <div class="footer-meta-inner">
+
+          <div th:if="${renderedCopyrightText.present}" class="custom-government-licence">
+            <div th:replace="copyright.html::copyright">Copyright text</div>
+          </div>
+            <div th:unless="${renderedCopyrightText.present}" class="open-government-licence">
+              <p class="logo">
+                <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">
+                  Open Government Licence
+                </a>
+              </p>
+              <p>
+                All content is available under the
+                <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated
+              </p>
+            </div>
+        </div>
+        <div class="copyright">
+          <a href="http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">
+            &copy; Crown copyright
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <th:block th:if="${registerTrackingId != null and registerTrackingId.present and !#strings.isEmpty(registerTrackingId.get())}">
+      <script id="analytics-tracking-id" src="/analytics-code.js"></script>
+      <script id="analytics-main" type="text/javascript" src="/assets/js/analytics.js"></script>
+      <script id="analytics-external-links" type="text/javascript" src="/assets/js/analytics-external-links.js"></script>
+    </th:block>
+  </footer>
+</body>
+</html>
