@@ -88,9 +88,7 @@ public class RegisterSerialisationFormatService {
     public List<Exception> processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
         List<Exception> results = new ArrayList<>();
         registerContext.transactionalRegisterOperation(register -> {
-
             try {
-
                 LOG.debug("before executing commands");
 
                 List<Exception> cmResults = RSFExecutor.execute(rsf, register);
@@ -98,16 +96,13 @@ public class RegisterSerialisationFormatService {
                 results.addAll(cmResults);
 
                 LOG.debug("after executing commands");
-
             } catch (Exception e) {
                 results.add(e);
             }
 
-            if (!results.isEmpty()) {
-                throw new RuntimeException(results.get(0));
-//                throw new RuntimeException("RSF processing failed with exceptions");
-            }
+            return results.isEmpty();
         });
+
         return results;
     }
 

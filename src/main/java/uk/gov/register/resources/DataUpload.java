@@ -75,7 +75,8 @@ public class DataUpload {
         List<Exception> exceptions = new ArrayList();
         try {
             RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormat);
-            exceptions.addAll(rsfService.processRegisterSerialisationFormat(rsf));
+            List<Exception> rsfServiceExp = rsfService.processRegisterSerialisationFormat(rsf);
+            exceptions.addAll(rsfServiceExp);
         } catch (Exception e) {
             exceptions.add(e);
         }

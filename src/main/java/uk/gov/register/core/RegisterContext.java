@@ -19,7 +19,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
+
+import org.skife.jdbi.v2.TransactionStatus;
 
 public class RegisterContext implements
         RegisterTrackingConfiguration,
@@ -99,8 +103,7 @@ public class RegisterContext implements
                         new ItemValidator(configManager, registerName)),
                 new TransactionalRecordIndex(
                         handle.attach(RecordQueryDAO.class),
-                        handle.attach(CurrentKeysUpdateDAO.class)
-                )
+                        handle.attach(CurrentKeysUpdateDAO.class))
         );
     }
 
@@ -113,6 +116,38 @@ public class RegisterContext implements
         });
         transactionalMemoizationStore.commitHashesToStore();
     }
+
+    public void transactionalRegisterOperation(Function<Register, Boolean> registerOperationFunc) {
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
+
+        Handle handle = null;
+        try {
+            handle = dbi.open();
+
+            Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
+            Boolean shouldCommit = registerOperationFunc.apply(register);
+
+            if (shouldCommit) {
+                register.commit();
+                transactionalMemoizationStore.commitHashesToStore();
+                handle.commit();
+            } else {
+                transactionalMemoizationStore.rollbackHashesFromStore();
+                handle.rollback();
+            }
+
+        } catch (Exception e) {
+            if (handle != null) {
+                handle.rollback();
+            }
+            throw new RuntimeException(e);
+        } finally {
+            if (handle != null && !handle.isClosed()) {
+                handle.close();
+            }
+        }
+    }
+
 
     public void resetRegister() throws IOException, NoSuchConfigException {
         if (enableRegisterDataDelete) {
@@ -157,7 +192,9 @@ public class RegisterContext implements
     }
 
     @Override
-    public Optional<String> getCustodianName() { return custodianName; }
+    public Optional<String> getCustodianName() {
+        return custodianName;
+    }
 
     @Override
     public Optional<List<String>> getSimilarRegisters() {
