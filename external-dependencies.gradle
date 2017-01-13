@@ -22,7 +22,6 @@ ext {
     postgresClient = 'org.postgresql:postgresql:9.4.1211'
 
     apacheCommonsCodec = 'commons-codec:commons-codec:1.10'
-    awsCloudWatch = 'com.amazonaws:aws-java-sdk-cloudwatch:1.11.38'
     awsS3 = 'com.amazonaws:aws-java-sdk-s3:1.11.38'
 
     jdbi = 'org.jdbi:jdbi:2.77'
