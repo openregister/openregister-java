@@ -14,12 +14,14 @@ buildscript {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.13.0"
         classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
         classpath "com.github.robfletcher:compass-gradle-plugin:2.0.6"
+        classpath 'org.owasp:dependency-check-gradle:1.4.4.1'
     }
 }
 
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "com.github.robfletcher.compass"
+apply plugin: 'org.owasp.dependencycheck'
 
 def assetsDir = new File(projectDir, "src/main/resources/assets")
 
@@ -33,6 +35,12 @@ compass {
     outputStyle = "expanded"
     force = true
     sourcemap = true
+}
+
+dependencyCheck {
+    failBuildOnCVSS = 0
+    skipConfigurations = ['jrubyExec']
+    suppressionFile = 'dependency-check-suppressions.xml'
 }
 
 // because we build into src/main/resources, we need compassCompile to run before processResources
@@ -167,6 +175,7 @@ task runConformanceTests(type: Exec) {
 
 check {
     dependsOn << runConformanceTests
+    dependsOn << 'dependencyCheck'
 }
 
 test {
