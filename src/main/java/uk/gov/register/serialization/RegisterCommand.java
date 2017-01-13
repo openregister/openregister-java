@@ -18,4 +18,23 @@ public class RegisterCommand {
     public List<String> getCommandArguments() {
         return arguments;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RegisterCommand that = (RegisterCommand) o;
+
+        if (!commandName.equals(that.commandName)) return false;
+        return arguments.equals(that.arguments);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = commandName.hashCode();
+        result = 31 * result + arguments.hashCode();
+        return result;
+    }
 }
