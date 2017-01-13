@@ -64,15 +64,6 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private RegisterName register;
 
-    @SuppressWarnings("unused")
-    @Valid
-    @JsonProperty
-    @Deprecated
-    /**
-     * no longer used.
-     */
-    private String cloudWatchEnvironmentName;
-
     @Override
     public String getRegisterDomain() {
         return registerDomain;
