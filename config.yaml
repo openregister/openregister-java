@@ -67,3 +67,7 @@ logging:
   loggers:
     "uk.gov": DEBUG
     "org.skife.jdbi.v2": TRACE
+  appenders:
+    - type: console
+      target: stdout
+      logFormat: "%-5p [%d{ISO8601}] %X{register} %c: %m%n%rEx"
