@@ -2,6 +2,7 @@ package uk.gov.register.serialization.handlers;
 
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
+import uk.gov.register.serialization.RSFResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.HashValue;
@@ -14,20 +15,18 @@ import java.util.List;
 
 public class AssertRootHashCommandHandler extends RegisterCommandHandler {
     @Override
-    protected List<Exception> executeCommand(RegisterCommand command, Register register) {
+    protected RSFResult executeCommand(RegisterCommand command, Register register) {
         try {
             HashValue hash = HashValue.decode(HashingAlgorithm.SHA256, command.getCommandArguments().get(0));
             RegisterProof expectedProof = new RegisterProof(hash);
             RegisterProof actualProof = register.getRegisterProof();
-            List<Exception> result = new ArrayList<>();
             if (!actualProof.equals(expectedProof)) {
-                result.add(new Exception("Root hashes don't match. Expected: " +
-                        expectedProof.getRootHash().toString() + " actual: " + actualProof.getRootHash().toString()));
+                String message = String.format("Root hashes don't match. Expected: %s actual: %s", expectedProof.getRootHash().toString(), actualProof.getRootHash().toString());
+                return RSFResult.createFailResult(message);
             }
-            return result;
+            return RSFResult.createSuccessResult();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return Collections.singletonList(e);
+            return RSFResult.createFailResult("Exception when executing command: " + command, e);
         }
     }
 

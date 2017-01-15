@@ -34,20 +34,14 @@ public class RegisterSerialisationFormatService {
         writeTo(output, RSFFormatter, register -> rsfCreator.create(register, totalEntries1, totalEntries2));
     }
 
-    public List<Exception> processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
-        List<Exception> results = new ArrayList<>();
+    public RSFResult processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
+        final RSFResult[] rsfResult = new RSFResult[1];
         registerContext.transactionalRegisterOperation(register -> {
-            try {
-                List<Exception> cmResults = rsfExecutor.execute(rsf, register);
-                results.addAll(cmResults);
-
-            } catch (Exception e) {
-                results.add(e);
-            }
-            return results.isEmpty();
+            RSFResult executionResult = rsfExecutor.execute(rsf, register);
+            rsfResult[0] = executionResult;
+            return executionResult.isSuccessful();
         });
-
-        return results;
+        return rsfResult[0];
     }
 
     public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormatter rsfFormatter) {
@@ -66,7 +60,7 @@ public class RegisterSerialisationFormatService {
                     output.write(rsfFormatter.format(commands.next()).getBytes());
 
                     // TODO: is flushing every 10000 commands ok?
-                    if (++commandCount >= 10000) {
+                    if (++commandCount >= 1) {
                         output.flush();
                         commandCount = 0;
                     }

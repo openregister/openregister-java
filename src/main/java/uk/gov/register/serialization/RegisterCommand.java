@@ -37,4 +37,12 @@ public class RegisterCommand {
         result = 31 * result + arguments.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "RegisterCommand{" +
+                "commandName='" + commandName + '\'' +
+                ", arguments=" + arguments +
+                '}';
+    }
 }

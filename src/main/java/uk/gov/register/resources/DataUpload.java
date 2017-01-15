@@ -9,7 +9,9 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
+import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.serialization.RSFFormatter;
+import uk.gov.register.serialization.RSFResult;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ObjectReconstructor;
@@ -21,13 +23,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
@@ -69,23 +74,25 @@ public class DataUpload {
     @POST
     @PermitAll
     @Consumes(ExtraMediaType.APPLICATION_RSF)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/load-rsf")
     public Response loadRsf(InputStream inputStream) {
-        // parsing exceptions try catch ok
-        List<Exception> exceptions = new ArrayList();
+        RSFResult loadResult;
         try {
             RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
-            List<Exception> rsfServiceExp = rsfService.processRegisterSerialisationFormat(rsf);
-            exceptions.addAll(rsfServiceExp);
-        } catch (Exception e) {
-            exceptions.add(e);
+            loadResult = rsfService.processRegisterSerialisationFormat(rsf);
+        } catch (SerializedRegisterParseException e) {
+            // cathing only RSF parsing exceptions and handling those
+            loadResult = RSFResult.createFailResult("RSF parsing error", e);
         }
-        // better handling
 
-        exceptions.forEach(e -> System.out.println(e.getMessage()));
-        String exceptionMessages = exceptions.stream().map(e -> e.getMessage()).collect(Collectors.joining(", "));
 
-        return exceptions.isEmpty() ? Response.status(Response.Status.OK).build() : Response.status(500).entity(exceptionMessages).build();
+        if (loadResult.isSuccessful()) {
+            return Response.status(Response.Status.OK).build();
+        } else {
+            // this is most of the time not 500
+            return Response.status(500).entity(loadResult).build();
+        }
 
 
     }

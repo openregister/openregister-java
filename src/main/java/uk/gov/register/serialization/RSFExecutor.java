@@ -20,39 +20,42 @@ public class RSFExecutor {
         shaRefCount = new HashMap<>();
     }
 
-    private List<Exception> execute(RegisterCommand command, Register register) {
+    public void register(RegisterCommandHandler registerCommandHandler) {
+        registeredHandlers.put(registerCommandHandler.getCommandName(), registerCommandHandler);
+    }
+
+    public RSFResult execute(RegisterSerialisationFormat rsf, Register register) {
+        Iterator<RegisterCommand> commands = rsf.getCommands();
+        while (commands.hasNext()) {
+            RegisterCommand command = commands.next();
+
+            RSFResult validationResult = validate(command, register);
+            if (!validationResult.isSuccessful()) {
+                return validationResult;
+            }
+
+            RSFResult executionResult = execute(command, register);
+            if (!executionResult.isSuccessful()) {
+                return executionResult;
+            }
+        }
+
+        return validateOrphanItems();
+    }
+
+    private RSFResult execute(RegisterCommand command, Register register) {
         if (registeredHandlers.containsKey(command.getCommandName())) {
             RegisterCommandHandler registerCommandHandler = registeredHandlers.get(command.getCommandName());
             return registerCommandHandler.execute(command, register);
         } else {
-            return Arrays.asList(new Exception("Handler not registered for command: " + command.getCommandName()));
+            return RSFResult.createFailResult("Handler not registered for command: " + command.getCommandName());
         }
     }
 
-    public List<Exception> execute(RegisterSerialisationFormat rsf, Register register) {
-        List<Exception> errors = new ArrayList<>();
-        Iterator<RegisterCommand> commands = rsf.getCommands();
-        while (commands.hasNext() && errors.isEmpty()) {
-            RegisterCommand command = commands.next();
-
-            // this can be bettah
-            errors.addAll(validate(command, register));
-
-            if (errors.isEmpty()) {
-                errors.addAll(execute(command, register));
-            }
-        }
-        if (errors.isEmpty()) {
-            errors.addAll(validateOrphanBits());
-        }
-        return errors;
-    }
-
-
-    private List<Exception> validate(RegisterCommand command, Register register) {
+    private RSFResult validate(RegisterCommand command, Register register) {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
-        List<Exception> result = new ArrayList<>();
+
         String commandName = command.getCommandName();
         if (commandName.equals("add-item")) {
             String hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
@@ -65,27 +68,27 @@ public class RSFExecutor {
                 HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, sha256);
                 Optional<Item> item = register.getItemBySha256(hashValue);
                 if (!item.isPresent()) {
-                    result.add(new Exception("OMG orphan append entry" + command.toString()));
+                    RSFResult.createFailResult("OMG orphan append entry" + command.toString());
                 }
             }
         }
-
-        return result;
-
+        return RSFResult.createSuccessResult();
     }
 
-    private List<Exception> validateOrphanBits() {
-        List<Exception> result = new ArrayList<>();
+    private RSFResult validateOrphanItems() {
+        List<String> orphanItems = new ArrayList<>();
         shaRefCount.forEach((hash, count) -> {
             if (count < 1) {
-                result.add(new Exception("OMG orphan item, hash: " + hash));
+                orphanItems.add("OMG orphan item, hash: " + hash);
             }
         });
-        return result;
+
+        if (orphanItems.isEmpty()) {
+            return RSFResult.createSuccessResult();
+        } else {
+            return RSFResult.createFailResult(String.join("\n", orphanItems));
+        }
     }
 
-    public void register(RegisterCommandHandler registerCommandHandler) {
-        registeredHandlers.put(registerCommandHandler.getCommandName(), registerCommandHandler);
-    }
 
 }
