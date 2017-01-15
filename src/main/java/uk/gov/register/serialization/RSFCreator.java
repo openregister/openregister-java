@@ -6,10 +6,12 @@ import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
+import javax.inject.Provider;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class RSFCreator {
 
@@ -24,19 +26,62 @@ public class RSFCreator {
     }
 
     public RegisterSerialisationFormat create(Register register) {
-        try {
-            Iterator<?> iterators = Iterators.concat(
-                    Iterators.singletonIterator(emptyRegisterProof),
-                    register.getItemIterator(),
-                    register.getEntryIterator(),
-                    Iterators.singletonIterator(register.getRegisterProof()));
+//        Stream<RegisterCommand> registerCommandStream = Stream.of(
+//                (Provider<Iterator<?>>) () -> Iterators.singletonIterator(emptyRegisterProof),
+//                (Provider<Iterator<?>>) () -> register.getItemIterator(),
+//                (Provider<Iterator<?>>) () -> register.getEntryIterator(),
+//                (Provider<Iterator<?>>) () -> {
+//                    try {
+//                        return Iterators.singletonIterator(register.getRegisterProof());
+//                    } catch (NoSuchAlgorithmException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }).parallel()
+//                .flatMap((iteratorProvider) -> iteratorToStream(iteratorProvider.get())
+//                        .map(obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj)));
 
-            Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj));
+        Stream<RegisterCommand> registerCommandStream = Stream.of(
+                (Provider<Iterator<?>>) () -> Iterators.singletonIterator(emptyRegisterProof),
+                (Provider<Iterator<?>>) register::getItemIterator,
+                (Provider<Iterator<?>>) register::getEntryIterator,
+                (Provider<Iterator<?>>) () -> {
+                    try {
+//                        return Iterators.singletonIterator(register.getRegisterProof());
+                        return Iterators.singletonIterator(emptyRegisterProof);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }).parallel()
+                .map(Provider::get)
+                .collect(Collectors.toList())
+                .stream().flatMap(iterator -> iteratorToStream(iterator)
+                        .map(obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj)));
 
-            return new RegisterSerialisationFormat(commands);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+
+//                .flatMap((iteratorProvider) -> iteratorToStream(iteratorProvider.get())
+//                        .map(obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj)));
+
+
+        ;
+//    }).parallel().flatMap(p -> Iterators.transform(p.get(), obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj))).;
+//                .map(obj -> obj.
+//                        (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj));
+
+
+//            Iterator<?> iterators = Iterators.concat(
+//                    Iterators.singletonIterator(emptyRegisterProof),
+//                    register.getItemIterator(),
+//                    register.getEntryIterator(),
+//                    Iterators.singletonIterator(register.getRegisterProof()));
+//
+//            Iterator<RegisterCommand> commands = Iterators.transform(iteratorOfIterators, obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj));
+
+        return new RegisterSerialisationFormat(registerCommandStream.iterator());
+    }
+
+    private <T> Stream<T> iteratorToStream(Iterator<T> iterator) {
+        Iterable<T> iterable = () -> iterator;
+        return StreamSupport.stream(iterable.spliterator(), false);
     }
 
     public RegisterSerialisationFormat create(Register register, int totalEntries1, int totalEntries2) {
