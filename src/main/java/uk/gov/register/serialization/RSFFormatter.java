@@ -37,7 +37,7 @@ public class RSFFormatter {
         List<String> parts = Arrays.asList(str.split(TAB));
 
         if (parts.isEmpty() || parts.size() < 2) {
-            throw new IllegalArgumentException("String is empty or is in incorrect format");
+            throw new SerializedRegisterParseException("String is empty or is in incorrect format");
         }
 
         String commandName = parts.get(0);
