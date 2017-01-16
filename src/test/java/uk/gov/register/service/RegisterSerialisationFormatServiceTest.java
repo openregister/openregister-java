@@ -16,6 +16,10 @@ import uk.gov.register.serialization.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,11 +144,11 @@ public class RegisterSerialisationFormatServiceTest {
     public void readFrom_readsRSFFromStream() {
         String streamValue =
                 "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
-                        "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
-                        "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
-                        "append-entry\t2016-07-24T16:55:00Z\tsha-256:item1sha\tentry1-field-1-value\n" +
-                        "append-entry\t2016-07-24T16:56:00Z\tsha-256:item2sha\tentry2-field-1-value\n" +
-                        "assert-root-hash\tsha-256:K3rfuFF1e\n";
+                "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
+                "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
+                "append-entry\t2016-07-24T16:55:00Z\tsha-256:item1sha\tentry1-field-1-value\n" +
+                "append-entry\t2016-07-24T16:56:00Z\tsha-256:item2sha\tentry2-field-1-value\n" +
+                "assert-root-hash\tsha-256:K3rfuFF1e\n";
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(streamValue.getBytes());
 
@@ -159,5 +163,18 @@ public class RegisterSerialisationFormatServiceTest {
                 new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"))));
 
         assertThat(Lists.newArrayList(rsfReadResult.getCommands()), equalTo(Lists.newArrayList(expectedRsf.getCommands())));
+    }
+
+    @Test
+    public void readFrom_readsRSFFromStreamEscaped() throws IOException {
+        try (InputStream rsfStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))) {
+            RegisterSerialisationFormat rsfReadResult = sutService.readFrom(rsfStream, rsfFormatter);
+
+            RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(Iterators.forArray(
+                    new RegisterCommand("add-item", Collections.singletonList("{\"name\":\"New College\\\\New College School\",\"school\":\"402019\",\"school-authority\":\"681\",\"school-type\":\"30\"}")),
+                    new RegisterCommand("append-entry", Arrays.asList("2016-11-07T16:26:22Z", "sha-256:d6cca062b6a4ff7f60e401aa1ebf4bf5af51c2217916c0115d0a38a42182aec5", "402019"))));
+
+            assertThat(Lists.newArrayList(rsfReadResult.getCommands()), equalTo(Lists.newArrayList(expectedRsf.getCommands())));
+        }
     }
 }
