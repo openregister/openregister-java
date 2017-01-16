@@ -9,6 +9,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
+import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RSFResult;
@@ -82,10 +83,12 @@ public class DataUpload {
             RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
             loadResult = rsfService.processRegisterSerialisationFormat(rsf);
         } catch (SerializedRegisterParseException e) {
-            // cathing only RSF parsing exceptions and handling those
+            // catching only RSF parsing exceptions and handling those
             loadResult = RSFResult.createFailResult("RSF parsing error", e);
+        } catch (SerializationFormatValidationException e) {
+            // catching only RSF validation exceptions and handling those
+            loadResult = RSFResult.createFailResult("RSF validation error", e);
         }
-
 
         if (loadResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
@@ -93,8 +96,6 @@ public class DataUpload {
             // this is most of the time not 500
             return Response.status(500).entity(loadResult).build();
         }
-
-
     }
 
     private void mintItems(Iterable<JsonNode> objects) {
