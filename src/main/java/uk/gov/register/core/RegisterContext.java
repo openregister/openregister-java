@@ -146,7 +146,6 @@ public class RegisterContext implements
         }
     }
 
-
     public void resetRegister() throws IOException, NoSuchConfigException {
         if (enableRegisterDataDelete) {
             flyway.clean();
