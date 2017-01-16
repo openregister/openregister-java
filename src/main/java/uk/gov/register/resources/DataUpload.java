@@ -93,8 +93,7 @@ public class DataUpload {
         if (loadResult.isSuccessful()) {
             return Response.status(Response.Status.OK).build();
         } else {
-            // this is most of the time not 500
-            return Response.status(500).entity(loadResult).build();
+            return Response.status(400).entity(loadResult).build();
         }
     }
 
