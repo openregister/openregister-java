@@ -209,3 +209,21 @@ table {
     }
   }
 }
+
+// Defintion lists
+dl {
+  overflow: hidden;
+
+  dt {
+    float: left;
+    font-weight: bold;
+    width: 35%;
+  }
+
+  dd {
+    float: left;
+    margin: 0;
+    padding-bottom: 1em;
+    width: 65%;
+  }
+}
