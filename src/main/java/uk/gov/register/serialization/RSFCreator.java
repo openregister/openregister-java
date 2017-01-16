@@ -31,7 +31,7 @@ public class RSFCreator {
                     register.getEntryIterator(),
                     Iterators.singletonIterator(register.getRegisterProof()));
 
-            Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj));
+            Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
             return new RegisterSerialisationFormat(commands);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -55,11 +55,19 @@ public class RSFCreator {
                     register.getEntryIterator(totalEntries1, totalEntries2),
                     Iterators.singletonIterator(nextRegisterProof));
         }
-        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) registeredMappers.get(obj.getClass()).apply(obj));
+        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);
     }
 
     public void register(RegisterCommandMapper commandMapper) {
         registeredMappers.put(commandMapper.getMapClass(), commandMapper);
+    }
+
+    private RegisterCommandMapper getMapper(Class objClass) {
+        if (registeredMappers.containsKey(objClass)) {
+            return registeredMappers.get(objClass);
+        } else {
+            throw new RuntimeException("Mapper not registered for class: " + objClass.getName());
+        }
     }
 }
