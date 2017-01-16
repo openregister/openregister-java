@@ -78,8 +78,8 @@ public class DataUpload {
             // catching only RSF parsing and validation exceptions and handling those
         } catch (SerializedRegisterParseException e) {
             loadResult = RSFResult.createFailResult("RSF parsing error", e);
-        } catch (SerializationFormatValidationException e) {
-            loadResult = RSFResult.createFailResult("RSF validation error", e);
+//        } catch (SerializationFormatValidationException e) {
+//            loadResult = RSFResult.createFailResult("RSF validation error", e);
         }
 
         if (loadResult.isSuccessful()) {

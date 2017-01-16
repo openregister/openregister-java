@@ -98,7 +98,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"RSF validation error\",\"details\":\"{ \\\"register\\\":\\\"ft_openregister_test\\\",   \\\"text\\\":\\\"SomeText\\\" }\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"RSF parsing error\",\"details\":\"Non canonical JSON: { \\\"register\\\":\\\"ft_openregister_test\\\",   \\\"text\\\":\\\"SomeText\\\" }\"}"));
     }
 
     @Test
