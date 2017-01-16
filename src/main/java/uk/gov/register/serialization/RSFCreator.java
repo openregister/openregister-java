@@ -6,12 +6,10 @@ import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
-import javax.inject.Provider;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class RSFCreator {
 

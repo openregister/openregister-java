@@ -25,8 +25,8 @@ public class RegisterSerialisationFormatService {
         this.rsfCreator = rsfCreator;
     }
 
-    public void writeTo(OutputStream output, RSFFormatter RSFFormatter) {
-        writeTo(output, RSFFormatter, rsfCreator::create);
+    public void writeTo(OutputStream output, RSFFormatter rsfFormatter) {
+        writeTo(output, rsfFormatter, rsfCreator::create);
     }
 
     public void writeTo(OutputStream output, RSFFormatter RSFFormatter, int totalEntries1, int totalEntries2) {

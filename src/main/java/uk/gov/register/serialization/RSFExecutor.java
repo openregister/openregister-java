@@ -33,6 +33,7 @@ public class RSFExecutor {
     }
 
     public RSFResult execute(RegisterSerialisationFormat rsf, Register register) {
+        shaRefLine.clear();
         Iterator<RegisterCommand> commands = rsf.getCommands();
         int rsfLine = 1;
         while (commands.hasNext()) {
@@ -40,18 +41,23 @@ public class RSFExecutor {
 
             RSFResult validationResult = validate(command, rsfLine, register);
             if (!validationResult.isSuccessful()) {
+                shaRefLine.clear();
                 return validationResult;
             }
 
             RSFResult executionResult = execute(command, register);
             if (!executionResult.isSuccessful()) {
+                shaRefLine.clear();
                 return executionResult;
             }
 
             rsfLine++;
         }
 
-        return validateOrphanItems();
+        RSFResult rsfResult = validateOrphanItems();
+        //no need to keep those in memory until the next run
+        shaRefLine.clear();
+        return rsfResult;
     }
 
     private RSFResult execute(RegisterCommand command, Register register) {

@@ -138,7 +138,7 @@ public class RegisterContext implements
             if (handle != null) {
                 handle.rollback();
             }
-            throw new RuntimeException(e);
+            throw e;
         } finally {
             if (handle != null && !handle.isClosed()) {
                 handle.close();
