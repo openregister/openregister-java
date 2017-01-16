@@ -1,6 +1,5 @@
 package uk.gov.register.serialization;
 
-
 import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
@@ -22,11 +21,11 @@ public class RSFExecutor {
 
     // for now hash and line from file?
     // hash and rsf file line number
-    private Map<String, Integer> shaRefCount;
+    private Map<String, Integer> shaRefLine;
 
     public RSFExecutor() {
         registeredHandlers = new HashMap<>();
-        shaRefCount = new HashMap<>();
+        shaRefLine = new HashMap<>();
     }
 
     public void register(RegisterCommandHandler registerCommandHandler) {
@@ -71,16 +70,16 @@ public class RSFExecutor {
         String commandName = command.getCommandName();
         if (commandName.equals("add-item")) {
             String hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
-            shaRefCount.put(HashingAlgorithm.SHA256 + ":" + hash, rsfLine);
+            shaRefLine.put(HashingAlgorithm.SHA256 + ":" + hash, rsfLine);
         } else if (commandName.equals("append-entry")) {
             String sha256 = command.getCommandArguments().get(1);
-            if (shaRefCount.containsKey(sha256)) {
-                shaRefCount.put(sha256, 0);
+            if (shaRefLine.containsKey(sha256)) {
+                shaRefLine.put(sha256, 0);
             } else {
                 HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, sha256);
                 Optional<Item> item = register.getItemBySha256(hashValue);
                 if (!item.isPresent()) {
-                    RSFResult.createFailResult("OMG orphan append entry" + command.toString());
+                    RSFResult.createFailResult("Orphan append entry" + command.toString());
                 }
             }
         }
@@ -89,9 +88,9 @@ public class RSFExecutor {
 
     private RSFResult validateOrphanItems() {
         List<String> orphanItems = new ArrayList<>();
-        shaRefCount.forEach((hash, rsfLine) -> {
+        shaRefLine.forEach((hash, rsfLine) -> {
             if (rsfLine > 0) {
-                orphanItems.add("OMG orphan item, hash: " + hash + ", line: " + rsfLine);
+                orphanItems.add("Orphan item, hash: " + hash + ", line: " + rsfLine);
             }
         });
 

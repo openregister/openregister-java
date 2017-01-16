@@ -9,9 +9,6 @@ import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class AssertRootHashCommandHandler extends RegisterCommandHandler {
     @Override

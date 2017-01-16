@@ -28,7 +28,6 @@ public class RegisterCommand {
 
         if (!commandName.equals(that.commandName)) return false;
         return arguments.equals(that.arguments);
-
     }
 
     @Override

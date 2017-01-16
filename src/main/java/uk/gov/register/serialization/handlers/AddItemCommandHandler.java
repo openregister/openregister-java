@@ -8,17 +8,12 @@ import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.ObjectReconstructor;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class AddItemCommandHandler extends RegisterCommandHandler {
-
-
     private final ObjectReconstructor objectReconstructor;
 
     public AddItemCommandHandler() {
         objectReconstructor = new ObjectReconstructor();
-
     }
 
     @Override

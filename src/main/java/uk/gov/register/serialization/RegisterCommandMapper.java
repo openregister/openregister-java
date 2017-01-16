@@ -14,6 +14,5 @@ public abstract class RegisterCommandMapper<A, B extends RegisterCommand> implem
             throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
         }
     }
-
 }
 

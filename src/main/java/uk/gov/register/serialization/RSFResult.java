@@ -9,7 +9,6 @@ import java.util.Optional;
 @JsonPropertyOrder({"success", "message", "details"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RSFResult {
-
     private Boolean isSuccessful;
     private String message;
     private Optional<Exception> exception;

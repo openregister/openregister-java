@@ -9,12 +9,9 @@ import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 
 public class AppendEntryCommandHandler extends RegisterCommandHandler {
-
-
     @Override
     protected RSFResult executeCommand(RegisterCommand command, Register register) {
         try {
