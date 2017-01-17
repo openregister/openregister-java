@@ -13,19 +13,9 @@ public class RSFExecutor {
 
     private Map<String, RegisterCommandHandler> registeredHandlers;
 
-    // this instead of integer can be full command
-    // then when it's referenced just empty the value
-    // when checking for orphan there should not be any hash with command as those
-    // should have been emptied
-    // ?? memory consumption here ??
-
-    // for now hash and line from file?
-    // hash and rsf file line number
-    private Map<String, Integer> shaRefLine;
 
     public RSFExecutor() {
         registeredHandlers = new HashMap<>();
-        shaRefLine = new HashMap<>();
     }
 
     public void register(RegisterCommandHandler registerCommandHandler) {
@@ -33,31 +23,34 @@ public class RSFExecutor {
     }
 
     public RSFResult execute(RegisterSerialisationFormat rsf, Register register) {
-        shaRefLine.clear();
+        // this instead of integer can be full command
+        // then when it's referenced just empty the value
+        // when checking for orphan there should not be any hash with command as those
+        // should have been emptied
+        // ?? memory consumption here ??
+
+        // for now hash and line from file?
+        // hash and rsf file line number
+        Map<String, Integer> shaRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
         int rsfLine = 1;
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
 
-            RSFResult validationResult = validate(command, rsfLine, register);
+            RSFResult validationResult = validate(command, register, rsfLine, shaRefLine);
             if (!validationResult.isSuccessful()) {
-                shaRefLine.clear();
                 return validationResult;
             }
 
             RSFResult executionResult = execute(command, register);
             if (!executionResult.isSuccessful()) {
-                shaRefLine.clear();
                 return executionResult;
             }
 
             rsfLine++;
         }
 
-        RSFResult rsfResult = validateOrphanItems();
-        //no need to keep those in memory until the next run
-        shaRefLine.clear();
-        return rsfResult;
+        return validateOrphanItems(shaRefLine);
     }
 
     private RSFResult execute(RegisterCommand command, Register register) {
@@ -69,7 +62,7 @@ public class RSFExecutor {
         }
     }
 
-    private RSFResult validate(RegisterCommand command, int rsfLine, Register register) {
+    private RSFResult validate(RegisterCommand command, Register register, int rsfLine, Map<String, Integer> shaRefLine) {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
 
@@ -92,7 +85,7 @@ public class RSFExecutor {
         return RSFResult.createSuccessResult();
     }
 
-    private RSFResult validateOrphanItems() {
+    private RSFResult validateOrphanItems(Map<String, Integer> shaRefLine) {
         List<String> orphanItems = new ArrayList<>();
         shaRefLine.forEach((hash, rsfLine) -> {
             if (rsfLine > 0) {
@@ -106,6 +99,4 @@ public class RSFExecutor {
             return RSFResult.createFailResult(String.join("; ", orphanItems));
         }
     }
-
-
 }
