@@ -11,7 +11,7 @@ public abstract class RegisterCommandHandler {
         if (command.getCommandName().equals(getCommandName())) {
             return executeCommand(command, register);
         } else {
-            return RSFResult.createFailResult("Incompatible handler and command type");
+            return RSFResult.createFailResult("Incompatible handler (" + getCommandName() + ") and command type (" + command.getCommandName() + ")");
         }
     }
 }
