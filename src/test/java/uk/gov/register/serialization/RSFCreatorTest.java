@@ -33,9 +33,6 @@ public class RSFCreatorTest {
     private RSFCreator sutCreator;
 
     @Mock
-    private RegisterContext registerContext;
-
-    @Mock
     private Register register;
 
     private Entry entry1;
