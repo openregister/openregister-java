@@ -1,6 +1,5 @@
 package uk.gov.register.service;
 
-import com.google.common.base.Strings;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.serialization.*;
@@ -46,7 +45,6 @@ public class RegisterSerialisationFormatService {
     public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormatter rsfFormatter) {
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
         Iterator<RegisterCommand> commandsIterator = buffer.lines()
-                .filter(str -> !Strings.isNullOrEmpty(str))
                 .map(rsfFormatter::parse)
                 .iterator();
         return new RegisterSerialisationFormat(commandsIterator);
