@@ -215,8 +215,10 @@ dl {
   overflow: hidden;
 
   dt {
+    clear: left;
     float: left;
     font-weight: bold;
+    padding-bottom: 1em;
     width: 35%;
   }
 
