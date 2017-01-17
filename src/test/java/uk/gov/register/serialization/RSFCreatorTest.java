@@ -3,7 +3,9 @@ package uk.gov.register.serialization;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.apache.commons.collections4.IteratorUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -31,6 +33,9 @@ public class RSFCreatorTest {
     private final String EMPTY_REGISTER_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
     private RSFCreator sutCreator;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private Register register;
@@ -123,5 +128,21 @@ public class RSFCreatorTest {
                 appendEntry1Command,
                 new RegisterCommand("assert-root-hash", Collections.singletonList(twoEntriesRegisterProof.getRootHash().toString()))
         ));
+    }
+
+    @Test
+    public void createRegisterSerialisationFormat_throwsAnExceptionForUnknownMapperType() throws Exception {
+        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
+
+        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"));
+        when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
+
+        expectedException.expect(RuntimeException.class);
+        expectedException.expectMessage("Mapper not registered for class: uk.gov.register.views.RegisterProof");
+
+        RSFCreator creatorWithoutMappers = new RSFCreator();
+        RegisterSerialisationFormat rsf = creatorWithoutMappers.create(register);
+        IteratorUtils.toList(rsf.getCommands());
     }
 }
