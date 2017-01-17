@@ -67,7 +67,7 @@ public class RSFExecutorTest {
     private RegisterCommand assertLastRootHashCommand;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(assertRootHashHandler.getCommandName()).thenReturn("assert-root-hash");
         when(appendEntryHandler.getCommandName()).thenReturn("append-entry");
         when(addItemHandler.getCommandName()).thenReturn("add-item");
@@ -97,7 +97,7 @@ public class RSFExecutorTest {
 
 
     @Test
-    public void execute_executesAllCommandsInCorrectOrder() throws Exception {
+    public void execute_executesAllCommandsInCorrectOrder() {
         when(assertRootHashHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
@@ -126,7 +126,7 @@ public class RSFExecutorTest {
     }
 
     @Test
-    public void execute_failsForOrphanAppendEntry() throws Exception {
+    public void execute_failsForOrphanAppendEntry() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
@@ -146,7 +146,7 @@ public class RSFExecutorTest {
     }
 
     @Test
-    public void execute_succeedsWhenAppendEntryReferencesItemNotInRSFButInDB() throws Exception {
+    public void execute_succeedsWhenAppendEntryReferencesItemNotInRSFButInDB() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
@@ -162,7 +162,7 @@ public class RSFExecutorTest {
     }
 
     @Test
-    public void execute_failsForOrphanAddItem() throws Exception {
+    public void execute_failsForOrphanAddItem() {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
 
@@ -178,7 +178,7 @@ public class RSFExecutorTest {
     }
 
     @Test
-    public void execute_failsForItemWhichWasntReferencedInRSF() throws Exception {
+    public void execute_failsForItemWhichWasntReferencedInRSF() {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
 
@@ -195,7 +195,7 @@ public class RSFExecutorTest {
 
 
     @Test
-    public void execute_failsForUnknownCommand() throws Exception {
+    public void execute_failsForUnknownCommand() {
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Collections.singletonList(
                 new RegisterCommand("unknown-command", Arrays.asList("some", "data"))).iterator());
 
@@ -206,7 +206,7 @@ public class RSFExecutorTest {
     }
 
     @Test
-    public void execute_executingTheSameInvalidRSFGivesSameResult() throws Exception {
+    public void execute_executingTheSameInvalidRSFGivesSameResult() {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
 
