@@ -72,4 +72,13 @@ public class RSFResult {
         result = 31 * result + exception.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "RSFResult{" +
+                "isSuccessful=" + isSuccessful +
+                ", message='" + message + '\'' +
+                ", exception=" + exception +
+                '}';
+    }
 }

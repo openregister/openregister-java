@@ -78,7 +78,7 @@ public class RSFExecutor {
                 HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, sha256);
                 Optional<Item> item = register.getItemBySha256(hashValue);
                 if (!item.isPresent()) {
-                    RSFResult.createFailResult("Orphan append entry" + command.toString());
+                    return RSFResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
                 }
             }
         }
@@ -89,7 +89,7 @@ public class RSFExecutor {
         List<String> orphanItems = new ArrayList<>();
         shaRefLine.forEach((hash, rsfLine) -> {
             if (rsfLine > 0) {
-                orphanItems.add("Orphan item, hash: " + hash + ", line: " + rsfLine);
+                orphanItems.add("Orphan add item (line:" + rsfLine + "): " + hash);
             }
         });
 

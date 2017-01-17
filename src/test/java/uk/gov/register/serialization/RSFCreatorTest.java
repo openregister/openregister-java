@@ -123,6 +123,5 @@ public class RSFCreatorTest {
                 appendEntry1Command,
                 new RegisterCommand("assert-root-hash", Collections.singletonList(twoEntriesRegisterProof.getRootHash().toString()))
         ));
-
     }
 }
