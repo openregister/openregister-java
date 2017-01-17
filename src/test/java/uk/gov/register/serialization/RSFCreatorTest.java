@@ -53,7 +53,7 @@ public class RSFCreatorTest {
     private RegisterCommand appendEntry2Command;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         sutCreator = new RSFCreator();
         sutCreator.register(new RegisterProofCommandMapper());
         sutCreator.register(new EntryToCommandMapper());
