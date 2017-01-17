@@ -60,7 +60,7 @@ public class RegisterSerialisationFormatService {
                     output.write(rsfFormatter.format(commands.next()).getBytes());
 
                     // TODO: is flushing every 10000 commands ok?
-                    if (++commandCount >= 1) {
+                    if (++commandCount >= 10000) {
                         output.flush();
                         commandCount = 0;
                     }
