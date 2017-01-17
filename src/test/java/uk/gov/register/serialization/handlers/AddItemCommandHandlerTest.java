@@ -1,5 +1,6 @@
 package uk.gov.register.serialization.handlers;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,8 @@ import uk.gov.register.util.HashValue;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,33 +30,36 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AppendEntryCommandHandlerTest {
-    private AppendEntryCommandHandler sutHandler;
+public class AddItemCommandHandlerTest {
+    private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
+
+    private AddItemCommandHandler sutHandler;
 
     @Mock
     private Register register;
 
-    private RegisterCommand appendEntryCommand;
+    private RegisterCommand addItemCommand;
 
     @Before
     public void setUp() throws Exception {
-        sutHandler = new AppendEntryCommandHandler();
-        appendEntryCommand = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item-sha", "entry1-field-1-value"));
+        sutHandler = new AddItemCommandHandler();
+        addItemCommand = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
     }
 
     @Test
     public void getCommandName_returnsCorrectCommandName() {
-        assertThat(sutHandler.getCommandName(), equalTo("append-entry"));
+        assertThat(sutHandler.getCommandName(), equalTo("add-item"));
     }
 
     @Test
-    public void execute_appendsEntryToRegister() {
-        when(register.getTotalEntries()).thenReturn(2);
+    public void execute_addsItemToRegister() {
+        RSFResult rsfResult = sutHandler.execute(addItemCommand, register);
 
-        RSFResult rsfResult = sutHandler.execute(appendEntryCommand, register);
+        Item expectedItem = new Item(new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"), jsonFactory.objectNode()
+                .put("field-1", "entry1-field-1-value")
+                .put("field-2", "entry1-field-2-value"));
 
-        Entry expectedEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "item-sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
-        verify(register, times(1)).appendEntry(expectedEntry);
+        verify(register, times(1)).putItem(expectedItem);
         assertThat(rsfResult, equalTo(RSFResult.createSuccessResult()));
     }
 
@@ -63,9 +69,9 @@ public class AppendEntryCommandHandlerTest {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).appendEntry(any(Entry.class));
+        }).when(register).putItem(any(Item.class));
 
-        RSFResult rsfResult = sutHandler.execute(appendEntryCommand, register);
+        RSFResult rsfResult = sutHandler.execute(addItemCommand, register);
 
         assertThat(rsfResult.isSuccessful(), equalTo(false));
         assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
@@ -74,12 +80,11 @@ public class AppendEntryCommandHandlerTest {
 
     @Test
     public void execute_failsForCommandWithInvalidArguments() {
-        when(register.getTotalEntries()).thenReturn(2);
-        RegisterCommand commandWithInvalidArguments = new RegisterCommand("append-entry", Arrays.asList("2016-07-T16:55:00Z", "sha-2tem-sha"));
+        RegisterCommand commandWithInvalidArguments = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value"));
 
         RSFResult rsfResult = sutHandler.execute(commandWithInvalidArguments, register);
 
-        verify(register, never()).appendEntry(any());
+        verify(register, never()).putItem(any());
         assertThat(rsfResult.isSuccessful(), equalTo(false));
         assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
         assertThat(rsfResult.getDetails(), not(isEmptyOrNullString()));
@@ -91,6 +96,6 @@ public class AppendEntryCommandHandlerTest {
 
         verify(register, never()).appendEntry(any());
         assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Incompatible handler (append-entry) and command type (unknown-type)"));
+        assertThat(rsfResult.getMessage(), equalTo("Incompatible handler (add-item) and command type (unknown-type)"));
     }
 }

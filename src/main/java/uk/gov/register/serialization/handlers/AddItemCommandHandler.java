@@ -23,7 +23,7 @@ public class AddItemCommandHandler extends RegisterCommandHandler {
             Item item = new Item(objectReconstructor.reconstruct(jsonContent));
             register.putItem(item);
             return RSFResult.createSuccessResult();
-        } catch (IOException e) {
+        } catch (Exception e) {
             return RSFResult.createFailResult("Exception when executing command: " + command, e);
         }
     }

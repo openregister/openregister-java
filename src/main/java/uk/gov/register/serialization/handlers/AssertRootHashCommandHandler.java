@@ -8,8 +8,6 @@ import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
-import java.security.NoSuchAlgorithmException;
-
 public class AssertRootHashCommandHandler extends RegisterCommandHandler {
     @Override
     protected RSFResult executeCommand(RegisterCommand command, Register register) {
@@ -22,7 +20,7 @@ public class AssertRootHashCommandHandler extends RegisterCommandHandler {
                 return RSFResult.createFailResult(message);
             }
             return RSFResult.createSuccessResult();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             return RSFResult.createFailResult("Exception when executing command: " + command, e);
         }
     }

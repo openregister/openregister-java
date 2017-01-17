@@ -7,17 +7,18 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.serialization.RSFResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.views.RegisterProof;
 
 import java.io.IOException;
-import java.time.Instant;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,45 +28,57 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AppendEntryCommandHandlerTest {
-    private AppendEntryCommandHandler sutHandler;
+public class AssertRootHashCommandHandlerTest {
+    private AssertRootHashCommandHandler sutHandler;
 
     @Mock
     private Register register;
 
-    private RegisterCommand appendEntryCommand;
+    private RegisterCommand assertRootHashCommand;
 
     @Before
     public void setUp() throws Exception {
-        sutHandler = new AppendEntryCommandHandler();
-        appendEntryCommand = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item-sha", "entry1-field-1-value"));
+        sutHandler = new AssertRootHashCommandHandler();
+        assertRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:root-hash"));
     }
 
     @Test
     public void getCommandName_returnsCorrectCommandName() {
-        assertThat(sutHandler.getCommandName(), equalTo("append-entry"));
+        assertThat(sutHandler.getCommandName(), equalTo("assert-root-hash"));
     }
 
     @Test
-    public void execute_appendsEntryToRegister() {
-        when(register.getTotalEntries()).thenReturn(2);
+    public void execute_obtainsAndAssertsRegisterProof() throws NoSuchAlgorithmException {
+        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"));
+        when(register.getRegisterProof()).thenReturn(registerProof);
 
-        RSFResult rsfResult = sutHandler.execute(appendEntryCommand, register);
+        RSFResult rsfResult = sutHandler.execute(assertRootHashCommand, register);
 
-        Entry expectedEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "item-sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
-        verify(register, times(1)).appendEntry(expectedEntry);
+        verify(register, times(1)).getRegisterProof();
         assertThat(rsfResult, equalTo(RSFResult.createSuccessResult()));
     }
 
     @Test
-    public void execute_catchesExceptionsAndReturnsFailRSFResult() {
+    public void execute_failsIfRootHashesDontMatch() throws NoSuchAlgorithmException {
+        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "different-hash"));
+        when(register.getRegisterProof()).thenReturn(registerProof);
+
+        RSFResult rsfResult = sutHandler.execute(assertRootHashCommand, register);
+
+        verify(register, times(1)).getRegisterProof();
+        assertThat(rsfResult.isSuccessful(), equalTo(false));
+        assertThat(rsfResult.getMessage(), equalTo("Root hashes don't match. Expected: sha-256:root-hash actual: sha-256:different-hash"));
+    }
+
+    @Test
+    public void execute_catchesExceptionsAndReturnsFailRSFResult() throws NoSuchAlgorithmException {
         doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).appendEntry(any(Entry.class));
+        }).when(register).getRegisterProof();
 
-        RSFResult rsfResult = sutHandler.execute(appendEntryCommand, register);
+        RSFResult rsfResult = sutHandler.execute(assertRootHashCommand, register);
 
         assertThat(rsfResult.isSuccessful(), equalTo(false));
         assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
@@ -74,12 +87,11 @@ public class AppendEntryCommandHandlerTest {
 
     @Test
     public void execute_failsForCommandWithInvalidArguments() {
-        when(register.getTotalEntries()).thenReturn(2);
-        RegisterCommand commandWithInvalidArguments = new RegisterCommand("append-entry", Arrays.asList("2016-07-T16:55:00Z", "sha-2tem-sha"));
+        RegisterCommand commandWithInvalidArguments = new RegisterCommand("assert-root-hash", Collections.singletonList("sha2-2:43534"));
 
         RSFResult rsfResult = sutHandler.execute(commandWithInvalidArguments, register);
 
-        verify(register, never()).appendEntry(any());
+        verify(register, never()).putItem(any());
         assertThat(rsfResult.isSuccessful(), equalTo(false));
         assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
         assertThat(rsfResult.getDetails(), not(isEmptyOrNullString()));
@@ -91,6 +103,6 @@ public class AppendEntryCommandHandlerTest {
 
         verify(register, never()).appendEntry(any());
         assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Incompatible handler (append-entry) and command type (unknown-type)"));
+        assertThat(rsfResult.getMessage(), equalTo("Incompatible handler (assert-root-hash) and command type (unknown-type)"));
     }
 }
