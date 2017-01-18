@@ -85,9 +85,9 @@ public class RSFExecutorTest {
         middleRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "middle-one"));
         lastRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "last-one"));
 
-        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterProof.getRootHash().toString()));
-        assertMiddleRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(middleRegisterProof.getRootHash().toString()));
-        assertLastRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(lastRegisterProof.getRootHash().toString()));
+        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterProof.getRootHash().encode()));
+        assertMiddleRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(middleRegisterProof.getRootHash().encode()));
+        assertLastRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(lastRegisterProof.getRootHash().encode()));
 
         addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));

@@ -71,7 +71,7 @@ public class RSFCreatorTest {
 
         emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH));
 
-        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterProof.getRootHash().toString()));
+        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterProof.getRootHash().encode()));
 
         addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
@@ -123,10 +123,10 @@ public class RSFCreatorTest {
 
         assertThat(actualCommands.size(), equalTo(4));
         assertThat(actualCommands, contains(
-                new RegisterCommand("assert-root-hash", Collections.singletonList(oneEntryRegisterProof.getRootHash().toString())),
+                new RegisterCommand("assert-root-hash", Collections.singletonList(oneEntryRegisterProof.getRootHash().encode())),
                 addItem1Command,
                 appendEntry1Command,
-                new RegisterCommand("assert-root-hash", Collections.singletonList(twoEntriesRegisterProof.getRootHash().toString()))
+                new RegisterCommand("assert-root-hash", Collections.singletonList(twoEntriesRegisterProof.getRootHash().encode()))
         ));
     }
 
