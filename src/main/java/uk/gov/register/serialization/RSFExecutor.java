@@ -23,21 +23,15 @@ public class RSFExecutor {
     }
 
     public RSFResult execute(RegisterSerialisationFormat rsf, Register register) {
-        // this instead of integer can be full command
-        // then when it's referenced just empty the value
-        // when checking for orphan there should not be any hash with command as those
-        // should have been emptied
-        // ?? memory consumption here ??
-
         // for now hash and line from file?
-        // hash and rsf file line number
-        Map<String, Integer> shaRefLine = new HashMap<>();
+        // hashvalue and rsf file line number
+        Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
         int rsfLine = 1;
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
 
-            RSFResult validationResult = validate(command, register, rsfLine, shaRefLine);
+            RSFResult validationResult = validate(command, register, rsfLine, hashRefLine);
             if (!validationResult.isSuccessful()) {
                 return validationResult;
             }
@@ -50,7 +44,7 @@ public class RSFExecutor {
             rsfLine++;
         }
 
-        return validateOrphanItems(shaRefLine);
+        return validateOrphanItems(hashRefLine);
     }
 
     private RSFResult execute(RegisterCommand command, Register register) {
@@ -62,20 +56,20 @@ public class RSFExecutor {
         }
     }
 
-    private RSFResult validate(RegisterCommand command, Register register, int rsfLine, Map<String, Integer> shaRefLine) {
+    private RSFResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
 
         String commandName = command.getCommandName();
         if (commandName.equals("add-item")) {
             String hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
-            shaRefLine.put(HashingAlgorithm.SHA256 + ":" + hash, rsfLine);
+            hashRefLine.put(new HashValue(HashingAlgorithm.SHA256, hash), rsfLine);
         } else if (commandName.equals("append-entry")) {
-            String sha256 = command.getCommandArguments().get(1);
-            if (shaRefLine.containsKey(sha256)) {
-                shaRefLine.put(sha256, 0);
+            String entrySha256 = command.getCommandArguments().get(1);
+            HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, entrySha256);
+            if (hashRefLine.containsKey(hashValue)) {
+                hashRefLine.put(hashValue, 0);
             } else {
-                HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, sha256);
                 Optional<Item> item = register.getItemBySha256(hashValue);
                 if (!item.isPresent()) {
                     return RSFResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
@@ -85,11 +79,11 @@ public class RSFExecutor {
         return RSFResult.createSuccessResult();
     }
 
-    private RSFResult validateOrphanItems(Map<String, Integer> shaRefLine) {
+    private RSFResult validateOrphanItems(Map<HashValue, Integer> hashRefLine) {
         List<String> orphanItems = new ArrayList<>();
-        shaRefLine.forEach((hash, rsfLine) -> {
+        hashRefLine.forEach((hash, rsfLine) -> {
             if (rsfLine > 0) {
-                orphanItems.add("Orphan add item (line:" + rsfLine + "): " + hash);
+                orphanItems.add("Orphan add item (line:" + rsfLine + "): " + hash.encode());
             }
         });
 
