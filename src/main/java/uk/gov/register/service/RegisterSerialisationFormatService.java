@@ -33,13 +33,9 @@ public class RegisterSerialisationFormatService {
     }
 
     public RegisterResult processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
-        final RegisterResult[] registerResult = new RegisterResult[1];
-        registerContext.transactionalRegisterOperation(register -> {
-            RegisterResult executionResult = rsfExecutor.execute(rsf, register);
-            registerResult[0] = executionResult;
-            return executionResult.isSuccessful();
+        return registerContext.transactionalRegisterOperation(register -> {
+            return rsfExecutor.execute(rsf, register);
         });
-        return registerResult[0];
     }
 
     public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormatter rsfFormatter) {

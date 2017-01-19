@@ -10,6 +10,7 @@ import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterLinkService;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
@@ -114,7 +115,7 @@ public class RegisterContext implements
         transactionalMemoizationStore.commitHashesToStore();
     }
 
-    public void transactionalRegisterOperation(Function<Register, Boolean> registerOperationFunc) {
+    public RegisterResult transactionalRegisterOperation(Function<Register, RegisterResult> registerOperationFunc) {
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
 
         Handle handle = null;
@@ -123,9 +124,9 @@ public class RegisterContext implements
             handle.begin();
 
             Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
-            Boolean shouldCommit = registerOperationFunc.apply(register);
+            RegisterResult result = registerOperationFunc.apply(register);
 
-            if (shouldCommit) {
+            if (result.isSuccessful()) {
                 register.commit();
                 transactionalMemoizationStore.commitHashesToStore();
                 handle.commit();
@@ -134,6 +135,7 @@ public class RegisterContext implements
                 handle.rollback();
             }
 
+            return result;
         } catch (Exception e) {
             if (handle != null) {
                 handle.rollback();

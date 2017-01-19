@@ -60,13 +60,10 @@ public class RegisterSerialisationFormatServiceTest {
             }
         }).when(registerContext).transactionalRegisterOperation(any(Consumer.class));
 
-        doAnswer(new Answer<Void>() {
-            public Void answer(InvocationOnMock invocation) {
-                Function<Register, Boolean> callback = (Function<Register, Boolean>) invocation.getArguments()[0];
-                callback.apply(register);
-                return null;
-            }
-        }).when(registerContext).transactionalRegisterOperation(any(Function.class));
+        when(registerContext.transactionalRegisterOperation(any(Function.class))).thenAnswer(answer -> {
+            Function<Register, Boolean> callback = (Function<Register, Boolean>) answer.getArguments()[0];
+            return callback.apply(register);
+        });
 
         sutService = new RegisterSerialisationFormatService(registerContext, rsfExecutor, rsfCreator);
         rsfFormatter = new RSFFormatter();
