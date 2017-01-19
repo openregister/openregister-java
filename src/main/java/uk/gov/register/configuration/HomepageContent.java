@@ -26,7 +26,7 @@ public class HomepageContent {
 
     @SuppressWarnings("unused, used from template")
     public String getSpecificationUrl() {
-        return "http://openregister.github.io/specification/";
+        return "https://open-registers-docs.readthedocs.io/en/latest/";
     }
 
     @SuppressWarnings("unused, used from template")
