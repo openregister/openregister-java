@@ -33,10 +33,9 @@ public class ResourceYamlFileReader {
         }
     }
 
-    public <N> Collection<N> readResource(byte[] bytes,
-                                          TypeReference<Map<String, N>> typeReference) {
+    public <N> Collection<N> readResourceFromPath(String path, TypeReference<Map<String, N>> typeReference) {
         try {
-            return YAML_OBJECT_MAPPER.<Map<String, N>>readValue(bytes, typeReference).values();
+            return YAML_OBJECT_MAPPER.<Map<String, N>>readValue(getStreamForFile(path), typeReference).values();
         } catch (IOException e) {
             throw new UncheckedIOException("Error loading resources configuration file.", e);
         }

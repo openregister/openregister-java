@@ -82,10 +82,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DropwizardResourceConfig resourceConfig = jersey.getResourceConfig();
         Client client = new JerseyClientBuilder(environment).using(configuration.getJerseyClientConfiguration()).build("http-client");
 
-        Optional<String> registersYamlFileUrl = Optional.ofNullable(System.getProperty("registersYaml"));
-        Optional<String> fieldsYamlFileUrl = Optional.ofNullable(System.getProperty("fieldsYaml"));
-
-        ConfigManager configManager = new ConfigManager(configuration, registersYamlFileUrl, fieldsYamlFileUrl);
+        ConfigManager configManager = new ConfigManager(configuration);
         configManager.refreshConfig();
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);

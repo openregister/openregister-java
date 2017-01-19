@@ -102,6 +102,16 @@ public class RegisterConfiguration extends Configuration
     @JsonProperty
     private Map<RegisterName, RegisterContextFactory> registers = new HashMap<>();
 
+    @JsonProperty
+    @NotNull
+    @Valid
+    private String fieldsYamlLocation;
+
+    @JsonProperty
+    @NotNull
+    @Valid
+    private String registersYamlLocation;
+
     public DataSourceFactory getDatabase() {
         return database;
     }
@@ -132,4 +142,15 @@ public class RegisterConfiguration extends Configuration
 
     @Override
     public boolean getDownloadConfigs() { return downloadConfigs; }
+
+    @Override
+    public String getFieldsYamlLocation() {
+        return fieldsYamlLocation;
+    }
+
+    @Override
+    public String getRegistersYamlLocation() {
+        return registersYamlLocation;
+    }
+
 }

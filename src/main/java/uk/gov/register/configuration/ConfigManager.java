@@ -12,9 +12,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConfigManager {
-    private final Optional<String> registersConfigFileUrl;
+    private final String registersConfigFileUrl;
     private final String registersConfigFilePath;
-    private final Optional<String> fieldsConfigFileUrl;
+    private final String fieldsConfigFileUrl;
     private final String fieldsConfigFilePath;
     private final boolean refresh;
     private final String externalConfigDirectory;
@@ -22,9 +22,9 @@ public class ConfigManager {
     private AtomicReference<RegistersConfiguration> registersConfiguration = new AtomicReference<>();
     private AtomicReference<FieldsConfiguration> fieldsConfiguration = new AtomicReference<>();
 
-    public ConfigManager(RegisterConfigConfiguration registerConfigConfiguration, Optional<String> registersConfigFileUrl, Optional<String> fieldsConfigFileUrl) {
-        this.registersConfigFileUrl = registersConfigFileUrl;
-        this.fieldsConfigFileUrl = fieldsConfigFileUrl;
+    public ConfigManager(RegisterConfigConfiguration registerConfigConfiguration) {
+        this.registersConfigFileUrl = registerConfigConfiguration.getRegistersYamlLocation();
+        this.fieldsConfigFileUrl = registerConfigConfiguration.getFieldsYamlLocation();
         this.refresh = registerConfigConfiguration.getDownloadConfigs();
         this.externalConfigDirectory = registerConfigConfiguration.getExternalConfigDirectory();
         this.registersConfigFilePath = externalConfigDirectory + "/" + "registers.yaml";
@@ -34,13 +34,8 @@ public class ConfigManager {
     public void refreshConfig() throws NoSuchConfigException, IOException {
         if (refresh) {
             try {
-                if (registersConfigFileUrl.isPresent()) {
-                    Files.copy(new URL(registersConfigFileUrl.get()).openStream(), Paths.get(registersConfigFilePath), StandardCopyOption.REPLACE_EXISTING);
-                }
-                if (fieldsConfigFileUrl.isPresent()) {
-                    Files.copy(new URL(fieldsConfigFileUrl.get()).openStream(), Paths.get(fieldsConfigFilePath), StandardCopyOption.REPLACE_EXISTING);
-                }
-
+                Files.copy(new URL(registersConfigFileUrl).openStream(), Paths.get(registersConfigFilePath), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(new URL(fieldsConfigFileUrl).openStream(), Paths.get(fieldsConfigFilePath), StandardCopyOption.REPLACE_EXISTING);
                 registersConfiguration.set(createRegistersConfiguration());
                 fieldsConfiguration.set(createFieldsConfiguration());
             } catch (FileNotFoundException e) {
@@ -57,11 +52,11 @@ public class ConfigManager {
         return fieldsConfiguration.get();
     }
 
-    private RegistersConfiguration createRegistersConfiguration() {
-        return new RegistersConfiguration(registersConfigFileUrl.map(s -> registersConfigFilePath));
+    private RegistersConfiguration createRegistersConfiguration() throws IOException {
+        return new RegistersConfiguration(registersConfigFilePath);
     }
 
     private FieldsConfiguration createFieldsConfiguration() {
-        return new FieldsConfiguration(fieldsConfigFileUrl.map(s -> fieldsConfigFilePath));
+        return new FieldsConfiguration(fieldsConfigFilePath);
     }
 }

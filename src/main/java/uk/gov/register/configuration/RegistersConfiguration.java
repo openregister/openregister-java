@@ -5,22 +5,19 @@ import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.util.ResourceYamlFileReader;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class RegistersConfiguration {
 
     private final Collection<RegisterMetadata> registers;
 
-    public RegistersConfiguration(Optional<String> registersResourceYamlPath) {
-        registers = new ResourceYamlFileReader().readResource(
-                registersResourceYamlPath,
-                "config/registers.yaml",
-                new TypeReference<Map<String, RegisterMetadata>>() {
-                }
-        );
+    public RegistersConfiguration(String registersResourceYamlPath) throws IOException {
+        registers = new ResourceYamlFileReader().readResourceFromPath(registersResourceYamlPath, new TypeReference<Map<String,
+                RegisterMetadata>>() {
+        });
     }
 
     public RegisterMetadata getRegisterMetadata(RegisterName registerName) {
