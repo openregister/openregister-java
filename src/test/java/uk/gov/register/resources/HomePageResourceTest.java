@@ -6,7 +6,6 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.HomePageView;
 import uk.gov.register.views.ViewFactory;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class HomePageResourceTest {
     }
 
     @Test
-    public void shouldReturnPageViewWithValidValues() throws NoSuchAlgorithmException {
+    public void shouldReturnPageViewWithValidValues() {
         int totalRecords = 5;
         int totalEntries = 6;
         Optional<Instant> lastUpdated = Optional.of(Instant.ofEpochMilli(1459241964336L));

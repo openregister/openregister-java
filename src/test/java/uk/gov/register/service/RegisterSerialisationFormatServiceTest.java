@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -86,7 +85,7 @@ public class RegisterSerialisationFormatServiceTest {
     }
 
     @Test
-    public void writeTo_writesEntireRSFtoStream() throws NoSuchAlgorithmException {
+    public void writeTo_writesEntireRSFtoStream() {
         when(rsfCreator.create(any())).thenReturn(
                 new RegisterSerialisationFormat(Iterators.forArray(
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
@@ -114,7 +113,7 @@ public class RegisterSerialisationFormatServiceTest {
     }
 
     @Test
-    public void writeTo_whenCalledWithBoundary_writesPartialRSFtoStream() throws NoSuchAlgorithmException {
+    public void writeTo_whenCalledWithBoundary_writesPartialRSFtoStream() {
         when(rsfCreator.create(any(), eq(1), eq(2))).thenReturn(
                 new RegisterSerialisationFormat(Iterators.forArray(
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_uno")),

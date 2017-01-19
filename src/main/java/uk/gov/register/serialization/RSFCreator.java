@@ -6,7 +6,6 @@ import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,19 +23,14 @@ public class RSFCreator {
     }
 
     public RegisterSerialisationFormat create(Register register) {
-        try {
-            Iterator<?> iterators = Iterators.concat(
-                    Iterators.singletonIterator(emptyRegisterProof),
-                    register.getItemIterator(),
-                    register.getEntryIterator(),
-                    Iterators.singletonIterator(register.getRegisterProof()));
+        Iterator<?> iterators = Iterators.concat(
+                Iterators.singletonIterator(emptyRegisterProof),
+                register.getItemIterator(),
+                register.getEntryIterator(),
+                Iterators.singletonIterator(register.getRegisterProof()));
 
-            Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-            return new RegisterSerialisationFormat(commands);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
+        return new RegisterSerialisationFormat(commands);
     }
 
     public RegisterSerialisationFormat create(Register register, int totalEntries1, int totalEntries2) {

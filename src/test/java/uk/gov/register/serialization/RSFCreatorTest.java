@@ -16,7 +16,6 @@ import uk.gov.register.serialization.mappers.RegisterProofCommandMapper;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,7 +79,7 @@ public class RSFCreatorTest {
     }
 
     @Test
-    public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() throws NoSuchAlgorithmException {
+    public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
