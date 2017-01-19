@@ -1,7 +1,6 @@
 package uk.gov.register.serialization;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import org.apache.commons.collections4.IteratorUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,20 +9,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.*;
-import uk.gov.register.serialization.handlers.AddItemCommandHandler;
-import uk.gov.register.serialization.handlers.AppendEntryCommandHandler;
-import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
-import uk.gov.register.serialization.mappers.EntryToCommandMapper;
-import uk.gov.register.serialization.mappers.ItemToCommandMapper;
-import uk.gov.register.serialization.mappers.RegisterProofCommandMapper;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -98,9 +88,9 @@ public class RSFExecutorTest {
 
     @Test
     public void execute_executesAllCommandsInCorrectOrder() {
-        when(assertRootHashHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
+        when(assertRootHashHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 assertEmptyRootHashCommand,
@@ -111,7 +101,7 @@ public class RSFExecutorTest {
                 appendEntry2Command,
                 assertLastRootHashCommand).iterator());
 
-        RSFResult rsfResult = sutExecutor.execute(rsf, register);
+        RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
         inOrder.verify(assertRootHashHandler, calls(1)).execute(assertEmptyRootHashCommand, register);
@@ -122,75 +112,75 @@ public class RSFExecutorTest {
         inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry2Command, register);
         inOrder.verify(assertRootHashHandler, calls(1)).execute(assertLastRootHashCommand, register);
 
-        assertThat(rsfResult, equalTo(RSFResult.createSuccessResult()));
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test
     public void execute_failsForOrphanAppendEntry() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
+        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.empty());
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 appendEntry1Command,
                 addItem1Command).iterator());
 
-        RSFResult rsfResult = sutExecutor.execute(rsf, register);
+        RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
         verify(register, times(1)).getItemBySha256(entry1hashValue);
 
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), startsWith("Orphan append entry (line:1): RegisterCommand"));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), startsWith("Orphan append entry (line:1): RegisterCommand"));
     }
 
     @Test
     public void execute_succeedsWhenAppendEntryReferencesItemNotInRSFButInDB() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
+        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.of(item1));
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Collections.singletonList(appendEntry1Command).iterator());
-        RSFResult rsfResult = sutExecutor.execute(rsf, register);
+        RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
         verify(register, times(1)).getItemBySha256(entry1hashValue);
 
-        assertThat(rsfResult, equalTo(RSFResult.createSuccessResult()));
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test
     public void execute_failsForOrphanAddItem() {
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
+        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 addItem1Command,
                 addItem2Command,
                 appendEntry1Command).iterator());
 
-        RSFResult rsfResult = sutExecutor.execute(rsf, register);
+        RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Orphan add item (line:2): sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a"));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), equalTo("Orphan add item (line:2): sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a"));
     }
 
     @Test
     public void execute_failsForItemWhichWasntReferencedInRSF() {
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
+        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 addItem1Command,
                 appendEntry1Command,
                 addItem1Command).iterator());
 
-        RSFResult rsfResult = sutExecutor.execute(rsf, register);
+        RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Orphan add item (line:3): sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), equalTo("Orphan add item (line:3): sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"));
     }
 
 
@@ -199,16 +189,16 @@ public class RSFExecutorTest {
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Collections.singletonList(
                 new RegisterCommand("unknown-command", Arrays.asList("some", "data"))).iterator());
 
-        RSFResult rsfResult = sutExecutor.execute(rsf, register);
+        RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Handler not registered for command: unknown-command"));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), equalTo("Handler not registered for command: unknown-command"));
     }
 
     @Test
     public void execute_executingTheSameInvalidRSFGivesSameResult() {
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RSFResult.createSuccessResult());
+        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 addItem1Command,
@@ -221,9 +211,9 @@ public class RSFExecutorTest {
                 appendEntry1Command,
                 addItem1Command).iterator());
 
-        RSFResult rsfResult1 = sutExecutor.execute(rsf, register);
-        RSFResult rsfResult2 = sutExecutor.execute(rsf2, register);
+        RegisterResult registerResult1 = sutExecutor.execute(rsf, register);
+        RegisterResult registerResult2 = sutExecutor.execute(rsf2, register);
 
-        assertThat(rsfResult1, equalTo(rsfResult2));
+        assertThat(registerResult1, equalTo(registerResult2));
     }
 }

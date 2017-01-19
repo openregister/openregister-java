@@ -9,9 +9,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.serialization.RSFResult;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
 
@@ -50,11 +49,11 @@ public class AppendEntryCommandHandlerTest {
     public void execute_appendsEntryToRegister() {
         when(register.getTotalEntries()).thenReturn(2);
 
-        RSFResult rsfResult = sutHandler.execute(appendEntryCommand, register);
+        RegisterResult registerResult = sutHandler.execute(appendEntryCommand, register);
 
         Entry expectedEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "item-sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
         verify(register, times(1)).appendEntry(expectedEntry);
-        assertThat(rsfResult, equalTo(RSFResult.createSuccessResult()));
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test
@@ -65,11 +64,11 @@ public class AppendEntryCommandHandlerTest {
             }
         }).when(register).appendEntry(any(Entry.class));
 
-        RSFResult rsfResult = sutHandler.execute(appendEntryCommand, register);
+        RegisterResult registerResult = sutHandler.execute(appendEntryCommand, register);
 
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
-        assertThat(rsfResult.getDetails(), not(isEmptyOrNullString()));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
+        assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));
     }
 
     @Test
@@ -77,20 +76,20 @@ public class AppendEntryCommandHandlerTest {
         when(register.getTotalEntries()).thenReturn(2);
         RegisterCommand commandWithInvalidArguments = new RegisterCommand("append-entry", Arrays.asList("2016-07-T16:55:00Z", "sha-2tem-sha"));
 
-        RSFResult rsfResult = sutHandler.execute(commandWithInvalidArguments, register);
+        RegisterResult registerResult = sutHandler.execute(commandWithInvalidArguments, register);
 
         verify(register, never()).appendEntry(any());
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
-        assertThat(rsfResult.getDetails(), not(isEmptyOrNullString()));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
+        assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));
     }
 
     @Test
     public void execute_failsForIncorrectCommandType() {
-        RSFResult rsfResult = sutHandler.execute(new RegisterCommand("unknown-type", Arrays.asList("some", "data")), register);
+        RegisterResult registerResult = sutHandler.execute(new RegisterCommand("unknown-type", Arrays.asList("some", "data")), register);
 
         verify(register, never()).appendEntry(any());
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Incompatible handler (append-entry) and command type (unknown-type)"));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), equalTo("Incompatible handler (append-entry) and command type (unknown-type)"));
     }
 }

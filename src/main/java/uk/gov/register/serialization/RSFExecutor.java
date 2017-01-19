@@ -22,7 +22,7 @@ public class RSFExecutor {
         registeredHandlers.put(registerCommandHandler.getCommandName(), registerCommandHandler);
     }
 
-    public RSFResult execute(RegisterSerialisationFormat rsf, Register register) {
+    public RegisterResult execute(RegisterSerialisationFormat rsf, Register register) {
         // HashValue and RSF file line number
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
@@ -30,12 +30,12 @@ public class RSFExecutor {
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
 
-            RSFResult validationResult = validate(command, register, rsfLine, hashRefLine);
+            RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine);
             if (!validationResult.isSuccessful()) {
                 return validationResult;
             }
 
-            RSFResult executionResult = execute(command, register);
+            RegisterResult executionResult = execute(command, register);
             if (!executionResult.isSuccessful()) {
                 return executionResult;
             }
@@ -46,16 +46,16 @@ public class RSFExecutor {
         return validateOrphanAddItems(hashRefLine);
     }
 
-    private RSFResult execute(RegisterCommand command, Register register) {
+    private RegisterResult execute(RegisterCommand command, Register register) {
         if (registeredHandlers.containsKey(command.getCommandName())) {
             RegisterCommandHandler registerCommandHandler = registeredHandlers.get(command.getCommandName());
             return registerCommandHandler.execute(command, register);
         } else {
-            return RSFResult.createFailResult("Handler not registered for command: " + command.getCommandName());
+            return RegisterResult.createFailResult("Handler not registered for command: " + command.getCommandName());
         }
     }
 
-    private RSFResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) {
+    private RegisterResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
 
@@ -64,9 +64,9 @@ public class RSFExecutor {
             validateAddItem(command, rsfLine, hashRefLine);
         } else if (commandName.equals("append-entry")) {
             if (validateAppendEntry(command, register, hashRefLine))
-                return RSFResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
+                return RegisterResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
         }
-        return RSFResult.createSuccessResult();
+        return RegisterResult.createSuccessResult();
     }
 
     private Boolean validateAppendEntry(RegisterCommand command, Register register, Map<HashValue, Integer> hashRefLine) {
@@ -88,7 +88,7 @@ public class RSFExecutor {
         hashRefLine.put(new HashValue(HashingAlgorithm.SHA256, hash), rsfLine);
     }
 
-    private RSFResult validateOrphanAddItems(Map<HashValue, Integer> hashRefLine) {
+    private RegisterResult validateOrphanAddItems(Map<HashValue, Integer> hashRefLine) {
         List<String> orphanItems = new ArrayList<>();
         hashRefLine.forEach((hash, rsfLine) -> {
             if (rsfLine > 0) {
@@ -97,9 +97,9 @@ public class RSFExecutor {
         });
 
         if (orphanItems.isEmpty()) {
-            return RSFResult.createSuccessResult();
+            return RegisterResult.createSuccessResult();
         } else {
-            return RSFResult.createFailResult(String.join("; ", orphanItems));
+            return RegisterResult.createFailResult(String.join("; ", orphanItems));
         }
     }
 }

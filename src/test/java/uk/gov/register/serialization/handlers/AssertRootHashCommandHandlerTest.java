@@ -8,9 +8,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.serialization.RSFResult;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
@@ -52,10 +51,10 @@ public class AssertRootHashCommandHandlerTest {
         RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"));
         when(register.getRegisterProof()).thenReturn(registerProof);
 
-        RSFResult rsfResult = sutHandler.execute(assertRootHashCommand, register);
+        RegisterResult registerResult = sutHandler.execute(assertRootHashCommand, register);
 
         verify(register, times(1)).getRegisterProof();
-        assertThat(rsfResult, equalTo(RSFResult.createSuccessResult()));
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test
@@ -63,11 +62,11 @@ public class AssertRootHashCommandHandlerTest {
         RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "different-hash"));
         when(register.getRegisterProof()).thenReturn(registerProof);
 
-        RSFResult rsfResult = sutHandler.execute(assertRootHashCommand, register);
+        RegisterResult registerResult = sutHandler.execute(assertRootHashCommand, register);
 
         verify(register, times(1)).getRegisterProof();
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Root hashes don't match. Expected: sha-256:root-hash actual: sha-256:different-hash"));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), equalTo("Root hashes don't match. Expected: sha-256:root-hash actual: sha-256:different-hash"));
     }
 
     @Test
@@ -78,31 +77,31 @@ public class AssertRootHashCommandHandlerTest {
             }
         }).when(register).getRegisterProof();
 
-        RSFResult rsfResult = sutHandler.execute(assertRootHashCommand, register);
+        RegisterResult registerResult = sutHandler.execute(assertRootHashCommand, register);
 
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
-        assertThat(rsfResult.getDetails(), not(isEmptyOrNullString()));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
+        assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));
     }
 
     @Test
     public void execute_failsForCommandWithInvalidArguments() {
         RegisterCommand commandWithInvalidArguments = new RegisterCommand("assert-root-hash", Collections.singletonList("sha2-2:43534"));
 
-        RSFResult rsfResult = sutHandler.execute(commandWithInvalidArguments, register);
+        RegisterResult registerResult = sutHandler.execute(commandWithInvalidArguments, register);
 
         verify(register, never()).putItem(any());
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
-        assertThat(rsfResult.getDetails(), not(isEmptyOrNullString()));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
+        assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));
     }
 
     @Test
     public void execute_failsForIncorrectCommandType() {
-        RSFResult rsfResult = sutHandler.execute(new RegisterCommand("unknown-type", Arrays.asList("some", "data")), register);
+        RegisterResult registerResult = sutHandler.execute(new RegisterCommand("unknown-type", Arrays.asList("some", "data")), register);
 
         verify(register, never()).appendEntry(any());
-        assertThat(rsfResult.isSuccessful(), equalTo(false));
-        assertThat(rsfResult.getMessage(), equalTo("Incompatible handler (assert-root-hash) and command type (unknown-type)"));
+        assertThat(registerResult.isSuccessful(), equalTo(false));
+        assertThat(registerResult.getMessage(), equalTo("Incompatible handler (assert-root-hash) and command type (unknown-type)"));
     }
 }

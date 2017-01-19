@@ -80,12 +80,12 @@ public class RegisterSerialisationFormatServiceTest {
         RegisterCommand command4 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"));
         RegisterSerialisationFormat rsfInput = new RegisterSerialisationFormat(Iterators.forArray(command1, command2, command3, command4));
 
-        when(rsfExecutor.execute(eq(rsfInput), any())).thenReturn(RSFResult.createSuccessResult());
+        when(rsfExecutor.execute(eq(rsfInput), any())).thenReturn(RegisterResult.createSuccessResult());
 
-        RSFResult rsfResult = sutService.processRegisterSerialisationFormat(rsfInput);
+        RegisterResult registerResult = sutService.processRegisterSerialisationFormat(rsfInput);
 
         verify(rsfExecutor, times(1)).execute(eq(rsfInput), any());
-        assertThat(rsfResult, equalTo(RSFResult.createSuccessResult()));
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test

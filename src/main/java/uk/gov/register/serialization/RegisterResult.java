@@ -8,27 +8,27 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({"success", "message", "details"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RSFResult {
+public class RegisterResult {
     private Boolean isSuccessful;
     private String message;
     private Optional<Exception> exception;
 
-    private RSFResult(Boolean isSuccessful, String message, Optional<Exception> exception) {
+    private RegisterResult(Boolean isSuccessful, String message, Optional<Exception> exception) {
         this.isSuccessful = isSuccessful;
         this.message = message;
         this.exception = exception;
     }
 
-    public static RSFResult createSuccessResult() {
-        return new RSFResult(true, "success", Optional.empty());
+    public static RegisterResult createSuccessResult() {
+        return new RegisterResult(true, "success", Optional.empty());
     }
 
-    public static RSFResult createFailResult(String message) {
-        return new RSFResult(false, message, Optional.empty());
+    public static RegisterResult createFailResult(String message) {
+        return new RegisterResult(false, message, Optional.empty());
     }
 
-    public static RSFResult createFailResult(String message, Exception exception) {
-        return new RSFResult(false, message, Optional.of(exception));
+    public static RegisterResult createFailResult(String message, Exception exception) {
+        return new RegisterResult(false, message, Optional.of(exception));
     }
 
     @JsonProperty("success")
@@ -55,13 +55,13 @@ public class RSFResult {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RSFResult)) return false;
+        if (!(o instanceof RegisterResult)) return false;
 
-        RSFResult rsfResult = (RSFResult) o;
+        RegisterResult registerResult = (RegisterResult) o;
 
-        if (!isSuccessful.equals(rsfResult.isSuccessful)) return false;
-        if (!message.equals(rsfResult.message)) return false;
-        return exception.equals(rsfResult.exception);
+        if (!isSuccessful.equals(registerResult.isSuccessful)) return false;
+        if (!message.equals(registerResult.message)) return false;
+        return exception.equals(registerResult.exception);
 
     }
 
@@ -75,7 +75,7 @@ public class RSFResult {
 
     @Override
     public String toString() {
-        return "RSFResult{" +
+        return "RegisterResult{" +
                 "isSuccessful=" + isSuccessful +
                 ", message='" + message + '\'' +
                 ", exception=" + exception +

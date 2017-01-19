@@ -9,10 +9,9 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.serialization.RSFFormatter;
-import uk.gov.register.serialization.RSFResult;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ObjectReconstructor;
@@ -71,13 +70,13 @@ public class DataUpload {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/load-rsf")
     public Response loadRsf(InputStream inputStream) {
-        RSFResult loadResult;
+        RegisterResult loadResult;
         try {
             RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
             loadResult = rsfService.processRegisterSerialisationFormat(rsf);
             // catching only RSF parsing exceptions and handling those
         } catch (SerializedRegisterParseException e) {
-            loadResult = RSFResult.createFailResult("RSF parsing error", e);
+            loadResult = RegisterResult.createFailResult("RSF parsing error", e);
         }
 
         if (loadResult.isSuccessful()) {

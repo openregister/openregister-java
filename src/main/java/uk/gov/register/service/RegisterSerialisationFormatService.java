@@ -32,14 +32,14 @@ public class RegisterSerialisationFormatService {
         writeTo(output, RSFFormatter, register -> rsfCreator.create(register, totalEntries1, totalEntries2));
     }
 
-    public RSFResult processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
-        final RSFResult[] rsfResult = new RSFResult[1];
+    public RegisterResult processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
+        final RegisterResult[] registerResult = new RegisterResult[1];
         registerContext.transactionalRegisterOperation(register -> {
-            RSFResult executionResult = rsfExecutor.execute(rsf, register);
-            rsfResult[0] = executionResult;
+            RegisterResult executionResult = rsfExecutor.execute(rsf, register);
+            registerResult[0] = executionResult;
             return executionResult.isSuccessful();
         });
-        return rsfResult[0];
+        return registerResult[0];
     }
 
     public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormatter rsfFormatter) {
