@@ -10,6 +10,16 @@ TOTAL_MEMORY=$(awk '($1 == "MemTotal:") { print $2 }' /proc/meminfo)
 MAX_JVM_HEAP_SIZE=$(($TOTAL_MEMORY-512*1024))
 
 aws s3 cp s3://${CONFIG_BUCKET}/${REGISTER_NAME}/openregister/config.yaml /srv/openregister-java --region eu-west-1
+aws s3 cp s3://${CONFIG_BUCKET}/fluentd.conf /srv/openregister-java --region eu-west-1
+
+docker run \
+    --detach \
+    --name=fluentd \
+    --publish 24224:24224 \
+    --restart "unless-stopped" \
+    --volume /srv/openregister-java/fluentd.conf:/fluentd/etc/fluentd.conf \
+    --env FLUENTD_CONF=fluentd.conf \
+    samcrang/fluentd-sumologic
 
 docker run \
     --detach \
@@ -17,6 +27,7 @@ docker run \
     --publish 80:8080 \
     --restart "unless-stopped" \
     --volume /srv/openregister-java:/srv/openregister-java \
+    --log-driver=fluentd \
     jstepien/openjdk8 \
     java \
       -Xmx"${MAX_JVM_HEAP_SIZE}k" \
