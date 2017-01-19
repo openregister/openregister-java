@@ -23,8 +23,7 @@ public class RSFExecutor {
     }
 
     public RSFResult execute(RegisterSerialisationFormat rsf, Register register) {
-        // for now hash and line from file?
-        // hashvalue and rsf file line number
+        // HashValue and RSF file line number
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
         int rsfLine = 1;
@@ -44,7 +43,7 @@ public class RSFExecutor {
             rsfLine++;
         }
 
-        return validateOrphanItems(hashRefLine);
+        return validateOrphanAddItems(hashRefLine);
     }
 
     private RSFResult execute(RegisterCommand command, Register register) {
@@ -62,24 +61,34 @@ public class RSFExecutor {
 
         String commandName = command.getCommandName();
         if (commandName.equals("add-item")) {
-            String hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
-            hashRefLine.put(new HashValue(HashingAlgorithm.SHA256, hash), rsfLine);
+            validateAddItem(command, rsfLine, hashRefLine);
         } else if (commandName.equals("append-entry")) {
-            String entrySha256 = command.getCommandArguments().get(1);
-            HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, entrySha256);
-            if (hashRefLine.containsKey(hashValue)) {
-                hashRefLine.put(hashValue, 0);
-            } else {
-                Optional<Item> item = register.getItemBySha256(hashValue);
-                if (!item.isPresent()) {
-                    return RSFResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
-                }
-            }
+            if (validateAppendEntry(command, register, hashRefLine))
+                return RSFResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
         }
         return RSFResult.createSuccessResult();
     }
 
-    private RSFResult validateOrphanItems(Map<HashValue, Integer> hashRefLine) {
+    private Boolean validateAppendEntry(RegisterCommand command, Register register, Map<HashValue, Integer> hashRefLine) {
+        String entrySha256 = command.getCommandArguments().get(1);
+        HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, entrySha256);
+        if (hashRefLine.containsKey(hashValue)) {
+            hashRefLine.put(hashValue, 0);
+        } else {
+            Optional<Item> item = register.getItemBySha256(hashValue);
+            if (!item.isPresent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void validateAddItem(RegisterCommand command, int rsfLine, Map<HashValue, Integer> hashRefLine) {
+        String hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
+        hashRefLine.put(new HashValue(HashingAlgorithm.SHA256, hash), rsfLine);
+    }
+
+    private RSFResult validateOrphanAddItems(Map<HashValue, Integer> hashRefLine) {
         List<String> orphanItems = new ArrayList<>();
         hashRefLine.forEach((hash, rsfLine) -> {
             if (rsfLine > 0) {
