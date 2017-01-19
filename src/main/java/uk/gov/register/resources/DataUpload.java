@@ -73,7 +73,7 @@ public class DataUpload {
         RegisterResult loadResult;
         try {
             RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
-            loadResult = rsfService.processRegisterSerialisationFormat(rsf);
+            loadResult = rsfService.process(rsf);
             // catching only RSF parsing exceptions and handling those
         } catch (SerializedRegisterParseException e) {
             loadResult = RegisterResult.createFailResult("RSF parsing error", e);

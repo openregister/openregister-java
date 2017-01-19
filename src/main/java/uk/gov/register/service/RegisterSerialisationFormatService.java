@@ -32,7 +32,7 @@ public class RegisterSerialisationFormatService {
         writeTo(output, RSFFormatter, register -> rsfCreator.create(register, totalEntries1, totalEntries2));
     }
 
-    public RegisterResult processRegisterSerialisationFormat(RegisterSerialisationFormat rsf) {
+    public RegisterResult process(RegisterSerialisationFormat rsf) {
         return registerContext.transactionalRegisterOperation(register -> {
             return rsfExecutor.execute(rsf, register);
         });
