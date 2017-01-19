@@ -15,7 +15,6 @@ import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -47,7 +46,7 @@ public class AssertRootHashCommandHandlerTest {
     }
 
     @Test
-    public void execute_obtainsAndAssertsRegisterProof() throws NoSuchAlgorithmException {
+    public void execute_obtainsAndAssertsRegisterProof() {
         RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"));
         when(register.getRegisterProof()).thenReturn(registerProof);
 
@@ -58,7 +57,7 @@ public class AssertRootHashCommandHandlerTest {
     }
 
     @Test
-    public void execute_failsIfRootHashesDontMatch() throws NoSuchAlgorithmException {
+    public void execute_failsIfRootHashesDontMatch() {
         RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "different-hash"));
         when(register.getRegisterProof()).thenReturn(registerProof);
 
@@ -70,7 +69,7 @@ public class AssertRootHashCommandHandlerTest {
     }
 
     @Test
-    public void execute_catchesExceptionsAndReturnsFailRSFResult() throws NoSuchAlgorithmException {
+    public void execute_catchesExceptionsAndReturnsFailRSFResult() {
         doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");

@@ -11,7 +11,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.security.NoSuchAlgorithmException;
 
 @Path("/")
 public class HomePageResource {
@@ -28,7 +27,7 @@ public class HomePageResource {
 
     @GET
     @Produces({ExtraMediaType.TEXT_HTML})
-    public View home() throws NoSuchAlgorithmException {
+    public View home() {
         return viewFactory.homePageView(
                 register.getTotalRecords(),
                 register.getTotalEntries(),

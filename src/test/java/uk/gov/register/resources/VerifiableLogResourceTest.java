@@ -10,7 +10,6 @@ import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
 import javax.ws.rs.BadRequestException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class VerifiableLogResourceTest {
     private final String sampleHash2 = "d3d33f57b033d18ad11e14b28ef6f33487410c98548d1759c772370dfeb6db11";
 
     @Test
-    public void shouldUseServiceToGetRegisterProof() throws NoSuchAlgorithmException {
+    public void shouldUseServiceToGetRegisterProof() {
         RegisterProof expectedProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, sampleHash1));
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getRegisterProof()).thenReturn(expectedProof);
@@ -37,7 +36,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test
-    public void shouldUseServiceToGetEntryProof() throws NoSuchAlgorithmException {
+    public void shouldUseServiceToGetEntryProof() {
         int entryNumber = 2;
         int totalEntries = 5;
         HashValue expectedHash1 = new HashValue(HashingAlgorithm.SHA256, sampleHash1);
@@ -59,7 +58,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test
-    public void shouldUseServiceToGetConsistencyProof() throws NoSuchAlgorithmException {
+    public void shouldUseServiceToGetConsistencyProof() {
         int totalEntries1 = 3;
         int totalEntries2 = 6;
         HashValue expectedHash1 = new HashValue(HashingAlgorithm.SHA256, sampleHash1);
@@ -81,7 +80,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void entryProofShouldThrowBadRequestExceptionIfEntryNumberTooSmall() throws NoSuchAlgorithmException {
+    public void entryProofShouldThrowBadRequestExceptionIfEntryNumberTooSmall() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getTotalEntries()).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
@@ -90,7 +89,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void entryProofShouldThrowBadRequestExceptionIfEntryNumberGreaterThanTotalEntries() throws NoSuchAlgorithmException {
+    public void entryProofShouldThrowBadRequestExceptionIfEntryNumberGreaterThanTotalEntries() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getTotalEntries()).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
@@ -99,7 +98,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void entryProofShouldThrowBadRequestExceptionIfTotalEntriesGreaterThanSizeOfRegister() throws NoSuchAlgorithmException {
+    public void entryProofShouldThrowBadRequestExceptionIfTotalEntriesGreaterThanSizeOfRegister() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getTotalEntries()).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
@@ -108,7 +107,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries1TooSmall() throws NoSuchAlgorithmException {
+    public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries1TooSmall() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getTotalEntries()).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
@@ -117,7 +116,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void consistencyProofshouldThrowBadRequestExceptionIfTotalEntries2SmallerThanTotalEntries1() throws NoSuchAlgorithmException {
+    public void consistencyProofshouldThrowBadRequestExceptionIfTotalEntries2SmallerThanTotalEntries1() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getTotalEntries()).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
@@ -126,7 +125,7 @@ public class VerifiableLogResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries2GreaterThanSizeOfRegister() throws NoSuchAlgorithmException {
+    public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries2GreaterThanSizeOfRegister() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getTotalEntries()).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);

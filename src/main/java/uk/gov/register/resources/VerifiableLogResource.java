@@ -8,7 +8,6 @@ import uk.gov.register.views.RegisterProof;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.security.NoSuchAlgorithmException;
 
 @Path("/proof")
 public class VerifiableLogResource {
@@ -22,14 +21,14 @@ public class VerifiableLogResource {
     @GET
     @Path("/register/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
-    public RegisterProof registerProof() throws NoSuchAlgorithmException {
+    public RegisterProof registerProof() {
         return register.getRegisterProof();
     }
 
     @GET
     @Path("/entry/{entry-number}/{total-entries}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
-    public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) throws NoSuchAlgorithmException {
+    public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) {
         validateEntryProofParams(entryNumber, totalEntries);
         return register.getEntryProof(entryNumber, totalEntries);
     }
@@ -37,7 +36,7 @@ public class VerifiableLogResource {
     @GET
     @Path("/consistency/{total-entries-1}/{total-entries-2}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
-    public ConsistencyProof consistencyProof(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) throws NoSuchAlgorithmException {
+    public ConsistencyProof consistencyProof(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
         validateConsistencyProofParams(totalEntries1, totalEntries2);
         return register.getConsistencyProof(totalEntries1, totalEntries2);
     }

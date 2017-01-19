@@ -8,7 +8,6 @@ import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
@@ -127,7 +126,7 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public RegisterProof getRegisterProof() throws NoSuchAlgorithmException {
+    public RegisterProof getRegisterProof() {
         return entryLog.getRegisterProof();
     }
 
