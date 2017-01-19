@@ -10,6 +10,8 @@ import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
+import uk.gov.register.exceptions.RegisterResultException;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterLinkService;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class RegisterContext implements
         RegisterTrackingConfiguration,
@@ -99,8 +102,7 @@ public class RegisterContext implements
                         new ItemValidator(configManager, registerName)),
                 new TransactionalRecordIndex(
                         handle.attach(RecordQueryDAO.class),
-                        handle.attach(CurrentKeysUpdateDAO.class)
-                )
+                        handle.attach(CurrentKeysUpdateDAO.class))
         );
     }
 
@@ -112,6 +114,26 @@ public class RegisterContext implements
             register.commit();
         });
         transactionalMemoizationStore.commitHashesToStore();
+    }
+
+    public RegisterResult transactionalRegisterOperation(Function<Register, RegisterResult> registerOperationFunc) {
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
+        try {
+            return inTransaction(dbi, handle -> {
+                Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
+                RegisterResult result = registerOperationFunc.apply(register);
+                if (result.isSuccessful()) {
+                    register.commit();
+                    transactionalMemoizationStore.commitHashesToStore();
+                } else {
+                    throw new RegisterResultException(result);
+                }
+                return result;
+            });
+
+        } catch (RegisterResultException e) {
+            return e.getRegisterResult();
+        }
     }
 
     public void resetRegister() throws IOException, NoSuchConfigException {
@@ -127,6 +149,14 @@ public class RegisterContext implements
     public static void useTransaction(DBI dbi, Consumer<Handle> callback) {
         try {
             dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callback.accept(handle));
+        } catch (CallbackFailedException e) {
+            throw Throwables.propagate(e.getCause());
+        }
+    }
+
+    public static <T> T inTransaction(DBI dbi, Function<Handle, T> callbackFn) {
+        try {
+            return dbi.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callbackFn.apply(handle));
         } catch (CallbackFailedException e) {
             throw Throwables.propagate(e.getCause());
         }
@@ -157,7 +187,9 @@ public class RegisterContext implements
     }
 
     @Override
-    public Optional<String> getCustodianName() { return custodianName; }
+    public Optional<String> getCustodianName() {
+        return custodianName;
+    }
 
     @Override
     public List<String> getSimilarRegisters() {

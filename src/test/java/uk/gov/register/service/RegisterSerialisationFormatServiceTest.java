@@ -1,74 +1,55 @@
 package uk.gov.register.service;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.google.common.collect.Iterators;
-import org.apache.commons.collections4.IteratorUtils;
+import com.google.common.collect.Lists;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import uk.gov.register.core.*;
+import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.serialization.*;
-import uk.gov.register.util.HashValue;
-import uk.gov.register.views.RegisterProof;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterSerialisationFormatServiceTest {
-    private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
-    private final String EMPTY_REGISTER_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-
     @Mock
     private RegisterContext registerContext;
 
     @Mock
     private Register register;
 
-    private CommandParser commandParser;
+    @Mock
+    private RSFCreator rsfCreator;
+
+    @Mock
+    private RSFExecutor rsfExecutor;
+
+    private RSFFormatter rsfFormatter;
     private RegisterSerialisationFormatService sutService;
-
-    private Entry entry1;
-    private Entry entry2;
-
-    private Item item1;
-    private Item item2;
-
-    private RegisterProof emptyRegisterProof;
 
     @Before
     public void setUp() throws Exception {
-
-        item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "item1sha"), jsonFactory.objectNode()
-                .put("field-1", "entry1-field-1-value")
-                .put("field-2", "entry1-field-2-value"));
-        item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "item2sha"), jsonFactory.objectNode()
-                .put("field-1", "entry2-field-1-value")
-                .put("field-2", "entry2-field-2-value"));
-
-        entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
-        entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "item2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value");
-
-        emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH));
-
         when(registerContext.buildOnDemandRegister()).thenReturn(register);
 
         doAnswer(new Answer<Void>() {
@@ -79,95 +60,47 @@ public class RegisterSerialisationFormatServiceTest {
             }
         }).when(registerContext).transactionalRegisterOperation(any(Consumer.class));
 
-        sutService = new RegisterSerialisationFormatService(registerContext);
-        commandParser = new CommandParser();
+        when(registerContext.transactionalRegisterOperation(any(Function.class))).thenAnswer(answer -> {
+            Function<Register, Boolean> callback = (Function<Register, Boolean>) answer.getArguments()[0];
+            return callback.apply(register);
+        });
+
+        sutService = new RegisterSerialisationFormatService(registerContext, rsfExecutor, rsfCreator);
+        rsfFormatter = new RSFFormatter();
     }
 
     @Test
-    public void processRegisterComponents() throws Exception {
-        when(register.getTotalEntries()).thenReturn(0).thenReturn(1);
-        when(register.getRegisterProof()).thenReturn(emptyRegisterProof);
+    public void process_passesCommandsToExecutorAndReturnsItsResult() {
+        RegisterCommand command1 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+        RegisterCommand command2 = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
+        RegisterCommand command3 = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item1sha", "entry1-field-1-value"));
+        RegisterCommand command4 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"));
+        RegisterSerialisationFormat rsfInput = new RegisterSerialisationFormat(Iterators.forArray(command1, command2, command3, command4));
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
-                new AssertRootHashCommand(emptyRegisterProof),
-                new AddItemCommand(item1),
-                new AppendEntryCommand(entry1),
-                new AppendEntryCommand(entry2)).iterator());
+        when(rsfExecutor.execute(eq(rsfInput), any())).thenReturn(RegisterResult.createSuccessResult());
 
-        InOrder inOrder = Mockito.inOrder(register);
+        RegisterResult registerResult = sutService.process(rsfInput);
 
-        sutService.processRegisterComponents(rsf);
-
-        verify(register, times(1)).getRegisterProof();
-        verify(register, times(1)).putItem(item1);
-        verify(register, times(2)).appendEntry(any());
-
-        inOrder.verify(register, calls(1)).appendEntry(new Entry(1, entry1.getSha256hex(), entry1.getTimestamp(), entry1.getKey()));
-        inOrder.verify(register, calls(1)).appendEntry(new Entry(2, entry2.getSha256hex(), entry2.getTimestamp(), entry2.getKey()));
-    }
-
-    @Test
-    public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() throws NoSuchAlgorithmException {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
-
-        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"));
-        when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
-
-        RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat(register);
-        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
-
-        verify(register, times(1)).getItemIterator();
-        verify(register, times(1)).getEntryIterator();
-        verify(register, times(1)).getRegisterProof();
-
-        assertThat(actualCommands.size(), equalTo(6));
-        assertThat(actualCommands, contains(
-                new AssertRootHashCommand(emptyRegisterProof),
-                new AddItemCommand(item1),
-                new AddItemCommand(item2),
-                new AppendEntryCommand(entry1),
-                new AppendEntryCommand(entry2),
-                new AssertRootHashCommand(expectedRegisterProof)));
-    }
-
-    @Test
-    public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
-        RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"));
-        RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"));
-
-        when(register.getItemIterator(1, 2)).thenReturn(singletonList(item1).iterator());
-        when(register.getEntryIterator(1, 2)).thenReturn(singletonList(entry2).iterator());
-        when(register.getRegisterProof(1)).thenReturn(oneEntryRegisterProof);
-        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
-
-        RegisterSerialisationFormat actualRSF = sutService.createRegisterSerialisationFormat(register, 1, 2);
-        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
-
-        verify(register, times(1)).getItemIterator(1, 2);
-        verify(register, times(1)).getEntryIterator(1, 2);
-
-        assertThat(actualCommands.size(), equalTo(4));
-        assertThat(actualCommands, contains(
-                new AssertRootHashCommand(oneEntryRegisterProof),
-                new AddItemCommand(item1),
-                new AppendEntryCommand(entry2),
-                new AssertRootHashCommand(twoEntriesRegisterProof)));
+        verify(rsfExecutor, times(1)).execute(eq(rsfInput), any());
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test
     public void writeTo_writesEntireRSFtoStream() throws NoSuchAlgorithmException {
-        when(register.getItemIterator()).thenReturn(Iterators.forArray(item1, item2));
-        when(register.getEntryIterator()).thenReturn(Iterators.forArray(entry1, entry2));
-        when(register.getRegisterProof()).thenReturn(new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "K3rfuFF1e")));
+        when(rsfCreator.create(any())).thenReturn(
+                new RegisterSerialisationFormat(Iterators.forArray(
+                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
+                        new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}")),
+                        new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
+                        new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item1sha", "entry1-field-1-value")),
+                        new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:item2sha", "entry2-field-1-value")),
+                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e")))));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        sutService.writeTo(outputStream, commandParser);
+        sutService.writeTo(outputStream, rsfFormatter);
 
-        verify(register, times(1)).getItemIterator();
-        verify(register, times(1)).getEntryIterator();
-
+        verify(rsfCreator, times(1)).create(any());
         String expectedRSF =
                 "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
                 "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
@@ -177,24 +110,23 @@ public class RegisterSerialisationFormatServiceTest {
                 "assert-root-hash\tsha-256:K3rfuFF1e\n";
 
         String actualRSF = outputStream.toString();
-
         assertThat(actualRSF, Matchers.equalTo(expectedRSF));
     }
 
     @Test
     public void writeTo_whenCalledWithBoundary_writesPartialRSFtoStream() throws NoSuchAlgorithmException {
-        when(register.getItemIterator(1, 2)).thenReturn(Iterators.forArray(item2));
-        when(register.getEntryIterator(1, 2)).thenReturn(Iterators.forArray(entry2));
-        when(register.getRegisterProof(1)).thenReturn(new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "K3rfuFF1e_uno")));
-        when(register.getRegisterProof(2)).thenReturn(new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "K3rfuFF1e_dos")));
+        when(rsfCreator.create(any(), eq(1), eq(2))).thenReturn(
+                new RegisterSerialisationFormat(Iterators.forArray(
+                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_uno")),
+                        new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
+                        new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:item2sha", "entry2-field-1-value")),
+                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_dos")))));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        sutService.writeTo(outputStream, commandParser, 1, 2);
+        sutService.writeTo(outputStream, rsfFormatter, 1, 2);
 
-        verify(register, times(1)).getItemIterator(1, 2);
-        verify(register, times(1)).getEntryIterator(1, 2);
-
+        verify(rsfCreator, times(1)).create(any(), eq(1), eq(2));
         String expectedRSF =
                 "assert-root-hash\tsha-256:K3rfuFF1e_uno\n" +
                 "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
@@ -202,7 +134,44 @@ public class RegisterSerialisationFormatServiceTest {
                 "assert-root-hash\tsha-256:K3rfuFF1e_dos\n";
 
         String actualRSF = outputStream.toString();
-
         assertThat(actualRSF, Matchers.equalTo(expectedRSF));
+    }
+
+    @Test
+    public void readFrom_readsRSFFromStream() {
+        String streamValue =
+                "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
+                "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
+                "append-entry\t2016-07-24T16:55:00Z\tsha-256:item1sha\tentry1-field-1-value\n" +
+                "append-entry\t2016-07-24T16:56:00Z\tsha-256:item2sha\tentry2-field-1-value\n" +
+                "assert-root-hash\tsha-256:K3rfuFF1e\n";
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(streamValue.getBytes());
+
+        RegisterSerialisationFormat rsfReadResult = sutService.readFrom(inputStream, rsfFormatter);
+
+        RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(Iterators.forArray(
+                new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
+                new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}")),
+                new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
+                new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item1sha", "entry1-field-1-value")),
+                new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:item2sha", "entry2-field-1-value")),
+                new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"))));
+
+        assertThat(Lists.newArrayList(rsfReadResult.getCommands()), equalTo(Lists.newArrayList(expectedRsf.getCommands())));
+    }
+
+    @Test
+    public void readFrom_readsRSFFromStreamEscaped() throws IOException {
+        try (InputStream rsfStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))) {
+            RegisterSerialisationFormat rsfReadResult = sutService.readFrom(rsfStream, rsfFormatter);
+
+            RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(Iterators.forArray(
+                    new RegisterCommand("add-item", Collections.singletonList("{\"name\":\"New College\\\\New College School\",\"school\":\"402019\",\"school-authority\":\"681\",\"school-type\":\"30\"}")),
+                    new RegisterCommand("append-entry", Arrays.asList("2016-11-07T16:26:22Z", "sha-256:d6cca062b6a4ff7f60e401aa1ebf4bf5af51c2217916c0115d0a38a42182aec5", "402019"))));
+
+            assertThat(Lists.newArrayList(rsfReadResult.getCommands()), equalTo(Lists.newArrayList(expectedRsf.getCommands())));
+        }
     }
 }

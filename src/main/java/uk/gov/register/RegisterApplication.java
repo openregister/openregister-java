@@ -24,6 +24,14 @@ import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
+import uk.gov.register.serialization.RSFCreator;
+import uk.gov.register.serialization.handlers.AddItemCommandHandler;
+import uk.gov.register.serialization.handlers.AppendEntryCommandHandler;
+import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
+import uk.gov.register.serialization.RSFExecutor;
+import uk.gov.register.serialization.mappers.EntryToCommandMapper;
+import uk.gov.register.serialization.mappers.ItemToCommandMapper;
+import uk.gov.register.serialization.mappers.RegisterProofCommandMapper;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
@@ -85,9 +93,20 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, configManager, environment, registerLinkService);
         allTheRegisters.stream().parallel().forEach(RegisterContext::migrate);
 
+        RSFExecutor rsfExecutor = new RSFExecutor();
+        rsfExecutor.register(new AddItemCommandHandler());
+        rsfExecutor.register(new AppendEntryCommandHandler());
+        rsfExecutor.register(new AssertRootHashCommandHandler());
+
+        RSFCreator rsfCreator = new RSFCreator();
+        rsfCreator.register(new ItemToCommandMapper());
+        rsfCreator.register(new EntryToCommandMapper());
+        rsfCreator.register(new RegisterProofCommandMapper());
+
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
+
                 bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
                 bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
                 bind(allTheRegisters);
@@ -103,6 +122,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
                 bind(CanonicalJsonValidator.class).to(CanonicalJsonValidator.class);
                 bind(ObjectReconstructor.class).to(ObjectReconstructor.class);
+                bind(rsfExecutor).to(RSFExecutor.class);
+                bind(rsfCreator).to(RSFCreator.class);
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
                 bind(RequestContext.class).to(RequestContext.class).to(SchemeContext.class);

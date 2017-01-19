@@ -51,7 +51,8 @@ public class LoadSerializedFunctionalTest {
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf.tsv")));
         Response r = send(input);
-        assertThat(r.getStatus(), equalTo(204));
+
+        assertThat(r.getStatus(), equalTo(200));
 
         List<TestDBItem> storedItems = testItemDAO.getItems();
         assertThat(storedItems.get(0).contents.toString(), equalTo("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
@@ -79,7 +80,7 @@ public class LoadSerializedFunctionalTest {
         Response response = send(entry);
 
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Error parsing : line must begin with legal command not: foo bar"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"RSF parsing error\",\"details\":\"String is empty or is in incorrect format\"}"));
     }
 
     @Test
@@ -87,7 +88,7 @@ public class LoadSerializedFunctionalTest {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-orphan-rsf.tsv")));
         Response response = send(input);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"message\":\"no corresponding entry for item(s): \",\"orphanItems\":[{\"register\":\"ft_openregister_test\",\"text\":\"orphan item\"}]}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Orphan add item (line:3): sha-256:d00d4b610e9b5af160a7e5e836eec9e12626cac61823eda1c3ec9a59a78eefaa\"}"));
     }
 
     @Test
@@ -97,7 +98,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("Item in serialization format is not canonicalized: '{ \"register\":\"ft_openregister_test\",   \"text\":\"SomeText\" }'"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"RSF parsing error\",\"details\":\"Non canonical JSON: { \\\"register\\\":\\\"ft_openregister_test\\\",   \\\"text\\\":\\\"SomeText\\\" }\"}"));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class LoadSerializedFunctionalTest {
 
         Response r = send(input);
 
-        assertThat(r.getStatus(), equalTo(409));
+        assertThat(r.getStatus(), equalTo(400));
         assertThat(testItemDAO.getItems(), is(empty()));
         assertThat(testEntryDAO.getAllEntries(), is(empty()));
     }
