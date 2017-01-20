@@ -31,3 +31,13 @@ database:
 
 enableDownloadResource: true
 enableRegisterDataDelete: true
+
+# can be http: file s3: or classpath: url
+fieldsYamlLocation: classpath://config/fields.yaml
+
+registersYamlLocation: classpath://config/registers.yaml
+
+externalConfigDirectory: /tmp
+
+downloadConfigs: true
+
