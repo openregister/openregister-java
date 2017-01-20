@@ -8,7 +8,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConfigManager {
@@ -17,7 +16,6 @@ public class ConfigManager {
     private final String fieldsConfigFileUrl;
     private final String fieldsConfigFilePath;
     private final boolean refresh;
-    private final String externalConfigDirectory;
 
     private AtomicReference<RegistersConfiguration> registersConfiguration = new AtomicReference<>();
     private AtomicReference<FieldsConfiguration> fieldsConfiguration = new AtomicReference<>();
@@ -26,7 +24,8 @@ public class ConfigManager {
         this.registersConfigFileUrl = registerConfigConfiguration.getRegistersYamlLocation();
         this.fieldsConfigFileUrl = registerConfigConfiguration.getFieldsYamlLocation();
         this.refresh = registerConfigConfiguration.getDownloadConfigs();
-        this.externalConfigDirectory = registerConfigConfiguration.getExternalConfigDirectory();
+
+        String externalConfigDirectory = registerConfigConfiguration.getExternalConfigDirectory();
         this.registersConfigFilePath = externalConfigDirectory + "/" + "registers.yaml";
         this.fieldsConfigFilePath = externalConfigDirectory + "/" + "fields.yaml";
     }
@@ -52,7 +51,7 @@ public class ConfigManager {
         return fieldsConfiguration.get();
     }
 
-    private RegistersConfiguration createRegistersConfiguration() throws IOException {
+    private RegistersConfiguration createRegistersConfiguration() {
         return new RegistersConfiguration(registersConfigFilePath);
     }
 

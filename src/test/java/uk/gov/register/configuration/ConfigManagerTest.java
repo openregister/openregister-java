@@ -46,7 +46,6 @@ public class ConfigManagerTest {
         externalConfigsFolderPath = externalConfigsFolder.getRoot().toString();
     }
 
-
     @Test
     public void refreshConfig_shouldNotRefresh_whenRefreshIsDisabled() throws NoSuchConfigException, IOException {
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(false);
@@ -124,7 +123,6 @@ public class ConfigManagerTest {
         List<String> registerNames = allRegisterMetaData.stream().map(md -> md.getRegisterName().toString()).collect(toList());
 
         assertThat(registerNames, hasItems("food-premises","country"));
-
     }
 
     @Test(expected = NoSuchConfigException.class)
@@ -158,7 +156,6 @@ public class ConfigManagerTest {
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
-
     }
 
     @Test(expected = MalformedURLException.class)

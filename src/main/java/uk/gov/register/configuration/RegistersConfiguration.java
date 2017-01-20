@@ -5,7 +5,6 @@ import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.util.ResourceYamlFileReader;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -14,7 +13,7 @@ public class RegistersConfiguration {
 
     private final Collection<RegisterMetadata> registers;
 
-    public RegistersConfiguration(String registersResourceYamlPath) throws IOException {
+    public RegistersConfiguration(String registersResourceYamlPath) {
         registers = new ResourceYamlFileReader().readResourceFromPath(registersResourceYamlPath, new TypeReference<Map<String,
                 RegisterMetadata>>() {
         });
