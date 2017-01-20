@@ -1,13 +1,14 @@
 package uk.gov.register.configuration;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.exceptions.NoSuchConfigException;
-import uk.gov.register.util.ResourceYamlFileReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,29 +16,40 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ConfigManagerTest {
     @Rule
     public TemporaryFolder externalConfigsFolder = new TemporaryFolder();
 
+    private String missingConfigFileUrl = "file:///config-that-does-not-exist.yaml";
+
+    private String registersConfigFileUrl = Paths.get("src/test/resources/config/external-registers.yaml").toUri().toString();
+
+    private String fieldsConfigFileUrl = Paths.get("src/test/resources/config/external-fields.yaml").toUri().toString();
+
+    private String externalConfigsFolderPath;
+
+    @Mock
+    private RegisterConfigConfiguration registerConfigConfiguration;
+
+    @Before
+    public void setup() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        externalConfigsFolderPath = externalConfigsFolder.getRoot().toString();
+    }
+
     @Test
     public void refreshConfig_shouldNotRefresh_whenRefreshIsDisabled() throws NoSuchConfigException, IOException {
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(false);
-
-        Optional<String> registersConfigFileUrl = Optional.of("file:///config-that-does-not-exist.yaml");
-        Optional<String> fieldsConfigFileUrl = Optional.of("file:///config-that-does-not-exist.yaml");
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
 
         assertNull(configManager.getRegistersConfiguration());
@@ -47,14 +59,15 @@ public class ConfigManagerTest {
     @Test
     public void refreshConfig_shouldDownloadAndStoreRegistersConfigFile_whenRegistersConfigFileUrlIsSpecified() throws Exception {
         File createdRegistersFile = externalConfigsFolder.newFile("registers.yaml");
-        String externalRegistersUrl = Paths.get("src/test/resources/config/external-registers.yaml").toUri().toString();
 
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolder.getRoot().getAbsolutePath());
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
 
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, Optional.of(externalRegistersUrl), Optional.empty());
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
+
         String expected = new String(Files.readAllBytes(Paths.get("src/test/resources/config/external-registers.yaml")));
         String copiedConfig = new String(Files.readAllBytes(createdRegistersFile.toPath()));
         assertThat(copiedConfig, is(expected));
@@ -63,136 +76,96 @@ public class ConfigManagerTest {
     @Test
     public void refreshConfig_shouldDownloadAndStoreFieldsConfigFile_whenFieldsConfigFileUrlIsSpecified() throws Exception {
         File createdFieldsFile = externalConfigsFolder.newFile("fields.yaml");
-        String externalFieldsUrl = Paths.get("src/test/resources/config/external-fields.yaml").toUri().toString();
 
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolder.getRoot().getAbsolutePath());
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
 
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.of(externalFieldsUrl));
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
+
         String expected = new String(Files.readAllBytes(Paths.get("src/test/resources/config/external-fields.yaml")));
         String copiedConfig = new String(Files.readAllBytes(createdFieldsFile.toPath()));
         assertThat(copiedConfig, is(expected));
     }
 
-    @Test
-    public void refreshConfig_shouldRefreshConfigsFromDefaultFiles_whenNoConfigFileUrlsSpecified() throws NoSuchConfigException, IOException {
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
-        when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
-
-        Optional<String> registersConfigFileUrl = Optional.empty();
-        Optional<String> fieldsConfigFileUrl = Optional.empty();
-
-        ResourceYamlFileReader resourceYamlFileReader = new ResourceYamlFileReader();
-        Collection<Field> expectedFields = resourceYamlFileReader.readResource(fieldsConfigFileUrl, "config/fields.yaml", new TypeReference<Map<String, Field>>(){});
-        Collection<RegisterMetadata> expectedRegisters = resourceYamlFileReader.readResource(registersConfigFileUrl, "config/registers.yaml", new TypeReference<Map<String, RegisterMetadata>>(){});
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
-        configManager.refreshConfig();
-
-        Collection<Field> actualFields = configManager.getFieldsConfiguration().getAllFields();
-        Collection<RegisterMetadata> actualRegisters = configManager.getRegistersConfiguration().getAllRegisterMetaData();
-
-        assertTrue(expectedFields.containsAll(actualFields));
-        assertTrue(expectedRegisters.containsAll(actualRegisters));
-    }
 
     @Test
     public void refreshConfig_shouldRefreshFieldsConfigurationUsingFileUrl_whenFieldsConfigFileUrlIsSpecified() throws NoSuchConfigException, IOException {
-        String externalConfigsFolderPath = externalConfigsFolder.getRoot().toString();
 
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(fieldsConfigFileUrl);
 
-        Optional<String> registersConfigFileUrl = Optional.empty();
-        Optional<String> fieldsConfigFileUrl = Optional.of(Paths.get("src/test/resources/config/external-fields.yaml").toUri().toString());
-
-        ResourceYamlFileReader resourceYamlFileReader = new ResourceYamlFileReader();
-        Collection<Field> expectedFields = resourceYamlFileReader.readResource(Optional.of("src/test/resources/config/external-fields.yaml"), "config/fields.yaml", new TypeReference<Map<String, Field>>(){});
-        Collection<RegisterMetadata> expectedRegisters = resourceYamlFileReader.readResource(Optional.empty(), "config/registers.yaml", new TypeReference<Map<String, RegisterMetadata>>(){});
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
 
         Collection<Field> actualFields = configManager.getFieldsConfiguration().getAllFields();
-        Collection<RegisterMetadata> actualRegisters = configManager.getRegistersConfiguration().getAllRegisterMetaData();
+        List<String> fieldNames = actualFields.stream().map(f -> f.fieldName).collect(toList());
 
-        assertTrue(expectedFields.containsAll(actualFields));
-        assertTrue(expectedRegisters.containsAll(actualRegisters));
+        assertThat(fieldNames, hasItems("country","food-premises-types","copyright"));
     }
 
     @Test
     public void refreshConfig_shouldRefreshRegistersConfigurationUsingFileUrl_whenRegistersConfigFileUrlIsSpecified() throws NoSuchConfigException, IOException {
-        String externalConfigsFolderPath = externalConfigsFolder.getRoot().toString();
 
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(fieldsConfigFileUrl);
 
-        Optional<String> registersConfigFileUrl = Optional.of(Paths.get("src/test/resources/config/external-registers.yaml").toUri().toString());
-        Optional<String> fieldsConfigFileUrl = Optional.empty();
-
-        ResourceYamlFileReader resourceYamlFileReader = new ResourceYamlFileReader();
-        Collection<Field> expectedFields = resourceYamlFileReader.readResource(Optional.empty(), "config/fields.yaml", new TypeReference<Map<String, Field>>(){});
-        Collection<RegisterMetadata> expectedRegisters = resourceYamlFileReader.readResource(Optional.of("src/test/resources/config/external-registers.yaml"), "config/registers.yaml", new TypeReference<Map<String, RegisterMetadata>>(){});
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
 
-        Collection<Field> actualFields = configManager.getFieldsConfiguration().getAllFields();
-        Collection<RegisterMetadata> actualRegisters = configManager.getRegistersConfiguration().getAllRegisterMetaData();
+        Collection<RegisterMetadata> allRegisterMetaData = configManager.getRegistersConfiguration().getAllRegisterMetaData();
+        List<String> registerNames = allRegisterMetaData.stream().map(md -> md.getRegisterName().toString()).collect(toList());
 
-        assertTrue(expectedFields.containsAll(actualFields));
-        assertTrue(expectedRegisters.containsAll(actualRegisters));
+        assertThat(registerNames, hasItems("food-premises","country"));
     }
 
     @Test(expected = NoSuchConfigException.class)
     public void refreshConfig_shouldThrowNoSuchConfigException_whenSpecifiedRegistersConfigFileUrlIsNotFound() throws NoSuchConfigException, IOException {
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
+        when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.missingConfigFileUrl);
 
-        Optional<String> registersConfigFileUrl = Optional.of("file:///config-that-does-not-exist.yaml");
-        Optional<String> fieldsConfigFileUrl = Optional.empty();
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
     }
 
     @Test(expected = NoSuchConfigException.class)
     public void refreshConfig_shouldThrowNoSuchConfigException_whenSpecifiedFieldsConfigFileUrlIsNotFound() throws NoSuchConfigException, IOException {
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
+        when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(missingConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
 
-        Optional<String> registersConfigFileUrl = Optional.empty();
-        Optional<String> fieldsConfigFileUrl = Optional.of("file:///config-that-does-not-exist.yaml");
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
     }
 
     @Test(expected = MalformedURLException.class)
     public void refreshConfig_shouldThrowIOException_whenSpecifiedRegistersConfigUrlIsMalformed() throws IOException, NoSuchConfigException {
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
+        when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn("zzz://config-that-does-not-exist.yaml");
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
 
-        Optional<String> registersConfigFileUrl = Optional.of("config-that-does-not-exist.yaml");
-        Optional<String> fieldsConfigFileUrl = Optional.empty();
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
     }
 
     @Test(expected = MalformedURLException.class)
     public void refreshConfig_shouldThrowIOException_whenSpecifiedFieldsConfigUrlIsMalformed() throws IOException, NoSuchConfigException {
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
+        when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn("zzz://config-that-does-not-exist.yaml");
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
 
-        Optional<String> registersConfigFileUrl = Optional.empty();
-        Optional<String> fieldsConfigFileUrl = Optional.of("config-that-does-not-exist.yaml");
-
-        ConfigManager configManager = new ConfigManager(registerConfigConfiguration, registersConfigFileUrl, fieldsConfigFileUrl);
+        ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
     }
 }

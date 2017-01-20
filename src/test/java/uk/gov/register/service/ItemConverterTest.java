@@ -3,7 +3,9 @@ package uk.gov.register.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.core.FieldValue;
@@ -13,6 +15,7 @@ import uk.gov.register.core.StringValue;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,15 +26,24 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ItemConverterTest {
+
+    @Rule
+    public TemporaryFolder externalConfigsFolder = new TemporaryFolder();
     private ConfigManager configManager;
     private ItemConverter itemConverter;
+    private String registersConfigFileUrl = Paths.get("src/main/resources/config/registers.yaml").toUri().toString();
+    private String fieldsConfigFileUrl = Paths.get("src/main/resources/config/fields.yaml").toUri().toString();
 
     @Before
     public void setup() throws IOException, NoSuchConfigException {
         RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
+        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(registersConfigFileUrl);
+        String externalConfigsFolderPath = externalConfigsFolder.getRoot().toString();
+        when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
 
-        configManager = new ConfigManager(registerConfigConfiguration, Optional.empty(), Optional.empty());
+        configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
         itemConverter = new ItemConverter(configManager);
     }

@@ -77,3 +77,9 @@ database:
 enableDownloadResource: true
 
 propertyToTestUnknownPropertiesAllowed: true
+
+externalConfigDirectory: /tmp
+
+fieldsYamlLocation: classpath://config/fields.yaml
+
+registersYamlLocation: classpath://config/registers.yaml

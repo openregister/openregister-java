@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 public class FieldsConfigurationTest {
     @Test
     public void loadConfigurationWithDefaultFieldsResourceFile() {
-        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.empty());
+        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration("src/main/resources/config/fields.yaml");
 
         assertThat(fieldsConfiguration.getField("register").fieldName, equalTo("register"));
     }
@@ -22,7 +22,7 @@ public class FieldsConfigurationTest {
         @SuppressWarnings("ConstantConditions")
         String fileUrl = ResourceHelpers.resourceFilePath("config/fields.yaml");
 
-        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(Optional.of(fileUrl));
+        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(fileUrl);
 
         assertThat(fieldsConfiguration.getField("register").fieldName, equalTo("register"));
     }
