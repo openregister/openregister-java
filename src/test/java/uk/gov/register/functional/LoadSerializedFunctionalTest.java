@@ -1,5 +1,7 @@
 package uk.gov.register.functional;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -7,6 +9,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.app.WipeDatabaseRule;
@@ -15,6 +18,7 @@ import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.functional.db.TestRecord;
 import uk.gov.register.functional.db.TestRecordDAO;
+import uk.gov.register.util.HashValue;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -22,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -54,11 +59,16 @@ public class LoadSerializedFunctionalTest {
 
         assertThat(r.getStatus(), equalTo(200));
 
+        TestDBItem expectedItem1 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"),
+                nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
+        TestDBItem expectedItem2 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"),
+                nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test2\"}"));
+
+
         List<TestDBItem> storedItems = testItemDAO.getItems();
-        assertThat(storedItems.get(0).contents.toString(), equalTo("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
-        assertThat(storedItems.get(0).hashValue.getValue(), equalTo("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
-        assertThat(storedItems.get(1).contents.toString(), equalTo("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test2\"}"));
-        assertThat(storedItems.get(1).hashValue.getValue(), equalTo("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
+        assertThat(storedItems, containsInAnyOrder(expectedItem1, expectedItem2));
 
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries.get(0).getEntryNumber(), is(1));
@@ -114,5 +124,10 @@ public class LoadSerializedFunctionalTest {
 
     private Response send(String payload) {
         return register.loadRsf(testRegister, payload);
+    }
+
+    private JsonNode nodeOf(String jsonString) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(jsonString, JsonNode.class);
     }
 }
