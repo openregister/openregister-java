@@ -2,7 +2,6 @@ package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.exceptions.NoSuchFieldException;
-import uk.gov.register.exceptions.NoSuchItemForEntryException;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -43,9 +42,6 @@ public class PostgresRegister implements Register {
 
     @Override
     public void appendEntry(Entry entry) {
-        if (!itemStore.getItemBySha256(entry.getSha256hex()).isPresent()) {
-            throw new NoSuchItemForEntryException(entry);
-        }
         entryLog.appendEntry(entry);
         recordIndex.updateRecordIndex(entry.getKey(), entry.getEntryNumber());
     }
