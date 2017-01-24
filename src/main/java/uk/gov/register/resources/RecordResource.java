@@ -68,7 +68,7 @@ public class RecordResource {
     }
 
     public Map<String, FieldValue> itemContent(Record record) {
-        return record.item.getFieldsStream().collect(Collectors.toMap(Map.Entry::getKey, itemConverter::convert));
+        return itemConverter.convertItem(record.item);
     }
 
     @GET
