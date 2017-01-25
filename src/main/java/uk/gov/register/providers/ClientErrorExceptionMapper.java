@@ -5,10 +5,7 @@ import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.NotAcceptableException;
-import javax.ws.rs.NotFoundException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -35,13 +32,18 @@ public class ClientErrorExceptionMapper implements ExceptionMapper<ClientErrorEx
 
     private ThymeleafView getEntityFor(ClientErrorException exception) {
         if (exception instanceof BadRequestException) {
-            return viewFactory.badRequestExceptionView((BadRequestException) exception);
+            return viewFactory.exceptionBadRequestView(exception.getMessage());
         }
 
         if (exception instanceof NotFoundException || exception instanceof NotAcceptableException) {
-            return viewFactory.thymeleafView("404.html");
+            return viewFactory.exceptionNotFoundView();
         }
 
-        throw exception;
+        if (exception instanceof NotAllowedException) {
+            return viewFactory.exceptionView("Method not allowed", "This method is not allowed");
+        }
+
+        int status = exception.getResponse().getStatus();
+        return viewFactory.exceptionView(String.valueOf(status), exception.getMessage());
     }
 }

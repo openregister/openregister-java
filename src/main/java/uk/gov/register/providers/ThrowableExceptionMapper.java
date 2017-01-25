@@ -34,14 +34,14 @@ public class ThrowableExceptionMapper implements ExceptionMapper<Throwable> {
         if (exception instanceof ParamException.PathParamException) {
             return Response.status(Response.Status.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
-                    .entity(viewFactory.thymeleafView("404.html"))
+                    .entity(viewFactory.exceptionNotFoundView())
                     .build();        }
 
         LOGGER.error("Uncaught exception: {}", exception);
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
-                .entity(viewFactory.thymeleafView("500.html"))
+                .entity(viewFactory.exceptionServerErrorView())
                 .build();
     }
 }

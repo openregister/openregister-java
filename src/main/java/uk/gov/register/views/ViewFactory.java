@@ -59,8 +59,20 @@ public class ViewFactory {
         return new ThymeleafView(requestContext, templateName, registerTrackingConfiguration.get(), registerResolver, register.get());
     }
 
-    public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, e, register.get(), registerTrackingConfiguration.get(), registerResolver);
+    public ExceptionView exceptionBadRequestView(String message){
+        return exceptionView("Bad request", message);
+    }
+
+    public ExceptionView exceptionNotFoundView(){
+        return exceptionView("Page not found", "If you entered a web address please check it was correct.");
+    }
+
+    public ExceptionView exceptionServerErrorView(){
+        return exceptionView("Oops, looks like something went wrong", "500 error");
+    }
+
+    public ExceptionView exceptionView(String heading, String message) {
+        return new ExceptionView (requestContext, heading, message, register.get(), registerTrackingConfiguration.get(), registerResolver);
     }
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
