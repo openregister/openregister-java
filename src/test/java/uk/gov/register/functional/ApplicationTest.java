@@ -9,9 +9,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
-import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
@@ -100,8 +98,7 @@ public class ApplicationTest {
 
     @Test
     public void returns400BadRequest() {
-        Response response = register.authenticatedTarget(address).path("/load-rsf").request()
-                .post(Entity.entity("nope", ExtraMediaType.APPLICATION_RSF_TYPE));
+        Response response = register.loadRsf(address, "nope");
 
         assertThat(response.getStatus(), equalTo(400));
     }

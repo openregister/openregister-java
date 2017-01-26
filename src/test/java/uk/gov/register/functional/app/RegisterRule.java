@@ -61,7 +61,7 @@ public class RegisterRule implements TestRule {
         return wholeRule.apply(me, description);
     }
 
-    public WebTarget authenticatedTarget(TestRegister register) {
+    private WebTarget authenticatedTarget(TestRegister register) {
         return target(register).register(register.httpAuthFeature());
     }
 
