@@ -8,13 +8,13 @@ import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.RegisterLinkService;
-import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.ws.rs.BadRequestException;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ViewFactory {
@@ -55,12 +55,20 @@ public class ViewFactory {
         this.registerLinkService = registerLinkService;
     }
 
-    public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, templateName, registerTrackingConfiguration.get(), registerResolver, register.get());
+    public ExceptionView exceptionBadRequestView(String message){
+        return exceptionView("Bad request", message);
     }
 
-    public BadRequestExceptionView badRequestExceptionView(BadRequestException e) {
-        return new BadRequestExceptionView(requestContext, e, register.get(), registerTrackingConfiguration.get(), registerResolver);
+    public ExceptionView exceptionNotFoundView(){
+        return exceptionView("Page not found", "If you entered a web address please check it was correct.");
+    }
+
+    public ExceptionView exceptionServerErrorView(){
+        return exceptionView("Oops, looks like something went wrong", "500 error");
+    }
+
+    public ExceptionView exceptionView(String heading, String message) {
+        return new ExceptionView (requestContext, heading, message, register.get(), registerTrackingConfiguration.get(), registerResolver);
     }
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {

@@ -8,15 +8,11 @@
   <div id="wrapper">
     <main id="main" role="main">
       <div th:replace="fragments/phase-banner.html::phase"></div>
-      <a href="/" class="link-back">Back</a>
-      <h1 class="heading-large">This page has not been implemented yet</h1>
-      <p>
-        We haven’t prioritised this work yet. If you are interested in this feature, please let us know so we can adjust our priorities.
-      </p>
+      <h1 class="heading-large" th:text="${heading}"></h1>
+      <p class="lede" th:text="${message}"></p>
     </main>
   </div>
 
   <footer th:replace="fragments/footer.html::footer"></footer>
-
 </body>
 </html>

@@ -38,7 +38,6 @@ public class ApplicationTest {
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "X-Requested-With")
                 .options();
 
-
         MultivaluedMap<String, Object> headers = response.getHeaders();
 
         assertThat(headers.get(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN), equalTo(ImmutableList.of(origin)));
@@ -82,10 +81,26 @@ public class ApplicationTest {
     public void app404PageHasXhtmlLangAttributes() throws Exception {
         Response response = register.getRequest(address, "/missing_page_to_force_a_404");
 
+        assertThat(response.getStatus(), equalTo(404));
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
         assertThat(htmlElement.size(), equalTo(1));
         assertThat(htmlElement.first().attr("lang"), equalTo("en"));
         assertThat(htmlElement.first().attr("xml:lang"), equalTo("en"));
     }
+
+    @Test
+    public void returns405ForNotAllowedMethod() {
+        Response response = register.getRequest(address, "/load-rsf");
+
+        assertThat(response.getStatus(), equalTo(405));
+    }
+
+    @Test
+    public void returns400BadRequest() {
+        Response response = register.loadRsf(address, "nope");
+
+        assertThat(response.getStatus(), equalTo(400));
+    }
+
 }

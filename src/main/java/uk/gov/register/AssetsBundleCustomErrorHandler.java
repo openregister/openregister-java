@@ -69,10 +69,12 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
                 request.getLocale());
         wc.setVariable("register", rm);
         wc.setVariable("friendlyRegisterName", registerName.getFriendlyRegisterName() + " register");
-        wc.setVariable("renderedCopyrightText",  Optional.ofNullable(rm.getCopyright()));
+        wc.setVariable("renderedCopyrightText", Optional.ofNullable(rm.getCopyright()));
+        wc.setVariable("heading", "Page not found");
+        wc.setVariable("message", "If you entered a web address please check it was correct.");
 
         response.setHeader("Content-Type", "text/html; charset=UTF-8");
-        engine.process("404.html", wc, response.getWriter());
+        engine.process("exception.html", wc, response.getWriter());
     }
 
 }

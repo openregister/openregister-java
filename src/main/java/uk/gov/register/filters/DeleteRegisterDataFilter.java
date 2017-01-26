@@ -29,7 +29,7 @@ public class DeleteRegisterDataFilter implements ContainerRequestFilter {
         if (!deleteRegisterDataConfiguration.get().getEnableRegisterDataDelete()) {
             Response response = Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity(viewFactory.thymeleafView("404.html"))
+                    .entity(viewFactory.exceptionNotFoundView())
                     .build();
 
             requestContext.abortWith(response);

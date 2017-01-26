@@ -29,7 +29,9 @@ public class ResourceAvailabilityFilter implements ContainerRequestFilter {
         if (!resourceConfiguration.get().getEnableDownloadResource()) {
             Response response = Response
                     .status(Response.Status.NOT_IMPLEMENTED)
-                    .entity(viewFactory.thymeleafView("not-implemented.html"))
+                    .entity(viewFactory.exceptionView(
+                            "This page has not been implemented yet",
+                            "We haven’t prioritised this work yet. If you are interested in this feature, please let us know so we can adjust our priorities."))
                     .build();
 
             requestContext.abortWith(response);
