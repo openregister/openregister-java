@@ -6,13 +6,17 @@ import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.service.RegisterLinkService;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
 
 public class RegisterContextTest {
@@ -49,5 +53,41 @@ public class RegisterContextTest {
         verify(flyway, times(1)).clean();
         verify(configManager, times(1)).refreshConfig();
         verify(flyway, times(1)).migrate();
+    }
+
+    @Test
+    public void getRegisterMetadata_returnsUpToDateConfigProvidedByConfigManager() {
+        RegisterMetadata initialMetadata = new RegisterMetadata(
+                new RegisterName("test-register-1"),
+                Collections.emptyList(),
+                "copyright-1",
+                "registry-1",
+                "text-1",
+                "phase-1");
+
+        RegisterMetadata expectedUpdatedMetadata = new RegisterMetadata(
+                new RegisterName("test-register-2"),
+                Collections.emptyList(),
+                "copyright-2",
+                "registry-2",
+                "text-2",
+                "phase-2");
+
+
+        RegistersConfiguration rcMock = mock(RegistersConfiguration.class);
+
+        when(rcMock.getRegisterMetadata(registerName)).thenReturn(initialMetadata);
+        when(configManager.getRegistersConfiguration()).thenReturn(rcMock);
+
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), new RegisterAuthenticator("", ""));
+
+        RegisterMetadata actualInitialMetadata = context.getRegisterMetadata();
+        assertThat(actualInitialMetadata, equalTo(initialMetadata));
+
+        when(rcMock.getRegisterMetadata(registerName)).thenReturn(expectedUpdatedMetadata);
+        when(configManager.getRegistersConfiguration()).thenReturn(rcMock);
+
+        RegisterMetadata actualUpdatedMetadata = context.getRegisterMetadata();
+        assertThat(actualUpdatedMetadata, equalTo(expectedUpdatedMetadata));
     }
 }
