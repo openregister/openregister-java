@@ -27,10 +27,6 @@ public class ThrowableExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable exception) {
-        if (exception instanceof ClientErrorException) {
-            throw (ClientErrorException) exception;
-        }
-
         if (exception instanceof ParamException.PathParamException) {
             return Response.status(Response.Status.NOT_FOUND)
                     .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
