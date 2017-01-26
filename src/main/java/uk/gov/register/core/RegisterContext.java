@@ -41,7 +41,6 @@ public class RegisterContext implements
     private final List<String> similarRegisters;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
-    private RegisterMetadata registerMetadata;
     private RegisterAuthenticator authenticator;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
@@ -61,7 +60,6 @@ public class RegisterContext implements
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
-        this.registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
         this.authenticator = authenticator;
     }
 
@@ -74,7 +72,7 @@ public class RegisterContext implements
     }
 
     public RegisterMetadata getRegisterMetadata() {
-        return registerMetadata;
+        return configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
     }
 
     public int migrate() {
