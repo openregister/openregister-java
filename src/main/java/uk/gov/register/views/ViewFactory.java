@@ -8,7 +8,6 @@ import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.RegisterLinkService;
-import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -54,10 +53,6 @@ public class ViewFactory {
         this.register = register;
         this.configManager = configManager;
         this.registerLinkService = registerLinkService;
-    }
-
-    public ThymeleafView thymeleafView(String templateName) {
-        return new ThymeleafView(requestContext, templateName, registerTrackingConfiguration.get(), registerResolver, register.get());
     }
 
     public ExceptionView exceptionBadRequestView(String message){
