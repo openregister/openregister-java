@@ -28,7 +28,7 @@ docker run \
     --restart "unless-stopped" \
     --volume /srv/openregister-java:/srv/openregister-java \
     --log-driver=fluentd \
-    jstepien/openjdk8 \
+    openjdk:8-jre-alpine \
     java \
       -Xmx"${MAX_JVM_HEAP_SIZE}k" \
       -Dfile.encoding=UTF-8 \
