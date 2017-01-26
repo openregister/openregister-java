@@ -12,7 +12,6 @@ import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
