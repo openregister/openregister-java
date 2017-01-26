@@ -97,10 +97,6 @@ public class ApplicationTest {
         Response response = register.getRequest(address, "/load-rsf");
 
         assertThat(response.getStatus(), equalTo(405));
-        Document doc = Jsoup.parse(response.readEntity(String.class));
-        Elements htmlElement = doc.select("html main");
-        assertThat(htmlElement.select(".heading-large").toString(), containsString("Method not allowed"));
-        assertThat(htmlElement.select(".lede").toString(), containsString("This method is not allowed"));
     }
 
     @Test
