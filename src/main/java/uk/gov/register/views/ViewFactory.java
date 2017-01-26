@@ -12,9 +12,10 @@ import uk.gov.register.thymeleaf.ThymeleafView;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.ws.rs.BadRequestException;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ViewFactory {

@@ -9,7 +9,10 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.views.representations.ExtraMediaType;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
@@ -37,7 +40,6 @@ public class ApplicationTest {
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "X-Requested-With")
                 .options();
-
 
         MultivaluedMap<String, Object> headers = response.getHeaders();
 
@@ -82,10 +84,31 @@ public class ApplicationTest {
     public void app404PageHasXhtmlLangAttributes() throws Exception {
         Response response = register.getRequest(address, "/missing_page_to_force_a_404");
 
+        assertThat(response.getStatus(), equalTo(404));
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements htmlElement = doc.select("html");
         assertThat(htmlElement.size(), equalTo(1));
         assertThat(htmlElement.first().attr("lang"), equalTo("en"));
         assertThat(htmlElement.first().attr("xml:lang"), equalTo("en"));
     }
+
+    @Test
+    public void returns405ForNotAllowedMethod() {
+        Response response = register.getRequest(address, "/load-rsf");
+
+        assertThat(response.getStatus(), equalTo(405));
+        Document doc = Jsoup.parse(response.readEntity(String.class));
+        Elements htmlElement = doc.select("html main");
+        assertThat(htmlElement.select(".heading-large").toString(), containsString("Method not allowed"));
+        assertThat(htmlElement.select(".lede").toString(), containsString("This method is not allowed"));
+    }
+
+    @Test
+    public void returns400BadRequest() {
+        Response response = register.authenticatedTarget(address).path("/load-rsf").request()
+                .post(Entity.entity("nope", ExtraMediaType.APPLICATION_RSF_TYPE));
+
+        assertThat(response.getStatus(), equalTo(400));
+    }
+
 }
