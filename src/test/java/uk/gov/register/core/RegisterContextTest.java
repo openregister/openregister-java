@@ -57,7 +57,7 @@ public class RegisterContextTest {
 
     @Test
     public void getRegisterMetadata_returnsUpToDateConfigProvidedByConfigManager() {
-        RegisterMetadata initialMetadata = new RegisterMetadata(
+        RegisterMetadata expectedInitialMetadata = new RegisterMetadata(
                 new RegisterName("test-register-1"),
                 Collections.emptyList(),
                 "copyright-1",
@@ -75,17 +75,15 @@ public class RegisterContextTest {
 
 
         RegistersConfiguration rcMock = mock(RegistersConfiguration.class);
-
-        when(rcMock.getRegisterMetadata(registerName)).thenReturn(initialMetadata);
         when(configManager.getRegistersConfiguration()).thenReturn(rcMock);
+        when(rcMock.getRegisterMetadata(registerName))
+                .thenReturn(expectedInitialMetadata)
+                .thenReturn(expectedUpdatedMetadata);
 
         RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), new RegisterAuthenticator("", ""));
 
         RegisterMetadata actualInitialMetadata = context.getRegisterMetadata();
-        assertThat(actualInitialMetadata, equalTo(initialMetadata));
-
-        when(rcMock.getRegisterMetadata(registerName)).thenReturn(expectedUpdatedMetadata);
-        when(configManager.getRegistersConfiguration()).thenReturn(rcMock);
+        assertThat(actualInitialMetadata, equalTo(expectedInitialMetadata));
 
         RegisterMetadata actualUpdatedMetadata = context.getRegisterMetadata();
         assertThat(actualUpdatedMetadata, equalTo(expectedUpdatedMetadata));
