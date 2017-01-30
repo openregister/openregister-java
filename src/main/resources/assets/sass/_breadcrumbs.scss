@@ -1,0 +1,19 @@
+// Breadcrumbs
+// ==========================================================================
+
+.breadcrumbs {
+  @include breadcrumbs;
+
+  ol {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    background-image: image-url("images/separator.png");
+
+    @include device-pixel-ratio() {
+      background-image: image-url("images/separator-2x.png");
+    }
+  }
+}
