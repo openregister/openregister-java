@@ -27,10 +27,13 @@
       <div class="grid-row">
         <div class="column-two-thirds">
           <h1 class="heading-large">
-            <span th:include="fragments/pagination.html::pagination-top('entries')"></span>
-            <span class="heading-secondary" th:if="${content.recordKey.present}">
-              Part of Record: <a th:href="${'/record/' + content.recordKey.get()}" th:text="${content.recordKey.get()}">GM</a>
+            <span th:if="${content.recordKey.present}">
+              Entries for record <span th:text="${content.recordKey.get()}">GM</span>
             </span>
+            <span th:unless="${content.recordKey.present}">
+              Entries
+            </span>
+            <span class="heading-secondary" th:include="fragments/pagination.html::pagination-top('entries')"></span>
           </h1>
           <div th:include="fragments/data-formats.html::data-formats"></div>
         </div>
