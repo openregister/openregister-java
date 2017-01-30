@@ -12,20 +12,19 @@
       <div class="grid-row">
         <div class="column-two-thirds">
           <h1 class="heading-large">
-            <span class="heading-secondary">Record</span>
+            Record
             <th:block th:utext="${content.primaryKey}"></th:block>
           </h1>
           <p>
             A record in the <a href="/" th:text="${friendlyRegisterName}"></a>.
             <a th:if="${#bools.isTrue(registerId.value() == 'register')}" th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}">View this register.</a>
           </p>
+          <div th:include="fragments/data-formats.html::data-formats"></div>
         </div>
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>
-
-      <div th:include="fragments/data-formats.html::data-formats"></div>
 
       <p>
         <a th:href="${'/record/' + content.primaryKey +'/entries'}">View all versions of this record</a>

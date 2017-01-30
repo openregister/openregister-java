@@ -45,6 +45,6 @@ public class FindEntityTest {
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
 
-        assertThat(doc.body().getElementById("main").getElementsByAttributeValue("class", "column-two-thirds").first().text(), equalTo("2 records"));
+        assertThat(doc.body().getElementById("main").getElementsByAttributeValue("class", "heading-large").first().text(), equalTo("2 records"));
     }
 }
