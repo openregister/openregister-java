@@ -26,6 +26,7 @@ $toolkit-font-stack: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sa
 @import "typography";
 @import "design-patterns/alpha-beta";
 @import "design-patterns/buttons";
+@import "design-patterns/breadcrumbs";
 
 // Import from govuk_template
 @import "styleguide/colours";
@@ -37,6 +38,7 @@ $toolkit-font-stack: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sa
 // Taken from govuk_elements
 @import "elements-typography";
 @import "lists";
+@import "breadcrumbs";
 
 // Register styles
 

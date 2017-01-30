@@ -101,8 +101,8 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerTrackingConfiguration.get(), registerResolver, fieldValueMap);
     }
 
-    public AttributionView<Map<String, FieldValue>> getItemView(Map<String, FieldValue> fieldValueMap) {
-        return getAttributionView("item.html", fieldValueMap);
+    public AttributionView<ItemView> getItemView(ItemView itemView) {
+        return getAttributionView("item.html", itemView);
     }
 
     public AttributionView<Entry> getEntryView(Entry entry) {

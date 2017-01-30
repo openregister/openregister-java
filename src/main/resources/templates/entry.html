@@ -8,6 +8,19 @@
   <div id="wrapper">
     <main id="main" role="main">
       <div th:replace="fragments/phase-banner.html::phase"></div>
+
+      <div class="breadcrumbs">
+        <ol>
+          <li>
+            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+          </li>
+          <li>
+            <a href="/entries">Entries</a>
+          </li>
+          <li th:text="${'Entry ' + content.entryNumber}"></li>
+        </ol>
+      </div>
+
       <div class="grid-row">
         <div class="column-two-thirds">
           <h1 class="heading-large">

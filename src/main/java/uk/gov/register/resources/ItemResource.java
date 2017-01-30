@@ -32,8 +32,8 @@ public class ItemResource {
     @GET
     @Path("/sha-256:{item-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
-    public AttributionView<Map<String, FieldValue>> getItemWebViewByHex(@PathParam("item-hash") String itemHash) {
-        return getItem(itemHash).map((item) -> viewFactory.getItemView(itemConverter.convertItem(item)))
+    public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) {
+        return getItem(itemHash).map((item) -> viewFactory.getItemView(makeItemView(item)))
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
 

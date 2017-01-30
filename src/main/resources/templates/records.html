@@ -9,6 +9,16 @@
 
     <main id="main" role="main">
       <div th:replace="fragments/phase-banner.html::phase"></div>
+
+      <div class="breadcrumbs">
+        <ol>
+          <li>
+            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+          </li>
+          <li>Records</li>
+        </ol>
+      </div>
+
       <div class="grid-row">
         <div class="column-two-thirds">
           <h1 class="heading-large" th:include="fragments/pagination.html::pagination-top('records')">
