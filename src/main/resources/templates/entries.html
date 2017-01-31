@@ -18,7 +18,7 @@
             <a href="/records">Records</a>
           </li>
           <li th:if="${content.recordKey.present}">
-            <a th:href="${'/record/' + content.recordKey.get()}" th:text="${content.recordKey.get()}"></a>
+            <a th:href="${'/record/' + content.recordKey.get()}" th:text="${'Record ' + content.recordKey.get()}"></a>
           </li>
           <li>Entries</li>
         </ol>
