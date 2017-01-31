@@ -20,14 +20,13 @@
 
       <div class="grid-row">
         <div class="column-two-thirds">
-          <p></p>
+          <h1 class="heading-large">Item</h1>
+          <div th:include="fragments/data-formats.html::data-formats"></div>
         </div>
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>
-
-      <div th:include="fragments/data-formats.html::data-formats"></div>
 
     </main>
   </div>

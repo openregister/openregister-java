@@ -27,10 +27,6 @@
             Entry
             <span th:text="${content.entryNumber}">Entry Number Header</span>
           </h1>
-          <p>
-            An entry in the
-            <a href="/" th:text="${friendlyRegisterName}"></a>
-          </p>
           <div th:include="fragments/data-formats.html::data-formats"></div>
         </div>
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
