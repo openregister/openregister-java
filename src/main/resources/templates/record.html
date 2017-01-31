@@ -27,6 +27,9 @@
             Record
             <th:block th:utext="${content.primaryKey}"></th:block>
           </h1>
+          <p th:if="${#bools.isTrue(registerId.value() == 'register')}">
+            <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}" th:utext="${'View ' + content.primaryKey + ' register'}">View this register.</a>
+          </p>
           <div th:include="fragments/data-formats.html::data-formats"></div>
         </div>
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
