@@ -19,12 +19,8 @@
         </p>
         <p class="text">You can also <a href="/download">download a copy</a> of the register.</p>
         <p class="text">The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span> records and includes the following fields:</p>
-        <dl>
-          <th:block th:each="field : ${fields}">
-            <dt th:text="${#strings.capitalize(field.fieldName) + ':'}"></dt>
-            <dd th:text="${field.text}"></dd>
-          </th:block>
-        </dl>
+        <div th:replace="fragments/field-list.html::field-list(${fields})"></div>
+
         <h3 class="heading-small">Using this register</h3>
         <p>Download a copy of this register. You'll need to regularly update it to make sure you have the most current version of the data.</p>
         <p>If you're building a service, you can use this data to create elements for forms.</p>
