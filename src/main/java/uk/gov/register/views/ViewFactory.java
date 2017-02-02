@@ -130,6 +130,18 @@ public class ViewFactory {
                 recordsView);
     }
 
+    public ItemView getItemMediaView(Item item) {
+        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item), getFields());
+    }
+
+    public RecordView getRecordMediaView(Record record) {
+        return new RecordView(record.entry, getItemMediaView(record.item), getFields());
+    }
+
+    public RecordsView getRecordsMediaView(List<RecordView> recordViews) {
+        return new RecordsView(recordViews, getFields());
+    }
+
     private PublicBody getRegistry() {
         return publicBodiesConfiguration.getPublicBody(registerMetadata.get().getRegistry());
     }
@@ -144,18 +156,5 @@ public class ViewFactory {
         return register.get().getRegisterMetadata().getFields().stream()
                 .map(fieldsConfiguration::getField)
                 .collect(Collectors.toList());
-    }
-
-
-    public ItemView getItemMediaView(Item item) {
-        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item), getFields());
-    }
-
-    public RecordView getRecordMediaView(Record record) {
-        return new RecordView(record.entry, getItemMediaView(record.item), getFields());
-    }
-
-    public RecordsView getRecordsMediaView(List<RecordView> recordViews) {
-        return new RecordsView(recordViews, getFields());
     }
 }
