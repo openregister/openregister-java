@@ -148,7 +148,14 @@ public class ViewFactory {
 
 
     public ItemView getItemMediaView(Item item) {
-
         return new ItemView(item.getSha256hex(), itemConverter.convertItem(item), getFields());
+    }
+
+    public RecordView getRecordMediaView(Record record) {
+        return new RecordView(record.entry, getItemMediaView(record.item), getFields());
+    }
+
+    public RecordsView getRecordsMediaView(List<RecordView> recordViews) {
+        return new RecordsView(recordViews, getFields());
     }
 }

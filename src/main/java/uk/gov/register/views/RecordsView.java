@@ -1,6 +1,8 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.collect.Iterables;
+import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
 import uk.gov.register.views.representations.CsvRepresentation;
 
@@ -11,9 +13,11 @@ import java.util.stream.Collectors;
 
 public class RecordsView implements CsvRepresentationView {
     private List<RecordView> records;
-    private Iterable<String> fields;
 
-    public RecordsView(List<RecordView> records, Iterable<String> fields) {
+
+    private Iterable<Field> fields;
+
+    public RecordsView(List<RecordView> records, Iterable<Field> fields) {
         this.records = records;
         this.fields = fields;
     }
@@ -29,6 +33,11 @@ public class RecordsView implements CsvRepresentationView {
 
     @Override
     public CsvRepresentation<Collection<RecordView>> csvRepresentation() {
-        return new CsvRepresentation<>(Record.csvSchema(fields), getRecords());
+        Iterable<String> fieldNames = Iterables.transform(fields, f -> f.fieldName);
+        return new CsvRepresentation<>(Record.csvSchema(fieldNames), getRecords());
+    }
+
+    public Iterable<Field> getFields() {
+        return fields;
     }
 }

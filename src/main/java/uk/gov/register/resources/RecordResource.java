@@ -25,7 +25,6 @@ public class RecordResource {
     private final ViewFactory viewFactory;
     private final RegisterName registerPrimaryKey;
     private final ItemConverter itemConverter;
-    private Iterable<String> fields;
 
     @Inject
     public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
@@ -35,8 +34,6 @@ public class RecordResource {
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
         this.registerPrimaryKey = register.getRegisterName();
         this.itemConverter = itemConverter;
-
-        this.fields = registerMetadata.getFields();
     }
 
     @GET
@@ -52,7 +49,7 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
-        return register.getRecord(key).map(this::toRecordView)
+        return register.getRecord(key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -100,8 +97,8 @@ public class RecordResource {
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return new RecordsView(recordViews, fields);
+        List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
+        return viewFactory.getRecordsMediaView(recordViews);
     }
 
     @GET
@@ -144,12 +141,7 @@ public class RecordResource {
 
     private RecordsView getRecordsView(int limit, int offset) {
         List<Record> records = register.getRecords(limit, offset);
-        List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return new RecordsView(recordViews, fields);
+        List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
+        return viewFactory.getRecordsMediaView(recordViews);
     }
-
-    private RecordView toRecordView(Record r) {
-        return new RecordView(r.entry, viewFactory.getItemMediaView(r.item), fields);
-    }
-
 }
