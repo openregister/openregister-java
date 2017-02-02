@@ -31,6 +31,14 @@
             <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}" th:utext="${'View ' + content.primaryKey + ' register'}">View this register.</a>
           </p>
           <div th:include="fragments/data-formats.html::data-formats"></div>
+          <details role="group">
+            <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+              <span class="summary">What are the table headers?</span>
+            </summary>
+            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+              <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
+            </div>
+          </details>
         </div>
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
