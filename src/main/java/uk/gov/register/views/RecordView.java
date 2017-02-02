@@ -3,8 +3,10 @@ package uk.gov.register.views;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.Field;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
 import uk.gov.register.views.representations.CsvRepresentation;
@@ -15,9 +17,9 @@ import java.util.Optional;
 public class RecordView implements CsvRepresentationView {
     private final Entry entry;
     private final ItemView itemView;
-    private final Iterable<String> fields;
+    private final Iterable<Field> fields;
 
-    public RecordView(Entry entry, ItemView itemView, Iterable<String> fields) {
+    public RecordView(Entry entry, ItemView itemView, Iterable<Field> fields) {
         this.entry = entry;
         this.itemView = itemView;
         this.fields = fields;
@@ -48,7 +50,8 @@ public class RecordView implements CsvRepresentationView {
 
     @Override
     public CsvRepresentation<ObjectNode> csvRepresentation() {
-        return new CsvRepresentation<>(Record.csvSchema(fields), getRecordJson());
+        Iterable<String> fieldNames = Iterables.transform(fields, f -> f.fieldName);
+        return new CsvRepresentation<>(Record.csvSchema(fieldNames), getRecordJson());
     }
 
     public ItemView getItemView() {
@@ -57,5 +60,9 @@ public class RecordView implements CsvRepresentationView {
 
     public Entry getEntry() {
         return entry;
+    }
+
+    public Iterable<Field> getFields() {
+        return fields;
     }
 }

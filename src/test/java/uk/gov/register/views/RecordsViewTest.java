@@ -23,7 +23,10 @@ public class RecordsViewTest {
     public void recordsJson_returnsTheMapOfRecords() throws IOException, JSONException {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
-        ImmutableList<String> fields = ImmutableList.of("address", "street");
+        ImmutableList<Field> fields = ImmutableList.of(
+                new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+
         List<RecordView> records = Lists.newArrayList(
                 new RecordView(
                         new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123"),

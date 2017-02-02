@@ -3,9 +3,7 @@ package uk.gov.register.views.representations;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
-import uk.gov.register.core.FieldValue;
-import uk.gov.register.core.ListValue;
-import uk.gov.register.core.StringValue;
+import uk.gov.register.core.*;
 import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
@@ -19,7 +17,11 @@ import static org.junit.Assert.assertThat;
 public class TsvWriterTest {
 
     private final TsvWriter writer = new TsvWriter();
-    private final Iterable<String> fields = ImmutableList.of("key1", "key2", "key3", "key4");
+    private final Iterable<Field> fields = ImmutableList.of(
+            new Field("key1", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
+            new Field("key2", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
+            new Field("key3", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
+            new Field("key4", "datatype", new RegisterName("register"),Cardinality.ONE, "text"));
 
     @Test
     public void tsv_entriesAreGenerated() throws IOException {

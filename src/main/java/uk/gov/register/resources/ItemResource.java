@@ -18,22 +18,18 @@ import java.util.Optional;
 public class ItemResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final ItemConverter itemConverter;
-    private final RegisterMetadata registerMetadata;
 
     @Inject
     public ItemResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.itemConverter = itemConverter;
-        this.registerMetadata = registerMetadata;
     }
 
     @GET
     @Path("/sha-256:{item-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
     public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) {
-        return getItem(itemHash).map((item) -> viewFactory.getItemView(makeItemView(item)))
+        return getItem(itemHash).map(viewFactory::getItemView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
 
@@ -41,7 +37,7 @@ public class ItemResource {
     @Path("/sha-256:{item-hash}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_TTL, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
     public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) {
-        return getItem(itemHash).map(this::makeItemView)
+        return getItem(itemHash).map(viewFactory::getItemMediaView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
 
@@ -50,10 +46,5 @@ public class ItemResource {
         return register.getItemBySha256(hash);
     }
 
-    private ItemView makeItemView(Item item) {
-        return new ItemView(item.getSha256hex(),
-                itemConverter.convertItem(item),
-                registerMetadata.getFields()
-        );
-    }
+
 }

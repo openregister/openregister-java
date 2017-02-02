@@ -1,21 +1,10 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.FieldValue;
-import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.*;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.views.AttributionView;
-import uk.gov.register.views.EntryListView;
-import uk.gov.register.views.ItemView;
-import uk.gov.register.views.PaginatedView;
-import uk.gov.register.views.RecordView;
-import uk.gov.register.views.RecordsView;
-import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -25,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -37,7 +25,6 @@ public class RecordResource {
     private final ViewFactory viewFactory;
     private final RegisterName registerPrimaryKey;
     private final ItemConverter itemConverter;
-    private Iterable<String> fields;
 
     @Inject
     public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
@@ -45,9 +32,8 @@ public class RecordResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        registerPrimaryKey = register.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterName();
         this.itemConverter = itemConverter;
-        this.fields = registerMetadata.getFields();
     }
 
     @GET
@@ -63,7 +49,7 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
-        return register.getRecord(key).map(this::toRecordView)
+        return register.getRecord(key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -111,8 +97,8 @@ public class RecordResource {
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return new RecordsView(recordViews, fields);
+        List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
+        return viewFactory.getRecordsMediaView(recordViews);
     }
 
     @GET
@@ -155,14 +141,7 @@ public class RecordResource {
 
     private RecordsView getRecordsView(int limit, int offset) {
         List<Record> records = register.getRecords(limit, offset);
-        List<RecordView> recordViews = records.stream().map(this::toRecordView).collect(toList());
-        return new RecordsView(recordViews, fields);
+        List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
+        return viewFactory.getRecordsMediaView(recordViews);
     }
-
-    private RecordView toRecordView(Record r) {
-        Map<String, FieldValue> itemContent = itemContent(r);
-        ItemView itemView = new ItemView(r.item.getSha256hex(), itemContent, fields);
-        return new RecordView(r.entry, itemView, fields);
-    }
-
 }

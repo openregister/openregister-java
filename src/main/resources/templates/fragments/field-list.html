@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<body>
+  <div th:fragment="field-list(fields)">
+    <dl>
+      <th:block th:each="field : ${fields}">
+        <dt th:text="${#strings.capitalize(field.fieldName) + ':'}"></dt>
+        <dd th:text="${field.text}"></dd>
+      </th:block>
+    </dl>
+  </div>
+</body>
+</html>
