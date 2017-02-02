@@ -23,6 +23,14 @@
         <div class="column-two-thirds">
           <h1 class="heading-large" th:include="fragments/pagination.html::pagination-top('records')"></h1>
           <div th:include="fragments/data-formats.html::data-formats"></div>
+          <details role="group">
+            <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+              <span class="summary">What are the table headers?</span>
+            </summary>
+            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+              <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
+            </div>
+          </details>
         </div>
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
