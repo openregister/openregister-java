@@ -1,21 +1,10 @@
 package uk.gov.register.resources;
 
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.FieldValue;
-import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.*;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.views.AttributionView;
-import uk.gov.register.views.EntryListView;
-import uk.gov.register.views.ItemView;
-import uk.gov.register.views.PaginatedView;
-import uk.gov.register.views.RecordView;
-import uk.gov.register.views.RecordsView;
-import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -25,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -45,8 +33,9 @@ public class RecordResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        registerPrimaryKey = register.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterName();
         this.itemConverter = itemConverter;
+
         this.fields = registerMetadata.getFields();
     }
 
@@ -160,9 +149,7 @@ public class RecordResource {
     }
 
     private RecordView toRecordView(Record r) {
-        Map<String, FieldValue> itemContent = itemContent(r);
-        ItemView itemView = new ItemView(r.item.getSha256hex(), itemContent, fields);
-        return new RecordView(r.entry, itemView, fields);
+        return new RecordView(r.entry, viewFactory.getItemMediaView(r.item), fields);
     }
 
 }

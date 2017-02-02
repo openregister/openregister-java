@@ -7,14 +7,16 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterLinkService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ViewFactory {
@@ -29,6 +31,7 @@ public class ViewFactory {
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
     private final Provider<ConfigManager> configManager;
     private final Provider<RegisterLinkService> registerLinkService;
+    private final ItemConverter itemConverter;
 
     @Inject
     public ViewFactory(RequestContext requestContext,
@@ -41,7 +44,7 @@ public class ViewFactory {
                        RegisterResolver registerResolver,
                        Provider<RegisterReadOnly> register,
                        Provider<ConfigManager> configManager,
-                       Provider<RegisterLinkService> registerLinkService) {
+                       Provider<RegisterLinkService> registerLinkService, ItemConverter itemConverter) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
@@ -53,22 +56,23 @@ public class ViewFactory {
         this.register = register;
         this.configManager = configManager;
         this.registerLinkService = registerLinkService;
+        this.itemConverter = itemConverter;
     }
 
-    public ExceptionView exceptionBadRequestView(String message){
+    public ExceptionView exceptionBadRequestView(String message) {
         return exceptionView("Bad request", message);
     }
 
-    public ExceptionView exceptionNotFoundView(){
+    public ExceptionView exceptionNotFoundView() {
         return exceptionView("Page not found", "If you entered a web address please check it was correct.");
     }
 
-    public ExceptionView exceptionServerErrorView(){
+    public ExceptionView exceptionServerErrorView() {
         return exceptionView("Oops, looks like something went wrong", "500 error");
     }
 
     public ExceptionView exceptionView(String heading, String message) {
-        return new ExceptionView (requestContext, heading, message, register.get(), registerTrackingConfiguration.get(), registerResolver);
+        return new ExceptionView(requestContext, heading, message, register.get(), registerTrackingConfiguration.get(), registerResolver);
     }
 
     public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
@@ -101,8 +105,8 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerTrackingConfiguration.get(), registerResolver, fieldValueMap);
     }
 
-    public AttributionView<ItemView> getItemView(ItemView itemView) {
-        return getAttributionView("item.html", itemView);
+    public AttributionView<ItemView> getItemView(Item item) {
+        return getAttributionView("item.html", getItemMediaView(item));
     }
 
     public AttributionView<Entry> getEntryView(Entry entry) {
@@ -133,5 +137,18 @@ public class ViewFactory {
     private Optional<GovukOrganisation.Details> getBranding() {
         Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(registerMetadata.get().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
+    }
+
+    private List<Field> getFields() {
+        FieldsConfiguration fieldsConfiguration = configManager.get().getFieldsConfiguration();
+        return register.get().getRegisterMetadata().getFields().stream()
+                .map(fieldsConfiguration::getField)
+                .collect(Collectors.toList());
+    }
+
+
+    public ItemView getItemMediaView(Item item) {
+
+        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item), getFields());
     }
 }

@@ -20,7 +20,11 @@ import static org.junit.Assert.assertThat;
 public class CsvWriterTest {
 
     CsvWriter csvWriter = new CsvWriter();
-    private final ImmutableList<String> fields = ImmutableList.of("key1", "key2", "key3", "key4");
+    private final ImmutableList<Field> fields = ImmutableList.of(
+            new Field("key1", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
+            new Field("key2", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
+            new Field("key3", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
+            new Field("key4", "datatype", new RegisterName("register"),Cardinality.ONE, "text"));
 
     @Test
     public void writes_EntryListView_to_output_stream() throws IOException {

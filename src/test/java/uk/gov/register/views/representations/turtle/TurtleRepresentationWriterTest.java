@@ -21,7 +21,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TurtleRepresentationWriterTest {
     private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
 
-    private final Set<String> fields = ImmutableSet.of("address", "location", "link-values", "string-values");
+    private final Set<Field> fields = ImmutableSet.of(
+            new Field("address", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
+            new Field("location", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
+            new Field("link-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
+            new Field("string-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
 
     @Test
     public void rendersFieldPrefixFromConfiguration() throws Exception {
@@ -60,7 +64,7 @@ public class TurtleRepresentationWriterTest {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
                         "address", new LinkValue(new RegisterName("address"), "1111111"),
-                        "location", new LinkValue(new RegisterName( "address"), "location-value"),
+                        "location", new LinkValue(new RegisterName("address"), "location-value"),
                         "name", new StringValue("foo")
                 );
 
