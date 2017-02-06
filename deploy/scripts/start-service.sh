@@ -25,6 +25,7 @@ docker run \
     --detach \
     --name=openregister \
     --publish 80:8080 \
+    --publish 8081:8081 \
     --restart "unless-stopped" \
     --volume /srv/openregister-java:/srv/openregister-java \
     --log-driver=fluentd \
