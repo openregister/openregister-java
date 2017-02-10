@@ -29,6 +29,7 @@ docker run \
     --restart "unless-stopped" \
     --volume /srv/openregister-java:/srv/openregister-java \
     --log-driver=fluentd \
+    --log-opt fluentd-async-connect=true \
     openjdk:8-jre-alpine \
     java \
       -Xmx"${MAX_JVM_HEAP_SIZE}k" \
