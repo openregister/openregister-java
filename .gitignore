@@ -26,4 +26,3 @@ deployable_bundle
 .cache
 
 .sass-cache
-src/main/resources/assets/css

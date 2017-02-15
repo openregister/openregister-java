@@ -31,7 +31,7 @@ compass {
         new File(assetsDir, "govuk_template/source/assets/stylesheets")
     )
     sassDir = new File(assetsDir, "sass")
-    cssDir = new File(assetsDir, "css")
+    cssDir = file("build/resources/main/assets/css")
     outputStyle = "expanded"
     force = true
     sourcemap = true
