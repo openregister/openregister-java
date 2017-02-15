@@ -27,8 +27,8 @@ Recompile the `.scss` files to `.css` via Gradle task:
 
     ./gradlew compassCompile
 
-If you are want to make iterative changes, you can start a compass
-watch task to automatically update a running app with scss changes:
+If you want to make iterative changes, you can start a compass watch
+task to automatically update a running app with scss changes:
 
     ./gradlew compassWatch
 
