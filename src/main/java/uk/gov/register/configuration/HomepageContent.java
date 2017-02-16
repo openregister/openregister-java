@@ -25,8 +25,8 @@ public class HomepageContent {
     }
 
     @SuppressWarnings("unused, used from template")
-    public String getSpecificationUrl() {
-        return "https://open-registers-docs.readthedocs.io/en/latest/";
+    public String getTechDocsUrl() {
+        return "https://registers-docs.cloudapps.digital";
     }
 
     @SuppressWarnings("unused, used from template")
