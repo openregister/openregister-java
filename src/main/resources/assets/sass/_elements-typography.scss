@@ -7,6 +7,10 @@
 main {
   @include core-19;
   -webkit-font-smoothing: antialiased;
+
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 }
 
 // Core font sizes
@@ -72,6 +76,10 @@ main {
 .heading-xlarge {
   @include bold-48();
 
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
+
   margin-top: em(15, 32);
   margin-bottom: em(30, 32);
 
@@ -91,6 +99,10 @@ main {
 
 .heading-large {
   @include bold-36();
+
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 
   margin-top: em(25, 24);
   margin-bottom: em(10, 24);
@@ -112,6 +124,10 @@ main {
 .heading-medium {
   @include bold-24();
 
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
+
   margin-top: em(25, 20);
   margin-bottom: em(10, 20);
 
@@ -124,6 +140,10 @@ main {
 
 .heading-small {
   @include bold-19();
+
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 
   margin-top: em(10, 16);
   margin-bottom: em(5, 16);

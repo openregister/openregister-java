@@ -18,6 +18,11 @@
 
   li {
     @include core-16($line-height: (20 / 16));
+
+    .openregister-org & {
+      font-family: $Helvetica-Regular;
+    }
+
     float: left;
     list-style: none;
     text-align: right;
@@ -45,6 +50,11 @@
 
       .pagination-part-title {
         @include core-27($line-height: (33.75 / 27));
+
+        .openregister-org & {
+          font-family: $Helvetica-Regular;
+        }
+
         margin-bottom: 0.1em;
         display: block;
       }
