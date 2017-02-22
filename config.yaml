@@ -32,7 +32,6 @@ registers:
       password: inhibition
     custodianName: Government Digital Service
 
-
 server:
   registerDefaultExceptionMappers: false
   adminConnectors:
@@ -76,3 +75,13 @@ logging:
     - type: console
       target: stdout
       logFormat: "%-5p [%d{ISO8601}] %X{register} %c: %m%n%rEx"
+
+# Metrics configuration going to telegraf
+metrics:
+  reporters:
+    - type: graphite
+      host: telegraf
+      port: 8092
+      transport: udp
+      frequency: 5 seconds
+

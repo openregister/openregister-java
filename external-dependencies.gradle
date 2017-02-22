@@ -1,5 +1,6 @@
 ext {
     dropwizard_version = '1.0.2'
+    dropwizard_metrics_version = '3.1.0'
     jersey_version = '2.23.2'
     jackson_version = '2.8.3'
 
@@ -14,6 +15,9 @@ ext {
             "io.dropwizard:dropwizard-jdbi:${dropwizard_version}",
             "io.dropwizard:dropwizard-logging:${dropwizard_version}",
             "io.dropwizard:dropwizard-views:${dropwizard_version}",
+            "io.dropwizard:dropwizard-metrics-graphite:${dropwizard_version}",
+            "io.dropwizard.metrics:metrics-core:${dropwizard_metrics_version}",
+            "io.dropwizard.metrics:metrics-graphite:${dropwizard_metrics_version}",
             "io.dropwizard.modules:dropwizard-flyway:1.0.0-1"
     ]
 
