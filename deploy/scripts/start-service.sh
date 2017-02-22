@@ -11,6 +11,20 @@ MAX_JVM_HEAP_SIZE=$(($TOTAL_MEMORY-512*1024))
 
 aws s3 cp s3://${CONFIG_BUCKET}/${REGISTER_NAME}/openregister/config.yaml /srv/openregister-java --region eu-west-1
 aws s3 cp s3://${CONFIG_BUCKET}/fluentd.conf /srv/openregister-java --region eu-west-1
+aws s3 cp s3://${CONFIG_BUCKET}/telegraf.conf /srv/openregister-java --region eu-west-1
+
+docker network create \
+    --driver=bridge \
+    --subnet=172.18.1.0/24 \
+    openregisters
+
+docker run \
+    --detach \
+    --name=telegraf \
+    --restart "unless-stopped" \
+    --volume /srv/openregister-java/telegraf.conf:/etc/telegraf/telegraf.conf:ro \
+    --network openregisters \
+    telegraf
 
 docker run \
     --detach \
@@ -18,6 +32,7 @@ docker run \
     --publish 24224:24224 \
     --restart "unless-stopped" \
     --volume /srv/openregister-java/fluentd.conf:/fluentd/etc/fluentd.conf \
+    --network openregisters \
     --env FLUENTD_CONF=fluentd.conf \
     samcrang/fluentd-sumologic
 
@@ -28,6 +43,7 @@ docker run \
     --publish 8081:8081 \
     --restart "unless-stopped" \
     --volume /srv/openregister-java:/srv/openregister-java \
+    --network openregisters \
     --log-driver=fluentd \
     --log-opt fluentd-async-connect=true \
     openjdk:8-jre-alpine \
