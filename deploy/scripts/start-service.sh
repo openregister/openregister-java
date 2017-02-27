@@ -34,7 +34,7 @@ docker run \
     --volume /srv/openregister-java/fluentd.conf:/fluentd/etc/fluentd.conf \
     --network openregisters \
     --env FLUENTD_CONF=fluentd.conf \
-    samcrang/fluentd-sumologic
+    openregister/fluentd-sumologic
 
 docker run \
     --detach \
