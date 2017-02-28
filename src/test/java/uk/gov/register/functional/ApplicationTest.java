@@ -51,7 +51,7 @@ public class ApplicationTest {
     public void appSupportsContentSecurityPolicy() throws Exception {
         Response response = register.getRequest(address, "/entries");
 
-        assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self' www.google-analytics.com")));
+        assertThat(response.getHeaders().get(HttpHeaders.CONTENT_SECURITY_POLICY), equalTo(ImmutableList.of("default-src 'self' www.google-analytics.com; font-src data:;")));
     }
 
     @Test
