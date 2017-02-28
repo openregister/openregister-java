@@ -47,6 +47,10 @@
         @include core-27($line-height: (33.75 / 27));
         margin-bottom: 0.1em;
         display: block;
+
+        .openregister-org & {
+          font-family: $Helvetica-Regular;
+        }
       }
 
     }
@@ -91,6 +95,10 @@
 
     &.next-page a {
       padding: 0.75em 3em 0.75em 0;
+    }
+
+    .openregister-org & {
+      font-family: $Helvetica-Regular;
     }
   }
 }

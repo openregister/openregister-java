@@ -7,6 +7,10 @@
 main {
   @include core-19;
   -webkit-font-smoothing: antialiased;
+
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 }
 
 // Core font sizes
@@ -87,6 +91,9 @@ main {
     color: $secondary-text-colour;
   }
 
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 }
 
 .heading-large {
@@ -107,6 +114,9 @@ main {
     color: $secondary-text-colour;
   }
 
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 }
 
 .heading-medium {
@@ -120,6 +130,9 @@ main {
     margin-bottom: em(20, 24);
   }
 
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 }
 
 .heading-small {
@@ -132,6 +145,9 @@ main {
     margin-top: em(20, 19);
   }
 
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
 }
 
 // Text
