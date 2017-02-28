@@ -15,7 +15,6 @@ $pale-grey: #f5f5f5;
 $dark-grey: #bfc1c3;
 $register: #2b8cc4;
 $light-gray: #f9f9f9;
-$toolkit-font-stack: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
 
 // Import from govuk_frontend_toolkit
 @import "colours";
@@ -41,28 +40,82 @@ $toolkit-font-stack: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sa
 @import "breadcrumbs";
 
 // Register styles
-
 @import "organisations";
 @import "page-navigation";
 @import "download";
 
-body {
+.openregister-org {
   font-family: $Helvetica-Regular;
-}
 
-#global-header {
-  background-color: $register;
-
-  .header-wrapper {
+  #global-header {
     background-color: $register;
 
-    .header-global .header-logo {
-      width: 100%;
+    .header-wrapper {
+      background-color: $register;
+
+      .header-global .header-logo {
+        width: 100%;
+      }
+    }
+
+    #logo {
+      background: none;
+
+      img {
+        display: none;
+      }
     }
   }
 
-  #logo {
-    background: none;
+  #global-header-bar {
+    display: none;
+  }
+
+  .header-proposition {
+    display: none;
+  }
+}
+
+.header-title {
+  float: left;
+  color: $white;
+  @include bold-24();
+  font-weight: normal;
+
+  .openregister-org & {
+    font-family: $Helvetica-Regular;
+  }
+
+  // When the title appears on its own line (the search box is hidden and only a
+  // search toggle is visible) it needs some padding
+  @media screen and (max-width: 379px) {
+    margin: 5px 15px 0;
+  }
+
+  .gov-uk & {
+    // When it appears next to the crown, align the heading with the baseline of
+    // the GOV.UK logo...
+    // ...at 16px
+    @media screen and (min-width: 380px) {
+      margin-top: 14px;
+    }
+
+    // ...and at 24px
+    @include media(tablet) {
+      margin-top: 8px;
+    }
+  }
+}
+
+#global-header.with-proposition .header-wrapper {
+  .header-global .header-logo {
+    width: auto;
+  }
+
+  @include media(tablet) {
+    .header-proposition {
+      margin-top: 8px;
+    }
   }
 }
 
@@ -74,14 +127,24 @@ body {
 .phase-banner {
   @include phase-banner();
 
-  .phase-tag {
-    padding: 2px 5px;
+  .openregister-org & {
+    .phase-tag {
+      font-family: $Helvetica-Regular;
+      padding: 2px 5px;
+    }
+
+    p {
+      font-family: $Helvetica-Regular;
+    }
   }
 }
 
 .button {
   @include button;
-  padding: 0.526315em 0.789473em;
+
+  .openregister-org & {
+    padding: 0.526315em 0.789473em;
+  }
 }
 
 .govuk-related-items {
@@ -190,7 +253,12 @@ table {
   td, th {
     vertical-align: top;
     text-align: left;
-    font-family: monospace;
+    font-family: $toolkit-font-stack-tabular;
+
+    .openregister-org & {
+      font-family: monospace;
+    }
+
     padding: $gutter-one-third;
   }
 
