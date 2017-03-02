@@ -94,6 +94,10 @@ public class ThymeleafView extends View {
         return requestContext.getScheme();
     }
 
+    @SuppressWarnings("unused, used by templates")
+    public Boolean getIsGovukBranded() {
+        return requestContext.getHost().endsWith("register.gov.uk");
+    }
 
     public Optional<String> getRegisterTrackingId() {
         return registerTrackingId;

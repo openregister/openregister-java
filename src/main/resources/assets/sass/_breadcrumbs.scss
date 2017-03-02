@@ -15,5 +15,9 @@
     @include device-pixel-ratio() {
       background-image: image-url("images/separator-2x.png");
     }
+
+    .openregister-org & {
+      font-family: $Helvetica-Regular;
+    }
   }
 }

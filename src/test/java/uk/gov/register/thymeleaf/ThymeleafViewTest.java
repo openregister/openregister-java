@@ -48,4 +48,18 @@ public class ThymeleafViewTest {
 
         assertThat(renderedCopyrightText, containsString("<p>Copyright text <a href=\"http://www.example.com/copyright\">with link</a></p>"));
     }
+
+    @Test
+    public void getIsGovukBranded_returnsTrueIfXForwardedHostIsOnRegisterGovuk() throws Exception {
+        when(requestContext.getHost()).thenReturn("foo.register.gov.uk");
+
+        assertThat(thymeleafView.getIsGovukBranded(), equalTo(true));
+    }
+
+    @Test
+    public void getIsGovukBranded_returnsFalseIfXForwardedHostIsNotOnRegisterGovuk() throws Exception {
+        when(requestContext.getHost()).thenReturn("foo.openregister.org");
+
+        assertThat(thymeleafView.getIsGovukBranded(), equalTo(false));
+    }
 }

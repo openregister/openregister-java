@@ -2,7 +2,7 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head th:include="fragments/head.html::head"></head>
-<body>
+<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
   <header th:replace="fragments/global-header.html::global-header"></header>
 
   <div id="wrapper">

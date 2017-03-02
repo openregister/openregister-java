@@ -2,14 +2,26 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <body>
-  <header th:fragment="global-header" id="global-header" role="banner">
-    <div class="header-wrapper">
-      <div class="header-global">
-        <div class="header-logo">
-          <a id="logo" class="content" href="/" th:text="${friendlyRegisterName}"></a>
+  <th:block th:fragment="global-header">
+    <header id="global-header" role="banner" class="with-proposition">
+      <div class="header-wrapper">
+        <div class="header-global">
+          <div class="header-logo">
+            <a id="logo" class="content" href="https://www.gov.uk/" title="Go to the GOV.UK homepage">
+              <img src="/assets/images/gov.uk_logotype_crown_invert_trans.png" width="36" height="32" alt="GOV.UK Registers"/>
+              GOV.UK
+            </a>
+          </div>
+          <h1 class="header-title">Registers</h1>
+        </div>
+        <div class="header-proposition">
+          <div class="content">
+            <a href="/" id="proposition-name" th:text="${friendlyRegisterName}">Register Name</a>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
+    <div id="global-header-bar"></div>
+  </th:block>
 </body>
 </html>
