@@ -5,7 +5,7 @@
     <meta charset="UTF-8"/>
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" th:href="'/assets/images/' + ${isGovukBranded ? 'govuk-favicon.ico' : 'blank-favicon.ico'}" type="image/x-icon" />
     <title th:text="${friendlyRegisterName}"></title>
     <link rel="stylesheet" href="/assets/govuk_template/source/assets/stylesheets/fonts.css"/>
     <link rel="stylesheet" href="/assets/css/main.css"/>
