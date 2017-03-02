@@ -2,7 +2,7 @@
 
 @mixin organisation-logo-19 {
   font-family: $Helvetica-Regular;
-  font-size: 13px;
+  font-size: 16px;
   line-height: (15 / 13);
   font-weight: 400;
   text-transform: none;
@@ -13,13 +13,13 @@
   background: image-url("coa-default-18.gif") no-repeat 8px 0;
   height: auto;
   width: auto;
-  padding-top: 23px;
+  padding-top: 30px;
   padding-left: 10px;
 
   @include media(tablet) {
-    font-size: 19px;
+    font-size: 18px;
     line-height: (20 / 19);
-    padding-top: 30px;
+    padding-top: 35px;
     background-image: image-url("coa-default-24.gif");
   }
 
@@ -160,9 +160,19 @@
 
 @mixin organisation-logo-image($crest) {
   background: image-url('crests/#{$crest}_13px.png') no-repeat 8px 0;
+  background-size: auto 25px;
+
+  @include device-pixel-ratio() {
+    background-image: image-url('crests/#{$crest}_13px_x2.png');
+  }
 
   @include media(tablet) {
-    background-image: image-url('crests/#{$crest}_18px.png');
+    background: image-url('crests/#{$crest}_18px.png') no-repeat 8px 0;
+    background-size: auto 30px;
+
+    @include device-pixel-ratio() {
+      background-image: image-url('crests/#{$crest}_18px_x2.png');
+    }
   }
 }
 
