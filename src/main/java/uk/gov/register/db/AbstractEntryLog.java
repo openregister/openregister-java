@@ -76,7 +76,7 @@ public abstract class AbstractEntryLog implements EntryLog {
         checkpoint();
         String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getCurrentRootHash()));
 
-        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
+        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), getTotalEntries());
     }
 
     @Override
@@ -84,7 +84,7 @@ public abstract class AbstractEntryLog implements EntryLog {
         checkpoint();
         String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getSpecificRootHash(totalEntries)));
 
-        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash));
+        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), totalEntries);
     }
 
     @Override

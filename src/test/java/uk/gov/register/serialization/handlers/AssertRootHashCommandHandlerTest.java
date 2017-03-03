@@ -47,7 +47,7 @@ public class AssertRootHashCommandHandlerTest {
 
     @Test
     public void execute_obtainsAndAssertsRegisterProof() {
-        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"));
+        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"), 123);
         when(register.getRegisterProof()).thenReturn(registerProof);
 
         RegisterResult registerResult = sutHandler.execute(assertRootHashCommand, register);
@@ -58,7 +58,7 @@ public class AssertRootHashCommandHandlerTest {
 
     @Test
     public void execute_failsIfRootHashesDontMatch() {
-        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "different-hash"));
+        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "different-hash"), 456);
         when(register.getRegisterProof()).thenReturn(registerProof);
 
         RegisterResult registerResult = sutHandler.execute(assertRootHashCommand, register);
