@@ -56,6 +56,9 @@ repositories {
     maven {
         url 'https://dl.bintray.com/openregister/openregister'
     }
+    maven {
+        url 'https://dl.bintray.com/alphagov/maven'
+    }
 }
 
 //noinspection GroovyAssignabilityCheck
@@ -68,6 +71,7 @@ dependencies {
     compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, awsS3
     compile jacksonCsv, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
     compile jdbi, jersey_client
+    compile dropwizardLogstash
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }

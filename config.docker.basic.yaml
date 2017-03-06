@@ -20,6 +20,10 @@ server:
   adminConnectors:
     - type: http
       port: 9092
+  requestLog:
+    type: classic
+    appenders:
+      - type: logstash-console
 
 registerDomain: openregister.dev:8080
 
@@ -62,14 +66,10 @@ registers:
 
 # Logging settings.
 logging:
-
   level: INFO
-
   # Logger-specific levels.
   loggers:
     "uk.gov": DEBUG
     "org.skife.jdbi.v2": TRACE
   appenders:
-    - type: console
-      target: stdout
-      logFormat: "%-5p [%d{ISO8601}] %X{register} %c: %m%n%rEx"
+    - type: logstash-console
