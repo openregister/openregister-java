@@ -12,7 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.*;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
-import uk.gov.register.serialization.mappers.RegisterProofCommandMapper;
+import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
 
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class RSFCreatorTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
-    private final String EMPTY_REGISTER_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    private static final String EMPTY_REGISTER_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
     private RSFCreator sutCreator;
 
@@ -43,7 +43,6 @@ public class RSFCreatorTest {
     private Entry entry2;
     private Item item1;
     private Item item2;
-    private RegisterProof emptyRegisterProof;
 
     private RegisterCommand assertEmptyRootHashCommand;
     private RegisterCommand addItem1Command;
@@ -54,7 +53,7 @@ public class RSFCreatorTest {
     @Before
     public void setUp() {
         sutCreator = new RSFCreator();
-        sutCreator.register(new RegisterProofCommandMapper());
+        sutCreator.register(new RootHashCommandMapper());
         sutCreator.register(new EntryToCommandMapper());
         sutCreator.register(new ItemToCommandMapper());
 
@@ -68,9 +67,9 @@ public class RSFCreatorTest {
         entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
         entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "item2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value");
 
-        emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH));
+        HashValue emptyRegisterHash = new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH);
 
-        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterProof.getRootHash().encode()));
+        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterHash.encode()));
 
         addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
@@ -83,7 +82,7 @@ public class RSFCreatorTest {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
-        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"));
+        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 46464);
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register);
@@ -106,8 +105,8 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
-        RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"));
-        RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"));
+        RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"), 1);
+        RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
 
         when(register.getItemIterator(1, 2)).thenReturn(Collections.singletonList(item1).iterator());
         when(register.getEntryIterator(1, 2)).thenReturn(Collections.singletonList(entry1).iterator());
@@ -134,11 +133,11 @@ public class RSFCreatorTest {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
-        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"));
+        RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 28828);
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
 
         expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Mapper not registered for class: uk.gov.register.views.RegisterProof");
+        expectedException.expectMessage("Mapper not registered for class: uk.gov.register.util.HashValue");
 
         RSFCreator creatorWithoutMappers = new RSFCreator();
         RegisterSerialisationFormat rsf = creatorWithoutMappers.create(register);

@@ -38,6 +38,7 @@ public class VerifiableLogResourceFunctionalTest {
         Map<?,?> responseData = response.readEntity(Map.class);
         assertThat(responseData.get("proof-identifier").toString(), equalTo(proofIdentifier));
         assertThat(responseData.get("root-hash").toString(), not(isEmptyOrNullString()));
+        assertThat(responseData.get("total-entries"), is(5));
     }
 
     @Test

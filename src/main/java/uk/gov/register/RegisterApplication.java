@@ -31,7 +31,7 @@ import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
 import uk.gov.register.serialization.RSFExecutor;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
-import uk.gov.register.serialization.mappers.RegisterProofCommandMapper;
+import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
@@ -98,7 +98,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RSFCreator rsfCreator = new RSFCreator();
         rsfCreator.register(new ItemToCommandMapper());
         rsfCreator.register(new EntryToCommandMapper());
-        rsfCreator.register(new RegisterProofCommandMapper());
+        rsfCreator.register(new RootHashCommandMapper());
 
         jersey.register(new AbstractBinder() {
             @Override

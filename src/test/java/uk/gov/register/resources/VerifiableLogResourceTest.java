@@ -23,7 +23,7 @@ public class VerifiableLogResourceTest {
 
     @Test
     public void shouldUseServiceToGetRegisterProof() {
-        RegisterProof expectedProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, sampleHash1));
+        RegisterProof expectedProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, sampleHash1), 12345);
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
         when(registerMock.getRegisterProof()).thenReturn(expectedProof);
 

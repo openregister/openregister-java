@@ -4,7 +4,6 @@ import com.google.common.collect.Iterators;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.RegisterProof;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,22 +11,20 @@ import java.util.Map;
 
 public class RSFCreator {
 
-    private final String EMPTY_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-    private final RegisterProof emptyRegisterProof;
+    private final HashValue EMPTY_ROOT_HASH = new HashValue(HashingAlgorithm.SHA256, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 
     private Map<Class, RegisterCommandMapper> registeredMappers;
 
     public RSFCreator() {
         this.registeredMappers = new HashMap<>();
-        this.emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_ROOT_HASH));
     }
 
     public RegisterSerialisationFormat create(Register register) {
         Iterator<?> iterators = Iterators.concat(
-                Iterators.singletonIterator(emptyRegisterProof),
+                Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(),
                 register.getEntryIterator(),
-                Iterators.singletonIterator(register.getRegisterProof()));
+                Iterators.singletonIterator(register.getRegisterProof().getRootHash()));
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);
@@ -40,14 +37,14 @@ public class RSFCreator {
             iterators = Iterators.singletonIterator(register.getRegisterProof(totalEntries1));
         } else {
 
-            RegisterProof previousRegisterProof = totalEntries1 == 0 ? emptyRegisterProof : register.getRegisterProof(totalEntries1);
-            RegisterProof nextRegisterProof = register.getRegisterProof(totalEntries2);
+            HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();
+            HashValue nextRootHash = register.getRegisterProof(totalEntries2).getRootHash();
 
             iterators = Iterators.concat(
-                    Iterators.singletonIterator(previousRegisterProof),
+                    Iterators.singletonIterator(previousRootHash),
                     register.getItemIterator(totalEntries1, totalEntries2),
                     register.getEntryIterator(totalEntries1, totalEntries2),
-                    Iterators.singletonIterator(nextRegisterProof));
+                    Iterators.singletonIterator(nextRootHash));
         }
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);
