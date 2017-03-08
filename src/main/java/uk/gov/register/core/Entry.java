@@ -16,6 +16,7 @@ import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,13 +24,20 @@ import java.util.List;
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
 public class Entry implements CsvRepresentationView<Entry> {
     private final int entryNumber;
-    private final HashValue hashValue;
+    private final List<HashValue> hashValues;
     private final Instant timestamp;
     private String key;
 
     public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key) {
         this.entryNumber = entryNumber;
-        this.hashValue = hashValue;
+        this.hashValues = Arrays.asList(hashValue);
+        this.timestamp = timestamp;
+        this.key = key;
+    }
+
+    public Entry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key) {
+        this.entryNumber = entryNumber;
+        this.hashValues = hashValues;
         this.timestamp = timestamp;
         this.key = key;
     }
@@ -42,7 +50,12 @@ public class Entry implements CsvRepresentationView<Entry> {
     @SuppressWarnings("unused, used from DAO")
     @JsonProperty("item-hash")
     public HashValue getSha256hex() {
-        return hashValue;
+        return hashValues.get(0);
+    }
+
+    @JsonIgnore
+    public List<HashValue> getItemHashes() {
+        return hashValues;
     }
 
     @JsonIgnore
@@ -95,12 +108,12 @@ public class Entry implements CsvRepresentationView<Entry> {
         Entry entry = (Entry) o;
 
         if (entryNumber != entry.entryNumber) return false;
-        return hashValue == null ? entry.hashValue == null : hashValue.equals(entry.hashValue);
+        return hashValues == null ? entry.hashValues == null : hashValues.equals(entry.hashValues);
     }
 
     @Override
     public int hashCode() {
-        int result = hashValue != null ? hashValue.hashCode() : 0;
+        int result = hashValues != null ? hashValues.hashCode() : 0;
         result = 31 * entryNumber + result;
         return result;
     }
