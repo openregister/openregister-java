@@ -11,12 +11,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -42,6 +41,10 @@ public class RSFExecutorTest {
 
     private Item item1;
 
+    private RegisterProof emptyRegisterProof;
+    private RegisterProof middleRegisterProof;
+    private RegisterProof lastRegisterProof;
+
     private RegisterCommand assertEmptyRootHashCommand;
     private RegisterCommand addItem1Command;
     private RegisterCommand addItem2Command;
@@ -65,13 +68,13 @@ public class RSFExecutorTest {
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
 
-        HashValue emptyRootHash = new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH);
-        HashValue middleRootHash = new HashValue(HashingAlgorithm.SHA256, "middle-one");
-        HashValue lastRootHash = new HashValue(HashingAlgorithm.SHA256, "last-one");
+        emptyRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH));
+        middleRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "middle-one"));
+        lastRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "last-one"));
 
-        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRootHash.encode()));
-        assertMiddleRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(middleRootHash.encode()));
-        assertLastRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(lastRootHash.encode()));
+        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterProof.getRootHash().encode()));
+        assertMiddleRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(middleRegisterProof.getRootHash().encode()));
+        assertLastRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(lastRegisterProof.getRootHash().encode()));
 
         addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
@@ -210,4 +213,5 @@ public class RSFExecutorTest {
 
         assertThat(registerResult1, equalTo(registerResult2));
     }
+
 }

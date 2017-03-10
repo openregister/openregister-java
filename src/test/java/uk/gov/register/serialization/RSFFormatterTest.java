@@ -20,7 +20,7 @@ public class RSFFormatterTest {
     }
 
     @Test
-    public void getFileExtension_returnsRsfExtension(){
+    public void getFileExtension_returnsRsfExtension() {
         assertThat(rsfFormatter.getFileExtension(), equalTo("rsf"));
     }
 
@@ -36,6 +36,14 @@ public class RSFFormatterTest {
         RegisterCommand parsedCommand = rsfFormatter.parse("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
         assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("2016-11-02T14:45:54Z", "sha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254", "ft_openregister_test")));
+    }
+
+    @Test
+    public void parse_parsesAppendEntryMultiItemCommand() {
+        String line = "append-entry\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
+        RegisterCommand parsedCommand = rsfFormatter.parse(line);
+        assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("2016-11-02T14:45:54Z", "sha-256:a;sha-256:b", "ft_openregister_test")));
     }
 
     @Test
