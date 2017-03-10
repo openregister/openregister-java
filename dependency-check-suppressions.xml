@@ -7,4 +7,11 @@
         <gav regex="true">^org\.markdownj:markdownj-core:.*$</gav>
         <cpe>cpe:/a:jcore:jcore</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: commons-collections4-4.1.jar
+   ]]></notes>
+        <gav regex="true">^org\.apache\.commons:commons-collections4:.*$</gav>
+        <cve>CVE-2015-6420</cve>
+    </suppress>
 </suppressions>

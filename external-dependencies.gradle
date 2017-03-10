@@ -26,6 +26,8 @@ ext {
     postgresClient = 'org.postgresql:postgresql:9.4.1211'
 
     apacheCommonsCodec = 'commons-codec:commons-codec:1.10'
+    apacheCommonsCollections = 'org.apache.commons:commons-collections4:4.1';
+
     // force AWS's dependency on dataformat-cbor to match our jackson_version
     awsS3 = ['com.amazonaws:aws-java-sdk-s3:1.11.77', "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jackson_version}"]
 

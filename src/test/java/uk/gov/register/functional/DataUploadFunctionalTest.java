@@ -62,7 +62,7 @@ public class DataUploadFunctionalTest {
         assertThat(storedItem.hashValue, equalTo(Item.itemHash(inputItem)));
 
         Entry entry = testEntryDAO.getAllEntries().get(0);
-        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, Instant.now(), "ft_openregister_test")));
+        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test")));
 
         TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
         assertThat(record.getEntryNumber(), equalTo(1));
@@ -94,10 +94,11 @@ public class DataUploadFunctionalTest {
         JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries();
+        Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), Instant.now(), "register1"),
-                        new Entry(2, Item.itemHash(canonicalItem2), Instant.now(), "register2")
+                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1"),
+                        new Entry(2, Item.itemHash(canonicalItem2), timestamp, "register2")
                 )
         );
 
@@ -130,10 +131,12 @@ public class DataUploadFunctionalTest {
         JsonNode canonicalItem = canonicalJsonMapper.readFromBytes(item1.getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries();
+        Instant timestamp = entries.get(0).getTimestamp();
+
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem), Instant.now(), "register1"),
-                        new Entry(2, Item.itemHash(canonicalItem), Instant.now(), "register2")
+                        new Entry(1, Item.itemHash(canonicalItem), timestamp, "register1"),
+                        new Entry(2, Item.itemHash(canonicalItem), timestamp, "register1")
                 )
         );
 
@@ -166,11 +169,12 @@ public class DataUploadFunctionalTest {
         JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries();
+        Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), Instant.now(), "register1"),
-                        new Entry(2, Item.itemHash(canonicalItem1), Instant.now(), "register1"),
-                        new Entry(3, Item.itemHash(canonicalItem2), Instant.now(), "register2")
+                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1"),
+                        new Entry(2, Item.itemHash(canonicalItem1), timestamp, "register1"),
+                        new Entry(3, Item.itemHash(canonicalItem2), timestamp, "register2")
                 )
         );
 

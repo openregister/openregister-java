@@ -65,7 +65,7 @@ configurations {
 }
 
 dependencies {
-    compile dropwizard, stringTemplate, apacheCommonsCodec, awsS3
+    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, awsS3
     compile jacksonCsv, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
     compile jdbi, jersey_client
     compile(postgresClient) {
