@@ -1,3 +1,13 @@
 #!/usr/bin/env bash
 
-./gradlew run
+if [ ! -e "./deploy/openregister-java.jar" ]
+then
+  docker run \
+    --rm \
+    --volume "$PWD":/usr/src/openregister-java \
+    --workdir /usr/src/openregister-java \
+    openjdk:8 \
+      bash -c "./gradlew stage"
+fi
+
+docker-compose up
