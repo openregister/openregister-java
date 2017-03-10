@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
 import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +32,7 @@ public class Entry implements CsvRepresentationView<Entry> {
 
     public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key) {
         this.entryNumber = entryNumber;
-        this.hashValues = Arrays.asList(hashValue);
+        this.hashValues = new ArrayList<>(Arrays.asList(hashValue));
         this.timestamp = timestamp;
         this.key = key;
     }
@@ -108,13 +110,25 @@ public class Entry implements CsvRepresentationView<Entry> {
         Entry entry = (Entry) o;
 
         if (entryNumber != entry.entryNumber) return false;
-        return hashValues == null ? entry.hashValues == null : hashValues.equals(entry.hashValues);
+        if (key != null ? !key.equals(entry.key) : entry.key != null) return false;
+        if (timestamp != null ? !timestamp.equals(entry.timestamp) : entry.timestamp != null) return false;
+        return hashValues == null ? entry.hashValues == null : CollectionUtils.isEqualCollection(hashValues, entry.hashValues);
     }
 
     @Override
     public int hashCode() {
-        int result = hashValues != null ? hashValues.hashCode() : 0;
-        result = 31 * entryNumber + result;
+        int result = 0;
+
+        Iterator<HashValue> iterator = hashValues.iterator();
+        while (iterator.hasNext()) {
+            HashValue hashValue = iterator.next();
+            result += hashValue.hashCode();
+        }
+
+        result = 31 * result + entryNumber;
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+        result = 31 * result + (key != null ? key.hashCode() : 0);
+
         return result;
     }
 }
