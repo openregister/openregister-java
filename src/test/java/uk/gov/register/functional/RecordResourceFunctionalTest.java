@@ -42,7 +42,7 @@ public class RecordResourceFunctionalTest {
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
         assertThat(res.get("entry-number").textValue(), equalTo("2"));
-        assertThat(res.get("item-hash").textValue(), equalTo("sha-256:" + sha256Hex));
+        assertThat(res.get("item-hashes").get(0).textValue(), equalTo("sha-256:" + sha256Hex));
         assertThat(res.get("address").textValue(), equalTo("6789"));
         assertThat(res.get("street").textValue(), equalTo("presley"));
         assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
@@ -90,12 +90,12 @@ public class RecordResourceFunctionalTest {
 
         JsonNode firstEntry = res.get(0);
         assertThat(firstEntry.get("entry-number").textValue(), equalTo("1"));
-        assertThat(firstEntry.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item0)));
+        assertThat(firstEntry.get("item-hashes").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item0)));
         assertTrue(firstEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
         JsonNode secondEntry = res.get(1);
         assertThat(secondEntry.get("entry-number").textValue(), equalTo("2"));
-        assertThat(secondEntry.get("item-hash").textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
+        assertThat(secondEntry.get("item-hashes").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
         assertTrue(secondEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
     }

@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-@JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
+@JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hashes", "key"})
 public class Entry implements CsvRepresentationView<Entry> {
     private final int indexEntryNumber;
     private final int entryNumber;
@@ -59,11 +59,12 @@ public class Entry implements CsvRepresentationView<Entry> {
 
     @SuppressWarnings("unused, used from DAO")
     @JsonProperty("item-hash")
+    @JsonIgnore
     public HashValue getSha256hex() {
         return hashValues.isEmpty() ? new HashValue("", "") : hashValues.get(0);
     }
 
-    @JsonIgnore
+    @JsonProperty("item-hashes")
     public List<HashValue> getItemHashes() {
         return hashValues;
     }

@@ -1,3 +1,3 @@
-entry-number	entry-timestamp	item-hash	register	text	registry	phase	copyright	fields
+entry-number	entry-timestamp	item-hashes	register	text	registry	phase	copyright	fields
 2	2016-03-02T02:03:04Z	sha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7	value2	The Entry 2				field1;field2
 1	2016-03-01T01:02:03Z	sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18	value1	The Entry 1				field1

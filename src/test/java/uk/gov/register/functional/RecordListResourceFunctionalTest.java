@@ -15,11 +15,13 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
@@ -39,30 +41,30 @@ public class RecordListResourceFunctionalTest {
     public void newRecords_shouldReturnAllCurrentVersionsOnly() throws Exception {
         Response response = register.getRequest(address, "/records.json");
 
-        Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
+        Map<String, Map<String, Object>> responseMap = response.readEntity(Map.class);
 
         assertThat(responseMap.size(), equalTo(3));
 
-        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.builder()
-                .put("entry-number", "5")
-                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"))
-                .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
-                .put("street", "ellis")
-                .put("address", "6789").build()));
+        Map<String,Object> map1 = responseMap.get("6789");
+        assertThat(map1.get("entry-number"), is("5"));
+        assertThat(map1.get("street"), is("ellis"));
+        assertThat(map1.get("address"), is("6789"));
+        List<String> hashes = (List<String>) map1.get("item-hashes");
+        assertThat(hashes.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}")));
 
-        assertThat(responseMap.get("145678"), equalTo(ImmutableMap.builder()
-                .put("entry-number", "4")
-                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"145678\",\"street\":\"updatedEllisName\"}"))
-                .put("entry-timestamp", responseMap.get("145678").get("entry-timestamp"))
-                .put("street", "updatedEllisName")
-                .put("address", "145678").build()));
+        Map<String,Object> map2 = responseMap.get("145678");
+        assertThat(map2.get("entry-number"), is("4"));
+        assertThat(map2.get("street"), is("updatedEllisName"));
+        assertThat(map2.get("address"), is("145678"));
+        List<String> hashes2 = (List<String>) map2.get("item-hashes");
+        assertThat(hashes2.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"145678\",\"street\":\"updatedEllisName\"}")));
 
-        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
-                .put("entry-number", "1")
-                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"))
-                .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
-                .put("street", "ellis")
-                .put("address", "12345").build()));
+        Map<String,Object> map3 = responseMap.get("12345");
+        assertThat(map3.get("entry-number"), is("1"));
+        assertThat(map3.get("street"), is("ellis"));
+        assertThat(map3.get("address"), is("12345"));
+        List<String> hashes3 = (List<String>) map3.get("item-hashes");
+        assertThat(hashes3.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}")));
 
     }
 
@@ -103,23 +105,25 @@ public class RecordListResourceFunctionalTest {
     @Test
     public void fetchAllRecordsForAKeyValueCombination() throws JSONException {
         Response response = register.getRequest(address, "/records/street/ellis.json");
-        Map<String, Map<String, String>> responseMap = response.readEntity(Map.class);
+        Map<String, Map<String, Object>> responseMap = response.readEntity(Map.class);
 
         assertThat(responseMap.size(), equalTo(2));
 
-        assertThat(responseMap.get("6789"), equalTo(ImmutableMap.builder()
-                .put("entry-number", "5")
-                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}"))
-                .put("entry-timestamp", responseMap.get("6789").get("entry-timestamp"))
-                .put("street", "ellis")
-                .put("address", "6789").build()));
+        Map<String,Object> map1 = responseMap.get("6789");
 
-        assertThat(responseMap.get("12345"), equalTo(ImmutableMap.builder()
-                .put("entry-number", "1")
-                .put("item-hash", "sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}"))
-                .put("entry-timestamp", responseMap.get("12345").get("entry-timestamp"))
-                .put("street", "ellis")
-                .put("address", "12345").build()));
+        assertThat(map1.get("entry-number"), is("5"));
+        assertThat(map1.get("street"), is("ellis"));
+        assertThat(map1.get("address"), is("6789"));
+        List<String> hashes = (List<String>) map1.get("item-hashes");
+        assertThat(hashes.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}")));
+
+        Map<String,Object> map3 = responseMap.get("12345");
+        assertThat(map3.get("entry-number"), is("1"));
+        assertThat(map3.get("street"), is("ellis"));
+        assertThat(map3.get("address"), is("12345"));
+        List<String> hashes3 = (List<String>) map3.get("item-hashes");
+        assertThat(hashes3.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}")));
+
     }
 
     //Note: tests below will be removed once the old resources are deleted

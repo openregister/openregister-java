@@ -74,7 +74,7 @@ public class RepresentationsFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedEntryValue));
+        assertThat(response.readEntity(String.class).trim(), equalTo(expectedEntryValue.trim()));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class RepresentationsFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedRecordValue));
+        assertThat(response.readEntity(String.class).trim(), equalTo(expectedRecordValue.trim()));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class RepresentationsFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedRecordsValue));
+        assertThat(response.readEntity(String.class).trim(), equalTo(expectedRecordsValue.trim()));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class RepresentationsFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedEntriesValue));
+        assertThat(response.readEntity(String.class).trim(), equalTo(expectedEntriesValue.trim()));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class RepresentationsFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
-        assertThat(response.readEntity(String.class), equalTo(expectedRecordEntriesValue));
+        assertThat(response.readEntity(String.class).trim(), equalTo(expectedRecordEntriesValue.trim()));
     }
 
     private static String fixture(String resourceName) {

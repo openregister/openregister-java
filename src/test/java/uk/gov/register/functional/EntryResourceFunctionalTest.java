@@ -134,7 +134,7 @@ public class EntryResourceFunctionalTest {
 
     private void assertEntryInJsonNode(JsonNode actualJsonNode, int expectedEntryNumber, String expectedHash) {
         assertThat(actualJsonNode.get("entry-number").asInt(), equalTo(expectedEntryNumber));
-        assertThat(actualJsonNode.get("item-hash").textValue(), equalTo(expectedHash));
+        assertThat(actualJsonNode.get("item-hashes").get(0).asText(), equalTo(expectedHash));
         assertTrue(actualJsonNode.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
     }
 

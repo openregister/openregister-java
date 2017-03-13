@@ -54,7 +54,7 @@ public class RecordsViewTest {
         JSONAssert.assertEquals(
                 "{" +
                         "\"entry-number\":\"1\"," +
-                        "\"item-hash\":\"sha-256:ab\"," +
+                        "\"item-hashes\":[\"sha-256:ab\"]," +
                         "\"entry-timestamp\":\"2016-03-29T08:59:25Z\"," +
                         "\"address\":\"123\"," +
                         "\"street\":\"foo\"" +
@@ -66,7 +66,7 @@ public class RecordsViewTest {
         JSONAssert.assertEquals(
                 "{" +
                         "\"entry-number\":\"2\"," +
-                        "\"item-hash\":\"sha-256:cd\"," +
+                        "\"item-hashes\":[\"sha-256:cd\"]," +
                         "\"entry-timestamp\":\"2016-03-28T09:49:26Z\"," +
                         "\"address\":\"456\"," +
                         "\"street\":\"bar\"" +
