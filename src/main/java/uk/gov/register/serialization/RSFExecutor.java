@@ -2,6 +2,7 @@ package uk.gov.register.serialization;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
+import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 
@@ -76,14 +77,19 @@ public class RSFExecutor {
         List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
                 .map(s -> HashValue.decode(SHA256, s)).collect(toList());
 
-        hashes.stream().forEach(hashValue -> {
+        for (HashValue hashValue : hashes) {
             if (hashRefLine.containsKey(hashValue)) {
                 hashRefLine.put(hashValue, 0);
+            } else {
+                Optional<Item> item = register.getItemBySha256(hashValue);
+                if (!item.isPresent()) {
+                    return true;
+                } else {
+                    hashRefLine.put(hashValue, 0);
+                }
             }
-        });
-
-        return hashes.stream().allMatch(hashValue -> (!hashRefLine.containsKey(hashValue)
-                && !register.getItemBySha256(hashValue).isPresent()));
+        }
+        return false;
     }
 
     private void validateAddItem(RegisterCommand command, int rsfLine, Map<HashValue, Integer> hashRefLine) {
