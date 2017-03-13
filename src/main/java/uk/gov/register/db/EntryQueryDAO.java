@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface EntryQueryDAO {
     @RegisterMapper(EntryMapper.class)
     @SingleValueResult(Entry.class)
-    @SqlQuery("select e.entry_number, ei.sha256hex, e.timestamp, e.key from entry e join entry_item ei on ei.entry_number = e.entry_number where e.entry_number = :entryNumber")
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from entry e left join entry_item ei on ei.entry_number = e.entry_number where e.entry_number = :entryNumber group by e.entry_number")
     Optional<Entry> findByEntryNumber(@Bind("entryNumber") int entryNumber);
 
     @RegisterMapper(LongTimestampToInstantMapper.class)
@@ -31,24 +31,24 @@ public interface EntryQueryDAO {
 
     //Note: This is fine for small data registers like country
     @RegisterMapper(EntryMapper.class)
-    @SqlQuery("SELECT e.entry_number, ei.sha256hex, e.timestamp, e.key from entry e join entry_item ei on ei.entry_number = e.entry_number order by e.entry_number desc")
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from entry e left join entry_item ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number desc")
     Collection<Entry> getAllEntriesNoPagination();
 
     @RegisterMapper(EntryMapper.class)
-    @SqlQuery("select e.entry_number, ei.sha256hex, e.timestamp, e.key from entry e join entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :start and e.entry_number \\< :start + :limit order by e.entry_number asc")
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from entry e left join entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :start and e.entry_number \\< :start + :limit group by e.entry_number order by e.entry_number asc")
     Collection<Entry> getEntries(@Bind("start") int start, @Bind("limit") int limit);
 
-    @SqlQuery("SELECT e.entry_number, ei.sha256hex, e.timestamp, e.key FROM entry e join entry_item ei on ei.entry_number = e.entry_number WHERE e.entry_number >= :entryNumber ORDER BY e.entry_number")
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from entry e left join entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :entryNumber group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144) // Has to be non-zero to enable cursor mode https://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor
     ResultIterator<Entry> entriesIteratorFrom(@Bind("entryNumber") int entryNumber);
 
-    @SqlQuery("SELECT e.entry_number, ei.sha256hex, e.timestamp, e.key FROM entry e join entry_item ei on ei.entry_number = e.entry_number ORDER BY e.entry_number")
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from entry e left join entry_item ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(10000)
     Iterator<Entry> getIterator();
 
-    @SqlQuery("SELECT e.entry_number, ei.sha256hex, e.timestamp, e.key FROM entry e join entry_item ei on ei.entry_number = e.entry_number WHERE e.entry_number > :totalEntries1 and e.entry_number <= :totalEntries2 ORDER BY e.entry_number")
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from entry e left join entry_item ei on ei.entry_number = e.entry_number where e.entry_number > :totalEntries1 and e.entry_number <= :totalEntries2 group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(10000)
     Iterator<Entry> getIterator(@Bind("totalEntries1") int totalEntries1, @Bind("totalEntries2") int totalEntries2);

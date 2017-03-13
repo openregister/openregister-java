@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class TransactionalEntryLogTest {
@@ -31,7 +32,7 @@ public class TransactionalEntryLogTest {
     public void setUp() throws Exception {
         entries = new ArrayList<>();
         entryQueryDAO = new InMemoryEntryDAO(entries);
-        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO, entryQueryDAO);
+        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO, mock(EntryItemDAO.class));
     }
 
     @Test

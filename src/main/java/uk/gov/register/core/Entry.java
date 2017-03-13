@@ -17,10 +17,7 @@ import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
@@ -52,7 +49,7 @@ public class Entry implements CsvRepresentationView<Entry> {
     @SuppressWarnings("unused, used from DAO")
     @JsonProperty("item-hash")
     public HashValue getSha256hex() {
-        return hashValues.get(0);
+        return hashValues.isEmpty() ? new HashValue("", "") : hashValues.get(0);
     }
 
     @JsonIgnore

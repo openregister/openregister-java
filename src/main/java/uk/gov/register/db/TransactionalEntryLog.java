@@ -1,6 +1,7 @@
 package uk.gov.register.db;
 
 import uk.gov.register.core.Entry;
+import uk.gov.register.util.EntryItemPair;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.util.ArrayList;
@@ -50,8 +51,12 @@ public class TransactionalEntryLog extends AbstractEntryLog {
         if (stagedEntries.isEmpty()) {
             return;
         }
+
+        List<EntryItemPair> entryItemPairs = new ArrayList<>();
+        stagedEntries.forEach(se -> se.getItemHashes().forEach(h -> entryItemPairs.add(new EntryItemPair(se.getEntryNumber(), h))));
+
         entryDAO.insertInBatch(stagedEntries);
-        entryItemDAO.insertInBatch(stagedEntries);
+        entryItemDAO.insertInBatch(entryItemPairs);
         entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + stagedEntries.size());
         stagedEntries.clear();
     }

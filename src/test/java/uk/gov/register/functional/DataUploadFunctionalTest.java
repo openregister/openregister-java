@@ -131,12 +131,11 @@ public class DataUploadFunctionalTest {
         JsonNode canonicalItem = canonicalJsonMapper.readFromBytes(item1.getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries();
-        Instant timestamp = entries.get(0).getTimestamp();
 
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem), timestamp, "register1"),
-                        new Entry(2, Item.itemHash(canonicalItem), timestamp, "register1")
+                        new Entry(1, Item.itemHash(canonicalItem), entries.get(0).getTimestamp(), "register1"),
+                        new Entry(2, Item.itemHash(canonicalItem), entries.get(1).getTimestamp(), "register1")
                 )
         );
 
