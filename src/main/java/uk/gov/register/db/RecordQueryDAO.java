@@ -27,20 +27,20 @@ public abstract class RecordQueryDAO {
     @SqlQuery("SELECT count FROM total_records")
     public abstract int getTotalRecords();
 
-    @SqlQuery("select entry_number, timestamp, e.sha256hex as sha256hex, key, content from entry e, item i where e.sha256hex=i.sha256hex and e.entry_number = (select entry_number from current_keys where current_keys.key=:key)")
+    @SqlQuery("select e.entry_number, e.timestamp, ei.sha256hex as sha256hex, e.key, i.content from entry e join entry_item ei on ei.entry_number = e.entry_number join item i on i.sha256hex = ei.sha256hex and e.entry_number = (select entry_number from current_keys where current_keys.key=:key)")
     @SingleValueResult(Record.class)
     @RegisterMapper(RecordMapper.class)
     public abstract Optional<Record> findByPrimaryKey(@Bind("key") String key);
 
-    @SqlQuery("select entry.entry_number, timestamp, entry.sha256hex as sha256hex, entry.key, content from item, entry, current_keys where current_keys.entry_number = entry.entry_number and item.sha256hex=entry.sha256hex order by entry.entry_number desc limit :limit offset :offset")
+    @SqlQuery("select e.entry_number, e.timestamp, ei.sha256hex as sha256hex, e.key, i.content from entry e join entry_item ei on ei.entry_number = e.entry_number join current_keys ck on ck.entry_number = e.entry_number join item i on i.sha256hex = ei.sha256hex order by e.entry_number desc limit :limit offset :offset")
     @RegisterMapper(RecordMapper.class)
     public abstract List<Record> getRecords(@Bind("limit") long limit, @Bind("offset") long offset);
 
-    @SqlQuery("select entry_number, timestamp, sha256hex, key from entry where sha256hex in (select sha256hex from item where (content @> :contentPGobject)) order by entry_number asc")
+    @SqlQuery("select e.entry_number, e.timestamp, ei.sha256hex, e.key from entry e join entry_item ei on ei.entry_number = e.entry_number join item i on i.sha256hex = ei.sha256hex and i.content @> :contentPGobject order by e.entry_number asc")
     @RegisterMapper(EntryMapper.class)
     public abstract Collection<Entry> __findAllEntriesOfRecordBy(@Bind("contentPGobject") PGobject content);
 
-    @SqlQuery("select entry.entry_number, timestamp, entry.sha256hex as sha256hex, entry.key, content from item, entry, current_keys where current_keys.entry_number = entry.entry_number and item.content @> :contentPGobject and item.sha256hex=entry.sha256hex limit 100")
+    @SqlQuery("select e.entry_number, e.timestamp, ei.sha256hex as sha256hex, e.key, i.content from entry e join entry_item ei on ei.entry_number = e.entry_number join item i on i.sha256hex = ei.sha256hex join current_keys ck on ck.entry_number = e.entry_number where i.content @> :contentPGobject and i.sha256hex = ei.sha256hex limit 100")
     @RegisterMapper(RecordMapper.class)
     public abstract List<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content);
 

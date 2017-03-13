@@ -14,12 +14,14 @@ public class TransactionalEntryLog extends AbstractEntryLog {
     private final List<Entry> stagedEntries;
     private final EntryQueryDAO entryQueryDAO;
     private final EntryDAO entryDAO;
+    private final EntryItemDAO entryItemDAO;
 
-    public TransactionalEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO) {
+    public TransactionalEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO, EntryItemDAO entryItemDAO) {
         super(entryQueryDAO, memoizationStore);
         this.stagedEntries = new ArrayList<>();
         this.entryQueryDAO = entryQueryDAO;
         this.entryDAO = entryDAO;
+        this.entryItemDAO = entryItemDAO;
     }
 
     @Override
@@ -49,6 +51,7 @@ public class TransactionalEntryLog extends AbstractEntryLog {
             return;
         }
         entryDAO.insertInBatch(stagedEntries);
+        entryItemDAO.insertInBatch(stagedEntries);
         entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + stagedEntries.size());
         stagedEntries.clear();
     }

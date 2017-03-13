@@ -24,12 +24,14 @@ public interface ItemQueryDAO {
     @RegisterMapper(ItemMapper.class)
     Collection<Item> getAllItemsNoPagination();
 
-    @SqlQuery("select sha256hex, content from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex)")
+    // TODO: This query will need to change to remove `distinct` when download-rsf supports multiple items per entry.
+    @SqlQuery("select distinct ei.sha256hex, i.content from item i join entry_item ei on i.sha256hex = ei.sha256hex")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(10000)
     Iterator<Item> getIterator();
 
-    @SqlQuery("select sha256hex, content from item where exists(select 1 from entry where item.sha256hex = entry.sha256hex and entry_number > :startEntryNo and entry_number <= :endEntryNo)")
+    // TODO: This query will need to change to remove `distinct` when download-rsf supports multiple items per entry.
+    @SqlQuery("select distinct ei.sha256hex, i.content from item i join entry_item ei on i.sha256hex = ei.sha256hex and ei.entry_number > :startEntryNo and ei.entry_number <= :endEntryNo")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(10000)
     Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo);

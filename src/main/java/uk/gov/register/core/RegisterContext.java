@@ -93,7 +93,8 @@ public class RegisterContext implements
                 getRegisterFieldsConfiguration(),
                 new TransactionalEntryLog(memoizationStore,
                         handle.attach(EntryQueryDAO.class),
-                        handle.attach(EntryDAO.class)),
+                        handle.attach(EntryDAO.class),
+                        handle.attach((EntryItemDAO.class))),
                 new TransactionalItemStore(
                         handle.attach(ItemDAO.class),
                         handle.attach(ItemQueryDAO.class),

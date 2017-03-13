@@ -31,7 +31,7 @@ public class TransactionalEntryLogTest {
     public void setUp() throws Exception {
         entries = new ArrayList<>();
         entryQueryDAO = new InMemoryEntryDAO(entries);
-        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO);
+        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO, entryQueryDAO);
     }
 
     @Test
