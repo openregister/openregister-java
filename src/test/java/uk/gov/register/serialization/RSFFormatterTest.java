@@ -40,10 +40,28 @@ public class RSFFormatterTest {
 
     @Test
     public void parse_parsesAppendEntryMultiItemCommand() {
+        System.setProperty("multi-item-entries-enabled", "true");
         String line = "append-entry\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
         RegisterCommand parsedCommand = rsfFormatter.parse(line);
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
         assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("2016-11-02T14:45:54Z", "sha-256:a;sha-256:b", "ft_openregister_test")));
+        System.clearProperty("multi-item-entries-enabled");
+    }
+
+    @Test
+    public void parse_parsesAppendEntryNoItems() {
+        System.setProperty("multi-item-entries-enabled", "true");
+        String line = "append-entry\t2016-11-02T14:45:54Z\t\tft_openregister_test";
+        RegisterCommand parsedCommand = rsfFormatter.parse(line);
+        assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("2016-11-02T14:45:54Z", "", "ft_openregister_test")));
+        System.clearProperty("multi-item-entries-enabled");
+    }
+
+    @Test(expected = SerializedRegisterParseException.class)
+    public void parse_failToParseEntryMultiItemCommandIfNotEnabled() {
+        String line = "append-entry\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
+        rsfFormatter.parse(line);
     }
 
     @Test
