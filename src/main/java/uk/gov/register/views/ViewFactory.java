@@ -135,7 +135,7 @@ public class ViewFactory {
     }
 
     public RecordView getRecordMediaView(Record record) {
-        return new RecordView(record.entry, getItemMediaView(record.item), getFields());
+        return new RecordView(record.getEntry(), getItemMediaView(record.getItem()), getFields());
     }
 
     public RecordsView getRecordsMediaView(List<RecordView> recordViews) {
