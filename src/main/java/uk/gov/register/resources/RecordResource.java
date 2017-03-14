@@ -53,10 +53,6 @@ public class RecordResource {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Map<String, FieldValue> itemContent(Record record) {
-        return itemConverter.convertItem(record.item);
-    }
-
     @GET
     @Path("/record/{record-key}/entries")
     @Produces(ExtraMediaType.TEXT_HTML)
