@@ -44,6 +44,10 @@ ext {
 
     thymeleaf = 'org.thymeleaf:thymeleaf:2.1.5.RELEASE'
 
+    logbackClassic = 'ch.qos.logback:logback-classic:1.2.1'
+
+    logbackAccess = 'ch.qos.logback:logback-access:1.2.1'
+
     // test dependencies
     dropwizardTest = "io.dropwizard:dropwizard-testing:${dropwizard_version}"
     junit = ['junit:junit:4.12','org.hamcrest:hamcrest-library:1.3']

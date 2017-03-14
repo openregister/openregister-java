@@ -71,6 +71,12 @@ dependencies {
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }
+    compile(logbackClassic){
+        force = true
+    }
+    compile(logbackAccess){
+        force = true
+    }
 
     testCompile junit, mockito, dropwizardTest, wiremock
     testCompile dropwizardTest, jsoup, jsonAssert
