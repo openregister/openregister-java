@@ -1,5 +1,7 @@
 package uk.gov.register.serialization;
 
+import com.google.common.base.Splitter;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
@@ -13,14 +15,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class RSFFormatter {
-    private final String TAB = "\t";
-    private final String NEW_LINE = System.lineSeparator();
+    private static final String SHA_256 = HashingAlgorithm.SHA256.toString();
 
+    private final String TAB = "\t";
+
+    private final String NEW_LINE = System.lineSeparator();
     private final String ADD_ITEM_COMMAND_NAME = "add-item";
     private final String APPEND_ENTRY_COMMAND_NAME = "append-entry";
-    private final String ASSERT_ROOT_HASH_COMMAND_NAME = "assert-root-hash";
 
-    private final String sha256 = HashingAlgorithm.SHA256.toString();
+    private final String ASSERT_ROOT_HASH_COMMAND_NAME = "assert-root-hash";
 
     private final CanonicalJsonValidator canonicalJsonValidator;
 
@@ -88,14 +91,14 @@ public class RSFFormatter {
             } catch (DateTimeParseException e) {
                 throw new SerializedRegisterParseException("Date is not in the correct format", e);
             }
-            validateHash(arguments.get(1), "Append entry hash value was not hashed using " + sha256);
+            validateHash(arguments.get(1), "Append entry hash value was not hashed using " + SHA_256);
         };
     }
 
     private Consumer<List<String>> getAssertRootHashValidator() {
         return (arguments) -> {
             if (arguments.size() == 1) {
-                validateHash(arguments.get(0), "Root hash value was not hashed using " + sha256);
+                validateHash(arguments.get(0), "Root hash value was not hashed using " + SHA_256);
             } else {
                 throw new SerializedRegisterParseException("Assert root hash line must have 1 arguments, was: " + argsToString(arguments));
             }
@@ -103,9 +106,19 @@ public class RSFFormatter {
     }
 
     private void validateHash(String hash, String errorMessage) {
-        if (!hash.startsWith(sha256)) {
-            throw new SerializedRegisterParseException(errorMessage);
+        if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
+            if (StringUtils.isNotEmpty(hash) && !allPartsHaveShaPrefix(hash)) {
+                throw new SerializedRegisterParseException(errorMessage);
+            }
+        } else {
+            if (!hash.startsWith(SHA_256) || hash.indexOf(';') != -1) {
+                throw new SerializedRegisterParseException(errorMessage);
+            }
         }
+    }
+
+    private boolean allPartsHaveShaPrefix(String hash) {
+        return Splitter.on(";").splitToList(hash).stream().allMatch(s -> s.startsWith(SHA_256));
     }
 
     private String argsToString(List<String> arguments) {

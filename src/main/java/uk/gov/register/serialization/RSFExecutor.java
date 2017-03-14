@@ -1,13 +1,17 @@
 package uk.gov.register.serialization;
 
+import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
-import uk.gov.register.core.HashingAlgorithm;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static java.util.stream.Collectors.toList;
+import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class RSFExecutor {
 
@@ -70,14 +74,23 @@ public class RSFExecutor {
     }
 
     private Boolean validateAppendEntry(RegisterCommand command, Register register, Map<HashValue, Integer> hashRefLine) {
-        String entrySha256 = command.getCommandArguments().get(1);
-        HashValue hashValue = HashValue.decode(HashingAlgorithm.SHA256, entrySha256);
-        if (hashRefLine.containsKey(hashValue)) {
-            hashRefLine.put(hashValue, 0);
-        } else {
-            Optional<Item> item = register.getItemBySha256(hashValue);
-            if (!item.isPresent()) {
-                return true;
+        String delimitedHashes = command.getCommandArguments().get(1);
+        if (StringUtils.isEmpty(delimitedHashes)) {
+            return false;
+        }
+        List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
+                .map(s -> HashValue.decode(SHA256, s)).collect(toList());
+
+        for (HashValue hashValue : hashes) {
+            if (hashRefLine.containsKey(hashValue)) {
+                hashRefLine.put(hashValue, 0);
+            } else {
+                Optional<Item> item = register.getItemBySha256(hashValue);
+                if (!item.isPresent()) {
+                    return true;
+                } else {
+                    hashRefLine.put(hashValue, 0);
+                }
             }
         }
         return false;
@@ -85,7 +98,7 @@ public class RSFExecutor {
 
     private void validateAddItem(RegisterCommand command, int rsfLine, Map<HashValue, Integer> hashRefLine) {
         String hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
-        hashRefLine.put(new HashValue(HashingAlgorithm.SHA256, hash), rsfLine);
+        hashRefLine.put(new HashValue(SHA256, hash), rsfLine);
     }
 
     private RegisterResult validateOrphanAddItems(Map<HashValue, Integer> hashRefLine) {
