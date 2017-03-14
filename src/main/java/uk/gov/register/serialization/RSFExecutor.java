@@ -2,6 +2,7 @@ package uk.gov.register.serialization;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
@@ -74,6 +75,9 @@ public class RSFExecutor {
 
     private Boolean validateAppendEntry(RegisterCommand command, Register register, Map<HashValue, Integer> hashRefLine) {
         String delimitedHashes = command.getCommandArguments().get(1);
+        if (StringUtils.isEmpty(delimitedHashes)) {
+            return false;
+        }
         List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
                 .map(s -> HashValue.decode(SHA256, s)).collect(toList());
 

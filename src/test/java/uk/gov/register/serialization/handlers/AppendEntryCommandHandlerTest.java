@@ -8,14 +8,14 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
-import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -69,6 +69,19 @@ public class AppendEntryCommandHandlerTest {
 
         Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
                 new HashValue(SHA256, "bbb")), july24, "entry1-field-1-value");
+        verify(register, times(1)).appendEntry(expectedEntry);
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
+    }
+
+    @Test
+    public void execute_appendsZeroItemEntryToRegister() {
+        when(register.getTotalEntries()).thenReturn(2);
+
+        RegisterCommand command = new RegisterCommand("append-entry",
+                Arrays.asList("2016-07-24T16:55:00Z", "", "entry1-field-1-value"));
+        RegisterResult registerResult = sutHandler.execute(command, register);
+
+        Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value");
         verify(register, times(1)).appendEntry(expectedEntry);
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
