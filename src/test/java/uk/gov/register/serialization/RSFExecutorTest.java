@@ -8,13 +8,15 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.core.*;
+import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -69,14 +71,14 @@ public class RSFExecutorTest {
         HashValue middleRootHash = new HashValue(HashingAlgorithm.SHA256, "middle-one");
         HashValue lastRootHash = new HashValue(HashingAlgorithm.SHA256, "last-one");
 
-        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRootHash.encode()));
-        assertMiddleRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(middleRootHash.encode()));
-        assertLastRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(lastRootHash.encode()));
+        assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", singletonList(emptyRootHash.encode()));
+        assertMiddleRootHashCommand = new RegisterCommand("assert-root-hash", singletonList(middleRootHash.encode()));
+        assertLastRootHashCommand = new RegisterCommand("assert-root-hash", singletonList(lastRootHash.encode()));
 
-        addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
-        addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
-        appendEntry1Command = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c", "entry1-field-1-value"));
-        appendEntry2Command = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a", "entry2-field-1-value"));
+        addItem1Command = new RegisterCommand("add-item", singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
+        addItem2Command = new RegisterCommand("add-item", singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
+        appendEntry1Command = new RegisterCommand("append-entry", asList("2016-07-24T16:55:00Z", "sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c", "entry1-field-1-value"));
+        appendEntry2Command = new RegisterCommand("append-entry", asList("2016-07-24T16:56:00Z", "sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a", "entry2-field-1-value"));
     }
 
 
@@ -86,7 +88,7 @@ public class RSFExecutorTest {
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 assertEmptyRootHashCommand,
                 addItem1Command,
                 addItem2Command,
@@ -117,7 +119,7 @@ public class RSFExecutorTest {
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.empty());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 appendEntry1Command,
                 addItem1Command).iterator());
 
@@ -137,7 +139,7 @@ public class RSFExecutorTest {
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.of(item1));
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Collections.singletonList(appendEntry1Command).iterator());
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(appendEntry1Command).iterator());
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
         verify(register, times(1)).getItemBySha256(entry1hashValue);
@@ -150,7 +152,7 @@ public class RSFExecutorTest {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 addItem1Command,
                 addItem2Command,
                 appendEntry1Command).iterator());
@@ -166,7 +168,7 @@ public class RSFExecutorTest {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 addItem1Command,
                 appendEntry1Command,
                 addItem1Command).iterator());
@@ -180,8 +182,8 @@ public class RSFExecutorTest {
 
     @Test
     public void execute_failsForUnknownCommand() {
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Collections.singletonList(
-                new RegisterCommand("unknown-command", Arrays.asList("some", "data"))).iterator());
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(
+                new RegisterCommand("unknown-command", asList("some", "data"))).iterator());
 
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
@@ -194,13 +196,13 @@ public class RSFExecutorTest {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 addItem1Command,
                 appendEntry1Command,
                 addItem1Command).iterator());
 
         // it has to be a new iterator because after 1st execution the iterator is going to be empty
-        RegisterSerialisationFormat rsf2 = new RegisterSerialisationFormat(Arrays.asList(
+        RegisterSerialisationFormat rsf2 = new RegisterSerialisationFormat(asList(
                 addItem1Command,
                 appendEntry1Command,
                 addItem1Command).iterator());
@@ -210,4 +212,29 @@ public class RSFExecutorTest {
 
         assertThat(registerResult1, equalTo(registerResult2));
     }
+
+    @Test
+    public void shouldHandleMultiItemAddEntryCommands(){
+        RegisterCommand addItem1 = new RegisterCommand("add-item", singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
+        String itemHash1 = "sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c";
+        RegisterCommand addItem2 = new RegisterCommand("add-item", singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
+        String itemHash2 = "sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a";
+        RegisterCommand appendEntry = new RegisterCommand("append-entry",
+                asList("2016-07-24T16:55:00Z", itemHash1 + ";" + itemHash2, "entry1-field-1-value"));
+
+        when(assertRootHashHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
+
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(addItem1, addItem2, appendEntry).iterator());
+        RegisterResult registerResult = sutExecutor.execute(rsf, register);
+
+        InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
+        inOrder.verify(addItemHandler, calls(1)).execute(addItem1, register);
+        inOrder.verify(addItemHandler, calls(1)).execute(addItem2, register);
+        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry, register);
+
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
+    }
+
 }

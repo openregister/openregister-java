@@ -8,14 +8,14 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
-import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
+import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AppendEntryCommandHandlerTest {
@@ -33,6 +34,7 @@ public class AppendEntryCommandHandlerTest {
     private Register register;
 
     private RegisterCommand appendEntryCommand;
+    private Instant july24 = Instant.parse("2016-07-24T16:55:00Z");
 
     @Before
     public void setUp() throws Exception {
@@ -51,10 +53,39 @@ public class AppendEntryCommandHandlerTest {
 
         RegisterResult registerResult = sutHandler.execute(appendEntryCommand, register);
 
-        Entry expectedEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "item-sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
+
+        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value");
         verify(register, times(1)).appendEntry(expectedEntry);
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
+
+    @Test
+    public void execute_appendsMultiItemEntryToRegister() {
+        when(register.getTotalEntries()).thenReturn(2);
+
+        RegisterCommand command = new RegisterCommand("append-entry",
+                Arrays.asList("2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb", "entry1-field-1-value"));
+        RegisterResult registerResult = sutHandler.execute(command, register);
+
+        Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
+                new HashValue(SHA256, "bbb")), july24, "entry1-field-1-value");
+        verify(register, times(1)).appendEntry(expectedEntry);
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
+    }
+
+    @Test
+    public void execute_appendsZeroItemEntryToRegister() {
+        when(register.getTotalEntries()).thenReturn(2);
+
+        RegisterCommand command = new RegisterCommand("append-entry",
+                Arrays.asList("2016-07-24T16:55:00Z", "", "entry1-field-1-value"));
+        RegisterResult registerResult = sutHandler.execute(command, register);
+
+        Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value");
+        verify(register, times(1)).appendEntry(expectedEntry);
+        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
+    }
+
 
     @Test
     public void execute_catchesExceptionsAndReturnsFailRSFResult() {
