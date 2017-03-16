@@ -2,18 +2,23 @@ package uk.gov.register.views.representations;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ItemView;
+import uk.gov.register.views.RecordView;
+import uk.gov.register.views.RecordsView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -21,10 +26,10 @@ public class CsvWriterTest {
 
     CsvWriter csvWriter = new CsvWriter();
     private final ImmutableList<Field> fields = ImmutableList.of(
-            new Field("key1", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
-            new Field("key2", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
-            new Field("key3", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
-            new Field("key4", "datatype", new RegisterName("register"),Cardinality.ONE, "text"));
+            new Field("key1", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
+            new Field("key2", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
+            new Field("key3", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
+            new Field("key4", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
 
     @Test
     public void writes_EntryListView_to_output_stream() throws IOException {
@@ -103,5 +108,73 @@ public class CsvWriterTest {
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1,,,\r\n"));
+    }
+
+    @Test
+    public void writeEntriesTo_writeRecordView() throws Exception {
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "key1");
+        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "aaa"), ImmutableMap.of("key1", new StringValue("item1")), emptyList());
+        ItemView itemView2 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "bbb"), ImmutableMap.of("key1", new StringValue("item2")), emptyList());
+        RecordView recordView = new RecordView(entry, Lists.newArrayList(itemView, itemView2), fields);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        csvWriter.writeTo(recordView, recordView.getClass(), null, null, null, null, outputStream);
+
+        byte[] bytes = outputStream.toByteArray();
+        String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
+
+        String expected = "entry-number,entry-timestamp,item-hashes,key1,key2,key3,key4\r\n" +
+                "1,2016-08-05T13:24:00Z,sha-256:aaa,item1,,,\r\n" +
+                "1,2016-08-05T13:24:00Z,sha-256:bbb,item2,,,\r\n";
+
+        assertThat(generatedCsv, is(expected));
+    }
+
+    @Test
+    public void writeEntriesTo_writeRecordsView() throws Exception {
+        Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
+        Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
+        ImmutableList<Field> fields = ImmutableList.of(
+                new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+
+        ItemView itemView1 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"),
+                ImmutableMap.of("address", new StringValue("123"), "street", new StringValue("foo")), fields);
+
+        ItemView itemView2 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "cd"),
+                ImmutableMap.of("address", new StringValue("456"), "street", new StringValue("bar")),
+                fields);
+
+        ItemView itemView3 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ef"),
+                ImmutableMap.of("address", new StringValue("456"), "street", new StringValue("baz")),
+                fields);
+
+        List<RecordView> records = Lists.newArrayList(
+                new RecordView(
+                        new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123"),
+                        Lists.newArrayList(itemView1), fields
+                ),
+                new RecordView(
+                        new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456"),
+                        Lists.newArrayList(itemView2, itemView3), fields
+                )
+        );
+
+        RecordsView recordsView = new RecordsView(records, fields);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        csvWriter.writeTo(recordsView, recordsView.getClass(), null, null, null, null, outputStream);
+
+        byte[] bytes = outputStream.toByteArray();
+        String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
+
+        String expected = "entry-number,entry-timestamp,item-hashes,address,street\r\n" +
+                "1,2016-03-29T08:59:25Z,sha-256:ab,123,foo\r\n" +
+                "2,2016-03-28T09:49:26Z,sha-256:cd,456,bar\r\n" +
+                "2,2016-03-28T09:49:26Z,sha-256:ef,456,baz\r\n";
+
+        assertThat(generatedCsv, is(expected));
     }
 }

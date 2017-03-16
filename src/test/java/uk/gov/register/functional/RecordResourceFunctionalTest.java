@@ -1,6 +1,7 @@
 package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.dropwizard.jackson.Jackson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
@@ -12,9 +13,12 @@ import uk.gov.register.functional.app.RegisterRule;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 import static uk.gov.register.functional.app.TestRegister.address;
 
@@ -43,9 +47,13 @@ public class RecordResourceFunctionalTest {
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
         assertThat(res.get("entry-number").textValue(), equalTo("2"));
         assertThat(res.get("item-hashes").get(0).textValue(), equalTo("sha-256:" + sha256Hex));
-        assertThat(res.get("address").textValue(), equalTo("6789"));
-        assertThat(res.get("street").textValue(), equalTo("presley"));
         assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+
+        ArrayNode items = (ArrayNode)res.get("items");
+        assertThat(items.size(), is(1));
+        JsonNode itemMap = items.get(0);
+        assertThat(itemMap.get("street").asText(), is("presley"));
+        assertThat(itemMap.get("address").asText(), is("6789"));
     }
 
     @Test

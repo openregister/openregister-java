@@ -31,7 +31,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
     @Override
     protected Model rdfModelFor(RecordView view) {
         Entry entry = view.getEntry();
-        ItemView itemView = view.getItemView();
+        ItemView itemView = view.getItemViews().stream().findFirst().get();
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(registerNameProvider, registerResolver).rdfModelFor(entry, false);
@@ -43,6 +43,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
         Map<String, String> prefixes = entryModel.getNsPrefixMap();
         prefixes.putAll(itemModel.getNsPrefixMap());
+
         recordModel.setNsPrefixes(prefixes);
 
         return recordModel;
@@ -50,7 +51,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
 
     private void addPropertiesToResource(Resource to, Resource from) {
         StmtIterator iterator = from.listProperties();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Statement statement = iterator.next();
             to.addProperty(statement.getPredicate(), statement.getObject());
         }

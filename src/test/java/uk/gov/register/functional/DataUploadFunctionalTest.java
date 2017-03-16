@@ -76,11 +76,14 @@ public class DataUploadFunctionalTest {
         Map actualJson = response.readEntity(Map.class);
         actualJson.remove("entry-timestamp"); // ignore the timestamp as we can't do exact match
         assertThat(actualJson.get("entry-number"), is("1"));
-        assertThat(actualJson.get("register"), is("ft_openregister_test"));
-        assertThat(actualJson.get("text"), is("SomeText"));
         assertThat(actualJson.get("item-hashes"), Matchers.instanceOf(List.class));
         List<String> itemHashes = (List<String>)actualJson.get("item-hashes");
         assertThat(itemHashes.get(0), is(storedItem.hashValue.toString()));
+        List<Map<String,Object>> itemMaps = (List<Map<String,Object>>)actualJson.get("items");
+        assertThat(itemMaps.size(), is(1));
+        Map<String, Object> itemMap = itemMaps.get(0);
+        assertThat(itemMap.get("register"), is("ft_openregister_test"));
+        assertThat(itemMap.get("text"), is("SomeText"));
     }
 
     @Test

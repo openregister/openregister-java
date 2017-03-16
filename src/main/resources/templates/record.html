@@ -43,7 +43,9 @@
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
-      <div th:include="fragments/item-table.html :: item-table (content = ${content.content})" class="table-wrapper"></div>
+      <th:block th:each="item : ${content.content}">
+        <div th:include="fragments/item-table.html :: item-table (content = ${item})" class="table-wrapper"></div>
+      </th:block>
 
       <p>
         <a th:href="${'/record/' + content.primaryKey +'/entries'}">View all versions of this record</a>

@@ -51,24 +51,24 @@
               </th:block>
             </tr>
           </thead>
-          <tbody>
-            <tr th:each="record : ${content.records}">
-              <td>
-                <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
-              </td>
-              <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-                <td th:if="${record.getField(fieldName).present}" class="field-list field-list-in-table">
-                  <ul th:if="${record.getField(fieldName).get().isList()}">
-                    <th:block th:each="fieldValue: ${record.getField(fieldName).get()}">
-                      <li th:text="${fieldValue.value}"></li>
-                    </th:block>
-                  </ul>
-                  <th:block th:unless="${record.getField(fieldName).get().isList()}" th:text="${record.getField(fieldName).get().value}">
-                  </th:block>
+          <tbody th:each="record : ${content.records}">
+              <tr th:each="item : ${record.itemViews}">
+                <td>
+                  <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
                 </td>
-                <td th:unless="${record.getField(fieldName).present}"></td>
-              </th:block>
-            </tr>
+                <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+                  <td th:if="${item.content.containsKey(fieldName)}" class="field-list field-list-in-table">
+                    <ul th:if="${item.content.get(fieldName).isList()}">
+                      <th:block th:each="fieldValue: ${record.getField(fieldName).get()}">
+                        <li th:text="${fieldValue.value}"></li>
+                      </th:block>
+                    </ul>
+                    <th:block th:text="${item.content.get(fieldName).value}">
+                    </th:block>
+                  </td>
+                  <td th:unless="${item.content.get(fieldName)}"></td>
+                </th:block>
+              </tr>
           </tbody>
         </table>
       </div>

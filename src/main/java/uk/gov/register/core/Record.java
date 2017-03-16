@@ -26,10 +26,6 @@ public class Record {
         return entry;
     }
 
-    public Item getItem() {
-        return items.get(entry.getSha256hex());
-    }
-
     public Map<HashValue, Item> getItems() {
         return items;
     }
