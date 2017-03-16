@@ -41,8 +41,8 @@ public abstract class AbstractRecordIndex implements RecordIndex {
     }
 
     @Override
-    public Collection<Entry> findAllEntriesOfRecordBy(RegisterName registerName, String key) {
+    public Collection<Entry> findAllEntriesOfRecordBy(String key) {
         checkpoint();
-        return recordQueryDAO.findAllEntriesOfRecordBy(registerName.value(), key);
+        return recordQueryDAO.findAllEntriesOfRecordBy(key);
     }
 }

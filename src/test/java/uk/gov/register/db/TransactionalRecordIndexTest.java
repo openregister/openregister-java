@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterName;
 
 import java.util.*;
 
@@ -71,7 +70,7 @@ public class TransactionalRecordIndexTest {
     public void findAllEntriesOfRecordBy_shouldCauseCheckpoint() {
         recordIndex.updateRecordIndex("foo", 5);
 
-        Collection<Entry> ignored = recordIndex.findAllEntriesOfRecordBy(new RegisterName("foo"), "bar");
+        Collection<Entry> ignored = recordIndex.findAllEntriesOfRecordBy("bar");
 
         // ignore the result, but check that we flushed out to currentKeys
         assertThat(currentKeys.get("foo"), is(5));

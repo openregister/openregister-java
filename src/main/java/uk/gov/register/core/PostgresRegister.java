@@ -79,7 +79,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Collection<Entry> allEntriesOfRecord(String key) {
-        return recordIndex.findAllEntriesOfRecordBy(registerName, key);
+        return recordIndex.findAllEntriesOfRecordBy(key);
     }
 
     @Override

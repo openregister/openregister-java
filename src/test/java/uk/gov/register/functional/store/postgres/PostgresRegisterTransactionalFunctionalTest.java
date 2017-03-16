@@ -146,7 +146,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
     }
 
     private PostgresRegister getPostgresRegister(Handle handle) {
-        TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class));
+        TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class), handle.attach(EntryItemDAO.class));
         TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
                 mock(ItemValidator.class));
         RegisterMetadata registerData = mock(RegisterMetadata.class);

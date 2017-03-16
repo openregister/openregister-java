@@ -1,6 +1,7 @@
 package uk.gov.register.db;
 
 import uk.gov.register.core.Entry;
+import uk.gov.register.util.EntryItemPair;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.util.ArrayList;
@@ -14,12 +15,14 @@ public class TransactionalEntryLog extends AbstractEntryLog {
     private final List<Entry> stagedEntries;
     private final EntryQueryDAO entryQueryDAO;
     private final EntryDAO entryDAO;
+    private final EntryItemDAO entryItemDAO;
 
-    public TransactionalEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO) {
+    public TransactionalEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO, EntryItemDAO entryItemDAO) {
         super(entryQueryDAO, memoizationStore);
         this.stagedEntries = new ArrayList<>();
         this.entryQueryDAO = entryQueryDAO;
         this.entryDAO = entryDAO;
+        this.entryItemDAO = entryItemDAO;
     }
 
     @Override
@@ -48,7 +51,12 @@ public class TransactionalEntryLog extends AbstractEntryLog {
         if (stagedEntries.isEmpty()) {
             return;
         }
+
+        List<EntryItemPair> entryItemPairs = new ArrayList<>();
+        stagedEntries.forEach(se -> se.getItemHashes().forEach(h -> entryItemPairs.add(new EntryItemPair(se.getEntryNumber(), h))));
+
         entryDAO.insertInBatch(stagedEntries);
+        entryItemDAO.insertInBatch(entryItemPairs);
         entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + stagedEntries.size());
         stagedEntries.clear();
     }
