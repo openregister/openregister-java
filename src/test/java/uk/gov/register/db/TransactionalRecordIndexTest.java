@@ -117,4 +117,51 @@ public class TransactionalRecordIndexTest {
         assertThat(currentKeys.size(), is(4));
         assertThat(currentKeysUpdateDAO.getTotalRecords(), is(4));
     }
+
+    @Test
+    public void removeRecordIndex_shouldUpdateCurrentKeysAndTotalRecords_whenKeyExistsInDatabase() {
+        recordIndex.updateRecordIndex("DE", 1);
+        recordIndex.updateRecordIndex("VA", 2);
+        recordIndex.updateRecordIndex("DE", 3);
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
+
+        recordIndex.removeRecordIndex("DE");
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(1));
+        assertThat(currentKeys.containsKey("DE"), is(false));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(1));
+    }
+
+    @Test
+    public void removeRecordIndex_shouldNotUpdateCurrentKeysAndTotalRecords_whenKeyExistsInStagedData() {
+        recordIndex.updateRecordIndex("DE", 1);
+        recordIndex.updateRecordIndex("VA", 2);
+        recordIndex.removeRecordIndex("DE");
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(1));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(1));
+        assertThat(currentKeys.containsKey("DE"), is(false));
+    }
+
+    @Test
+    public void removeRecordIndex_shouldNotUpdateCurrentKeysAndTotalRecords_whenKeyDoesNotExistInStagedDataOrDatabase() {
+        recordIndex.updateRecordIndex("DE", 1);
+        recordIndex.updateRecordIndex("VA", 2);
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
+
+        recordIndex.removeRecordIndex("CZ");
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeys.containsKey("CZ"), is(false));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
+    }
 }

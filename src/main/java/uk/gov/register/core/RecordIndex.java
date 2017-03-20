@@ -7,6 +7,8 @@ import java.util.Optional;
 public interface RecordIndex {
     void updateRecordIndex(String key, Integer entryNumber);
 
+    void removeRecordIndex(String key);
+
     Optional<Record> getRecord(String key);
 
     int getTotalRecords();

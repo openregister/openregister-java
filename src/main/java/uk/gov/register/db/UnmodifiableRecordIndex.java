@@ -14,6 +14,11 @@ public class UnmodifiableRecordIndex extends AbstractRecordIndex {
     }
 
     @Override
+    public void removeRecordIndex(String key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void checkpoint() {
         // do nothing
     }
