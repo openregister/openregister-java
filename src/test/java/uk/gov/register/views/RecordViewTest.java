@@ -29,10 +29,11 @@ public class RecordViewTest {
         String result = objectMapper.writeValueAsString(recordView);
 
         assertThat(result, equalTo("{" +
+                "\"index-entry-number\":\"1\"," +
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
-                "\"item-hashes\":[\"sha-256:ab\"]," +
-                "\"items\":[{\"a\":\"b\"},{\"a\":\"d\"}]" +
+                "\"item-hash\":[\"sha-256:ab\"]," +
+                "\"item\":[{\"a\":\"b\"},{\"a\":\"d\"}]" +
                 "}"));
     }
 
@@ -47,13 +48,15 @@ public class RecordViewTest {
         String result = recordView.getFlatRecordJson().toString();
 
         assertThat(result, equalTo("[{" +
+                "\"index-entry-number\":\"1\"," +
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
-                "\"item-hashes\":\"sha-256:ab\"," +
+                "\"item-hash\":\"sha-256:ab\"," +
                 "\"a\":\"b\"}," +
-                "{\"entry-number\":\"1\"," +
+                "{\"index-entry-number\":\"1\"," +
+                "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
-                "\"item-hashes\":\"sha-256:ad\"," +
+                "\"item-hash\":\"sha-256:ad\"," +
                 "\"a\":\"d\"" +
                 "}]"));
     }

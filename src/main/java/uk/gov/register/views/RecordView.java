@@ -40,7 +40,7 @@ public class RecordView implements CsvRepresentationView {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         ObjectNode jsonNodes = objectMapper.convertValue(entry, ObjectNode.class);
         jsonNodes.remove("key");
-        ArrayNode items = jsonNodes.putArray("items");
+        ArrayNode items = jsonNodes.putArray("item");
         itemViews.forEach( iv -> items.add(objectMapper.convertValue(iv, ObjectNode.class)));
         return jsonNodes;
     }
@@ -51,7 +51,7 @@ public class RecordView implements CsvRepresentationView {
         itemViews.forEach( iv -> {
             ObjectNode jsonNodes = objectMapper.convertValue(entry, ObjectNode.class);
             jsonNodes.remove("key");
-            jsonNodes.set("item-hashes", TextNode.valueOf(iv.getItemHash().encode()));
+            jsonNodes.set("item-hash", TextNode.valueOf(iv.getItemHash().encode()));
             jsonNodes.setAll(objectMapper.convertValue(iv, ObjectNode.class));
             arrayNode.add(jsonNodes);
         });

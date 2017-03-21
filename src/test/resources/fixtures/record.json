@@ -1,1 +1,1 @@
-{"entry-number":"1","entry-timestamp":"2016-03-01T01:02:03Z","item-hashes":["sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18"],"items":[{"text":"The Entry 1","fields":["field1"],"register":"value1"}]}
+{"index-entry-number":"1","entry-number":"1","entry-timestamp":"2016-03-01T01:02:03Z","item-hash":["sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18"],"item":[{"text":"The Entry 1","fields":["field1"],"register":"value1"}]}

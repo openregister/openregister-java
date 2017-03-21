@@ -46,10 +46,10 @@ public class RecordResourceFunctionalTest {
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
         assertThat(res.get("entry-number").textValue(), equalTo("2"));
-        assertThat(res.get("item-hashes").get(0).textValue(), equalTo("sha-256:" + sha256Hex));
+        assertThat(res.get("item-hash").get(0).textValue(), equalTo("sha-256:" + sha256Hex));
         assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
-        ArrayNode items = (ArrayNode)res.get("items");
+        ArrayNode items = (ArrayNode)res.get("item");
         assertThat(items.size(), is(1));
         JsonNode itemMap = items.get(0);
         assertThat(itemMap.get("street").asText(), is("presley"));
@@ -97,13 +97,15 @@ public class RecordResourceFunctionalTest {
         assertThat(res.isArray(), equalTo(true));
 
         JsonNode firstEntry = res.get(0);
+        assertThat(firstEntry.get("index-entry-number").textValue(), equalTo("1"));
         assertThat(firstEntry.get("entry-number").textValue(), equalTo("1"));
-        assertThat(firstEntry.get("item-hashes").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item0)));
+        assertThat(firstEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item0)));
         assertTrue(firstEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
         JsonNode secondEntry = res.get(1);
+        assertThat(secondEntry.get("index-entry-number").textValue(), equalTo("2"));
         assertThat(secondEntry.get("entry-number").textValue(), equalTo("2"));
-        assertThat(secondEntry.get("item-hashes").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
+        assertThat(secondEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
         assertTrue(secondEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
     }

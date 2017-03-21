@@ -75,18 +75,18 @@ public class EntriesResourceFunctionalTest {
         assertThat(jsonNodes.size(), equalTo(2));
 
         JsonNode entry1 = jsonNodes.get(0);
-        assertThat(Iterators.size(entry1.fields()), equalTo(4));
+        assertThat(Iterators.size(entry1.fields()), equalTo(5));
         assertThat(entry1.get("entry-number").textValue(), equalTo("1"));
-        assertThat(entry1.get("item-hashes").getNodeType(), is(JsonNodeType.ARRAY));
-        String hash1 = entry1.get("item-hashes").get(0).asText();
+        assertThat(entry1.get("item-hash").getNodeType(), is(JsonNodeType.ARRAY));
+        String hash1 = entry1.get("item-hash").get(0).asText();
         assertThat( hash1, is("sha-256:" + DigestUtils.sha256Hex(item1)));
         verifyStringIsADateSpecifiedInSpecification(entry1.get("entry-timestamp").textValue());
         assertThat(entry1.get("key").textValue(), equalTo("1234"));
 
         JsonNode entry2 = jsonNodes.get(1);
-        assertThat(Iterators.size(entry2.fields()), equalTo(4));
+        assertThat(Iterators.size(entry2.fields()), equalTo(5));
         assertThat(entry2.get("entry-number").textValue(), equalTo("2"));
-        String hash2 = entry2.get("item-hashes").get(0).asText();
+        String hash2 = entry2.get("item-hash").get(0).asText();
         assertThat( hash2, is("sha-256:" + DigestUtils.sha256Hex(item2)));
         verifyStringIsADateSpecifiedInSpecification(entry2.get("entry-timestamp").textValue());
         assertThat(entry2.get("key").textValue(), equalTo("6789"));

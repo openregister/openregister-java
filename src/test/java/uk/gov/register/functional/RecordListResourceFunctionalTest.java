@@ -47,9 +47,9 @@ public class RecordListResourceFunctionalTest {
 
         Map<String,Object> map1 = responseMap.get("6789");
         assertThat(map1.get("entry-number"), is("5"));
-        List<String> hashes = (List<String>) map1.get("item-hashes");
+        List<String> hashes = (List<String>) map1.get("item-hash");
         assertThat(hashes.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}")));
-        List items1 = (List) map1.get("items");
+        List items1 = (List) map1.get("item");
         assertThat(items1.size(), is(1));
         Map<String, String> itemMap1 = (Map<String, String>) items1.get(0);
         assertThat(itemMap1.get("street"), is("ellis"));
@@ -57,9 +57,9 @@ public class RecordListResourceFunctionalTest {
 
         Map<String,Object> map2 = responseMap.get("145678");
         assertThat(map2.get("entry-number"), is("4"));
-        List<String> hashes2 = (List<String>) map2.get("item-hashes");
+        List<String> hashes2 = (List<String>) map2.get("item-hash");
         assertThat(hashes2.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"145678\",\"street\":\"updatedEllisName\"}")));
-        List items2 = (List) map2.get("items");
+        List items2 = (List) map2.get("item");
         assertThat(items2.size(), is(1));
         Map<String, String> itemMap2 = (Map<String, String>) items2.get(0);
         assertThat(itemMap2.get("street"), is("updatedEllisName"));
@@ -67,9 +67,9 @@ public class RecordListResourceFunctionalTest {
 
         Map<String,Object> map3 = responseMap.get("12345");
         assertThat(map3.get("entry-number"), is("1"));
-        List<String> hashes3 = (List<String>) map3.get("item-hashes");
+        List<String> hashes3 = (List<String>) map3.get("item-hash");
         assertThat(hashes3.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}")));
-        List items3 = (List) map3.get("items");
+        List items3 = (List) map3.get("item");
         assertThat(items3.size(), is(1));
         Map<String, String> itemMap3 = (Map<String, String>) items3.get(0);
         assertThat(itemMap3.get("street"), is("ellis"));
@@ -120,21 +120,23 @@ public class RecordListResourceFunctionalTest {
 
         Map<String,Object> map1 = responseMap.get("6789");
 
+        assertThat(map1.get("index-entry-number"), is("5"));
         assertThat(map1.get("entry-number"), is("5"));
 
-        List<String> hashes = (List<String>) map1.get("item-hashes");
+        List<String> hashes = (List<String>) map1.get("item-hash");
         assertThat(hashes.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"6789\",\"street\":\"ellis\"}")));
-        List items = (List) map1.get("items");
+        List items = (List) map1.get("item");
         assertThat(items.size(), is(1));
         Map<String, String> itemMap = (Map<String, String>) items.get(0);
         assertThat(itemMap.get("street"), is("ellis"));
         assertThat(itemMap.get("address"), is("6789"));
 
         Map<String,Object> map3 = responseMap.get("12345");
+        assertThat(map3.get("index-entry-number"), is("1"));
         assertThat(map3.get("entry-number"), is("1"));
-        List<String> hashes3 = (List<String>) map3.get("item-hashes");
+        List<String> hashes3 = (List<String>) map3.get("item-hash");
         assertThat(hashes3.get(0), is("sha-256:" + DigestUtils.sha256Hex("{\"address\":\"12345\",\"street\":\"ellis\"}")));
-        List items3 = (List) map3.get("items");
+        List items3 = (List) map3.get("item");
         assertThat(items3.size(), is(1));
         Map<String, String> itemMap3 = (Map<String, String>) items3.get(0);
         assertThat(itemMap3.get("street"), is("ellis"));
