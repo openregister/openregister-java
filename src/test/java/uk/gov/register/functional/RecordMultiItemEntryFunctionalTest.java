@@ -72,11 +72,11 @@ public class RecordMultiItemEntryFunctionalTest {
     }
 
     @Test
-    public void shouldRenderListOfHashes() throws IOException {
+    public void shouldRenderListOfItems() throws IOException {
         Response response = register.getRequest(testRegister, "/record/government-digital-service.json");
         assertThat(response.getStatus(), equalTo(200));
         JsonNode res = MAPPER.readValue(response.readEntity(String.class), JsonNode.class);
-        ArrayNode items = (ArrayNode) res.get("item-hash");
+        ArrayNode items = (ArrayNode) res.get("item");
         assertThat(items.size(), Matchers.is(2));
     }
 

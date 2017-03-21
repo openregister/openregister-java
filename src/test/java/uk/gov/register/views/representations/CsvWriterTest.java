@@ -44,7 +44,7 @@ public class CsvWriterTest {
                 outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedCsv, is("index-entry-number,entry-number,entry-timestamp,item-hash,key\r\n1,1,2014-05-13T16:53:20Z,sha-256:1234abcd,abc\r\n"));
+        assertThat(generatedCsv, is("index-entry-number,entry-number,entry-timestamp,key,item-hash\r\n1,1,2014-05-13T16:53:20Z,abc,sha-256:1234abcd\r\n"));
     }
 
     @Test
@@ -124,9 +124,9 @@ public class CsvWriterTest {
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
 
-        String expected = "index-entry-number,entry-number,entry-timestamp,item-hash,key1,key2,key3,key4\r\n" +
-                "1,1,2016-08-05T13:24:00Z,sha-256:aaa,item1,,,\r\n" +
-                "1,1,2016-08-05T13:24:00Z,sha-256:bbb,item2,,,\r\n";
+        String expected = "index-entry-number,entry-number,entry-timestamp,key,key1,key2,key3,key4\r\n" +
+                "1,1,2016-08-05T13:24:00Z,key1,item1,,,\r\n" +
+                "1,1,2016-08-05T13:24:00Z,key1,item2,,,\r\n";
 
         assertThat(generatedCsv, is(expected));
     }
@@ -170,10 +170,10 @@ public class CsvWriterTest {
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
 
-        String expected = "index-entry-number,entry-number,entry-timestamp,item-hash,address,street\r\n" +
-                "1,1,2016-03-29T08:59:25Z,sha-256:ab,123,foo\r\n" +
-                "2,2,2016-03-28T09:49:26Z,sha-256:cd,456,bar\r\n" +
-                "2,2,2016-03-28T09:49:26Z,sha-256:ef,456,baz\r\n";
+        String expected = "index-entry-number,entry-number,entry-timestamp,key,address,street\r\n" +
+                "1,1,2016-03-29T08:59:25Z,123,123,foo\r\n" +
+                "2,2,2016-03-28T09:49:26Z,456,456,bar\r\n" +
+                "2,2,2016-03-28T09:49:26Z,456,456,baz\r\n";
 
         assertThat(generatedCsv, is(expected));
     }

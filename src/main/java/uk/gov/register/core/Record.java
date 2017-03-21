@@ -31,7 +31,7 @@ public class Record {
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
-        CsvSchema entrySchema = Entry.csvSchemaWithOmittedFields(Arrays.asList("key"));
+        CsvSchema entrySchema = Entry.csvSchemaWithOmittedFields(Arrays.asList("item-hash"));
         CsvSchema.Builder schemaBuilder = entrySchema.rebuild();
 
         for (Iterator<CsvSchema.Column> iterator = Item.csvSchema(fields).rebuild().getColumns(); iterator.hasNext();) {

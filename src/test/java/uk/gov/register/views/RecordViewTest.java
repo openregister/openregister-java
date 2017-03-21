@@ -32,7 +32,7 @@ public class RecordViewTest {
                 "\"index-entry-number\":\"1\"," +
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
-                "\"item-hash\":[\"sha-256:ab\"]," +
+                "\"key\":\"b\"," +
                 "\"item\":[{\"a\":\"b\"},{\"a\":\"d\"}]" +
                 "}"));
     }
@@ -51,12 +51,12 @@ public class RecordViewTest {
                 "\"index-entry-number\":\"1\"," +
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
-                "\"item-hash\":\"sha-256:ab\"," +
+                "\"key\":\"b\"," +
                 "\"a\":\"b\"}," +
                 "{\"index-entry-number\":\"1\"," +
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
-                "\"item-hash\":\"sha-256:ad\"," +
+                "\"key\":\"b\"," +
                 "\"a\":\"d\"" +
                 "}]"));
     }

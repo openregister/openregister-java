@@ -1,2 +1,2 @@
-index-entry-number,entry-number,entry-timestamp,item-hash,key
-1,1,2016-03-01T01:02:03Z,"sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18",value1
+index-entry-number,entry-number,entry-timestamp,key,item-hash
+1,1,2016-03-01T01:02:03Z,value1,"sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18"

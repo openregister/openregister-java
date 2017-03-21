@@ -56,7 +56,7 @@ public class RecordsViewTest {
                         "\"index-entry-number\":\"1\"," +
                         "\"entry-number\":\"1\"," +
                         "\"entry-timestamp\":\"2016-03-29T08:59:25Z\"," +
-                        "\"item-hash\":[\"sha-256:ab\"]," +
+                        "\"key\":\"123\"," +
                         "\"item\":[{" +
                         "\"address\":\"123\"," +
                         "\"street\":\"foo\"" +
@@ -70,7 +70,7 @@ public class RecordsViewTest {
                         "\"index-entry-number\":\"2\"," +
                         "\"entry-number\":\"2\"," +
                         "\"entry-timestamp\":\"2016-03-28T09:49:26Z\"," +
-                        "\"item-hash\":[\"sha-256:cd\"]," +
+                        "\"key\":\"456\"," +
                         "\"item\":[{" +
                         "\"address\":\"456\"," +
                         "\"street\":\"bar\"" +
