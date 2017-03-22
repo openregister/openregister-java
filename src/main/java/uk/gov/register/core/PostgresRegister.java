@@ -43,13 +43,7 @@ public class PostgresRegister implements Register {
     @Override
     public void appendEntry(Entry entry) {
         entryLog.appendEntry(entry);
-
-        if (!entry.getItemHashes().isEmpty()) {
-            recordIndex.updateRecordIndex(entry.getKey(), entry.getEntryNumber());
-        }
-        else {
-            recordIndex.removeRecordIndex(entry.getKey());
-        }
+        recordIndex.updateRecordIndex(entry);
     }
 
     public void commit() {

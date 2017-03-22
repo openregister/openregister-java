@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RecordIndex {
-    void updateRecordIndex(String key, Integer entryNumber);
-
-    void removeRecordIndex(String key);
+    void updateRecordIndex(Entry entry);
 
     Optional<Record> getRecord(String key);
 

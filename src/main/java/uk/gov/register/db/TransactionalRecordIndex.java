@@ -1,6 +1,7 @@
 package uk.gov.register.db;
 
 import com.google.common.collect.Iterables;
+import uk.gov.register.core.Entry;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,42 +9,37 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 public class TransactionalRecordIndex extends AbstractRecordIndex {
-    private final Set<String> stagedCurrentKeysForRemoval;
-    private final HashMap<String, Integer> stagedCurrentKeysForAddition;
+    private final HashMap<String, Integer> stagedCurrentKeys;
+    private final Set<String> entriesWithoutItems;
     private final CurrentKeysUpdateDAO currentKeysDAO;
 
     public TransactionalRecordIndex(RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysDAO) {
         super(recordQueryDAO);
         this.currentKeysDAO = currentKeysDAO;
-        stagedCurrentKeysForAddition = new HashMap<>();
-        stagedCurrentKeysForRemoval = new HashSet<>();
+        stagedCurrentKeys = new HashMap<>();
+        entriesWithoutItems = new HashSet<>();
     }
 
     @Override
-    public void updateRecordIndex(String key, Integer entryNumber) {
-        stagedCurrentKeysForAddition.put(key, entryNumber);
-    }
+    public void updateRecordIndex(Entry entry) {
+        stagedCurrentKeys.put(entry.getKey(), entry.getEntryNumber());
 
-    @Override
-    public void removeRecordIndex(String key) {
-        if (stagedCurrentKeysForAddition.containsKey(key)) {
-            stagedCurrentKeysForAddition.remove(key);
-        }
-        else {
-            stagedCurrentKeysForRemoval.add(key);
+        if (entry.getItemHashes().isEmpty()) {
+            entriesWithoutItems.add(entry.getKey());
         }
     }
 
     @Override
     public void checkpoint() {
-        int noOfRecordsDeleted = removeRecordsWithKeys(stagedCurrentKeysForAddition.keySet()) + removeRecordsWithKeys(stagedCurrentKeysForRemoval);
+        int noOfRecordsDeleted = removeRecordsWithKeys(stagedCurrentKeys.keySet());
 
-        currentKeysDAO.writeCurrentKeys(Iterables.transform(stagedCurrentKeysForAddition.entrySet(),
+        currentKeysDAO.writeCurrentKeys(Iterables.transform(stagedCurrentKeys.entrySet(),
                 keyValue -> new CurrentKey(keyValue.getKey(), keyValue.getValue()))
         );
-        currentKeysDAO.updateTotalRecords(stagedCurrentKeysForAddition.size() - noOfRecordsDeleted);
-        stagedCurrentKeysForAddition.clear();
-        stagedCurrentKeysForRemoval.clear();
+
+        currentKeysDAO.updateTotalRecords(stagedCurrentKeys.size() - noOfRecordsDeleted - entriesWithoutItems.size());
+        stagedCurrentKeys.clear();
+        entriesWithoutItems.clear();
     }
 
     private int removeRecordsWithKeys(Iterable<String> keySet) {
