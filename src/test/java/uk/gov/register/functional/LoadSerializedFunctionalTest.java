@@ -2,10 +2,7 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
@@ -120,6 +117,20 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(400));
         assertThat(testItemDAO.getItems(), is(empty()));
         assertThat(testEntryDAO.getAllEntries(), is(empty()));
+    }
+
+    @Test
+    public void shouldUploadMultiItemEntries() throws IOException {
+        System.setProperty("multi-item-entries-enabled", "true");
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry.rsf")));
+        Response r = send(input);
+        assertThat(r.getStatus(), equalTo(200));
+
+    }
+
+    @After
+    public void clearMultiItemsEnabled(){
+        System.clearProperty("multi-item-entries-enabled");
     }
 
     private Response send(String payload) {
