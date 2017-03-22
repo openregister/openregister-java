@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.*;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
@@ -28,6 +29,7 @@ public class ItemResource {
     @GET
     @Path("/sha-256:{item-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) {
         return getItem(itemHash).map(viewFactory::getItemView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
@@ -36,6 +38,7 @@ public class ItemResource {
     @GET
     @Path("/sha-256:{item-hash}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_TTL, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Timed
     public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) {
         return getItem(itemHash).map(viewFactory::getItemMediaView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));

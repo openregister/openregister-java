@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -29,6 +30,7 @@ public class SearchResource {
     @GET
     @Path("/{key}/{value}")
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Timed
     public Object find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
         if (!key.equals(registerPrimaryKey.value()) && !registerFieldsConfiguration.containsField(key)) {
             throw new NotFoundException();

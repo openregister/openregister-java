@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.RegisterDetailView;
 import uk.gov.register.views.ViewFactory;
@@ -25,6 +26,7 @@ public class RegisterResource {
     @GET
     @Path("/register")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML})
+    @Timed
     public RegisterDetailView getRegisterDetail() {
         return viewFactory.registerDetailView(
                 register.getTotalRecords(),

@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterName;
@@ -38,6 +39,7 @@ public class EntryResource {
     @GET
     @Path("/entry/{entry-number}")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = findByEntryNumber(entryNumber);
         return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
@@ -46,6 +48,7 @@ public class EntryResource {
     @GET
     @Path("/entry/{entry-number}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Timed
     public Optional<Entry> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         return register.getEntry(entryNumber);
     }
@@ -53,6 +56,7 @@ public class EntryResource {
     @GET
     @Path("/entries")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public PaginatedView<EntryListView> entriesHtml(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
         int totalEntries = register.getTotalEntries();
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
@@ -67,6 +71,7 @@ public class EntryResource {
     @GET
     @Path("/entries")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Timed
     public EntryListView entries(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
         int totalEntries = register.getTotalEntries();
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);

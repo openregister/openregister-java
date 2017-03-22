@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.*;
 import uk.gov.register.providers.params.IntegerParam;
@@ -39,6 +40,7 @@ public class RecordResource {
     @GET
     @Path("/record/{record-key}")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) {
         return viewFactory.getRecordView(getRecordByKey(key));
     }
@@ -46,6 +48,7 @@ public class RecordResource {
     @GET
     @Path("/record/{record-key}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Timed
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
@@ -56,6 +59,7 @@ public class RecordResource {
     @GET
     @Path("/record/{record-key}/entries")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public PaginatedView<EntryListView> getAllEntriesOfARecordHtml(@PathParam("record-key") String key) {
         Collection<Entry> allEntries = register.allEntriesOfRecord(key);
         if (allEntries.isEmpty()) {
@@ -70,6 +74,7 @@ public class RecordResource {
     @GET
     @Path("/record/{record-key}/entries")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Timed
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
         Collection<Entry> allEntries = register.allEntriesOfRecord(key);
         if (allEntries.isEmpty()) {
@@ -81,6 +86,7 @@ public class RecordResource {
     @GET
     @Path("/records/{key}/{value}")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public PaginatedView<RecordsView> facetedRecordsHtml(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         Pagination pagination
@@ -91,6 +97,7 @@ public class RecordResource {
     @GET
     @Path("/records/{key}/{value}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Timed
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
@@ -100,6 +107,7 @@ public class RecordResource {
     @GET
     @Path("/records")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
         setContentDisposition();
@@ -110,6 +118,7 @@ public class RecordResource {
     @GET
     @Path("/records")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Timed
     public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
         setContentDisposition();

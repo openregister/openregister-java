@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
@@ -54,6 +55,7 @@ public class DataUpload {
     @POST
     @PermitAll
     @Path("/load")
+    @Timed
     public void load(String payload) {
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstructWithCanonicalization(payload.split("\n"));
@@ -69,6 +71,7 @@ public class DataUpload {
     @Consumes(ExtraMediaType.APPLICATION_RSF)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/load-rsf")
+    @Timed
     public Response loadRsf(InputStream inputStream) {
         RegisterResult loadResult;
         try {
