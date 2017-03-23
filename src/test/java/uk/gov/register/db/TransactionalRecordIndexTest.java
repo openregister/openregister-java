@@ -6,8 +6,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Record;
+import uk.gov.register.util.HashValue;
 
+import java.time.Instant;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,14 +34,14 @@ public class TransactionalRecordIndexTest {
 
     @Test
     public void updateRecordIndex_shouldNotCommitChanges() throws Exception {
-        recordIndex.updateRecordIndex("foo", 5);
+        recordIndex.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
 
         assertThat(currentKeys.entrySet(), is(empty()));
     }
 
     @Test
     public void getRecord_shouldCauseCheckpoint() {
-        recordIndex.updateRecordIndex("foo", 5);
+        recordIndex.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
 
         Optional<Record> ignored = recordIndex.getRecord("foo");
 
@@ -48,7 +51,7 @@ public class TransactionalRecordIndexTest {
 
     @Test
     public void getRecords_shouldCauseCheckpoint() {
-        recordIndex.updateRecordIndex("foo", 5);
+        recordIndex.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
 
         List<Record> ignored = recordIndex.getRecords(1,0);
 
@@ -58,7 +61,7 @@ public class TransactionalRecordIndexTest {
 
     @Test
     public void findMax100RecordsByKeyValue_shouldCauseCheckpoint() {
-        recordIndex.updateRecordIndex("foo", 5);
+        recordIndex.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
 
         List<Record> ignored = recordIndex.findMax100RecordsByKeyValue("foo", "bar");
 
@@ -68,7 +71,7 @@ public class TransactionalRecordIndexTest {
 
     @Test
     public void findAllEntriesOfRecordBy_shouldCauseCheckpoint() {
-        recordIndex.updateRecordIndex("foo", 5);
+        recordIndex.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
 
         Collection<Entry> ignored = recordIndex.findAllEntriesOfRecordBy("bar");
 
@@ -78,7 +81,7 @@ public class TransactionalRecordIndexTest {
 
     @Test
     public void getTotalRecords_shouldCauseCheckpoint() {
-        recordIndex.updateRecordIndex("foo", 5);
+        recordIndex.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
 
         int ignored = recordIndex.getTotalRecords();
 
@@ -88,9 +91,9 @@ public class TransactionalRecordIndexTest {
 
     @Test
     public void insertRecordWithSameKeyValueDoesNotStageBothCurrentKeys() {
-        recordIndex.updateRecordIndex("DE", 1);
-        recordIndex.updateRecordIndex("VA", 2);
-        recordIndex.updateRecordIndex("DE", 3);
+        recordIndex.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        recordIndex.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
+        recordIndex.updateRecordIndex(new Entry(3, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
 
         assertThat(currentKeys.entrySet(), is(empty()));
 
@@ -103,18 +106,82 @@ public class TransactionalRecordIndexTest {
 
     @Test
     public void whenInserting_shouldUpdateRecordCount() throws Exception {
-        recordIndex.updateRecordIndex("DE", 1);
-        recordIndex.updateRecordIndex("VA", 2);
-        recordIndex.updateRecordIndex("DE", 3);
+        recordIndex.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        recordIndex.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
+        recordIndex.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
         recordIndex.checkpoint(); // force writing staged data
 
         assertThat(currentKeys.size(), is(2));
         assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
-        recordIndex.updateRecordIndex("CZ", 4);
-        recordIndex.updateRecordIndex("TV", 5);
+        recordIndex.updateRecordIndex(new Entry(4, new HashValue(HashingAlgorithm.SHA256, "cz"), Instant.now(), "CZ"));
+        recordIndex.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "tv"), Instant.now(), "TV"));
         recordIndex.checkpoint();
 
         assertThat(currentKeys.size(), is(4));
         assertThat(currentKeysUpdateDAO.getTotalRecords(), is(4));
+    }
+
+    @Test
+    public void updateRecordIndex_shouldUpdateTotalRecords_whenKeyExistsInDatabaseAndEntryContainsNoItems() {
+        recordIndex.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        recordIndex.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cz"), Instant.now(), "CZ"));
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
+
+        recordIndex.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "DE"));
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeys.containsKey("DE"), is(true));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(1));
+    }
+
+    @Test
+    public void updateRecordIndex_shouldUpdateCurrentKeysAndTotalRecords_whenKeyExistsInDatabase() {
+        recordIndex.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        recordIndex.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
+        recordIndex.updateRecordIndex(new Entry(3, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
+
+        recordIndex.updateRecordIndex(new Entry(4, Collections.emptyList(), Instant.now(), "DE"));
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeys.containsKey("DE"), is(true));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(1));
+    }
+
+    @Test
+    public void updateRecordIndex_shouldNotUpdateCurrentKeysAndTotalRecords_whenKeyExistsInStagedData() {
+        recordIndex.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        recordIndex.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
+        recordIndex.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "DE"));
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeys.containsKey("DE"), is(true));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(1));
+    }
+
+    @Test
+    public void updateRecordIndex_shouldNotUpdateCurrentKeysAndTotalRecords_whenKeyDoesNotExistInStagedDataOrDatabase() {
+        recordIndex.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        recordIndex.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(2));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
+
+        recordIndex.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "CZ"));
+        recordIndex.checkpoint();
+
+        assertThat(currentKeys.size(), is(3));
+        assertThat(currentKeys.containsKey("CZ"), is(true));
+        assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
     }
 }

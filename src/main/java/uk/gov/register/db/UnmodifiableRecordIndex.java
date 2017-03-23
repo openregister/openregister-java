@@ -1,5 +1,7 @@
 package uk.gov.register.db;
 
+import uk.gov.register.core.Entry;
+
 import javax.inject.Inject;
 
 public class UnmodifiableRecordIndex extends AbstractRecordIndex {
@@ -9,7 +11,7 @@ public class UnmodifiableRecordIndex extends AbstractRecordIndex {
     }
 
     @Override
-    public void updateRecordIndex(String key, Integer entryNumber) {
+    public void updateRecordIndex(Entry entry) {
         throw new UnsupportedOperationException();
     }
 
