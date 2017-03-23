@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.*;
@@ -45,6 +46,7 @@ public class DataDownload {
     @Path("/download-register")
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
+    @Timed
     public Response downloadRegister() {
         Collection<Entry> entries = register.getAllEntries();
         Collection<Item> items = register.getAllItems();
@@ -70,6 +72,7 @@ public class DataDownload {
     @Path("/download-rsf")
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
+    @Timed
     public Response downloadRSF() {
         String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
         return Response
@@ -81,6 +84,7 @@ public class DataDownload {
     @Path("/download-rsf/{total-entries-1}/{total-entries-2}")
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
+    @Timed
     public Response downloadPartialRSF(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
         if (totalEntries1 < 0) {
             throw new BadRequestException("total-entries-1 must be 0 or greater");
@@ -105,6 +109,7 @@ public class DataDownload {
     @GET
     @Path("/download")
     @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
     public View download() {
         return viewFactory.downloadPageView(resourceConfiguration.getEnableDownloadResource());
     }

@@ -1,5 +1,6 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
@@ -23,6 +24,7 @@ public class DeleteRegisterDataResource {
     @PermitAll
     @Path("/delete-register-data")
     @DataDeleteNotAllowed
+    @Timed
     public Response deleteRegisterData() throws NoSuchConfigException, IOException {
         registerContext.resetRegister();
 
