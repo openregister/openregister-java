@@ -15,7 +15,11 @@ public class LocalAuthorityByTypeIndexFunction extends BaseIndexFunction {
 
     @Override
     protected void execute(String key, HashValue itemHash, Set<IndexValueItemPair> result) {
-        register.getItemBySha256(itemHash).map(i -> result.add(new IndexValueItemPair(i.getValue("local-authority-type"), i.getSha256hex())));
+        register.getItemBySha256(itemHash).ifPresent(i -> {
+            if (i.getValue("local-authority-type").isPresent()) {
+                result.add(new IndexValueItemPair(i.getValue("local-authority-type").get(), i.getSha256hex()));
+            }
+        });
     }
 
     @Override

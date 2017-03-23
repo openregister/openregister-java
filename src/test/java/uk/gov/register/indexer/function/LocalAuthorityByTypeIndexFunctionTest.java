@@ -35,6 +35,20 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     }
 
     @Test
+    public void executeWithKeyAndHash_shouldReturnEmptySet_whenLocalAuthorityTypeIsNotSpecifiedInItem() throws IOException {
+        HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
+        Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"name\":\"City of London\"}"));
+        Register register = mock(Register.class);
+        when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
+
+        LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction(register);
+        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        func.execute("LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+
+        assertThat(resultSet, is(empty()));
+    }
+
+    @Test
     public void executeWithKeyAndHash_shouldReturnIndexValueItemPairByLocalAuthType_whenItemExists() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));

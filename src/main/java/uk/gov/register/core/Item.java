@@ -9,6 +9,7 @@ import uk.gov.register.util.HashValue;
 
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -49,8 +50,9 @@ public class Item {
         return data;
     }
 
-    public String getValue(String key) {
-        return content.get(key).textValue();
+    public Optional<String> getValue(String key) {
+        JsonNode value = content.get(key);
+        return value != null ? Optional.of(value.textValue()) : Optional.empty();
     }
 
     public Stream<Map.Entry<String, JsonNode>> getFieldsStream() {

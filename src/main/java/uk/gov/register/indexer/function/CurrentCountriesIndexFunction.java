@@ -16,7 +16,7 @@ public class CurrentCountriesIndexFunction extends BaseIndexFunction {
     @Override
     protected void execute(String key, HashValue itemHash, Set<IndexValueItemPair> result) {
         register.getItemBySha256(itemHash).ifPresent(i -> {
-            if (!i.getFieldsStream().anyMatch(f -> f.getKey().equals("end-date"))) {
+            if (!i.getValue("end-date").isPresent()) {
                 result.add(new IndexValueItemPair(key, i.getSha256hex()));
             }
         });
