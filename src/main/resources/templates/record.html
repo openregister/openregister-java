@@ -47,11 +47,8 @@
         <table th:if="${!content.content.isEmpty()}">
             <thead>
             <tr>
-                <th scope="col">
-                    <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}"
-                       th:text="${registerId}"></a>
-                </th>
-                <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+                <th scope="col">key</th>
+                <th:block th:each="fieldName : ${register.fields}">
                     <th scope="col">
                         <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
                            th:text="${fieldName}"></a>
@@ -64,7 +61,7 @@
                 <td>
                     <a th:href="${'/record/' + content.primaryKey}" th:text="${content.primaryKey}"></a>
                 </td>
-                <th:block th:each="fieldName : ${register.nonPrimaryFields}">
+                <th:block th:each="fieldName : ${register.fields}">
                     <td th:if="${item.containsKey(fieldName)}" class="field-list field-list-in-table">
                         <ul th:if="${item.get(fieldName).isList()}">
                             <th:block th:each="fieldValue: ${item.get(fieldName)}">
