@@ -1,17 +1,20 @@
 package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.db.IndexDAO;
+import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.indexer.IndexDriver;
+import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
+import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -21,18 +24,32 @@ public class PostgresRegister implements Register {
     private final ItemStore itemStore;
     private final RegisterFieldsConfiguration registerFieldsConfiguration;
     private final RegisterMetadata registerMetadata;
+    private final IndexDriver indexDriver;
+    private final List<IndexFunction> indexFunctions;
 
     public PostgresRegister(RegisterMetadata registerMetadata,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
                             EntryLog entryLog,
                             ItemStore itemStore,
-                            RecordIndex recordIndex) {
+                            RecordIndex recordIndex,
+                            IndexDAO indexDAO,
+                            IndexQueryDAO indexQueryDAO) {
         registerName = registerMetadata.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
         this.registerMetadata = registerMetadata;
+        this.indexDriver = new IndexDriver(this, indexDAO, indexQueryDAO);
+
+        this.indexFunctions = new ArrayList<>();
+
+        if (this.registerMetadata.getRegisterName().value().equals("country")) {
+            this.indexFunctions.add(new CurrentCountriesIndexFunction(this));
+        }
+        else if (this.registerMetadata.getRegisterName().value().equals("local-authority-eng")) {
+            this.indexFunctions.add(new LocalAuthorityByTypeIndexFunction(this));
+        }
     }
 
     @Override
@@ -43,6 +60,11 @@ public class PostgresRegister implements Register {
     @Override
     public void appendEntry(Entry entry) {
         entryLog.appendEntry(entry);
+
+        for (IndexFunction indexFunction : indexFunctions) {
+            indexDriver.indexEntry(entry, indexFunction);
+        }
+
         recordIndex.updateRecordIndex(entry);
     }
 
