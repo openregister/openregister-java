@@ -44,16 +44,19 @@
             <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
         </div>
 
-        <table th:if="${!content.content.isEmpty()}">
+        <table th:if="${!content.content.isEmpty()}"
+               th:with="fields = ${content.isRegister()}? ${register.nonPrimaryFields} : ${register.fields}">
             <thead>
             <tr>
-                <th scope="col">key</th>
-                <th:block th:each="fieldName : ${register.fields}">
-                    <th scope="col">
-                        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
-                           th:text="${fieldName}"></a>
-                    </th>
-                </th:block>
+                <th scope="col" th:unless="${content.isRegister()}">key</th>
+                <th scope="col" th:if="${content.isRegister()}">
+                    <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}"
+                       th:text="${registerId}"></a>
+                </th>
+                <th scope="col" th:each="fieldName : ${fields}">
+                    <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
+                       th:text="${fieldName}"></a>
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -61,7 +64,7 @@
                 <td>
                     <a th:href="${'/record/' + content.primaryKey}" th:text="${content.primaryKey}"></a>
                 </td>
-                <th:block th:each="fieldName : ${register.fields}">
+                <th:block th:each="fieldName : ${fields}">
                     <td th:if="${item.containsKey(fieldName)}" class="field-list field-list-in-table">
                         <ul th:if="${item.get(fieldName).isList()}">
                             <th:block th:each="fieldValue: ${item.get(fieldName)}">

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
@@ -15,7 +14,6 @@ import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,11 +21,13 @@ public class RecordView implements CsvRepresentationView {
     private final Entry entry;
     private final Collection<ItemView> itemViews;
     private final Iterable<Field> fields;
+    private final boolean isRegister;
 
     public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields) {
         this.entry = entry;
         this.itemViews = itemViews;
         this.fields = fields;
+        this.isRegister = true;
     }
 
     public String getPrimaryKey() {
@@ -78,5 +78,9 @@ public class RecordView implements CsvRepresentationView {
 
     public Iterable<Field> getFields() {
         return fields;
+    }
+
+    public boolean isRegister() {
+        return isRegister;
     }
 }

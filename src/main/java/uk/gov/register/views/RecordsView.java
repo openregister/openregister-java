@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class RecordsView implements CsvRepresentationView {
     private List<RecordView> records;
+    private final boolean isRegister;
 
 
     private Iterable<Field> fields;
@@ -22,6 +23,7 @@ public class RecordsView implements CsvRepresentationView {
     public RecordsView(List<RecordView> records, Iterable<Field> fields) {
         this.records = records;
         this.fields = fields;
+        this.isRegister = true;
     }
 
     @JsonValue
@@ -48,5 +50,9 @@ public class RecordsView implements CsvRepresentationView {
 
     public Iterable<Field> getFields() {
         return fields;
+    }
+
+    public boolean isRegister() {
+        return isRegister;
     }
 }
