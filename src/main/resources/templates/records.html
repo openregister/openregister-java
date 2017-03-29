@@ -7,79 +7,43 @@
 
 <div id="wrapper">
 
-    <main id="main" role="main">
-        <div th:replace="fragments/phase-banner.html::phase"></div>
+  <main id="main" role="main">
+    <div th:replace="fragments/phase-banner.html::phase"></div>
 
-        <div class="breadcrumbs">
-            <ol>
-                <li>
-                    <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-                </li>
-                <li>Records</li>
-            </ol>
-        </div>
+    <div class="breadcrumbs">
+      <ol>
+        <li>
+          <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+        </li>
+        <li>Records</li>
+      </ol>
+    </div>
 
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-large">
-                    Records
-                    <span class="heading-secondary"
-                          th:include="fragments/pagination.html::pagination-top('records')"></span>
-                </h1>
-                <div th:include="fragments/data-formats.html::data-formats"></div>
-                <details role="group">
-                    <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-                        <span class="summary">What are the table headers?</span>
-                    </summary>
-                    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                        <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
-                    </div>
-                </details>
-            </div>
-            <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
-        </div>
-        <div class="table-wrapper">
-            <table th:if="${!content.records.isEmpty()}"
-                   th:with="fields = ${content.isRegister()}? ${register.nonPrimaryFields} : ${register.fields}">
-                <thead>
-                <tr>
-                    <th scope="col" th:unless="${content.isRegister()}">key</th>
-                    <th scope="col" th:if="${content.isRegister()}">
-                        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}"
-                           th:text="${registerId}"></a>
-                    </th>
-                    <th scope="col" th:each="fieldName : ${fields}">
-                        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
-                           th:text="${fieldName}"></a>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <th:block th:each="record : ${content.records}">
-                    <tr th:each="item : ${record.itemViews}">
-                        <td>
-                            <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
-                        </td>
-                        <th:block th:each="fieldName : ${fields}">
-                            <td th:if="${item.content.containsKey(fieldName)}" class="field-list field-list-in-table">
-                                <ul th:if="${item.content.get(fieldName).isList()}">
-                                    <th:block th:each="fieldValue: ${record.getField(fieldName).get()}">
-                                        <li th:text="${fieldValue.value}"></li>
-                                    </th:block>
-                                </ul>
-                                <th:block th:text="${item.content.get(fieldName).value}">
-                                </th:block>
-                            </td>
-                            <td th:unless="${item.content.get(fieldName)}"></td>
-                        </th:block>
-                    </tr>
-                </th:block>
-                </tbody>
-            </table>
-        </div>
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <h1 class="heading-large">
+          Records
+          <span class="heading-secondary"
+                th:include="fragments/pagination.html::pagination-top('records')"></span>
+        </h1>
+        <div th:include="fragments/data-formats.html::data-formats"></div>
+        <details role="group">
+          <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+            <span class="summary">What are the table headers?</span>
+          </summary>
+          <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+            <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
+          </div>
+        </details>
+      </div>
+      <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
+    </div>
 
-        <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
-    </main>
+    <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.records})"
+         class="table-wrapper"></div>
+
+    <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
+  </main>
 </div>
 
 <footer th:replace="fragments/footer.html::footer"></footer>

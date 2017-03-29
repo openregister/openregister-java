@@ -3,76 +3,76 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head th:include="fragments/head.html::head"></head>
 <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-<header th:replace="fragments/global-header.html::global-header"></header>
+  <header th:replace="fragments/global-header.html::global-header"></header>
 
-<div id="wrapper">
+  <div id="wrapper">
     <main id="main" role="main">
-        <div th:replace="fragments/phase-banner.html::phase"></div>
+      <div th:replace="fragments/phase-banner.html::phase"></div>
 
-        <div class="breadcrumbs">
-            <ol>
-                <li>
-                    <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-                </li>
-                <li th:if="${content.recordKey.present}">
-                    <a href="/records">Records</a>
-                </li>
-                <li th:if="${content.recordKey.present}">
-                    <a th:href="${'/record/' + content.recordKey.get()}"
-                       th:text="${'Record ' + content.recordKey.get()}"></a>
-                </li>
-                <li>Entries</li>
-            </ol>
+      <div class="breadcrumbs">
+        <ol>
+          <li>
+            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+          </li>
+          <li th:if="${content.recordKey.present}">
+            <a href="/records">Records</a>
+          </li>
+          <li th:if="${content.recordKey.present}">
+            <a th:href="${'/record/' + content.recordKey.get()}"
+               th:text="${'Record ' + content.recordKey.get()}"></a>
+          </li>
+          <li>Entries</li>
+        </ol>
+      </div>
+
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="heading-large">
+              <span th:if="${content.recordKey.present}">
+                Entries for record <span th:text="${content.recordKey.get()}">GM</span>
+              </span>
+                      <span th:unless="${content.recordKey.present}">
+                Entries
+              </span>
+                      <span class="heading-secondary"
+                            th:include="fragments/pagination.html::pagination-top('entries')"></span>
+          </h1>
+          <div th:include="fragments/data-formats.html::data-formats"></div>
         </div>
+        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
+      </div>
 
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <h1 class="heading-large">
-            <span th:if="${content.recordKey.present}">
-              Entries for record <span th:text="${content.recordKey.get()}">GM</span>
-            </span>
-                    <span th:unless="${content.recordKey.present}">
-              Entries
-            </span>
-                    <span class="heading-secondary"
-                          th:include="fragments/pagination.html::pagination-top('entries')"></span>
-                </h1>
-                <div th:include="fragments/data-formats.html::data-formats"></div>
-            </div>
-            <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
-        </div>
+      <div class="table-wrapper">
+        <table th:if="${#lists.isEmpty(content.entries) == false}">
+          <thead>
+          <tr>
+            <th scope="col">Entry</th>
+            <th scope="col">item-hash</th>
+            <th scope="col">entry-timestamp</th>
+            <th scope="col">key</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="entry : ${content.entries}">
+            <td>
+              <a th:href="${'/entry/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
+            </td>
+            <td>
+              <p th:each="sha : ${entry.itemHashes}"><a th:href="${'/item/' + sha}" th:text="${sha}"></a></p>
+            </td>
+            <td th:text="${entry.timestamp}"></td>
+            <td th:text="${entry.key}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <div class="table-wrapper">
-            <table th:if="${#lists.isEmpty(content.entries) == false}">
-                <thead>
-                <tr>
-                    <th scope="col">Entry</th>
-                    <th scope="col">item-hash</th>
-                    <th scope="col">entry-timestamp</th>
-                    <th scope="col">key</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="entry : ${content.entries}">
-                    <td>
-                        <a th:href="${'/entry/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
-                    </td>
-                    <td>
-                        <p th:each="sha : ${entry.itemHashes}"><a th:href="${'/item/' + sha}" th:text="${sha}"></a> </p>
-                    </td>
-                  <td th:text="${entry.timestamp}"></td>
-                    <td th:text="${entry.key}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
+      <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
 
     </main>
-</div>
+  </div>
 
-<footer th:replace="fragments/footer.html::footer"></footer>
+  <footer th:replace="fragments/footer.html::footer"></footer>
 
 </body>
 </html>

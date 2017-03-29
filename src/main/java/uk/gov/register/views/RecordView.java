@@ -12,9 +12,7 @@ import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
 import uk.gov.register.views.representations.CsvRepresentation;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RecordView implements CsvRepresentationView {
@@ -60,6 +58,10 @@ public class RecordView implements CsvRepresentationView {
 
     public Set<Map<String, FieldValue>> getContent() {
         return itemViews.stream().map(iv -> iv.getContent()).collect(Collectors.toSet());
+    }
+
+    public List<RecordView> asList(){
+        return Arrays.asList(this);
     }
 
     @Override
