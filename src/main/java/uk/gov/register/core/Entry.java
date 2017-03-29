@@ -22,6 +22,7 @@ import java.util.*;
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
 public class Entry implements CsvRepresentationView<Entry> {
+    private final int indexEntryNumber;
     private final int entryNumber;
     private final List<HashValue> hashValues;
     private final Instant timestamp;
@@ -29,12 +30,18 @@ public class Entry implements CsvRepresentationView<Entry> {
 
     public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key) {
         this.entryNumber = entryNumber;
+        this.indexEntryNumber = entryNumber;
         this.hashValues = new ArrayList<>(Arrays.asList(hashValue));
         this.timestamp = timestamp;
         this.key = key;
     }
 
     public Entry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key) {
+        this(entryNumber, entryNumber, hashValues, timestamp, key);
+    }
+
+    public Entry(int indexEntryNumber, int entryNumber, List<HashValue> hashValues, Instant timestamp, String key) {
+        this.indexEntryNumber = indexEntryNumber;
         this.entryNumber = entryNumber;
         this.hashValues = hashValues;
         this.timestamp = timestamp;

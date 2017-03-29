@@ -25,9 +25,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,6 +38,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
     private DBI dbi;
     private TestEntryDAO testEntryDAO;
     private Handle handle;
+    private DerivationRecordIndex derivationRecordIndex = mock(DerivationRecordIndex.class);
 
     @Before
     public void setUp() throws Exception {
@@ -151,7 +150,10 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 mock(ItemValidator.class));
         RegisterMetadata registerData = mock(RegisterMetadata.class);
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
-        return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore, new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)), handle.attach(IndexDAO.class), handle.attach(IndexQueryDAO.class));
+        return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore,
+                new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)),
+                handle.attach(IndexDAO.class), handle.attach(IndexQueryDAO.class), derivationRecordIndex);
     }
+
 }
 

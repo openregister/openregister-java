@@ -86,7 +86,8 @@ public class RegisterContext implements
                 new UnmodifiableItemStore(dbi.onDemand(ItemQueryDAO.class)),
                 new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class)),
                 dbi.onDemand(IndexDAO.class),
-                dbi.onDemand(IndexQueryDAO.class));
+                dbi.onDemand(IndexQueryDAO.class),
+                new DerivationRecordIndex(dbi.onDemand(IndexQueryDAO.class)));
     }
 
     private Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
@@ -104,7 +105,8 @@ public class RegisterContext implements
                         handle.attach(RecordQueryDAO.class),
                         handle.attach(CurrentKeysUpdateDAO.class)),
                 handle.attach(IndexDAO.class),
-                handle.attach(IndexQueryDAO.class));
+                handle.attach(IndexQueryDAO.class),
+                new DerivationRecordIndex(handle.attach(IndexQueryDAO.class)));
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
