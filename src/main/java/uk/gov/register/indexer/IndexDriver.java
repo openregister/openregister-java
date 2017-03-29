@@ -49,11 +49,23 @@ public class IndexDriver {
             currentIndexEntryNumber++;
 
             for (IndexValueItemPairEvent p : keyValuePair.getValue()) {
+                int existingIndexCountForItem = indexQueryDAO.getExistingIndexCountForItem(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue());
+
                 if (p.isStart()) {
-                    indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, currentIndexEntryNumber);
+                    if (existingIndexCountForItem > 0) {
+                        indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
+                    }
+                    else {
+                        indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(currentIndexEntryNumber));
+
+                    }
                 }
                 else {
-                    indexDAO.end(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, currentIndexEntryNumber);
+                    if (existingIndexCountForItem > 1) {
+                        indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
+                    } else {
+                        indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(currentIndexEntryNumber));
+                    }
                 }
             }
         }

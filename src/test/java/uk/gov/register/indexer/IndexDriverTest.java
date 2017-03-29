@@ -127,7 +127,7 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "bbb", 2, 1);
+        verify(indexDAO, times(1)).start("by-x", "P", "bbb", 2, Optional.of(1));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -154,7 +154,7 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).end("by-x", "P", "aaa", 2, 1);
+        verify(indexDAO, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -183,8 +183,8 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).end("by-x", "P", "aaa", 2, 1);
-        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, 2);
+        verify(indexDAO, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
+        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -213,8 +213,8 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 2, 1);
-        verify(indexDAO, times(1)).end("by-x", "Q", "bbb", 2, 2);
+        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 2, Optional.of(1));
+        verify(indexDAO, times(1)).end("by-x", "A", "Q", "bbb", 2, Optional.of(2));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -243,13 +243,13 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).end("by-x", "P", "aaa", 2, 1);
-        verify(indexDAO, times(1)).start("by-x", "P", "bbb", 2, 1);
+        verify(indexDAO, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
+        verify(indexDAO, times(1)).start("by-x", "P", "bbb", 2, Optional.of(1));
         verifyNoMoreInteractions(indexDAO);
     }
 
     @Test
-    public void indexEntry_shouldStartIndexesWithIncreasingIndexNumbers_whenAddingItems() throws IOException {
+    public void indexEntry_shouldStartIndexesWithIncreasingIndexNumbers_whenAddingNewItems() throws IOException {
         Item itemP = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
         Item itemQ = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
 
@@ -273,8 +273,62 @@ public class IndexDriverTest {
         indexDriver.indexEntry(newEntry1, indexFunction);
         indexDriver.indexEntry(newEntry2, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 1, 1);
-        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, 2);
+        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 1, Optional.of(1));
+        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
+        verifyNoMoreInteractions(indexDAO);
+    }
+
+    @Test
+    public void indexEntry_shouldStartIndexWithoutSpecifyingStartIndexEntryNumber_whenItemExistsUnderAnotherIndex() throws IOException {
+        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
+
+        Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A");
+        Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B");
+
+        Register register = mock(Register.class);
+        when(register.getRecord(anyString())).thenReturn(Optional.empty());
+
+        IndexDAO indexDAO = mock(IndexDAO.class);
+        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
+        when(indexQueryDAO.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(1);
+        IndexFunction indexFunction = mock(IndexFunction.class);
+        when(indexFunction.getName()).thenReturn("by-x");
+        when(indexFunction.execute(newEntry))
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+
+        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
+        indexDriver.indexEntry(newEntry, indexFunction);
+
+        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 2, Optional.empty());
+        verifyNoMoreInteractions(indexDAO);
+    }
+
+    @Test
+    public void indexEntry_shouldEndIndexWithoutSpecifyingEndIndexEntryNumber_whenItemExistsUnderAnotherIndex() throws IOException {
+        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
+
+        Entry previousEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B");
+        Entry newEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B");
+
+        Register register = mock(Register.class);
+        when(register.getRecord(anyString())).thenReturn(Optional.of(new Record(previousEntry, item)));
+
+        IndexDAO indexDAO = mock(IndexDAO.class);
+        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
+        when(indexQueryDAO.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(2);
+        IndexFunction indexFunction = mock(IndexFunction.class);
+        when(indexFunction.getName()).thenReturn("by-x");
+        when(indexFunction.execute(previousEntry))
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+        when(indexFunction.execute(newEntry))
+                .thenReturn(new HashSet<>());
+
+        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
+        indexDriver.indexEntry(newEntry, indexFunction);
+
+        verify(indexDAO, times(1)).end("by-x", "B", "P", "aaa", 3, Optional.empty());
         verifyNoMoreInteractions(indexDAO);
     }
 }
