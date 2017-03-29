@@ -84,8 +84,9 @@ public class RegisterContext implements
                 getRegisterFieldsConfiguration(),
                 new UnmodifiableEntryLog(memoizationStore.get(), dbi.onDemand(EntryQueryDAO.class)),
                 new UnmodifiableItemStore(dbi.onDemand(ItemQueryDAO.class)),
-                new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class))
-        );
+                new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class)),
+                dbi.onDemand(IndexDAO.class),
+                dbi.onDemand(IndexQueryDAO.class));
     }
 
     private Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
@@ -101,8 +102,9 @@ public class RegisterContext implements
                         new ItemValidator(configManager, registerName)),
                 new TransactionalRecordIndex(
                         handle.attach(RecordQueryDAO.class),
-                        handle.attach(CurrentKeysUpdateDAO.class))
-        );
+                        handle.attach(CurrentKeysUpdateDAO.class)),
+                handle.attach(IndexDAO.class),
+                handle.attach(IndexQueryDAO.class));
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
