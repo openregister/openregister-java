@@ -1,8 +1,13 @@
 package uk.gov.register.db;
 
-import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
+import static uk.gov.register.core.HashingAlgorithm.SHA256;
+
 import uk.gov.register.core.Entry;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
@@ -12,13 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.mock;
-import static uk.gov.register.core.HashingAlgorithm.SHA256;
+import com.google.common.collect.ImmutableList;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TransactionalEntryLogTest {
 
@@ -32,7 +33,7 @@ public class TransactionalEntryLogTest {
     public void setUp() throws Exception {
         entries = new ArrayList<>();
         entryQueryDAO = new InMemoryEntryDAO(entries);
-        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO, mock(EntryItemDAO.class));
+        entryLog = new TransactionalEntryLog(new DoNothing(), entryQueryDAO, entryQueryDAO, mock(EntryItemDAO.class), mock(IndexQueryDAO.class));
     }
 
     @Test

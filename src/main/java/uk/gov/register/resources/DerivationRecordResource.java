@@ -1,21 +1,32 @@
 package uk.gov.register.resources;
 
-import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.jersey.params.IntParam;
+import static java.util.stream.Collectors.toList;
+
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
-import uk.gov.register.views.*;
+import uk.gov.register.views.AttributionView;
+import uk.gov.register.views.PaginatedView;
+import uk.gov.register.views.RecordView;
+import uk.gov.register.views.RecordsView;
+import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.jersey.params.IntParam;
 
 @Path("/")
 public class DerivationRecordResource {

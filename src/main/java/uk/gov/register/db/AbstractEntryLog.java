@@ -1,6 +1,5 @@
 package uk.gov.register.db;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.HashingAlgorithm;
@@ -11,7 +10,6 @@ import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
-import javax.xml.bind.DatatypeConverter;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,13 +18,19 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.codec.digest.DigestUtils;
+
 public abstract class AbstractEntryLog implements EntryLog {
     protected final EntryQueryDAO entryQueryDAO;
     private final MemoizationStore memoizationStore;
+    protected final IndexQueryDAO indexQueryDAO;
 
-    protected AbstractEntryLog(EntryQueryDAO entryQueryDAO, MemoizationStore memoizationStore) {
+    protected AbstractEntryLog(EntryQueryDAO entryQueryDAO, MemoizationStore memoizationStore, IndexQueryDAO indexQueryDAO) {
         this.entryQueryDAO = entryQueryDAO;
         this.memoizationStore = memoizationStore;
+        this.indexQueryDAO = indexQueryDAO;
     }
 
     @Override
@@ -45,6 +49,16 @@ public abstract class AbstractEntryLog implements EntryLog {
     public Iterator<Entry> getIterator() {
         checkpoint();
         return entryQueryDAO.getIterator();
+    }
+
+    @Override
+    public Iterator<Entry> getDerivationIterator(String indexName) {
+        return indexQueryDAO.getIterator(indexName);
+    }
+
+    @Override
+    public Iterator<Entry> getDerivationIterator(String indexName, int totalEntries1, int totalEntries2) {
+        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2);
     }
 
     @Override

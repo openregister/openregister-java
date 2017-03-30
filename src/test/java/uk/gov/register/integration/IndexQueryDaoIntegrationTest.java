@@ -1,24 +1,33 @@
 package uk.gov.register.integration;
 
-import io.dropwizard.jdbi.OptionalContainerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import uk.gov.register.core.HashingAlgorithm;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static uk.gov.register.core.HashingAlgorithm.SHA256;
+import static uk.gov.register.util.HashValue.decode;
+
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.util.HashValue;
 
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import io.dropwizard.jdbi.OptionalContainerFactory;
+import org.assertj.core.util.Lists;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 
 /**
  * reg
@@ -42,35 +51,36 @@ import static org.junit.Assert.assertTrue;
  * entry3 - 93,93,xxx01c,BDF
  * <p>
  * dervi
- * entry3 - 3,3,[xxx6c4,xxx37d,xxx01c],UA
+ * entry3 - 93,93,[xxx6c4,xxx37d,xxx01c],UA
  * <p>
  * reg
  * {lae:BIR, lat:MD, name: Birmingham} bdc
- * entry4 - 4,4,xxxbdc,BIR
+ * entry4 - 94,94,xxxbdc,BIR
  * <p>
  * deriv
- * entry4 - 4,4,[xxxbdc],MD
+ * entry4 - 94,94,[xxxbdc],MD
  * <p>
  * reg
  * {lae:BDD, lat:UA, name: New Bath} 12
- * entry5 - 5,5,xxx126,BAS
+ * entry5 - 95,95,xxx126,BAS
  * <p>
  * deriv
- * entry5 - 5,5,[xxx37d,xxx01c,xxx126],UA
+ * entry5 - 95,95,[xxx37d,xxx01c,xxx126],UA
  * <p>
  * reg
  * {lae:BDD, lat:MD, name: Blackburn} 509
- * entry6 - 6,6,xxx509,BDD
+ * entry6 - 96,96,xxx509,BDD
  * <p>
  * deriv
- * entry6 - 6,6,[xxx01c,xxx126],UA
- * entry7 - 7,6,[xxxbdc,xxx509],MD
+ * entry6 - 96,96,[xxx01c,xxx126],UA
+ * entry7 - 97,96,[xxxbdc,xxx509],MD
  */
 public class IndexQueryDaoIntegrationTest {
 
     private DBI dbi;
     private Handle handle;
     private IndexQueryDAO dao;
+    private Instant timestamp = Instant.ofEpochMilli(1490610633L * 1000L);
 
     @Before
     public void setup() {
@@ -101,12 +111,12 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(record.getEntry().getEntryNumber(), is(96));
         assertThat(record.getEntry().getIndexEntryNumber(), is(96));
 
-        HashValue hash01c = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxx01c");
+        HashValue hash01c = decode(SHA256, "sha-256:xxx01c");
         assertTrue(record.getItems().containsKey(hash01c));
         Item item = record.getItems().get(hash01c);
         assertThat(item.getValue("name").get(), is("Bedford"));
 
-        HashValue hash126 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxx126");
+        HashValue hash126 = decode(SHA256, "sha-256:xxx126");
         assertTrue(record.getItems().containsKey(hash126));
         Item item2 = record.getItems().get(hash126);
         assertThat(item2.getValue("name").get(), is("New Bath"));
@@ -124,12 +134,12 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(record.getEntry().getEntryNumber(), is(96));
         assertThat(record.getEntry().getIndexEntryNumber(), is(97));
 
-        HashValue hash1 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxxbdc");
+        HashValue hash1 = decode(SHA256, "sha-256:xxxbdc");
         assertTrue("record should contain key sha-256:xxxbdc", record.getItems().containsKey(hash1));
         Item item = record.getItems().get(hash1);
         assertThat(item.getValue("name").get(), is("Birmingham"));
 
-        HashValue hash2 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxx509");
+        HashValue hash2 = decode(SHA256, "sha-256:xxx509");
         assertTrue("record should contain key sha-256:xxx509", record.getItems().containsKey(hash2));
         Item item2 = record.getItems().get(hash2);
         assertThat(item2.getValue("name").get(), is("Blackburn with Darwen"));
@@ -164,12 +174,12 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(record0.getEntry().getEntryNumber(), is(96));
         assertThat(record0.getEntry().getIndexEntryNumber(), is(97));
 
-        HashValue hash1 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxxbdc");
+        HashValue hash1 = decode(SHA256, "sha-256:xxxbdc");
         assertTrue(record0.getItems().containsKey(hash1));
         Item item1 = record0.getItems().get(hash1);
         assertThat(item1.getValue("name").get(), is("Birmingham"));
 
-        HashValue hash2 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxx509");
+        HashValue hash2 = decode(SHA256, "sha-256:xxx509");
         assertTrue(record0.getItems().containsKey(hash2));
         Item item2 = record0.getItems().get(hash2);
         assertThat(item2.getValue("name").get(), is("Blackburn with Darwen"));
@@ -178,16 +188,78 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(record1.getEntry().getEntryNumber(), is(96));
         assertThat(record1.getEntry().getIndexEntryNumber(), is(96));
 
-        HashValue hash01c = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxx01c");
+        HashValue hash01c = decode(SHA256, "sha-256:xxx01c");
         assertTrue(record1.getItems().containsKey(hash01c));
         Item item3 = record1.getItems().get(hash01c);
         assertThat(item3.getValue("name").get(), is("Bedford"));
 
-        HashValue hash126 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxx126");
+        HashValue hash126 = decode(SHA256, "sha-256:xxx126");
         assertTrue(record1.getItems().containsKey(hash126));
         Item item4 = record1.getItems().get(hash126);
         assertThat(item4.getValue("name").get(), is("New Bath"));
 
+    }
+
+    @Test
+    public void shouldReadEntries() {
+        nameChangeAndGroupChangeScenario();
+
+        Iterator<Entry> entryIterator = dao.getIterator("by-type");
+        List<Entry> entries = Lists.newArrayList(entryIterator);
+
+        assertThat(entries.size(), is(7));
+        Entry entry0 = entries.get(0);
+        Entry expectedEntry0 = new Entry(91, 91,
+                Arrays.asList(decode(SHA256, "sha-256:xxx6c4")), timestamp, "UA");
+        assertThat(entry0, equalTo(expectedEntry0));
+
+        Entry entryLast = entries.get(6);
+        Entry expectedEntryLast = new Entry(97, 96,
+                Arrays.asList(decode(SHA256, "sha-256:xxxbdc"),
+                        decode(SHA256, "sha-256:xxx509")), timestamp, "MD");
+        assertThat(entryLast, equalTo(expectedEntryLast));
+    }
+
+    @Test
+    public void shouldReadEntriesBetweenEntryNumbers() {
+        nameChangeAndGroupChangeScenario();
+
+        Iterator<Entry> entryIterator = dao.getIterator("by-type", 92, 94);
+        List<Entry> entries = Lists.newArrayList(entryIterator);
+
+        assertThat(entries.size(), is(2));
+
+        Entry entry0 = entries.get(0);
+        Entry expectedEntry0 = new Entry(93, 93,
+                Arrays.asList(decode(SHA256, "sha-256:xxx6c4"),
+                        decode(SHA256, "sha-256:xxx37d"),
+                        decode(SHA256, "sha-256:xxx01c")), timestamp, "UA");
+        assertThat(entry0, equalTo(expectedEntry0));
+
+        Entry entryLast = entries.get(1);
+        Entry expectedEntryLast = new Entry(94, 94,
+                Arrays.asList(decode(SHA256, "sha-256:xxxbdc")), timestamp, "MD");
+        assertThat(entryLast, equalTo(expectedEntryLast));
+    }
+
+    @Test
+    public void shouldReturnEmptyListForInvalidEntryNumberRange() {
+        nameChangeAndGroupChangeScenario();
+
+        Iterator<Entry> entryIterator = dao.getIterator("by-type", 94, 92);
+        List<Entry> entries = Lists.newArrayList(entryIterator);
+
+        assertThat(entries.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotReturnResultsForUnknownName() {
+        nameChangeAndGroupChangeScenario();
+
+        Iterator<Entry> entryIterator = dao.getIterator("sam");
+        List<Entry> entries = Lists.newArrayList(entryIterator);
+
+        assertThat(entries.size(), is(0));
     }
 
     @Test
@@ -202,6 +274,21 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(record.getItems().size(), is(0));
         assertThat(record.getEntry().getEntryNumber(), is(92));
         assertThat(record.getEntry().getIndexEntryNumber(), is(92));
+
+    }
+
+    @Test
+    public void shouldFindZeroEntriesForUA() {
+        zeroItemsEntryScenario();
+
+        List<Entry> entries = Lists.newArrayList(dao.getIterator("by-type"));
+
+        assertThat(entries.size(), is(3));
+
+        Entry entry1 = entries.get(1);
+        Entry expectedEntry1 = new Entry(92, 92,
+                Collections.emptyList(), timestamp, "UA");
+        assertThat(entry1, equalTo(expectedEntry1));
 
     }
 
@@ -283,7 +370,7 @@ public class IndexQueryDaoIntegrationTest {
         // update bath to new bath
         handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) " +
                 "VALUES('by-type', 'UA', 'xxx126', 95, NULL, 95, NULL)");
-        
+
         handle.execute("UPDATE public.\"index\" set end_entry_number = 95, end_index_entry_number = 95 where name='by-type' and sha256hex='xxx6c4'");
 
         // change BBD from UA to MD
@@ -294,7 +381,7 @@ public class IndexQueryDaoIntegrationTest {
 
     }
 
-    private void insertIndexZeroItems(){
+    private void insertIndexZeroItems() {
         handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
                 " VALUES('by-type', 'UA', 'xxx37d', 91, NULL, 91, NULL)");
         // change BBD from UA to MD
@@ -303,6 +390,5 @@ public class IndexQueryDaoIntegrationTest {
         handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
                 " VALUES('by-type', 'MD', 'xxx509', 92, NULL, 93, NULL)");
     }
-
 
 }

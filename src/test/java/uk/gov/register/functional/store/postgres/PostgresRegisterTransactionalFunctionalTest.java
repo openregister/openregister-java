@@ -1,17 +1,35 @@
 package uk.gov.register.functional.store.postgres;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jdbi.OptionalContainerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
+import static java.util.Collections.emptyList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.*;
-import uk.gov.register.db.*;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.PostgresRegister;
+import uk.gov.register.core.RegisterContext;
+import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
+import uk.gov.register.db.CurrentKeysUpdateDAO;
+import uk.gov.register.db.DerivationRecordIndex;
+import uk.gov.register.db.EntryDAO;
+import uk.gov.register.db.EntryItemDAO;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.IndexDAO;
+import uk.gov.register.db.IndexQueryDAO;
+import uk.gov.register.db.ItemDAO;
+import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.db.TransactionalEntryLog;
+import uk.gov.register.db.TransactionalItemStore;
+import uk.gov.register.db.TransactionalRecordIndex;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
@@ -23,12 +41,15 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jdbi.OptionalContainerFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 
 public class PostgresRegisterTransactionalFunctionalTest {
 
@@ -145,7 +166,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
     }
 
     private PostgresRegister getPostgresRegister(Handle handle) {
-        TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class), handle.attach(EntryItemDAO.class));
+        TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class), handle.attach(EntryItemDAO.class), handle.attach(IndexQueryDAO.class));
         TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
                 mock(ItemValidator.class));
         RegisterMetadata registerData = mock(RegisterMetadata.class);

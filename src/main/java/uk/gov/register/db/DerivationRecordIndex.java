@@ -29,6 +29,4 @@ public class DerivationRecordIndex {
             return Collections.emptyList();
         }
     }
-
-
 }

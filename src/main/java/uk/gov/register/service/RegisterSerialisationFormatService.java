@@ -2,15 +2,21 @@ package uk.gov.register.service;
 
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.serialization.*;
+import uk.gov.register.serialization.RSFCreator;
+import uk.gov.register.serialization.RSFExecutor;
+import uk.gov.register.serialization.RSFFormatter;
+import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterResult;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 
-import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.function.Function;
+
+import javax.inject.Inject;
 
 public class RegisterSerialisationFormatService {
     private final RegisterContext registerContext;
@@ -30,6 +36,14 @@ public class RegisterSerialisationFormatService {
 
     public void writeTo(OutputStream output, RSFFormatter RSFFormatter, int totalEntries1, int totalEntries2) {
         writeTo(output, RSFFormatter, register -> rsfCreator.create(register, totalEntries1, totalEntries2));
+    }
+
+    public void writeTo(OutputStream output, RSFFormatter RSFFormatter, String indexName) {
+        writeTo(output, RSFFormatter, register -> rsfCreator.create(register, indexName));
+    }
+
+    public void writeTo(OutputStream output, RSFFormatter RSFFormatter, String indexName, int totalEntries1, int totalEntries2) {
+        writeTo(output, RSFFormatter, register -> rsfCreator.create(register, indexName, totalEntries1, totalEntries2));
     }
 
     public RegisterResult process(RegisterSerialisationFormat rsf) {

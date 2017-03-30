@@ -1,5 +1,16 @@
 package uk.gov.register.core;
 
+import uk.gov.register.util.HashValue;
+import uk.gov.register.util.ISODateFormatter;
+import uk.gov.register.views.CsvRepresentationView;
+import uk.gov.register.views.representations.CsvRepresentation;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,13 +22,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
-import uk.gov.register.util.HashValue;
-import uk.gov.register.util.ISODateFormatter;
-import uk.gov.register.views.CsvRepresentationView;
-import uk.gov.register.views.representations.CsvRepresentation;
-
-import java.time.Instant;
-import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
@@ -118,6 +122,7 @@ public class Entry implements CsvRepresentationView<Entry> {
 
         Entry entry = (Entry) o;
 
+        if (indexEntryNumber != entry.indexEntryNumber) return false;
         if (entryNumber != entry.entryNumber) return false;
         if (key != null ? !key.equals(entry.key) : entry.key != null) return false;
         if (timestamp != null ? !timestamp.equals(entry.timestamp) : entry.timestamp != null) return false;
@@ -134,6 +139,7 @@ public class Entry implements CsvRepresentationView<Entry> {
             result += hashValue.hashCode();
         }
 
+        result = 31 * result + indexEntryNumber;
         result = 31 * result + entryNumber;
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         result = 31 * result + (key != null ? key.hashCode() : 0);

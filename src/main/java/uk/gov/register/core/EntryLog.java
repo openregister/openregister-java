@@ -23,6 +23,9 @@ public interface EntryLog {
 
     Iterator<Entry> getIterator(int totalEntries1, int totalEntries2);
 
+    Iterator<Entry> getDerivationIterator(String indexName);
+    Iterator<Entry> getDerivationIterator(String indexName, int totalEntries1, int totalEntries2);
+
     Collection<Entry> getAllEntries();
 
     int getTotalEntries();

@@ -187,6 +187,16 @@ public class PostgresRegister implements Register {
     }
 
     @Override
+    public Iterator<Entry> getDerivationEntryIterator(String indexName) {
+        return entryLog.getDerivationIterator(indexName);
+    }
+
+    @Override
+    public Iterator<Entry> getDerivationEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+        return entryLog.getDerivationIterator(indexName, totalEntries1, totalEntries2);
+    }
+
+    @Override
     public RegisterName getRegisterName() {
         return registerName;
     }
