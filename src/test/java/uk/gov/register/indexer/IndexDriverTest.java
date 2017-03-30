@@ -283,18 +283,23 @@ public class IndexDriverTest {
         Item itemP = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
         Item itemQ = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
         Item itemR = new Item(new HashValue(HashingAlgorithm.SHA256, "ccc"), objectMapper.readTree("{\"x\":\"R\"}"));
+        Item itemS = new Item(new HashValue(HashingAlgorithm.SHA256, "ddd"), objectMapper.readTree("{\"x\":\"S\"}"));
 
         Entry newEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A");
         Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B");
-        Entry newEntry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "C");
-        Entry newEntry4 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D");
+        Entry newEntry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "ddd"), Instant.now(), "C");
+        Entry newEntry4 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "C");
+        Entry newEntry5 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D");
 
         Register register = mock(Register.class);
-        when(register.getRecord(anyString())).thenReturn(Optional.empty());
+        when(register.getRecord("A")).thenReturn(Optional.empty());
+        when(register.getRecord("B")).thenReturn(Optional.empty());
+        when(register.getRecord("C")).thenReturn(Optional.empty(), Optional.of(new Record(newEntry3, itemS)));
+        when(register.getRecord("D")).thenReturn(Optional.empty());
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 2);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 3, 4);
         when(indexQueryDAO.getExistingIndexCountForItem("by-x", "Q", "bbb")).thenReturn(0, 1);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -303,8 +308,10 @@ public class IndexDriverTest {
         when(indexFunction.execute(newEntry2))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         when(indexFunction.execute(newEntry3))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("S", new HashValue(HashingAlgorithm.SHA256, "ddd")))));
         when(indexFunction.execute(newEntry4))
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+        when(indexFunction.execute(newEntry5))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("R", new HashValue(HashingAlgorithm.SHA256, "ccc")))));
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
@@ -312,11 +319,14 @@ public class IndexDriverTest {
         indexDriver.indexEntry(newEntry2, indexFunction);
         indexDriver.indexEntry(newEntry3, indexFunction);
         indexDriver.indexEntry(newEntry4, indexFunction);
+        indexDriver.indexEntry(newEntry5, indexFunction);
 
         verify(indexDAO, times(1)).start("by-x", "P", "aaa", 1, Optional.of(1));
         verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
-        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 3, Optional.empty());
-        verify(indexDAO, times(1)).start("by-x", "R", "ccc", 4, Optional.of(3));
+        verify(indexDAO, times(1)).start("by-x", "S", "ddd", 3, Optional.of(3));
+        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 4, Optional.empty());
+        verify(indexDAO, times(1)).end("by-x", "C", "S", "ddd", 4, Optional.of(4));
+        verify(indexDAO, times(1)).start("by-x", "R", "ccc", 5, Optional.of(5));
     }
 
     @Test

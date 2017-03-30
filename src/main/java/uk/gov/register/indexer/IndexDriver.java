@@ -46,7 +46,7 @@ public class IndexDriver {
         int currentEntryNumber = entry.getEntryNumber();
 
         for (Map.Entry<String, List<IndexValueItemPairEvent>> keyValuePair : sortedEvents.entrySet()) {
-            currentIndexEntryNumber++;
+            int tempCurrentIndexEntryNumber = currentIndexEntryNumber + 1;
 
             for (IndexValueItemPairEvent p : keyValuePair.getValue()) {
                 int existingIndexCountForItem = indexQueryDAO.getExistingIndexCountForItem(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue());
@@ -56,15 +56,16 @@ public class IndexDriver {
                         indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
                     }
                     else {
-                        indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(currentIndexEntryNumber));
-
+                        indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(tempCurrentIndexEntryNumber));
+                        currentIndexEntryNumber = tempCurrentIndexEntryNumber;
                     }
                 }
                 else {
                     if (existingIndexCountForItem > 1) {
                         indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
                     } else {
-                        indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(currentIndexEntryNumber));
+                        indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(tempCurrentIndexEntryNumber));
+                        currentIndexEntryNumber = tempCurrentIndexEntryNumber;
                     }
                 }
             }
