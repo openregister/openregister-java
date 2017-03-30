@@ -279,6 +279,47 @@ public class IndexDriverTest {
     }
 
     @Test
+    public void indexEntry_shouldNotSkipStartIndexEntryNumber_whenAddingMultipleItemsContainingDuplicates() throws IOException {
+        Item itemP = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
+        Item itemQ = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
+        Item itemR = new Item(new HashValue(HashingAlgorithm.SHA256, "ccc"), objectMapper.readTree("{\"x\":\"R\"}"));
+
+        Entry newEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A");
+        Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B");
+        Entry newEntry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "C");
+        Entry newEntry4 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D");
+
+        Register register = mock(Register.class);
+        when(register.getRecord(anyString())).thenReturn(Optional.empty());
+
+        IndexDAO indexDAO = mock(IndexDAO.class);
+        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 2);
+        when(indexQueryDAO.getExistingIndexCountForItem("by-x", "Q", "bbb")).thenReturn(0, 1);
+        IndexFunction indexFunction = mock(IndexFunction.class);
+        when(indexFunction.getName()).thenReturn("by-x");
+        when(indexFunction.execute(newEntry1))
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+        when(indexFunction.execute(newEntry2))
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+        when(indexFunction.execute(newEntry3))
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+        when(indexFunction.execute(newEntry4))
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("R", new HashValue(HashingAlgorithm.SHA256, "ccc")))));
+
+        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
+        indexDriver.indexEntry(newEntry1, indexFunction);
+        indexDriver.indexEntry(newEntry2, indexFunction);
+        indexDriver.indexEntry(newEntry3, indexFunction);
+        indexDriver.indexEntry(newEntry4, indexFunction);
+
+        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 1, Optional.of(1));
+        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
+        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 3, Optional.empty());
+        verify(indexDAO, times(1)).start("by-x", "R", "ccc", 4, Optional.of(3));
+    }
+
+    @Test
     public void indexEntry_shouldStartIndexWithoutSpecifyingStartIndexEntryNumber_whenItemExistsUnderAnotherIndex() throws IOException {
         Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
 
