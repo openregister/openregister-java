@@ -2,9 +2,11 @@ package uk.gov.register.db;
 
 import uk.gov.register.core.Record;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-public class DerivationRecordIndex  {
+public class DerivationRecordIndex {
 
     private final IndexQueryDAO indexQueryDAO;
 
@@ -20,7 +22,13 @@ public class DerivationRecordIndex  {
         }
     }
 
-
+    public List<Record> getRecords(int limit, int offset, String derivationName) {
+        if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
+            return indexQueryDAO.findRecords(limit, offset, derivationName);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
 
 }

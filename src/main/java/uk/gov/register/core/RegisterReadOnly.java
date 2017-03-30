@@ -46,4 +46,6 @@ public interface RegisterReadOnly {
     RegisterMetadata getRegisterMetadata();
 
     Optional<Record> getDerivationRecord(String key, String derivationName);
+
+    List<Record> getDerivationRecords(int limit, int offset, String derivationName);
 }

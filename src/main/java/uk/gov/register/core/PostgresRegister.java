@@ -201,4 +201,9 @@ public class PostgresRegister implements Register {
         return derivationRecordIndex.getRecord(key, derivationName);
     }
 
+    @Override
+    public List<Record> getDerivationRecords(int limit, int offset, String derivationName) {
+        return derivationRecordIndex.getRecords(limit, offset, derivationName);
+    }
+
 }
