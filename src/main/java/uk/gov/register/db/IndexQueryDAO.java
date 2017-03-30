@@ -96,7 +96,8 @@ public interface IndexQueryDAO {
             "group by " +
             " entry_nums.key " +
             "order by " +
-            " entry_nums.key";
+            " entry_nums.key " +
+            " limit :limit offset :offset ";
 
     String entriesQuery = "select  " +
             "  index_entry.ien as index_entry_number,  " +
@@ -148,7 +149,7 @@ public interface IndexQueryDAO {
             "  \"timestamp\",  " +
             "  index_entry.\"key\"  " +
             "order by  " +
-            "  ien  ";
+            "  ien  " ;
 
     @SqlQuery(recordForKeyQuery)
     @SingleValueResult(Record.class)
@@ -157,7 +158,7 @@ public interface IndexQueryDAO {
 
     @SqlQuery(recordQuery)
     @RegisterMapper(DerivationRecordMapper.class)
-    List<Record> findRecords(int limit, int offset, @Bind("name") String derivationName);
+    List<Record> findRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Bind("name") String derivationName);
 
     @SqlQuery("select max(r.index_entry_number) from (select greatest(start_index_entry_number, end_index_entry_number) as index_entry_number from index where name = :name) r")
     int getCurrentIndexEntryNumber(@Bind("name") String indexName);

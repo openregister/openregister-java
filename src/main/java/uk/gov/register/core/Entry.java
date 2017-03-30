@@ -75,6 +75,11 @@ public class Entry implements CsvRepresentationView<Entry> {
         return entryNumber;
     }
 
+    @JsonIgnore
+    public Integer getIndexEntryNumber() {
+        return indexEntryNumber;
+    }
+
     @JsonProperty("entry-timestamp")
     public String getTimestampAsISOFormat() {
         return ISODateFormatter.format(timestamp);
