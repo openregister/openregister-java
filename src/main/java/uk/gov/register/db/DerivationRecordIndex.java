@@ -16,7 +16,8 @@ public class DerivationRecordIndex {
 
     public Optional<Record> getRecord(String key, String derivationName) {
         if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
-            return indexQueryDAO.findRecord(key, derivationName);
+            Optional<Record> record = indexQueryDAO.findRecord(key, derivationName);
+            return record.filter(r -> r.getItems().size() != 0);
         } else {
             return Optional.empty();
         }

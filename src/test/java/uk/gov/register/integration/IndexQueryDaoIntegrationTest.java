@@ -61,7 +61,7 @@ import org.skife.jdbi.v2.Handle;
  * entry4 - 94,94,[xxxbdc],MD
  * <p>
  * reg
- * {lae:BDD, lat:UA, name: New Bath} 12
+ * {lae:BAS, lat:UA, name: New Bath} 12
  * entry5 - 95,95,xxx126,BAS
  * <p>
  * deriv

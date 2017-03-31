@@ -44,8 +44,8 @@ public interface IndexQueryDAO {
             " max( entry_nums.ien ) as index_entry_number, " +
             " max( entry_nums.en ) as entry_number, " +
             " max( e.\"timestamp\" ) as \"timestamp\", " +
-            " array_agg(unended.sha256hex) as sha256_arr, " +
-            " array_agg(unended.content) as content_arr " +
+            " array_remove(array_agg(unended.sha256hex),null) as sha256_arr, " +
+            " array_remove(array_agg(unended.content),null) as content_arr " +
             "from " +
             " ( " +
             "  select " +
@@ -74,6 +74,7 @@ public interface IndexQueryDAO {
             "   ix.sha256hex = im.sha256hex " +
             "  where " +
             "   end_index_entry_number is null " +
+            "   and ix.name = :name " +
             " ) as unended on " +
             " unended.sha256hex = entry_nums.sha256hex " +
             "group by " +
@@ -86,8 +87,8 @@ public interface IndexQueryDAO {
             " max( entry_nums.ien ) as index_entry_number, " +
             " max( entry_nums.en ) as entry_number, " +
             " max( e.\"timestamp\" ) as \"timestamp\", " +
-            " array_agg(unended.sha256hex) as sha256_arr, " +
-            " array_agg(unended.content) as content_arr " +
+            " array_remove(array_agg(unended.sha256hex),null) as sha256_arr, " +
+            " array_remove(array_agg(unended.content),null) as content_arr " +
             "from " +
             " ( " +
             "  select " +
@@ -116,6 +117,7 @@ public interface IndexQueryDAO {
             "   ix.sha256hex = im.sha256hex " +
             "  where " +
             "   end_index_entry_number is null " +
+            "   and ix.name = :name " +
             " ) as unended on " +
             " unended.sha256hex = entry_nums.sha256hex " +
             "group by " +
@@ -129,7 +131,7 @@ public interface IndexQueryDAO {
             "  index_entry.en as entry_number,  " +
             "  e.\"timestamp\" as \"timestamp\",  " +
             "  index_entry.\"key\" as \"key\",  " +
-            "  array_agg(unended.sha256hex) as sha256_arr  " +
+            "  array_remove(array_agg(unended.sha256hex),null) as sha256_arr  " +
             "from  " +
             "  (  " +
             "    select  " +
@@ -158,6 +160,7 @@ public interface IndexQueryDAO {
             "      ix.\"key\"  " +
             "    from  " +
             "      index as ix " +
+            "      where ix.name = :name " +
             "  ) as unended on  " +
             "  unended.key = index_entry.key  " +
             "  and unended.start_index_entry_number <= index_entry.ien  " +
@@ -178,7 +181,7 @@ public interface IndexQueryDAO {
             "  index_entry.en as entry_number,  " +
             "  e.\"timestamp\" as \"timestamp\",  " +
             "  index_entry.\"key\" as \"key\",  " +
-            "  array_agg(unended.sha256hex) as sha256_arr  " +
+            "  array_remove(array_agg(unended.sha256hex),null) as sha256_arr  " +
             "from  " +
             "  (  " +
             "    select  " +
@@ -207,6 +210,7 @@ public interface IndexQueryDAO {
             "      ix.\"key\"  " +
             "    from  " +
             "      index as ix" +
+            "    where ix.name = :name " +
             "  ) as unended on  " +
             "  unended.key = index_entry.key  " +
             "  and unended.start_index_entry_number <= index_entry.ien  " +

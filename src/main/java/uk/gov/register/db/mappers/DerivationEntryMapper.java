@@ -31,10 +31,8 @@ public class DerivationEntryMapper implements ResultSetMapper<Entry> {
         List<HashValue> hashValues = new ArrayList<>();
 
         for (int i = 0; i < hashes.length; i++) {
-            if ( hashes[i] != null) {
                 HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, hashes[i]);
                 hashValues.add(hashValue);
-            }
         }
 
         return new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key);

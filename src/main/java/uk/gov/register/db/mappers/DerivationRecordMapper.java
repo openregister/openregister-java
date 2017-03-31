@@ -45,12 +45,10 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
         List<Item> items = new ArrayList<>();
 
         for (int i = 0; i < hashes.length; i++) {
-            if ( hashes[i] != null) {
-                HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, hashes[i]);
-                hashValues.add(hashValue);
-                Item item = new Item(hashValue, jsonNode(content[i]));
-                items.add(item);
-            }
+            HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, hashes[i]);
+            hashValues.add(hashValue);
+            Item item = new Item(hashValue, jsonNode(content[i]));
+            items.add(item);
         }
 
         Entry entry = new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key);
