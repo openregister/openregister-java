@@ -8,6 +8,7 @@ import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.indexer.function.IndexFunction;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class IndexDriver {
     private final Register register;
@@ -23,76 +24,89 @@ public class IndexDriver {
     public void indexEntry(Entry entry, IndexFunction indexFunction) {
         register.commit();
         Optional<Record> currentRecord = register.getRecord(entry.getKey());
-        Set<IndexValueItemPair> currentIndexValueItemPairs = new HashSet<>();
+        Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentRecord.isPresent()) {
-            currentIndexValueItemPairs.addAll(indexFunction.execute(currentRecord.get().getEntry()));
+            currentIndexKeyItemPairs.addAll(indexFunction.execute(currentRecord.get().getEntry()));
         }
 
-        Set<IndexValueItemPair> newIndexValueItemPairs = indexFunction.execute(entry);
+        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(entry);
 
-        List<IndexValueItemPairEvent> pairEvents = getEndIndices(currentIndexValueItemPairs, newIndexValueItemPairs);
-        pairEvents.addAll(getStartIndices(currentIndexValueItemPairs, newIndexValueItemPairs));
+        List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs);
+        pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs));
 
-        TreeMap<String, List<IndexValueItemPairEvent>> sortedEvents = new TreeMap<>();
-        pairEvents.forEach(e -> {
-            if (!sortedEvents.containsKey(e.getIndexValue())) {
-                sortedEvents.put(e.getIndexValue(), new ArrayList<>());
-            }
+        TreeMap<String, List<IndexKeyItemPairEvent>> sortedEvents = groupEventsByKey(pairEvents);
 
-            sortedEvents.get(e.getIndexValue()).add(e);
-        });
+        AtomicInteger currentIndexEntryNumber = new AtomicInteger(indexQueryDAO.getCurrentIndexEntryNumber(indexFunction.getName()));
 
-        int currentIndexEntryNumber = indexQueryDAO.getCurrentIndexEntryNumber(indexFunction.getName());
-        int currentEntryNumber = entry.getEntryNumber();
+        for (Map.Entry<String, List<IndexKeyItemPairEvent>> keyValuePair : sortedEvents.entrySet()) {
+            int newIndexEntryNumber = currentIndexEntryNumber.get() + 1;
 
-        for (Map.Entry<String, List<IndexValueItemPairEvent>> keyValuePair : sortedEvents.entrySet()) {
-            int tempCurrentIndexEntryNumber = currentIndexEntryNumber + 1;
-
-            for (IndexValueItemPairEvent p : keyValuePair.getValue()) {
-                int existingIndexCountForItem = indexQueryDAO.getExistingIndexCountForItem(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue());
+            for (IndexKeyItemPairEvent p : keyValuePair.getValue()) {
+                int existingIndexCountForItem = indexQueryDAO.getExistingIndexCountForItem(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
 
                 if (p.isStart()) {
-                    if (existingIndexCountForItem > 0) {
-                        indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
-                    }
-                    else {
-                        indexDAO.start(indexFunction.getName(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(tempCurrentIndexEntryNumber));
-                        currentIndexEntryNumber = tempCurrentIndexEntryNumber;
-                    }
+                    addIndexKeyToItemHash(indexFunction, currentIndexEntryNumber, entry.getEntryNumber(), newIndexEntryNumber, p, existingIndexCountForItem);
                 }
                 else {
-                    if (existingIndexCountForItem > 1) {
-                        indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
-                    } else {
-                        indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexValue(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(tempCurrentIndexEntryNumber));
-                        currentIndexEntryNumber = tempCurrentIndexEntryNumber;
-                    }
+                    removeIndexKeyFromItemHash(entry, indexFunction, currentIndexEntryNumber, newIndexEntryNumber, p, existingIndexCountForItem);
                 }
             }
         }
     }
 
-    protected List<IndexValueItemPairEvent> getEndIndices(Set<IndexValueItemPair> existingPairs, Set<IndexValueItemPair> newPairs) {
-        List<IndexValueItemPairEvent> pairs = new ArrayList<>();
+    protected List<IndexKeyItemPairEvent> getEndIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs) {
+        List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         existingPairs.forEach(existingPair -> {
             if (!newPairs.contains(existingPair)) {
-                pairs.add(new IndexValueItemPairEvent(existingPair, false));
+                pairs.add(new IndexKeyItemPairEvent(existingPair, false));
             }
         });
 
         return pairs;
     }
 
-    protected List<IndexValueItemPairEvent> getStartIndices(Set<IndexValueItemPair> existingPairs, Set<IndexValueItemPair> newPairs) {
-        List<IndexValueItemPairEvent> pairs = new ArrayList<>();
+    protected List<IndexKeyItemPairEvent> getStartIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs) {
+        List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         newPairs.forEach(newPair -> {
             if (!existingPairs.contains(newPair)) {
-                pairs.add(new IndexValueItemPairEvent(newPair, true));
+                pairs.add(new IndexKeyItemPairEvent(newPair, true));
             }
         });
 
         return pairs;
+    }
+
+    private void addIndexKeyToItemHash(IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int currentEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, int existingIndexCountForItem) {
+        if (existingIndexCountForItem > 0) {
+            indexDAO.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
+        }
+        else {
+            indexDAO.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(newIndexEntryNumber));
+            currentIndexEntryNumber.set(newIndexEntryNumber);
+        }
+    }
+
+    private TreeMap<String, List<IndexKeyItemPairEvent>> groupEventsByKey(List<IndexKeyItemPairEvent> pairEvents) {
+        TreeMap<String, List<IndexKeyItemPairEvent>> sortedEvents = new TreeMap<>();
+        pairEvents.forEach(e -> {
+            if (!sortedEvents.containsKey(e.getIndexKey())) {
+                sortedEvents.put(e.getIndexKey(), new ArrayList<>());
+            }
+
+            sortedEvents.get(e.getIndexKey()).add(e);
+        });
+
+        return sortedEvents;
+    }
+
+    private void removeIndexKeyFromItemHash(Entry entry, IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, int existingIndexCountForItem) {
+        if (existingIndexCountForItem > 1) {
+            indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.empty());
+        } else {
+            indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.of(newIndexEntryNumber));
+            currentIndexEntryNumber.set(newIndexEntryNumber);
+        }
     }
 }

@@ -27,16 +27,16 @@ public class IndexDriverTest {
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
 
-        Set<IndexValueItemPair> existingPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
+        Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
-        Set<IndexValueItemPair> newPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
+        Set<IndexKeyItemPair> newPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
 
-        List<IndexValueItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs);
 
         assertThat(pairsToStart, empty());
     }
@@ -48,19 +48,19 @@ public class IndexDriverTest {
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
 
-        Set<IndexValueItemPair> existingPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
+        Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
-        Set<IndexValueItemPair> newPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb")),
-                new IndexValueItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc"))
+        Set<IndexKeyItemPair> newPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb")),
+                new IndexKeyItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc"))
         ));
 
-        List<IndexValueItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs);
 
-        assertThat(pairsToStart, contains(new IndexValueItemPairEvent(new IndexValueItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc")), true)));
+        assertThat(pairsToStart, contains(new IndexKeyItemPairEvent(new IndexKeyItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc")), true)));
     }
 
     @Test
@@ -70,16 +70,16 @@ public class IndexDriverTest {
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
 
-        Set<IndexValueItemPair> existingPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
+        Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
-        Set<IndexValueItemPair> newPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb")),
-                new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa"))
+        Set<IndexKeyItemPair> newPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb")),
+                new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa"))
         ));
 
-        List<IndexValueItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs);
 
         assertThat(pairsToEnd, empty());
     }
@@ -91,17 +91,17 @@ public class IndexDriverTest {
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
 
-        Set<IndexValueItemPair> existingPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
+        Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
-        Set<IndexValueItemPair> newPairs = new HashSet<>(Arrays.asList(
-                new IndexValueItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
+        Set<IndexKeyItemPair> newPairs = new HashSet<>(Arrays.asList(
+                new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
 
-        List<IndexValueItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs);
 
-        assertThat(pairsToEnd, contains(new IndexValueItemPairEvent(new IndexValueItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")), false)));
+        assertThat(pairsToEnd, contains(new IndexKeyItemPairEvent(new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")), false)));
     }
 
     @Test
@@ -120,9 +120,9 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(previousEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
         when(indexFunction.execute(newEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")), new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")), new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
@@ -147,9 +147,9 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(previousEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")), new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")), new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         when(indexFunction.execute(newEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
@@ -175,9 +175,9 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(previousEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
         when(indexFunction.execute(newEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
@@ -205,9 +205,9 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(previousEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         when(indexFunction.execute(newEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
 
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
@@ -235,9 +235,9 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(previousEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
         when(indexFunction.execute(newEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
@@ -265,9 +265,9 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(newEntry1))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
         when(indexFunction.execute(newEntry2))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry1, indexFunction);
@@ -304,15 +304,15 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(newEntry1))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
         when(indexFunction.execute(newEntry2))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         when(indexFunction.execute(newEntry3))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("S", new HashValue(HashingAlgorithm.SHA256, "ddd")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("S", new HashValue(HashingAlgorithm.SHA256, "ddd")))));
         when(indexFunction.execute(newEntry4))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         when(indexFunction.execute(newEntry5))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("R", new HashValue(HashingAlgorithm.SHA256, "ccc")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("R", new HashValue(HashingAlgorithm.SHA256, "ccc")))));
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry1, indexFunction);
@@ -346,7 +346,7 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(newEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
 
         IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
         indexDriver.indexEntry(newEntry, indexFunction);
@@ -372,7 +372,7 @@ public class IndexDriverTest {
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(previousEntry))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexValueItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
         when(indexFunction.execute(newEntry))
                 .thenReturn(new HashSet<>());
 

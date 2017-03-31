@@ -6,7 +6,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.indexer.IndexValueItemPair;
+import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         when(register.getItemBySha256(any())).thenReturn(Optional.empty());
 
         LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute("LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet, is(empty()));
@@ -42,7 +42,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute("LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet, is(empty()));
@@ -56,11 +56,11 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute("LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet.size(), is(1));
-        assertThat(resultSet, contains(new IndexValueItemPair("CC", itemHash)));
+        assertThat(resultSet, contains(new IndexKeyItemPair("CC", itemHash)));
     }
 
     @Test
@@ -72,10 +72,10 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = func.execute(entry);
+        Set<IndexKeyItemPair> resultSet = func.execute(entry);
 
         assertThat(resultSet.size(), is(1));
-        assertThat(resultSet, contains(new IndexValueItemPair("CC", itemHash)));
+        assertThat(resultSet, contains(new IndexKeyItemPair("CC", itemHash)));
     }
 
     @Test
@@ -90,9 +90,9 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         when(register.getItemBySha256(itemHash2)).thenReturn(Optional.of(item2));
 
         LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = func.execute(entry);
+        Set<IndexKeyItemPair> resultSet = func.execute(entry);
 
         assertThat(resultSet.size(), is(2));
-        assertThat(resultSet, containsInAnyOrder(new IndexValueItemPair("CC", itemHash1), new IndexValueItemPair("NMD", itemHash2)));
+        assertThat(resultSet, containsInAnyOrder(new IndexKeyItemPair("CC", itemHash1), new IndexKeyItemPair("NMD", itemHash2)));
     }
 }

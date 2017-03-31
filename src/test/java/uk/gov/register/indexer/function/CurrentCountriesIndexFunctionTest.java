@@ -6,7 +6,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
-import uk.gov.register.indexer.IndexValueItemPair;
+import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class CurrentCountriesIndexFunctionTest {
         when(register.getItemBySha256(any())).thenReturn(Optional.empty());
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute("CS", new HashValue(HashingAlgorithm.SHA256, "cs"), resultSet);
 
         assertThat(resultSet, is(empty()));
@@ -45,11 +45,11 @@ public class CurrentCountriesIndexFunctionTest {
         when(register.getItemBySha256(itemHashVN)).thenReturn(Optional.of(countryVN));
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute("VN", itemHashVN, resultSet);
 
         assertThat(resultSet.size(), is(1));
-        assertThat(resultSet, contains(new IndexValueItemPair("VN", itemHashVN)));
+        assertThat(resultSet, contains(new IndexKeyItemPair("VN", itemHashVN)));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class CurrentCountriesIndexFunctionTest {
         when(register.getItemBySha256(itemHashCS)).thenReturn(Optional.of(countryCS));
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute("CS", itemHashCS, resultSet);
 
         assertThat(resultSet, is(empty()));
@@ -78,9 +78,9 @@ public class CurrentCountriesIndexFunctionTest {
         when(register.getItemBySha256(itemHashCS)).thenReturn(Optional.of(countryCS));
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
-        Set<IndexValueItemPair> resultSet = func.execute(entry);
+        Set<IndexKeyItemPair> resultSet = func.execute(entry);
 
         assertThat(resultSet.size(), is(1));
-        assertThat(resultSet, contains(new IndexValueItemPair("key", itemHashVN)));
+        assertThat(resultSet, contains(new IndexKeyItemPair("key", itemHashVN)));
     }
 }

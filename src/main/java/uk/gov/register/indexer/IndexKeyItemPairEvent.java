@@ -2,11 +2,11 @@ package uk.gov.register.indexer;
 
 import uk.gov.register.util.HashValue;
 
-public class IndexValueItemPairEvent {
-    private final IndexValueItemPair pair;
+public class IndexKeyItemPairEvent {
+    private final IndexKeyItemPair pair;
     private final boolean isStart;
 
-    public IndexValueItemPairEvent(IndexValueItemPair pair, boolean isStart) {
+    public IndexKeyItemPairEvent(IndexKeyItemPair pair, boolean isStart) {
         this.pair = pair;
         this.isStart = isStart;
     }
@@ -15,8 +15,8 @@ public class IndexValueItemPairEvent {
         return pair.getItemHash();
     }
 
-    public String getIndexValue() {
-        return pair.getValue();
+    public String getIndexKey() {
+        return pair.getIndexKey();
     }
 
     public boolean isStart() {
@@ -28,7 +28,7 @@ public class IndexValueItemPairEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        IndexValueItemPairEvent that = (IndexValueItemPairEvent) o;
+        IndexKeyItemPairEvent that = (IndexKeyItemPairEvent) o;
 
         if (isStart != that.isStart) return false;
         return pair.equals(that.pair);

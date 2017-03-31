@@ -1,7 +1,7 @@
 package uk.gov.register.indexer.function;
 
 import uk.gov.register.core.Register;
-import uk.gov.register.indexer.IndexValueItemPair;
+import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
 import java.util.Set;
@@ -14,10 +14,10 @@ public class LocalAuthorityByTypeIndexFunction extends BaseIndexFunction {
     }
 
     @Override
-    protected void execute(String key, HashValue itemHash, Set<IndexValueItemPair> result) {
+    protected void execute(String key, HashValue itemHash, Set<IndexKeyItemPair> result) {
         register.getItemBySha256(itemHash).ifPresent(i -> {
             if (i.getValue("local-authority-type").isPresent()) {
-                result.add(new IndexValueItemPair(i.getValue("local-authority-type").get(), i.getSha256hex()));
+                result.add(new IndexKeyItemPair(i.getValue("local-authority-type").get(), i.getSha256hex()));
             }
         });
     }
