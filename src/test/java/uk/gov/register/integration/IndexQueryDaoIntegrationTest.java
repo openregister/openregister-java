@@ -15,57 +15,56 @@ import uk.gov.register.util.HashValue;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertFalse;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- reg
- {lae:BAS, lat:UA, name: Bath} hash = 6c4...
- entry1 - 91,91,xxx6c4,BAS
-
- [start all hashes with xxx so we can delete them all]
-
- dervi
- entry1 - 91,91,xxx6c4,UA
-
- reg
- {lae:BDD, lat:UA, name: Blackburn} 37d
- entry2 - 92,92,xxx37d,BDD
-
- dervi
- entry2 - 92,92,[xxx6c4,xxx37d],UA
-
- reg
- {lae:BDF, lat:UA, name: Bedford} 01c
- entry3 - 93,93,xxx01c,BDF
-
- dervi
- entry3 - 3,3,[xxx6c4,xxx37d,xxx01c],UA
-
- reg
- {lae:BIR, lat:MD, name: Birmingham} bdc
- entry4 - 4,4,xxxbdc,BIR
-
- deriv
- entry4 - 4,4,[xxxbdc],MD
-
- reg
- {lae:BDD, lat:UA, name: New Bath} 12
- entry5 - 5,5,xxx126,BAS
-
- deriv
- entry5 - 5,5,[xxx37d,xxx01c,xxx126],UA
-
- reg
- {lae:BDD, lat:MD, name: Blackburn} 509
- entry6 - 6,6,xxx509,BDD
-
- deriv
- entry6 - 6,6,[xxx01c,xxx126],UA
- entry7 - 7,6,[xxxbdc,xxx509],MD
-
- *
+ * reg
+ * {lae:BAS, lat:UA, name: Bath} hash = 6c4...
+ * entry1 - 91,91,xxx6c4,BAS
+ * <p>
+ * [start all hashes with xxx so we can delete them all]
+ * <p>
+ * dervi
+ * entry1 - 91,91,xxx6c4,UA
+ * <p>
+ * reg
+ * {lae:BDD, lat:UA, name: Blackburn} 37d
+ * entry2 - 92,92,xxx37d,BDD
+ * <p>
+ * dervi
+ * entry2 - 92,92,[xxx6c4,xxx37d],UA
+ * <p>
+ * reg
+ * {lae:BDF, lat:UA, name: Bedford} 01c
+ * entry3 - 93,93,xxx01c,BDF
+ * <p>
+ * dervi
+ * entry3 - 3,3,[xxx6c4,xxx37d,xxx01c],UA
+ * <p>
+ * reg
+ * {lae:BIR, lat:MD, name: Birmingham} bdc
+ * entry4 - 4,4,xxxbdc,BIR
+ * <p>
+ * deriv
+ * entry4 - 4,4,[xxxbdc],MD
+ * <p>
+ * reg
+ * {lae:BDD, lat:UA, name: New Bath} 12
+ * entry5 - 5,5,xxx126,BAS
+ * <p>
+ * deriv
+ * entry5 - 5,5,[xxx37d,xxx01c,xxx126],UA
+ * <p>
+ * reg
+ * {lae:BDD, lat:MD, name: Blackburn} 509
+ * entry6 - 6,6,xxx509,BDD
+ * <p>
+ * deriv
+ * entry6 - 6,6,[xxx01c,xxx126],UA
+ * entry7 - 7,6,[xxxbdc,xxx509],MD
  */
 public class IndexQueryDaoIntegrationTest {
 
@@ -74,20 +73,15 @@ public class IndexQueryDaoIntegrationTest {
     private IndexQueryDAO dao;
 
     @Before
-    public void setup(){
+    public void setup() {
         dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=PGRegisterTxnFT");
         dbi.registerContainerFactory(new OptionalContainerFactory());
         handle = dbi.open();
         dao = handle.attach(IndexQueryDAO.class);
-
-        insertItems();
-        insertEntries();
-        insertIndex();
-
     }
 
     @After
-    public void teardown(){
+    public void teardown() {
         handle.execute("delete from public.item where sha256hex like 'xxx%' ");
         handle.execute("delete from public.entry where sha256hex like 'xxx%' ");
         handle.execute("delete from public.entry_item where sha256hex like 'xxx%' ");
@@ -96,11 +90,12 @@ public class IndexQueryDaoIntegrationTest {
     }
 
     @Test
-    public void shouldReadRecordForUA(){
+    public void shouldReadRecordForUA() {
+        nameChangeAndGroupChangeScenario();
 
         Optional<Record> recordOptional = dao.findRecord("UA", "by-type");
 
-        assertTrue( recordOptional.isPresent());
+        assertTrue(recordOptional.isPresent());
         Record record = recordOptional.get();
         assertThat(record.getItems().size(), is(2));
         assertThat(record.getEntry().getEntryNumber(), is(96));
@@ -118,31 +113,48 @@ public class IndexQueryDaoIntegrationTest {
     }
 
     @Test
-    public void shouldReadRecordForMD(){
+    public void shouldReadRecordForMD() {
+        nameChangeAndGroupChangeScenario();
 
         Optional<Record> recordOptional = dao.findRecord("MD", "by-type");
 
-        assertTrue( recordOptional.isPresent());
+        assertTrue(recordOptional.isPresent());
         Record record = recordOptional.get();
         assertThat(record.getItems().size(), is(2));
         assertThat(record.getEntry().getEntryNumber(), is(96));
         assertThat(record.getEntry().getIndexEntryNumber(), is(97));
 
         HashValue hash1 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxxbdc");
-        assertTrue(record.getItems().containsKey(hash1));
+        assertTrue("record should contain key sha-256:xxxbdc", record.getItems().containsKey(hash1));
         Item item = record.getItems().get(hash1);
         assertThat(item.getValue("name").get(), is("Birmingham"));
 
         HashValue hash2 = HashValue.decode(HashingAlgorithm.SHA256, "sha-256:xxx509");
-        assertTrue(record.getItems().containsKey(hash2));
+        assertTrue("record should contain key sha-256:xxx509", record.getItems().containsKey(hash2));
         Item item2 = record.getItems().get(hash2);
         assertThat(item2.getValue("name").get(), is("Blackburn with Darwen"));
     }
 
     @Test
-    public void shouldReadRecords(){
+    public void shouldReturnEmptyForMissingKey() {
+        nameChangeAndGroupChangeScenario();
+        Optional<Record> recordOptional = dao.findRecord("Z", "by-type");
+        assertFalse("should be empty for key Z", recordOptional.isPresent());
+    }
 
-        List<Record> records = dao.findRecords(10,0,"by-type");
+    @Test
+    public void shouldReturnEmptyForMissingIndex() {
+        nameChangeAndGroupChangeScenario();
+        List<Record> records = dao.findRecords(10, 0, "zzz");
+        assertThat(records.size(), is(0));
+    }
+
+
+    @Test
+    public void shouldReadRecords() {
+        nameChangeAndGroupChangeScenario();
+
+        List<Record> records = dao.findRecords(10, 0, "by-type");
 
         assertThat(records.size(), is(2));
 
@@ -178,20 +190,53 @@ public class IndexQueryDaoIntegrationTest {
 
     }
 
+    @Test
+    public void shouldFindZeroItemsRecordForUA() {
+        zeroItemsEntryScenario();
 
-    private void insertItems(){
-        handle.execute("INSERT INTO public.item (sha256hex,content) VALUES ( 'xxx37d','{\"name\": \"Blackburn with Darwen\", \"local-authority-eng\": \"BBD\", \"local-authority-type\": \"UA\"}')");
-        handle.execute("INSERT INTO public.item (sha256hex,content) VALUES ( 'xxxbdc','{\"name\": \"Birmingham\", \"local-authority-eng\": \"BIR\", \"local-authority-type\": \"MD\"}')");
-        handle.execute("INSERT INTO public.item (sha256hex,content) VALUES ( 'xxx6c4','{\"name\": \"Bath and North East Somerset\", \"local-authority-eng\": \"BAS\", \"local-authority-type\": \"UA\"}')");
-        handle.execute("INSERT INTO public.item (sha256hex,content) VALUES ( 'xxx01c','{\"name\": \"Bedford\", \"local-authority-eng\": \"BDF\", \"local-authority-type\": \"UA\"}')");
-        //new bath
-        handle.execute("INSERT INTO public.item (sha256hex,content) VALUES ( 'xxx126','{\"name\": \"New Bath\", \"local-authority-eng\": \"BAS\", \"local-authority-type\": \"UA\"}')");
-        // BDD as MD
-        handle.execute("INSERT INTO public.item (sha256hex,content) VALUES ( 'xxx509','{\"name\": \"Blackburn with Darwen\", \"local-authority-eng\": \"BBD\", \"local-authority-type\": \"MD\"}')");
+        Optional<Record> recordOptional = dao.findRecord("UA", "by-type");
+
+        assertTrue(recordOptional.isPresent());
+        Record record = recordOptional.get();
+
+        assertThat(record.getItems().size(), is(0));
+        assertThat(record.getEntry().getEntryNumber(), is(92));
+        assertThat(record.getEntry().getIndexEntryNumber(), is(92));
 
     }
 
-    private void insertEntries(){
+    private void nameChangeAndGroupChangeScenario() {
+        insertItems();
+        insertEntries();
+        insertIndex();
+    }
+
+    private void zeroItemsEntryScenario() {
+        insertItems();
+        insertEntriesZeroItems();
+        insertIndexZeroItems();
+    }
+
+
+    private void insertItems() {
+        handle.execute("INSERT INTO public.item (sha256hex,content)" +
+                " VALUES ( 'xxx37d','{\"name\": \"Blackburn with Darwen\", \"local-authority-eng\": \"BBD\", \"local-authority-type\": \"UA\"}')");
+        handle.execute("INSERT INTO public.item (sha256hex,content) " +
+                "VALUES ( 'xxxbdc','{\"name\": \"Birmingham\", \"local-authority-eng\": \"BIR\", \"local-authority-type\": \"MD\"}')");
+        handle.execute("INSERT INTO public.item (sha256hex,content) " +
+                "VALUES ( 'xxx6c4','{\"name\": \"Bath and North East Somerset\", \"local-authority-eng\": \"BAS\", \"local-authority-type\": \"UA\"}')");
+        handle.execute("INSERT INTO public.item (sha256hex,content) " +
+                "VALUES ( 'xxx01c','{\"name\": \"Bedford\", \"local-authority-eng\": \"BDF\", \"local-authority-type\": \"UA\"}')");
+        //new bath
+        handle.execute("INSERT INTO public.item (sha256hex,content) " +
+                "VALUES ( 'xxx126','{\"name\": \"New Bath\", \"local-authority-eng\": \"BAS\", \"local-authority-type\": \"UA\"}')");
+        // BDD as MD
+        handle.execute("INSERT INTO public.item (sha256hex,content) " +
+                "VALUES ( 'xxx509','{\"name\": \"Blackburn with Darwen\", \"local-authority-eng\": \"BBD\", \"local-authority-type\": \"MD\"}')");
+
+    }
+
+    private void insertEntries() {
         // Ordinary entries for Bath, Blackburn, Bedford, Birmingham
         handle.execute("INSERT INTO public.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 91,'xxx6c4',1490610633,'BAS')");
         handle.execute("INSERT INTO public.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 92,'xxx37d',1490610633,'BBD')");
@@ -211,24 +256,53 @@ public class IndexQueryDaoIntegrationTest {
 
     }
 
-    private void insertIndex(){
-        // BAS
-        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) VALUES('by-type', 'UA', 'xxx6c4', 91, NULL, 91, NULL)");
-        // BBD
-        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) VALUES('by-type', 'UA', 'xxx37d', 92, NULL, 92, NULL)");
-        // BDF
-        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) VALUES('by-type', 'UA', 'xxx01c', 93, NULL, 93, NULL)");
-        // BIR
-        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) VALUES('by-type', 'MD', 'xxxbdc', 94, NULL, 94, NULL)");
-        // update bath to new bath
-        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) VALUES('by-type', 'UA', 'xxx126', 95, NULL, 95, NULL)");
-        handle.execute("UPDATE public.\"index\" set end_entry_number = 95, end_index_entry_number = 95 where name='by-type' and sha256hex='xxx6c4'");
-        // change BBD from UA to MD
-        handle.execute("UPDATE public.\"index\" set end_index_entry_number=96, end_entry_number=96 where name='by-type' and sha256hex='xxx37d'");
-        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) VALUES('by-type', 'MD', 'xxx509', 96, NULL, 97, NULL)");
+    private void insertEntriesZeroItems() {
+        // Blackburn as UA
+        handle.execute("INSERT INTO public.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 91,'xxx37d',1490610633,'BBD')");
+        // Blackburn as MD
+        handle.execute("INSERT INTO public.entry (entry_number, sha256hex, \"timestamp\", \"key\") VALUES ( 92, 'xxx509', 1490610633, 'BBD')");
+        // join table
+        handle.execute("INSERT INTO public.entry_item (entry_number,sha256hex) VALUES ( 91,'xxx37d')");
+        handle.execute("INSERT INTO public.entry_item (entry_number,sha256hex) VALUES ( 92,'xxx509')");
 
     }
 
+    private void insertIndex() {
+        // BAS
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
+                " VALUES('by-type', 'UA', 'xxx6c4', 91, NULL, 91, NULL)");
+        // BBD
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) " +
+                "VALUES('by-type', 'UA', 'xxx37d', 92, NULL, 92, NULL)");
+        // BDF
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
+                " VALUES('by-type', 'UA', 'xxx01c', 93, NULL, 93, NULL)");
+        // BIR
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
+                " VALUES('by-type', 'MD', 'xxxbdc', 94, NULL, 94, NULL)");
+        // update bath to new bath
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number) " +
+                "VALUES('by-type', 'UA', 'xxx126', 95, NULL, 95, NULL)");
+        
+        handle.execute("UPDATE public.\"index\" set end_entry_number = 95, end_index_entry_number = 95 where name='by-type' and sha256hex='xxx6c4'");
+
+        // change BBD from UA to MD
+        handle.execute("UPDATE public.\"index\" set end_index_entry_number=96, end_entry_number=96 where name='by-type' and sha256hex='xxx37d'");
+
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
+                " VALUES('by-type', 'MD', 'xxx509', 96, NULL, 97, NULL)");
+
+    }
+
+    private void insertIndexZeroItems(){
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
+                " VALUES('by-type', 'UA', 'xxx37d', 91, NULL, 91, NULL)");
+        // change BBD from UA to MD
+        handle.execute("UPDATE public.\"index\" set end_index_entry_number=92, end_entry_number=92 where name='by-type' and sha256hex='xxx37d'");
+
+        handle.execute("INSERT INTO public.\"index\" (\"name\", \"key\", sha256hex, start_entry_number, end_entry_number, start_index_entry_number, end_index_entry_number)" +
+                " VALUES('by-type', 'MD', 'xxx509', 92, NULL, 93, NULL)");
+    }
 
 
 }
