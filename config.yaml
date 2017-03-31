@@ -40,7 +40,7 @@ server:
 
 registerDomain: openregister.dev:8080
 
-register: school
+register: local-authority-eng
 
 enableDownloadResource: true
 
@@ -51,9 +51,9 @@ externalConfigDirectory: /tmp
 downloadConfigs: true
 
 # can be http: file s3: or classpath: url
-fieldsYamlLocation: classpath://config/fields.yaml
+fieldsYamlLocation: file:///Users/johnollier/github/openregister/field-records-disc.yaml
 
-registersYamlLocation: classpath://config/registers.yaml
+registersYamlLocation: file:///Users/johnollier/github/openregister/register-records-disc.yaml
 
 similarRegisters:
   - address

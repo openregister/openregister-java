@@ -58,7 +58,7 @@ public class DerivationRecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key, @PathParam("index-name") String indexName) {
-        return viewFactory.getRecordView(getRecordByKey(key, indexName));
+        return viewFactory.getRecordView(getRecordByKey(indexName, key));
     }
 
     @GET
