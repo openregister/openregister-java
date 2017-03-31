@@ -2,16 +2,16 @@ package uk.gov.register.indexer;
 
 import uk.gov.register.util.HashValue;
 
-public class IndexValueItemPair {
+public class IndexKeyItemPair {
     private final String value;
     private final HashValue itemHash;
 
-    public IndexValueItemPair(String value, HashValue itemHash) {
+    public IndexKeyItemPair(String value, HashValue itemHash) {
         this.value = value;
         this.itemHash = itemHash;
     }
 
-    public String getValue() {
+    public String getIndexKey() {
         return value;
     }
 
@@ -24,7 +24,7 @@ public class IndexValueItemPair {
         if (this == o) return true;
         if (o == null || o.getClass() != this.getClass()) return false;
 
-        IndexValueItemPair obj = (IndexValueItemPair) o;
+        IndexKeyItemPair obj = (IndexKeyItemPair) o;
 
         if (value != null ? !value.equals(obj.value) : obj.value != null) return false;
 

@@ -3,7 +3,7 @@ package uk.gov.register.indexer.function;
 import org.junit.Test;
 import org.mockito.Mockito;
 import uk.gov.register.core.Entry;
-import uk.gov.register.indexer.IndexValueItemPair;
+import uk.gov.register.indexer.IndexKeyItemPair;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -21,7 +21,7 @@ public class BaseIndexFunctionTest {
         Entry entry = new Entry(1, Collections.emptyList(), Instant.now(), "key");
 
         BaseIndexFunction func = mock(BaseIndexFunction.class, Mockito.CALLS_REAL_METHODS);
-        Set<IndexValueItemPair> resultSet = new HashSet<>();
+        Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute(entry);
 
         assertThat(resultSet, is(empty()));
