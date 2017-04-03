@@ -66,9 +66,13 @@ public class DerivationRecordResource {
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @Timed
     public RecordsView records(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        setContentDisposition();
-        return getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
+        if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
+            IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+            setContentDisposition();
+            return getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @GET
@@ -76,10 +80,14 @@ public class DerivationRecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public PaginatedView<RecordsView> recordsHtml(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        setContentDisposition();
-        RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
-        return viewFactory.getRecordListView(pagination, recordsView);
+        if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
+            IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+            setContentDisposition();
+            RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
+            return viewFactory.getRecordListView(pagination, recordsView);
+        } else {
+            throw new NotFoundException();
+        }
     }
 
 
