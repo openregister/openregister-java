@@ -4,6 +4,7 @@ import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class RSFCreator {
         Iterator<?> iterators;
 
         if (totalEntries1 == totalEntries2) {
-            iterators = Iterators.singletonIterator(register.getRegisterProof(totalEntries1));
+            iterators = Collections.emptyIterator();
         } else {
             iterators = Iterators.concat(
                     register.getItemIterator(totalEntries1, totalEntries2),

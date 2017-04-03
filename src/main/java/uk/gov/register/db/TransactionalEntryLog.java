@@ -30,8 +30,6 @@ public class TransactionalEntryLog extends AbstractEntryLog {
         stagedEntries.add(entry);
     }
 
-
-
     @Override
     public int getTotalEntries() {
         // This method is called a lot, so we want to avoid checkpointing
