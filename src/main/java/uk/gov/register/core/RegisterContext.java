@@ -1,14 +1,28 @@
 package uk.gov.register.core;
 
-import com.google.common.base.Throwables;
-import org.flywaydb.core.Flyway;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.TransactionIsolationLevel;
-import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.auth.RegisterAuthenticator;
-import uk.gov.register.configuration.*;
-import uk.gov.register.db.*;
+import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.DeleteRegisterDataConfiguration;
+import uk.gov.register.configuration.HomepageContentConfiguration;
+import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.configuration.RegisterTrackingConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
+import uk.gov.register.db.CurrentKeysUpdateDAO;
+import uk.gov.register.db.DerivationRecordIndex;
+import uk.gov.register.db.EntryDAO;
+import uk.gov.register.db.EntryItemDAO;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.IndexDAO;
+import uk.gov.register.db.IndexQueryDAO;
+import uk.gov.register.db.ItemDAO;
+import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.db.TransactionalEntryLog;
+import uk.gov.register.db.TransactionalItemStore;
+import uk.gov.register.db.TransactionalRecordIndex;
+import uk.gov.register.db.UnmodifiableEntryLog;
+import uk.gov.register.db.UnmodifiableItemStore;
+import uk.gov.register.db.UnmodifiableRecordIndex;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.exceptions.RegisterResultException;
 import uk.gov.register.serialization.RegisterResult;
@@ -23,6 +37,13 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import com.google.common.base.Throwables;
+import org.flywaydb.core.Flyway;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.TransactionIsolationLevel;
+import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 
 public class RegisterContext implements
         RegisterTrackingConfiguration,
@@ -82,11 +103,12 @@ public class RegisterContext implements
     public Register buildOnDemandRegister() {
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
-                new UnmodifiableEntryLog(memoizationStore.get(), dbi.onDemand(EntryQueryDAO.class)),
+                new UnmodifiableEntryLog(memoizationStore.get(), dbi.onDemand(EntryQueryDAO.class), dbi.onDemand(IndexQueryDAO.class)),
                 new UnmodifiableItemStore(dbi.onDemand(ItemQueryDAO.class)),
                 new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class)),
                 dbi.onDemand(IndexDAO.class),
-                dbi.onDemand(IndexQueryDAO.class));
+                dbi.onDemand(IndexQueryDAO.class),
+                new DerivationRecordIndex(dbi.onDemand(IndexQueryDAO.class)));
     }
 
     private Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
@@ -95,7 +117,8 @@ public class RegisterContext implements
                 new TransactionalEntryLog(memoizationStore,
                         handle.attach(EntryQueryDAO.class),
                         handle.attach(EntryDAO.class),
-                        handle.attach((EntryItemDAO.class))),
+                        handle.attach((EntryItemDAO.class)),
+                        handle.attach(IndexQueryDAO.class)),
                 new TransactionalItemStore(
                         handle.attach(ItemDAO.class),
                         handle.attach(ItemQueryDAO.class),
@@ -104,7 +127,8 @@ public class RegisterContext implements
                         handle.attach(RecordQueryDAO.class),
                         handle.attach(CurrentKeysUpdateDAO.class)),
                 handle.attach(IndexDAO.class),
-                handle.attach(IndexQueryDAO.class));
+                handle.attach(IndexQueryDAO.class),
+                new DerivationRecordIndex(handle.attach(IndexQueryDAO.class)));
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {

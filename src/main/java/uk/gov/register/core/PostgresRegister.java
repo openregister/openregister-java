@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.db.IndexDAO;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.exceptions.NoSuchFieldException;
@@ -18,7 +19,7 @@ import java.util.*;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
-
+    private final DerivationRecordIndex derivationRecordIndex;
     private final RegisterName registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
@@ -33,11 +34,13 @@ public class PostgresRegister implements Register {
                             ItemStore itemStore,
                             RecordIndex recordIndex,
                             IndexDAO indexDAO,
-                            IndexQueryDAO indexQueryDAO) {
+                            IndexQueryDAO indexQueryDAO,
+                            DerivationRecordIndex derivationRecordIndex) {
         registerName = registerMetadata.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
+        this.derivationRecordIndex = derivationRecordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
         this.registerMetadata = registerMetadata;
         this.indexDriver = new IndexDriver(this, indexDAO, indexQueryDAO);
@@ -184,6 +187,16 @@ public class PostgresRegister implements Register {
     }
 
     @Override
+    public Iterator<Entry> getDerivationEntryIterator(String indexName) {
+        return entryLog.getDerivationIterator(indexName);
+    }
+
+    @Override
+    public Iterator<Entry> getDerivationEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+        return entryLog.getDerivationIterator(indexName, totalEntries1, totalEntries2);
+    }
+
+    @Override
     public RegisterName getRegisterName() {
         return registerName;
     }
@@ -192,4 +205,15 @@ public class PostgresRegister implements Register {
     public RegisterMetadata getRegisterMetadata() {
         return registerMetadata;
     }
+
+    @Override
+    public Optional<Record> getDerivationRecord(String key, String derivationName) {
+        return derivationRecordIndex.getRecord(key, derivationName);
+    }
+
+    @Override
+    public List<Record> getDerivationRecords(int limit, int offset, String derivationName) {
+        return derivationRecordIndex.getRecords(limit, offset, derivationName);
+    }
+
 }

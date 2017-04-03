@@ -1,13 +1,15 @@
 package uk.gov.register.serialization;
 
-import com.google.common.collect.Iterators;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.google.common.collect.Iterators;
 
 public class RSFCreator {
 
@@ -45,6 +47,30 @@ public class RSFCreator {
                     register.getItemIterator(totalEntries1, totalEntries2),
                     register.getEntryIterator(totalEntries1, totalEntries2),
                     Iterators.singletonIterator(nextRootHash));
+        }
+        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
+        return new RegisterSerialisationFormat(commands);
+    }
+
+    public RegisterSerialisationFormat create(Register register, String indexName) {
+        Iterator<?> iterators = Iterators.concat(
+                register.getItemIterator(),
+                register.getDerivationEntryIterator(indexName));
+
+        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
+        return new RegisterSerialisationFormat(commands);
+    }
+
+
+    public RegisterSerialisationFormat create(Register register, String indexName, int totalEntries1, int totalEntries2) {
+        Iterator<?> iterators;
+
+        if (totalEntries1 == totalEntries2) {
+            iterators = Collections.emptyIterator();
+        } else {
+            iterators = Iterators.concat(
+                    register.getItemIterator(totalEntries1, totalEntries2),
+                    register.getDerivationEntryIterator(indexName, totalEntries1, totalEntries2));
         }
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);

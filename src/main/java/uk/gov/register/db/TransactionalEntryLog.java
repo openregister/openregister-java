@@ -17,8 +17,8 @@ public class TransactionalEntryLog extends AbstractEntryLog {
     private final EntryDAO entryDAO;
     private final EntryItemDAO entryItemDAO;
 
-    public TransactionalEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO, EntryItemDAO entryItemDAO) {
-        super(entryQueryDAO, memoizationStore);
+    public TransactionalEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO, EntryItemDAO entryItemDAO, IndexQueryDAO indexQueryDAO) {
+        super(entryQueryDAO, memoizationStore, indexQueryDAO);
         this.stagedEntries = new ArrayList<>();
         this.entryQueryDAO = entryQueryDAO;
         this.entryDAO = entryDAO;

@@ -41,7 +41,14 @@ public interface RegisterReadOnly {
     Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);
 
+    Iterator<Entry> getDerivationEntryIterator(String indexName);
+    Iterator<Entry> getDerivationEntryIterator(String indexName, int totalEntries1, int totalEntries2);
+
     RegisterName getRegisterName();
 
     RegisterMetadata getRegisterMetadata();
+
+    Optional<Record> getDerivationRecord(String key, String derivationName);
+
+    List<Record> getDerivationRecords(int limit, int offset, String derivationName);
 }

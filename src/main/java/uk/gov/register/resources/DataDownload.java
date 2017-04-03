@@ -1,22 +1,32 @@
 package uk.gov.register.resources;
 
-import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.views.View;
 import uk.gov.register.configuration.ResourceConfiguration;
-import uk.gov.register.core.*;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.RegisterDetail;
+import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.util.Collection;
+
+import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.views.View;
 
 @Path("/")
 public class DataDownload {
@@ -77,6 +87,30 @@ public class DataDownload {
         String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
         return Response
                 .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter))
+                .header("Content-Disposition", rsfFileName).build();
+    }
+
+    @GET
+    @Path("/index/{index-name}/download-rsf")
+    @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
+    @DownloadNotAvailable
+    @Timed
+    public Response downloadIndexRSF(@PathParam("index-name") String indexName) {
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
+        return Response
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, indexName))
+                .header("Content-Disposition", rsfFileName).build();
+    }
+
+    @GET
+    @Path("/index/{index-name}/download-rsf/{total-entries-1}/{total-entries-2}")
+    @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
+    @DownloadNotAvailable
+    @Timed
+    public Response downloadIndexRSF(@PathParam("index-name") String indexName, @PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
+        return Response
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, indexName, totalEntries1, totalEntries2))
                 .header("Content-Disposition", rsfFileName).build();
     }
 

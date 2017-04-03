@@ -8,8 +8,8 @@ import uk.gov.verifiablelog.store.memoization.MemoizationStore;
  * An append-only log of Entries, together with proofs
  */
 public class UnmodifiableEntryLog extends AbstractEntryLog {
-    public UnmodifiableEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO) {
-        super(entryQueryDAO, memoizationStore);
+    public UnmodifiableEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO) {
+        super(entryQueryDAO, memoizationStore, indexQueryDAO);
     }
 
     @Override
