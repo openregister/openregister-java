@@ -13,11 +13,15 @@ import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import static uk.gov.register.core.HashingAlgorithm.SHA256;
+
 
 public class DerivationRecordMapper implements ResultSetMapper<Record> {
     private final LongTimestampToInstantMapper longTimestampToInstantMapper;
@@ -34,8 +38,11 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
         int indexEntryNumber = r.getInt("index_entry_number");
         int entryNumber = r.getInt("entry_number");
         Instant timestamp = longTimestampToInstantMapper.map(index, r, ctx);
-        String[] hashes = (String[]) r.getArray("sha256_arr").getArray();
-        String[] content = (String[]) r.getArray("content_arr").getArray();
+        Array shaArray = r.getArray("sha256_arr");
+        String[] hashes = (shaArray != null) ? (String[]) shaArray.getArray() : new String[]{};
+
+        Array contentArray = r.getArray("content_arr");
+        String[] content = (contentArray != null) ? (String[]) contentArray.getArray() : new String[]{};
 
         if (hashes.length != content.length) {
             throw new IllegalStateException("query returned unequal number of hashes and content");
@@ -45,7 +52,7 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
         List<Item> items = new ArrayList<>();
 
         for (int i = 0; i < hashes.length; i++) {
-            HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, hashes[i]);
+            HashValue hashValue = new HashValue(SHA256, hashes[i]);
             hashValues.add(hashValue);
             Item item = new Item(hashValue, jsonNode(content[i]));
             items.add(item);

@@ -40,90 +40,102 @@ public interface IndexQueryDAO {
     int getExistingIndexCountForItem(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex);
 
     String recordForKeyQuery = "select " +
-            " entry_nums.key, " +
-            " max( entry_nums.ien ) as index_entry_number, " +
-            " max( entry_nums.en ) as entry_number, " +
-            " max( e.\"timestamp\" ) as \"timestamp\", " +
-            " array_remove(array_agg(unended.sha256hex),null) as sha256_arr, " +
-            " array_remove(array_agg(unended.content),null) as content_arr " +
+            " entry_numbers.mien as index_entry_number, " +
+            " entry_numbers.men as entry_number, " +
+            " entry.\"timestamp\" as \"timestamp\", " +
+            " unended.sha256_arr as sha256_arr, " +
+            " unended.content_arr as content_arr, " +
+            " :key as key " +
             "from " +
             " ( " +
             "  select " +
-            "   coalesce( " +
-            "    end_index_entry_number, " +
-            "    start_index_entry_number " +
-            "   ) as ien, " +
-            "   coalesce( " +
-            "    end_entry_number, " +
-            "    start_entry_number " +
-            "   ) as en, " +
-            "   sha256hex, " +
-            "   key " +
+            "   greatest( " +
+            "    max( start_index_entry_number ), " +
+            "    max( end_index_entry_number ) " +
+            "   ) as mien, " +
+            "   greatest( " +
+            "    max( start_entry_number ), " +
+            "    max( end_entry_number ) " +
+            "   ) as men " +
             "  from " +
-            "   \"index\" " +
+            "   index " +
             "  where " +
-            "   name = :name and key = :key " +
-            " ) as entry_nums join entry as e on " +
-            " e.entry_number = entry_nums.en  " +
-            " left outer join ( " +
+            "   name = :name " +
+            "   and key = :key " +
+            " ) as entry_numbers cross join( " +
             "  select " +
-            "   ix.sha256hex, " +
-            "   im.content " +
+            "   array_remove( " +
+            "    array_agg(ix.sha256hex), " +
+            "    null " +
+            "   ) as sha256_arr, " +
+            "   array_remove( " +
+            "    array_agg(im.content), " +
+            "    null " +
+            "   ) as content_arr " +
             "  from " +
             "   index as ix join item as im on " +
             "   ix.sha256hex = im.sha256hex " +
             "  where " +
             "   end_index_entry_number is null " +
             "   and ix.name = :name " +
-            " ) as unended on " +
-            " unended.sha256hex = entry_nums.sha256hex " +
-            "group by " +
-            " entry_nums.key " +
-            "order by " +
-            " entry_nums.key";
+            "   and ix.key = :key " +
+            " ) as unended join entry on " +
+            " entry.entry_number = entry_numbers.men";
 
     String recordQuery = "select " +
-            " entry_nums.key, " +
-            " max( entry_nums.ien ) as index_entry_number, " +
-            " max( entry_nums.en ) as entry_number, " +
-            " max( e.\"timestamp\" ) as \"timestamp\", " +
-            " array_remove(array_agg(unended.sha256hex),null) as sha256_arr, " +
-            " array_remove(array_agg(unended.content),null) as content_arr " +
+            " entry_numbers.key, " +
+            " greatest( " +
+            "  entry_numbers.meien, " +
+            "  entry_numbers.msien " +
+            " ) as index_entry_number, " +
+            " greatest( " +
+            "  entry_numbers.meen, " +
+            "  entry_numbers.msen " +
+            " ) as entry_number, " +
+            " entry.timestamp as timestamp, " +
+            " unended.sha256_arr as sha256_arr, " +
+            " unended.content_arr as content_arr " +
             "from " +
             " ( " +
             "  select " +
-            "   coalesce( " +
-            "    end_index_entry_number, " +
-            "    start_index_entry_number " +
-            "   ) as ien, " +
-            "   coalesce( " +
-            "    end_entry_number, " +
-            "    start_entry_number " +
-            "   ) as en, " +
-            "   sha256hex, " +
+            "   max( start_index_entry_number ) as msien, " +
+            "   max( start_entry_number ) as msen, " +
+            "   max( end_index_entry_number ) as meien, " +
+            "   max( end_entry_number ) as meen, " +
             "   key " +
             "  from " +
-            "   \"index\" " +
+            "   index " +
             "  where " +
-            "   name = :name" +
-            " ) as entry_nums join entry as e on " +
-            " e.entry_number = entry_nums.en  " +
-            " left outer join ( " +
+            "   name = :name " +
+            "  group by " +
+            "   key " +
+            " ) as entry_numbers join( " +
             "  select " +
-            "   ix.sha256hex, " +
-            "   im.content " +
+            "   array_remove( " +
+            "    array_agg(ix.sha256hex), " +
+            "    null " +
+            "   ) as sha256_arr, " +
+            "   array_remove( " +
+            "    array_agg(im.content), " +
+            "    null " +
+            "   ) as content_arr, " +
+            "   ix.key " +
             "  from " +
             "   index as ix join item as im on " +
             "   ix.sha256hex = im.sha256hex " +
             "  where " +
             "   end_index_entry_number is null " +
-            "   and ix.name = :name " +
+            "   and name = :name " +
+            "  group by " +
+            "   key " +
             " ) as unended on " +
-            " unended.sha256hex = entry_nums.sha256hex " +
-            "group by " +
-            " entry_nums.key " +
+            " unended.key = entry_numbers.key join entry on " +
+            " entry.entry_number = greatest( " +
+            "  entry_numbers.meen, " +
+            "  entry_numbers.msen " +
+            " ) " +
             "order by " +
-            " entry_nums.key " +
+            " key " +
             " limit :limit offset :offset ";
 
     String entriesQuery = "select  " +
