@@ -20,10 +20,14 @@ public class RecordsView implements CsvRepresentationView {
 
     private Iterable<Field> fields;
 
-    public RecordsView(List<RecordView> records, Iterable<Field> fields) {
+    public RecordsView(List<RecordView> records, Iterable<Field> fields, boolean isRegister) {
         this.records = records;
         this.fields = fields;
-        this.isRegister = true;
+        this.isRegister = isRegister;
+    }
+
+    public RecordsView(List<RecordView> records, Iterable<Field> fields) {
+        this(records, fields, true);
     }
 
     @JsonValue

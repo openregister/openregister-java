@@ -49,7 +49,7 @@ public class DerivationRecordResource {
     @Path("/index/{index-name}/record/{record-key}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordView getRecordByKey(@PathParam("index-name") String indexName, @PathParam("record-key") String key) {
-        return register.getDerivationRecord(key, indexName).map(viewFactory::getRecordMediaView)
+        return register.getDerivationRecord(key, indexName).map(viewFactory::getDerivationRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -66,13 +66,9 @@ public class DerivationRecordResource {
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @Timed
     public RecordsView records(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
-            IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-            setContentDisposition();
-            return getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
-        } else {
-            throw new NotFoundException();
-        }
+        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+        setContentDisposition();
+        return getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
     }
 
     @GET
@@ -80,14 +76,10 @@ public class DerivationRecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public PaginatedView<RecordsView> recordsHtml(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
-            IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-            setContentDisposition();
-            RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
-            return viewFactory.getRecordListView(pagination, recordsView);
-        } else {
-            throw new NotFoundException();
-        }
+        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+        setContentDisposition();
+        RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
+        return viewFactory.getRecordListView(pagination, recordsView);
     }
 
 
@@ -113,7 +105,7 @@ public class DerivationRecordResource {
     private RecordsView getRecordsView(int limit, int offset, String indexName) {
         List<Record> records = register.getDerivationRecords(limit, offset, indexName);
         List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
-        return viewFactory.getRecordsMediaView(recordViews);
+        return viewFactory.getDerivationRecordsMediaView(recordViews);
     }
 
 

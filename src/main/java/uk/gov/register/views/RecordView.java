@@ -22,10 +22,14 @@ public class RecordView implements CsvRepresentationView {
     private final boolean isRegister;
 
     public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields) {
+        this(entry, itemViews, fields, true);
+    }
+
+    public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields, boolean isRegister) {
         this.entry = entry;
         this.itemViews = itemViews;
         this.fields = fields;
-        this.isRegister = true;
+        this.isRegister = isRegister;
     }
 
     public String getPrimaryKey() {
