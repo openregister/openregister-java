@@ -138,9 +138,9 @@ public class HomePageViewTest {
 
     @Test
     public void getFields_shouldGetFields() {
-        Field height = new Field("height", "", null, null, "");
-        Field width = new Field("width", "", null, null, "");
-        Field title = new Field("title", "", null, null, "");
+        Field height = new Field(new FieldItem("height", "", null, null, ""));
+        Field width = new Field(new FieldItem("width", "", null, null, ""));
+        Field title = new Field(new FieldItem("title", "", null, null, ""));
 
         when(fieldsConfiguration.getField("height")).thenReturn(height);
         when(fieldsConfiguration.getField("width")).thenReturn(width);

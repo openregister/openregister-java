@@ -48,7 +48,7 @@ public class RecordsView implements CsvRepresentationView {
 
     @Override
     public CsvRepresentation<ArrayNode> csvRepresentation() {
-        Iterable<String> fieldNames = Iterables.transform(fields, f -> f.fieldName);
+        Iterable<String> fieldNames = Iterables.transform(fields, f -> f.getFieldName());
         return new CsvRepresentation<>(Record.csvSchema(fieldNames), getFlatRecordsJson());
     }
 

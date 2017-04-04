@@ -28,7 +28,7 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
 
     @Override
     public CsvRepresentation<Map<String, FieldValue>> csvRepresentation() {
-        Iterable<String> fieldNames = Iterables.transform(fields, f -> f.fieldName);
+        Iterable<String> fieldNames = Iterables.transform(fields, f -> f.getFieldName());
         return new CsvRepresentation<>(Item.csvSchema(fieldNames), fieldValueMap);
     }
 

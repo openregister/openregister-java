@@ -26,10 +26,10 @@ public class CsvWriterTest {
 
     CsvWriter csvWriter = new CsvWriter();
     private final ImmutableList<Field> fields = ImmutableList.of(
-            new Field("key1", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("key2", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("key3", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("key4", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
+            new Field(new FieldItem("key1", "datatype", new RegisterName("register"), Cardinality.ONE, "text")),
+            new Field(new FieldItem("key2", "datatype", new RegisterName("register"), Cardinality.ONE, "text")),
+            new Field(new FieldItem("key3", "datatype", new RegisterName("register"), Cardinality.ONE, "text")),
+            new Field(new FieldItem("key4", "datatype", new RegisterName("register"), Cardinality.ONE, "text")));
 
     @Test
     public void writes_EntryListView_to_output_stream() throws IOException {
@@ -136,8 +136,8 @@ public class CsvWriterTest {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
         ImmutableList<Field> fields = ImmutableList.of(
-                new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+                new Field(new FieldItem("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text")),
+                new Field(new FieldItem("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text")));
 
         ItemView itemView1 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"),
                 ImmutableMap.of("address", new StringValue("123"), "street", new StringValue("foo")), fields);
