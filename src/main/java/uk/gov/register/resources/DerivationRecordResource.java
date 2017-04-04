@@ -58,7 +58,11 @@ public class DerivationRecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key, @PathParam("index-name") String indexName) {
-        return viewFactory.getRecordView(getRecordByKey(indexName, key));
+        if (Boolean.getBoolean("index-pages-enabled")) {
+            return viewFactory.getRecordView(getRecordByKey(indexName, key));
+        } else {
+            throw new NotFoundException();
+        }
     }
 
     @GET
@@ -76,10 +80,14 @@ public class DerivationRecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public PaginatedView<RecordsView> recordsHtml(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        setContentDisposition();
-        RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
-        return viewFactory.getRecordListView(pagination, recordsView);
+        if (Boolean.getBoolean("index-pages-enabled")) {
+            IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+            setContentDisposition();
+            RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
+            return viewFactory.getRecordListView(pagination, recordsView);
+        } else {
+            throw new NotFoundException();
+        }
     }
 
 
