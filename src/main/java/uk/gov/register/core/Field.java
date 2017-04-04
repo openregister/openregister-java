@@ -4,47 +4,41 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.register.core.datatype.Datatype;
-import uk.gov.register.core.datatype.DatatypeFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
-    public final String fieldName;
-    final Datatype datatype;
-    final Optional<RegisterName> register;
-    final Cardinality cardinality;
-    final String text;
+    final FieldItem item;
+
+    public Field(FieldItem item) {
+        this.item = item;
+    }
 
     @JsonCreator
-    public Field(@JsonProperty("field") String fieldName,
-                 @JsonProperty("datatype") String datatype,
-                 @JsonProperty("register") RegisterName register,
-                 @JsonProperty("cardinality") Cardinality cardinality,
-                 @JsonProperty("text") String text) {
-        this.fieldName = fieldName;
-        this.text = text;
-        this.register = Optional.ofNullable(register);
-        this.cardinality = cardinality;
-        this.datatype = DatatypeFactory.get(datatype);
+    public Field(@JsonProperty("item") List<FieldItem> items) {
+        this.item = items.get(0);
     }
 
     public Optional<RegisterName> getRegister() {
-        return register;
+        return item.register;
     }
 
     @SuppressWarnings("unused")
     public Cardinality getCardinality() {
-        return cardinality;
+        return item.cardinality;
     }
 
     public Datatype getDatatype() {
-        return datatype;
+        return item.datatype;
     }
 
     public String getText() {
-        return text;
+        return item.text;
     }
+
+    public String getFieldName() { return item.fieldName; }
 
     @Override
     public boolean equals(Object o) {
@@ -53,20 +47,11 @@ public class Field {
 
         Field field = (Field) o;
 
-        if (fieldName != null ? !fieldName.equals(field.fieldName) : field.fieldName != null) return false;
-        if (datatype != null ? !datatype.equals(field.datatype) : field.datatype != null) return false;
-        if (register != null ? !register.equals(field.register) : field.register != null) return false;
-        if (cardinality != field.cardinality) return false;
-        return text != null ? text.equals(field.text) : field.text == null;
+        return item != null ? item.equals(field.item) : field.item == null;
     }
 
     @Override
     public int hashCode() {
-        int result = fieldName != null ? fieldName.hashCode() : 0;
-        result = 31 * result + (datatype != null ? datatype.hashCode() : 0);
-        result = 31 * result + (register != null ? register.hashCode() : 0);
-        result = 31 * result + (cardinality != null ? cardinality.hashCode() : 0);
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        return result;
+        return item != null ? item.hashCode() : 0;
     }
 }

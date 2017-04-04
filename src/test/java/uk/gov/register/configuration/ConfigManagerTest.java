@@ -103,7 +103,7 @@ public class ConfigManagerTest {
         configManager.refreshConfig();
 
         Collection<Field> actualFields = configManager.getFieldsConfiguration().getAllFields();
-        List<String> fieldNames = actualFields.stream().map(f -> f.fieldName).collect(toList());
+        List<String> fieldNames = actualFields.stream().map(f -> f.getFieldName()).collect(toList());
 
         assertThat(fieldNames, hasItems("country","food-premises-types","copyright"));
     }

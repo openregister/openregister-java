@@ -41,7 +41,7 @@ public class RegisterLinkService {
         // Get fields that have a register property equal to the name of the current register
         List<String> fieldsMatchingRegister = allFields.stream()
                 .filter(f -> f.getRegister().map(r -> r.equals(registerName)).orElse(false))
-                .map(f -> f.fieldName)
+                .map(f -> f.getFieldName())
                 .collect(Collectors.toList());
 
         // Next, get the registers which contain the fields matched above, excluding the current register
@@ -60,7 +60,7 @@ public class RegisterLinkService {
         List<String> registerFields = Lists.newArrayList(registersConfiguration.getRegisterMetadata(registerName).getFields());
 
         return allFields.stream()
-                .filter(f -> registerFields.contains(f.fieldName) && f.getRegister().isPresent() && !f.fieldName.equalsIgnoreCase(registerName.value()))
+                .filter(f -> registerFields.contains(f.getFieldName()) && f.getRegister().isPresent() && !f.getFieldName().equalsIgnoreCase(registerName.value()))
                 .map(f -> f.getRegister().get().value())
                 .collect(Collectors.toList());
     }

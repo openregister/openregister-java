@@ -24,8 +24,8 @@ public class RecordsViewTest {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
         ImmutableList<Field> fields = ImmutableList.of(
-                new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+                new Field(new FieldItem("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text")),
+                new Field(new FieldItem("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text")));
 
         List<RecordView> records = Lists.newArrayList(
                 new RecordView(

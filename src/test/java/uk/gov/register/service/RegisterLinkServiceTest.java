@@ -4,10 +4,7 @@ import org.junit.Test;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.Cardinality;
-import uk.gov.register.core.Field;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,9 +26,9 @@ public class RegisterLinkServiceTest {
 
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
         when(fieldsConfiguration.getAllFields()).thenReturn(Arrays.asList(
-                new Field("address", "string", new RegisterName("address"), Cardinality.ONE, ""),
-                new Field("local-authority", "string", localAuthorityRegisterName, Cardinality.ONE, ""),
-                new Field("name", "string", null, Cardinality.ONE, "")
+                new Field(new FieldItem("address", "string", new RegisterName("address"), Cardinality.ONE, "")),
+                new Field(new FieldItem("local-authority", "string", localAuthorityRegisterName, Cardinality.ONE, "")),
+                new Field(new FieldItem("name", "string", null, Cardinality.ONE, ""))
         ));
 
         ConfigManager configManager = mock(ConfigManager.class);
@@ -61,12 +58,12 @@ public class RegisterLinkServiceTest {
 
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
         when(fieldsConfiguration.getAllFields()).thenReturn(Arrays.asList(
-                new Field("address", "string", addressRegisterName, Cardinality.ONE, ""),
-                new Field("company", "string", companyRegisterName, Cardinality.ONE, ""),
-                new Field("local-authority", "string", localAuthorityRegisterName, Cardinality.ONE, ""),
-                new Field("name", "string", null, Cardinality.ONE, ""),
-                new Field("street", "string", null, Cardinality.ONE, ""),
-                new Field("registered-office", "string", addressRegisterName, Cardinality.ONE, "")
+                new Field(new FieldItem("address", "string", addressRegisterName, Cardinality.ONE, "")),
+                new Field(new FieldItem("company", "string", companyRegisterName, Cardinality.ONE, "")),
+                new Field(new FieldItem("local-authority", "string", localAuthorityRegisterName, Cardinality.ONE, "")),
+                new Field(new FieldItem("name", "string", null, Cardinality.ONE, "")),
+                new Field(new FieldItem("street", "string", null, Cardinality.ONE, "")),
+                new Field(new FieldItem("registered-office", "string", addressRegisterName, Cardinality.ONE, ""))
         ));
 
         ConfigManager configManager = mock(ConfigManager.class);
@@ -90,9 +87,9 @@ public class RegisterLinkServiceTest {
 
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
         when(fieldsConfiguration.getAllFields()).thenReturn(Arrays.asList(
-                new Field("address", "string", registerName, Cardinality.ONE, ""),
-                new Field("property", "string", null, Cardinality.ONE, ""),
-                new Field("street", "string", null, Cardinality.ONE, "")
+                new Field(new FieldItem("address", "string", registerName, Cardinality.ONE, "")),
+                new Field(new FieldItem("property", "string", null, Cardinality.ONE, "")),
+                new Field(new FieldItem("street", "string", null, Cardinality.ONE, ""))
         ));
 
         ConfigManager configManager = mock(ConfigManager.class);
@@ -116,12 +113,12 @@ public class RegisterLinkServiceTest {
 
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
         when(fieldsConfiguration.getAllFields()).thenReturn(Arrays.asList(
-                new Field("address", "string", registerName, Cardinality.ONE, ""),
-                new Field("property", "string", null, Cardinality.ONE, ""),
-                new Field("street", "string", null, Cardinality.ONE, ""),
-                new Field("postcode", "string", new RegisterName("postcode"), Cardinality.ONE, ""),
-                new Field("country", "string", new RegisterName("country"), Cardinality.ONE, ""),
-                new Field("registry", "string", new RegisterName("public-body"), Cardinality.ONE, "")
+                new Field(new FieldItem("address", "string", registerName, Cardinality.ONE, "")),
+                new Field(new FieldItem("property", "string", null, Cardinality.ONE, "")),
+                new Field(new FieldItem("street", "string", null, Cardinality.ONE, "")),
+                new Field(new FieldItem("postcode", "string", new RegisterName("postcode"), Cardinality.ONE, "")),
+                new Field(new FieldItem("country", "string", new RegisterName("country"), Cardinality.ONE, "")),
+                new Field(new FieldItem("registry", "string", new RegisterName("public-body"), Cardinality.ONE, ""))
         ));
 
         ConfigManager configManager = mock(ConfigManager.class);

@@ -22,10 +22,10 @@ public class TurtleRepresentationWriterTest {
     private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
 
     private final Set<Field> fields = ImmutableSet.of(
-            new Field("address", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("location", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("link-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("string-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
+            new Field(new FieldItem("address", "datatype", new RegisterName("register"), Cardinality.ONE, "text")),
+            new Field(new FieldItem("location", "datatype", new RegisterName("register"), Cardinality.ONE, "text")),
+            new Field(new FieldItem("link-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text")),
+            new Field(new FieldItem("string-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text")));
 
     @Test
     public void rendersFieldPrefixFromConfiguration() throws Exception {
