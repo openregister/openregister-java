@@ -3,81 +3,50 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head th:include="fragments/head.html::head"></head>
 <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-  <header th:replace="fragments/global-header.html::global-header"></header>
+<header th:replace="fragments/global-header.html::global-header"></header>
 
-  <div id="wrapper">
+<div id="wrapper">
 
-    <main id="main" role="main">
-      <div th:replace="fragments/phase-banner.html::phase"></div>
+  <main id="main" role="main">
+    <div th:replace="fragments/phase-banner.html::phase"></div>
 
-      <div class="breadcrumbs">
-        <ol>
-          <li>
-            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-          </li>
-          <li>Records</li>
-        </ol>
+    <div class="breadcrumbs">
+      <ol>
+        <li>
+          <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+        </li>
+        <li>Records</li>
+      </ol>
+    </div>
+
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <h1 class="heading-large">
+          Records
+          <span class="heading-secondary"
+                th:include="fragments/pagination.html::pagination-top('records')"></span>
+        </h1>
+        <div th:include="fragments/data-formats.html::data-formats"></div>
+        <details role="group">
+          <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+            <span class="summary">What are the table headers?</span>
+          </summary>
+          <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+            <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
+          </div>
+        </details>
       </div>
+      <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
+    </div>
 
-      <div class="grid-row">
-        <div class="column-two-thirds">
-          <h1 class="heading-large">
-            Records
-            <span class="heading-secondary" th:include="fragments/pagination.html::pagination-top('records')"></span>
-          </h1>
-          <div th:include="fragments/data-formats.html::data-formats"></div>
-          <details role="group">
-            <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-              <span class="summary">What are the table headers?</span>
-            </summary>
-            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-              <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
-            </div>
-          </details>
-        </div>
-        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
-      </div>
-      <div class="table-wrapper">
-        <table th:if="${!content.records.isEmpty()}">
-          <thead>
-            <tr>
-              <th scope="col">
-                <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}" th:text="${registerId}"></a>
-              </th>
-              <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-                <th scope="col">
-                  <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}" th:text="${fieldName}"></a>
-                </th>
-              </th:block>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="record : ${content.records}">
-              <td>
-                <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
-              </td>
-              <th:block th:each="fieldName : ${register.nonPrimaryFields}">
-                <td th:if="${record.getField(fieldName).present}" class="field-list field-list-in-table">
-                  <ul th:if="${record.getField(fieldName).get().isList()}">
-                    <th:block th:each="fieldValue: ${record.getField(fieldName).get()}">
-                      <li th:text="${fieldValue.value}"></li>
-                    </th:block>
-                  </ul>
-                  <th:block th:unless="${record.getField(fieldName).get().isList()}" th:text="${record.getField(fieldName).get().value}">
-                  </th:block>
-                </td>
-                <td th:unless="${record.getField(fieldName).present}"></td>
-              </th:block>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.records})"
+         class="table-wrapper"></div>
 
-      <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
-    </main>
-  </div>
+    <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
+  </main>
+</div>
 
-  <footer th:replace="fragments/footer.html::footer"></footer>
+<footer th:replace="fragments/footer.html::footer"></footer>
 
 </body>
 </html>

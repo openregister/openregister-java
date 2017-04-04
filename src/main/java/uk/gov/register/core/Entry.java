@@ -23,8 +23,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
-@JsonPropertyOrder({"entry-number", "entry-timestamp", "item-hash", "key"})
+import java.time.Instant;
+import java.util.*;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder({"index-entry-number", "entry-number", "entry-timestamp", "key", "item-hash"})
 public class Entry implements CsvRepresentationView<Entry> {
     private final int indexEntryNumber;
     private final int entryNumber;
@@ -58,12 +61,12 @@ public class Entry implements CsvRepresentationView<Entry> {
     }
 
     @SuppressWarnings("unused, used from DAO")
-    @JsonProperty("item-hash")
+    @JsonIgnore
     public HashValue getSha256hex() {
         return hashValues.isEmpty() ? new HashValue("", "") : hashValues.get(0);
     }
 
-    @JsonIgnore
+    @JsonProperty("item-hash")
     public List<HashValue> getItemHashes() {
         return hashValues;
     }
@@ -79,7 +82,8 @@ public class Entry implements CsvRepresentationView<Entry> {
         return entryNumber;
     }
 
-    @JsonIgnore
+    @JsonProperty("index-entry-number")
+    @JsonSerialize(using = ToStringSerializer.class)
     public Integer getIndexEntryNumber() {
         return indexEntryNumber;
     }

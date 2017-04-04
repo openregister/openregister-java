@@ -9,13 +9,12 @@ import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterLinkService;
+import uk.gov.register.util.HashValue;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -135,11 +134,23 @@ public class ViewFactory {
     }
 
     public RecordView getRecordMediaView(Record record) {
-        return new RecordView(record.getEntry(), getItemMediaView(record.getItem()), getFields());
+        Map<HashValue, Item> itemMap = record.getItems();
+        Set<ItemView> itemViews = itemMap.values().stream().map(this::getItemMediaView).collect(Collectors.toSet());
+        return new RecordView(record.getEntry(), itemViews , getFields());
+    }
+
+    public RecordView getDerivationRecordMediaView(Record record) {
+        Map<HashValue, Item> itemMap = record.getItems();
+        Set<ItemView> itemViews = itemMap.values().stream().map(this::getItemMediaView).collect(Collectors.toSet());
+        return new RecordView(record.getEntry(), itemViews , getFields(), false);
     }
 
     public RecordsView getRecordsMediaView(List<RecordView> recordViews) {
         return new RecordsView(recordViews, getFields());
+    }
+
+    public RecordsView getDerivationRecordsMediaView(List<RecordView> recordViews) {
+        return new RecordsView(recordViews, getFields(), false);
     }
 
     private PublicBody getRegistry() {
@@ -157,4 +168,6 @@ public class ViewFactory {
                 .map(fieldsConfiguration::getField)
                 .collect(Collectors.toList());
     }
+
+
 }

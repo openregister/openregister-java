@@ -2,10 +2,7 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
@@ -72,9 +69,9 @@ public class LoadSerializedFunctionalTest {
 
         List<Entry> entries = testEntryDAO.getAllEntries();
         assertThat(entries.get(0).getEntryNumber(), is(1));
-        assertThat(entries.get(0).getSha256hex().getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        assertThat(entries.get(0).getItemHashes().get(0).getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
         assertThat(entries.get(1).getEntryNumber(), is(2));
-        assertThat(entries.get(1).getSha256hex().getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
+        assertThat(entries.get(1).getItemHashes().get(0).getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
         TestRecord record1 = testRecordDAO.getRecord("ft_openregister_test");
         assertThat(record1.getEntryNumber(), equalTo(1));
@@ -120,6 +117,20 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(400));
         assertThat(testItemDAO.getItems(), is(empty()));
         assertThat(testEntryDAO.getAllEntries(), is(empty()));
+    }
+
+    @Test
+    public void shouldUploadMultiItemEntries() throws IOException {
+        System.setProperty("multi-item-entries-enabled", "true");
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry.rsf")));
+        Response r = send(input);
+        assertThat(r.getStatus(), equalTo(200));
+
+    }
+
+    @After
+    public void clearMultiItemsEnabled(){
+        System.clearProperty("multi-item-entries-enabled");
     }
 
     private Response send(String payload) {

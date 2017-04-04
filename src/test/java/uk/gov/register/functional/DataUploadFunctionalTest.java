@@ -2,6 +2,7 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -26,6 +27,7 @@ import java.util.Map;
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -73,12 +75,12 @@ public class DataUploadFunctionalTest {
         assertThat(response.getStatus(), equalTo(200));
         Map actualJson = response.readEntity(Map.class);
         actualJson.remove("entry-timestamp"); // ignore the timestamp as we can't do exact match
-        assertThat(actualJson, equalTo(ImmutableMap.of(
-                "entry-number", "1",
-                "item-hash", storedItem.hashValue.toString(),
-                "register", "ft_openregister_test",
-                "text", "SomeText"
-        )));
+        assertThat(actualJson.get("entry-number"), is("1"));
+        List<Map<String,Object>> itemMaps = (List<Map<String,Object>>)actualJson.get("item");
+        assertThat(itemMaps.size(), is(1));
+        Map<String, Object> itemMap = itemMaps.get(0);
+        assertThat(itemMap.get("register"), is("ft_openregister_test"));
+        assertThat(itemMap.get("text"), is("SomeText"));
     }
 
     @Test

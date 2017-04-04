@@ -26,16 +26,12 @@ public class Record {
         return entry;
     }
 
-    public Item getItem() {
-        return items.get(entry.getSha256hex());
-    }
-
     public Map<HashValue, Item> getItems() {
         return items;
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
-        CsvSchema entrySchema = Entry.csvSchemaWithOmittedFields(Arrays.asList("key"));
+        CsvSchema entrySchema = Entry.csvSchemaWithOmittedFields(Arrays.asList("item-hash"));
         CsvSchema.Builder schemaBuilder = entrySchema.rebuild();
 
         for (Iterator<CsvSchema.Column> iterator = Item.csvSchema(fields).rebuild().getColumns(); iterator.hasNext();) {

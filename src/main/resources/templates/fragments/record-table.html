@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<body>
+<div th:fragment="record-table(view, records)">
+  <table th:if="${!  records.isEmpty()}"
+         th:with="fields = ${ view.isRegister()}? ${register.nonPrimaryFields} : ${register.fields}">
+    <thead>
+    <tr>
+      <th scope="col" th:unless="${ view.isRegister()}">key</th>
+      <th scope="col" th:if="${ view.isRegister()}">
+        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}"
+           th:text="${registerId}"></a>
+      </th>
+      <th scope="col" th:each="fieldName : ${fields}">
+        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
+           th:text="${fieldName}"></a>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="record : ${records}">
+      <tr th:each="item : ${record.itemViews}">
+        <td>
+          <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
+        </td>
+        <th:block th:each="fieldName : ${fields}">
+          <td th:if="${item.content.containsKey(fieldName)}" class="field-list field-list-in-table">
+            <ul th:if="${item.content.get(fieldName).isList()}">
+              <th:block th:each="fieldValue: ${item.content.get(fieldName)}">
+                <li th:if="${fieldValue.isLink()}">
+                  <a th:href="${linkResolver.resolve(fieldValue)}" th:text="${fieldValue.value}"></a>
+                </li>
+                <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
+              </th:block>
+            </ul>
+            <th:block th:unless="${item.content.get(fieldName).isList()}" th:with="fieldValue=${item.content.get(fieldName)}">
+              <a th:if="${fieldValue.isLink()}" th:href="${linkResolver.resolve(fieldValue)}"
+                 th:text="${fieldValue.value}"></a>
+              <p th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></p>
+            </th:block>
+          </td>
+          <td th:unless="${item.content.get(fieldName)}"></td>
+        </th:block>
+      </tr>
+    </th:block>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

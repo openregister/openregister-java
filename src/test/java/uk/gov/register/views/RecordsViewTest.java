@@ -30,18 +30,18 @@ public class RecordsViewTest {
         List<RecordView> records = Lists.newArrayList(
                 new RecordView(
                         new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123"),
-                        new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"),
+                        Lists.newArrayList(new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"),
                                 ImmutableMap.of("address", new StringValue("123"),
                                         "street", new StringValue("foo")),
-                                fields),
+                                fields)),
                         fields
                 ),
                 new RecordView(
                         new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456"),
-                        new ItemView(new HashValue(HashingAlgorithm.SHA256, "cd"),
+                        Lists.newArrayList(new ItemView(new HashValue(HashingAlgorithm.SHA256, "cd"),
                                 ImmutableMap.of("address", new StringValue("456"),
                                         "street", new StringValue("bar")),
-                                fields),
+                                fields)),
                         fields
                 )
         );
@@ -53,24 +53,28 @@ public class RecordsViewTest {
 
         JSONAssert.assertEquals(
                 "{" +
+                        "\"index-entry-number\":\"1\"," +
                         "\"entry-number\":\"1\"," +
-                        "\"item-hash\":\"sha-256:ab\"," +
                         "\"entry-timestamp\":\"2016-03-29T08:59:25Z\"," +
+                        "\"key\":\"123\"," +
+                        "\"item\":[{" +
                         "\"address\":\"123\"," +
                         "\"street\":\"foo\"" +
-                        "}",
+                        "}]}",
                 Jackson.newObjectMapper().writeValueAsString(result.get("123")),
                 false
         );
 
         JSONAssert.assertEquals(
                 "{" +
+                        "\"index-entry-number\":\"2\"," +
                         "\"entry-number\":\"2\"," +
-                        "\"item-hash\":\"sha-256:cd\"," +
                         "\"entry-timestamp\":\"2016-03-28T09:49:26Z\"," +
+                        "\"key\":\"456\"," +
+                        "\"item\":[{" +
                         "\"address\":\"456\"," +
                         "\"street\":\"bar\"" +
-                        "}",
+                        "}]}",
                 Jackson.newObjectMapper().writeValueAsString(result.get("456")),
                 false
         );
