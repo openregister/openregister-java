@@ -4,17 +4,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import uk.gov.register.core.Field;
 import uk.gov.register.util.ResourceYamlFileReader;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class FieldsConfiguration {
 
     private final Collection<Field> fields;
 
     public FieldsConfiguration(String fieldsResourceYamlPath) {
-        fields = new ResourceYamlFileReader().readResourceFromPath(fieldsResourceYamlPath, new TypeReference<Map<String, Field>>() {
+        Collection<ConfigRecord<Field>> configRecords = new ResourceYamlFileReader().readResourceFromPath(fieldsResourceYamlPath, new TypeReference<Map<String, ConfigRecord<Field>>>() {
         });
+        fields = configRecords.stream().map(ConfigRecord::getSingleItem).collect(toList());
     }
 
     public Field getField(String fieldName) {
