@@ -2,6 +2,7 @@ package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.register.core.Field;
 
 import java.util.List;
 
@@ -10,16 +11,16 @@ import java.util.List;
  * where the model provides that the item is a single item in a list.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfigRecord<T> {
+public class FieldConfigRecord {
 
     @JsonProperty("item")
-    private List<T> item;
+    private List<Field> item;
 
-    public void setItem(List<T> item) {
+    public void setItem(List<Field> item) {
         this.item = item;
     }
 
-    T getSingleItem(){
+    Field getSingleItem(){
         if (item.size() != 0){
             return item.get(0);
         } else {

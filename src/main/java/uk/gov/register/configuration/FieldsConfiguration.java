@@ -5,7 +5,6 @@ import uk.gov.register.core.Field;
 import uk.gov.register.util.ResourceYamlFileReader;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -14,9 +13,10 @@ public class FieldsConfiguration {
     private final Collection<Field> fields;
 
     public FieldsConfiguration(String fieldsResourceYamlPath) {
-        Collection<ConfigRecord<Field>> configRecords = new ResourceYamlFileReader().readResourceFromPath(fieldsResourceYamlPath, new TypeReference<Map<String, ConfigRecord<Field>>>() {
+        Collection<FieldConfigRecord> fieldConfigRecords = new ResourceYamlFileReader().readResourceFromPath(fieldsResourceYamlPath,
+                new TypeReference<Map<String, FieldConfigRecord>>() {
         });
-        fields = configRecords.stream().map(ConfigRecord::getSingleItem).collect(toList());
+        fields = fieldConfigRecords.stream().map(FieldConfigRecord::getSingleItem).collect(toList());
     }
 
     public Field getField(String fieldName) {
