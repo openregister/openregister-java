@@ -56,6 +56,10 @@ public class RegisterContextFactory {
     @JsonProperty
     private RegisterAuthenticatorFactory credentials;
 
+    @Valid
+    @JsonProperty
+    private List<String> indexes = emptyList();
+
     @JsonCreator
     public RegisterContextFactory(
             @JsonProperty("database") DataSourceFactory database,
@@ -65,6 +69,7 @@ public class RegisterContextFactory {
             @JsonProperty("historyPageUrl") Optional<String> historyPageUrl,
             @JsonProperty("custodianName") Optional<String> custodianName,
             @JsonProperty("similarRegisters") List<String> similarRegisters,
+            @JsonProperty("indexes") List<String> indexes,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
         this.database = database;
         this.trackingId = trackingId;
@@ -73,6 +78,7 @@ public class RegisterContextFactory {
         this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
         this.similarRegisters = similarRegisters != null ? similarRegisters : emptyList();
+        this.indexes = indexes != null ? indexes : emptyList();
         this.credentials = credentials;
     }
 
@@ -103,6 +109,7 @@ public class RegisterContextFactory {
                 historyPageUrl,
                 custodianName,
                 similarRegisters,
+                indexes,
                 credentials.buildAuthenticator());
     }
 }

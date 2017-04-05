@@ -10,4 +10,5 @@ public interface HomepageContentConfiguration {
     Optional<String> getRegisterHistoryPageUrl();
     Optional<String> getCustodianName();
     List<String> getSimilarRegisters();
+    List<String> getIndexes();
 }

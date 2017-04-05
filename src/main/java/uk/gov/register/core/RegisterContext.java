@@ -1,28 +1,14 @@
 package uk.gov.register.core;
 
+import com.google.common.base.Throwables;
+import org.flywaydb.core.Flyway;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.TransactionIsolationLevel;
+import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.auth.RegisterAuthenticator;
-import uk.gov.register.configuration.ConfigManager;
-import uk.gov.register.configuration.DeleteRegisterDataConfiguration;
-import uk.gov.register.configuration.HomepageContentConfiguration;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.configuration.RegisterTrackingConfiguration;
-import uk.gov.register.configuration.ResourceConfiguration;
-import uk.gov.register.db.CurrentKeysUpdateDAO;
-import uk.gov.register.db.DerivationRecordIndex;
-import uk.gov.register.db.EntryDAO;
-import uk.gov.register.db.EntryItemDAO;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.IndexDAO;
-import uk.gov.register.db.IndexQueryDAO;
-import uk.gov.register.db.ItemDAO;
-import uk.gov.register.db.ItemQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.db.TransactionalEntryLog;
-import uk.gov.register.db.TransactionalItemStore;
-import uk.gov.register.db.TransactionalRecordIndex;
-import uk.gov.register.db.UnmodifiableEntryLog;
-import uk.gov.register.db.UnmodifiableItemStore;
-import uk.gov.register.db.UnmodifiableRecordIndex;
+import uk.gov.register.configuration.*;
+import uk.gov.register.db.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.exceptions.RegisterResultException;
 import uk.gov.register.serialization.RegisterResult;
@@ -38,17 +24,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.google.common.base.Throwables;
-import org.flywaydb.core.Flyway;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.TransactionIsolationLevel;
-import org.skife.jdbi.v2.exceptions.CallbackFailedException;
-
 public class RegisterContext implements
         RegisterTrackingConfiguration,
         DeleteRegisterDataConfiguration,
         HomepageContentConfiguration,
+        IndexConfiguration,
         ResourceConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;
@@ -60,6 +40,7 @@ public class RegisterContext implements
     private final Optional<String> custodianName;
     private final Optional<String> trackingId;
     private final List<String> similarRegisters;
+    private final List<String> indexes;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterAuthenticator authenticator;
@@ -67,7 +48,7 @@ public class RegisterContext implements
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
                            DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
-                           Optional<String> custodianName, List<String> similarRegisters,
+                           Optional<String> custodianName, List<String> similarRegisters, List<String> indexes,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
@@ -77,6 +58,7 @@ public class RegisterContext implements
         this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
         this.similarRegisters = similarRegisters;
+        this.indexes = indexes;
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
@@ -219,5 +201,10 @@ public class RegisterContext implements
     @Override
     public List<String> getSimilarRegisters() {
         return similarRegisters;
+    }
+
+    @Override
+    public List<String> getIndexes() {
+        return indexes;
     }
 }

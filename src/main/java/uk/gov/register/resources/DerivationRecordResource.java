@@ -1,32 +1,23 @@
 package uk.gov.register.resources;
 
-import static java.util.stream.Collectors.toList;
-
+import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.jersey.params.IntParam;
+import uk.gov.register.configuration.IndexConfiguration;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
-import uk.gov.register.views.AttributionView;
-import uk.gov.register.views.PaginatedView;
-import uk.gov.register.views.RecordView;
-import uk.gov.register.views.RecordsView;
-import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
-import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.jersey.params.IntParam;
+import static java.util.stream.Collectors.toList;
 
 @Path("/")
 public class DerivationRecordResource {
@@ -35,20 +26,25 @@ public class DerivationRecordResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
     private final RegisterName registerPrimaryKey;
+    private final Provider<IndexConfiguration> indexConfiguration;
 
     @Inject
-    public DerivationRecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
+    public DerivationRecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext,
+                                    Provider<IndexConfiguration> indexConfiguration) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
         this.registerPrimaryKey = register.getRegisterName();
+        this.indexConfiguration = indexConfiguration;
     }
 
     @GET
     @Path("/index/{index-name}/record/{record-key}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     public RecordView getRecordByKey(@PathParam("index-name") String indexName, @PathParam("record-key") String key) {
+        ensureIndexIsAccessible(indexName);
+
         return register.getDerivationRecord(key, indexName).map(viewFactory::getDerivationRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
@@ -58,11 +54,9 @@ public class DerivationRecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key, @PathParam("index-name") String indexName) {
-        if (Boolean.getBoolean("index-pages-enabled")) {
-            return viewFactory.getRecordView(getRecordByKey(indexName, key));
-        } else {
-            throw new NotFoundException();
-        }
+        ensureIndexIsAccessible(indexName);
+
+        return viewFactory.getRecordView(getRecordByKey(indexName, key));
     }
 
     @GET
@@ -70,6 +64,8 @@ public class DerivationRecordResource {
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @Timed
     public RecordsView records(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+        ensureIndexIsAccessible(indexName);
+
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
         setContentDisposition();
         return getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
@@ -80,16 +76,19 @@ public class DerivationRecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public PaginatedView<RecordsView> recordsHtml(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        if (Boolean.getBoolean("index-pages-enabled")) {
-            IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-            setContentDisposition();
-            RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
-            return viewFactory.getRecordListView(pagination, recordsView);
-        } else {
+        ensureIndexIsAccessible(indexName);
+
+        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+        setContentDisposition();
+        RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
+        return viewFactory.getRecordListView(pagination, recordsView);
+    }
+
+    protected void ensureIndexIsAccessible(String indexName) {
+        if (!Boolean.getBoolean("index-pages-enabled") || !indexConfiguration.get().getIndexes().contains(indexName)) {
             throw new NotFoundException();
         }
     }
-
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
