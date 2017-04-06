@@ -85,7 +85,7 @@ public class DerivationRecordResource {
     }
 
     protected void ensureIndexIsAccessible(String indexName) {
-        if (!Boolean.getBoolean("index-pages-enabled") || !indexConfiguration.get().getIndexes().contains(indexName)) {
+        if (!indexConfiguration.get().getIndexes().contains(indexName)) {
             throw new NotFoundException();
         }
     }

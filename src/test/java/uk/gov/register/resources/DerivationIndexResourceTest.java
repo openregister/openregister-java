@@ -31,23 +31,12 @@ public class DerivationIndexResourceTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void ensureIndexIsAccessible_shouldThrow404_whenIndexPagesAreNotEnabled() {
-        System.setProperty("index-pages-enabled", "false");
-
-        resource.ensureIndexIsAccessible("current-countries");
-    }
-
-    @Test(expected = NotFoundException.class)
     public void ensureIndexIsAccessible_shouldThrow404_whenRequestedIndexIsNotFoundInRegister() {
-        System.setProperty("index-pages-enabled", "true");
-
         resource.ensureIndexIsAccessible("local-authority-by-type");
     }
 
     @Test
     public void ensureIndexIsAccessible_shouldDoNothing_whenRequestedIndexIsFoundInRegister() {
-        System.setProperty("index-pages-enabled", "true");
-
         resource.ensureIndexIsAccessible("current-countries");
     }
 }
