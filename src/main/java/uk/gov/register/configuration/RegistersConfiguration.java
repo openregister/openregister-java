@@ -1,6 +1,7 @@
 package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import uk.gov.register.core.Field;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.util.ResourceYamlFileReader;
@@ -8,15 +9,18 @@ import uk.gov.register.util.ResourceYamlFileReader;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class RegistersConfiguration {
 
     private final Collection<RegisterMetadata> registers;
 
     public RegistersConfiguration(String registersResourceYamlPath) {
-        registers = new ResourceYamlFileReader().readResourceFromPath(registersResourceYamlPath, new TypeReference<Map<String,
-                RegisterMetadata>>() {
-        });
+        Collection<RegisterConfigRecord> configRecords = new ResourceYamlFileReader()
+                .readResourceFromPath(registersResourceYamlPath, new TypeReference<Map<String,RegisterConfigRecord>>(){} );
+        registers = configRecords.stream().map(RegisterConfigRecord::getSingleItem).collect(toList());
     }
 
     public RegisterMetadata getRegisterMetadata(RegisterName registerName) {

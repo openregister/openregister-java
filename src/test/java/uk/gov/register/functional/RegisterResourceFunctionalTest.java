@@ -81,9 +81,10 @@ public class RegisterResourceFunctionalTest {
 
     private HashMap<String, Object> getAddressRegisterMap() {
         HashMap<String, Object> result = new HashMap<>();
+        result.put("index-entry-number", "1");
         result.put("entry-number", "1");
-        result.put("item-hash", "sha-256:6a7bcb516b4a465f3340a31ab42a35a9193e512608d9577388da4d99251880a8");
         result.put("entry-timestamp", "2016-04-21T10:14:21Z");
+        result.put("key", "address");
         result.put("text", "Postal addresses in the UK");
         result.put("phase", "alpha");
         result.put("fields", Arrays.asList("address", "property", "street", "locality", "town", "area", "postcode", "country", "latitude", "longitude"));
