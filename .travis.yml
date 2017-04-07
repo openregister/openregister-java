@@ -44,16 +44,6 @@ deploy:
   bucket: openregister.app.artifacts
   region: eu-west-1
   skip_cleanup: true
-  on: &2
+  on:
     branch: master
     condition: $DEPLOY=true
-- provider: codedeploy
-  access_key_id: AKIAINSAHPOLGXFFYGMQ
-  secret_access_key: *1
-  bucket: openregister.app.artifacts
-  key: openregister-java-$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT.zip
-  bundle_type: zip
-  application: openregister-app
-  deployment_group: test
-  region: eu-west-1
-  on: *2

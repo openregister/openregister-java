@@ -210,7 +210,7 @@ clean.doFirst {
 
 task createDeployableBundle(type: Zip) {
     Map env = System.getenv()
-    baseName("openregister-java-${env.'TRAVIS_BRANCH'}-${env.'TRAVIS_BUILD_NUMBER'}-${env.'TRAVIS_COMMIT'}")
+    baseName('openregister-java')
     from('deploy/')
     include('*')
     include('scripts/*')
