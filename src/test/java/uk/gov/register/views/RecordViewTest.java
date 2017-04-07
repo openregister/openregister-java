@@ -29,12 +29,13 @@ public class RecordViewTest {
         String result = objectMapper.writeValueAsString(recordView);
 
         assertThat(result, equalTo("{" +
+                "\"b\":{" +
                 "\"index-entry-number\":\"1\"," +
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
                 "\"item\":[{\"a\":\"b\"},{\"a\":\"d\"}]" +
-                "}"));
+                "}}"));
     }
 
     @Test

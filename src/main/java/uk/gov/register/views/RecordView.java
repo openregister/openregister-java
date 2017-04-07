@@ -1,9 +1,11 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
@@ -38,13 +40,13 @@ public class RecordView implements CsvRepresentationView {
 
     @SuppressWarnings("unused, used to create the json representation of this class")
     @JsonValue
-    public ObjectNode getRecordJson() {
+    public Map<String, JsonNode> getRecordJson() {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         ObjectNode jsonNodes = objectMapper.convertValue(entry, ObjectNode.class);
         jsonNodes.remove("item-hash");
         ArrayNode items = jsonNodes.putArray("item");
         itemViews.forEach( iv -> items.add(objectMapper.convertValue(iv, ObjectNode.class)));
-        return jsonNodes;
+        return ImmutableMap.of(entry.getKey(), jsonNodes);
     }
 
     ArrayNode getFlatRecordJson() {

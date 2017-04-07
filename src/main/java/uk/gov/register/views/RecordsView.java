@@ -1,6 +1,7 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.Iterables;
@@ -9,9 +10,9 @@ import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
 import uk.gov.register.views.representations.CsvRepresentation;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RecordsView implements CsvRepresentationView {
     private List<RecordView> records;
@@ -31,8 +32,10 @@ public class RecordsView implements CsvRepresentationView {
     }
 
     @JsonValue
-    public Map<String, RecordView> recordsJson() {
-        return getRecords().stream().collect(Collectors.toMap(RecordView::getPrimaryKey, r -> r));
+    public Map<String, JsonNode> recordsJson() {
+        Map<String, JsonNode> records = new HashMap<>();
+        getRecords().forEach(recordView -> records.putAll(recordView.getRecordJson()));
+        return records;
     }
 
     ArrayNode getFlatRecordsJson() {

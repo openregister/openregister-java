@@ -75,7 +75,7 @@ public class RecordMultiItemEntryFunctionalTest {
     public void shouldRenderListOfItems() throws IOException {
         Response response = register.getRequest(testRegister, "/record/government-digital-service.json");
         assertThat(response.getStatus(), equalTo(200));
-        JsonNode res = MAPPER.readValue(response.readEntity(String.class), JsonNode.class);
+        JsonNode res = MAPPER.readValue(response.readEntity(String.class), JsonNode.class).get("government-digital-service");
         ArrayNode items = (ArrayNode) res.get("item");
         assertThat(items.size(), Matchers.is(2));
     }

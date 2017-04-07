@@ -2,6 +2,7 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
+import io.dropwizard.jackson.Jackson;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -73,7 +74,7 @@ public class DataUploadFunctionalTest {
         Response response = register.getRequest(TestRegister.register, "/record/ft_openregister_test.json");
 
         assertThat(response.getStatus(), equalTo(200));
-        Map actualJson = response.readEntity(Map.class);
+        Map actualJson = Jackson.newObjectMapper().convertValue(response.readEntity(JsonNode.class).get("ft_openregister_test"), Map.class);
         actualJson.remove("entry-timestamp"); // ignore the timestamp as we can't do exact match
         assertThat(actualJson.get("entry-number"), is("1"));
         List<Map<String,Object>> itemMaps = (List<Map<String,Object>>)actualJson.get("item");

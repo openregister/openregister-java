@@ -1,5 +1,6 @@
 package uk.gov.register.views;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -47,7 +48,7 @@ public class RecordsViewTest {
         );
         RecordsView recordsView = new RecordsView(records, fields);
 
-        Map<String, RecordView> result = recordsView.recordsJson();
+        Map<String, JsonNode> result = recordsView.recordsJson();
         assertThat(result.size(), equalTo(2));
 
 
