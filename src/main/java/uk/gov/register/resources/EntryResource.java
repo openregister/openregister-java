@@ -15,6 +15,7 @@ import uk.gov.register.views.representations.ExtraMediaType;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class EntryResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = findByEntryNumber(entryNumber);
+        Optional<Entry> entry = register.getEntry(entryNumber);
         return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
     }
 
@@ -49,8 +50,9 @@ public class EntryResource {
     @Path("/entry/{entry-number}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @Timed
-    public Optional<Entry> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
-        return register.getEntry(entryNumber);
+    public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
+        Optional<Entry> entry = register.getEntry(entryNumber);
+        return entry.isPresent() ? Optional.of(new EntryListView(Arrays.asList(entry.get()))) : Optional.empty();
     }
 
     @GET
