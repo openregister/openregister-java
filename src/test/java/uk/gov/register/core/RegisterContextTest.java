@@ -37,7 +37,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -47,7 +47,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();
@@ -80,7 +80,7 @@ public class RegisterContextTest {
                 .thenReturn(expectedInitialMetadata)
                 .thenReturn(expectedUpdatedMetadata);
 
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
 
         RegisterMetadata actualInitialMetadata = context.getRegisterMetadata();
         assertThat(actualInitialMetadata, equalTo(expectedInitialMetadata));

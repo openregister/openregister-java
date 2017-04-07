@@ -54,6 +54,10 @@ public class RegisterConfiguration extends Configuration
     private List<String> similarRegisters = emptyList();
 
     @Valid
+    @JsonProperty
+    private List<String> indexes = emptyList();
+
+    @Valid
     @NotNull
     @JsonProperty
     private RegisterAuthenticatorFactory credentials = new RegisterAuthenticatorFactory();
@@ -117,7 +121,7 @@ public class RegisterConfiguration extends Configuration
     }
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, custodianName, similarRegisters, credentials);
+        return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, custodianName, similarRegisters, indexes, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
