@@ -94,7 +94,8 @@ public class EntryResourceFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
-        assertEntryInJsonNode(res, 1, item1Hash);
+        assertThat(res.size(), equalTo(1));
+        assertEntryInJsonNode(res.get(0), 1, item1Hash);
     }
 
     @Test
@@ -126,7 +127,7 @@ public class EntryResourceFunctionalTest {
         Instant now = Instant.now();
 
         Response response = register.getRequest(address, "/entry/1.json");
-        Map<String, String> responseData = response.readEntity(Map.class);
+        Map<String, String> responseData = Jackson.newObjectMapper().convertValue(response.readEntity(JsonNode.class).get(0), Map.class);
         Instant entryTimestamp = Instant.parse(responseData.get("entry-timestamp"));
 
         assertThat(entryTimestamp, between(now.minus(30, SECONDS), now.plus(30, SECONDS)));
