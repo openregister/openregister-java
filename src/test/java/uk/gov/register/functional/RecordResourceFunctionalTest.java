@@ -44,7 +44,7 @@ public class RecordResourceFunctionalTest {
 
         assertThat(response.getHeaderString("Link"), equalTo("</record/6789/entries>; rel=\"version-history\""));
 
-        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class).get("6789");
         assertThat(res.get("entry-number").textValue(), equalTo("2"));
         assertThat(res.get("key").textValue(), equalTo("6789"));
         assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
