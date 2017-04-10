@@ -5,6 +5,7 @@ files:
     destination: /srv/openregister-java
 hooks:
   ApplicationStop:
+    - location: scripts/aws/deregister_from_elb.sh
     - location: scripts/stop-service.sh
       timeout: 60
       runas: root
@@ -14,6 +15,7 @@ hooks:
       runas: root
   ApplicationStart:
     - location: scripts/start-service.sh
+    - location: scripts/aws/register_with_elb.sh
       timeout: 60
       runas: root
   ValidateService:
