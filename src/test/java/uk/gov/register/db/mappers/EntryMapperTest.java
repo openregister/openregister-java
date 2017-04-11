@@ -12,9 +12,7 @@ import uk.gov.register.util.HashValue;
 import java.time.Instant;
 import java.util.Collection;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class EntryMapperTest {
@@ -29,8 +27,8 @@ public class EntryMapperTest {
         DBI dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=EntryMapperTest");
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", expectedInstant.getEpochSecond());
-            h.execute("insert into entry_item(entry_number, sha256hex) values(5, 'abcdef')");
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", expectedInstant.getEpochSecond());
+            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'abcdef')");
             // this method implicitly invokes EntryMapper
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
         });
@@ -44,8 +42,8 @@ public class EntryMapperTest {
         DBI dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=EntryMapperTest");
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
-            h.execute("insert into entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
         });
 
@@ -60,9 +58,9 @@ public class EntryMapperTest {
         DBI dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=EntryMapperTest");
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
-            h.execute("insert into entry_item(entry_number, sha256hex) values(5, 'abcdef')");
-            h.execute("insert into entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'abcdef')");
+            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
         });
 
@@ -77,7 +75,7 @@ public class EntryMapperTest {
         DBI dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=EntryMapperTest");
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
         });
 

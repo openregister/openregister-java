@@ -1,5 +1,6 @@
 package uk.gov.register.functional.app;
 
+import org.apache.log4j.MDC;
 import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.functional.db.TestEntryDAO;
@@ -24,6 +25,7 @@ public class WipeDatabaseRule extends ExternalResource {
     @Override
     protected void before() {
         for (String register : registers) {
+            MDC.put("register", register);
             DBI dbi = new DBI(postgresConnectionString(register));
             dbi.useHandle(handle -> {
                 handle.attach(TestEntryDAO.class).wipeData();

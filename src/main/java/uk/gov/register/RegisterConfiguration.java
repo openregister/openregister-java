@@ -2,9 +2,7 @@ package uk.gov.register;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
-import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayFactory;
 import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
@@ -25,7 +23,7 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RegisterConfiguration extends Configuration
+public class RegisterConfiguration extends CoreConfiguration
         implements RegisterDomainConfiguration,
         RegisterConfigConfiguration,
         GovukClientConfiguration {
@@ -33,12 +31,6 @@ public class RegisterConfiguration extends Configuration
     @NotNull
     @JsonProperty
     private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
-
-    @SuppressWarnings("unused")
-    @Valid
-    @NotNull
-    @JsonProperty
-    private DataSourceFactory database;
 
     @Valid
     @NotNull
@@ -115,10 +107,6 @@ public class RegisterConfiguration extends Configuration
     @NotNull
     @Valid
     private String registersYamlLocation;
-
-    public DataSourceFactory getDatabase() {
-        return database;
-    }
 
     public RegisterContextFactory getDefaultRegister() {
         return new RegisterContextFactory(getDatabase(), trackingId, enableRegisterDataDelete, enableDownloadResource, historyPageUrl, custodianName, similarRegisters, indexes, credentials);

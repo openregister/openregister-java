@@ -79,6 +79,8 @@ public class RegisterContext implements
     }
 
     public int migrate() {
+        flyway.setSchemas(registerName.value());
+
         return flyway.migrate();
     }
 
