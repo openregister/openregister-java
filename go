@@ -17,9 +17,7 @@ git submodule init
 # Set up postgres
 ensure_db_exists openregister_java
 ensure_db_exists register
-ensure_db_exists ft_openregister_java_address
-ensure_db_exists ft_openregister_java_postcode
-ensure_db_exists ft_openregister_java_register
+ensure_db_exists ft_openregister_java_multi
 ensure_db_exists conformance_openregister_java
 ensure_user_exists postgres
 

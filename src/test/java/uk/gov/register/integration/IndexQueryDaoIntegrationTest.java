@@ -79,7 +79,7 @@ public class IndexQueryDaoIntegrationTest {
     @Before
     public void setup() {
         MDC.put("register", "address");
-        dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=PGRegisterTxnFT");
+        dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=PGRegisterTxnFT");
         dbi.registerContainerFactory(new OptionalContainerFactory());
         handle = dbi.open();
         dao = handle.attach(IndexQueryDAO.class);

@@ -1,8 +1,7 @@
 package uk.gov.register.core;
 
-import io.dropwizard.jdbi.DBIFactory;
-import io.dropwizard.setup.Environment;
 import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.DatabaseManager;
 import uk.gov.register.service.RegisterLinkService;
 
 import java.util.Map;
@@ -20,16 +19,16 @@ public class AllTheRegistersFactory {
         this.defaultRegisterName = defaultRegisterName;
     }
 
-    public AllTheRegisters build(DBIFactory dbiFactory, ConfigManager configManager, Environment environment, RegisterLinkService registerLinkService) {
+    public AllTheRegisters build(ConfigManager configManager, DatabaseManager databaseManager, RegisterLinkService registerLinkService) {
         Map<RegisterName, RegisterContext> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
-                e -> buildRegister(e.getKey(), e.getValue(), dbiFactory, configManager, environment, registerLinkService)));
+                e -> buildRegister(e.getKey(), e.getValue(), configManager, databaseManager, registerLinkService)));
         return new AllTheRegisters(
-                defaultRegisterFactory.build(defaultRegisterName, dbiFactory, configManager, environment, registerLinkService),
+                defaultRegisterFactory.build(defaultRegisterName, configManager, databaseManager, registerLinkService),
                 builtRegisters
         );
     }
 
-    private RegisterContext buildRegister(RegisterName registerName, RegisterContextFactory registerFactory, DBIFactory dbiFactory, ConfigManager configManager, Environment environment, RegisterLinkService registerLinkService) {
-        return registerFactory.build(registerName, dbiFactory, configManager, environment, registerLinkService);
+    private RegisterContext buildRegister(RegisterName registerName, RegisterContextFactory registerFactory, ConfigManager configManager, DatabaseManager databaseManager, RegisterLinkService registerLinkService) {
+        return registerFactory.build(registerName, configManager, databaseManager, registerLinkService);
     }
 }

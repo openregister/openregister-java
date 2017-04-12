@@ -2,12 +2,12 @@ package uk.gov.register.db;
 
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.StatementLocator;
-import org.slf4j.MDC;
 
 public class SchemaRewriter implements StatementLocator {
+    public static ThreadLocal<String> schema = new ThreadLocal<>();
+
     @Override
     public String locate(String name, StatementContext ctx) throws Exception {
-//        ctx.getConnection().setSchema("country");
-        return ctx.getRawSql().replace(":schema", MDC.get("register"));
+        return ctx.getRawSql().replace(":schema", schema.get());
     }
 }

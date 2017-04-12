@@ -2,13 +2,10 @@ package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.flyway.FlywayFactory;
-import io.dropwizard.jdbi.DBIFactory;
-import io.dropwizard.setup.Environment;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.DatabaseManager;
 import uk.gov.register.service.RegisterLinkService;
 
 import javax.validation.Valid;
@@ -22,11 +19,6 @@ import static java.util.Collections.emptyList;
 public class RegisterContextFactory {
 
     @Valid
-    @NotNull
-    @JsonProperty
-    private DataSourceFactory database;
-
-    @Valid
     @JsonProperty
     private Optional<String> trackingId;
 
@@ -37,6 +29,10 @@ public class RegisterContextFactory {
     @Valid
     @JsonProperty
     private boolean enableDownloadResource = false;
+
+    @Valid
+    @JsonProperty
+    private String schema;
 
     @SuppressWarnings("unused")
     @Valid
@@ -62,19 +58,19 @@ public class RegisterContextFactory {
 
     @JsonCreator
     public RegisterContextFactory(
-            @JsonProperty("database") DataSourceFactory database,
             @JsonProperty("trackingId") Optional<String> trackingId,
             @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
+            @JsonProperty("schema") String schema,
             @JsonProperty("historyPageUrl") Optional<String> historyPageUrl,
             @JsonProperty("custodianName") Optional<String> custodianName,
             @JsonProperty("similarRegisters") List<String> similarRegisters,
             @JsonProperty("indexes") List<String> indexes,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
-        this.database = database;
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
+        this.schema = schema;
         this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
         this.similarRegisters = similarRegisters != null ? similarRegisters : emptyList();
@@ -90,19 +86,14 @@ public class RegisterContextFactory {
         return flywayFactory;
     }
 
-    public RegisterContext build(RegisterName registerName, DBIFactory dbiFactory, ConfigManager configManager, Environment environment, RegisterLinkService registerLinkService) {
-        database.getProperties().put("ApplicationName", "openregister_" + registerName);
-
-        // dbiFactory.build() will ensure that this dataSource is correctly shut down
-        // it will also be shared with flyway
-        ManagedDataSource managedDataSource = database.build(environment.metrics(), registerName.value());
-
+    public RegisterContext build(RegisterName registerName, ConfigManager configManager, DatabaseManager databaseManager, RegisterLinkService registerLinkService) {
         return new RegisterContext(
                 registerName,
                 configManager,
                 registerLinkService,
-                dbiFactory.build(environment, database, managedDataSource, registerName.value()),
-                getFlywayFactory(registerName).build(managedDataSource),
+                databaseManager.getDbi(),
+                getFlywayFactory(registerName).build(databaseManager.getDataSource()),
+                schema,
                 trackingId,
                 enableRegisterDataDelete,
                 enableDownloadResource,

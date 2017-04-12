@@ -8,6 +8,7 @@ server:
       port: 9091
 
 register: school
+schema: school
 registerDomain: test.register.gov.uk
 
 credentials:
