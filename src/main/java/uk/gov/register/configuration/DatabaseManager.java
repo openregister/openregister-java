@@ -13,12 +13,12 @@ public class DatabaseManager {
 
     public DatabaseManager(DatabaseConfiguration databaseConfiguration, Environment environment, DBIFactory dbiFactory) {
         this.database = databaseConfiguration.getDatabase();
-        this.database.getProperties().put("ApplicationName", "openregister_" + databaseConfiguration.getRegisterGroup());
+        this.database.getProperties().put("ApplicationName", "openregister_java");
 
         // dbiFactory.build() will ensure that this dataSource is correctly shut down
         // it will also be shared with flyway
-        this.dataSource = database.build(environment.metrics(), databaseConfiguration.getRegisterGroup());
-        this.dbi = dbiFactory.build(environment, database, dataSource, databaseConfiguration.getRegisterGroup());
+        this.dataSource = database.build(environment.metrics(), "openregister_java");
+        this.dbi = dbiFactory.build(environment, database, dataSource, "openregister_java");
     }
 
     public ManagedDataSource getDataSource() {

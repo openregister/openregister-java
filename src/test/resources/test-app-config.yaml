@@ -13,8 +13,6 @@ database:
   properties:
     charSet: UTF-8
 
-registerGroup: multi
-
 server:
   registerDefaultExceptionMappers: false
   applicationConnectors:

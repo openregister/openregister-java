@@ -39,11 +39,6 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     @Valid
     @NotNull
     @JsonProperty
-    private String registerGroup = "basic";
-
-    @Valid
-    @NotNull
-    @JsonProperty
     private String schema;
 
     @Valid
@@ -137,10 +132,6 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
 
     public RegisterName getDefaultRegisterName() {
         return register;
-    }
-
-    public String getRegisterGroup() {
-        return registerGroup;
     }
 
     public String getSchema() {

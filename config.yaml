@@ -12,8 +12,6 @@ database:
   properties:
     charSet: UTF-8
 
-registerGroup: multi
-
 registers:
   register:
     credentials:
@@ -34,7 +32,7 @@ register: school
 
 enableDownloadResource: true
 
-schema: country_s
+schema: school
 
 historyPageUrl: https://registers-history.herokuapp.com/school-eng
 
