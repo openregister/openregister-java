@@ -8,6 +8,6 @@ public class SchemaRewriter implements StatementLocator {
 
     @Override
     public String locate(String name, StatementContext ctx) throws Exception {
-        return ctx.getRawSql().replace(":schema", schema.get());
+        return ctx.getRawSql().replace(":schema", "\"" + schema.get() + "\"");
     }
 }
