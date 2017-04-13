@@ -22,16 +22,22 @@ public class RecordView implements CsvRepresentationView {
     private final Collection<ItemView> itemViews;
     private final Iterable<Field> fields;
     private final boolean isRegister;
+    private final String path;
 
     public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields) {
-        this(entry, itemViews, fields, true);
-    }
-
-    public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields, boolean isRegister) {
         this.entry = entry;
         this.itemViews = itemViews;
         this.fields = fields;
-        this.isRegister = isRegister;
+        this.isRegister = true;
+        this.path = "/record/";
+    }
+
+    public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields, String indexName) {
+        this.entry = entry;
+        this.itemViews = itemViews;
+        this.fields = fields;
+        this.isRegister = false;
+        this.path = partialPath(indexName);
     }
 
     public String getPrimaryKey() {
@@ -66,6 +72,10 @@ public class RecordView implements CsvRepresentationView {
         return itemViews.stream().map(iv -> iv.getContent()).collect(Collectors.toSet());
     }
 
+    public String getPath() {
+        return path;
+    }
+
     public List<RecordView> asList(){
         return Arrays.asList(this);
     }
@@ -90,5 +100,11 @@ public class RecordView implements CsvRepresentationView {
 
     public boolean isRegister() {
         return isRegister;
+    }
+
+    private String partialPath(String indexName){
+        StringJoiner joiner = new StringJoiner("/","/","/");
+        joiner.add("index").add(indexName).add("record");
+        return joiner.toString();
     }
 }
