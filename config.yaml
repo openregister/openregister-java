@@ -1,6 +1,6 @@
 database:
   driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/new_test_db
+  url: jdbc:postgresql://localhost:5432/openregister_java
   user: postgres
   password:
 
@@ -17,10 +17,10 @@ registerGroup: multi
 registers:
   register:
     credentials:
-      user: foo
-      password: bar
+      user: sasine
+      password: inhibition
     custodianName: Government Digital Service
-    schema: register_s
+    schema: register
 
 server:
   registerDefaultExceptionMappers: false
@@ -30,7 +30,7 @@ server:
 
 registerDomain: openregister.dev:8080
 
-register: register
+register: school
 
 enableDownloadResource: true
 

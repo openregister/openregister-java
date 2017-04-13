@@ -8,7 +8,6 @@ import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.OverrideStatementLocatorWith;
 
 @OverrideStatementLocatorWith(SchemaRewriter.class)
-//@UseStringTemplate3StatementLocator
 public interface CurrentKeysUpdateDAO {
     @SqlBatch("delete from :schema.current_keys where key = :key")
     @BatchChunkSize(1000)

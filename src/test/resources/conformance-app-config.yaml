@@ -1,3 +1,18 @@
+database:
+  driverClass: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/conformance_openregister_java
+  user: postgres
+  properties:
+    charSet: UTF-8
+
+  #db connection properties
+  initialSize: 1
+  minSize: 1
+  maxSize: 3
+
+  properties:
+    charSet: UTF-8
+
 server:
   registerDefaultExceptionMappers: false
   applicationConnectors:
@@ -14,21 +29,6 @@ registerDomain: test.register.gov.uk
 credentials:
   user: foo
   password: bar
-
-database:
-  driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/conformance_openregister_java
-  user: postgres
-  properties:
-    charSet: UTF-8
-
-  #db connection properties
-  initialSize: 1
-  minSize: 1
-  maxSize: 3
-
-  properties:
-    charSet: UTF-8
 
 enableDownloadResource: true
 enableRegisterDataDelete: true
