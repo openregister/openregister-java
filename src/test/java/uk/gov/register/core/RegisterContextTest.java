@@ -25,10 +25,12 @@ public class RegisterContextTest {
     private RegisterLinkService registerLinkService;
     private DBI dbi;
     private Flyway flyway;
+    private String schema;
 
     @Before
     public void setup() {
         registerName = new RegisterName("register");
+        schema = "register";
         configManager = mock(ConfigManager.class, RETURNS_DEEP_STUBS);
         registerLinkService = mock(RegisterLinkService.class);
         dbi = mock(DBI.class);
@@ -37,7 +39,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), false, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, schema, Optional.empty(), false, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -47,7 +49,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();
@@ -80,7 +82,7 @@ public class RegisterContextTest {
                 .thenReturn(expectedInitialMetadata)
                 .thenReturn(expectedUpdatedMetadata);
 
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
 
         RegisterMetadata actualInitialMetadata = context.getRegisterMetadata();
         assertThat(actualInitialMetadata, equalTo(expectedInitialMetadata));

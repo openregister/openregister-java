@@ -14,23 +14,11 @@ database:
 
 registers:
   register:
-    database:
-      driverClass: org.postgresql.Driver
-      url: jdbc:postgresql://localhost:5432/register
-      user: postgres
-      password:
-
-      #db connection properties
-      initialSize: 1
-      minSize: 1
-      maxSize: 4
-
-      properties:
-        charSet: UTF-8
     credentials:
       user: sasine
       password: inhibition
     custodianName: Government Digital Service
+    schema: register
 
 server:
   registerDefaultExceptionMappers: false
@@ -43,6 +31,8 @@ registerDomain: openregister.dev:8080
 register: school
 
 enableDownloadResource: true
+
+schema: school
 
 historyPageUrl: https://registers-history.herokuapp.com/school-eng
 

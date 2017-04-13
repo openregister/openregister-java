@@ -25,10 +25,10 @@ import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.serialization.RSFCreator;
+import uk.gov.register.serialization.RSFExecutor;
 import uk.gov.register.serialization.handlers.AddItemCommandHandler;
 import uk.gov.register.serialization.handlers.AppendEntryCommandHandler;
 import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
-import uk.gov.register.serialization.RSFExecutor;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
@@ -85,9 +85,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         ConfigManager configManager = new ConfigManager(configuration);
         configManager.refreshConfig();
 
+        DatabaseManager databaseManager = new DatabaseManager(configuration, environment, dbiFactory);
+
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
 
-        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(dbiFactory, configManager, environment, registerLinkService);
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService);
         allTheRegisters.stream().parallel().forEach(RegisterContext::migrate);
 
         RSFExecutor rsfExecutor = new RSFExecutor();

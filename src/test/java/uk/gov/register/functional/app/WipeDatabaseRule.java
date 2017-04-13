@@ -2,6 +2,7 @@ package uk.gov.register.functional.app;
 
 import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
+import uk.gov.register.db.SchemaRewriter;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.functional.db.TestRecordDAO;
@@ -17,14 +18,15 @@ public class WipeDatabaseRule extends ExternalResource {
         this.registers = newArrayList(registers);
     }
 
-    private String postgresConnectionString(String register) {
-        return String.format("jdbc:postgresql://localhost:5432/ft_openregister_java_%s?user=postgres&ApplicationName=WipeDatabaseRule", register);
+    private String postgresConnectionString() {
+        return "jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=WipeDatabaseRule";
     }
 
     @Override
     protected void before() {
         for (String register : registers) {
-            DBI dbi = new DBI(postgresConnectionString(register));
+            SchemaRewriter.schema.set(register);
+            DBI dbi = new DBI(postgresConnectionString());
             dbi.useHandle(handle -> {
                 handle.attach(TestEntryDAO.class).wipeData();
                 handle.attach(TestItemCommandDAO.class).wipeData();

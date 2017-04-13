@@ -1,9 +1,7 @@
 package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -13,11 +11,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.TestRegister;
-import uk.gov.register.functional.db.TestDBItem;
-import uk.gov.register.functional.db.TestEntryDAO;
-import uk.gov.register.functional.db.TestItemCommandDAO;
-import uk.gov.register.functional.db.TestRecord;
-import uk.gov.register.functional.db.TestRecordDAO;
+import uk.gov.register.functional.db.*;
 import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.ws.rs.core.Response;

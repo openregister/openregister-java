@@ -19,9 +19,7 @@ cache:
   - $HOME/.m2
 before_script:
 - psql --version
-- psql -c 'create database ft_openregister_java_address;' -U postgres
-- psql -c 'create database ft_openregister_java_postcode;' -U postgres
-- psql -c 'create database ft_openregister_java_register;' -U postgres
+- psql -c 'create database ft_openregister_java_multi;' -U postgres
 - psql -c 'create database conformance_openregister_java;' -U postgres
 after_failure:
 - cat $TRAVIS_BUILD_DIR/stderr.txt

@@ -36,6 +36,7 @@ public class RegisterContext implements
     private AtomicReference<MemoizationStore> memoizationStore;
     private DBI dbi;
     private Flyway flyway;
+    private final String schema;
     private final Optional<String> historyPageUrl;
     private final Optional<String> custodianName;
     private final Optional<String> trackingId;
@@ -46,7 +47,7 @@ public class RegisterContext implements
     private RegisterAuthenticator authenticator;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
-                           DBI dbi, Flyway flyway, Optional<String> trackingId, boolean enableRegisterDataDelete,
+                           DBI dbi, Flyway flyway, String schema, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
                            Optional<String> custodianName, List<String> similarRegisters, List<String> indexes,
                            RegisterAuthenticator authenticator) {
@@ -55,6 +56,7 @@ public class RegisterContext implements
         this.registerLinkService = registerLinkService;
         this.dbi = dbi;
         this.flyway = flyway;
+        this.schema = schema;
         this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
         this.similarRegisters = similarRegisters;
@@ -79,6 +81,8 @@ public class RegisterContext implements
     }
 
     public int migrate() {
+        flyway.setSchemas(schema);
+
         return flyway.migrate();
     }
 
@@ -206,5 +210,9 @@ public class RegisterContext implements
     @Override
     public List<String> getIndexes() {
         return indexes;
+    }
+
+    public String getSchema() {
+        return schema;
     }
 }

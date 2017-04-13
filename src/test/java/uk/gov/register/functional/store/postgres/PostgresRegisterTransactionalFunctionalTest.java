@@ -63,7 +63,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     @Before
     public void setUp() throws Exception {
-        dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_address?user=postgres&ApplicationName=PGRegisterTxnFT");
+        dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=PGRegisterTxnFT");
         dbi.registerContainerFactory(new OptionalContainerFactory());
         handle = dbi.open();
         testItemDAO = handle.attach(TestItemCommandDAO.class);

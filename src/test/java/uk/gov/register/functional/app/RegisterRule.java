@@ -123,6 +123,6 @@ public class RegisterRule implements TestRule {
     }
 
     private String postgresConnectionString(TestRegister register) {
-        return String.format("jdbc:postgresql://localhost:5432/ft_openregister_java_%s?user=postgres&ApplicationName=RegisterRule", register.name());
+        return String.format("jdbc:postgresql://localhost:5432/ft_openregister_java_%s?user=postgres&ApplicationName=RegisterRule", "multi");
     }
 }

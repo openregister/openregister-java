@@ -15,7 +15,7 @@ import static uk.gov.register.functional.app.TestRegister.postcode;
 public class AuthenticationTest {
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
-
+    
     @Test
     public void correctCredentials_shouldBeAllowed() throws Exception {
         Response addressResponse = register.target(address).register(address.httpAuthFeature())
@@ -25,7 +25,7 @@ public class AuthenticationTest {
 
         Response postcodeResponse = register.target(postcode).register(postcode.httpAuthFeature())
                 .path("/load").request()
-                .post(Entity.json("{\"postcode\":\"1234\"}"));
+                .post(Entity.json("{\"postcode\":\"12345\"}"));
         assertThat(postcodeResponse.getStatus(), is(204));
     }
 
