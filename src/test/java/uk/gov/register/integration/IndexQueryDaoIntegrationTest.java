@@ -5,6 +5,7 @@ import org.apache.log4j.MDC;
 import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -12,6 +13,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
+import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
@@ -70,11 +72,13 @@ import static uk.gov.register.util.HashValue.decode;
  * entry7 - 97,96,[xxxbdc,xxx509],MD
  */
 public class IndexQueryDaoIntegrationTest {
-
     private DBI dbi;
     private Handle handle;
     private IndexQueryDAO dao;
     private Instant timestamp = Instant.ofEpochMilli(1490610633L * 1000L);
+
+    @Rule
+    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule("address");
 
     @Before
     public void setup() {
@@ -87,10 +91,6 @@ public class IndexQueryDaoIntegrationTest {
 
     @After
     public void teardown() {
-        handle.execute("delete from address.item where sha256hex like 'xxx%' ");
-        handle.execute("delete from address.entry where sha256hex like 'xxx%' ");
-        handle.execute("delete from address.entry_item where sha256hex like 'xxx%' ");
-        handle.execute("delete from address.index where name = 'by-type' ");
         dbi.close(handle);
     }
 

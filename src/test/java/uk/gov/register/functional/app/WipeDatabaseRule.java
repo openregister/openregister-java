@@ -4,6 +4,7 @@ import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.db.SchemaRewriter;
 import uk.gov.register.functional.db.TestEntryDAO;
+import uk.gov.register.functional.db.TestIndexDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.functional.db.TestRecordDAO;
 
@@ -31,6 +32,7 @@ public class WipeDatabaseRule extends ExternalResource {
                 handle.attach(TestEntryDAO.class).wipeData();
                 handle.attach(TestItemCommandDAO.class).wipeData();
                 handle.attach(TestRecordDAO.class).wipeData();
+                handle.attach(TestIndexDAO.class).wipeData();
             });
         }
     }
