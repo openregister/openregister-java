@@ -140,10 +140,10 @@ public class ViewFactory {
         return new RecordView(record.getEntry(), itemViews , getFields());
     }
 
-    public RecordView getDerivationRecordMediaView(Record record) {
+    public RecordView getDerivationRecordMediaView(Record record, String indexName) {
         Map<HashValue, Item> itemMap = record.getItems();
         Set<ItemView> itemViews = itemMap.values().stream().map(this::getItemMediaView).collect(Collectors.toSet());
-        return new RecordView(record.getEntry(), itemViews , getFields(), false);
+        return new RecordView(record.getEntry(), itemViews , getFields(), indexName);
     }
 
     public RecordsView getRecordsMediaView(List<RecordView> recordViews) {
@@ -169,6 +169,4 @@ public class ViewFactory {
                 .map(fieldsConfiguration::getField)
                 .collect(Collectors.toList());
     }
-
-
 }

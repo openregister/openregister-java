@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <body>
 <div th:fragment="record-table(view, records)">
-  <table th:if="${!  records.isEmpty()}"
+  <table th:if="${!records.isEmpty()}"
          th:with="fields = ${ view.isRegister()}? ${register.nonPrimaryFields} : ${register.fields}">
     <thead>
     <tr>
@@ -21,7 +21,7 @@
     <th:block th:each="record : ${records}">
       <tr th:each="item : ${record.itemViews}">
         <td>
-          <a th:href="${'/record/' + record.primaryKey}" th:text="${record.primaryKey}"></a>
+          <a th:href="${record.path + record.primaryKey}" th:text="${record.primaryKey}"></a>
         </td>
         <th:block th:each="fieldName : ${fields}">
           <td th:if="${item.content.containsKey(fieldName)}" class="field-list field-list-in-table">
