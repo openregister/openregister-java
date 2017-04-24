@@ -22,6 +22,8 @@ registerDomain: openregister.dev:8080
 
 register: school
 
+schema: school
+
 enableDownloadResource: true
 
 historyPageUrl: https://registers-history.herokuapp.com/school-eng
