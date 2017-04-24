@@ -67,7 +67,7 @@ public class DerivationRecordResource {
     public RecordsView records(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         ensureIndexIsAccessible(indexName);
 
-        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize, indexName);
         setContentDisposition();
         return getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
     }
@@ -79,7 +79,7 @@ public class DerivationRecordResource {
     public PaginatedView<RecordsView> recordsHtml(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         ensureIndexIsAccessible(indexName);
 
-        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
+        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize, indexName);
         setContentDisposition();
         RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
         return viewFactory.getRecordListView(pagination, recordsView);
@@ -91,8 +91,8 @@ public class DerivationRecordResource {
         }
     }
 
-    private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
+    private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize, String indexName) {
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalDerivationRecords(indexName));
 
         if (pagination.hasNextPage()) {
             httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());

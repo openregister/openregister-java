@@ -258,6 +258,14 @@ public class IndexQueryDaoIntegrationTest {
     }
 
     @Test
+    public void shouldCountRecords() {
+        nameChangeAndGroupChangeScenario();
+        int totalRecords = dao.getTotalRecords("by-type");
+
+        assertThat(totalRecords, is(2));
+    }
+
+    @Test
     public void shouldFindZeroItemsRecordForUA() {
         zeroItemsEntryScenario();
 
@@ -281,10 +289,17 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(entries.size(), is(3));
 
         Entry entry1 = entries.get(1);
-        Entry expectedEntry1 = new Entry(92, 92,
-                Collections.emptyList(), timestamp, "UA");
+        Entry expectedEntry1 = new Entry(92, 92, Collections.emptyList(), timestamp, "UA");
         assertThat(entry1, equalTo(expectedEntry1));
 
+    }
+
+    @Test
+    public void shouldNotCountRecordsWithNoItems() {
+        zeroItemsEntryScenario();
+        int totalRecords = dao.getTotalRecords("by-type");
+
+        assertThat(totalRecords, is(1));
     }
 
     private void nameChangeAndGroupChangeScenario() {
