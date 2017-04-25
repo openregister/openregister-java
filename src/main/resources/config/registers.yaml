@@ -157,7 +157,7 @@ public-body:
     - "website"
     - "public-body-type"
     - "parent-bodies"
-    - "- text"
+    - "text"
     - "crest"
     - "official-colour"
     register: "public-body"
@@ -176,7 +176,7 @@ field:
     - "phase"
     - "register"
     - "cardinality"
-    - "- text"
+    - "text"
     register: "field"
     registry: "cabinet-office"
 food-premises-type:
@@ -204,7 +204,7 @@ datatype:
     fields:
     - "datatype"
     - "phase"
-    - "- text"
+    - "text"
     register: "datatype"
     registry: "cabinet-office"
 school:
@@ -259,7 +259,7 @@ uk:
     - "start-date"
     - "end-date"
     - "citizen-names"
-    - "- text"
+    - "text"
     register: "uk"
     registry: "cabinet-office"
 company:
