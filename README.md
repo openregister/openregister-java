@@ -7,11 +7,24 @@ A java implementation of a register
 
 You can spin up a local copy of `openregister-java` using Docker with the following:
 
-    ./run-application.sh
+    ENVIRONMENT=alpha ./run-application.sh
 
-This will build the application from source (inside a container), start and configure Postgres, and run the application (listens on `127.0.0.1:8080`). To load some sample data:
+This will do the following in Docker containers:
 
-    ./load-school-data.sh
+- build the application from source.
+- start and configure the DB.
+- run the "basic" registers: register, field and datatype with data cloned from the specified phase (listens on `127.0.0.1:8081`).
+- run a register configured with `config.docker.register.yaml` (listens on `127.0.0.1:8080`).
+
+### Experimenting locally
+
+If you want to view/change the basic registers you can do that by sending requests to `127.0.0.1:8081` with an appropriate `Host` header:
+
+    curl 127.0.0.1:8081/records -H "Host: field"
+
+If the basic registers change you can restart your register so that it sees the changes:
+
+    docker restart openregister-register
 
 ## Development
 

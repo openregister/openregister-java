@@ -1,19 +1,26 @@
 version: '3'
 services:
-  openregister:
+  openregister-basic:
     image: openjdk:8-jre
+    container_name: openregister-basic
     # hack so that we wait for postgres to be available not just started
     command: bash -c '/srv/openregister-java/wait-for-it.sh postgres:5432 -- java -jar /srv/openregister-java/openregister-java.jar server /srv/openregister-java/config.yaml'
     ports:
-      - 127.0.0.1:8080:8080
+      - 127.0.0.1:8081:80
     volumes:
       - ./wait-for-it.sh:/srv/openregister-java/wait-for-it.sh:ro
-      - ./config.docker.yaml:/srv/openregister-java/config.yaml:ro
+      - ./config.docker.basic.yaml:/srv/openregister-java/config.yaml:ro
       - ./deploy/openregister-java.jar:/srv/openregister-java/openregister-java.jar:ro
     links:
       - postgres
     depends_on:
       - postgres
+    networks:
+      default:
+        aliases:
+          - field
+          - register
+          - datatype
 
   postgres:
     image: postgres:alpine

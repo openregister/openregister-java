@@ -1,0 +1,75 @@
+database:
+  driverClass: org.postgresql.Driver
+  url: jdbc:postgresql://postgres:5432/openregister_java
+  user: postgres
+  password:
+
+  #db connection properties
+  initialSize: 1
+  minSize: 1
+  maxSize: 4
+
+  properties:
+    charSet: UTF-8
+
+server:
+  registerDefaultExceptionMappers: false
+  applicationConnectors:
+    - type: http
+      port: 80
+  adminConnectors:
+    - type: http
+      port: 9092
+
+registerDomain: openregister.dev:8080
+
+register: register
+
+schema: register
+
+enableDownloadResource: true
+
+externalConfigDirectory: /tmp
+
+downloadConfigs: true
+
+# can be http: file s3: or classpath: url
+fieldsYamlLocation: classpath://config/fields.yaml
+registersYamlLocation: classpath://config/registers.yaml
+
+credentials:
+  user: foo
+  password: bar
+
+registers:
+  field:
+    schema: field
+    enableDownloadResource: True
+    enableRegisterDataDelete: True
+
+    credentials:
+      user: foo
+      password: bar
+
+  datatype:
+    schema: datatype
+    enableDownloadResource: True
+    enableRegisterDataDelete: True
+
+    credentials:
+      user: foo
+      password: bar
+
+# Logging settings.
+logging:
+
+  level: INFO
+
+  # Logger-specific levels.
+  loggers:
+    "uk.gov": DEBUG
+    "org.skife.jdbi.v2": TRACE
+  appenders:
+    - type: console
+      target: stdout
+      logFormat: "%-5p [%d{ISO8601}] %X{register} %c: %m%n%rEx"

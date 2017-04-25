@@ -20,9 +20,8 @@ server:
 
 registerDomain: openregister.dev:8080
 
-register: school
-
-schema: school
+register: school-eng
+schema: school-eng
 
 enableDownloadResource: true
 
@@ -33,9 +32,8 @@ externalConfigDirectory: /tmp
 downloadConfigs: true
 
 # can be http: file s3: or classpath: url
-fieldsYamlLocation: classpath://config/fields.yaml
-
-registersYamlLocation: classpath://config/registers.yaml
+fieldsYamlLocation: http://field/records.yaml?page-size=5000
+registersYamlLocation: http://register/records.yaml?page-size=5000
 
 similarRegisters:
   - address
