@@ -115,8 +115,6 @@ public class RSFExecutorTest {
     public void execute_failsForOrphanAppendEntry() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.empty());
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
@@ -136,7 +134,6 @@ public class RSFExecutorTest {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.of(item1));
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(appendEntry1Command).iterator());
@@ -222,7 +219,6 @@ public class RSFExecutorTest {
         RegisterCommand appendEntry = new RegisterCommand("append-entry",
                 asList("2016-07-24T16:55:00Z", itemHash1 + ";" + itemHash2, "entry1-field-1-value"));
 
-        when(assertRootHashHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 

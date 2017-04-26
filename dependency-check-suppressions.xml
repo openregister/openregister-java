@@ -22,5 +22,39 @@
         <gav regex="true">^com\.fasterxml\.jackson.*$</gav>
         <cve>CVE-2016-7051</cve>
     </suppress>
-
+    <suppress>
+        <notes><![CDATA[
+   file name: javax.el-api-2.2.4.jar
+   ]]></notes>
+        <gav regex="true">^javax\.el:javax\.el-api:.*$</gav>
+        <cve>CVE-2015-2808</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: javax.el-api-2.2.4.jar
+   ]]></notes>
+        <gav regex="true">^javax\.el:javax\.el-api:.*$</gav>
+        <cve>CVE-2013-2566</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: javax.el-2.2.4.jar
+   ]]></notes>
+        <gav regex="true">^org\.glassfish\.web:javax\.el:.*$</gav>
+        <cve>CVE-2015-2808</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: javax.el-2.2.4.jar
+   ]]></notes>
+        <gav regex="true">^org\.glassfish\.web:javax\.el:.*$</gav>
+        <cve>CVE-2013-2566</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: tomcat-jdbc-8.5.9.jar
+   ]]></notes>
+        <sha1>3d34018a222959ca69e0e0da5bc9988741cbe7ba</sha1>
+        <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+    </suppress>
 </suppressions>
