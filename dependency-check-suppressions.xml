@@ -14,4 +14,13 @@
         <gav regex="true">^org\.apache\.commons:commons-collections4:.*$</gav>
         <cve>CVE-2015-6420</cve>
     </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+       Suppress CVE-2016-7051 in all Jackson jar files
+   ]]></notes>
+        <gav regex="true">^com\.fasterxml\.jackson.*$</gav>
+        <cve>CVE-2016-7051</cve>
+    </suppress>
+
 </suppressions>
