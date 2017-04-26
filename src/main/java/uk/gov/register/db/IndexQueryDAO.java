@@ -39,6 +39,9 @@ public interface IndexQueryDAO {
     @SqlQuery("select count(1) from :schema.index where name = :name and key = :key and sha256hex = :sha256hex and end_entry_number is null")
     int getExistingIndexCountForItem(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex);
 
+    @SqlQuery(recordCountQuery)
+    int getTotalRecords(@Bind("name") String indexName);
+
     String recordForKeyQuery = "select " +
             " entry_numbers.mien as index_entry_number, " +
             " entry_numbers.men as entry_number, " +
@@ -237,5 +240,14 @@ public interface IndexQueryDAO {
             "  index_entry.\"key\"  " +
             "order by  " +
             "  ien  ";
+    
+    String recordCountQuery = "select " +
+            "count( distinct key) " +
+            "from " +
+            " :schema.index " +
+            "where " +
+            " name = :name" +
+            " and end_index_entry_number is null";
+
 
 }

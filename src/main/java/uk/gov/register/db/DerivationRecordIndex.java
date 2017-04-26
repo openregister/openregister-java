@@ -2,7 +2,6 @@ package uk.gov.register.db;
 
 import uk.gov.register.core.Record;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,5 +20,9 @@ public class DerivationRecordIndex {
 
     public List<Record> getRecords(int limit, int offset, String derivationName) {
         return indexQueryDAO.findRecords(limit, offset, derivationName);
+    }
+
+    public int getTotalRecords(String derivationName) {
+        return indexQueryDAO.getTotalRecords(derivationName);
     }
 }

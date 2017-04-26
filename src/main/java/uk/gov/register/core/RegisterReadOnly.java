@@ -51,4 +51,7 @@ public interface RegisterReadOnly {
     Optional<Record> getDerivationRecord(String key, String derivationName);
 
     List<Record> getDerivationRecords(int limit, int offset, String derivationName);
+
+    int getTotalDerivationRecords(String derivationName);
 }
+
