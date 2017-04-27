@@ -114,7 +114,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void return404ResponseWhenEntryNotExist() {
-        assertThat(register.getRequest(address, "/entry/5001").getStatus(), equalTo(404));
+        assertThat(register.getRequest(address, "/entry/5001", MediaType.TEXT_HTML).getStatus(), equalTo(404));
     }
 
     @Test
