@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class BaseIndexFunction implements IndexFunction {
-
     @Override
     public Set<IndexKeyItemPair> execute(Entry entry) {
         Set<IndexKeyItemPair> result = new HashSet<>();

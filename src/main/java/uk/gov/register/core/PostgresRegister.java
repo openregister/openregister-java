@@ -1,5 +1,6 @@
 package uk.gov.register.core;
 
+import org.glassfish.hk2.api.IterableProvider;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.db.IndexDAO;
@@ -9,13 +10,17 @@ import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
+import uk.gov.register.service.IndexFunctionExecutor;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
+import javax.inject.Inject;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -27,6 +32,12 @@ public class PostgresRegister implements Register {
     private final RegisterMetadata registerMetadata;
     private final IndexDriver indexDriver;
     private final List<IndexFunction> indexFunctions;
+
+    @Inject
+    private IndexFunctionExecutor indexFunctionExecutor;
+
+    @Inject
+    private IterableProvider<IndexFunction> indexFunctions2;
 
     public PostgresRegister(RegisterMetadata registerMetadata,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
@@ -63,6 +74,12 @@ public class PostgresRegister implements Register {
     @Override
     public void appendEntry(Entry entry) {
         entryLog.appendEntry(entry);
+
+        List<String> indexesForRegisterFromConfig = new ArrayList<>();
+
+        Map<String, IndexFunction> indexFunctionsByName = StreamSupport.stream(indexFunctions2.spliterator(), false).collect(Collectors.toMap(k -> k.getName(), v -> v));
+
+        indexDriver.indexEntry(entry, indexesForRegisterFromConfig, indexFunctionsByName);
 
         for (IndexFunction indexFunction : indexFunctions) {
             indexDriver.indexEntry(entry, indexFunction);

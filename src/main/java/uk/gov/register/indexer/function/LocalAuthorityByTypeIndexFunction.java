@@ -7,7 +7,9 @@ import uk.gov.register.util.HashValue;
 import java.util.Set;
 
 public class LocalAuthorityByTypeIndexFunction extends BaseIndexFunction {
-    private final Register register;
+    private Register register;
+
+    public LocalAuthorityByTypeIndexFunction() {}
 
     public LocalAuthorityByTypeIndexFunction(Register register) {
         this.register = register;

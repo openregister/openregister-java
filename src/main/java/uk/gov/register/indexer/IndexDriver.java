@@ -109,4 +109,13 @@ public class IndexDriver {
             currentIndexEntryNumber.set(newIndexEntryNumber);
         }
     }
+
+    public void indexEntry(Entry entry, List<String> indexNamesForCurrentRegister, Map<String, IndexFunction> allTheIndexFunctions) {
+        indexNamesForCurrentRegister.forEach(indexName -> {
+            if (allTheIndexFunctions.containsKey(indexName)) {
+                indexEntry(entry, allTheIndexFunctions.get(indexName));
+            }
+
+        });
+    }
 }

@@ -7,7 +7,9 @@ import uk.gov.register.util.HashValue;
 import java.util.Set;
 
 public class CurrentCountriesIndexFunction extends BaseIndexFunction {
-    private final Register register;
+    private Register register;
+
+    public CurrentCountriesIndexFunction() {}
 
     public CurrentCountriesIndexFunction(Register register) {
         this.register = register;
