@@ -86,8 +86,6 @@ public class HomePageViewTest {
     public void getLinkToRegisterRegister_returnsTheLinkOfRegisterRegister(){
         Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
 
-        when(mockRequestContext.getScheme()).thenReturn("https");
-
         RegisterMetadata registerMetadata = mock(RegisterMetadata.class);
 
         RegisterReadOnly register = mock(RegisterReadOnly.class);

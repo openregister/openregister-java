@@ -49,8 +49,6 @@ public class RegisterSerialisationFormatServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        when(registerContext.buildOnDemandRegister()).thenReturn(register);
-
         doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) {
                 Consumer<Register> callback = (Consumer<Register>) invocation.getArguments()[0];
