@@ -15,6 +15,7 @@ import java.net.URI;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.register.functional.app.TestRegister.address;
+import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
 public class FindEntityTest {
 
@@ -41,7 +42,7 @@ public class FindEntityTest {
 
     @Test
     public void find_returnsTheCorrectTotalRecordsInPaginationHeader() {
-        Response response = register.getRequest(address, "/records/street/ellis");
+        Response response = register.getRequest(address, "/records/street/ellis", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
 
