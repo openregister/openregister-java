@@ -1,11 +1,13 @@
 package uk.gov.register.db.mappers;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.functional.app.MigrateDatabaseRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
 
@@ -16,6 +18,9 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class EntryMapperTest {
+    @ClassRule
+    public static MigrateDatabaseRule migrateDatabaseRule = new MigrateDatabaseRule("address");
+
     @Rule
     public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule("address");
 
