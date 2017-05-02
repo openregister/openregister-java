@@ -1,7 +1,10 @@
 package uk.gov.register.indexer.function;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
@@ -25,14 +28,19 @@ import static org.mockito.Mockito.when;
 public class CurrentCountriesIndexFunctionTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Before
+    public void setup(){
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void executeWithKeyAndHash_shouldReturnEmptySet_whenItemDoesNotExist() {
         Register register = mock(Register.class);
         when(register.getItemBySha256(any())).thenReturn(Optional.empty());
 
-        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
+        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute("CS", new HashValue(HashingAlgorithm.SHA256, "cs"), resultSet);
+        func.execute(register, "CS", new HashValue(HashingAlgorithm.SHA256, "cs"), resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -44,9 +52,9 @@ public class CurrentCountriesIndexFunctionTest {
         Register register = mock(Register.class);
         when(register.getItemBySha256(itemHashVN)).thenReturn(Optional.of(countryVN));
 
-        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
+        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute("VN", itemHashVN, resultSet);
+        func.execute(register, "VN", itemHashVN, resultSet);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("VN", itemHashVN)));
@@ -59,9 +67,9 @@ public class CurrentCountriesIndexFunctionTest {
         Register register = mock(Register.class);
         when(register.getItemBySha256(itemHashCS)).thenReturn(Optional.of(countryCS));
 
-        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
+        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute("CS", itemHashCS, resultSet);
+        func.execute(register, "CS", itemHashCS, resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -77,8 +85,8 @@ public class CurrentCountriesIndexFunctionTest {
         when(register.getItemBySha256(itemHashVN)).thenReturn(Optional.of(countryVN));
         when(register.getItemBySha256(itemHashCS)).thenReturn(Optional.of(countryCS));
 
-        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction(register);
-        Set<IndexKeyItemPair> resultSet = func.execute(entry);
+        CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
+        Set<IndexKeyItemPair> resultSet = func.execute(register, entry);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("key", itemHashVN)));

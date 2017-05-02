@@ -22,9 +22,6 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
-import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
-import uk.gov.register.indexer.function.IndexFunction;
-import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.serialization.RSFCreator;
@@ -35,7 +32,9 @@ import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
-import uk.gov.register.service.*;
+import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.RegisterLinkService;
+import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.CanonicalJsonValidator;
@@ -132,12 +131,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
-
-                bind(LocalAuthorityByTypeIndexFunction.class).to(IndexFunction.class);
-                bind(CurrentCountriesIndexFunction.class).to(IndexFunction.class);
-                bind(IndexFunctionExecutor.class).to(IndexFunctionExecutor.class);
-//                bind(TestIndexFunction.class).to(IndexFunction.class);
-                bind(IndexService.class).to(IndexService.class).in(Singleton.class);
 
                 bindFactory(Factories.PostgresRegisterFactory.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
