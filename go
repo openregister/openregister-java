@@ -3,7 +3,7 @@
 set -ue
 
 function ensure_db_exists {
-  psql -lqt | grep -wq $1 || createdb $1
+  psql -lqt | grep -wq $1 || createdb -O postgres $1
 }
 
 function ensure_user_exists {
