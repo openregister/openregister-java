@@ -24,7 +24,7 @@ docker run \
     --restart "unless-stopped" \
     --volume /srv/openregister-java/telegraf.conf:/etc/telegraf/telegraf.conf:ro \
     --network openregisters \
-    --env REGISTER_NAME \
+    --env REGISTER_NAME=${REGISTER_NAME} \
     telegraf
 
 docker run \
