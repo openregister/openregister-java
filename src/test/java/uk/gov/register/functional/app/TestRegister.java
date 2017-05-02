@@ -9,6 +9,7 @@ public enum TestRegister {
     private final String hostname = name() + "." + REGISTER_DOMAIN;
     private final String username;
     private final String password;
+    private final String databaseConnectionString = "jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=%s";
 
     TestRegister(String username, String password) {
         this.username = username;
@@ -23,5 +24,9 @@ public enum TestRegister {
         return HttpAuthenticationFeature.basicBuilder()
                 .credentials(username, password)
                 .build();
+    }
+
+    public String getDatabaseConnectionString(String applicationName) {
+        return String.format(databaseConnectionString, applicationName);
     }
 }

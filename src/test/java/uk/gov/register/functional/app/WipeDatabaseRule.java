@@ -13,21 +13,17 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class WipeDatabaseRule extends ExternalResource {
-    private final List<String> registers;
+    private final List<TestRegister> registers;
 
-    public WipeDatabaseRule(String... registers) {
+    public WipeDatabaseRule(TestRegister... registers) {
         this.registers = newArrayList(registers);
-    }
-
-    private String postgresConnectionString() {
-        return "jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=WipeDatabaseRule";
     }
 
     @Override
     protected void before() {
-        for (String register : registers) {
-            SchemaRewriter.schema.set(register);
-            DBI dbi = new DBI(postgresConnectionString());
+        for (TestRegister register : registers) {
+            SchemaRewriter.schema.set(register.name());
+            DBI dbi = new DBI(register.getDatabaseConnectionString("WipeDatabaseRule"));
             dbi.useHandle(handle -> {
                 handle.attach(TestEntryDAO.class).wipeData();
                 handle.attach(TestItemCommandDAO.class).wipeData();

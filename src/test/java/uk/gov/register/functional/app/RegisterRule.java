@@ -21,7 +21,6 @@ import javax.ws.rs.core.Response;
 import java.net.InetAddress;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static javax.ws.rs.client.Entity.entity;
@@ -39,10 +38,7 @@ public class RegisterRule implements TestRule {
     public RegisterRule() {
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
                 ResourceHelpers.resourceFilePath("test-app-config.yaml"));
-        String[] registers = Arrays.stream(TestRegister.values())
-                .map(TestRegister::name)
-                .toArray(String[]::new);
-        wipeRule = new WipeDatabaseRule(registers);
+        wipeRule = new WipeDatabaseRule(TestRegister.values());
         wholeRule = RuleChain
                 .outerRule(appRule)
                 .around(wipeRule);
@@ -117,12 +113,8 @@ public class RegisterRule implements TestRule {
      * the handle will automatically be closed by the RegisterRule
      */
     public Handle handleFor(TestRegister register) {
-        Handle handle = new DBI(postgresConnectionString(register)).open();
+        Handle handle = new DBI(register.getDatabaseConnectionString("RegisterRule")).open();
         handles.add(handle);
         return handle;
-    }
-
-    private String postgresConnectionString(TestRegister register) {
-        return String.format("jdbc:postgresql://localhost:5432/ft_openregister_java_%s?user=postgres&ApplicationName=RegisterRule", "multi");
     }
 }

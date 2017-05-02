@@ -13,22 +13,18 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class MigrateDatabaseRule extends ExternalResource {
-    private final List<String> registers;
+    private final List<TestRegister> registers;
 
-    public MigrateDatabaseRule(String... registers) {
+    public MigrateDatabaseRule(TestRegister... registers) {
         this.registers = newArrayList(registers);
-    }
-
-    private String postgresConnectionString() {
-        return "jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=MigrateDatabaseRule";
     }
 
     @Override
     protected void before() {
-        for (String register : registers) {
-            FlywayFactory flywayFactory = getFlywayFactory(register);
-            Flyway flyway = flywayFactory.build(getDataSource());
-            flyway.setSchemas(register);
+        for (TestRegister register : registers) {
+            FlywayFactory flywayFactory = getFlywayFactory(register.name());
+            Flyway flyway = flywayFactory.build(getDataSource(register.getDatabaseConnectionString("MigrateDatabaseRule")));
+            flyway.setSchemas(register.name());
             flyway.migrate();
         }
     }
@@ -41,10 +37,10 @@ public class MigrateDatabaseRule extends ExternalResource {
         return flywayFactory;
     }
 
-    private DataSource getDataSource() {
+    private DataSource getDataSource(String databaseConnectionString) {
         DataSourceFactory dataSourceFactory = new DataSourceFactory();
         dataSourceFactory.setDriverClass("org.postgresql.Driver");
-        dataSourceFactory.setUrl(postgresConnectionString());
+        dataSourceFactory.setUrl(databaseConnectionString);
         return dataSourceFactory.build(new MetricRegistry(), "ft_openregister_java_multi");
     }
 }
