@@ -32,7 +32,7 @@ docker run \
     --name=fluentd \
     --publish 24224:24224 \
     --restart "unless-stopped" \
-    --volume /srv/openregister-java/fluentd.conf:/fluentd/etc/fluentd.conf \
+    --volume /srv/openregister-java/fluentd.conf:/fluentd/etc/fluentd.conf:ro \
     --network openregisters \
     --env FLUENTD_CONF=fluentd.conf \
     openregister/fluentd-sumologic
@@ -43,7 +43,7 @@ docker run \
     --publish 80:8080 \
     --publish 8081:8081 \
     --restart "unless-stopped" \
-    --volume /srv/openregister-java:/srv/openregister-java \
+    --volume /srv/openregister-java:/srv/openregister-java:ro \
     --network openregisters \
     --log-driver=fluentd \
     --log-opt fluentd-async-connect=true \
