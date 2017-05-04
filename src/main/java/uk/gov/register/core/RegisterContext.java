@@ -220,10 +220,6 @@ public class RegisterContext implements
         return similarRegisters;
     }
 
-    public List<IndexFunctionConfiguration> getIndexFunctionConfigs() {
-        return indexFunctionConfigs;
-    }
-
     @Override
     public List<String> getIndexes() {
         return indexFunctionConfigs.stream().map(IndexFunctionConfiguration::getName).collect(toList());
