@@ -21,15 +21,15 @@ public class IndexDriver {
         this.indexQueryDAO = indexQueryDAO;
     }
 
-    public void indexEntry(Entry entry, IndexFunction indexFunction) {
+    public void indexEntry(Register register, Entry entry, IndexFunction indexFunction) {
         register.commit();
         Optional<Record> currentRecord = register.getRecord(entry.getKey());
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentRecord.isPresent()) {
-            currentIndexKeyItemPairs.addAll(indexFunction.execute(currentRecord.get().getEntry()));
+            currentIndexKeyItemPairs.addAll(indexFunction.execute(register, currentRecord.get().getEntry()));
         }
 
-        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(entry);
+        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(register, entry);
 
         List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs);
         pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs));
@@ -109,4 +109,5 @@ public class IndexDriver {
             currentIndexEntryNumber.set(newIndexEntryNumber);
         }
     }
+
 }

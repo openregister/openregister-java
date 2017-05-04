@@ -39,6 +39,7 @@ import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -174,7 +175,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
         return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore,
                 new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)),
-                handle.attach(IndexDAO.class), handle.attach(IndexQueryDAO.class), derivationRecordIndex);
+                handle.attach(IndexDAO.class), handle.attach(IndexQueryDAO.class), derivationRecordIndex, Collections.emptyList());
     }
 
 }

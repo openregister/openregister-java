@@ -1,8 +1,12 @@
 package uk.gov.register.indexer.function;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.Register;
 import uk.gov.register.indexer.IndexKeyItemPair;
 
 import java.time.Instant;
@@ -16,13 +20,22 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
 public class BaseIndexFunctionTest {
+
+    @Mock
+    private Register register;
+
+    @Before
+    public void setup(){
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void executeWithEntry_shouldReturnEmptyResultSet_whenEntryContainsNoItems() {
         Entry entry = new Entry(1, Collections.emptyList(), Instant.now(), "key");
 
         BaseIndexFunction func = mock(BaseIndexFunction.class, Mockito.CALLS_REAL_METHODS);
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(entry);
+        func.execute(register, entry);
 
         assertThat(resultSet, is(empty()));
     }

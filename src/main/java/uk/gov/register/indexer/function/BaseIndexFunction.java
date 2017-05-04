@@ -1,6 +1,7 @@
 package uk.gov.register.indexer.function;
 
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.Register;
 import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
@@ -9,16 +10,27 @@ import java.util.Set;
 
 public abstract class BaseIndexFunction implements IndexFunction {
 
+    private final String name;
+
+    public BaseIndexFunction(String name) {
+        this.name = name;
+    }
+
     @Override
-    public Set<IndexKeyItemPair> execute(Entry entry) {
+    public Set<IndexKeyItemPair> execute(Register register, Entry entry) {
         Set<IndexKeyItemPair> result = new HashSet<>();
 
         entry.getItemHashes().forEach(itemHash -> {
-            execute(entry.getKey(), itemHash, result);
+            execute(register, entry.getKey(), itemHash, result);
         });
 
         return result;
     }
 
-    protected abstract void execute(String key, HashValue itemHash, Set<IndexKeyItemPair> result);
+    protected abstract void execute(Register register, String key, HashValue itemHash, Set<IndexKeyItemPair> result);
+
+    @Override
+    public String getName() {
+        return name;
+    }
 }

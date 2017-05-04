@@ -11,6 +11,7 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.exceptions.RegisterResultException;
+import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterLinkService;
@@ -23,6 +24,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 public class RegisterContext implements
         RegisterTrackingConfiguration,
@@ -41,7 +44,7 @@ public class RegisterContext implements
     private final Optional<String> custodianName;
     private final Optional<String> trackingId;
     private final List<String> similarRegisters;
-    private final List<String> indexes;
+    private final List<IndexFunctionConfiguration> indexFunctionConfigs;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterAuthenticator authenticator;
@@ -49,7 +52,7 @@ public class RegisterContext implements
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
                            DBI dbi, Flyway flyway, String schema, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
-                           Optional<String> custodianName, List<String> similarRegisters, List<String> indexes,
+                           Optional<String> custodianName, List<String> similarRegisters, List<String> indexNames,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
@@ -60,7 +63,7 @@ public class RegisterContext implements
         this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
         this.similarRegisters = similarRegisters;
-        this.indexes = indexes;
+        this.indexFunctionConfigs = mapIndexes(indexNames);
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
@@ -94,7 +97,12 @@ public class RegisterContext implements
                 new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class)),
                 dbi.onDemand(IndexDAO.class),
                 dbi.onDemand(IndexQueryDAO.class),
-                new DerivationRecordIndex(dbi.onDemand(IndexQueryDAO.class)));
+                new DerivationRecordIndex(dbi.onDemand(IndexQueryDAO.class)),
+                getIndexFunctions());
+    }
+
+    private List<IndexFunction> getIndexFunctions() {
+        return indexFunctionConfigs.stream().flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
     }
 
     private Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
@@ -114,7 +122,8 @@ public class RegisterContext implements
                         handle.attach(CurrentKeysUpdateDAO.class)),
                 handle.attach(IndexDAO.class),
                 handle.attach(IndexQueryDAO.class),
-                new DerivationRecordIndex(handle.attach(IndexQueryDAO.class)));
+                new DerivationRecordIndex(handle.attach(IndexQueryDAO.class)),
+                getIndexFunctions());
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
@@ -173,6 +182,10 @@ public class RegisterContext implements
         }
     }
 
+    private List<IndexFunctionConfiguration> mapIndexes(List<String> indexNames) {
+        return indexNames.stream().map(IndexFunctionConfiguration::getValueLowerCase).collect(toList());
+    }
+
     @Override
     public Optional<String> getRegisterTrackingId() {
         return trackingId;
@@ -209,7 +222,7 @@ public class RegisterContext implements
 
     @Override
     public List<String> getIndexes() {
-        return indexes;
+        return indexFunctionConfigs.stream().map(IndexFunctionConfiguration::getName).collect(toList());
     }
 
     public String getSchema() {

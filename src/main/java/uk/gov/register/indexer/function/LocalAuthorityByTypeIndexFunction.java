@@ -7,14 +7,13 @@ import uk.gov.register.util.HashValue;
 import java.util.Set;
 
 public class LocalAuthorityByTypeIndexFunction extends BaseIndexFunction {
-    private final Register register;
 
-    public LocalAuthorityByTypeIndexFunction(Register register) {
-        this.register = register;
+    public LocalAuthorityByTypeIndexFunction(String name) {
+        super(name);
     }
 
     @Override
-    protected void execute(String key, HashValue itemHash, Set<IndexKeyItemPair> result) {
+    protected void execute(Register register, String key, HashValue itemHash, Set<IndexKeyItemPair> result) {
         register.getItemBySha256(itemHash).ifPresent(i -> {
             if (i.getValue("local-authority-type").isPresent()) {
                 result.add(new IndexKeyItemPair(i.getValue("local-authority-type").get(), i.getSha256hex()));
@@ -22,8 +21,4 @@ public class LocalAuthorityByTypeIndexFunction extends BaseIndexFunction {
         });
     }
 
-    @Override
-    public String getName() {
-        return "local-authority-by-type";
-    }
 }

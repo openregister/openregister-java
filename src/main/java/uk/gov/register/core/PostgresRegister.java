@@ -6,16 +6,17 @@ import uk.gov.register.db.IndexDAO;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.indexer.IndexDriver;
-import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
 import uk.gov.register.indexer.function.IndexFunction;
-import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -35,7 +36,8 @@ public class PostgresRegister implements Register {
                             RecordIndex recordIndex,
                             IndexDAO indexDAO,
                             IndexQueryDAO indexQueryDAO,
-                            DerivationRecordIndex derivationRecordIndex) {
+                            DerivationRecordIndex derivationRecordIndex,
+                            List<IndexFunction> indexFunctions) {
         registerName = registerMetadata.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
@@ -44,15 +46,7 @@ public class PostgresRegister implements Register {
         this.registerFieldsConfiguration = registerFieldsConfiguration;
         this.registerMetadata = registerMetadata;
         this.indexDriver = new IndexDriver(this, indexDAO, indexQueryDAO);
-
-        this.indexFunctions = new ArrayList<>();
-
-        if (this.registerMetadata.getRegisterName().value().equals("country")) {
-            this.indexFunctions.add(new CurrentCountriesIndexFunction(this));
-        }
-        else if (this.registerMetadata.getRegisterName().value().equals("local-authority-eng")) {
-            this.indexFunctions.add(new LocalAuthorityByTypeIndexFunction(this));
-        }
+        this.indexFunctions = indexFunctions;
     }
 
     @Override
@@ -65,7 +59,7 @@ public class PostgresRegister implements Register {
         entryLog.appendEntry(entry);
 
         for (IndexFunction indexFunction : indexFunctions) {
-            indexDriver.indexEntry(entry, indexFunction);
+            indexDriver.indexEntry(this, entry, indexFunction);
         }
 
         recordIndex.updateRecordIndex(entry);
