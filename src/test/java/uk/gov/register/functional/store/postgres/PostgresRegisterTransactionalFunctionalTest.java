@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.Entry;
@@ -54,7 +55,7 @@ import org.skife.jdbi.v2.Handle;
 public class PostgresRegisterTransactionalFunctionalTest {
 
     @Rule
-    public TestRule wipe = new WipeDatabaseRule("address");
+    public TestRule wipe = new WipeDatabaseRule(address);
     private TestItemCommandDAO testItemDAO;
     private DBI dbi;
     private TestEntryDAO testEntryDAO;
@@ -63,7 +64,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     @Before
     public void setUp() throws Exception {
-        dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=PGRegisterTxnFT");
+        dbi = new DBI(address.getDatabaseConnectionString("PGRegisterTxnFT"));
         dbi.registerContainerFactory(new OptionalContainerFactory());
         handle = dbi.open();
         testItemDAO = handle.attach(TestItemCommandDAO.class);

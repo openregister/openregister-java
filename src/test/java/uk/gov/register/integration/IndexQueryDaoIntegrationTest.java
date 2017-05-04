@@ -23,6 +23,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
+import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.util.HashValue.decode;
 
 /**
@@ -78,12 +79,12 @@ public class IndexQueryDaoIntegrationTest {
     private Instant timestamp = Instant.ofEpochMilli(1490610633L * 1000L);
 
     @Rule
-    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule("address");
+    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(address);
 
     @Before
     public void setup() {
         MDC.put("register", "address");
-        dbi = new DBI("jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=PGRegisterTxnFT");
+        dbi = new DBI(address.getDatabaseConnectionString("PGRegisterTxnFT"));
         dbi.registerContainerFactory(new OptionalContainerFactory());
         handle = dbi.open();
         dao = handle.attach(IndexQueryDAO.class);
