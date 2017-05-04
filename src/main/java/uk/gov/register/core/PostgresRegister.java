@@ -133,11 +133,6 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public boolean containsField(String fieldName) {
-        return registerFieldsConfiguration.containsField(fieldName);
-    }
-
-    @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
         if (!registerFieldsConfiguration.containsField(key)) {
             throw new NoSuchFieldException(registerName, key);
