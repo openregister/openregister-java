@@ -65,12 +65,6 @@ public class PostgresRegister implements Register {
         recordIndex.updateRecordIndex(entry);
     }
 
-    public void commit() {
-        itemStore.checkpoint();
-        entryLog.checkpoint();
-        recordIndex.checkpoint();
-    }
-
     @Override
     public Optional<Entry> getEntry(int entryNumber) {
         return entryLog.getEntry(entryNumber);

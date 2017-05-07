@@ -1,13 +1,14 @@
 package uk.gov.register.db;
 
 import uk.gov.register.core.Item;
+import uk.gov.register.store.DataAccessLayer;
 
 import javax.inject.Inject;
 
 public class UnmodifiableItemStore extends AbstractItemStore {
     @Inject
-    public UnmodifiableItemStore(ItemQueryDAO itemQueryDAO) {
-        super(itemQueryDAO);
+    public UnmodifiableItemStore(DataAccessLayer dataAccessLayer) {
+        super(dataAccessLayer);
     }
 
     @Override

@@ -44,7 +44,7 @@ public class PostgresRegisterTest {
     @Before
     public void setup() {
         register = new PostgresRegister(registerMetadata("register"), registerFieldsConfiguration,
-                inMemoryEntryLog(entryDAO, indexQueryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
+                inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
                 indexDAO, indexQueryDAO, derivationRecordIndex, indexFunctions);
     }
 

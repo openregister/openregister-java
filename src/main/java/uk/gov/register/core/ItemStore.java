@@ -16,7 +16,4 @@ public interface ItemStore {
     Iterator<Item> getIterator();
 
     Iterator<Item> getIterator(int start, int end);
-
-    // for transactional item stores, flushes added items out to database
-    void checkpoint();
 }

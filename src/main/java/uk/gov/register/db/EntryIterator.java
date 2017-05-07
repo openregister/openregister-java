@@ -28,6 +28,10 @@ public class EntryIterator implements AutoCloseable {
         return iterator.next();
     }
 
+    public int getTotalEntries() {
+        return entryDAO.getTotalEntries();
+    }
+
     @Override
     public void close() {
         if (iterator != null) {

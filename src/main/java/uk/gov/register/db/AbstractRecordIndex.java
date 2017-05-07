@@ -3,46 +3,41 @@ package uk.gov.register.db;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RecordIndex;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.store.DataAccessLayer;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractRecordIndex implements RecordIndex {
-    protected final RecordQueryDAO recordQueryDAO;
+    protected final DataAccessLayer dataAccessLayer;
 
-    public AbstractRecordIndex(RecordQueryDAO recordQueryDAO) {
-        this.recordQueryDAO = recordQueryDAO;
+    public AbstractRecordIndex(DataAccessLayer dataAccessLayer) {
+        this.dataAccessLayer = dataAccessLayer;
     }
 
     @Override
     public Optional<Record> getRecord(String key) {
-        checkpoint();
-        return recordQueryDAO.findByPrimaryKey(key);
+        return dataAccessLayer.getRecord(key);
     }
 
     @Override
     public int getTotalRecords() {
-        checkpoint();
-        return recordQueryDAO.getTotalRecords();
+        return dataAccessLayer.getTotalRecords();
     }
 
     @Override
     public List<Record> getRecords(int limit, int offset) {
-        checkpoint();
-        return recordQueryDAO.getRecords(limit, offset);
+        return dataAccessLayer.getRecords(limit, offset);
     }
 
     @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
-        checkpoint();
-        return recordQueryDAO.findMax100RecordsByKeyValue(key, value);
+        return dataAccessLayer.findMax100RecordsByKeyValue(key, value);
     }
 
     @Override
     public Collection<Entry> findAllEntriesOfRecordBy(String key) {
-        checkpoint();
-        return recordQueryDAO.findAllEntriesOfRecordBy(key);
+        return dataAccessLayer.findAllEntriesOfRecordBy(key);
     }
 }
