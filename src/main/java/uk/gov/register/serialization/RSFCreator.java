@@ -54,6 +54,7 @@ public class RSFCreator {
 
     public RegisterSerialisationFormat create(Register register, String indexName) {
         Iterator<?> iterators = Iterators.concat(
+                Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(),
                 register.getDerivationEntryIterator(indexName));
 
