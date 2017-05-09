@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.google.common.base.Predicates.equalTo;
@@ -70,7 +71,16 @@ public class RegisterMetadata {
 
     @JsonIgnore
     public Iterable<String> getNonPrimaryFields() {
-        return Iterables.filter(fields, not(equalTo(registerName.value())));
+        if (!getPrimaryKeyField().isPresent()) {
+            return fields;
+        }
+
+        return Iterables.filter(fields, not(equalTo(getPrimaryKeyField().get())));
+    }
+
+    @JsonIgnore
+    public Optional<String> getPrimaryKeyField() {
+        return fields.stream().filter(this::isFieldPrimaryKey).findFirst();
     }
 
     public List<String> getFields() {
@@ -87,6 +97,10 @@ public class RegisterMetadata {
 
     public String getText() {
         return text;
+    }
+
+    private boolean isFieldPrimaryKey(String field) {
+        return field.equals(registerName.value());
     }
 
     @Override

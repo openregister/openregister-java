@@ -9,6 +9,8 @@ import io.dropwizard.jackson.Jackson;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.nullValue;
@@ -29,12 +31,40 @@ public class RegisterMetadataTest {
     }
 
     @Test
+    public void getPrimaryKeyField_returnsFieldWithSameNameAsRegister() {
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+
+        Optional<String> primaryField = registerMetadata.getPrimaryKeyField();
+
+        assertThat(primaryField.isPresent(), is(true));
+        assertThat(primaryField.get(), is("company"));
+    }
+
+    @Test
+    public void getPrimaryKeyField_returnsEmptyIfNoFieldExistsWithSameNameAsRegister() {
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company-index"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+
+        Optional<String> primaryField = registerMetadata.getPrimaryKeyField();
+
+        assertThat(primaryField.isPresent(), is(false));
+    }
+
+    @Test
     public void getNonPrimaryFields_returnsFieldsOtherThanPrimaryInConfiguredOrder() throws Exception {
         RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
 
         Iterable<String> fields = registerMetadata.getNonPrimaryFields();
 
         assertThat(fields, IsIterableContainingInOrder.contains("address", "secretary", "company-status", "company-accounts-category"));
+    }
+
+    @Test
+    public void getNonPrimaryFields_returnsAllFieldsIfNoPrimaryKeyField() throws Exception {
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company-index"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+
+        Iterable<String> fields = registerMetadata.getNonPrimaryFields();
+
+        assertThat(fields, IsIterableContainingInOrder.contains("address", "company", "secretary", "company-status", "company-accounts-category"));
     }
 
     @Test
