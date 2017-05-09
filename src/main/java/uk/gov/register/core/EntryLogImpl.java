@@ -1,8 +1,6 @@
-package uk.gov.register.db;
+package uk.gov.register.core;
 
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.EntryLog;
-import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.db.EntryMerkleLeafStore;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
@@ -23,13 +21,18 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-public abstract class AbstractEntryLog implements EntryLog {
+public class EntryLogImpl implements EntryLog {
     private final DataAccessLayer dataAccessLayer;
     private final MemoizationStore memoizationStore;
 
-    protected AbstractEntryLog(DataAccessLayer dataAccessLayer, MemoizationStore memoizationStore) {
+    public EntryLogImpl(DataAccessLayer dataAccessLayer, MemoizationStore memoizationStore) {
         this.dataAccessLayer = dataAccessLayer;
         this.memoizationStore = memoizationStore;
+    }
+
+    @Override
+    public void appendEntry(Entry entry) {
+        dataAccessLayer.appendEntry(entry);
     }
 
     @Override

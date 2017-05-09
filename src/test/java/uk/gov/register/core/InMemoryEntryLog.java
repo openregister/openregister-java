@@ -7,7 +7,7 @@ import uk.gov.register.db.*;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
-public class InMemoryEntryLog extends AbstractEntryLog {
+public class InMemoryEntryLog extends EntryLogImpl {
     private final EntryDAO entryDAO;
 
     public InMemoryEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO) {

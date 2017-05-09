@@ -1,19 +1,21 @@
-package uk.gov.register.db;
+package uk.gov.register.core;
 
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Record;
-import uk.gov.register.core.RecordIndex;
 import uk.gov.register.store.DataAccessLayer;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractRecordIndex implements RecordIndex {
+public class RecordIndexImpl implements RecordIndex {
     protected final DataAccessLayer dataAccessLayer;
 
-    public AbstractRecordIndex(DataAccessLayer dataAccessLayer) {
+    public RecordIndexImpl(DataAccessLayer dataAccessLayer) {
         this.dataAccessLayer = dataAccessLayer;
+    }
+
+    @Override
+    public void updateRecordIndex(Entry entry) {
+        dataAccessLayer.updateRecordIndex(entry);
     }
 
     @Override

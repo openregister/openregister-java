@@ -7,14 +7,14 @@ import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.mock;
 
-public class InMemoryItemStore extends AbstractItemStore {
+public class InMemoryItemStore extends ItemStoreImpl {
     private final ItemDAO itemDAO;
     private final ItemValidator itemValidator;
 
     public InMemoryItemStore(ItemQueryDAO itemQueryDAO, ItemDAO itemDAO, ItemValidator itemValidator) {
         super(new PostgresDataAccessLayer(mock(EntryQueryDAO.class), mock(IndexQueryDAO.class), mock(EntryDAO.class),
                 mock(EntryItemDAO.class), itemQueryDAO, itemDAO,
-                mock(RecordQueryDAO.class), mock(CurrentKeysUpdateDAO.class)));
+                mock(RecordQueryDAO.class), mock(CurrentKeysUpdateDAO.class)), itemValidator);
         this.itemDAO = itemDAO;
         this.itemValidator = itemValidator;
     }

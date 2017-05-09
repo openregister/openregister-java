@@ -11,26 +11,8 @@ import static org.mockito.Mockito.when;
 import static uk.gov.register.functional.app.TestRegister.address;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.PostgresRegister;
-import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.db.CurrentKeysUpdateDAO;
-import uk.gov.register.db.DerivationRecordIndex;
-import uk.gov.register.db.EntryDAO;
-import uk.gov.register.db.EntryItemDAO;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.IndexDAO;
-import uk.gov.register.db.IndexQueryDAO;
-import uk.gov.register.db.ItemDAO;
-import uk.gov.register.db.ItemQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.db.TransactionalEntryLog;
-import uk.gov.register.db.TransactionalItemStore;
-import uk.gov.register.db.TransactionalRecordIndex;
+import uk.gov.register.core.*;
+import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
@@ -172,12 +154,12 @@ public class PostgresRegisterTransactionalFunctionalTest {
     }
 
     private PostgresRegister getPostgresRegister(Handle handle, DataAccessLayer dataAccessLayer) {
-        TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), dataAccessLayer);
-        TransactionalItemStore itemStore = new TransactionalItemStore(dataAccessLayer, mock(ItemValidator.class));
+        EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
+        ItemStore itemStore = new ItemStoreImpl(dataAccessLayer, mock(ItemValidator.class));
         RegisterMetadata registerData = mock(RegisterMetadata.class);
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
         return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore,
-                new TransactionalRecordIndex(dataAccessLayer),
+                new RecordIndexImpl(dataAccessLayer),
                 handle.attach(IndexDAO.class), handle.attach(IndexQueryDAO.class), derivationRecordIndex, Collections.emptyList());
     }
 
