@@ -46,7 +46,7 @@ public class DerivationRecordResource {
         ensureIndexIsAccessible(indexName);
 
         return register.getDerivationRecord(key, indexName)
-                .map(r -> viewFactory.getDerivationRecordMediaView(r, indexName))
+                .map(r -> viewFactory.getDerivationRecordMediaView(r))
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -112,7 +112,7 @@ public class DerivationRecordResource {
 
     private RecordsView getRecordsView(int limit, int offset, String indexName) {
         List<Record> records = register.getDerivationRecords(limit, offset, indexName);
-        List<RecordView> recordViews = records.stream().map(r -> viewFactory.getDerivationRecordMediaView(r,indexName))
+        List<RecordView> recordViews = records.stream().map(r -> viewFactory.getDerivationRecordMediaView(r))
                 .collect(toList());
         return viewFactory.getDerivationRecordsMediaView(recordViews);
     }

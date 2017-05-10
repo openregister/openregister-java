@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<body>
+<div th:fragment="record-table-item-cells(item, fieldNames, resolveAll, firstColumnLink)">
+  <th:block th:each="fieldName, iterStatus : ${fieldNames}">
+    <td th:if="${item.content.containsKey(fieldName)}" class="field-list field-list-in-table">
+      <ul th:if="${item.content.get(fieldName).isList()}">
+        <th:block th:each="fieldValue: ${item.content.get(fieldName)}"
+                  th:with="useFirstColumnLink = ${iterStatus.index == 0 and firstColumnLink != null}, resolveRegisterLink = ${resolveAll and fieldValue.isLink()}">
+          <li th:if="${resolveRegisterLink or useFirstColumnLink}">
+            <a th:href="${resolveRegisterLink} ? ${linkResolver.resolve(fieldValue)} : ${firstColumnLink}" th:text="${fieldValue.value}"></a>
+          </li>
+          <li th:unless="${resolveRegisterLink or useFirstColumnLink}" th:text="${fieldValue.value}"></li>
+        </th:block>
+      </ul>
+      <th:block th:unless="${item.content.get(fieldName).isList()}" th:with="fieldValue=${item.content.get(fieldName)}, useFirstColumnLink = ${iterStatus.index == 0 and firstColumnLink != null}, resolveRegisterLink = ${resolveAll and item.content.get(fieldName).isLink()}">
+        <a th:if="${resolveRegisterLink or useFirstColumnLink}" th:href="${resolveRegisterLink} ? ${linkResolver.resolve(fieldValue)} : ${firstColumnLink}"
+           th:text="${fieldValue.value}"></a>
+        <p th:unless="${resolveRegisterLink or useFirstColumnLink}" th:text="${fieldValue.value}"></p>
+      </th:block>
+    </td>
+    <td th:unless="${item.content.get(fieldName)}"></td>
+  </th:block>
+</div>
+</body>
+</html>

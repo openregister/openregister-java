@@ -18,7 +18,6 @@ public class RecordsView implements CsvRepresentationView {
     private List<RecordView> records;
     private final boolean isRegister;
 
-
     private Iterable<Field> fields;
 
     public RecordsView(List<RecordView> records, Iterable<Field> fields, boolean isRegister) {
@@ -59,7 +58,11 @@ public class RecordsView implements CsvRepresentationView {
         return fields;
     }
 
-    public boolean isRegister() {
-        return isRegister;
+    @SuppressWarnings("unused, used by template")
+    public boolean displayEntryKey() {
+        return !isRegister;
     }
+
+    @SuppressWarnings("unused, used by template")
+    public boolean resolveLinks() { return false; }
 }

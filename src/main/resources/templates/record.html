@@ -17,7 +17,7 @@
         <li>
           <a href="/records">Records</a>
         </li>
-        <li th:utext="${'Record ' + content.primaryKey}"></li>
+        <li th:utext="${'Record ' + content.entryKey}"></li>
       </ol>
     </div>
 
@@ -25,11 +25,11 @@
       <div class="column-two-thirds">
         <h1 class="heading-large">
           Record
-          <th:block th:utext="${content.primaryKey}"></th:block>
+          <th:block th:utext="${content.entryKey}"></th:block>
         </h1>
         <p th:if="${#bools.isTrue(registerId.value() == 'register')}">
-          <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.primaryKey))}"
-             th:utext="${'View ' + content.primaryKey + ' register'}">View this register.</a>
+          <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.entryKey))}"
+             th:utext="${'View ' + content.entryKey + ' register'}">View this register.</a>
         </p>
         <div th:include="fragments/data-formats.html::data-formats"></div>
         <details role="group">
@@ -45,7 +45,7 @@
     </div>
     <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.asList()})" class="table-wrapper"></div>
     <p>
-      <a th:href="${'/record/' + content.primaryKey +'/entries'}">View all versions of this record</a>
+      <a th:href="${'/record/' + content.entryKey +'/entries'}">View all versions of this record</a>
     </p>
 
   </main>

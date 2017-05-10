@@ -21,26 +21,14 @@ public class RecordView implements CsvRepresentationView {
     private final Entry entry;
     private final Collection<ItemView> itemViews;
     private final Iterable<Field> fields;
-    private final boolean isRegister;
-    private final String path;
 
     public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields) {
         this.entry = entry;
         this.itemViews = itemViews;
         this.fields = fields;
-        this.isRegister = true;
-        this.path = "/record/";
     }
 
-    public RecordView(Entry entry, Collection<ItemView> itemViews, Iterable<Field> fields, String indexName) {
-        this.entry = entry;
-        this.itemViews = itemViews;
-        this.fields = fields;
-        this.isRegister = false;
-        this.path = partialPath(indexName);
-    }
-
-    public String getPrimaryKey() {
+    public String getEntryKey() {
         return entry.getKey();
     }
 
@@ -72,10 +60,6 @@ public class RecordView implements CsvRepresentationView {
         return itemViews.stream().map(iv -> iv.getContent()).collect(Collectors.toSet());
     }
 
-    public String getPath() {
-        return path;
-    }
-
     public List<RecordView> asList(){
         return Arrays.asList(this);
     }
@@ -98,13 +82,11 @@ public class RecordView implements CsvRepresentationView {
         return fields;
     }
 
-    public boolean isRegister() {
-        return isRegister;
+    @SuppressWarnings("unused, used by template")
+    public boolean displayEntryKey() {
+        return false;
     }
 
-    private String partialPath(String indexName){
-        StringJoiner joiner = new StringJoiner("/","/","/");
-        joiner.add("index").add(indexName).add("record");
-        return joiner.toString();
-    }
+    @SuppressWarnings("unused, used by template")
+    public boolean resolveLinks() { return true; }
 }
