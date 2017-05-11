@@ -24,7 +24,7 @@ public class RecordsTurtleWriter extends TurtleRepresentationWriter<RecordsView>
     protected Model rdfModelFor(RecordsView view) {
         Model model = ModelFactory.createDefaultModel();
         RecordTurtleWriter recordTurtleWriter = new RecordTurtleWriter(registerNameProvider, registerResolver);
-        view.getRecords().forEach(r -> model.add(recordTurtleWriter.rdfModelFor(r)));
+        view.getRecords().entrySet().forEach(r -> model.add(recordTurtleWriter.rdfModelFor(r)));
         return model;
     }
 }

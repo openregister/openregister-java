@@ -4,47 +4,54 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.representations.CsvRepresentation;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RecordsView implements CsvRepresentationView {
-    private List<RecordView> records;
-    private final boolean isRegister;
+    private final boolean displayEntryKeyColumn;
+    private final boolean resolveAllItemLinks;
 
-    private Iterable<Field> fields;
+    private final Iterable<Field> fields;
+    private final Map<Entry, List<ItemView>> recordMap;
 
-    public RecordsView(List<RecordView> records, Iterable<Field> fields, boolean isRegister) {
-        this.records = records;
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+
+    public RecordsView(List<Record> records, Iterable<Field> fields, ItemConverter itemConverter,
+                       boolean resolveAllItemLinks, boolean displayEntryKeyColumn) {
+        this.displayEntryKeyColumn = displayEntryKeyColumn;
+        this.resolveAllItemLinks = resolveAllItemLinks;
         this.fields = fields;
-        this.isRegister = isRegister;
+        this.recordMap = getItemViews(records, itemConverter);
     }
 
-    public RecordsView(List<RecordView> records, Iterable<Field> fields) {
-        this(records, fields, true);
+    public Map<Entry, List<ItemView>> getRecords() {
+        return recordMap;
     }
 
+    public Iterable<Field> getFields() {
+        return fields;
+    }
+
+    @SuppressWarnings("unused, used by JSON renderer")
     @JsonValue
-    public Map<String, JsonNode> recordsJson() {
+    public Map<String, JsonNode> getNestedRecordJson() {
         Map<String, JsonNode> records = new HashMap<>();
-        getRecords().forEach(recordView -> records.putAll(recordView.getRecordJson()));
-        return records;
-    }
+        recordMap.entrySet().forEach(record -> {
+            ObjectNode jsonNode = getEntryJson(record.getKey());
+            ArrayNode items = jsonNode.putArray("item");
+            record.getValue().forEach(item -> items.add(getItemJson(item)));
+            records.put(record.getKey().getKey(), jsonNode);
+        });
 
-    ArrayNode getFlatRecordsJson() {
-        ObjectMapper objectMapper = Jackson.newObjectMapper();
-        ArrayNode arrayNode = objectMapper.createArrayNode();
-        records.forEach( rv -> arrayNode.addAll( rv.getFlatRecordJson() ));
-        return arrayNode;
-    }
-
-    public List<RecordView> getRecords() {
         return records;
     }
 
@@ -54,15 +61,44 @@ public class RecordsView implements CsvRepresentationView {
         return new CsvRepresentation<>(Record.csvSchema(fieldNames), getFlatRecordsJson());
     }
 
-    public Iterable<Field> getFields() {
-        return fields;
+    protected ArrayNode getFlatRecordsJson() {
+        ArrayNode flatRecords = objectMapper.createArrayNode();
+        recordMap.entrySet().forEach(record -> record.getValue().forEach(item -> {
+            ObjectNode jsonNodes = getEntryJson(record.getKey());
+            jsonNodes.setAll(getItemJson(item));
+            flatRecords.add(jsonNodes);
+        }));
+
+        return flatRecords;
     }
 
     @SuppressWarnings("unused, used by template")
-    public boolean displayEntryKey() {
-        return !isRegister;
+    public boolean displayEntryKeyColumn() {
+        return displayEntryKeyColumn;
     }
 
     @SuppressWarnings("unused, used by template")
-    public boolean resolveLinks() { return false; }
+    public boolean resolveAllItemLinks() {
+        return resolveAllItemLinks;
+    }
+
+    private Map<Entry, List<ItemView>> getItemViews(Collection<Record> records, ItemConverter itemConverter) {
+        Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
+        records.forEach(record ->
+                map.put(record.getEntry(), record.getItems().stream().map(item ->
+                        new ItemView(item.getSha256hex(), itemConverter.convertItem(item), fields))
+                        .collect(Collectors.toList())));
+        return map;
+    }
+
+    private ObjectNode getEntryJson(Entry entry) {
+        ObjectNode jsonNode = objectMapper.convertValue(entry, ObjectNode.class);
+        jsonNode.remove("item-hash");
+        return jsonNode;
+    }
+
+    private ObjectNode getItemJson(ItemView itemView) {
+        ObjectNode jsonNode = objectMapper.convertValue(itemView, ObjectNode.class);
+        return jsonNode;
+    }
 }

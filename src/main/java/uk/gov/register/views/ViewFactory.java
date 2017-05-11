@@ -9,7 +9,6 @@ import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterLinkService;
-import uk.gov.register.util.HashValue;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -125,7 +124,7 @@ public class ViewFactory {
         return getAttributionView("record.html", record);
     }
 
-    public PaginatedView<RecordsView> getRecordListView(Pagination pagination, RecordsView recordsView) {
+    public PaginatedView<RecordsView> getRecordsView(Pagination pagination, RecordsView recordsView) {
         return new PaginatedView<>("records.html", requestContext, getRegistry(), getBranding(), register.get(), registerTrackingConfiguration.get(), registerResolver, pagination,
                 recordsView);
     }
@@ -135,23 +134,15 @@ public class ViewFactory {
     }
 
     public RecordView getRecordMediaView(Record record) {
-        Map<HashValue, Item> itemMap = record.getItems();
-        Set<ItemView> itemViews = itemMap.values().stream().map(this::getItemMediaView).collect(Collectors.toSet());
-        return new RecordView(record.getEntry(), itemViews , getFields());
+        return new RecordView(record, getFields(), itemConverter);
     }
 
-    public RecordView getDerivationRecordMediaView(Record record) {
-        Map<HashValue, Item> itemMap = record.getItems();
-        Set<ItemView> itemViews = itemMap.values().stream().map(this::getItemMediaView).collect(Collectors.toSet());
-        return new RecordView(record.getEntry(), itemViews , getFields());
+    public RecordsView getRecordsMediaView(List<Record> records) {
+        return new RecordsView(records, getFields(), itemConverter, false, false);
     }
 
-    public RecordsView getRecordsMediaView(List<RecordView> recordViews) {
-        return new RecordsView(recordViews, getFields());
-    }
-
-    public RecordsView getDerivationRecordsMediaView(List<RecordView> recordViews) {
-        return new RecordsView(recordViews, getFields(), false);
+    public RecordsView getIndexRecordsMediaView(List<Record> records) {
+        return new RecordsView(records, getFields(), itemConverter, false, true);
     }
 
     private PublicBody getRegistry() {

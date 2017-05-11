@@ -17,8 +17,6 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
-
 @Path("/")
 public class DerivationRecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
@@ -46,7 +44,7 @@ public class DerivationRecordResource {
         ensureIndexIsAccessible(indexName);
 
         return register.getDerivationRecord(key, indexName)
-                .map(r -> viewFactory.getDerivationRecordMediaView(r))
+                .map(r -> viewFactory.getRecordMediaView(r))
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -82,7 +80,7 @@ public class DerivationRecordResource {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize, indexName);
         setContentDisposition();
         RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset(), indexName);
-        return viewFactory.getRecordListView(pagination, recordsView);
+        return viewFactory.getRecordsView(pagination, recordsView);
     }
 
     protected void ensureIndexIsAccessible(String indexName) {
@@ -112,10 +110,6 @@ public class DerivationRecordResource {
 
     private RecordsView getRecordsView(int limit, int offset, String indexName) {
         List<Record> records = register.getDerivationRecords(limit, offset, indexName);
-        List<RecordView> recordViews = records.stream().map(r -> viewFactory.getDerivationRecordMediaView(r))
-                .collect(toList());
-        return viewFactory.getDerivationRecordsMediaView(recordViews);
+        return viewFactory.getIndexRecordsMediaView(records);
     }
-
-
 }

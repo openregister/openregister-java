@@ -6,7 +6,7 @@
          th:with="itemFieldNames = ${orderedFieldNames}">
     <thead>
     <tr>
-      <th scope="col" th:if="${view.displayEntryKey()}">key</th>
+      <th scope="col" th:if="${view.displayEntryKeyColumn()}">key</th>
       <th scope="col" th:each="fieldName : ${itemFieldNames}">
         <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
            th:text="${fieldName}"></a>
@@ -15,11 +15,11 @@
     </thead>
     <tbody>
     <th:block th:each="record : ${records}">
-      <tr th:each="item : ${record.itemViews}" th:with="firstItemColumnLink = ${view.displayEntryKey()} ? ${null} : ${'../record/' + record.entryKey}">
-        <td th:if="${view.displayEntryKey()}">
-          <a th:href="${'./record/' + record.entryKey}" th:text="${record.entryKey}"></a>
+      <tr th:each="item : ${record.value}" th:with="firstItemColumnLink = ${view.displayEntryKeyColumn()} ? ${null} : ${'../record/' + record.key.key}">
+        <td th:if="${view.displayEntryKeyColumn()}">
+          <a th:href="${'./record/' + record.key.key}" th:text="${record.key.key}"></a>
         </td>
-        <div th:include="fragments/record-table-item-cells.html :: record-table-item-cells (item = ${item}, fieldNames = ${itemFieldNames}, resolveAll = ${view.resolveLinks()}, firstColumnLink = ${firstItemColumnLink})"></div>
+        <div th:include="fragments/record-table-item-cells.html :: record-table-item-cells (item = ${item}, fieldNames = ${itemFieldNames}, resolveAllLinks = ${view.resolveAllItemLinks()}, firstColumnLink = ${firstItemColumnLink})"></div>
       </tr>
     </th:block>
     </tbody>
