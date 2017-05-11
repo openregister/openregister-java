@@ -1,10 +1,12 @@
 package uk.gov.register.views.representations;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
 import uk.gov.register.core.*;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ItemView;
@@ -15,12 +17,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.List;
+import java.util.Arrays;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CsvWriterTest {
 
@@ -112,10 +115,24 @@ public class CsvWriterTest {
 
     @Test
     public void writeEntriesTo_writeRecordView() throws Exception {
+        ObjectMapper objectMapper = Jackson.newObjectMapper();
+
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "key1");
-        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "aaa"), ImmutableMap.of("key1", new StringValue("item1")), emptyList());
-        ItemView itemView2 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "bbb"), ImmutableMap.of("key1", new StringValue("item2")), emptyList());
-        RecordView recordView = new RecordView(entry, Lists.newArrayList(itemView, itemView2), fields);
+        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"key1\":\"item1\"}"));
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"key1\":\"item2\"}"));
+        Record record = new Record(entry, Arrays.asList(item, item2));
+
+        ItemConverter itemConverter = mock(ItemConverter.class);
+        when(itemConverter.convertItem(item)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
+        when(itemConverter.convertItem(item2)).thenReturn(ImmutableMap.of("key1", new StringValue("item2")));
+
+        ImmutableList<Field> fields = ImmutableList.of(
+                new Field("key1", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                new Field("key2", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                new Field("key3", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                new Field("key4", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+
+        RecordView recordView = new RecordView(record, fields, itemConverter);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -133,35 +150,32 @@ public class CsvWriterTest {
 
     @Test
     public void writeEntriesTo_writeRecordsView() throws Exception {
+        ObjectMapper objectMapper = Jackson.newObjectMapper();
+
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
+
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123");
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456");
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
+        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "ef"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"baz\"}"));
+        Record record1 = new Record(entry1, Arrays.asList(item1));
+        Record record2 = new Record(entry2, Arrays.asList(item2, item3));
+
+        ItemConverter itemConverter = mock(ItemConverter.class);
+        when(itemConverter.convertItem(item1)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+                "street", new StringValue("foo")));
+        when(itemConverter.convertItem(item2)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+                "street", new StringValue("bar")));
+        when(itemConverter.convertItem(item3)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+                "street", new StringValue("baz")));
+
         ImmutableList<Field> fields = ImmutableList.of(
                 new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
                 new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
 
-        ItemView itemView1 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"),
-                ImmutableMap.of("address", new StringValue("123"), "street", new StringValue("foo")), fields);
-
-        ItemView itemView2 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "cd"),
-                ImmutableMap.of("address", new StringValue("456"), "street", new StringValue("bar")),
-                fields);
-
-        ItemView itemView3 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ef"),
-                ImmutableMap.of("address", new StringValue("456"), "street", new StringValue("baz")),
-                fields);
-
-        List<RecordView> records = Lists.newArrayList(
-                new RecordView(
-                        new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123"),
-                        Lists.newArrayList(itemView1), fields
-                ),
-                new RecordView(
-                        new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456"),
-                        Lists.newArrayList(itemView2, itemView3), fields
-                )
-        );
-
-        RecordsView recordsView = new RecordsView(records, fields);
+        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fields, itemConverter, false, false);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

@@ -11,12 +11,7 @@ import uk.gov.register.views.representations.ExtraMediaType;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
+import java.util.*;
 
 @Path("/")
 public class RecordResource {
@@ -25,16 +20,14 @@ public class RecordResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
     private final RegisterName registerPrimaryKey;
-    private final ItemConverter itemConverter;
 
     @Inject
-    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
+    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
         this.registerPrimaryKey = register.getRegisterName();
-        this.itemConverter = itemConverter;
     }
 
     @GET
@@ -91,7 +84,7 @@ public class RecordResource {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         Pagination pagination
                 = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
-        return viewFactory.getRecordListView(pagination, facetedRecords(key, value));
+        return viewFactory.getRecordsView(pagination, facetedRecords(key, value));
     }
 
     @GET
@@ -100,8 +93,7 @@ public class RecordResource {
     @Timed
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
-        return viewFactory.getRecordsMediaView(recordViews);
+        return viewFactory.getRecordsMediaView(records);
     }
 
     @GET
@@ -112,7 +104,7 @@ public class RecordResource {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
         setContentDisposition();
         RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset());
-        return viewFactory.getRecordListView(pagination, recordsView);
+        return viewFactory.getRecordsView(pagination, recordsView);
     }
 
     @GET
@@ -146,7 +138,6 @@ public class RecordResource {
 
     private RecordsView getRecordsView(int limit, int offset) {
         List<Record> records = register.getRecords(limit, offset);
-        List<RecordView> recordViews = records.stream().map(viewFactory::getRecordMediaView).collect(toList());
-        return viewFactory.getRecordsMediaView(recordViews);
+        return viewFactory.getRecordsMediaView(records);
     }
 }

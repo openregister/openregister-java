@@ -1,32 +1,28 @@
 package uk.gov.register.core;
 
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import uk.gov.register.util.HashValue;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class Record {
     private final Entry entry;
-    private final Map<HashValue, Item> items = new HashMap<>();
+    private final List<Item> items = new ArrayList<>();
 
     public Record(Entry entry, Item item) {
         this.entry = entry;
-        this.items.put(item.getSha256hex(), item);
+        this.items.add(item);
     }
 
     public Record(Entry entry, Iterable<Item> items) {
         this.entry = entry;
-        items.forEach(i -> this.items.put(i.getSha256hex(), i));
+        items.forEach(i -> this.items.add(i));
     }
 
     public Entry getEntry() {
         return entry;
     }
 
-    public Map<HashValue, Item> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
@@ -47,14 +43,12 @@ public class Record {
 
         Record record = (Record) o;
 
-        if (!entry.equals(record.entry)) return false;
-        return items.equals(record.items);
+        return entry.equals(record.entry);
     }
 
     @Override
     public int hashCode() {
         int result = entry.hashCode();
-        result = 31 * result + items.hashCode();
         return result;
     }
 }

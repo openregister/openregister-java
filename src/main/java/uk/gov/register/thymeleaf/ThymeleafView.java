@@ -14,6 +14,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class ThymeleafView extends View {
@@ -75,6 +77,14 @@ public class ThymeleafView extends View {
         return Optional.ofNullable(getRegister().getCopyright()).map(
                 markdownProcessor::markdown
         );
+    }
+
+    @SuppressWarnings("unused, used by templates")
+    public List<String> getOrderedFieldNames() {
+        List<String> orderedFieldNames = new ArrayList<>();
+        getRegister().getPrimaryKeyField().ifPresent(orderedFieldNames::add);
+        getRegister().getNonPrimaryFields().forEach(orderedFieldNames::add);
+        return orderedFieldNames;
     }
 
     public ServletContext getServletContext() {

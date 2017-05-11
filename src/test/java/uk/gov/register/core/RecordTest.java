@@ -15,6 +15,7 @@ import static org.hamcrest.core.Is.is;
 public class RecordTest {
     private final HashValue hash1 = new HashValue(HashingAlgorithm.SHA256, "hash1");
     private final HashValue hash2 = new HashValue(HashingAlgorithm.SHA256, "hash2");
+    private final HashValue hash3 = new HashValue(HashingAlgorithm.SHA256, "hash3");
 
     private final Item item1 = getItem("{\"key1\":\"value1\"}");
     private final Item item2 = getItem("{\"key2\":\"value2\"}");
@@ -74,7 +75,7 @@ public class RecordTest {
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key"),
                 Arrays.asList(item1, item2));
         Record record2 = new Record(
-                new Entry(1, Arrays.asList(hash2, hash1), Instant.parse("2017-03-10T00:00:00Z"), "key"),
+                new Entry(1, Arrays.asList(hash2, hash1, hash3), Instant.parse("2017-03-10T00:00:00Z"), "key"),
                 Arrays.asList(item2, item1, item3));
 
         assertThat(record1.equals(record2), is(false));
@@ -86,7 +87,7 @@ public class RecordTest {
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key"),
                 Arrays.asList(item1, item2));
         Record record2 = new Record(
-                new Entry(1, Arrays.asList(hash2, hash1), Instant.parse("2017-03-10T00:00:00Z"), "key"),
+                new Entry(1, Arrays.asList(hash2, hash1, hash3), Instant.parse("2017-03-10T00:00:00Z"), "key"),
                 Arrays.asList(item2, item1, item3));
 
         assertThat(record1.hashCode(), not(record2.hashCode()));

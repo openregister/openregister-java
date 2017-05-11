@@ -1,31 +1,45 @@
 package uk.gov.register.views;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
-import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Arrays;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RecordViewTest {
-    @Test
-    public void recordJsonRepresentation_isJsonOfEntryAndItemContent() throws IOException, JSONException {
-        ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private RecordView recordView;
 
+    @Before
+    public void setup() throws IOException {
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b");
-        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"), ImmutableMap.of("a", new StringValue("b")), emptyList());
-        ItemView itemView2 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "cd"), ImmutableMap.of("a", new StringValue("d")), emptyList());
-        RecordView recordView = new RecordView(entry, Lists.newArrayList(itemView, itemView2), emptyList());
+        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}"));
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"a\":\"d\"}"));
+        Record record = new Record(entry, Arrays.asList(item, item2));
 
+        ItemConverter itemConverter = mock(ItemConverter.class);
+        when(itemConverter.convertItem(item)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
+        when(itemConverter.convertItem(item2)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
+
+        recordView = new RecordView(record, emptyList(), itemConverter);
+    }
+
+    @Test
+    public void recordJsonRepresentation_isJsonOfEntryAndItemContent() throws JsonProcessingException {
         String result = objectMapper.writeValueAsString(recordView);
 
         assertThat(result, equalTo("{" +
@@ -39,14 +53,8 @@ public class RecordViewTest {
     }
 
     @Test
-    public void recordJsonRepresentation_isFlatJsonOfEntryAndItemContent() throws IOException, JSONException {
-
-        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b");
-        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ab"), ImmutableMap.of("a", new StringValue("b")), emptyList());
-        ItemView itemView2 = new ItemView(new HashValue(HashingAlgorithm.SHA256, "ad"), ImmutableMap.of("a", new StringValue("d")), emptyList());
-        RecordView recordView = new RecordView(entry, Lists.newArrayList(itemView, itemView2), emptyList());
-
-        String result = recordView.getFlatRecordJson().toString();
+    public void recordJsonRepresentation_isFlatJsonOfEntryAndItemContent() {
+        String result = recordView.getFlatRecordsJson().toString();
 
         assertThat(result, equalTo("[{" +
                 "\"index-entry-number\":\"1\"," +

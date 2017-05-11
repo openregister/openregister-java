@@ -3,15 +3,11 @@
 <body>
 <div th:fragment="record-table(view, records)">
   <table th:if="${!records.isEmpty()}"
-         th:with="fields = ${ view.isRegister()}? ${register.nonPrimaryFields} : ${register.fields}">
+         th:with="itemFieldNames = ${orderedFieldNames}">
     <thead>
     <tr>
-      <th scope="col" th:unless="${ view.isRegister()}">key</th>
-      <th scope="col" th:if="${ view.isRegister()}">
-        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), registerId)}"
-           th:text="${registerId}"></a>
-      </th>
-      <th scope="col" th:each="fieldName : ${fields}">
+      <th scope="col" th:if="${view.displayEntryKeyColumn()}">key</th>
+      <th scope="col" th:each="fieldName : ${itemFieldNames}">
         <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
            th:text="${fieldName}"></a>
       </th>
@@ -19,28 +15,11 @@
     </thead>
     <tbody>
     <th:block th:each="record : ${records}">
-      <tr th:each="item : ${record.itemViews}">
-        <td>
-          <a th:href="${record.path + record.primaryKey}" th:text="${record.primaryKey}"></a>
+      <tr th:each="item : ${record.value}" th:with="firstItemColumnLink = ${view.displayEntryKeyColumn()} ? ${null} : ${'../record/' + record.key.key}">
+        <td th:if="${view.displayEntryKeyColumn()}">
+          <a th:href="${'./record/' + record.key.key}" th:text="${record.key.key}"></a>
         </td>
-        <th:block th:each="fieldName : ${fields}">
-          <td th:if="${item.content.containsKey(fieldName)}" class="field-list field-list-in-table">
-            <ul th:if="${item.content.get(fieldName).isList()}">
-              <th:block th:each="fieldValue: ${item.content.get(fieldName)}">
-                <li th:if="${fieldValue.isLink()}">
-                  <a th:href="${linkResolver.resolve(fieldValue)}" th:text="${fieldValue.value}"></a>
-                </li>
-                <li th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></li>
-              </th:block>
-            </ul>
-            <th:block th:unless="${item.content.get(fieldName).isList()}" th:with="fieldValue=${item.content.get(fieldName)}">
-              <a th:if="${fieldValue.isLink()}" th:href="${linkResolver.resolve(fieldValue)}"
-                 th:text="${fieldValue.value}"></a>
-              <p th:unless="${fieldValue.isLink()}" th:text="${fieldValue.value}"></p>
-            </th:block>
-          </td>
-          <td th:unless="${item.content.get(fieldName)}"></td>
-        </th:block>
+        <div th:include="fragments/record-table-item-cells.html :: record-table-item-cells (item = ${item}, fieldNames = ${itemFieldNames}, resolveAllLinks = ${view.resolveAllItemLinks()}, firstColumnLink = ${firstItemColumnLink})"></div>
       </tr>
     </th:block>
     </tbody>

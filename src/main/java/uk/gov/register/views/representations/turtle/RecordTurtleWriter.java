@@ -9,7 +9,6 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.ItemView;
-import uk.gov.register.views.RecordView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -17,11 +16,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.Provider;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
+public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Entry, List<ItemView>>> {
 
     @Inject
     public RecordTurtleWriter(javax.inject.Provider<RegisterName> registerNameProvider, RegisterResolver registerResolver) {
@@ -29,15 +29,15 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<RecordView> {
     }
 
     @Override
-    protected Model rdfModelFor(RecordView view) {
-        Entry entry = view.getEntry();
-        ItemView itemView = view.getItemViews().stream().findFirst().get();
+    protected Model rdfModelFor(Map.Entry<Entry, List<ItemView>> record) {
+        Entry entry = record.getKey();
+        ItemView itemView = record.getValue().get(0);
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(registerNameProvider, registerResolver).rdfModelFor(entry, false);
         Model itemModel = new ItemTurtleWriter(registerNameProvider, registerResolver).rdfModelFor(itemView);
 
-        Resource recordResource = recordModel.createResource(recordUri(view.getPrimaryKey()).toString());
+        Resource recordResource = recordModel.createResource(recordUri(entry.getKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));
         addPropertiesToResource(recordResource, itemModel.getResource(itemUri(itemView.getItemHash().encode()).toString()));
 
