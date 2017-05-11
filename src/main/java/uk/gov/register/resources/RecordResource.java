@@ -22,7 +22,7 @@ public class RecordResource {
     private final RegisterName registerPrimaryKey;
 
     @Inject
-    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
+    public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
