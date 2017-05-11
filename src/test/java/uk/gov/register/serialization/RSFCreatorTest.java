@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.register.core.*;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
@@ -100,6 +100,27 @@ public class RSFCreatorTest {
                 appendEntry1Command,
                 appendEntry2Command,
                 new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:1231234"))
+        ));
+    }
+
+    @Test
+    public void createRegisterSerialisationFormat_returnsRSFFromEntireIndex() {
+        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getDerivationEntryIterator("index")).thenReturn(Arrays.asList(entry1, entry2).iterator());
+
+        RegisterSerialisationFormat actualRSF = sutCreator.create(register, "index");
+        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
+
+        verify(register, times(1)).getItemIterator();
+        verify(register, times(1)).getDerivationEntryIterator("index");
+
+        assertThat(actualCommands.size(), equalTo(5));
+        assertThat(actualCommands, contains(
+                assertEmptyRootHashCommand,
+                addItem1Command,
+                addItem2Command,
+                appendEntry1Command,
+                appendEntry2Command
         ));
     }
 
