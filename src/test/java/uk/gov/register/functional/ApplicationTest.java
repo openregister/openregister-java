@@ -2,6 +2,7 @@ package uk.gov.register.functional;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HttpHeaders;
+import org.glassfish.jersey.client.ClientProperties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -103,4 +104,20 @@ public class ApplicationTest {
         assertThat(response.getStatus(), equalTo(400));
     }
 
+    @Test
+    public void appRedirectsHttpToHttpsWhenRunningBehindALoadBalancer() {
+        Response response = register.target(address).path("/foo")
+                .queryParam("bar", "baz")
+                .property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .request()
+                .header(HttpHeaders.X_FORWARDED_PROTO, "http")
+                .get();
+
+        String location = response.getHeaderString(HttpHeaders.LOCATION);
+
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(location, startsWith("https://"));
+        assertThat(location, endsWith("/foo?bar=baz"));
+        assertThat(response.getLength(), equalTo(0));
+    }
 }
