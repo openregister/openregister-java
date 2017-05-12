@@ -44,6 +44,8 @@ ext {
 
     thymeleaf = 'org.thymeleaf:thymeleaf:2.1.5.RELEASE'
 
+    dropwizardLogstash = "uk.gov.ida:dropwizard-logstash:1.1.0-2"
+
     // test dependencies
     dropwizardTest = "io.dropwizard:dropwizard-testing:${dropwizard_version}"
     junit = ['junit:junit:4.12','org.hamcrest:hamcrest-library:1.3']

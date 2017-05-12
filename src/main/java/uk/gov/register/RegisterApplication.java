@@ -15,6 +15,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.CommonProperties;
+import uk.gov.ida.dropwizard.logstash.LogstashBundle;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.BasicAuthFilter;
 import uk.gov.register.auth.RegisterAuthDynamicFeature;
@@ -71,6 +72,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 ));
         bootstrap.addBundle(new AssetsBundle("/assets"));
         bootstrap.addBundle(new CorsBundle());
+        bootstrap.addBundle(new LogstashBundle());
 
         System.setProperty("java.protocol.handler.pkgs", "uk.gov.register.protocols");
     }
