@@ -33,28 +33,28 @@ public class RSFFormatterTest {
 
     @Test
     public void parse_parsesAppendEntryCommand() {
-        RegisterCommand parsedCommand = rsfFormatter.parse("append-entry\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
+        RegisterCommand parsedCommand = rsfFormatter.parse("append-entry\tft_openregister_test\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
-        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("2016-11-02T14:45:54Z", "sha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254", "ft_openregister_test")));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("ft_openregister_test", "2016-11-02T14:45:54Z", "sha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254")));
     }
 
     @Test
     public void parse_parsesAppendEntryMultiItemCommand() {
         System.setProperty("multi-item-entries-enabled", "true");
-        String line = "append-entry\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
+        String line = "append-entry\tft_openregister_test\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b";
         RegisterCommand parsedCommand = rsfFormatter.parse(line);
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
-        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("2016-11-02T14:45:54Z", "sha-256:a;sha-256:b", "ft_openregister_test")));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("ft_openregister_test", "2016-11-02T14:45:54Z", "sha-256:a;sha-256:b")));
         System.clearProperty("multi-item-entries-enabled");
     }
 
     @Test
     public void parse_parsesAppendEntryNoItems() {
         System.setProperty("multi-item-entries-enabled", "true");
-        String line = "append-entry\t2016-11-02T14:45:54Z\t\tft_openregister_test";
+        String line = "append-entry\tft_openregister_test\t2016-11-02T14:45:54Z\t";
         RegisterCommand parsedCommand = rsfFormatter.parse(line);
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
-        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("2016-11-02T14:45:54Z", "", "ft_openregister_test")));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("ft_openregister_test", "2016-11-02T14:45:54Z", "")));
         System.clearProperty("multi-item-entries-enabled");
     }
 

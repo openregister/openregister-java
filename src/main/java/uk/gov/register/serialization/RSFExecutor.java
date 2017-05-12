@@ -74,7 +74,7 @@ public class RSFExecutor {
     }
 
     private Boolean validateAppendEntry(RegisterCommand command, Register register, Map<HashValue, Integer> hashRefLine) {
-        String delimitedHashes = command.getCommandArguments().get(1);
+        String delimitedHashes = command.getCommandArguments().get(2);
         if (StringUtils.isEmpty(delimitedHashes)) {
             return false;
         }

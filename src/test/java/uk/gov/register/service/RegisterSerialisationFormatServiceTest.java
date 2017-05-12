@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
@@ -70,7 +70,7 @@ public class RegisterSerialisationFormatServiceTest {
     public void process_passesCommandsToExecutorAndReturnsItsResult() {
         RegisterCommand command1 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
         RegisterCommand command2 = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
-        RegisterCommand command3 = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item1sha", "entry1-field-1-value"));
+        RegisterCommand command3 = new RegisterCommand("append-entry", Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha"));
         RegisterCommand command4 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"));
         RegisterSerialisationFormat rsfInput = new RegisterSerialisationFormat(Iterators.forArray(command1, command2, command3, command4));
 
@@ -89,8 +89,8 @@ public class RegisterSerialisationFormatServiceTest {
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
                         new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}")),
                         new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
-                        new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item1sha", "entry1-field-1-value")),
-                        new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:item2sha", "entry2-field-1-value")),
+                        new RegisterCommand("append-entry", Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha")),
+                        new RegisterCommand("append-entry", Arrays.asList("entry2-field-1-value", "2016-07-24T16:56:00Z", "sha-256:item2sha")),
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e")))));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -102,8 +102,8 @@ public class RegisterSerialisationFormatServiceTest {
                 "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
                 "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
                 "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
-                "append-entry\t2016-07-24T16:55:00Z\tsha-256:item1sha\tentry1-field-1-value\n" +
-                "append-entry\t2016-07-24T16:56:00Z\tsha-256:item2sha\tentry2-field-1-value\n" +
+                "append-entry\tentry1-field-1-value\t2016-07-24T16:55:00Z\tsha-256:item1sha\n" +
+                "append-entry\tentry2-field-1-value\t2016-07-24T16:56:00Z\tsha-256:item2sha\n" +
                 "assert-root-hash\tsha-256:K3rfuFF1e\n";
 
         String actualRSF = outputStream.toString();
@@ -116,7 +116,7 @@ public class RegisterSerialisationFormatServiceTest {
                 new RegisterSerialisationFormat(Iterators.forArray(
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_uno")),
                         new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
-                        new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:item2sha", "entry2-field-1-value")),
+                        new RegisterCommand("append-entry", Arrays.asList("entry2-field-1-value", "2016-07-24T16:56:00Z", "sha-256:item2sha")),
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_dos")))));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -127,7 +127,7 @@ public class RegisterSerialisationFormatServiceTest {
         String expectedRSF =
                 "assert-root-hash\tsha-256:K3rfuFF1e_uno\n" +
                 "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
-                "append-entry\t2016-07-24T16:56:00Z\tsha-256:item2sha\tentry2-field-1-value\n" +
+                "append-entry\tentry2-field-1-value\t2016-07-24T16:56:00Z\tsha-256:item2sha\n" +
                 "assert-root-hash\tsha-256:K3rfuFF1e_dos\n";
 
         String actualRSF = outputStream.toString();
@@ -140,8 +140,8 @@ public class RegisterSerialisationFormatServiceTest {
                 "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
                 "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
                 "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
-                "append-entry\t2016-07-24T16:55:00Z\tsha-256:item1sha\tentry1-field-1-value\n" +
-                "append-entry\t2016-07-24T16:56:00Z\tsha-256:item2sha\tentry2-field-1-value\n" +
+                "append-entry\tentry1-field-1-value\t2016-07-24T16:55:00Z\tsha-256:item1sha\n" +
+                "append-entry\tentry2-field-1-value\t2016-07-24T16:56:00Z\tsha-256:item2sha\n" +
                 "assert-root-hash\tsha-256:K3rfuFF1e\n";
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(streamValue.getBytes());
@@ -152,8 +152,8 @@ public class RegisterSerialisationFormatServiceTest {
                 new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
                 new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}")),
                 new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
-                new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item1sha", "entry1-field-1-value")),
-                new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:item2sha", "entry2-field-1-value")),
+                new RegisterCommand("append-entry", Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha")),
+                new RegisterCommand("append-entry", Arrays.asList("entry2-field-1-value", "2016-07-24T16:56:00Z", "sha-256:item2sha")),
                 new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"))));
 
         assertThat(Lists.newArrayList(rsfReadResult.getCommands()), equalTo(Lists.newArrayList(expectedRsf.getCommands())));
@@ -166,7 +166,7 @@ public class RegisterSerialisationFormatServiceTest {
 
             RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(Iterators.forArray(
                     new RegisterCommand("add-item", Collections.singletonList("{\"name\":\"New College\\\\New College School\",\"school\":\"402019\",\"school-authority\":\"681\",\"school-type\":\"30\"}")),
-                    new RegisterCommand("append-entry", Arrays.asList("2016-11-07T16:26:22Z", "sha-256:d6cca062b6a4ff7f60e401aa1ebf4bf5af51c2217916c0115d0a38a42182aec5", "402019"))));
+                    new RegisterCommand("append-entry", Arrays.asList("402019", "2016-11-07T16:26:22Z", "sha-256:d6cca062b6a4ff7f60e401aa1ebf4bf5af51c2217916c0115d0a38a42182aec5"))));
 
             assertThat(Lists.newArrayList(rsfReadResult.getCommands()), equalTo(Lists.newArrayList(expectedRsf.getCommands())));
         }
