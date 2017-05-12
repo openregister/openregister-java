@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Register;
@@ -39,7 +39,7 @@ public class AppendEntryCommandHandlerTest {
     @Before
     public void setUp() throws Exception {
         sutHandler = new AppendEntryCommandHandler();
-        appendEntryCommand = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item-sha", "entry1-field-1-value"));
+        appendEntryCommand = new RegisterCommand("append-entry", Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item-sha"));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class AppendEntryCommandHandlerTest {
         when(register.getTotalEntries()).thenReturn(2);
 
         RegisterCommand command = new RegisterCommand("append-entry",
-                Arrays.asList("2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb", "entry1-field-1-value"));
+                Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb"));
         RegisterResult registerResult = sutHandler.execute(command, register);
 
         Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
@@ -78,7 +78,7 @@ public class AppendEntryCommandHandlerTest {
         when(register.getTotalEntries()).thenReturn(2);
 
         RegisterCommand command = new RegisterCommand("append-entry",
-                Arrays.asList("2016-07-24T16:55:00Z", "", "entry1-field-1-value"));
+                Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
         RegisterResult registerResult = sutHandler.execute(command, register);
 
         Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value");
@@ -105,7 +105,7 @@ public class AppendEntryCommandHandlerTest {
     @Test
     public void execute_failsForCommandWithInvalidArguments() {
         when(register.getTotalEntries()).thenReturn(2);
-        RegisterCommand commandWithInvalidArguments = new RegisterCommand("append-entry", Arrays.asList("2016-07-T16:55:00Z", "sha-2tem-sha"));
+        RegisterCommand commandWithInvalidArguments = new RegisterCommand("append-entry", Arrays.asList("sha-2tem-sha", "2016-07-T16:55:00Z"));
 
         RegisterResult registerResult = sutHandler.execute(commandWithInvalidArguments, register);
 

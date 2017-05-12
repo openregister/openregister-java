@@ -114,11 +114,11 @@ public class DataDownloadFunctionalTest {
                 "add-item\t{\"address\":\"6789\",\"street\":\"presley\"}",
                 "add-item\t{\"address\":\"12345\",\"street\":\"foo\"}"));
 
-        assertFormattedEntry(rsfLines.get(5), "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9\t12345");
-        assertFormattedEntry(rsfLines.get(6), "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934\t6789");
-        assertFormattedEntry(rsfLines.get(7), "sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592\t12345");
-        assertFormattedEntry(rsfLines.get(8), "sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983\t145678");
-        assertFormattedEntry(rsfLines.get(9), "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9\t12345");
+        assertFormattedEntry(rsfLines.get(5), "12345","sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+        assertFormattedEntry(rsfLines.get(6), "6789","sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
+        assertFormattedEntry(rsfLines.get(7), "12345","sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+        assertFormattedEntry(rsfLines.get(8), "145678","sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
+        assertFormattedEntry(rsfLines.get(9), "12345","sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
 
         assertThat(rsfLines.get(10), containsString("assert-root-hash\t"));
     }
@@ -139,8 +139,8 @@ public class DataDownloadFunctionalTest {
                 "add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}",
                 "add-item\t{\"address\":\"6789\",\"street\":\"presley\"}"));
 
-        assertFormattedEntry(rsfLines.get(3), "sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9\t12345");
-        assertFormattedEntry(rsfLines.get(4), "sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934\t6789");
+        assertFormattedEntry(rsfLines.get(3), "12345","sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+        assertFormattedEntry(rsfLines.get(4), "6789","sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934");
 
         assertThat(rsfLines.get(5), containsString("assert-root-hash\t"));
     }
@@ -193,9 +193,12 @@ public class DataDownloadFunctionalTest {
         return new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.toList());
     }
 
-    private void assertFormattedEntry(String actualEntry, String expectedLine) {
-        assertThat(actualEntry, startsWith("append-entry"));
-        assertThat(actualEntry, endsWith(expectedLine));
+    private void assertFormattedEntry(String actualEntry, String expectedKey, String expectedHash) {
+        String[] parts = actualEntry.split("\t");
+        assertThat(parts.length, is(4));
+        assertThat(parts[0], is("append-entry"));
+        assertThat(parts[1], is(expectedKey));
+        assertThat(parts[3], is(expectedHash));
     }
 
     private Map<String, JsonNode> getEntries(InputStream inputStream) throws IOException {

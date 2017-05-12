@@ -73,8 +73,8 @@ public class RSFCreatorTest {
 
         addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
-        appendEntry1Command = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item1sha", "entry1-field-1-value"));
-        appendEntry2Command = new RegisterCommand("append-entry", Arrays.asList("2016-07-24T16:56:00Z", "sha-256:item2sha", "entry2-field-1-value"));
+        appendEntry1Command = new RegisterCommand("append-entry", Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha"));
+        appendEntry2Command = new RegisterCommand("append-entry", Arrays.asList("entry2-field-1-value","2016-07-24T16:56:00Z", "sha-256:item2sha" ));
     }
 
     @Test

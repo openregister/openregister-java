@@ -9,10 +9,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class EntryToCommandMapper extends RegisterCommandMapper<Entry,RegisterCommand> {
+public class EntryToCommandMapper extends RegisterCommandMapper<Entry, RegisterCommand> {
     @Override
     public RegisterCommand apply(Entry entry) {
-        return new RegisterCommand("append-entry", Arrays.asList(entry.getTimestampAsISOFormat(), toDelimited(entry.getItemHashes()), entry.getKey()));
+        return new RegisterCommand("append-entry", Arrays.asList(entry.getKey(), entry.getTimestampAsISOFormat(), toDelimited(entry.getItemHashes())));
     }
 
     private String toDelimited(Collection<HashValue> hashValues) {
