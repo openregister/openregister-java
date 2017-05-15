@@ -29,7 +29,7 @@ public class EntryToCommandMapperTest {
         RegisterCommand mapResult = sutMapper.apply(entryToMap);
 
         assertThat(mapResult.getCommandName(), equalTo("append-entry"));
-        assertThat(mapResult.getCommandArguments(), equalTo(Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item-sha", "entry1-field-1-value")));
+        assertThat(mapResult.getCommandArguments(), equalTo(Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item-sha")));
     }
 
     @Test
@@ -42,6 +42,6 @@ public class EntryToCommandMapperTest {
         RegisterCommand mapResult = sutMapper.apply(entryToMap);
 
         assertThat(mapResult.getCommandName(), equalTo("append-entry"));
-        assertThat(mapResult.getCommandArguments(), equalTo(Arrays.asList("2016-07-24T16:55:00Z", "sha-256:item-sha;sha-256:item-sha2", "entry1-field-1-value")));
+        assertThat(mapResult.getCommandArguments(), equalTo(Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item-sha;sha-256:item-sha2")));
     }
 }

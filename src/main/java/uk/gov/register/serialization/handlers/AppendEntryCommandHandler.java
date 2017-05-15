@@ -23,7 +23,7 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
         try {
             List<String> parts = command.getCommandArguments();
             int newEntryNo = register.getTotalEntries() + 1;
-            String delimitedHashes = parts.get(1);
+            String delimitedHashes = parts.get(2);
             List<HashValue> hashValues;
             if (StringUtils.isNotEmpty(delimitedHashes)) {
                 hashValues = Splitter.on(";").splitToList(delimitedHashes).stream()
@@ -31,7 +31,7 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
             } else {
                 hashValues = new ArrayList<>();
             }
-            Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(0)), parts.get(2));
+            Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(1)), parts.get(0));
             register.appendEntry(entry);
             return RegisterResult.createSuccessResult();
         } catch (Exception e) {

@@ -46,7 +46,8 @@ public class RSFFormatter {
     }
 
     public RegisterCommand parse(String str) throws SerializedRegisterParseException {
-        List<String> parts = Arrays.asList(str.split(TAB));
+        // -1 -> if str ends with \t then final string in list will be ""
+        List<String> parts = Arrays.asList(str.split(TAB, -1));
 
         if (parts.isEmpty() || parts.size() < 2) {
             throw new SerializedRegisterParseException("String is empty or is in incorrect format");
@@ -87,11 +88,11 @@ public class RSFFormatter {
                 throw new SerializedRegisterParseException("Append entry line must have 3 arguments, was: " + argsToString(arguments));
             }
             try {
-                Instant.parse(arguments.get(0));
+                Instant.parse(arguments.get(1));
             } catch (DateTimeParseException e) {
                 throw new SerializedRegisterParseException("Date is not in the correct format", e);
             }
-            validateHash(arguments.get(1), "Append entry hash value was not hashed using " + SHA_256);
+            validateHash(arguments.get(2), "Append entry hash value was not hashed using " + SHA_256);
         };
     }
 
