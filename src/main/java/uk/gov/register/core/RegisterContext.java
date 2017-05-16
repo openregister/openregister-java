@@ -96,14 +96,16 @@ public class RegisterContext implements
     }
 
     public Register buildOnDemandRegister() {
+        DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
+
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
-                new EntryLogImpl(getOnDemandDataAccessLayer(), memoizationStore.get()),
-                new ItemStoreImpl(getOnDemandDataAccessLayer(), new ItemValidator(configManager, registerName)),
-                new RecordIndexImpl(getOnDemandDataAccessLayer()),
+                new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
+                new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
+                new RecordIndexImpl(dataAccessLayer),
                 dbi.onDemand(IndexDAO.class),
                 dbi.onDemand(IndexQueryDAO.class),
-                new DerivationRecordIndex(getOnDemandDataAccessLayer()),
+                new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions());
     }
 

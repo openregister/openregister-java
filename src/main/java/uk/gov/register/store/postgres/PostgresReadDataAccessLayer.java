@@ -162,7 +162,5 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
         return indexQueryDAO.getTotalRecords(indexName);
     }
 
-    protected void checkpoint() {
-        // do nothing
-    };
+    protected abstract void checkpoint();
 }
