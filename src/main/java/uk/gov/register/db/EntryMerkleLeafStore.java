@@ -8,12 +8,10 @@ import uk.gov.register.core.Entry;
 import uk.gov.verifiablelog.store.MerkleLeafStore;
 
 public class EntryMerkleLeafStore implements MerkleLeafStore {
-    private final EntryQueryDAO entryDAO;
     private final EntryIterator entryIterator;
 
 
-    public EntryMerkleLeafStore(EntryQueryDAO entryDAO, EntryIterator entryIterator) {
-        this.entryDAO = entryDAO;
+    public EntryMerkleLeafStore(EntryIterator entryIterator) {
         this.entryIterator = entryIterator;
     }
 
@@ -24,7 +22,7 @@ public class EntryMerkleLeafStore implements MerkleLeafStore {
 
     @Override
     public int totalLeaves() {
-        return entryDAO.getTotalEntries();
+        return entryIterator.getTotalEntries();
     }
 
     private byte[] bytesFromEntry(Entry entry) {

@@ -1,8 +1,7 @@
-package uk.gov.register.db;
+package uk.gov.register.core;
 
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.EntryLog;
-import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.db.EntryMerkleLeafStore;
+import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -22,72 +21,67 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-public abstract class AbstractEntryLog implements EntryLog {
-    protected final EntryQueryDAO entryQueryDAO;
+public class EntryLogImpl implements EntryLog {
+    private final DataAccessLayer dataAccessLayer;
     private final MemoizationStore memoizationStore;
-    protected final IndexQueryDAO indexQueryDAO;
 
-    protected AbstractEntryLog(EntryQueryDAO entryQueryDAO, MemoizationStore memoizationStore, IndexQueryDAO indexQueryDAO) {
-        this.entryQueryDAO = entryQueryDAO;
+    public EntryLogImpl(DataAccessLayer dataAccessLayer, MemoizationStore memoizationStore) {
+        this.dataAccessLayer = dataAccessLayer;
         this.memoizationStore = memoizationStore;
-        this.indexQueryDAO = indexQueryDAO;
+    }
+
+    @Override
+    public void appendEntry(Entry entry) {
+        dataAccessLayer.appendEntry(entry);
     }
 
     @Override
     public Optional<Entry> getEntry(int entryNumber) {
-        checkpoint();
-        return entryQueryDAO.findByEntryNumber(entryNumber);
+        return dataAccessLayer.getEntry(entryNumber);
     }
 
     @Override
     public Collection<Entry> getEntries(int start, int limit) {
-        checkpoint();
-        return entryQueryDAO.getEntries(start, limit);
+        return dataAccessLayer.getEntries(start, limit);
     }
 
     @Override
     public Iterator<Entry> getIterator() {
-        checkpoint();
-        return entryQueryDAO.getIterator();
+        return dataAccessLayer.getEntryIterator();
     }
 
     @Override
     public Iterator<Entry> getDerivationIterator(String indexName) {
-        return indexQueryDAO.getIterator(indexName);
+        return dataAccessLayer.getIndexEntryIterator(indexName);
     }
 
     @Override
     public Iterator<Entry> getDerivationIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2);
+        return dataAccessLayer.getIndexEntryIterator(indexName, totalEntries1, totalEntries2);
     }
 
     @Override
     public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2) {
-        checkpoint();
-        return entryQueryDAO.getIterator(totalEntries1, totalEntries2);
+        return dataAccessLayer.getEntryIterator(totalEntries1, totalEntries2);
     }
 
     @Override
     public Collection<Entry> getAllEntries() {
-        checkpoint();
-        return entryQueryDAO.getAllEntriesNoPagination();
+        return dataAccessLayer.getAllEntries();
     }
 
     @Override
     public int getTotalEntries() {
-        checkpoint();
-        return entryQueryDAO.getTotalEntries();
+        return dataAccessLayer.getTotalEntries();
     }
 
     @Override
     public Optional<Instant> getLastUpdatedTime() {
-        checkpoint();
-        return entryQueryDAO.getLastUpdatedTime();
+        return dataAccessLayer.getLastUpdatedTime();
     }
 
     @Override
     public RegisterProof getRegisterProof() {
-        checkpoint();
         String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getCurrentRootHash()));
 
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), getTotalEntries());
@@ -95,7 +89,6 @@ public abstract class AbstractEntryLog implements EntryLog {
 
     @Override
     public RegisterProof getRegisterProof(int totalEntries) {
-        checkpoint();
         String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getSpecificRootHash(totalEntries)));
 
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), totalEntries);
@@ -103,7 +96,6 @@ public abstract class AbstractEntryLog implements EntryLog {
 
     @Override
     public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        checkpoint();
         List<HashValue> auditProof = withVerifiableLog(verifiableLog ->
                 verifiableLog.auditProof(entryNumber - 1, totalEntries)
                         .stream()
@@ -115,7 +107,6 @@ public abstract class AbstractEntryLog implements EntryLog {
 
     @Override
     public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        checkpoint();
         List<HashValue> consistencyProof = withVerifiableLog(verifiableLog ->
             verifiableLog.consistencyProof(totalEntries1, totalEntries2)
                     .stream()
@@ -129,14 +120,9 @@ public abstract class AbstractEntryLog implements EntryLog {
         return DatatypeConverter.printHexBinary(bytes).toLowerCase();
     }
 
-    @Override
-    public void checkpoint() {
-        // by default, do nothing
-    }
-
     private <R> R withVerifiableLog(Function<VerifiableLog, R> callback) {
-        return EntryIterator.withEntryIterator(entryQueryDAO, entryIterator -> {
-            VerifiableLog verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new EntryMerkleLeafStore(entryQueryDAO, entryIterator), memoizationStore);
+        return dataAccessLayer.withEntryIterator(entryIterator -> {
+            VerifiableLog verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new EntryMerkleLeafStore(entryIterator), memoizationStore);
             return callback.apply(verifiableLog);
         });
     }

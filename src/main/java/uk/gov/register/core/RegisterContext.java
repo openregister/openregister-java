@@ -15,6 +15,8 @@ import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterLinkService;
+import uk.gov.register.store.DataAccessLayer;
+import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
@@ -89,49 +91,43 @@ public class RegisterContext implements
         return flyway.migrate();
     }
 
-    public Register buildOnDemandRegister() {
-        return new PostgresRegister(getRegisterMetadata(),
-                getRegisterFieldsConfiguration(),
-                new UnmodifiableEntryLog(memoizationStore.get(), dbi.onDemand(EntryQueryDAO.class), dbi.onDemand(IndexQueryDAO.class)),
-                new UnmodifiableItemStore(dbi.onDemand(ItemQueryDAO.class)),
-                new UnmodifiableRecordIndex(dbi.onDemand(RecordQueryDAO.class)),
-                dbi.onDemand(IndexDAO.class),
-                dbi.onDemand(IndexQueryDAO.class),
-                new DerivationRecordIndex(dbi.onDemand(IndexQueryDAO.class)),
-                getIndexFunctions());
-    }
-
     private List<IndexFunction> getIndexFunctions() {
         return indexFunctionConfigs.stream().flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
     }
 
-    private Register buildTransactionalRegister(Handle handle, TransactionalMemoizationStore memoizationStore) {
+    public Register buildOnDemandRegister() {
+        DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
+
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
-                new TransactionalEntryLog(memoizationStore,
-                        handle.attach(EntryQueryDAO.class),
-                        handle.attach(EntryDAO.class),
-                        handle.attach((EntryItemDAO.class)),
-                        handle.attach(IndexQueryDAO.class)),
-                new TransactionalItemStore(
-                        handle.attach(ItemDAO.class),
-                        handle.attach(ItemQueryDAO.class),
-                        new ItemValidator(configManager, registerName)),
-                new TransactionalRecordIndex(
-                        handle.attach(RecordQueryDAO.class),
-                        handle.attach(CurrentKeysUpdateDAO.class)),
+                new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
+                new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
+                new RecordIndexImpl(dataAccessLayer),
+                dbi.onDemand(IndexDAO.class),
+                dbi.onDemand(IndexQueryDAO.class),
+                new DerivationRecordIndex(dataAccessLayer),
+                getIndexFunctions());
+    }
+
+    private Register buildTransactionalRegister(Handle handle, DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
+        return new PostgresRegister(getRegisterMetadata(),
+                getRegisterFieldsConfiguration(),
+                new EntryLogImpl(dataAccessLayer, memoizationStore),
+                new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
+                new RecordIndexImpl(dataAccessLayer),
                 handle.attach(IndexDAO.class),
                 handle.attach(IndexQueryDAO.class),
-                new DerivationRecordIndex(handle.attach(IndexQueryDAO.class)),
+                new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions());
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
         useTransaction(dbi, handle -> {
-            Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
+            PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
+            Register register = buildTransactionalRegister(handle, dataAccessLayer, transactionalMemoizationStore);
             consumer.accept(register);
-            register.commit();
+            dataAccessLayer.checkpoint();
         });
         transactionalMemoizationStore.commitHashesToStore();
     }
@@ -140,10 +136,11 @@ public class RegisterContext implements
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
         try {
             return inTransaction(dbi, handle -> {
-                Register register = buildTransactionalRegister(handle, transactionalMemoizationStore);
+                PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
+                Register register = buildTransactionalRegister(handle, dataAccessLayer, transactionalMemoizationStore);
                 RegisterResult result = registerOperationFunc.apply(register);
                 if (result.isSuccessful()) {
-                    register.commit();
+                    dataAccessLayer.checkpoint();
                     transactionalMemoizationStore.commitHashesToStore();
                 } else {
                     throw new RegisterResultException(result);
@@ -184,6 +181,30 @@ public class RegisterContext implements
 
     private List<IndexFunctionConfiguration> mapIndexes(List<String> indexNames) {
         return indexNames.stream().map(IndexFunctionConfiguration::getValueLowerCase).collect(toList());
+    }
+
+    private DataAccessLayer getOnDemandDataAccessLayer() {
+        return new PostgresDataAccessLayer(
+                dbi.onDemand(EntryQueryDAO.class),
+                dbi.onDemand(IndexQueryDAO.class),
+                dbi.onDemand(EntryDAO.class),
+                dbi.onDemand(EntryItemDAO.class),
+                dbi.onDemand(ItemQueryDAO.class),
+                dbi.onDemand(ItemDAO.class),
+                dbi.onDemand(RecordQueryDAO.class),
+                dbi.onDemand(CurrentKeysUpdateDAO.class));
+    }
+
+    private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
+        return new PostgresDataAccessLayer(
+                handle.attach(EntryQueryDAO.class),
+                handle.attach(IndexQueryDAO.class),
+                handle.attach(EntryDAO.class),
+                handle.attach(EntryItemDAO.class),
+                handle.attach(ItemQueryDAO.class),
+                handle.attach(ItemDAO.class),
+                handle.attach(RecordQueryDAO.class),
+                handle.attach(CurrentKeysUpdateDAO.class));
     }
 
     @Override

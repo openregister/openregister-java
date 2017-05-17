@@ -6,5 +6,4 @@ import org.jvnet.hk2.annotations.Contract;
 public interface Register extends RegisterReadOnly {
     void putItem(Item item);
     void appendEntry(Entry entry);
-    void commit();
 }

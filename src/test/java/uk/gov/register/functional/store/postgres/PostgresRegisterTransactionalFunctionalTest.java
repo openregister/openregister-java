@@ -11,30 +11,14 @@ import static org.mockito.Mockito.when;
 import static uk.gov.register.functional.app.TestRegister.address;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.PostgresRegister;
-import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.db.CurrentKeysUpdateDAO;
-import uk.gov.register.db.DerivationRecordIndex;
-import uk.gov.register.db.EntryDAO;
-import uk.gov.register.db.EntryItemDAO;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.IndexDAO;
-import uk.gov.register.db.IndexQueryDAO;
-import uk.gov.register.db.ItemDAO;
-import uk.gov.register.db.ItemQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.db.TransactionalEntryLog;
-import uk.gov.register.db.TransactionalItemStore;
-import uk.gov.register.db.TransactionalRecordIndex;
+import uk.gov.register.core.*;
+import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.store.DataAccessLayer;
+import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
@@ -85,7 +69,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         RegisterContext.useTransaction(dbi, handle -> {
-            PostgresRegister postgresRegister = getPostgresRegister(handle);
+            PostgresRegister postgresRegister = getPostgresRegister(handle, getTransactionalDataAccessLayer(handle));
             postgresRegister.putItem(item1);
 
             assertThat(postgresRegister.getAllItems().size(), is(1));
@@ -113,21 +97,22 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         try {
             RegisterContext.useTransaction(dbi, handle -> {
-                PostgresRegister postgresRegister = getPostgresRegister(handle);
+                PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
+                PostgresRegister postgresRegister = getPostgresRegister(handle, dataAccessLayer);
                 postgresRegister.putItem(item1);
-                postgresRegister.commit();
+                dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(1));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 postgresRegister.putItem(item2);
-                postgresRegister.commit();
+                dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(2));
                 assertThat(testItemDAO.getItems(), is(empty()));
 
                 postgresRegister.putItem(item3);
-                postgresRegister.commit();
+                dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(3));
                 assertThat(testItemDAO.getItems(), is(empty()));
@@ -152,14 +137,15 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.parse("2017-03-10T00:00:00Z"), "ccc");
 
         RegisterContext.useTransaction(dbi, handle -> {
-            PostgresRegister postgresRegister = getPostgresRegister(handle);
+            PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
+            PostgresRegister postgresRegister = getPostgresRegister(handle, dataAccessLayer);
             postgresRegister.putItem(item1);
             postgresRegister.putItem(item2);
             postgresRegister.putItem(item3);
             postgresRegister.appendEntry(entry1);
             postgresRegister.appendEntry(entry2);
             postgresRegister.appendEntry(entry3);
-            postgresRegister.commit();
+            dataAccessLayer.checkpoint();
         });
 
         List<HashValue> items = testItemDAO.getItems().stream().map(item -> item.hashValue).collect(Collectors.toList());
@@ -167,16 +153,26 @@ public class PostgresRegisterTransactionalFunctionalTest {
         assertThat(testEntryDAO.getAllEntries(), contains(entry1, entry2, entry3));
     }
 
-    private PostgresRegister getPostgresRegister(Handle handle) {
-        TransactionalEntryLog entryLog = new TransactionalEntryLog(new DoNothing(), handle.attach(EntryQueryDAO.class), handle.attach(EntryDAO.class), handle.attach(EntryItemDAO.class), handle.attach(IndexQueryDAO.class));
-        TransactionalItemStore itemStore = new TransactionalItemStore(handle.attach(ItemDAO.class), handle.attach(ItemQueryDAO.class),
-                mock(ItemValidator.class));
+    private PostgresRegister getPostgresRegister(Handle handle, DataAccessLayer dataAccessLayer) {
+        EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
+        ItemStore itemStore = new ItemStoreImpl(dataAccessLayer, mock(ItemValidator.class));
         RegisterMetadata registerData = mock(RegisterMetadata.class);
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
         return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore,
-                new TransactionalRecordIndex(handle.attach(RecordQueryDAO.class), handle.attach(CurrentKeysUpdateDAO.class)),
+                new RecordIndexImpl(dataAccessLayer),
                 handle.attach(IndexDAO.class), handle.attach(IndexQueryDAO.class), derivationRecordIndex, Collections.emptyList());
     }
 
+    private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
+        return new PostgresDataAccessLayer(
+                handle.attach(EntryQueryDAO.class),
+                handle.attach(IndexQueryDAO.class),
+                handle.attach(EntryDAO.class),
+                handle.attach(EntryItemDAO.class),
+                handle.attach(ItemQueryDAO.class),
+                handle.attach(ItemDAO.class),
+                handle.attach(RecordQueryDAO.class),
+                handle.attach(CurrentKeysUpdateDAO.class));
+    }
 }
 
