@@ -1193,8 +1193,7 @@ upper-tribunal-lands-chamber:
   name: "Upper Tribunal (Lands Chamber)"
   public-body: "upper-tribunal-lands-chamber"
 science-advisory-committee-on-the-medical-implications-of-less-lethal-weapons:
-  name: "Scientific Advisory Committee on the Medical Implications of Less-Lethal\
-    \ Weapons"
+  name: "Scientific Advisory Committee on the Medical Implications of Less-Lethal Weapons"
   public-body: "science-advisory-committee-on-the-medical-implications-of-less-lethal-weapons"
 crown-prosecution-service:
   name: "Crown Prosecution Service"
@@ -1651,8 +1650,7 @@ equality-and-human-rights-commission:
   name: "Equality and Human Rights Commission"
   public-body: "equality-and-human-rights-commission"
 independent-monitoring-boards-of-prisons-immigration-removal-centres-and-short-term-holding-rooms:
-  name: "Independent Monitoring Boards of Prisons, Immigration, Removal Centres and\
-    \ Short Term Holding Rooms"
+  name: "Independent Monitoring Boards of Prisons, Immigration, Removal Centres and Short Term Holding Rooms"
   public-body: "independent-monitoring-boards-of-prisons-immigration-removal-centres-and-short-term-holding-rooms"
 nhs-institute-for-innovation-and-improvement:
   name: "NHS Institute for Innovation and Improvement"
@@ -1950,8 +1948,7 @@ marine-accident-investigation-branch:
   name: "Marine Accident Investigation Branch"
   public-body: "marine-accident-investigation-branch"
 the-reviewing-committee-on-the-export-of-works-of-art-and-objects-of-cultural-interest:
-  name: "The Reviewing Committee on the Export of Works of Art and Objects of Cultural\
-    \ Interest"
+  name: "The Reviewing Committee on the Export of Works of Art and Objects of Cultural Interest"
   public-body: "the-reviewing-committee-on-the-export-of-works-of-art-and-objects-of-cultural-interest"
 service-children-s-education:
   name: "Service Children's Education"
@@ -1994,8 +1991,7 @@ rivers-agency:
   name: "Rivers Agency"
   public-body: "rivers-agency"
 committee-on-mutagenicity-of-chemicals-in-food-consumer-products-and-the-environment:
-  name: "Committee on Mutagenicity of Chemicals in Food, Consumer Products and the\
-    \ Environment"
+  name: "Committee on Mutagenicity of Chemicals in Food, Consumer Products and the Environment"
   public-body: "committee-on-mutagenicity-of-chemicals-in-food-consumer-products-and-the-environment"
 defence-scientific-advisory-council:
   name: "Defence Scientific Advisory Council"
