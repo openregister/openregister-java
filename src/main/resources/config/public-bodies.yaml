@@ -2852,3 +2852,6 @@ acas:
 health-and-social-care-information-centre:
   name: "Health and Social Care Information Centre"
   public-body: "health-and-social-care-information-centre"
+department-for-business-energy-and-industrial-strategy:
+  name: "Department for Business, Energy & Industrial Strategy"
+  public-body: "department-for-business-energy-and-industrial-strategy"
