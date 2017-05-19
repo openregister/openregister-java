@@ -8,6 +8,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.TestRegister;
@@ -59,7 +60,7 @@ public class DataUploadFunctionalTest {
         assertThat(storedItem.hashValue, equalTo(Item.itemHash(inputItem)));
 
         Entry entry = testEntryDAO.getAllEntries().get(0);
-        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test")));
+        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
 
         TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
         assertThat(record.getEntryNumber(), equalTo(1));
@@ -94,8 +95,8 @@ public class DataUploadFunctionalTest {
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1"),
-                        new Entry(2, Item.itemHash(canonicalItem2), timestamp, "register2")
+                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(2, Item.itemHash(canonicalItem2), timestamp, "register2", EntryType.user)
                 )
         );
 
@@ -131,8 +132,8 @@ public class DataUploadFunctionalTest {
 
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem), entries.get(0).getTimestamp(), "register1"),
-                        new Entry(2, Item.itemHash(canonicalItem), entries.get(1).getTimestamp(), "register1")
+                        new Entry(1, Item.itemHash(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
+                        new Entry(2, Item.itemHash(canonicalItem), entries.get(1).getTimestamp(), "register1", EntryType.user)
                 )
         );
 
@@ -168,9 +169,9 @@ public class DataUploadFunctionalTest {
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1"),
-                        new Entry(2, Item.itemHash(canonicalItem1), timestamp, "register1"),
-                        new Entry(3, Item.itemHash(canonicalItem2), timestamp, "register2")
+                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(2, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(3, Item.itemHash(canonicalItem2), timestamp, "register2", EntryType.user)
                 )
         );
 

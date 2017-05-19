@@ -8,6 +8,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Register;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterResult;
@@ -54,7 +55,7 @@ public class AppendEntryCommandHandlerTest {
         RegisterResult registerResult = sutHandler.execute(appendEntryCommand, register);
 
 
-        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value");
+        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
@@ -68,7 +69,7 @@ public class AppendEntryCommandHandlerTest {
         RegisterResult registerResult = sutHandler.execute(command, register);
 
         Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
-                new HashValue(SHA256, "bbb")), july24, "entry1-field-1-value");
+                new HashValue(SHA256, "bbb")), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
@@ -81,7 +82,7 @@ public class AppendEntryCommandHandlerTest {
                 Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
         RegisterResult registerResult = sutHandler.execute(command, register);
 
-        Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value");
+        Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }

@@ -3,6 +3,7 @@ package uk.gov.register.serialization.handlers;
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Register;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandHandler;
@@ -11,7 +12,6 @@ import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -31,7 +31,7 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
             } else {
                 hashValues = new ArrayList<>();
             }
-            Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(1)), parts.get(0));
+            Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(1)), parts.get(0), EntryType.user);
             register.appendEntry(entry);
             return RegisterResult.createSuccessResult();
         } catch (Exception e) {

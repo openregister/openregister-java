@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Register;
 import uk.gov.register.indexer.IndexKeyItemPair;
 
@@ -31,7 +32,7 @@ public class BaseIndexFunctionTest {
 
     @Test
     public void executeWithEntry_shouldReturnEmptyResultSet_whenEntryContainsNoItems() {
-        Entry entry = new Entry(1, Collections.emptyList(), Instant.now(), "key");
+        Entry entry = new Entry(1, Collections.emptyList(), Instant.now(), "key", EntryType.user);
 
         BaseIndexFunction func = mock(BaseIndexFunction.class, Mockito.CALLS_REAL_METHODS);
         Set<IndexKeyItemPair> resultSet = new HashSet<>();

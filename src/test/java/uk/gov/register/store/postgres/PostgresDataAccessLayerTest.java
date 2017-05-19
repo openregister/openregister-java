@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
+import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.util.HashValue;
 
@@ -39,8 +36,8 @@ public class PostgresDataAccessLayerTest {
 
     private PostgresDataAccessLayer dataAccessLayer;
 
-    private final Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1");
-    private final Entry entry2 = new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2");
+    private final Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
+    private final Entry entry2 = new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user);
     private Item item1;
     private Item item2;
 
@@ -66,17 +63,17 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void appendEntry_shouldNotCommitData() {
-        dataAccessLayer.appendEntry(new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1"));
-        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2"));
+        dataAccessLayer.appendEntry(new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user));
+        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
 
         assertThat(entries, is(empty()));
     }
 
     @Test
     public void getEntry_shouldGetFromStagedDataIfNeeded() throws Exception {
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1");
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
         dataAccessLayer.appendEntry(entry1);
-        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2"));
+        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
 
         assertThat(dataAccessLayer.getEntry(1), equalTo(Optional.of(entry1)));
     }
@@ -146,8 +143,8 @@ public class PostgresDataAccessLayerTest {
     public void getIterator_shouldGetFromStagedDataIfNeeded() throws Exception {
         dataAccessLayer.putItem(item1);
         dataAccessLayer.putItem(item2);
-        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345"));
-        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321"));
+        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
+        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
         List<Item> items = newArrayList(dataAccessLayer.getItemIterator());
         assertThat(items, is(asList(item1, item2)));
@@ -157,8 +154,8 @@ public class PostgresDataAccessLayerTest {
     public void getIteratorRange_shouldGetFromStagedDataIfNeeded() throws Exception {
         dataAccessLayer.putItem(item1);
         dataAccessLayer.putItem(item2);
-        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345"));
-        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321"));
+        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
+        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
         List<Item> items = newArrayList(dataAccessLayer.getItemIterator(1,2));
         assertThat(items, is(singletonList(item2)));
@@ -166,14 +163,14 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void updateRecordIndex_shouldNotCommitChanges() throws Exception {
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
+        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         assertThat(currentKeys.entrySet(), is(empty()));
     }
 
     @Test
     public void getRecord_shouldCauseCheckpoint() {
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
+        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         Optional<Record> ignored = dataAccessLayer.getRecord("foo");
 
@@ -183,7 +180,7 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void getRecords_shouldCauseCheckpoint() {
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
+        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         List<Record> ignored = dataAccessLayer.getRecords(1,0);
 
@@ -193,7 +190,7 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void findMax100RecordsByKeyValue_shouldCauseCheckpoint() {
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
+        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         List<Record> ignored = dataAccessLayer.findMax100RecordsByKeyValue("foo", "bar");
 
@@ -203,7 +200,7 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void findAllEntriesOfRecordBy_shouldCauseCheckpoint() {
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
+        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         Collection<Entry> ignored = dataAccessLayer.findAllEntriesOfRecordBy("bar");
 
@@ -213,7 +210,7 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void getTotalRecords_shouldCauseCheckpoint() {
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo"));
+        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         int ignored = dataAccessLayer.getTotalRecords();
 
@@ -223,9 +220,9 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void insertRecordWithSameKeyValueDoesNotStageBothCurrentKeys() {
-        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
-        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
-        dataAccessLayer.updateRecordIndex(new Entry(3, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(3, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
 
         assertThat(currentKeys.entrySet(), is(empty()));
 
@@ -238,15 +235,15 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void whenInserting_shouldUpdateRecordCount() throws Exception {
-        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
-        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
-        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
         dataAccessLayer.checkpoint(); // force writing staged data
 
         assertThat(currentKeys.size(), is(2));
         assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
-        dataAccessLayer.updateRecordIndex(new Entry(4, new HashValue(HashingAlgorithm.SHA256, "cz"), Instant.now(), "CZ"));
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "tv"), Instant.now(), "TV"));
+        dataAccessLayer.updateRecordIndex(new Entry(4, new HashValue(HashingAlgorithm.SHA256, "cz"), Instant.now(), "CZ", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "tv"), Instant.now(), "TV", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(4));
@@ -255,14 +252,14 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void updateRecordIndex_shouldUpdateTotalRecords_whenKeyExistsInDatabaseAndEntryContainsNoItems() {
-        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
-        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cz"), Instant.now(), "CZ"));
+        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cz"), Instant.now(), "CZ", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(2));
         assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
 
-        dataAccessLayer.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "DE"));
+        dataAccessLayer.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "DE", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(2));
@@ -272,15 +269,15 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void updateRecordIndex_shouldUpdateCurrentKeysAndTotalRecords_whenKeyExistsInDatabase() {
-        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
-        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
-        dataAccessLayer.updateRecordIndex(new Entry(3, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
+        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(3, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(2));
         assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
 
-        dataAccessLayer.updateRecordIndex(new Entry(4, Collections.emptyList(), Instant.now(), "DE"));
+        dataAccessLayer.updateRecordIndex(new Entry(4, Collections.emptyList(), Instant.now(), "DE", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(2));
@@ -290,9 +287,9 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void updateRecordIndex_shouldNotUpdateCurrentKeysAndTotalRecords_whenKeyExistsInStagedData() {
-        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
-        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
-        dataAccessLayer.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "DE"));
+        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "DE", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(2));
@@ -302,14 +299,14 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void updateRecordIndex_shouldNotUpdateCurrentKeysAndTotalRecords_whenKeyDoesNotExistInStagedDataOrDatabase() {
-        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE"));
-        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA"));
+        dataAccessLayer.updateRecordIndex(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "de"), Instant.now(), "DE", EntryType.user));
+        dataAccessLayer.updateRecordIndex(new Entry(2, new HashValue(HashingAlgorithm.SHA256, "va"), Instant.now(), "VA", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(2));
         assertThat(currentKeysUpdateDAO.getTotalRecords(), is(2));
 
-        dataAccessLayer.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "CZ"));
+        dataAccessLayer.updateRecordIndex(new Entry(3, Collections.emptyList(), Instant.now(), "CZ", EntryType.user));
         dataAccessLayer.checkpoint();
 
         assertThat(currentKeys.size(), is(3));

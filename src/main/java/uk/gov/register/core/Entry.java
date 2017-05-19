@@ -23,9 +23,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.time.Instant;
-import java.util.*;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({"index-entry-number", "entry-number", "entry-timestamp", "key", "item-hash"})
 public class Entry implements CsvRepresentationView<Entry> {
@@ -33,26 +30,29 @@ public class Entry implements CsvRepresentationView<Entry> {
     private final int entryNumber;
     private final List<HashValue> hashValues;
     private final Instant timestamp;
+    private final EntryType entryType;
     private String key;
 
-    public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key) {
+    public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key, EntryType entryType) {
         this.entryNumber = entryNumber;
         this.indexEntryNumber = entryNumber;
         this.hashValues = new ArrayList<>(Arrays.asList(hashValue));
         this.timestamp = timestamp;
         this.key = key;
+        this.entryType = entryType;
     }
 
-    public Entry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key) {
-        this(entryNumber, entryNumber, hashValues, timestamp, key);
+    public Entry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
+        this(entryNumber, entryNumber, hashValues, timestamp, key, entryType);
     }
 
-    public Entry(int indexEntryNumber, int entryNumber, List<HashValue> hashValues, Instant timestamp, String key) {
+    public Entry(int indexEntryNumber, int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
         this.indexEntryNumber = indexEntryNumber;
         this.entryNumber = entryNumber;
         this.hashValues = hashValues;
         this.timestamp = timestamp;
         this.key = key;
+        this.entryType = entryType;
     }
 
     @JsonIgnore
@@ -97,6 +97,10 @@ public class Entry implements CsvRepresentationView<Entry> {
     public String getKey() {
         return key;
     }
+
+    @JsonIgnore
+    public EntryType getEntryType() { return entryType; }
+
 
     public static CsvSchema csvSchema() {
         CsvMapper csvMapper = new CsvMapper();

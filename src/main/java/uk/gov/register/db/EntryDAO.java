@@ -8,7 +8,7 @@ import uk.gov.register.store.postgres.BindEntry;
 
 @OverrideStatementLocatorWith(SchemaRewriter.class)
 public interface EntryDAO {
-    @SqlBatch("insert into :schema.entry(entry_number, sha256hex, timestamp, key) values(:entry_number, :sha256hex, :timestampAsLong, :key)")
+    @SqlBatch("insert into :schema.entry(entry_number, sha256hex, timestamp, key, type) values(:entry_number, :sha256hex, :timestampAsLong, :key, :entryType:::schema.ENTRY_TYPE)")
     @BatchChunkSize(1000)
     void insertInBatch(@BindEntry Iterable<Entry> entries);
 
