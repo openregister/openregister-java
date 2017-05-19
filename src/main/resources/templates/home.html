@@ -17,12 +17,12 @@
         <p>
           <a href="/records" class="button">View Register</a>
         </p>
-        <p class="text">You can also <a href="/download">download a copy</a> of the register.</p>
-        <p class="text">The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span> records and includes the following fields:</p>
+        <p>The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span> records and includes the following fields:</p>
         <div th:replace="fragments/field-list.html::field-list(${fields})"></div>
 
         <h3 class="heading-small">Using this register</h3>
-        <p>Download a copy of this register. You'll need to regularly update it to make sure you have the most current version of the data.</p>
+        <p><a href="/download">Download</a> a copy of this register. You'll need to regularly update it to make sure you have the most current version of the data.</p>
+        <p>Each register has an open API you can use to access the data without any authentication. There's more information about using the register APIs in the <a th:href="${homepageContent.techDocsUrl}" target="_blank">technical documentation</a>.</p>
         <p>If you're building a service, you can use this data to create elements for forms.</p>
         <p>You might need to combine data from this register with data from another source to do this.</p>
       </main>
