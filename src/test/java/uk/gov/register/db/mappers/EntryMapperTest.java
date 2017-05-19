@@ -27,25 +27,31 @@ public class EntryMapperTest {
     public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(address);
 
     @Test
-    public void map_returnsSameDateAndTimeInUTC() throws Exception {
+    public void map_returnsEntry() {
         String expected = "2016-07-15T10:00:00Z";
         Instant expectedInstant = Instant.parse(expected);
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", expectedInstant.getEpochSecond());
-            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'abcdef')");
-            // this method implicitly invokes EntryMapper
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key) values(5, :timestamp, 'abcdef', 'K')", expectedInstant.getEpochSecond());
+            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
         });
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
+
+        Entry entry = allEntriesNoPagination.iterator().next();
+
+        assertThat(entry.getItemHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
+        assertThat(entry.getEntryNumber(), is(5));
+        assertThat(entry.getIndexEntryNumber(), is(5));
         assertThat(allEntriesNoPagination.iterator().next().getTimestamp(), equalTo(expectedInstant));
+        assertThat(entry.getKey(), is("K"));
     }
 
     @Test
     public void map_returnsSingleItemHashForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key) values(5, :timestamp, 'abcdef', 'K')", Instant.now().getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
         });
@@ -59,7 +65,7 @@ public class EntryMapperTest {
     @Test
     public void map_returnsMultipleItemHashesForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key) values(5, :timestamp, 'abcdef', 'K')", Instant.now().getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'abcdef')");
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
@@ -74,7 +80,7 @@ public class EntryMapperTest {
     @Test
     public void map_returnsNoItemHashesForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex) values(5, :timestamp, 'abcdef')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key) values(5, :timestamp, 'abcdef', 'K')", Instant.now().getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination();
         });
 
