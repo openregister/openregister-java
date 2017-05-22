@@ -32,35 +32,48 @@ public class RSFFormatterTest {
     }
 
     @Test
-    public void parse_parsesAppendEntryCommand() {
-        RegisterCommand parsedCommand = rsfFormatter.parse("append-entry\tft_openregister_test\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
+    public void parse_parsesAppendEntryCommandWithSystemType() {
+        RegisterCommand parsedCommand = rsfFormatter.parse("append-entry\tsystem\tft_openregister_test\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
-        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("ft_openregister_test", "2016-11-02T14:45:54Z", "sha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254")));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("system","ft_openregister_test", "2016-11-02T14:45:54Z", "sha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254")));
+    }
+
+    @Test
+    public void parse_parsesAppendEntryCommand() {
+        RegisterCommand parsedCommand = rsfFormatter.parse("append-entry\tuser\tft_openregister_test\t2016-11-02T14:45:54Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254");
+        assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("user","ft_openregister_test", "2016-11-02T14:45:54Z", "sha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254")));
     }
 
     @Test
     public void parse_parsesAppendEntryMultiItemCommand() {
         System.setProperty("multi-item-entries-enabled", "true");
-        String line = "append-entry\tft_openregister_test\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b";
+        String line = "append-entry\tuser\tft_openregister_test\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b";
         RegisterCommand parsedCommand = rsfFormatter.parse(line);
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
-        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("ft_openregister_test", "2016-11-02T14:45:54Z", "sha-256:a;sha-256:b")));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("user","ft_openregister_test", "2016-11-02T14:45:54Z", "sha-256:a;sha-256:b")));
         System.clearProperty("multi-item-entries-enabled");
     }
 
     @Test
     public void parse_parsesAppendEntryNoItems() {
         System.setProperty("multi-item-entries-enabled", "true");
-        String line = "append-entry\tft_openregister_test\t2016-11-02T14:45:54Z\t";
+        String line = "append-entry\tuser\tft_openregister_test\t2016-11-02T14:45:54Z\t";
         RegisterCommand parsedCommand = rsfFormatter.parse(line);
         assertThat(parsedCommand.getCommandName(), equalTo("append-entry"));
-        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("ft_openregister_test", "2016-11-02T14:45:54Z", "")));
+        assertThat(parsedCommand.getCommandArguments(), equalTo(Arrays.asList("user","ft_openregister_test", "2016-11-02T14:45:54Z", "")));
         System.clearProperty("multi-item-entries-enabled");
     }
 
     @Test(expected = SerializedRegisterParseException.class)
     public void parse_failToParseEntryMultiItemCommandIfNotEnabled() {
-        String line = "append-entry\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
+        String line = "append-entry\tuser\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
+        rsfFormatter.parse(line);
+    }
+
+    @Test(expected = SerializedRegisterParseException.class)
+    public void parse_failToParseInvalidType() {
+        String line = "append-entry\tZZZZ\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
         rsfFormatter.parse(line);
     }
 
@@ -88,13 +101,13 @@ public class RSFFormatterTest {
 
     @Test(expected = SerializedRegisterParseException.class)
     public void parse_throwsExceptionWhenHashInWrongFormat() throws Exception {
-        rsfFormatter.parse("append-entry\t2016-11-02T14:45:54Z\tsha-25:cee6dfc567f2157208edc4b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
+        rsfFormatter.parse("append-entry\tuser\t2016-11-02T14:45:54Z\tsha-25:cee6dfc567f2157208edc4b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
     }
 
 
     @Test(expected = SerializedRegisterParseException.class)
     public void parse_throwsExceptionWhenTimestampNotIso() throws Exception {
-        rsfFormatter.parse("append-entry\t20161212\tsha-256:abc123\t123");
+        rsfFormatter.parse("append-entry\tuser\t20161212\tsha-256:abc123\t123");
     }
 
     @Test(expected = SerializedRegisterParseException.class)
@@ -109,8 +122,8 @@ public class RSFFormatterTest {
 
     @Test
     public void format_formatAppendEntryCommandAsTsvLine() {
-        RegisterCommand formattedCommand = new RegisterCommand("append-entry", Arrays.asList("2016-07-15T10:00:00Z", "sha-256:item-hash", "key"));
-        assertThat(rsfFormatter.format(formattedCommand), equalTo("append-entry\t2016-07-15T10:00:00Z\tsha-256:item-hash\tkey\n"));
+        RegisterCommand formattedCommand = new RegisterCommand("append-entry", Arrays.asList("user","2016-07-15T10:00:00Z", "sha-256:item-hash", "key"));
+        assertThat(rsfFormatter.format(formattedCommand), equalTo("append-entry\tuser\t2016-07-15T10:00:00Z\tsha-256:item-hash\tkey\n"));
     }
 
     @Test

@@ -10,7 +10,7 @@ def print_rsf(item, key_field):
     item_str = json.dumps(item, separators=(',', ':'), sort_keys=True)
     item_hash = hashlib.sha256(item_str.encode("utf-8")).hexdigest()
     item_line = "add-item\t" + item_str
-    entry_line = "append-entry\t{0}\t{1}\tsha-256:{2}".format(
+    entry_line = "append-entry\tuser\t{0}\t{1}\tsha-256:{2}".format(
             key, timestamp, item_hash)
     print(item_line)
     print(entry_line)

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Register;
+import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.serialization.RegisterResult;
@@ -23,7 +24,7 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
         try {
             List<String> parts = command.getCommandArguments();
             int newEntryNo = register.getTotalEntries() + 1;
-            String delimitedHashes = parts.get(2);
+            String delimitedHashes = parts.get(RSFFormatter.RSF_HASH_POSITION);
             List<HashValue> hashValues;
             if (StringUtils.isNotEmpty(delimitedHashes)) {
                 hashValues = Splitter.on(";").splitToList(delimitedHashes).stream()
@@ -31,7 +32,8 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
             } else {
                 hashValues = new ArrayList<>();
             }
-            Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(1)), parts.get(0), EntryType.user);
+            EntryType entryType = EntryType.valueOf(parts.get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
+            Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(RSFFormatter.RSF_TIMESTAMP_POSITION)), parts.get(RSFFormatter.RSF_KEY_POSITION), entryType);
             register.appendEntry(entry);
             return RegisterResult.createSuccessResult();
         } catch (Exception e) {

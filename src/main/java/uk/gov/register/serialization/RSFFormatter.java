@@ -2,6 +2,7 @@ package uk.gov.register.serialization;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
@@ -17,12 +18,21 @@ import java.util.function.Consumer;
 public class RSFFormatter {
     private static final String SHA_256 = HashingAlgorithm.SHA256.toString();
 
+    public static final int RSF_ENTRY_TYPE_POSITION = 0;
+    public static final int RSF_KEY_POSITION = 1;
+    public static final int RSF_TIMESTAMP_POSITION = 2;
+    public static final int RSF_HASH_POSITION = 3;
+    public static final int APPEND_ENTRY_ARGUMENT_COUNT = 4;
+    public static final int ASSERT_ROOT_HASH_ARGUMENT_COUNT = 1;
+    public static final int ADD_ITEM_ARGUMENT_COUNT = 1;
+    public static final int RSF_ITEM_ARGUMENT_POSITION = 0;
+    public static final int RSF_ASSERT_ROOT_HASH_ARGUMENT_POSITION = 0;
+
     private final String TAB = "\t";
 
     private final String NEW_LINE = System.lineSeparator();
     private final String ADD_ITEM_COMMAND_NAME = "add-item";
     private final String APPEND_ENTRY_COMMAND_NAME = "append-entry";
-
     private final String ASSERT_ROOT_HASH_COMMAND_NAME = "assert-root-hash";
 
     private final CanonicalJsonValidator canonicalJsonValidator;
@@ -67,8 +77,8 @@ public class RSFFormatter {
 
     private Consumer<List<String>> getAddItemValidator() {
         return (arguments) -> {
-            if (arguments.size() == 1) {
-                String jsonContent = arguments.get(0);
+            if (arguments.size() == ADD_ITEM_ARGUMENT_COUNT) {
+                String jsonContent = arguments.get(RSF_ITEM_ARGUMENT_POSITION);
                 try {
                     canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
                 } catch (SerializationFormatValidationException e) {
@@ -77,31 +87,34 @@ public class RSFFormatter {
                     throw new SerializedRegisterParseException("Invalid JSON: " + e.getMessage(), e);
                 }
             } else {
-                throw new SerializedRegisterParseException("Add item line must have 1 argument, was: " + argsToString(arguments));
+                throw new SerializedRegisterParseException("Add item line must have " + ADD_ITEM_ARGUMENT_COUNT + " argument, was: " + argsToString(arguments));
             }
         };
     }
 
     private Consumer<List<String>> getAppendEntryValidator() {
         return (arguments) -> {
-            if (arguments.size() != 3) {
-                throw new SerializedRegisterParseException("Append entry line must have 3 arguments, was: " + argsToString(arguments));
+            if (arguments.size() != APPEND_ENTRY_ARGUMENT_COUNT) {
+                throw new SerializedRegisterParseException("Append entry line must have " + APPEND_ENTRY_ARGUMENT_COUNT + " arguments, was: " + argsToString(arguments));
             }
             try {
-                Instant.parse(arguments.get(1));
+                EntryType.valueOf(arguments.get(RSF_ENTRY_TYPE_POSITION));
+                Instant.parse(arguments.get(RSF_TIMESTAMP_POSITION));
             } catch (DateTimeParseException e) {
                 throw new SerializedRegisterParseException("Date is not in the correct format", e);
+            } catch (IllegalArgumentException iae) {
+                throw new SerializedRegisterParseException("Type must be 'user' or 'system'", iae);
             }
-            validateHash(arguments.get(2), "Append entry hash value was not hashed using " + SHA_256);
+            validateHash(arguments.get(RSF_HASH_POSITION), "Append entry hash value was not hashed using " + SHA_256);
         };
     }
 
     private Consumer<List<String>> getAssertRootHashValidator() {
         return (arguments) -> {
-            if (arguments.size() == 1) {
-                validateHash(arguments.get(0), "Root hash value was not hashed using " + SHA_256);
+            if (arguments.size() == ASSERT_ROOT_HASH_ARGUMENT_COUNT) {
+                validateHash(arguments.get(RSF_ASSERT_ROOT_HASH_ARGUMENT_POSITION), "Root hash value was not hashed using " + SHA_256);
             } else {
-                throw new SerializedRegisterParseException("Assert root hash line must have 1 arguments, was: " + argsToString(arguments));
+                throw new SerializedRegisterParseException("Assert root hash line must have " + ASSERT_ROOT_HASH_ARGUMENT_COUNT + " arguments, was: " + argsToString(arguments));
             }
         };
     }
@@ -125,6 +138,4 @@ public class RSFFormatter {
     private String argsToString(List<String> arguments) {
         return String.join(", ", arguments);
     }
-
-
 }

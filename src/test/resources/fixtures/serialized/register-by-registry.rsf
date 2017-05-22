@@ -1,4 +1,4 @@
 add-item	{"register":"address","registry":"government-digital-service","text":"Addresses"}
 add-item	{"register":"food-authority","registry":"government-digital-service","text":"Food Authority"}
-append-entry	government-digital-service	2016-11-02T14:45:54Z	sha-256:4bdfee6268fd1365ad9ef378799c1ce567d237c1c0d38d0cf64e64c51aaec559;sha-256:6344e3925465464b317795010fc400ffa8c10380429a3d0260b71ccd9ffc08c7
-append-entry	cabinet-office	2016-11-02T14:45:54Z	
+append-entry	user	government-digital-service	2016-11-02T14:45:54Z	sha-256:4bdfee6268fd1365ad9ef378799c1ce567d237c1c0d38d0cf64e64c51aaec559;sha-256:6344e3925465464b317795010fc400ffa8c10380429a3d0260b71ccd9ffc08c7
+append-entry	user	cabinet-office	2016-11-02T14:45:54Z	
