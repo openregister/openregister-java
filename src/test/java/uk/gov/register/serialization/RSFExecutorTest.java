@@ -77,8 +77,8 @@ public class RSFExecutorTest {
 
         addItem1Command = new RegisterCommand("add-item", singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
-        appendEntry1Command = new RegisterCommand("append-entry", asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"));
-        appendEntry2Command = new RegisterCommand("append-entry", asList("entry2-field-1-value", "2016-07-24T16:56:00Z", "sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a"));
+        appendEntry1Command = new RegisterCommand("append-entry", asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"));
+        appendEntry2Command = new RegisterCommand("append-entry", asList("user", "entry2-field-1-value", "2016-07-24T16:56:00Z", "sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a"));
     }
 
 
@@ -217,7 +217,7 @@ public class RSFExecutorTest {
         RegisterCommand addItem2 = new RegisterCommand("add-item", singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
         String itemHash2 = "sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a";
         RegisterCommand appendEntry = new RegisterCommand("append-entry",
-                asList("entry1-field-1-value", "2016-07-24T16:55:00Z", itemHash1 + ";" + itemHash2));
+                asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", itemHash1 + ";" + itemHash2));
 
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());

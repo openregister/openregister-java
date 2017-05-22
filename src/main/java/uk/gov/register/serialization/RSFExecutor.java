@@ -14,6 +14,7 @@ import static java.util.stream.Collectors.toList;
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class RSFExecutor {
+    public static final int RSF_HASH_POSITION = 3;
 
     private Map<String, RegisterCommandHandler> registeredHandlers;
 
@@ -74,7 +75,7 @@ public class RSFExecutor {
     }
 
     private Boolean validateAppendEntry(RegisterCommand command, Register register, Map<HashValue, Integer> hashRefLine) {
-        String delimitedHashes = command.getCommandArguments().get(2);
+        String delimitedHashes = command.getCommandArguments().get(RSF_HASH_POSITION);
         if (StringUtils.isEmpty(delimitedHashes)) {
             return false;
         }

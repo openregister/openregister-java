@@ -195,10 +195,11 @@ public class DataDownloadFunctionalTest {
 
     private void assertFormattedEntry(String actualEntry, String expectedKey, String expectedHash) {
         String[] parts = actualEntry.split("\t");
-        assertThat(parts.length, is(4));
+        assertThat(parts.length, is(5));
         assertThat(parts[0], is("append-entry"));
-        assertThat(parts[1], is(expectedKey));
-        assertThat(parts[3], is(expectedHash));
+        assertThat(parts[1], is("user"));
+        assertThat(parts[2], is(expectedKey));
+        assertThat(parts[4], is(expectedHash));
     }
 
     private Map<String, JsonNode> getEntries(InputStream inputStream) throws IOException {

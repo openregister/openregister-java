@@ -40,7 +40,7 @@ public class AppendEntryCommandHandlerTest {
     @Before
     public void setUp() throws Exception {
         sutHandler = new AppendEntryCommandHandler();
-        appendEntryCommand = new RegisterCommand("append-entry", Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item-sha"));
+        appendEntryCommand = new RegisterCommand("append-entry", Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item-sha"));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class AppendEntryCommandHandlerTest {
         when(register.getTotalEntries()).thenReturn(2);
 
         RegisterCommand command = new RegisterCommand("append-entry",
-                Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb"));
+                Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb"));
         RegisterResult registerResult = sutHandler.execute(command, register);
 
         Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
@@ -79,7 +79,7 @@ public class AppendEntryCommandHandlerTest {
         when(register.getTotalEntries()).thenReturn(2);
 
         RegisterCommand command = new RegisterCommand("append-entry",
-                Arrays.asList("entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
+                Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
         RegisterResult registerResult = sutHandler.execute(command, register);
 
         Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value", EntryType.user);

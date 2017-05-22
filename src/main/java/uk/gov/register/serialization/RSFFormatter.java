@@ -2,6 +2,7 @@ package uk.gov.register.serialization;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
@@ -84,15 +85,18 @@ public class RSFFormatter {
 
     private Consumer<List<String>> getAppendEntryValidator() {
         return (arguments) -> {
-            if (arguments.size() != 3) {
-                throw new SerializedRegisterParseException("Append entry line must have 3 arguments, was: " + argsToString(arguments));
+            if (arguments.size() != 4) {
+                throw new SerializedRegisterParseException("Append entry line must have 4 arguments, was: " + argsToString(arguments));
             }
             try {
-                Instant.parse(arguments.get(1));
+                EntryType entryType = EntryType.valueOf(arguments.get(0));
+                Instant.parse(arguments.get(2));
             } catch (DateTimeParseException e) {
                 throw new SerializedRegisterParseException("Date is not in the correct format", e);
+            } catch (IllegalArgumentException iae){
+                throw new SerializedRegisterParseException("Type must be 'user' or 'system'", iae);
             }
-            validateHash(arguments.get(2), "Append entry hash value was not hashed using " + SHA_256);
+            validateHash(arguments.get(3), "Append entry hash value was not hashed using " + SHA_256);
         };
     }
 
