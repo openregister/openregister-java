@@ -1,6 +1,7 @@
 package uk.gov.register.db.mappers;
 
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.util.HashValue;
 
@@ -35,7 +36,7 @@ public class DerivationEntryMapper implements ResultSetMapper<Entry> {
                 hashValues.add(hashValue);
         }
 
-        return new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key);
+        return new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.user);
     }
 
 }

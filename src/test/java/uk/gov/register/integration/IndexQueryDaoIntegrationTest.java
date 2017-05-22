@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
@@ -206,13 +207,13 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(entries.size(), is(7));
         Entry entry0 = entries.get(0);
         Entry expectedEntry0 = new Entry(91, 91,
-                Arrays.asList(decode(SHA256, "sha-256:xxx6c4")), timestamp, "UA");
+                Arrays.asList(decode(SHA256, "sha-256:xxx6c4")), timestamp, "UA", EntryType.user);
         assertThat(entry0, equalTo(expectedEntry0));
 
         Entry entryLast = entries.get(6);
         Entry expectedEntryLast = new Entry(97, 96,
                 Arrays.asList(decode(SHA256, "sha-256:xxxbdc"),
-                        decode(SHA256, "sha-256:xxx509")), timestamp, "MD");
+                        decode(SHA256, "sha-256:xxx509")), timestamp, "MD", EntryType.user);
         assertThat(entryLast, equalTo(expectedEntryLast));
     }
 
@@ -229,12 +230,12 @@ public class IndexQueryDaoIntegrationTest {
         Entry expectedEntry0 = new Entry(93, 93,
                 Arrays.asList(decode(SHA256, "sha-256:xxx6c4"),
                         decode(SHA256, "sha-256:xxx37d"),
-                        decode(SHA256, "sha-256:xxx01c")), timestamp, "UA");
+                        decode(SHA256, "sha-256:xxx01c")), timestamp, "UA", EntryType.user);
         assertThat(entry0, equalTo(expectedEntry0));
 
         Entry entryLast = entries.get(1);
         Entry expectedEntryLast = new Entry(94, 94,
-                Arrays.asList(decode(SHA256, "sha-256:xxxbdc")), timestamp, "MD");
+                Arrays.asList(decode(SHA256, "sha-256:xxxbdc")), timestamp, "MD", EntryType.user);
         assertThat(entryLast, equalTo(expectedEntryLast));
     }
 
@@ -290,7 +291,7 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(entries.size(), is(3));
 
         Entry entry1 = entries.get(1);
-        Entry expectedEntry1 = new Entry(92, 92, Collections.emptyList(), timestamp, "UA");
+        Entry expectedEntry1 = new Entry(92, 92, Collections.emptyList(), timestamp, "UA", EntryType.user);
         assertThat(entry1, equalTo(expectedEntry1));
 
     }
@@ -336,14 +337,14 @@ public class IndexQueryDaoIntegrationTest {
 
     private void insertEntries() {
         // Ordinary entries for Bath, Blackburn, Bedford, Birmingham
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 91,'xxx6c4',1490610633,'BAS')");
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 92,'xxx37d',1490610633,'BBD')");
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 93,'xxx01c',1490610633,'BDF')");
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 94,'xxxbdc',1490610633,'BIR')");
+        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 91,'xxx6c4',1490610633,'BAS', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 92,'xxx37d',1490610633,'BBD', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 93,'xxx01c',1490610633,'BDF', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 94,'xxxbdc',1490610633,'BIR', 'user'::address.ENTRY_TYPE)");
         // Bath to New Bath
-        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\") VALUES ( 95, 'xxx126', 1490610633, 'BAS')");
+        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\", \"type\") VALUES ( 95, 'xxx126', 1490610633, 'BAS', 'user'::address.ENTRY_TYPE)");
         // Blackburn as MD
-        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\") VALUES ( 96, 'xxx509', 1490610633, 'BBD')");
+        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\", \"type\") VALUES ( 96, 'xxx509', 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
         // join table
         handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 91,'xxx6c4')");
         handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 92,'xxx37d')");
@@ -356,9 +357,9 @@ public class IndexQueryDaoIntegrationTest {
 
     private void insertEntriesZeroItems() {
         // Blackburn as UA
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\") VALUES ( 91,'xxx37d',1490610633,'BBD')");
+        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 91,'xxx37d',1490610633,'BBD', 'user'::address.ENTRY_TYPE)");
         // Blackburn as MD
-        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\") VALUES ( 92, 'xxx509', 1490610633, 'BBD')");
+        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\", \"type\") VALUES ( 92, 'xxx509', 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
         // join table
         handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 91,'xxx37d')");
         handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 92,'xxx509')");

@@ -3,10 +3,7 @@ package uk.gov.register.indexer.function;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Register;
+import uk.gov.register.core.*;
 import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
@@ -72,7 +69,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     public void executeWithEntry_shouldReturnIndexValueItemPairByLocalAuthType_whenItemExists() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
-        Entry entry = new Entry(1, itemHash, Instant.now(), "LND");
+        Entry entry = new Entry(1, itemHash, Instant.now(), "LND", EntryType.user);
         when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         Set<IndexKeyItemPair> resultSet = func.execute(register, entry);
@@ -87,7 +84,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         HashValue itemHash2 = new HashValue(HashingAlgorithm.SHA256, "def");
         Item item1 = new Item(itemHash1, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
         Item item2 = new Item(itemHash2, objectMapper.readTree("{\"local-authority-eng\":\"WOT\",\"local-authority-type\":\"NMD\",\"name\":\"Worthing\"}"));
-        Entry entry = new Entry(1, Arrays.asList(itemHash1, itemHash2), Instant.now(), "key");
+        Entry entry = new Entry(1, Arrays.asList(itemHash1, itemHash2), Instant.now(), "key", EntryType.user);
         when(register.getItemBySha256(itemHash1)).thenReturn(Optional.of(item1));
         when(register.getItemBySha256(itemHash2)).thenReturn(Optional.of(item2));
 

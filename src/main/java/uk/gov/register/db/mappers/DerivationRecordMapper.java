@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
+import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -58,7 +55,7 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
             items.add(item);
         }
 
-        Entry entry = new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key);
+        Entry entry = new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.user);
 
         return new Record(entry, items);
     }

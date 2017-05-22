@@ -3,12 +3,8 @@ package uk.gov.register.indexer.function;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Register;
+import uk.gov.register.core.*;
 import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
@@ -80,7 +76,7 @@ public class CurrentCountriesIndexFunctionTest {
         HashValue itemHashCS = new HashValue(HashingAlgorithm.SHA256, "cs");
         Item countryVN = new Item(itemHashVN, objectMapper.readTree("{\"country\":\"VN\",\"name\":\"Vietnam\"}"));
         Item countryCS = new Item(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
-        Entry entry = new Entry(1, Arrays.asList(itemHashVN, itemHashCS), Instant.now(), "key");
+        Entry entry = new Entry(1, Arrays.asList(itemHashVN, itemHashCS), Instant.now(), "key", EntryType.user);
         Register register = mock(Register.class);
         when(register.getItemBySha256(itemHashVN)).thenReturn(Optional.of(countryVN));
         when(register.getItemBySha256(itemHashCS)).thenReturn(Optional.of(countryCS));

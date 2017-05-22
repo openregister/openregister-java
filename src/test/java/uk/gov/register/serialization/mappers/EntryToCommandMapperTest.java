@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
@@ -24,7 +25,7 @@ public class EntryToCommandMapperTest {
 
     @Test
     public void apply_returnsAppendEntryCommandForEntry() {
-        Entry entryToMap = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item-sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
+        Entry entryToMap = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item-sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
 
         RegisterCommand mapResult = sutMapper.apply(entryToMap);
 
@@ -37,7 +38,7 @@ public class EntryToCommandMapperTest {
         Entry entryToMap = new Entry(1, Arrays.asList(
                 new HashValue(HashingAlgorithm.SHA256, "item-sha"),
                 new HashValue(HashingAlgorithm.SHA256, "item-sha2")),
-                Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value");
+                Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
 
         RegisterCommand mapResult = sutMapper.apply(entryToMap);
 
