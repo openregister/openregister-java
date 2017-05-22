@@ -6,7 +6,7 @@ import hashlib
 
 def print_rsf(item, key_field):
     key = item[key_field]
-    timestamp = datetime.now().isoformat(sep='T')
+    timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     item_str = json.dumps(item, separators=(',', ':'), sort_keys=True)
     item_hash = hashlib.sha256(item_str.encode("utf-8")).hexdigest()
     item_line = "add-item\t" + item_str
