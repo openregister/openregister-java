@@ -53,7 +53,7 @@ public class ArchiveCreatorTest {
                 "test register",
                 "alpha");
 
-        RegisterDetail registerDetail = new RegisterDetail("test-domain", 2, 2, Optional.empty(), registerMetadata);
+        RegisterDetail registerDetail = new RegisterDetail("test-domain", 2, 2, Optional.empty(), registerMetadata, Optional.of("name"));
 
         StreamingOutput streamingOutput = sutArchiveCreator.create(
             registerDetail,

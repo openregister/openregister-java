@@ -97,7 +97,8 @@ public class ViewFactory {
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
-        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerMetadata.get(), registerDomainConfiguration.getRegisterDomain());
+        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerMetadata.get(),
+                registerDomainConfiguration.getRegisterDomain(), homepageContentConfiguration.get().getCustodianName());
     }
 
     public <T> AttributionView<T> getAttributionView(String templateName, T fieldValueMap) {
