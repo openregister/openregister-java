@@ -7,25 +7,28 @@ import uk.gov.register.util.ISODateFormatter;
 import java.time.Instant;
 import java.util.Optional;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class RegisterDetail {
     private final String domain;
     private final int totalRecords;
     private final int totalEntries;
     private final Optional<Instant> lastUpdated;
     private RegisterMetadata registerMetadata;
+    private Optional<String> custodianName;
 
     public RegisterDetail(
             String domain,
             int totalRecords,
             int totalEntries,
             Optional<Instant> lastUpdated,
-            RegisterMetadata registerMetadata) {
+            RegisterMetadata registerMetadata,
+            Optional<String> custodianName) {
         this.domain = domain;
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
         this.registerMetadata = registerMetadata;
+        this.custodianName = custodianName;
     }
 
     @JsonProperty("domain")
@@ -55,5 +58,11 @@ public class RegisterDetail {
     @JsonProperty("total-records")
     public int getTotalRecords() {
         return totalRecords;
+    }
+
+    @SuppressWarnings("unused, used from template")
+    @JsonProperty("custodian")
+    public Optional<String> getCustodianName() {
+        return custodianName;
     }
 }

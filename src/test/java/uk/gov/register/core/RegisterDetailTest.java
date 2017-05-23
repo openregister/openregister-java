@@ -13,13 +13,13 @@ import static org.junit.Assert.assertThat;
 public class RegisterDetailTest {
     @Test
     public void getLastUpdatedTime_returnsTheTimestampIfExists() {
-        RegisterDetail registerDetail = new RegisterDetail("", 0, 0, Optional.of(Instant.ofEpochMilli(1411111111)), null);
+        RegisterDetail registerDetail = new RegisterDetail("", 0, 0, Optional.of(Instant.ofEpochMilli(1411111111)), null, Optional.of("name"));
         assertThat(registerDetail.getLastUpdatedTime(), equalTo("1970-01-17T07:58:31Z"));
     }
 
     @Test
     public void getLastUpdatedTime_returnsEmptyStringIfDoesNOTExists() {
-        RegisterDetail registerDetail = new RegisterDetail("", 0, 0, Optional.empty(), null);
+        RegisterDetail registerDetail = new RegisterDetail("", 0, 0, Optional.empty(), null, Optional.of("name"));
         assertThat(registerDetail.getLastUpdatedTime(), is(nullValue()));
     }
 

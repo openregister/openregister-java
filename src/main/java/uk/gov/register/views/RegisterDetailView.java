@@ -13,18 +13,21 @@ public class RegisterDetailView {
     private final Optional<Instant> lastUpdated;
     private final RegisterMetadata registerMetadata;
     private final String registerDomain;
+    private Optional<String> custodianName;
 
     public RegisterDetailView(
             int totalRecords,
             int totalEntries,
             Optional<Instant> lastUpdated,
             RegisterMetadata registerMetadata,
-            String registerDomain) {
+            String registerDomain,
+            Optional<String> custodianName) {
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
         this.registerMetadata = registerMetadata;
         this.registerDomain = registerDomain;
+        this.custodianName = custodianName;
     }
 
     @JsonValue
@@ -34,7 +37,7 @@ public class RegisterDetailView {
                 totalRecords,
                 totalEntries,
                 lastUpdated,
-                registerMetadata
-        );
+                registerMetadata,
+                custodianName);
     }
 }
