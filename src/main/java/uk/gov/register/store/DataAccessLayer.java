@@ -32,6 +32,7 @@ public interface DataAccessLayer {
     // Item Store
     void putItem(Item item);
     Optional<Item> getItemBySha256(HashValue hash);
+    Optional<Item> getItemBySha2562NoFlush(HashValue hash);
     Collection<Item> getAllItems();
     Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);

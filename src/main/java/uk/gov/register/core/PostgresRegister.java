@@ -3,8 +3,10 @@ package uk.gov.register.core;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -15,6 +17,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PostgresRegister implements Register {
     private final RecordIndex recordIndex;
@@ -26,6 +29,7 @@ public class PostgresRegister implements Register {
     private final RegisterMetadata registerMetadata;
     private final IndexDriver indexDriver;
     private final List<IndexFunction> indexFunctions;
+    private final ItemValidator itemValidator;
 
     public PostgresRegister(RegisterMetadata registerMetadata,
                             RegisterFieldsConfiguration registerFieldsConfiguration,
@@ -33,7 +37,7 @@ public class PostgresRegister implements Register {
                             ItemStore itemStore,
                             RecordIndex recordIndex,
                             DerivationRecordIndex derivationRecordIndex,
-                            List<IndexFunction> indexFunctions, IndexDriver indexDriver) {
+                            List<IndexFunction> indexFunctions, IndexDriver indexDriver, ItemValidator itemValidator) {
         registerName = registerMetadata.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
@@ -43,6 +47,7 @@ public class PostgresRegister implements Register {
         this.registerMetadata = registerMetadata;
         this.indexDriver = indexDriver;
         this.indexFunctions = indexFunctions;
+        this.itemValidator = itemValidator;
     }
 
     @Override
@@ -51,7 +56,15 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public void appendEntry(Entry entry) {
+    public void appendEntry(final Entry entry) {
+        List<Item> referencedItems = getReferencedItems(entry);
+
+        referencedItems.forEach(i -> {
+            if (entry.getEntryType() == EntryType.user) {
+                itemValidator.validateItem(i.getContent());
+            }
+        });
+
         entryLog.appendEntry(entry);
 
         for (IndexFunction indexFunction : indexFunctions) {
@@ -59,6 +72,13 @@ public class PostgresRegister implements Register {
         }
 
         recordIndex.updateRecordIndex(entry);
+    }
+
+    private List<Item> getReferencedItems(Entry entry) {
+        return entry.getItemHashes().stream()
+                .map(h -> itemStore.getItemBySha256NoFlush(h).orElseThrow(
+                        () -> new SerializationFormatValidationException("Failed to find item referenced by " + h.getValue())))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -178,6 +198,11 @@ public class PostgresRegister implements Register {
     @Override
     public RegisterName getRegisterName() {
         return registerName;
+    }
+
+    @Override
+    public Optional<String> getCustodianName() {
+        return getDerivationRecord("custodian", "metadata").map(r -> r.getItems().get(0).getValue("custodian").get());
     }
 
     @Override

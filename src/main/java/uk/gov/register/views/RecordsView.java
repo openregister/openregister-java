@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
 import uk.gov.register.service.ItemConverter;
@@ -84,10 +85,12 @@ public class RecordsView implements CsvRepresentationView {
 
     private Map<Entry, List<ItemView>> getItemViews(Collection<Record> records, ItemConverter itemConverter) {
         Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
-        records.forEach(record ->
+        records.forEach(record -> {
+            if (record.getEntry().getEntryType() == EntryType.user)
                 map.put(record.getEntry(), record.getItems().stream().map(item ->
                         new ItemView(item.getSha256hex(), itemConverter.convertItem(item), fields))
-                        .collect(Collectors.toList())));
+                        .collect(Collectors.toList()));
+        });
         return map;
     }
 

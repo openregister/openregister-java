@@ -60,6 +60,11 @@ public class ThymeleafView extends View {
         return register.getRegisterName();
     }
 
+    @SuppressWarnings("unused, used by templates")
+    public Optional<String> getCustodianName() {
+        return getMetadataField("custodian");
+    }
+
     public RegisterMetadata getRegister() {
         return register.getRegisterMetadata();
     }
@@ -111,5 +116,9 @@ public class ThymeleafView extends View {
 
     public Optional<String> getRegisterTrackingId() {
         return registerTrackingId;
+    }
+
+    private Optional<String> getMetadataField(String fieldName) {
+        return register.getDerivationRecord(fieldName, "metadata").map(r -> r.getItems().stream().findFirst().get().getValue(fieldName).get());
     }
 }

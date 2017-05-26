@@ -83,7 +83,7 @@ public class ViewFactory {
                 lastUpdated,
                 register.get(),
                 new HomepageContent(homepageContentConfiguration.get().getRegisterHistoryPageUrl(),
-                        homepageContentConfiguration.get().getCustodianName(),
+                        homepageContentConfiguration.get().getCustodianName(), //register.get().getCustodianName(),
                         homepageContentConfiguration.get().getSimilarRegisters(),
                         homepageContentConfiguration.get().getIndexes()),
                 registerTrackingConfiguration.get(),

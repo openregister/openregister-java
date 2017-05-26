@@ -12,7 +12,6 @@ import uk.gov.register.views.representations.ExtraMediaType;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Map;
 import java.util.Optional;
 
 @Path("/item")

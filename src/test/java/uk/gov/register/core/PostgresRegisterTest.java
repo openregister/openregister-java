@@ -1,22 +1,27 @@
 package uk.gov.register.core;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.db.InMemoryEntryDAO;
-import uk.gov.register.db.IndexDAO;
-import uk.gov.register.db.IndexQueryDAO;
+import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.util.HashValue;
 
+import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 import static uk.gov.register.db.InMemoryStubs.inMemoryEntryLog;
@@ -24,7 +29,10 @@ import static uk.gov.register.db.InMemoryStubs.inMemoryItemStore;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PostgresRegisterTest {
+    private static ObjectMapper mapper = new ObjectMapper();
+
     private final InMemoryEntryDAO entryDAO = new InMemoryEntryDAO(new ArrayList<>());
+
     @Mock
     private RecordIndex recordIndex;
     @Mock
@@ -36,7 +44,7 @@ public class PostgresRegisterTest {
     @Mock
     private RegisterFieldsConfiguration registerFieldsConfiguration;
     @Mock
-    private List<IndexFunction> indexFunctions;
+    private IndexFunction indexFunction;
 
     private PostgresRegister register;
 
@@ -44,7 +52,7 @@ public class PostgresRegisterTest {
     public void setup() {
         register = new PostgresRegister(registerMetadata("register"), registerFieldsConfiguration,
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, indexFunctions, indexDriver);
+                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator);
     }
 
     @Test(expected = NoSuchFieldException.class)
@@ -57,6 +65,39 @@ public class PostgresRegisterTest {
         when(registerFieldsConfiguration.containsField("name")).thenReturn(true);
         register.max100RecordsFacetedByKeyValue("name", "United Kingdom");
         verify(recordIndex, times(1)).findMax100RecordsByKeyValue("name", "United Kingdom");
+    }
+
+    @Test(expected = SerializationFormatValidationException.class)
+    public void shouldFailForUnreferencedItem() {
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.now(),
+                "key", EntryType.user);
+
+        register.appendEntry(entry);
+    }
+
+    @Test(expected = ItemValidationException.class)
+    public void shouldFailForInvalidItem() throws IOException {
+        JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
+        doThrow(new ItemValidationException("error", content)).when(itemValidator).validateItem(content);
+        HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
+        Item item = new Item(hashValue, content);
+        Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
+
+        register.putItem(item);
+        register.appendEntry(entry);
+    }
+
+    @Test
+    public void shouldNotValidateSystemItem() throws IOException {
+        JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
+        HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
+        Item item = new Item(hashValue, content);
+        Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.system);
+
+        register.putItem(item);
+        register.appendEntry(entry);
+
+        verify(recordIndex).updateRecordIndex(entry);
     }
 
     private RegisterMetadata registerMetadata(String registerName) {

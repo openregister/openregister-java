@@ -159,12 +159,13 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     private PostgresRegister getPostgresRegister(DataAccessLayer dataAccessLayer) {
         EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
-        ItemStore itemStore = new ItemStoreImpl(dataAccessLayer, mock(ItemValidator.class));
+        ItemValidator itemValidator = mock(ItemValidator.class);
+        ItemStore itemStore = new ItemStoreImpl(dataAccessLayer);
         RegisterMetadata registerData = mock(RegisterMetadata.class);
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
         return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore,
                 new RecordIndexImpl(dataAccessLayer),
-                derivationRecordIndex, Collections.emptyList(), indexDriver);
+                derivationRecordIndex, Collections.emptyList(), indexDriver, itemValidator);
     }
 
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {

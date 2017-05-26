@@ -35,7 +35,9 @@ public class RegisterResourceFunctionalTest {
     @Test
     public void registerJsonShouldContainEntryViewRegisterRegister() throws Throwable {
 
-        String payload = "add-item\t{\"address\":\"12345\"}\n" +
+        String payload = "add-item\t{\"custodian\":\"Stephen McAllister\"}\n" +
+                "append-entry\tsystem\tcustodian\t2017-01-10T17:16:07Z\tsha-256:1a79573f28a473bc281ae5ef7f1a910da710648bc666abf5930e05e1ed962f39\n" +
+                "add-item\t{\"address\":\"12345\"}\n" +
                 "append-entry\tuser\t12345\t2017-05-23T10:12:34Z\tsha-256:5a850dd38262ddc5c4b25532215fea767573e4cd9cb0130b36548fd04b34518d\n" +
                 "add-item\t{\"address\":\"6789\"}\n" +
                 "append-entry\tuser\t6789\t2017-05-23T10:12:34Z\tsha-256:f715806d5b3a85ee3593f53653eb274188cf02de00d4a2064a2c8952617de7fe\n" +
@@ -53,7 +55,7 @@ public class RegisterResourceFunctionalTest {
 
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
 
-        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(5));
+        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(6));
         assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(3));
         assertThat(registerResourceMapFromAddressRegister.get("custodian"), equalTo("Custodian Name"));
         verifyStringIsAnISODate(registerResourceMapFromAddressRegister.get("last-updated").toString());

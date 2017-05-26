@@ -78,6 +78,19 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema);
     }
 
+    public Optional<Item> getItemBySha256(HashValue hash) {
+        checkpoint();
+        return itemQueryDAO.getItemBySHA256(hash.getValue());
+    }
+
+    @Override
+    public Optional<Item> getItemBySha2562NoFlush(HashValue hash) {
+        if (stagedItems.containsKey(hash)) {
+            return Optional.of(stagedItems.get(hash));
+        }
+        return itemQueryDAO.getItemBySHA256(hash.getValue());
+    }
+
     @Override
     public void checkpoint() {
         writeStagedEntriesToDatabase();

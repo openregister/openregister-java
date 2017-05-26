@@ -51,6 +51,7 @@ public class RegisterContext implements
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterAuthenticator authenticator;
+    private final ItemValidator itemValidator;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
                            DBI dbi, Flyway flyway, String schema, Optional<String> trackingId, boolean enableRegisterDataDelete,
@@ -72,6 +73,7 @@ public class RegisterContext implements
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
+        this.itemValidator = new ItemValidator(configManager, registerName);
     }
 
     public RegisterName getRegisterName() {
@@ -102,22 +104,24 @@ public class RegisterContext implements
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
-                new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
+                new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
-                new IndexDriver(dataAccessLayer));
+                new IndexDriver(dataAccessLayer),
+                itemValidator);
     }
 
     private Register buildTransactionalRegister(Handle handle, DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
         return new PostgresRegister(getRegisterMetadata(),
                 getRegisterFieldsConfiguration(),
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
-                new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
+                new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
-                new IndexDriver(dataAccessLayer));
+                new IndexDriver(dataAccessLayer),
+                itemValidator);
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
@@ -236,7 +240,7 @@ public class RegisterContext implements
 
     @Override
     public Optional<String> getCustodianName() {
-        return custodianName;
+        return getMetadataField("custodian");
     }
 
     @Override
@@ -251,5 +255,9 @@ public class RegisterContext implements
 
     public String getSchema() {
         return schema;
+    }
+
+    private Optional<String> getMetadataField(String fieldName) {
+        return getOnDemandDataAccessLayer().getIndexRecord(fieldName, "metadata").map(r -> r.getItems().stream().findFirst().get().getValue(fieldName).get());
     }
 }
