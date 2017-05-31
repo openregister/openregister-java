@@ -53,10 +53,6 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
 
     @Valid
     @JsonProperty
-    private Optional<String> custodianName = Optional.empty();
-
-    @Valid
-    @JsonProperty
     private List<String> similarRegisters = emptyList();
 
     @Valid
@@ -123,7 +119,7 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     private String registersYamlLocation;
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(trackingId, enableRegisterDataDelete, enableDownloadResource, schema, historyPageUrl, custodianName, similarRegisters, indexes, credentials);
+        return new RegisterContextFactory(trackingId, enableRegisterDataDelete, enableDownloadResource, schema, historyPageUrl, similarRegisters, indexes, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {

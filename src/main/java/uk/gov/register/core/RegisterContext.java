@@ -44,7 +44,6 @@ public class RegisterContext implements
     private Flyway flyway;
     private final String schema;
     private final Optional<String> historyPageUrl;
-    private final Optional<String> custodianName;
     private final Optional<String> trackingId;
     private final List<String> similarRegisters;
     private final List<IndexFunctionConfiguration> indexFunctionConfigs;
@@ -56,8 +55,7 @@ public class RegisterContext implements
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
                            DBI dbi, Flyway flyway, String schema, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
-                           Optional<String> custodianName, List<String> similarRegisters, List<String> indexNames,
-                           RegisterAuthenticator authenticator) {
+                           List<String> similarRegisters, List<String> indexNames, RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.registerLinkService = registerLinkService;
@@ -65,7 +63,6 @@ public class RegisterContext implements
         this.flyway = flyway;
         this.schema = schema;
         this.historyPageUrl = historyPageUrl;
-        this.custodianName = custodianName;
         this.similarRegisters = similarRegisters;
         this.indexFunctionConfigs = mapIndexes(indexNames);
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
@@ -239,11 +236,6 @@ public class RegisterContext implements
     }
 
     @Override
-    public Optional<String> getCustodianName() {
-        return getMetadataField("custodian");
-    }
-
-    @Override
     public List<String> getSimilarRegisters() {
         return similarRegisters;
     }
@@ -255,9 +247,5 @@ public class RegisterContext implements
 
     public String getSchema() {
         return schema;
-    }
-
-    private Optional<String> getMetadataField(String fieldName) {
-        return getOnDemandDataAccessLayer().getIndexRecord(fieldName, "metadata").map(r -> r.getItems().stream().findFirst().get().getValue(fieldName).get());
     }
 }

@@ -71,7 +71,9 @@ public class PostgresRegister implements Register {
             indexDriver.indexEntry(this, entry, indexFunction);
         }
 
-        recordIndex.updateRecordIndex(entry);
+        if (entry.getEntryType() == EntryType.user) {
+            recordIndex.updateRecordIndex(entry);
+        }
     }
 
     private List<Item> getReferencedItems(Entry entry) {
@@ -202,7 +204,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<String> getCustodianName() {
-        return getDerivationRecord("custodian", "metadata").map(r -> r.getItems().get(0).getValue("custodian").get());
+        return getMetadataField("custodian");
     }
 
     @Override
@@ -223,6 +225,10 @@ public class PostgresRegister implements Register {
     @Override
     public int getTotalDerivationRecords(String derivationName) {
         return derivationRecordIndex.getTotalRecords(derivationName);
+    }
+
+    private Optional<String> getMetadataField(String fieldName) {
+        return getDerivationRecord(fieldName, "metadata").map(r -> r.getItems().get(0).getValue(fieldName).get());
     }
 
 }

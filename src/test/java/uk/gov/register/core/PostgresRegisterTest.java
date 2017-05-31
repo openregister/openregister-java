@@ -97,7 +97,7 @@ public class PostgresRegisterTest {
         register.putItem(item);
         register.appendEntry(entry);
 
-        verify(recordIndex).updateRecordIndex(entry);
+        verify(itemValidator, never()).validateItem(any());
     }
 
     private RegisterMetadata registerMetadata(String registerName) {

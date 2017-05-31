@@ -30,9 +30,9 @@
       <div class="column-third">
         <aside class="govuk-related-items" role="complementary">
           <h2 class="heading-medium">About this register</h2>
-          <th:block th:if="${#bools.isTrue(homepageContent.custodianName.isPresent())}">
+          <th:block th:if="${#bools.isTrue(custodianName.isPresent())}">
             <h3 class="heading-small">Custodian</h3>
-            <p th:text="${homepageContent.custodianName.get()}"></p>
+            <p th:text="${custodianName.get()}"></p>
           </th:block>
           <th:block th:replace="fragments/attribution.html::attribution"></th:block>
           <h3 class="heading-small">Last updated</h3>

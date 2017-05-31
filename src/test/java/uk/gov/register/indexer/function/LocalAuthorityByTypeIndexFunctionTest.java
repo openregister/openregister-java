@@ -35,7 +35,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
 
         LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction("local-authority-by-type");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+        func.execute(register,EntryType.user,  "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -47,7 +47,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+        func.execute(register, EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -59,7 +59,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+        func.execute(register, EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("CC", itemHash)));

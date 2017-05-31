@@ -36,7 +36,7 @@ public class CurrentCountriesIndexFunctionTest {
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, "CS", new HashValue(HashingAlgorithm.SHA256, "cs"), resultSet);
+        func.execute(register, EntryType.user, "CS", new HashValue(HashingAlgorithm.SHA256, "cs"), resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -50,7 +50,7 @@ public class CurrentCountriesIndexFunctionTest {
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, "VN", itemHashVN, resultSet);
+        func.execute(register, EntryType.user, "VN", itemHashVN, resultSet);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("VN", itemHashVN)));
@@ -65,7 +65,7 @@ public class CurrentCountriesIndexFunctionTest {
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, "CS", itemHashCS, resultSet);
+        func.execute(register,EntryType.user,  "CS", itemHashCS, resultSet);
 
         assertThat(resultSet, is(empty()));
     }

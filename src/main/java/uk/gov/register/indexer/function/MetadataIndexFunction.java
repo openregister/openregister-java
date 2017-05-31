@@ -15,7 +15,7 @@ public class MetadataIndexFunction extends BaseIndexFunction {
     @Override
     protected void execute(Register register, EntryType type, String key, HashValue itemHash, Set<IndexKeyItemPair> result) {
         if (type == EntryType.system) {
-            register.getItemBySha256(itemHash).ifPresent(i -> result.add(new IndexKeyItemPair(key, i.getSha256hex())));
+            result.add(new IndexKeyItemPair(key, itemHash));
         }
     }
 }

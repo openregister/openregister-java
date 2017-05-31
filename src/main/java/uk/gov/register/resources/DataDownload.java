@@ -51,14 +51,11 @@ public class DataDownload {
         Collection<Entry> entries = register.getAllEntries();
         Collection<Item> items = register.getAllItems();
 
-        int totalEntries = register.getTotalEntries();
-        int totalRecords = register.getTotalRecords();
-
         RegisterDetail registerDetail = viewFactory.registerDetailView(
-                totalRecords,
-                totalEntries,
-                register.getLastUpdatedTime()
-        ).getRegisterDetail();
+                register.getTotalRecords(),
+                register.getTotalEntries(),
+                register.getLastUpdatedTime(),
+                register.getCustodianName()).getRegisterDetail();
 
         return Response
                 .ok(new ArchiveCreator().create(registerDetail, entries, items))

@@ -73,7 +73,7 @@ public class ViewFactory {
         return new ExceptionView(requestContext, heading, message, register.get(), registerTrackingConfiguration.get(), registerResolver);
     }
 
-    public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
+    public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated, Optional<String> custodianName) {
         return new HomePageView(
                 getRegistry(),
                 getBranding(),
@@ -81,24 +81,26 @@ public class ViewFactory {
                 totalRecords,
                 totalEntries,
                 lastUpdated,
-                register.get(),
-                new HomepageContent(homepageContentConfiguration.get().getRegisterHistoryPageUrl(),
-                        homepageContentConfiguration.get().getCustodianName(), //register.get().getCustodianName(),
+                custodianName,
+                new HomepageContent(
+                        homepageContentConfiguration.get().getRegisterHistoryPageUrl(),
                         homepageContentConfiguration.get().getSimilarRegisters(),
                         homepageContentConfiguration.get().getIndexes()),
                 registerTrackingConfiguration.get(),
                 registerResolver,
                 configManager.get().getFieldsConfiguration(),
-                registerLinkService.get());
+                registerLinkService.get(),
+                register.get()
+        );
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
         return new DownloadPageView(requestContext, register.get(), enableDownloadResource, registerTrackingConfiguration.get(), registerResolver);
     }
 
-    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
+    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated, Optional<String> custodianName) {
         return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerMetadata.get(),
-                registerDomainConfiguration.getRegisterDomain(), homepageContentConfiguration.get().getCustodianName());
+                registerDomainConfiguration.getRegisterDomain(), custodianName);
     }
 
     public <T> AttributionView<T> getAttributionView(String templateName, T fieldValueMap) {
