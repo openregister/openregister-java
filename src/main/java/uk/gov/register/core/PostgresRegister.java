@@ -78,7 +78,7 @@ public class PostgresRegister implements Register {
 
     private List<Item> getReferencedItems(Entry entry) {
         return entry.getItemHashes().stream()
-                .map(h -> itemStore.getItemBySha256NoFlush(h).orElseThrow(
+                .map(h -> itemStore.getItemBySha256(h).orElseThrow(
                         () -> new SerializationFormatValidationException("Failed to find item referenced by " + h.getValue())))
                 .collect(Collectors.toList());
     }

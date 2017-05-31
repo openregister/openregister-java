@@ -1,6 +1,7 @@
 package uk.gov.register.indexer;
 
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.Register;
 import uk.gov.register.indexer.function.IndexFunction;
@@ -17,7 +18,9 @@ public class IndexDriver {
     }
 
     public void indexEntry(Register register, Entry entry, IndexFunction indexFunction) {
-        Optional<Record> currentRecord = register.getRecord(entry.getKey());
+        Optional<Record> currentRecord = (entry.getEntryType() == EntryType.user)
+                ? register.getRecord(entry.getKey())
+                : register.getDerivationRecord(entry.getKey(), "metadata");
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentRecord.isPresent()) {
             currentIndexKeyItemPairs.addAll(indexFunction.execute(register, currentRecord.get().getEntry()));

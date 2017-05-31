@@ -11,8 +11,6 @@ public interface ItemStore {
 
     Optional<Item> getItemBySha256(HashValue hash);
 
-    Optional<Item> getItemBySha256NoFlush(HashValue hash);
-
     Collection<Item> getAllItems();
 
     Iterator<Item> getIterator();

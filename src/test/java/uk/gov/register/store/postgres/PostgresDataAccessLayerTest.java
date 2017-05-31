@@ -150,7 +150,7 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void getItemBySha256_shouldGetFromStagedDataWithoutWritingToDB() throws Exception {
         dataAccessLayer.putItem(item1);
-        Optional<Item> item = dataAccessLayer.getItemBySha2562NoFlush(item1.getSha256hex());
+        Optional<Item> item = dataAccessLayer.getItemBySha256(item1.getSha256hex());
         assertThat(item, is(Optional.of(item1)));
         assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd").isPresent());
     }

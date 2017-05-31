@@ -86,10 +86,9 @@ public class RecordsView implements CsvRepresentationView {
     private Map<Entry, List<ItemView>> getItemViews(Collection<Record> records, ItemConverter itemConverter) {
         Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
-            if (record.getEntry().getEntryType() == EntryType.user)
-                map.put(record.getEntry(), record.getItems().stream().map(item ->
-                        new ItemView(item.getSha256hex(), itemConverter.convertItem(item), fields))
-                        .collect(Collectors.toList()));
+            map.put(record.getEntry(), record.getItems().stream().map(item ->
+                    new ItemView(item.getSha256hex(), itemConverter.convertItem(item), fields))
+                    .collect(Collectors.toList()));
         });
         return map;
     }

@@ -79,16 +79,10 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     public Optional<Item> getItemBySha256(HashValue hash) {
-        checkpoint();
-        return itemQueryDAO.getItemBySHA256(hash.getValue());
-    }
-
-    @Override
-    public Optional<Item> getItemBySha2562NoFlush(HashValue hash) {
         if (stagedItems.containsKey(hash)) {
             return Optional.of(stagedItems.get(hash));
         }
-        return itemQueryDAO.getItemBySHA256(hash.getValue());
+        return super.getItemBySha256(hash);
     }
 
     @Override
@@ -121,6 +115,10 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     private void writeStagedCurrentKeysToDatabase() {
+        if (stagedCurrentKeys.isEmpty()) {
+            return;
+        }
+
         int noOfRecordsDeleted = removeRecordsWithKeys(stagedCurrentKeys.keySet());
 
         currentKeysDAO.writeCurrentKeys(Iterables.transform(stagedCurrentKeys.entrySet(),

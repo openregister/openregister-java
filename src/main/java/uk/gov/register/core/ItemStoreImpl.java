@@ -25,11 +25,6 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
-    public Optional<Item> getItemBySha256NoFlush(HashValue hash) {
-        return dataAccessLayer.getItemBySha2562NoFlush(hash);
-    }
-
-    @Override
     public Collection<Item> getAllItems() {
         return dataAccessLayer.getAllItems();
     }
