@@ -6,7 +6,9 @@ import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
 import uk.gov.register.indexer.function.MetadataIndexFunction;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -16,12 +18,22 @@ public enum IndexFunctionConfiguration {
     LOCAL_AUTHORITY_BY_TYPE(Constants.LOCAL_AUTHORITY_BY_TYPE, new LocalAuthorityByTypeIndexFunction(Constants.LOCAL_AUTHORITY_BY_TYPE)),
     METADATA(Constants.METADATA, new MetadataIndexFunction(Constants.METADATA));
 
-    public static IndexFunctionConfiguration getValueLowerCase(String name) {
+    public static List<IndexFunctionConfiguration> getConfigurations(List<String> indexNames) {
+        List<IndexFunctionConfiguration> configurations = indexNames.stream().map(n -> getValueLowerCase(n)).collect(Collectors.toList());
+        configurations.addAll(getDefaultConfigurations());
+        return configurations;
+    }
+
+    private static IndexFunctionConfiguration getValueLowerCase(String name) {
         try {
             return IndexFunctionConfiguration.valueOf(name.toUpperCase().replaceAll("-", "_"));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(String.format("Error: no index function corresponding to index: %s in config.yaml", name), e);
         }
+    }
+
+    private static List<IndexFunctionConfiguration> getDefaultConfigurations() {
+        return Arrays.asList(METADATA);
     }
 
     private String name;

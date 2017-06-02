@@ -44,9 +44,6 @@ externalConfigDirectory: /tmp
 
 downloadConfigs: true
 
-indexes:
-  - metadata
-
 # can be http: file s3: or classpath: url
 fieldsYamlLocation: classpath://config/fields.yaml
 

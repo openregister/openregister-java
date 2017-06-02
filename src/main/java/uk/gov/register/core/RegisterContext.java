@@ -180,7 +180,7 @@ public class RegisterContext implements
     }
 
     private List<IndexFunctionConfiguration> mapIndexes(List<String> indexNames) {
-        return indexNames.stream().map(IndexFunctionConfiguration::getValueLowerCase).collect(toList());
+        return IndexFunctionConfiguration.getConfigurations(indexNames);
     }
 
     private DataAccessLayer getOnDemandDataAccessLayer() {

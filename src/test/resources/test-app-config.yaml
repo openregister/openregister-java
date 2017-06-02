@@ -35,9 +35,6 @@ jerseyClient:
 
 trackingId: "UA-12345678-1"
 
-indexes:
-  - metadata
-
 registers:
   postcode:
     schema: postcode
