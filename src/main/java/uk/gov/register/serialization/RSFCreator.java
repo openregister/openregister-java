@@ -36,7 +36,7 @@ public class RSFCreator {
         Iterator<?> iterators;
 
         if (totalEntries1 == totalEntries2) {
-            iterators = Iterators.singletonIterator(register.getRegisterProof(totalEntries1));
+            iterators = Iterators.singletonIterator(register.getRegisterProof(totalEntries1).getRootHash());
         } else {
 
             HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();

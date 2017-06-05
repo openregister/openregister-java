@@ -201,6 +201,21 @@ public class DataDownloadFunctionalTest {
     }
 
     @Test
+    public void downloadPartialRSF_shouldReturnCurrentRootHash_whenStartEntryNumbersIsCurrentMaximum() {
+        Response response = register.getRequest(address, "/download-rsf/5");
+        List<String> partialRsfLines = getRsfLinesFrom(response);
+        assertThat(partialRsfLines.get(0), equalTo("assert-root-hash\tsha-256:a0aa6dace50e47c68fd4a79e3d94ba525f827e0a44bb64ed2e5f75cfe051b71c"));
+    }
+
+    @Test
+    public void downloadPartialRSF_shouldReturnRootHash_whenStartAndEndEntryNumbersEqual() {
+        Response response = register.getRequest(address, "/download-rsf/0/0");
+        List<String> partialRsfLines = getRsfLinesFrom(response);
+
+        assertThat(partialRsfLines.get(0), equalTo("assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
+    }
+
+    @Test
     public void downloadPartialRSF_shouldReturn400_whenRequestedTotalEntriesExceedsEntriesInRegister() {
         Response response = register.getRequest(address, "/download-rsf/0/6");
 
