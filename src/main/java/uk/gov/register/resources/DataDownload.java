@@ -1,32 +1,22 @@
 package uk.gov.register.resources;
 
+import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.views.View;
 import uk.gov.register.configuration.ResourceConfiguration;
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.RegisterDetail;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.*;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.util.ArchiveCreator;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-
-import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.views.View;
+import java.util.Collection;
 
 @Path("/")
 public class DataDownload {
@@ -111,6 +101,28 @@ public class DataDownload {
         String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
         return Response
                 .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, indexName, totalEntries1, totalEntries2))
+                .header("Content-Disposition", rsfFileName).build();
+    }
+
+    @GET
+    @Path("/download-rsf/{start-entry-number}")
+    @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
+    @DownloadNotAvailable
+    @Timed
+    public Response downloadPartialRSF(@PathParam("start-entry-number") int startEntryNumber) {
+        if (startEntryNumber < 0) {
+            throw new BadRequestException("start-entry-number must be 0 or greater");
+        }
+
+        int totalEntriesInRegister = register.getTotalEntries();
+
+        if (startEntryNumber > totalEntriesInRegister) {
+            throw new BadRequestException("start-entry-number must not exceed number of total entries in the register");
+        }
+
+        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
+        return Response
+                .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, startEntryNumber, totalEntriesInRegister))
                 .header("Content-Disposition", rsfFileName).build();
     }
 
