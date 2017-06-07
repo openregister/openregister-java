@@ -3,9 +3,11 @@ package uk.gov.register.functional;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
@@ -13,6 +15,7 @@ import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.functional.app.TestRegister.postcode;
 
 public class HomePageFunctionalTest {
@@ -21,6 +24,11 @@ public class HomePageFunctionalTest {
 
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
+
+    @Before
+    public void setup() {
+        register.loadRsf(postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
+    }
 
     @Test
     public void homePageIsAvailableWhenNoDataInRegister() {

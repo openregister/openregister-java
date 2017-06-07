@@ -3,6 +3,7 @@ package uk.gov.register.resources;
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -14,17 +15,16 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-
 @Path("/")
 public class SearchResource {
 
     private final RegisterName registerPrimaryKey;
-    private final RegisterFieldsConfiguration registerFieldsConfiguration;
+    private final RegisterReadOnly register;
 
     @Inject
-    public SearchResource(RegisterName registerName, RegisterFieldsConfiguration registerFieldsConfiguration) {
+    public SearchResource(RegisterName registerName, RegisterReadOnly register) {
         registerPrimaryKey = registerName;
-        this.registerFieldsConfiguration = registerFieldsConfiguration;
+        this.register = register;
     }
 
     @GET
@@ -32,7 +32,7 @@ public class SearchResource {
     @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @Timed
     public Object find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
-        if (!key.equals(registerPrimaryKey.value()) && !registerFieldsConfiguration.containsField(key)) {
+        if (!key.equals(registerPrimaryKey.value()) && !register.getRegisterMetadata().getFields().contains(key)) {
             throw new NotFoundException();
         }
 
@@ -46,5 +46,4 @@ public class SearchResource {
     private String encodeUrlValue(String value) throws UnsupportedEncodingException {
         return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
-
 }

@@ -9,12 +9,11 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,6 +30,7 @@ public class RecordResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
         register.mintLines(address, item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
     }
 
@@ -45,7 +45,7 @@ public class RecordResourceFunctionalTest {
         assertThat(response.getHeaderString("Link"), equalTo("</record/6789/entries>; rel=\"version-history\""));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class).get("6789");
-        assertThat(res.get("entry-number").textValue(), equalTo("2"));
+        assertThat(res.get("entry-number").textValue(), equalTo("3"));
         assertThat(res.get("key").textValue(), equalTo("6789"));
         assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
@@ -97,14 +97,14 @@ public class RecordResourceFunctionalTest {
         assertThat(res.isArray(), equalTo(true));
 
         JsonNode firstEntry = res.get(0);
-        assertThat(firstEntry.get("index-entry-number").textValue(), equalTo("1"));
-        assertThat(firstEntry.get("entry-number").textValue(), equalTo("1"));
+        assertThat(firstEntry.get("index-entry-number").textValue(), equalTo("2"));
+        assertThat(firstEntry.get("entry-number").textValue(), equalTo("2"));
         assertThat(firstEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item0)));
         assertTrue(firstEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
         JsonNode secondEntry = res.get(1);
-        assertThat(secondEntry.get("index-entry-number").textValue(), equalTo("2"));
-        assertThat(secondEntry.get("entry-number").textValue(), equalTo("2"));
+        assertThat(secondEntry.get("index-entry-number").textValue(), equalTo("3"));
+        assertThat(secondEntry.get("entry-number").textValue(), equalTo("3"));
         assertThat(secondEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
         assertTrue(secondEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 

@@ -1,8 +1,11 @@
 package uk.gov.register.core;
 
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.exceptions.RegisterUndefinedException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
@@ -20,31 +23,29 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PostgresRegister implements Register {
+    private static ObjectMapper mapper = new ObjectMapper();
     private final RecordIndex recordIndex;
     private final DerivationRecordIndex derivationRecordIndex;
     private final RegisterName registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
-    private final RegisterFieldsConfiguration registerFieldsConfiguration;
-    private final RegisterMetadata registerMetadata;
     private final IndexDriver indexDriver;
     private final List<IndexFunction> indexFunctions;
     private final ItemValidator itemValidator;
 
-    public PostgresRegister(RegisterMetadata registerMetadata,
-                            RegisterFieldsConfiguration registerFieldsConfiguration,
+    public PostgresRegister(RegisterName registerName,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             RecordIndex recordIndex,
                             DerivationRecordIndex derivationRecordIndex,
-                            List<IndexFunction> indexFunctions, IndexDriver indexDriver, ItemValidator itemValidator) {
-        registerName = registerMetadata.getRegisterName();
+                            List<IndexFunction> indexFunctions,
+                            IndexDriver indexDriver,
+                            ItemValidator itemValidator) {
+        this.registerName = registerName;
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
         this.derivationRecordIndex = derivationRecordIndex;
-        this.registerFieldsConfiguration = registerFieldsConfiguration;
-        this.registerMetadata = registerMetadata;
         this.indexDriver = indexDriver;
         this.indexFunctions = indexFunctions;
         this.itemValidator = itemValidator;
@@ -140,7 +141,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
-        if (!registerFieldsConfiguration.containsField(key)) {
+        if (!getRegisterMetadata().getFields().contains(key)) {
             throw new NoSuchFieldException(registerName, key);
         }
 
@@ -209,7 +210,14 @@ public class PostgresRegister implements Register {
 
     @Override
     public RegisterMetadata getRegisterMetadata() {
-        return registerMetadata;
+        return getDerivationRecord("register:" + getRegisterName().value(), "metadata").map(r -> {
+            JsonNode content = r.getItems().get(0).getContent();
+            try {
+                return mapper.treeToValue(content, RegisterMetadata.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }).orElseThrow(() -> new RegisterUndefinedException(getRegisterName()));
     }
 
     @Override

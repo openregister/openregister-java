@@ -77,10 +77,6 @@ public class RegisterContext implements
         return registerName;
     }
 
-    private RegisterFieldsConfiguration getRegisterFieldsConfiguration() {
-        return new RegisterFieldsConfiguration(getRegisterMetadata().getFields());
-    }
-
     public RegisterMetadata getRegisterMetadata() {
         return configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
     }
@@ -98,8 +94,7 @@ public class RegisterContext implements
     public Register buildOnDemandRegister() {
         DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
 
-        return new PostgresRegister(getRegisterMetadata(),
-                getRegisterFieldsConfiguration(),
+        return new PostgresRegister(registerName,
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
@@ -110,8 +105,7 @@ public class RegisterContext implements
     }
 
     private Register buildTransactionalRegister(Handle handle, DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
-        return new PostgresRegister(getRegisterMetadata(),
-                getRegisterFieldsConfiguration(),
+        return new PostgresRegister(registerName,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),

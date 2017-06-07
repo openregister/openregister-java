@@ -7,6 +7,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,6 +25,7 @@ public class ItemResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
         register.mintLines(address, item1, item2);
     }
 

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static uk.gov.register.db.InMemoryStubs.inMemoryEntryLog;
@@ -49,10 +50,13 @@ public class PostgresRegisterTest {
     private PostgresRegister register;
 
     @Before
-    public void setup() {
-        register = new PostgresRegister(registerMetadata("register"), registerFieldsConfiguration,
+    public void setup() throws IOException {
+        register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
                 derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator);
+        Record record = mock(Record.class);
+        when(record.getItems()).thenReturn(Arrays.asList(getItem("{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}")));
+        when(derivationRecordIndex.getRecord("register:postcode", "metadata")).thenReturn(Optional.of(record));
     }
 
     @Test(expected = NoSuchFieldException.class)
@@ -62,9 +66,8 @@ public class PostgresRegisterTest {
 
     @Test
     public void findMax100RecordsByKeyValueShouldReturnValueWhenKeyExists() {
-        when(registerFieldsConfiguration.containsField("name")).thenReturn(true);
-        register.max100RecordsFacetedByKeyValue("name", "United Kingdom");
-        verify(recordIndex, times(1)).findMax100RecordsByKeyValue("name", "United Kingdom");
+        register.max100RecordsFacetedByKeyValue("postcode", "AB1 2CD");
+        verify(recordIndex, times(1)).findMax100RecordsByKeyValue("postcode", "AB1 2CD");
     }
 
     @Test(expected = SerializationFormatValidationException.class)
@@ -104,5 +107,9 @@ public class PostgresRegisterTest {
         RegisterMetadata mock = mock(RegisterMetadata.class);
         when(mock.getRegisterName()).thenReturn(new RegisterName(registerName));
         return mock;
+    }
+
+    private Item getItem(String json) throws IOException {
+        return new Item(new ObjectMapper().readTree(json));
     }
 }

@@ -115,8 +115,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             @Override
             protected void configure() {
 
-                bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
-                bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
+//                bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
+//                bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
                 bind(allTheRegisters);
                 bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class)
                         .to(RegisterTrackingConfiguration.class).to(DeleteRegisterDataConfiguration.class)

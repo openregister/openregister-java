@@ -1,16 +1,14 @@
 package uk.gov.register.functional.store.postgres;
 
-import static java.util.Collections.emptyList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static uk.gov.register.functional.app.TestRegister.address;
-
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jdbi.OptionalContainerFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
@@ -28,15 +26,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jdbi.OptionalContainerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class PostgresRegisterTransactionalFunctionalTest {
 
@@ -163,7 +158,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         ItemStore itemStore = new ItemStoreImpl(dataAccessLayer);
         RegisterMetadata registerData = mock(RegisterMetadata.class);
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
-        return new PostgresRegister(registerData, new RegisterFieldsConfiguration(emptyList()), entryLog, itemStore,
+        return new PostgresRegister(registerData.getRegisterName(), entryLog, itemStore,
                 new RecordIndexImpl(dataAccessLayer),
                 derivationRecordIndex, Collections.emptyList(), indexDriver, itemValidator);
     }

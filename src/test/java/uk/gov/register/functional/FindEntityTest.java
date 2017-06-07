@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -25,6 +26,7 @@ public class FindEntityTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
         register.mintLines(address, "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}");
     }
 

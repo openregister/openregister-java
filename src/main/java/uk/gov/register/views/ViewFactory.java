@@ -21,7 +21,6 @@ public class ViewFactory {
     private final RequestContext requestContext;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
-    private final Provider<RegisterMetadata> registerMetadata;
     private final RegisterDomainConfiguration registerDomainConfiguration;
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
@@ -37,7 +36,6 @@ public class ViewFactory {
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
                        Provider<HomepageContentConfiguration> homepageContentConfiguration,
-                       Provider<RegisterMetadata> registerMetadata,
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
                        Provider<RegisterReadOnly> register,
@@ -47,7 +45,6 @@ public class ViewFactory {
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
-        this.registerMetadata = registerMetadata;
         this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
@@ -67,6 +64,10 @@ public class ViewFactory {
 
     public ExceptionView exceptionServerErrorView() {
         return exceptionView("Oops, looks like something went wrong", "500 error");
+    }
+
+    public ExceptionView exceptionRegisterUndefinedView(String message) {
+        return exceptionView("Register undefined", message);
     }
 
     public ExceptionView exceptionView(String heading, String message) {
@@ -99,7 +100,7 @@ public class ViewFactory {
     }
 
     public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated, Optional<String> custodianName) {
-        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerMetadata.get(),
+        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, register.get().getRegisterMetadata(),
                 registerDomainConfiguration.getRegisterDomain(), custodianName);
     }
 
@@ -149,11 +150,11 @@ public class ViewFactory {
     }
 
     private PublicBody getRegistry() {
-        return publicBodiesConfiguration.getPublicBody(registerMetadata.get().getRegistry());
+        return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
     }
 
     private Optional<GovukOrganisation.Details> getBranding() {
-        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(registerMetadata.get().getRegistry());
+        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(register.get().getRegisterMetadata().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
     }
 

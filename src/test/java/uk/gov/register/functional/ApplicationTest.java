@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -27,6 +28,7 @@ public class ApplicationTest {
     @Before
     public void setup() {
         register.wipe();
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
     }
 
     @Test

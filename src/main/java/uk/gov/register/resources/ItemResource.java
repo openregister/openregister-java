@@ -20,7 +20,7 @@ public class ItemResource {
     private final ViewFactory viewFactory;
 
     @Inject
-    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
+    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory) {
         this.register = register;
         this.viewFactory = viewFactory;
     }
