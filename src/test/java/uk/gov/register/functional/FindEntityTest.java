@@ -26,8 +26,13 @@ public class FindEntityTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
-        register.mintLines(address, "{\"street\":\"ellis\",\"address\":\"12345\"}", "{\"street\":\"presley\",\"address\":\"6789\"}", "{\"street\":\"ellis\",\"address\":\"145678\"}");
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER +
+            "add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}\n" +
+            "append-entry\tuser\t12345\t2017-06-13T09:20:41Z\tsha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9\n" +
+            "add-item\t{\"address\":\"6789\",\"street\":\"presley\"}\n" +
+            "append-entry\tuser\t6789\t2017-06-13T09:20:41Z\tsha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934\n" +
+            "add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}\n" +
+            "append-entry\tuser\t145678\t2017-06-13T09:20:41Z\tsha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
     }
 
     @Test

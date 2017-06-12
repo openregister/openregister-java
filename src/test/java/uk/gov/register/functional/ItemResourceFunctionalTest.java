@@ -25,7 +25,7 @@ public class ItemResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
         register.mintLines(address, item1, item2);
     }
 

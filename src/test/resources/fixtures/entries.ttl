@@ -1,8 +1,18 @@
 @prefix register-metadata:  <https://openregister.github.io/specification/#> .
 
-<http://register.test.register.gov.uk/entry/2>
+<http://register.test.register.gov.uk/entry/9>
       register-metadata:entry-number-field
-              "2" ;
+              "9" ;
+      register-metadata:entry-timestamp-field
+              "2016-03-02T02:03:04Z" ;
+      register-metadata:item-resource
+              <http://register.test.register.gov.uk/item/sha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7> ;
+      register-metadata:key-field
+              "value2" .
+
+<http://register.test.register.gov.uk/entry/8>
+      register-metadata:entry-number-field
+              "8" ;
       register-metadata:entry-timestamp-field
               "2016-03-01T01:02:03Z" ;
       register-metadata:item-resource
@@ -10,9 +20,9 @@
       register-metadata:key-field
               "value1" .
 
-<http://register.test.register.gov.uk/entry/1>
+<http://register.test.register.gov.uk/entry/7>
       register-metadata:entry-number-field
-              "1" ;
+              "7" ;
       register-metadata:entry-timestamp-field
               "2017-06-06T09:54:11Z" ;
       register-metadata:item-resource
@@ -20,12 +30,66 @@
       register-metadata:key-field
               "register:register" .
 
+<http://register.test.register.gov.uk/entry/2>
+      register-metadata:entry-number-field
+              "2" ;
+      register-metadata:entry-timestamp-field
+              "2017-06-09T12:59:51Z" ;
+      register-metadata:item-resource
+              <http://register.test.register.gov.uk/item/sha-256:9ff422bcc529f754408d95f99169d8aba14fb977d3dfc9278d7dfac517706439> ;
+      register-metadata:key-field
+              "field:text" .
+
+<http://register.test.register.gov.uk/entry/1>
+      register-metadata:entry-number-field
+              "1" ;
+      register-metadata:entry-timestamp-field
+              "2017-06-09T12:59:51Z" ;
+      register-metadata:item-resource
+              <http://register.test.register.gov.uk/item/sha-256:a36afdcbce5063e5e51e49ff6d646fe5e8bf83bdb2649e97794206857462daa3> ;
+      register-metadata:key-field
+              "field:register" .
+
+<http://register.test.register.gov.uk/entry/6>
+      register-metadata:entry-number-field
+              "6" ;
+      register-metadata:entry-timestamp-field
+              "2017-06-09T12:59:51Z" ;
+      register-metadata:item-resource
+              <http://register.test.register.gov.uk/item/sha-256:275623d6ea7a7db2e9eeace2fd833610c48862a3601a2afd810b42bff4452c21> ;
+      register-metadata:key-field
+              "field:fields" .
+
+<http://register.test.register.gov.uk/entry/5>
+      register-metadata:entry-number-field
+              "5" ;
+      register-metadata:entry-timestamp-field
+              "2017-06-09T12:59:51Z" ;
+      register-metadata:item-resource
+              <http://register.test.register.gov.uk/item/sha-256:ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c> ;
+      register-metadata:key-field
+              "field:copyright" .
+
+<http://register.test.register.gov.uk/entry/4>
+      register-metadata:entry-number-field
+              "4" ;
+      register-metadata:entry-timestamp-field
+              "2017-06-09T12:59:51Z" ;
+      register-metadata:item-resource
+              <http://register.test.register.gov.uk/item/sha-256:1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4> ;
+      register-metadata:key-field
+              "field:phase" .
+
 <http://register.test.register.gov.uk/entry/3>
       register-metadata:entry-number-field
               "3" ;
       register-metadata:entry-timestamp-field
-              "2016-03-02T02:03:04Z" ;
+              "2017-06-09T12:59:51Z" ;
       register-metadata:item-resource
-              <http://register.test.register.gov.uk/item/sha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7> ;
+              <http://register.test.register.gov.uk/item/sha-256:4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2> ;
       register-metadata:key-field
-              "value2" .
+              "field:registry" .
+
+
+
+

@@ -3,7 +3,6 @@ package uk.gov.register.functional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.dropwizard.jackson.Jackson;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -22,22 +21,17 @@ import static org.junit.Assert.assertTrue;
 import static uk.gov.register.functional.app.TestRegister.address;
 
 public class RecordResourceFunctionalTest {
-    private final static String item0 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
-    private final static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";
     @ClassRule
     public static RegisterRule register = new RegisterRule();
 
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
-        register.mintLines(address, item0, item1, "{\"address\":\"145678\",\"street\":\"ellis\"}");
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER + addressRsf());
     }
 
     @Test
     public void getRecordByKey() throws JSONException, IOException {
-        String sha256Hex = DigestUtils.sha256Hex(item1);
-
         Response response = register.getRequest(address, "/record/6789.json");
 
         assertThat(response.getStatus(), equalTo(200));
@@ -45,7 +39,7 @@ public class RecordResourceFunctionalTest {
         assertThat(response.getHeaderString("Link"), equalTo("</record/6789/entries>; rel=\"version-history\""));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class).get("6789");
-        assertThat(res.get("entry-number").textValue(), equalTo("3"));
+        assertThat(res.get("entry-number").textValue(), equalTo("13"));
         assertThat(res.get("key").textValue(), equalTo("6789"));
         assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
@@ -97,21 +91,29 @@ public class RecordResourceFunctionalTest {
         assertThat(res.isArray(), equalTo(true));
 
         JsonNode firstEntry = res.get(0);
-        assertThat(firstEntry.get("index-entry-number").textValue(), equalTo("2"));
-        assertThat(firstEntry.get("entry-number").textValue(), equalTo("2"));
-        assertThat(firstEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item0)));
+        assertThat(firstEntry.get("index-entry-number").textValue(), equalTo("12"));
+        assertThat(firstEntry.get("entry-number").textValue(), equalTo("12"));
+        assertThat(firstEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:9432331d3343a7ceaaee46308069d01836460294c672223b236727a790acf786" ));
         assertTrue(firstEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
         JsonNode secondEntry = res.get(1);
-        assertThat(secondEntry.get("index-entry-number").textValue(), equalTo("3"));
-        assertThat(secondEntry.get("entry-number").textValue(), equalTo("3"));
-        assertThat(secondEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
+        assertThat(secondEntry.get("index-entry-number").textValue(), equalTo("13"));
+        assertThat(secondEntry.get("entry-number").textValue(), equalTo("13"));
+        assertThat(secondEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934" ));
         assertTrue(secondEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
-
     }
 
     @Test
     public void historyResource_return404ResponseWhenRecordNotExist() {
         assertThat(register.getRequest(address, "/record/5001/entries.json").getStatus(), equalTo(404));
+    }
+
+    private String addressRsf(){
+        return "add-item\t{\"address\":\"6789\",\"street\":\"elvis\"}\n" +
+                "append-entry\tuser\t6789\t2017-06-09T12:09:02Z\tsha-256:9432331d3343a7ceaaee46308069d01836460294c672223b236727a790acf786\n" +
+                "add-item\t{\"address\":\"6789\",\"street\":\"presley\"}\n" +
+                "append-entry\tuser\t6789\t2017-06-09T12:09:02Z\tsha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934\n" +
+                "add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}\n" +
+                "append-entry\tuser\t145678\t2017-06-09T12:09:02Z\tsha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983";
     }
 }

@@ -33,14 +33,14 @@ public class EntriesResourceFunctionalTest {
     @Before
     public void setup() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
     }
 
     @Test
     public void entries_returnsSingleEntryWhenRegisterDefined() {
         Response response = register.getRequest(address, "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.readEntity(ArrayNode.class).size(), equalTo(1));
+        assertThat(response.readEntity(ArrayNode.class).size(), equalTo(11));
     }
 
     @Test
@@ -71,20 +71,20 @@ public class EntriesResourceFunctionalTest {
         Response response = register.getRequest(address, "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         ArrayNode jsonNodes = response.readEntity(ArrayNode.class);
-        assertThat(jsonNodes.size(), equalTo(3));
+        assertThat(jsonNodes.size(), equalTo(13));
 
-        JsonNode entry1 = jsonNodes.get(1);
+        JsonNode entry1 = jsonNodes.get(11);
         assertThat(Iterators.size(entry1.fields()), equalTo(5));
-        assertThat(entry1.get("entry-number").textValue(), equalTo("2"));
+        assertThat(entry1.get("entry-number").textValue(), equalTo("12"));
         assertThat(entry1.get("item-hash").getNodeType(), is(JsonNodeType.ARRAY));
         String hash1 = entry1.get("item-hash").get(0).asText();
         assertThat( hash1, is("sha-256:" + DigestUtils.sha256Hex(item1)));
         verifyStringIsADateSpecifiedInSpecification(entry1.get("entry-timestamp").textValue());
         assertThat(entry1.get("key").textValue(), equalTo("1234"));
 
-        JsonNode entry2 = jsonNodes.get(2);
+        JsonNode entry2 = jsonNodes.get(12);
         assertThat(Iterators.size(entry2.fields()), equalTo(5));
-        assertThat(entry2.get("entry-number").textValue(), equalTo("3"));
+        assertThat(entry2.get("entry-number").textValue(), equalTo("13"));
         String hash2 = entry2.get("item-hash").get(0).asText();
         assertThat( hash2, is("sha-256:" + DigestUtils.sha256Hex(item2)));
         verifyStringIsADateSpecifiedInSpecification(entry2.get("entry-timestamp").textValue());

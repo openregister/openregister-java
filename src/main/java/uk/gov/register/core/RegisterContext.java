@@ -70,7 +70,7 @@ public class RegisterContext implements
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
-        this.itemValidator = new ItemValidator(configManager, registerName);
+        this.itemValidator = new ItemValidator(registerName);
     }
 
     public RegisterName getRegisterName() {
@@ -180,6 +180,7 @@ public class RegisterContext implements
     private DataAccessLayer getOnDemandDataAccessLayer() {
         return new PostgresDataAccessLayer(
                 dbi.onDemand(EntryQueryDAO.class),
+                dbi.onDemand(IndexDAO.class),
                 dbi.onDemand(IndexQueryDAO.class),
                 dbi.onDemand(EntryDAO.class),
                 dbi.onDemand(EntryItemDAO.class),
@@ -194,6 +195,7 @@ public class RegisterContext implements
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
         return new PostgresDataAccessLayer(
                 handle.attach(EntryQueryDAO.class),
+                handle.attach(IndexDAO.class),
                 handle.attach(IndexQueryDAO.class),
                 handle.attach(EntryDAO.class),
                 handle.attach(EntryItemDAO.class),

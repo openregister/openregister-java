@@ -13,9 +13,14 @@ import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -72,7 +77,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForEntryResource() {
         assumeThat(expectedEntryValue, notNullValue());
 
-        Response response = register.getRequest(TestRegister.register, "/entry/2." + extension);
+        Response response = register.getRequest(TestRegister.register, "/entry/8." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -121,6 +126,11 @@ public class RepresentationsFunctionalTest {
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
         assertThat(response.readEntity(String.class).trim(), equalTo(expectedEntriesValue.trim()));
+    }
+
+    private List<String> getRsfLinesFrom(Response response) {
+        InputStream is = response.readEntity(InputStream.class);
+        return new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.toList());
     }
 
     @Test

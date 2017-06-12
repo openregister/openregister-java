@@ -18,7 +18,8 @@ ext {
             "io.dropwizard:dropwizard-metrics-graphite:${dropwizard_version}",
             "io.dropwizard.metrics:metrics-core:${dropwizard_metrics_version}",
             "io.dropwizard.metrics:metrics-graphite:${dropwizard_metrics_version}",
-            "io.dropwizard.modules:dropwizard-flyway:1.0.0-1"
+            "io.dropwizard.modules:dropwizard-flyway:1.0.0-1",
+            "io.dropwizard.modules:dropwizard-java8-jdbi:0.9.0-1"
     ]
 
     stringTemplate= 'org.antlr:stringtemplate:3.2.1'

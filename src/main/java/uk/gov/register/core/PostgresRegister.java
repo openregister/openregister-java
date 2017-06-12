@@ -10,17 +10,19 @@ import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
+import java.io.UncheckedIOException;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 public class PostgresRegister implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -62,7 +64,7 @@ public class PostgresRegister implements Register {
 
         referencedItems.forEach(i -> {
             if (entry.getEntryType() == EntryType.user) {
-                itemValidator.validateItem(i.getContent());
+                itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
             }
         });
 
@@ -210,14 +212,9 @@ public class PostgresRegister implements Register {
 
     @Override
     public RegisterMetadata getRegisterMetadata() {
-        return getDerivationRecord("register:" + getRegisterName().value(), "metadata").map(r -> {
-            JsonNode content = r.getItems().get(0).getContent();
-            try {
-                return mapper.treeToValue(content, RegisterMetadata.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }).orElseThrow(() -> new RegisterUndefinedException(getRegisterName()));
+        return getDerivationRecord("register:" + registerName.value(), "metadata")
+                .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
+                .orElseThrow(() -> new RegisterUndefinedException(registerName));
     }
 
     @Override
@@ -233,6 +230,28 @@ public class PostgresRegister implements Register {
     @Override
     public int getTotalDerivationRecords(String derivationName) {
         return derivationRecordIndex.getTotalRecords(derivationName);
+    }
+
+    @Override
+    public Map<String, Field> getFieldsByName() {
+        RegisterMetadata registerMetadata = getRegisterMetadata();
+        List<String> fieldNames = registerMetadata.getFields();
+        return fieldNames.stream().collect(toMap(identity(), this::getField));
+    }
+
+    private Field getField(String fieldName) {
+        return getDerivationRecord("field:" + fieldName, "metadata")
+                .map(record -> extractObjectFromRecord(record, Field.class))
+                .orElseThrow(() -> new RegisterUndefinedException(registerName, "field definition not found for " + fieldName));
+    }
+
+    private <T> T extractObjectFromRecord(Record record, Class<T> clazz) {
+        try {
+            JsonNode content = record.getItems().get(0).getContent();
+            return mapper.treeToValue(content, clazz);
+        } catch (JsonProcessingException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private Optional<String> getMetadataField(String fieldName) {

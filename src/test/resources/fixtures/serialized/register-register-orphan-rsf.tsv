@@ -1,5 +1,3 @@
-assert-root-hash	sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 add-item	{"register":"ft_openregister_test","text":"SomeText"}
 add-item	{"register":"ft_openregister_test","text":"orphan item"}
 append-entry	user	ft_openregister_test	2016-11-02T14:45:54Z	sha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254
-assert-root-hash	sha-256:707166227cb8271fc9b6a4f8add42d3567edf7007159ea92ba3f4fb84b10249c

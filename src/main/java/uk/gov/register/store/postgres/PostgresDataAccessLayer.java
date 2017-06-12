@@ -24,9 +24,9 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private final IndexDAO indexDAO;
 
     public PostgresDataAccessLayer(
-            EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
+            EntryQueryDAO entryQueryDAO, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
             EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO,
-            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO, IndexDAO indexDAO, String schema) {
+            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO, String schema) {
         super(entryQueryDAO, indexQueryDAO, itemQueryDAO, recordQueryDAO, schema);
         this.entryDAO = entryDAO;
         this.entryItemDAO = entryItemDAO;
@@ -78,6 +78,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema);
     }
 
+    @Override
     public Optional<Item> getItemBySha256(HashValue hash) {
         if (stagedItems.containsKey(hash)) {
             return Optional.of(stagedItems.get(hash));
