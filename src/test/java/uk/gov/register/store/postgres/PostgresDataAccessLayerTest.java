@@ -26,7 +26,6 @@ public class PostgresDataAccessLayerTest {
 
     InMemoryEntryDAO entryQueryDAO;
     InMemoryEntryItemDAO entryItemDAO;
-    IndexDAO indexDAO;
     IndexQueryDAO indexQueryDAO;
     IndexDAO indexDAO;
     InMemoryItemDAO itemDAO;
@@ -62,7 +61,7 @@ public class PostgresDataAccessLayerTest {
         currentKeysUpdateDAO = new InMemoryCurrentKeysUpdateDAO(currentKeys);
 
         dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
-                itemDAO, itemDAO, recordQueryDAO, currentKeysUpdateDAO, "zzz");
+                itemDAO, itemDAO, recordQueryDAO, currentKeysUpdateDAO, "schema");
 
         hash1 = new HashValue(SHA256, "abcd");
         hash2 = new HashValue(SHA256, "jkl1");
@@ -154,7 +153,7 @@ public class PostgresDataAccessLayerTest {
         dataAccessLayer.putItem(item1);
         Optional<Item> item = dataAccessLayer.getItemBySha256(item1.getSha256hex());
         assertThat(item, is(Optional.of(item1)));
-        assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd").isPresent());
+        assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd", "schema").isPresent());
     }
 
     @Test

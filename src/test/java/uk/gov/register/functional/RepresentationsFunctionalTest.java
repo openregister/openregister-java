@@ -128,11 +128,6 @@ public class RepresentationsFunctionalTest {
         assertThat(response.readEntity(String.class).trim(), equalTo(expectedEntriesValue.trim()));
     }
 
-    private List<String> getRsfLinesFrom(Response response) {
-        InputStream is = response.readEntity(InputStream.class);
-        return new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.toList());
-    }
-
     @Test
     public void representationIsSupportedForRecordEntriesResource() {
         assumeThat(expectedRecordEntriesValue, notNullValue());

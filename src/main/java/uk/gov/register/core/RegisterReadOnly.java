@@ -6,10 +6,7 @@ import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface RegisterReadOnly {
     Optional<Item> getItemBySha256(HashValue hash);
@@ -53,5 +50,7 @@ public interface RegisterReadOnly {
     List<Record> getDerivationRecords(int limit, int offset, String derivationName);
 
     int getTotalDerivationRecords(String derivationName);
+
+    Map<String, Field> getFieldsByName();
 }
 

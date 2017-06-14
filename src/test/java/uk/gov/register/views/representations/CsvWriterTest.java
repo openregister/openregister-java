@@ -122,15 +122,15 @@ public class CsvWriterTest {
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"key1\":\"item2\"}"));
         Record record = new Record(entry, Arrays.asList(item, item2));
 
-        ItemConverter itemConverter = mock(ItemConverter.class);
-        when(itemConverter.convertItem(item)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
-        when(itemConverter.convertItem(item2)).thenReturn(ImmutableMap.of("key1", new StringValue("item2")));
+        ImmutableMap<String, Field> fields = ImmutableMap.of(
+                "key1", new Field("key1", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                "key2", new Field("key2", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                "key3", new Field("key3", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                "key4", new Field("key4", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
 
-        ImmutableList<Field> fields = ImmutableList.of(
-                new Field("key1", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                new Field("key2", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                new Field("key3", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                new Field("key4", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+        ItemConverter itemConverter = mock(ItemConverter.class);
+        when(itemConverter.convertItem(item, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
+        when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item2")));
 
         RecordView recordView = new RecordView(record, fields, itemConverter);
 
@@ -164,16 +164,18 @@ public class CsvWriterTest {
         Record record2 = new Record(entry2, Arrays.asList(item2, item3));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
-        when(itemConverter.convertItem(item1)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+
+        ImmutableMap<String,Field> fields = ImmutableMap.of(
+                "address",new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
+                "street", new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+
+        when(itemConverter.convertItem(item1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(item2)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
-        when(itemConverter.convertItem(item3)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(item3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("baz")));
 
-        ImmutableList<Field> fields = ImmutableList.of(
-                new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
 
         RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fields, itemConverter, false, false);
 

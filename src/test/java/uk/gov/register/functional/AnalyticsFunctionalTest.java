@@ -45,9 +45,9 @@ public class AnalyticsFunctionalTest {
     public void setup() {
         register.wipe();
 
-        register.loadRsf(REGISTER_WITH_MISSING_TRACKING_ID, RsfRegisterDefinition.REGISTER_REGISTER + dataToLoad);
-        register.loadRsf(REGISTER_WITH_EMPTY_TRACKING_ID, RsfRegisterDefinition.POSTCODE_REGISTER + dataToLoad);
-        register.loadRsf(REGISTER_WITH_VALID_TRACKING_ID, RsfRegisterDefinition.ADDRESS_REGISTER + dataToLoad);
+        register.loadRsf(REGISTER_WITH_MISSING_TRACKING_ID, RsfRegisterDefinition.REGISTER_REGISTER);
+        register.loadRsf(REGISTER_WITH_EMPTY_TRACKING_ID, RsfRegisterDefinition.POSTCODE_REGISTER);
+        register.loadRsf(REGISTER_WITH_VALID_TRACKING_ID, RsfRegisterDefinition.ADDRESS_REGISTER + RsfRegisterDefinition.ADDRESS_FIELDS + dataToLoad);
     }
 
     private final String targetUrl;
@@ -73,30 +73,25 @@ public class AnalyticsFunctionalTest {
                 "/records/" + testEntry1Key + "/entries",
                 "/records/" + testEntry2Key + "/entries",
                 "/item/sha-256:non-existent-item",
-                "/item/" + testEntry1.sha256hex,
-                "/item/" + testEntry2.sha256hex,
-                "/not-found-page");
+                "/item/sha-256:" + testEntry1.sha256hex,
+                "/item/sha-256:" + testEntry2.sha256hex,
+                "/not-found-page"
+        );
     }
 
-    @Ignore
+    @Test
     public void emptyTrackingId_shouldNotIncludeAnalyticsCode() throws Exception {
         assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_EMPTY_TRACKING_ID, false);
     }
 
-    @Ignore
+    @Test
     public void missingTrackingId_shouldNotIncludeAnalyticsCode() throws Exception {
         assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_MISSING_TRACKING_ID, false);
     }
 
-    @Ignore
+    @Test
     public void validTrackingId_shouldIncludeAnalyticsCode() throws Exception {
         assertUrlHasResponseWithAppropriateAnalytics(REGISTER_WITH_VALID_TRACKING_ID, true);
-    }
-
-    //TODO remove this
-    @Test
-    public void dummy(){
-        Assert.assertThat(1+1, is(2));
     }
 
     private void assertUrlHasResponseWithAppropriateAnalytics(TestRegister testRegister, boolean shouldIncludeAnalytics) {

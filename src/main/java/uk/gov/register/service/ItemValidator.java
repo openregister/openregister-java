@@ -15,17 +15,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class ItemValidator {
-    //private final ConfigManager configManager;
     private final RegisterName registerName;
 
     public ItemValidator(RegisterName registerName) {
-        //this.configManager = configManager;
         this.registerName = registerName;
     }
 
     public void validateItem(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws ItemValidationException {
-       // RegisterMetadata registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
-
         validateFields(inputEntry, registerMetadata);
 
         validatePrimaryKeyExists(inputEntry);
@@ -49,7 +45,6 @@ public class ItemValidator {
 
     private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws ItemValidationException {
         inputEntry.fieldNames().forEachRemaining(fieldName -> {
-            //Field field = configManager.getFieldsConfiguration().getField(fieldName);
             Field field = fields.get(fieldName);
 
             Datatype datatype = field.getDatatype();

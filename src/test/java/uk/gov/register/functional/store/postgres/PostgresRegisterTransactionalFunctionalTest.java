@@ -1,6 +1,7 @@
 package uk.gov.register.functional.store.postgres;
 
 import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
@@ -28,7 +29,9 @@ import uk.gov.verifiablelog.store.memoization.DoNothing;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,6 +43,8 @@ import static uk.gov.register.functional.app.TestRegister.address;
 
 public class PostgresRegisterTransactionalFunctionalTest {
 
+    private static ObjectMapper MAPPER = new ObjectMapper();
+
     @Rule
     public TestRule wipe = new WipeDatabaseRule(address);
     private DBI dbi;
@@ -48,8 +53,8 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     private TestItemCommandDAO testItemDAO;
     private TestEntryDAO testEntryDAO;
-    private DerivationRecordIndex derivationRecordIndex = mock(DerivationRecordIndex.class);
     private IndexDriver indexDriver = mock(IndexDriver.class);
+    private DerivationRecordIndex derivationRecordIndex;
 
     @Before
     public void setUp() throws Exception {
@@ -59,6 +64,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         handle = dbi.open();
         testItemDAO = handle.attach(TestItemCommandDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
+        derivationRecordIndex = mock(DerivationRecordIndex.class);
     }
 
     @After
@@ -134,8 +140,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     @Test
     public void entryAndItemDataShouldBeCommittedInOrder() throws Exception {
-        Item addressField = new Item(new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), new ObjectMapper().readTree("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"address\",\"phase\":\"alpha\",\"register\":\"address\",\"text\":\"A place in the UK with a postal address.\"}"));
-        Item addressRegister = new Item(new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), new ObjectMapper().readTree("{\"fields\":[\"address\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}"));
+        JsonNode addressRegisterJson = MAPPER.readTree("{\"fields\":[\"address\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}");
+        JsonNode addressFieldJson = MAPPER.readTree("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"address\",\"phase\":\"alpha\",\"register\":\"address\",\"text\":\"A place in the UK with a postal address.\"}");
+
+        Item addressField = new Item(new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), addressFieldJson);
+        Item addressRegister = new Item(new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), addressRegisterJson);
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
@@ -144,6 +153,14 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Entry entry1 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.parse("2017-03-10T00:00:00Z"), "aaa", EntryType.user);
         Entry entry2 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.parse("2017-03-10T00:00:00Z"), "bbb", EntryType.user);
         Entry entry3 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.parse("2017-03-10T00:00:00Z"), "ccc", EntryType.user);
+
+        Record addressRegisterRecord = mock(Record.class);
+        when(addressRegisterRecord.getItems()).thenReturn(Arrays.asList(addressRegister));
+        when(derivationRecordIndex.getRecord("register:address", "metadata")).thenReturn(Optional.of(addressRegisterRecord));
+
+        Record addressFieldRecord = mock(Record.class);
+        when(addressFieldRecord.getItems()).thenReturn(Arrays.asList(addressField));
+        when(derivationRecordIndex.getRecord("field:address", "metadata")).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
@@ -177,7 +194,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 entryLog,
                 itemStore,
                 new RecordIndexImpl(dataAccessLayer),
-                new DerivationRecordIndex(dataAccessLayer),
+                derivationRecordIndex,
                 new ArrayList<>(IndexFunctionConfiguration.METADATA.getIndexFunctions()),
                 indexDriver,
                 itemValidator);
@@ -194,7 +211,6 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 handle.attach(ItemDAO.class),
                 handle.attach(RecordQueryDAO.class),
                 handle.attach(CurrentKeysUpdateDAO.class),
-                handle.attach(IndexDAO.class),
                 "address");
     }
 

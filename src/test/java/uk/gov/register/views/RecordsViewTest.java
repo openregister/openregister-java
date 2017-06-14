@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -38,12 +39,13 @@ public class RecordsViewTest {
         Record record2 = new Record(entry2, Arrays.asList(item2));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
-        when(itemConverter.convertItem(item1)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        Map<String, Field> fieldsByName = mock(Map.class);
+        when(itemConverter.convertItem(item1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(item2)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(item2, fieldsByName )).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
 
-        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), emptyList(), itemConverter, false, false);
+        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fieldsByName, itemConverter, false, false);
 
         Map<String, JsonNode> result = recordsView.getNestedRecordJson();
         assertThat(result.size(), equalTo(2));

@@ -55,11 +55,11 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(200));
 
         TestDBItem expectedItem1 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "a36afdcbce5063e5e51e49ff6d646fe5e8bf83bdb2649e97794206857462daa3"),
-                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"text\":\"A register name.\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"register\":\"register\",\"text\":\"A register name.\"}"));
         TestDBItem expectedItem2 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "9ff422bcc529f754408d95f99169d8aba14fb977d3dfc9278d7dfac517706439"),
-                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"text\",\"phase\":\"alpha\",\"register\":\"address\",\"text\":\"Description of register entry.\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}"));
         TestDBItem expectedItem3 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"text\":\"Body responsible for maintaining one or more registers\"}"));
@@ -70,8 +70,8 @@ public class LoadSerializedFunctionalTest {
                 new HashValue(HashingAlgorithm.SHA256, "ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"copyright\",\"phase\":\"alpha\",\"text\":\"Copyright for the data in the register.\"}"));
         TestDBItem expectedItem6 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "275623d6ea7a7db2e9eeace2fd833610c48862a3601a2afd810b42bff4452c21"),
-                nodeOf("{\"cardinality\":\"n\",\"datatype\":\"string\",\"field\":\"fields\",\"phase\":\"alpha\",\"text\":\"Set of field names.\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"),
+                nodeOf("{\"cardinality\":\"n\",\"datatype\":\"string\",\"field\":\"fields\",\"phase\":\"alpha\",\"register\":\"field\",\"text\":\"Set of field names.\"}"));
         TestDBItem expectedItem7 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "2238e546c1d9e81a3715d10949dedced0311f596304fbf9bb48c50833f8ab025"),
                 nodeOf("{\"fields\":[\"register\",\"text\",\"registry\",\"phase\",\"copyright\",\"fields\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of registers\"}"));
@@ -88,9 +88,9 @@ public class LoadSerializedFunctionalTest {
 
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
         assertThat(entries.get(0).getEntryNumber(), is(1));
-        assertThat(entries.get(0).getItemHashes().get(0).getValue(), is("a36afdcbce5063e5e51e49ff6d646fe5e8bf83bdb2649e97794206857462daa3"));
+        assertThat(entries.get(0).getItemHashes().get(0).getValue(), is("955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"));
         assertThat(entries.get(1).getEntryNumber(), is(2));
-        assertThat(entries.get(1).getItemHashes().get(0).getValue(), is("9ff422bcc529f754408d95f99169d8aba14fb977d3dfc9278d7dfac517706439"));
+        assertThat(entries.get(1).getItemHashes().get(0).getValue(), is("243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b"));
         assertThat(entries.get(2).getEntryNumber(), is(3));
         assertThat(entries.get(2).getItemHashes().get(0).getValue(), is("4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"));
         assertThat(entries.get(3).getEntryNumber(), is(4));
@@ -98,7 +98,7 @@ public class LoadSerializedFunctionalTest {
         assertThat(entries.get(4).getEntryNumber(), is(5));
         assertThat(entries.get(4).getItemHashes().get(0).getValue(), is("ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c"));
         assertThat(entries.get(5).getEntryNumber(), is(6));
-        assertThat(entries.get(5).getItemHashes().get(0).getValue(), is("275623d6ea7a7db2e9eeace2fd833610c48862a3601a2afd810b42bff4452c21"));
+        assertThat(entries.get(5).getItemHashes().get(0).getValue(), is("61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"));
         assertThat(entries.get(6).getEntryNumber(), is(7));
         assertThat(entries.get(6).getItemHashes().get(0).getValue(), is("2238e546c1d9e81a3715d10949dedced0311f596304fbf9bb48c50833f8ab025"));
         assertThat(entries.get(7).getEntryNumber(), is(8));

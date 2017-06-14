@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
 import uk.gov.register.service.ItemConverter;
@@ -21,16 +20,16 @@ public class RecordsView implements CsvRepresentationView {
     private final boolean displayEntryKeyColumn;
     private final boolean resolveAllItemLinks;
 
-    private final Iterable<Field> fields;
+    private final Map<String,Field> fieldsByName;
     private final Map<Entry, List<ItemView>> recordMap;
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-    public RecordsView(List<Record> records, Iterable<Field> fields, ItemConverter itemConverter,
+    public RecordsView(List<Record> records, Map<String, Field> fieldsByName, ItemConverter itemConverter,
                        boolean resolveAllItemLinks, boolean displayEntryKeyColumn) {
         this.displayEntryKeyColumn = displayEntryKeyColumn;
         this.resolveAllItemLinks = resolveAllItemLinks;
-        this.fields = fields;
+        this.fieldsByName = fieldsByName;
         this.recordMap = getItemViews(records, itemConverter);
     }
 
@@ -39,7 +38,7 @@ public class RecordsView implements CsvRepresentationView {
     }
 
     public Iterable<Field> getFields() {
-        return fields;
+        return fieldsByName.values();
     }
 
     @SuppressWarnings("unused, used by JSON renderer")
@@ -58,7 +57,7 @@ public class RecordsView implements CsvRepresentationView {
 
     @Override
     public CsvRepresentation<ArrayNode> csvRepresentation() {
-        Iterable<String> fieldNames = Iterables.transform(fields, f -> f.fieldName);
+        Iterable<String> fieldNames = Iterables.transform(getFields(), f -> f.fieldName);
         return new CsvRepresentation<>(Record.csvSchema(fieldNames), getFlatRecordsJson());
     }
 
@@ -87,7 +86,7 @@ public class RecordsView implements CsvRepresentationView {
         Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
             map.put(record.getEntry(), record.getItems().stream().map(item ->
-                    new ItemView(item.getSha256hex(), itemConverter.convertItem(item), fields))
+                    new ItemView(item.getSha256hex(), itemConverter.convertItem(item, fieldsByName), getFields()))
                     .collect(Collectors.toList()));
         });
         return map;

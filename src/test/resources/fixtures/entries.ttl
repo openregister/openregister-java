@@ -36,7 +36,7 @@
       register-metadata:entry-timestamp-field
               "2017-06-09T12:59:51Z" ;
       register-metadata:item-resource
-              <http://register.test.register.gov.uk/item/sha-256:9ff422bcc529f754408d95f99169d8aba14fb977d3dfc9278d7dfac517706439> ;
+              <http://register.test.register.gov.uk/item/sha-256:243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b> ;
       register-metadata:key-field
               "field:text" .
 
@@ -46,7 +46,7 @@
       register-metadata:entry-timestamp-field
               "2017-06-09T12:59:51Z" ;
       register-metadata:item-resource
-              <http://register.test.register.gov.uk/item/sha-256:a36afdcbce5063e5e51e49ff6d646fe5e8bf83bdb2649e97794206857462daa3> ;
+              <http://register.test.register.gov.uk/item/sha-256:955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0> ;
       register-metadata:key-field
               "field:register" .
 
@@ -56,7 +56,7 @@
       register-metadata:entry-timestamp-field
               "2017-06-09T12:59:51Z" ;
       register-metadata:item-resource
-              <http://register.test.register.gov.uk/item/sha-256:275623d6ea7a7db2e9eeace2fd833610c48862a3601a2afd810b42bff4452c21> ;
+              <http://register.test.register.gov.uk/item/sha-256:61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26> ;
       register-metadata:key-field
               "field:fields" .
 

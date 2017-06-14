@@ -151,24 +151,23 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadPartialRSF_fromStartEntryNumber_shouldReturnAPartOfRegisterAsRsfStream() throws IOException {
-        Response response = register.getRequest(address, "/download-rsf/2");
+        Response response = register.getRequest(address, "/download-rsf/14");
 
         assertThat(response.getHeaderString("Content-Type"), equalTo(ExtraMediaType.APPLICATION_RSF));
         assertThat(response.getHeaderString("Content-Disposition"), startsWith("attachment; filename="));
         assertThat(response.getHeaderString("Content-Disposition"), endsWith(".rsf"));
 
         List<String> rsfLines = getRsfLinesFrom(response);
-
-        assertThat(rsfLines.get(0), equalTo("assert-root-hash\tsha-256:7cdec03e9aba7810340596079a18b495dbc93f22a8d051d3417fb4a79b1f6124"));
+        assertThat(rsfLines.get(0), equalTo("assert-root-hash\tsha-256:9d21d8cd375b99e862df2f73c27d7572c8044ad3f690ab843c2bdc5f2206f607"));
 
         assertThat(rsfLines, hasItems(
                 "add-item\t{\"address\":\"12345\",\"street\":\"foo\"}",
                 "add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}",
                 "add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}"));
 
-        assertFormattedEntry(rsfLines.get(4), "12345","sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
-        assertFormattedEntry(rsfLines.get(5), "145678","sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
-        assertFormattedEntry(rsfLines.get(6), "12345","sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
+        assertFormattedEntry(rsfLines.get(4), EntryType.user, "12345","sha-256:cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
+        assertFormattedEntry(rsfLines.get(5), EntryType.user,"145678","sha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983");
+        assertFormattedEntry(rsfLines.get(6), EntryType.user,"12345","sha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9");
 
         assertThat(rsfLines.get(7), containsString("assert-root-hash\t"));
     }
@@ -218,9 +217,9 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadPartialRSF_shouldReturnCurrentRootHash_whenStartEntryNumbersIsCurrentMaximum() {
-        Response response = register.getRequest(address, "/download-rsf/5");
+        Response response = register.getRequest(address, "/download-rsf/17");
         List<String> partialRsfLines = getRsfLinesFrom(response);
-        assertThat(partialRsfLines.get(0), equalTo("assert-root-hash\tsha-256:a0aa6dace50e47c68fd4a79e3d94ba525f827e0a44bb64ed2e5f75cfe051b71c"));
+        assertThat(partialRsfLines.get(0), equalTo("assert-root-hash\tsha-256:6be3e02f06e49b0109672bc77a9682af8590e69960b1c6eb6a98228aba73504e"));
     }
 
     @Test
@@ -247,7 +246,7 @@ public class DataDownloadFunctionalTest {
 
     @Test
     public void downloadPartialRSF_fromStartEntryNumber_shouldReturn400_whenRequestedStartEntryNumberExceedsEntriesInRegister() {
-        Response response = register.getRequest(address, "/download-rsf/6");
+        Response response = register.getRequest(address, "/download-rsf/18");
 
         assertThat(response.getStatus(), equalTo(400));
     }

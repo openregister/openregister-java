@@ -236,7 +236,11 @@ public class PostgresRegister implements Register {
     public Map<String, Field> getFieldsByName() {
         RegisterMetadata registerMetadata = getRegisterMetadata();
         List<String> fieldNames = registerMetadata.getFields();
-        return fieldNames.stream().collect(toMap(identity(), this::getField));
+        LinkedHashMap<String, Field> fieldsByName = new LinkedHashMap<>();
+        for (String fieldName : fieldNames) {
+            fieldsByName.put(fieldName, getField(fieldName));
+        }
+        return fieldsByName;
     }
 
     private Field getField(String fieldName) {

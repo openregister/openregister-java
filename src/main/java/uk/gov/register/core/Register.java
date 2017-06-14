@@ -9,5 +9,4 @@ public interface Register extends RegisterReadOnly {
     void putItem(Item item);
     void appendEntry(Entry entry);
 
-    Map<String, Field> getFieldsByName();
 }

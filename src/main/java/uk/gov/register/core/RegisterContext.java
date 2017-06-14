@@ -188,7 +188,6 @@ public class RegisterContext implements
                 dbi.onDemand(ItemDAO.class),
                 dbi.onDemand(RecordQueryDAO.class),
                 dbi.onDemand(CurrentKeysUpdateDAO.class),
-                dbi.onDemand(IndexDAO.class),
                 schema);
     }
 
@@ -203,7 +202,6 @@ public class RegisterContext implements
                 handle.attach(ItemDAO.class),
                 handle.attach(RecordQueryDAO.class),
                 handle.attach(CurrentKeysUpdateDAO.class),
-                handle.attach(IndexDAO.class),
                 schema);
     }
 

@@ -2,7 +2,6 @@ package uk.gov.register.views;
 
 import com.google.common.collect.Iterables;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.HomepageContent;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.*;
@@ -40,7 +39,7 @@ public class HomePageView extends AttributionView<Object> {
             HomepageContent homepageContent,
             RegisterTrackingConfiguration registerTrackingConfiguration,
             RegisterResolver registerResolver,
-            FieldsConfiguration fieldsConfiguration,
+            Iterable<Field> fields,
             RegisterLinkService registerLinkService,
             RegisterReadOnly register) {
         super("home.html", requestContext, registry, registryBranding, register, registerTrackingConfiguration, registerResolver, null);
@@ -49,7 +48,7 @@ public class HomePageView extends AttributionView<Object> {
         this.lastUpdated = lastUpdated;
         this.custodianName = custodianName;
         this.homepageContent = homepageContent;
-        this.fields = Iterables.transform(getRegister().getFields(), f -> fieldsConfiguration.getField(f));
+        this.fields = fields;
         this.registerLinks = registerLinkService.getRegisterLinks(getRegisterId());
     }
 

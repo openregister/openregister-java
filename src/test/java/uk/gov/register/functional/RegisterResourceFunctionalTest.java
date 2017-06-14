@@ -30,13 +30,12 @@ public class RegisterResourceFunctionalTest {
     @Before
     public void setup() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS +  RsfRegisterDefinition.ADDRESS_REGISTER );
     }
 
     private final Map<?, ?> expectedAddressRegisterMap = getAddressRegisterMap();
 
-    // TODO do we still want register entry ?
-    @Ignore
+    @Test
     public void registerJsonShouldContainEntryViewRegisterRegister() throws Throwable {
 
         String payload = "add-item\t{\"custodian\":\"Stephen McAllister\"}\n" +
@@ -59,30 +58,14 @@ public class RegisterResourceFunctionalTest {
 
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
 
-        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(7));
+        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(17));
         assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(3));
         assertThat(registerResourceMapFromAddressRegister.get("custodian"), equalTo("Stephen McAllister"));
         verifyStringIsAnISODate(registerResourceMapFromAddressRegister.get("last-updated").toString());
 
         Map<?, ?> registerRecordMapFromAddressRegister = (Map) registerResourceMapFromAddressRegister.get("register-record");
-        verifyStringIsAnISODate(registerRecordMapFromAddressRegister.get("entry-timestamp").toString());
 
         assertAddressRegisterMapIsEqualTo(registerRecordMapFromAddressRegister);
-    }
-
-    // TODO does this matter?
-    @Ignore
-    public void registerJsonShouldGenerateValidResponseForEmptyDB() {
-        Response registerResourceFromAddressRegisterResponse = register.getRequest(address, "/register.json");
-        assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
-
-        Map<String, ?> registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(new GenericType<Map<String, ?>>() {
-        });
-
-        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(1));
-        assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(0));
-
-        assertThat(registerResourceMapFromAddressRegister, not(hasKey("last-updated")));
     }
 
     @Test
@@ -118,16 +101,16 @@ public class RegisterResourceFunctionalTest {
 
     private HashMap<String, Object> getAddressRegisterMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("index-entry-number", "1");
-        result.put("entry-number", "1");
-        result.put("entry-timestamp", "2016-04-21T10:14:21Z");
-        result.put("key", "address");
-        result.put("text", "Postal addresses in the UK");
+      //  result.put("index-entry-number", "1");
+      //  result.put("entry-number", "1");
+      //  result.put("entry-timestamp", "2016-04-21T10:14:21Z");
+      //  result.put("key", "address");
+        result.put("text", "Register of addresses");
         result.put("phase", "alpha");
-        result.put("fields", Arrays.asList("address", "property", "street", "locality", "town", "area", "postcode", "country", "latitude", "longitude"));
+        result.put("fields", Arrays.asList("address","street","locality","town","area","postcode","country","latitude","longitude"));
         result.put("register", "address");
         result.put("registry", "office-for-national-statistics");
-        result.put("copyright", "Contains Ordnance Survey data © Crown copyright & database right 2015\n Contains Royal Mail data © Royal Mail copyright & database right 2015\n");
+    //    result.put("copyright", "Contains Ordnance Survey data © Crown copyright & database right 2015\n Contains Royal Mail data © Royal Mail copyright & database right 2015\n");
         return result;
     }
 }

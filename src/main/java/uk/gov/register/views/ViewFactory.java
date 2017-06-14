@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ViewFactory {
@@ -26,7 +25,6 @@ public class ViewFactory {
     private final Provider<RegisterReadOnly> register;
     private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
-    private final Provider<ConfigManager> configManager;
     private final Provider<RegisterLinkService> registerLinkService;
     private final ItemConverter itemConverter;
 
@@ -39,7 +37,6 @@ public class ViewFactory {
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
                        Provider<RegisterReadOnly> register,
-                       Provider<ConfigManager> configManager,
                        Provider<RegisterLinkService> registerLinkService, ItemConverter itemConverter) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
@@ -49,7 +46,6 @@ public class ViewFactory {
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
-        this.configManager = configManager;
         this.registerLinkService = registerLinkService;
         this.itemConverter = itemConverter;
     }
@@ -89,7 +85,7 @@ public class ViewFactory {
                         homepageContentConfiguration.get().getIndexes()),
                 registerTrackingConfiguration.get(),
                 registerResolver,
-                configManager.get().getFieldsConfiguration(),
+                getFields(),
                 registerLinkService.get(),
                 register.get()
         );
@@ -134,19 +130,19 @@ public class ViewFactory {
     }
 
     public ItemView getItemMediaView(Item item) {
-        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item), getFields());
+        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(Record record) {
-        return new RecordView(record, getFields(), itemConverter);
+        return new RecordView(record, register.get().getFieldsByName(), itemConverter);
     }
 
     public RecordsView getRecordsMediaView(List<Record> records) {
-        return new RecordsView(records, getFields(), itemConverter, false, false);
+        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, false);
     }
 
     public RecordsView getIndexRecordsMediaView(List<Record> records) {
-        return new RecordsView(records, getFields(), itemConverter, false, true);
+        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
     }
 
     private PublicBody getRegistry() {
@@ -158,10 +154,7 @@ public class ViewFactory {
         return organisation.map(GovukOrganisation::getDetails);
     }
 
-    private List<Field> getFields() {
-        FieldsConfiguration fieldsConfiguration = configManager.get().getFieldsConfiguration();
-        return register.get().getRegisterMetadata().getFields().stream()
-                .map(fieldsConfiguration::getField)
-                .collect(Collectors.toList());
+    private Collection<Field> getFields() {
+        return register.get().getFieldsByName().values();
     }
 }
