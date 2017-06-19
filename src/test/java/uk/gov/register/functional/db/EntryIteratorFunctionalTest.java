@@ -10,6 +10,7 @@ import uk.gov.register.functional.app.TestRegister;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,14 +22,15 @@ public class EntryIteratorFunctionalTest {
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
     private static final TestEntryDAO testEntryDAO = register.handleFor(TestRegister.register).attach(TestEntryDAO.class);
+    private static final String schema = TestRegister.register.getSchema();
 
     @Before
     public void publishTestMessages() {
         register.wipe();
 
         entryQueryDAO = mock(EntryQueryDAO.class);
-        when(entryQueryDAO.entriesIteratorFrom(anyInt())).thenAnswer(invocation ->
-                testEntryDAO.entriesIteratorFrom(invocation.getArgument(0)));
+        when(entryQueryDAO.entriesIteratorFrom(anyInt(), eq(schema))).thenAnswer(invocation ->
+                testEntryDAO.entriesIteratorFrom(invocation.getArgument(0), TestRegister.register.getSchema()));
     }
 
     @Test
@@ -42,7 +44,7 @@ public class EntryIteratorFunctionalTest {
             assertThat(entryIteratorDAO.findByEntryNumber(1).getEntryNumber(), equalTo(1));
             assertThat(entryIteratorDAO.findByEntryNumber(2).getEntryNumber(), equalTo(2));
             return null;
-        });
+        }, schema);
     }
 
     @Test
@@ -56,7 +58,7 @@ public class EntryIteratorFunctionalTest {
             assertThat(entryIteratorDAO.findByEntryNumber(2).getEntryNumber(), equalTo(2));
             assertThat(entryIteratorDAO.findByEntryNumber(1).getEntryNumber(), equalTo(1));
             return null;
-        });
+        }, schema);
     }
 
     @Test
@@ -72,7 +74,7 @@ public class EntryIteratorFunctionalTest {
 
             assertThat(entryIteratorDAO.findByEntryNumber(2).getEntryNumber(), equalTo(2));
             return null;
-        });
+        }, schema);
     }
 
     @Test
@@ -91,6 +93,6 @@ public class EntryIteratorFunctionalTest {
             assertThat(entryIteratorDAO.findByEntryNumber(2).getEntryNumber(), equalTo(2));
             assertThat(entryIteratorDAO.findByEntryNumber(3).getEntryNumber(), equalTo(3));
             return null;
-        });
+        }, schema);
     }
 }

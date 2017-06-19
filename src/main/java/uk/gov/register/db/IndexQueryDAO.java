@@ -2,7 +2,7 @@ package uk.gov.register.db;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.customizers.OverrideStatementLocatorWith;
+import org.skife.jdbi.v2.sqlobject.customizers.OverrideStatementRewriterWith;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import uk.gov.register.core.Entry;
@@ -14,33 +14,33 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-@OverrideStatementLocatorWith(SchemaRewriter.class)
+@OverrideStatementRewriterWith(SubstituteSchemaRewriter.class)
 public interface IndexQueryDAO {
     @SqlQuery(recordForKeyQuery)
     @SingleValueResult(Record.class)
     @RegisterMapper(DerivationRecordMapper.class)
-    Optional<Record> findRecord(@Bind("key") String derivationKey, @Bind("name") String derivationName);
+    Optional<Record> findRecord(@Bind("key") String derivationKey, @Bind("name") String derivationName, @Bind("schema") String schema );
 
     @SqlQuery(recordQuery)
     @RegisterMapper(DerivationRecordMapper.class)
-    List<Record> findRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Bind("name") String derivationName);
+    List<Record> findRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Bind("name") String derivationName, @Bind("schema") String schema );
 
     @SqlQuery("select max(r.index_entry_number) from (select greatest(start_index_entry_number, end_index_entry_number) as index_entry_number from :schema.index where name = :name) r")
-    int getCurrentIndexEntryNumber(@Bind("name") String indexName);
+    int getCurrentIndexEntryNumber(@Bind("name") String indexName, @Bind("schema") String schema );
 
     @SqlQuery(entriesQuery)
     @RegisterMapper(DerivationEntryMapper.class)
-    Iterator<Entry> getIterator(@Bind("name") String indexName);
+    Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("schema") String schema );
 
     @SqlQuery(entriesQueryBetweenEntries)
     @RegisterMapper(DerivationEntryMapper.class)
-    Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1,  @Bind("total_entries_2") int totalEntries2);
+    Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Bind("schema") String schema );
 
     @SqlQuery("select count(1) from :schema.index where name = :name and key = :key and sha256hex = :sha256hex and end_entry_number is null")
-    int getExistingIndexCountForItem(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex);
+    int getExistingIndexCountForItem(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Bind("schema") String schema );
 
     @SqlQuery(recordCountQuery)
-    int getTotalRecords(@Bind("name") String indexName);
+    int getTotalRecords(@Bind("name") String indexName, @Bind("schema") String schema );
 
     String recordForKeyQuery = "select " +
             " entry_numbers.mien as index_entry_number, " +

@@ -29,4 +29,8 @@ public enum TestRegister {
     public String getDatabaseConnectionString(String applicationName) {
         return String.format(databaseConnectionString, applicationName);
     }
+
+    public String getSchema() {
+        return name();
+    }
 }

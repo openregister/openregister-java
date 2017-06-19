@@ -11,6 +11,7 @@ import uk.gov.register.db.InMemoryEntryDAO;
 import uk.gov.register.db.IndexDAO;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.ItemValidator;
 
@@ -31,9 +32,7 @@ public class PostgresRegisterTest {
     @Mock
     private ItemValidator itemValidator;
     @Mock
-    private IndexDAO indexDAO;
-    @Mock
-    private IndexQueryDAO indexQueryDAO;
+    private IndexDriver indexDriver;
     @Mock
     private RegisterFieldsConfiguration registerFieldsConfiguration;
     @Mock
@@ -45,7 +44,7 @@ public class PostgresRegisterTest {
     public void setup() {
         register = new PostgresRegister(registerMetadata("register"), registerFieldsConfiguration,
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                indexDAO, indexQueryDAO, derivationRecordIndex, indexFunctions);
+                derivationRecordIndex, indexFunctions, indexDriver);
     }
 
     @Test(expected = NoSuchFieldException.class)

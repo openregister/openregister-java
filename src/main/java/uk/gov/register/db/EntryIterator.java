@@ -8,12 +8,15 @@ import java.util.function.Function;
 public class EntryIterator implements AutoCloseable {
 
     private final EntryQueryDAO entryDAO;
+    private final String schema;
     private int nextValidEntryNumber;
     private ResultIterator<Entry> iterator;
 
-    private EntryIterator(EntryQueryDAO entryDAO) {
+    private EntryIterator(EntryQueryDAO entryDAO, String schema) {
         this.entryDAO = entryDAO;
+        this.schema = schema;
         this.nextValidEntryNumber = -1;
+
     }
 
     public Entry findByEntryNumber(int entryNumber) {
@@ -21,7 +24,7 @@ public class EntryIterator implements AutoCloseable {
             if (iterator != null) {
                 iterator.close();
             }
-            iterator = entryDAO.entriesIteratorFrom(entryNumber);
+            iterator = entryDAO.entriesIteratorFrom(entryNumber, schema);
             nextValidEntryNumber = entryNumber;
         }
         nextValidEntryNumber++;
@@ -29,7 +32,7 @@ public class EntryIterator implements AutoCloseable {
     }
 
     public int getTotalEntries() {
-        return entryDAO.getTotalEntries();
+        return entryDAO.getTotalEntries(schema);
     }
 
     @Override
@@ -39,8 +42,8 @@ public class EntryIterator implements AutoCloseable {
         }
     }
 
-    public static <R> R withEntryIterator(EntryQueryDAO entryQueryDAO, Function<EntryIterator, R> callback) {
-        try (EntryIterator entryIterator = new EntryIterator(entryQueryDAO)) {
+    public static <R> R withEntryIterator(EntryQueryDAO entryQueryDAO, Function<EntryIterator, R> callback, String schema) {
+        try (EntryIterator entryIterator = new EntryIterator(entryQueryDAO, schema)) {
             return callback.apply(entryIterator);
         }
     }

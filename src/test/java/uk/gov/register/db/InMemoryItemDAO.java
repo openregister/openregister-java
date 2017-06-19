@@ -23,31 +23,31 @@ public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
     }
 
     @Override
-    public void insertInBatch(@BindItem Iterable<Item> items) {
+    public void insertInBatch(@BindItem Iterable<Item> items, String schema) {
         for (Item item : items) {
             this.items.put(item.getSha256hex(), item);
         }
     }
 
     @Override
-    public Optional<Item> getItemBySHA256(@Bind("sha256hex") String sha256Hash) {
+    public Optional<Item> getItemBySHA256(@Bind("sha256hex") String sha256Hash, String schema) {
         return Optional.ofNullable(items.get(new HashValue(SHA256, sha256Hash)));
     }
 
     @Override
-    public Collection<Item> getAllItemsNoPagination() {
+    public Collection<Item> getAllItemsNoPagination(String schema) {
         return items.values();
     }
 
     @Override
-    public Iterator<Item> getIterator() {
-        return transform(entryQueryDao.getIterator(),
+    public Iterator<Item> getIterator(String schema) {
+        return transform(entryQueryDao.getIterator(schema),
                 entry -> items.get(entry.getSha256hex()));
     }
 
     @Override
-    public Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo) {
-        return transform(entryQueryDao.getIterator(startEntryNo, endEntryNo),
+    public Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo, String schema) {
+        return transform(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema),
                 entry -> items.get(entry.getSha256hex()));
     }
 }

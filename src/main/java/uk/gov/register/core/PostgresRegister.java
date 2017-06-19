@@ -2,8 +2,6 @@ package uk.gov.register.core;
 
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.db.DerivationRecordIndex;
-import uk.gov.register.db.IndexDAO;
-import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
@@ -34,10 +32,8 @@ public class PostgresRegister implements Register {
                             EntryLog entryLog,
                             ItemStore itemStore,
                             RecordIndex recordIndex,
-                            IndexDAO indexDAO,
-                            IndexQueryDAO indexQueryDAO,
                             DerivationRecordIndex derivationRecordIndex,
-                            List<IndexFunction> indexFunctions) {
+                            List<IndexFunction> indexFunctions, IndexDriver indexDriver) {
         registerName = registerMetadata.getRegisterName();
         this.entryLog = entryLog;
         this.itemStore = itemStore;
@@ -45,7 +41,7 @@ public class PostgresRegister implements Register {
         this.derivationRecordIndex = derivationRecordIndex;
         this.registerFieldsConfiguration = registerFieldsConfiguration;
         this.registerMetadata = registerMetadata;
-        this.indexDriver = new IndexDriver(this, indexDAO, indexQueryDAO);
+        this.indexDriver = indexDriver;
         this.indexFunctions = indexFunctions;
     }
 
