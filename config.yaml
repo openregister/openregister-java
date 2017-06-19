@@ -31,6 +31,9 @@ server:
     - type: http
       port: 9092
 
+indexes:
+  - records
+
 registerDomain: openregister.dev:8080
 
 register: school

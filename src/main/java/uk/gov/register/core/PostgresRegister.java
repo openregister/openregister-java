@@ -108,7 +108,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public int getTotalRecords() {
-        return recordIndex.getTotalRecords();
+        return getTotalDerivationRecords("records");
     }
 
     @Override

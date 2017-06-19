@@ -17,7 +17,7 @@ public class IndexDriver {
     }
 
     public void indexEntry(Register register, Entry entry, IndexFunction indexFunction) {
-        Optional<Record> currentRecord = register.getRecord(entry.getKey());
+        Optional<Record> currentRecord = register.getDerivationRecord(entry.getKey(), indexFunction.getName());
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentRecord.isPresent()) {
             currentIndexKeyItemPairs.addAll(indexFunction.execute(register, currentRecord.get().getEntry()));
@@ -25,8 +25,8 @@ public class IndexDriver {
 
         Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(register, entry);
 
-        List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs);
-        pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs));
+        List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, indexFunction.getName());
+        pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, indexFunction.getName()));
 
         TreeMap<String, List<IndexKeyItemPairEvent>> sortedEvents = groupEventsByKey(pairEvents);
 
@@ -47,11 +47,11 @@ public class IndexDriver {
         }
     }
 
-    protected List<IndexKeyItemPairEvent> getEndIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs) {
+    protected List<IndexKeyItemPairEvent> getEndIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, String name) {
         List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         existingPairs.forEach(existingPair -> {
-            if (!newPairs.contains(existingPair)) {
+            if (!newPairs.contains(existingPair) || name.equals("records")) {
                 pairs.add(new IndexKeyItemPairEvent(existingPair, false));
             }
         });
@@ -59,11 +59,11 @@ public class IndexDriver {
         return pairs;
     }
 
-    protected List<IndexKeyItemPairEvent> getStartIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs) {
+    protected List<IndexKeyItemPairEvent> getStartIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, String name) {
         List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         newPairs.forEach(newPair -> {
-            if (!existingPairs.contains(newPair)) {
+            if (!existingPairs.contains(newPair) || name.equals("records")) {
                 pairs.add(new IndexKeyItemPairEvent(newPair, true));
             }
         });

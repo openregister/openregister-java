@@ -43,7 +43,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs, "");
 
         assertThat(pairsToStart, empty());
     }
@@ -62,7 +62,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs, "");
 
         assertThat(pairsToStart, contains(new IndexKeyItemPairEvent(new IndexKeyItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc")), true)));
     }
@@ -81,7 +81,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs, "");
 
         assertThat(pairsToEnd, empty());
     }
@@ -98,7 +98,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs);
+        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs, "");
 
         assertThat(pairsToEnd, contains(new IndexKeyItemPairEvent(new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")), false)));
     }
@@ -111,7 +111,7 @@ public class IndexDriverTest {
         Entry newEntry = new Entry(2, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
 
 
-        when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, item)));
+        when(register.getDerivationRecord("A", "by-x")).thenReturn(Optional.of(new Record(previousEntry, item)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
@@ -138,7 +138,7 @@ public class IndexDriverTest {
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
 
-        when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, item)));
+        when(register.getDerivationRecord("A", "by-x")).thenReturn(Optional.of(new Record(previousEntry, item)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
@@ -166,7 +166,7 @@ public class IndexDriverTest {
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
 
-        when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
+        when(register.getDerivationRecord("A", "by-x")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
@@ -195,8 +195,7 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
 
-
-        when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemQ)));
+        when(register.getDerivationRecord("A", "by-x")).thenReturn(Optional.of(new Record(previousEntry, itemQ)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
@@ -226,7 +225,7 @@ public class IndexDriverTest {
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
 
-        when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
+        when(register.getDerivationRecord("A", "by-x")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
@@ -256,7 +255,7 @@ public class IndexDriverTest {
         Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
 
 
-        when(register.getRecord(anyString())).thenReturn(Optional.empty());
+        when(register.getDerivationRecord(anyString(), eq("by-x"))).thenReturn(Optional.empty());
 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1);
         IndexFunction indexFunction = mock(IndexFunction.class);
@@ -290,10 +289,10 @@ public class IndexDriverTest {
         Entry newEntry5 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D", EntryType.user);
 
 
-        when(register.getRecord("A")).thenReturn(Optional.empty());
-        when(register.getRecord("B")).thenReturn(Optional.empty());
-        when(register.getRecord("C")).thenReturn(Optional.empty(), Optional.of(new Record(newEntry3, itemS)));
-        when(register.getRecord("D")).thenReturn(Optional.empty());
+        when(register.getDerivationRecord("A", "by-x")).thenReturn(Optional.empty());
+        when(register.getDerivationRecord("B", "by-x")).thenReturn(Optional.empty());
+        when(register.getDerivationRecord("C", "by-x")).thenReturn(Optional.empty(), Optional.of(new Record(newEntry3, itemS)));
+        when(register.getDerivationRecord("D", "by-x")).thenReturn(Optional.empty());
 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 3, 4);
         when(dataAccessLayer.getExistingIndexCountForItem("by-x", "Q", "bbb")).thenReturn(0, 1);
@@ -358,7 +357,7 @@ public class IndexDriverTest {
         Entry newEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
 
 
-        when(register.getRecord(anyString())).thenReturn(Optional.of(new Record(previousEntry, item)));
+        when(register.getDerivationRecord(anyString(), eq("by-x"))).thenReturn(Optional.of(new Record(previousEntry, item)));
 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         when(dataAccessLayer.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(2);

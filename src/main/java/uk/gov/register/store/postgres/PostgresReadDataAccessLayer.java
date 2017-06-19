@@ -1,6 +1,5 @@
 package uk.gov.register.store.postgres;
 
-import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
@@ -9,7 +8,10 @@ import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
@@ -126,13 +128,13 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public List<Record> getRecords(int limit, int offset) {
         checkpoint();
-        return recordQueryDAO.getRecords(limit, offset, schema);
+        return indexQueryDAO.findRecords(limit, offset, "records", schema);
     }
 
     @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
         checkpoint();
-        return recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema);
+        return indexQueryDAO.findMax100RecordsByKeyValue(key, value);
     }
 
     @Override
@@ -151,6 +153,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
+        checkpoint(); // do we need this?
         Optional<Record> record = indexQueryDAO.findRecord(key, indexName, schema);
         return record.filter(r -> r.getItems().size() != 0);
     }

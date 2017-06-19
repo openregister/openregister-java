@@ -1,6 +1,7 @@
 package uk.gov.register.functional.app;
 
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.jdbi.OptionalContainerFactory;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.apache.http.impl.conn.InMemoryDnsResolver;
@@ -113,7 +114,9 @@ public class RegisterRule implements TestRule {
      * the handle will automatically be closed by the RegisterRule
      */
     public Handle handleFor(TestRegister register) {
-        Handle handle = new DBI(register.getDatabaseConnectionString("RegisterRule")).open();
+        DBI dbi = new DBI(register.getDatabaseConnectionString("RegisterRule"));
+        dbi.registerContainerFactory(new OptionalContainerFactory());
+        Handle handle = dbi.open();
         handles.add(handle);
         return handle;
     }

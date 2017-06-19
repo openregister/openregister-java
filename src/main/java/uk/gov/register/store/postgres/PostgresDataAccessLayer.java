@@ -82,7 +82,6 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     public void checkpoint() {
         writeStagedEntriesToDatabase();
         writeStagedItemsToDatabase();
-        writeStagedCurrentKeysToDatabase();
     }
 
     private void writeStagedEntriesToDatabase() {

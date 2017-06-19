@@ -30,6 +30,9 @@ credentials:
   user: foo
   password: bar
 
+indexes:
+  - records
+
 jerseyClient:
   timeout: 3000ms
 
@@ -43,16 +46,22 @@ registers:
     credentials:
       user: pat
       password: goggins
+    indexes:
+      - records
   register:
     schema: register
     credentials:
       user: sasine
       password: inhibition
+    indexes:
+      - records
   local-authority-eng:
     schema: local-authority-eng
     credentials:
       user: bar
       password: baz
+    indexes:
+      - records
 
 enableDownloadResource: true
 
