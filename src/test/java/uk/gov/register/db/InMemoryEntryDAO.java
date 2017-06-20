@@ -20,7 +20,7 @@ public class InMemoryEntryDAO implements EntryQueryDAO, EntryDAO {
     }
 
     @Override
-    public Optional<Entry> findByEntryNumber(int entryNumber) {
+    public Optional<Entry> findByEntryNumber(int entryNumber, String schema) {
         if (entryNumber > entries.size()) {
             return Optional.empty();
         }
@@ -28,7 +28,7 @@ public class InMemoryEntryDAO implements EntryQueryDAO, EntryDAO {
     }
 
     @Override
-    public Optional<Instant> getLastUpdatedTime() {
+    public Optional<Instant> getLastUpdatedTime(String schema) {
         if (entries.isEmpty()) {
             return Optional.empty();
         }
@@ -36,37 +36,37 @@ public class InMemoryEntryDAO implements EntryQueryDAO, EntryDAO {
     }
 
     @Override
-    public int getTotalEntries() {
+    public int getTotalEntries(String schema) {
         return currentEntryNumber;
     }
 
     @Override
-    public Collection<Entry> getAllEntriesNoPagination() {
+    public Collection<Entry> getAllEntriesNoPagination(String schema) {
         return entries;
     }
 
     @Override
-    public Collection<Entry> getEntries(int start, int limit) {
+    public Collection<Entry> getEntries(int start, int limit, String schema) {
         return entries.subList(start-1, start-1+limit);
     }
 
     @Override
-    public ResultIterator<Entry> entriesIteratorFrom(int entryNumber) {
+    public ResultIterator<Entry> entriesIteratorFrom(int entryNumber, String schema) {
         return new FakeResultIterator(entries.subList(entryNumber-1, entries.size()).iterator());
     }
 
     @Override
-    public Iterator<Entry> getIterator() {
+    public Iterator<Entry> getIterator(String schema) {
         return entries.iterator();
     }
 
     @Override
-    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2) {
+    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2, String schema) {
         return entries.subList(totalEntries1, totalEntries2).iterator();
     }
 
     @Override
-    public void insertInBatch(@BindEntry Iterable<Entry> entries) {
+    public void insertInBatch(@BindEntry Iterable<Entry> entries, String schema) {
         for (Entry entry : entries) {
             if (!this.entries.contains(entry)) {
                 this.entries.add(entry);
@@ -75,12 +75,12 @@ public class InMemoryEntryDAO implements EntryQueryDAO, EntryDAO {
     }
 
     @Override
-    public int currentEntryNumber() {
+    public int currentEntryNumber(String schema) {
         return currentEntryNumber;
     }
 
     @Override
-    public void setEntryNumber(@Bind("entryNumber") int currentEntryNumber) {
+    public void setEntryNumber(@Bind("entryNumber") int currentEntryNumber, String schema) {
         this.currentEntryNumber = currentEntryNumber;
     }
 

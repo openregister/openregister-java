@@ -15,7 +15,7 @@ public class InMemoryCurrentKeysUpdateDAO implements CurrentKeysUpdateDAO {
     }
 
     @Override
-    public int[] removeRecordWithKeys(@Bind("key") Iterable<String> allKeys) {
+    public int[] removeRecordWithKeys(@Bind("key") Iterable<String> allKeys, String schema) {
         int total = 0;
         for (String key : allKeys) {
             if (currentKeys.containsKey(key)) {
@@ -28,14 +28,14 @@ public class InMemoryCurrentKeysUpdateDAO implements CurrentKeysUpdateDAO {
     }
 
     @Override
-    public void writeCurrentKeys(@BindBean Iterable<CurrentKey> values) {
+    public void writeCurrentKeys(@BindBean Iterable<CurrentKey> values, String schema) {
         for (CurrentKey value : values) {
             currentKeys.put(value.getKey(), value.getEntry_number());
         }
     }
 
     @Override
-    public void updateTotalRecords(@Bind("noOfNewRecords") int noOfNewRecords) {
+    public void updateTotalRecords(@Bind("noOfNewRecords") int noOfNewRecords, String schema) {
         this.totalRecords += noOfNewRecords;
     }
 

@@ -11,6 +11,7 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.exceptions.RegisterResultException;
+import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.service.ItemValidator;
@@ -103,10 +104,9 @@ public class RegisterContext implements
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
                 new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
                 new RecordIndexImpl(dataAccessLayer),
-                dbi.onDemand(IndexDAO.class),
-                dbi.onDemand(IndexQueryDAO.class),
                 new DerivationRecordIndex(dataAccessLayer),
-                getIndexFunctions());
+                getIndexFunctions(),
+                new IndexDriver(dataAccessLayer));
     }
 
     private Register buildTransactionalRegister(Handle handle, DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
@@ -115,10 +115,9 @@ public class RegisterContext implements
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
                 new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
                 new RecordIndexImpl(dataAccessLayer),
-                handle.attach(IndexDAO.class),
-                handle.attach(IndexQueryDAO.class),
                 new DerivationRecordIndex(dataAccessLayer),
-                getIndexFunctions());
+                getIndexFunctions(),
+                new IndexDriver(dataAccessLayer));
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
@@ -192,7 +191,9 @@ public class RegisterContext implements
                 dbi.onDemand(ItemQueryDAO.class),
                 dbi.onDemand(ItemDAO.class),
                 dbi.onDemand(RecordQueryDAO.class),
-                dbi.onDemand(CurrentKeysUpdateDAO.class));
+                dbi.onDemand(CurrentKeysUpdateDAO.class),
+                dbi.onDemand(IndexDAO.class),
+                schema);
     }
 
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
@@ -204,7 +205,9 @@ public class RegisterContext implements
                 handle.attach(ItemQueryDAO.class),
                 handle.attach(ItemDAO.class),
                 handle.attach(RecordQueryDAO.class),
-                handle.attach(CurrentKeysUpdateDAO.class));
+                handle.attach(CurrentKeysUpdateDAO.class),
+                handle.attach(IndexDAO.class),
+                schema);
     }
 
     @Override

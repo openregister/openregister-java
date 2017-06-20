@@ -21,16 +21,18 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private final EntryItemDAO entryItemDAO;
     private final ItemDAO itemDAO;
     private final CurrentKeysUpdateDAO currentKeysDAO;
+    private final IndexDAO indexDAO;
 
     public PostgresDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
             EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO,
-            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO) {
-        super(entryQueryDAO, indexQueryDAO, itemQueryDAO, recordQueryDAO);
+            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO, IndexDAO indexDAO, String schema) {
+        super(entryQueryDAO, indexQueryDAO, itemQueryDAO, recordQueryDAO, schema);
         this.entryDAO = entryDAO;
         this.entryItemDAO = entryItemDAO;
         this.itemDAO = itemDAO;
         this.currentKeysDAO = currentKeysUpdateDAO;
+        this.indexDAO = indexDAO;
 
         stagedEntries = new ArrayList<>();
         stagedItems = new HashMap<>();
@@ -67,6 +69,16 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
+    public void start(String indexName, String key, String itemHash, int startEntryNumber, Optional<Integer> startIndexEntryNumber) {
+        indexDAO.start(indexName, key, itemHash, startEntryNumber, startIndexEntryNumber, schema);
+    }
+
+    @Override
+    public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, Optional<Integer> endIndexEntryNumber) {
+        indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema);
+    }
+
+    @Override
     public void checkpoint() {
         writeStagedEntriesToDatabase();
         writeStagedItemsToDatabase();
@@ -81,9 +93,9 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         List<EntryItemPair> entryItemPairs = new ArrayList<>();
         stagedEntries.forEach(se -> se.getItemHashes().forEach(h -> entryItemPairs.add(new EntryItemPair(se.getEntryNumber(), h))));
 
-        entryDAO.insertInBatch(stagedEntries);
-        entryItemDAO.insertInBatch(entryItemPairs);
-        entryDAO.setEntryNumber(entryDAO.currentEntryNumber() + stagedEntries.size());
+        entryDAO.insertInBatch(stagedEntries, schema);
+        entryItemDAO.insertInBatch(entryItemPairs, schema);
+        entryDAO.setEntryNumber(entryDAO.currentEntryNumber(schema) + stagedEntries.size(), schema);
         stagedEntries.clear();
     }
 
@@ -91,7 +103,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         if (stagedItems.isEmpty()) {
             return;
         }
-        itemDAO.insertInBatch(stagedItems.values());
+        itemDAO.insertInBatch(stagedItems.values(), schema);
         stagedItems.clear();
     }
 
@@ -100,9 +112,9 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
         currentKeysDAO.writeCurrentKeys(Iterables.transform(stagedCurrentKeys.entrySet(),
                 keyValue -> new CurrentKey(keyValue.getKey(), keyValue.getValue()))
-        );
+                , schema);
 
-        currentKeysDAO.updateTotalRecords(stagedCurrentKeys.size() - noOfRecordsDeleted - entriesWithoutItems.size());
+        currentKeysDAO.updateTotalRecords(stagedCurrentKeys.size() - noOfRecordsDeleted - entriesWithoutItems.size(), schema);
         stagedCurrentKeys.clear();
         entriesWithoutItems.clear();
     }
@@ -115,7 +127,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     private int removeRecordsWithKeys(Iterable<String> keySet) {
-        int[] noOfRecordsDeletedPerBatch = currentKeysDAO.removeRecordWithKeys(keySet);
+        int[] noOfRecordsDeletedPerBatch = currentKeysDAO.removeRecordWithKeys(keySet, schema);
         return IntStream.of(noOfRecordsDeletedPerBatch).sum();
     }
 }

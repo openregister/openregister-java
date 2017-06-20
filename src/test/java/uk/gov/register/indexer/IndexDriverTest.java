@@ -7,6 +7,7 @@ import uk.gov.register.core.*;
 import uk.gov.register.db.IndexDAO;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -21,18 +22,17 @@ import static org.mockito.Mockito.*;
 public class IndexDriverTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private Register register;
+    private DataAccessLayer dataAccessLayer;
 
     @Before
     public void setup() {
         register = mock(Register.class);
+        dataAccessLayer = mock(DataAccessLayer.class);
     }
 
     @Test
     public void getStartIndices_shouldReturnEmptyList_whenNoNewPairsExist() {
-        Register register = mock(Register.class);
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
 
         Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
                 new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
@@ -50,10 +50,7 @@ public class IndexDriverTest {
 
     @Test
     public void getStartIndices_shouldReturnNewPairs_whenNewPairsExist() {
-
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
 
         Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
                 new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
@@ -73,9 +70,7 @@ public class IndexDriverTest {
     @Test
     public void getEndIndices_shouldReturnEmptyList_whenNoNewPairsExist() {
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
 
         Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
                 new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
@@ -93,10 +88,7 @@ public class IndexDriverTest {
 
     @Test
     public void getEndIndices_shouldReturnEndedPairs_whenEndedPairsExist() {
-
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
 
         Set<IndexKeyItemPair> existingPairs = new HashSet<>(Arrays.asList(
                 new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")),
@@ -123,7 +115,7 @@ public class IndexDriverTest {
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -131,10 +123,10 @@ public class IndexDriverTest {
         when(indexFunction.execute(register, newEntry))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")), new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "bbb", 2, Optional.of(1));
+        verify(dataAccessLayer, times(1)).start("by-x", "P", "bbb", 2, Optional.of(1));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -150,7 +142,7 @@ public class IndexDriverTest {
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -158,10 +150,10 @@ public class IndexDriverTest {
         when(indexFunction.execute(register, newEntry))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
+        verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -178,7 +170,7 @@ public class IndexDriverTest {
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -187,11 +179,11 @@ public class IndexDriverTest {
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
-        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
+        verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
+        verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -208,7 +200,7 @@ public class IndexDriverTest {
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -217,11 +209,11 @@ public class IndexDriverTest {
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
 
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 2, Optional.of(1));
-        verify(indexDAO, times(1)).end("by-x", "A", "Q", "bbb", 2, Optional.of(2));
+        verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 2, Optional.of(1));
+        verify(dataAccessLayer, times(1)).end("by-x", "A", "Q", "bbb", 2, Optional.of(2));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -238,7 +230,7 @@ public class IndexDriverTest {
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0);
+        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -247,11 +239,11 @@ public class IndexDriverTest {
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
-        verify(indexDAO, times(1)).start("by-x", "P", "bbb", 2, Optional.of(1));
+        verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, Optional.of(1));
+        verify(dataAccessLayer, times(1)).start("by-x", "P", "bbb", 2, Optional.of(1));
         verifyNoMoreInteractions(indexDAO);
     }
 
@@ -266,9 +258,7 @@ public class IndexDriverTest {
 
         when(register.getRecord(anyString())).thenReturn(Optional.empty());
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1);
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, newEntry1))
@@ -276,13 +266,14 @@ public class IndexDriverTest {
         when(indexFunction.execute(register, newEntry2))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry1, indexFunction);
-        indexDriver.indexEntry( register, newEntry2, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry1, indexFunction);
+        indexDriver.indexEntry(register, newEntry2, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 1, Optional.of(1));
-        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 1, Optional.of(1));
+        verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
+        verify(dataAccessLayer, times(2)).start(anyString(), anyString(), anyString(), anyInt(), any());
+        verify(dataAccessLayer, times(0)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), any());
     }
 
     @Test
@@ -304,10 +295,8 @@ public class IndexDriverTest {
         when(register.getRecord("C")).thenReturn(Optional.empty(), Optional.of(new Record(newEntry3, itemS)));
         when(register.getRecord("D")).thenReturn(Optional.empty());
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 3, 4);
-        when(indexQueryDAO.getExistingIndexCountForItem("by-x", "Q", "bbb")).thenReturn(0, 1);
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 3, 4);
+        when(dataAccessLayer.getExistingIndexCountForItem("by-x", "Q", "bbb")).thenReturn(0, 1);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, newEntry1))
@@ -321,19 +310,19 @@ public class IndexDriverTest {
         when(indexFunction.execute(register, newEntry5))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("R", new HashValue(HashingAlgorithm.SHA256, "ccc")))));
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry1, indexFunction);
-        indexDriver.indexEntry( register, newEntry2, indexFunction);
-        indexDriver.indexEntry( register, newEntry3, indexFunction);
-        indexDriver.indexEntry( register, newEntry4, indexFunction);
-        indexDriver.indexEntry( register, newEntry5, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry1, indexFunction);
+        indexDriver.indexEntry(register, newEntry2, indexFunction);
+        indexDriver.indexEntry(register, newEntry3, indexFunction);
+        indexDriver.indexEntry(register, newEntry4, indexFunction);
+        indexDriver.indexEntry(register, newEntry5, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 1, Optional.of(1));
-        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
-        verify(indexDAO, times(1)).start("by-x", "S", "ddd", 3, Optional.of(3));
-        verify(indexDAO, times(1)).start("by-x", "Q", "bbb", 4, Optional.empty());
-        verify(indexDAO, times(1)).end("by-x", "C", "S", "ddd", 4, Optional.of(4));
-        verify(indexDAO, times(1)).start("by-x", "R", "ccc", 5, Optional.of(5));
+        verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 1, Optional.of(1));
+        verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, Optional.of(2));
+        verify(dataAccessLayer, times(1)).start("by-x", "S", "ddd", 3, Optional.of(3));
+        verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 4, Optional.empty());
+        verify(dataAccessLayer, times(1)).end("by-x", "C", "S", "ddd", 4, Optional.of(4));
+        verify(dataAccessLayer, times(1)).start("by-x", "R", "ccc", 5, Optional.of(5));
     }
 
     @Test
@@ -346,20 +335,19 @@ public class IndexDriverTest {
 
         when(register.getRecord(anyString())).thenReturn(Optional.empty());
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
-        when(indexQueryDAO.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(1);
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
+        when(dataAccessLayer.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(1);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, newEntry))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).start("by-x", "P", "aaa", 2, Optional.empty());
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 2, Optional.empty());
+        verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), any());
+        verify(dataAccessLayer, times(0)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), any());
     }
 
     @Test
@@ -372,10 +360,8 @@ public class IndexDriverTest {
 
         when(register.getRecord(anyString())).thenReturn(Optional.of(new Record(previousEntry, item)));
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
-        when(indexQueryDAO.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(2);
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
+        when(dataAccessLayer.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(2);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -383,10 +369,11 @@ public class IndexDriverTest {
         when(indexFunction.execute(register, newEntry))
                 .thenReturn(new HashSet<>());
 
-        IndexDriver indexDriver = new IndexDriver(register, indexDAO, indexQueryDAO);
-        indexDriver.indexEntry( register, newEntry, indexFunction);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(indexDAO, times(1)).end("by-x", "B", "P", "aaa", 3, Optional.empty());
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).end("by-x", "B", "P", "aaa", 3, Optional.empty());
+        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), any());
+        verify(dataAccessLayer, times(0)).start(anyString(), anyString(), anyString(), anyInt(), any());
     }
 }

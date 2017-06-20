@@ -40,6 +40,7 @@ public class LoadSerializedFunctionalTest {
     private static TestItemCommandDAO testItemDAO;
     private static TestEntryDAO testEntryDAO;
     private static TestRecordDAO testRecordDAO;
+    private static String schema = testRegister.getSchema();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -64,19 +65,19 @@ public class LoadSerializedFunctionalTest {
                 nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test2\"}"));
 
 
-        List<TestDBItem> storedItems = testItemDAO.getItems();
+        List<TestDBItem> storedItems = testItemDAO.getItems(schema);
         assertThat(storedItems, containsInAnyOrder(expectedItem1, expectedItem2));
 
-        List<Entry> entries = testEntryDAO.getAllEntries();
+        List<Entry> entries = testEntryDAO.getAllEntries(schema);
         assertThat(entries.get(0).getEntryNumber(), is(1));
         assertThat(entries.get(0).getItemHashes().get(0).getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
         assertThat(entries.get(1).getEntryNumber(), is(2));
         assertThat(entries.get(1).getItemHashes().get(0).getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
-        TestRecord record1 = testRecordDAO.getRecord("ft_openregister_test");
+        TestRecord record1 = testRecordDAO.getRecord("ft_openregister_test", schema);
         assertThat(record1.getEntryNumber(), equalTo(1));
         assertThat(record1.getPrimaryKey(), equalTo("ft_openregister_test"));
-        TestRecord record2 = testRecordDAO.getRecord("ft_openregister_test2");
+        TestRecord record2 = testRecordDAO.getRecord("ft_openregister_test2", schema);
         assertThat(record2.getEntryNumber(), equalTo(2));
         assertThat(record2.getPrimaryKey(), equalTo("ft_openregister_test2"));
     }
@@ -115,8 +116,8 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(testItemDAO.getItems(), is(empty()));
-        assertThat(testEntryDAO.getAllEntries(), is(empty()));
+        assertThat(testItemDAO.getItems(schema), is(empty()));
+        assertThat(testEntryDAO.getAllEntries(schema), is(empty()));
     }
 
     @Test

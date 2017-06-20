@@ -30,6 +30,7 @@ import static org.junit.Assert.assertThat;
 public class DataUploadFunctionalTest {
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
+    private static String schema;
 
     private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
     private static TestRecordDAO testRecordDAO;
@@ -42,6 +43,7 @@ public class DataUploadFunctionalTest {
         testRecordDAO = handle.attach(TestRecordDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
         testItemDAO = handle.attach(TestItemCommandDAO.class);
+        schema = TestRegister.register.getSchema();
     }
 
     @Before
@@ -55,14 +57,14 @@ public class DataUploadFunctionalTest {
         Response r = register.mintLines(TestRegister.register, inputItem.toString());
         assertThat(r.getStatus(), equalTo(204));
 
-        TestDBItem storedItem = testItemDAO.getItems().get(0);
+        TestDBItem storedItem = testItemDAO.getItems(schema).get(0);
         assertThat(storedItem.contents, equalTo(inputItem));
         assertThat(storedItem.hashValue, equalTo(Item.itemHash(inputItem)));
 
-        Entry entry = testEntryDAO.getAllEntries().get(0);
+        Entry entry = testEntryDAO.getAllEntries(schema).get(0);
         assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
 
-        TestRecord record = testRecordDAO.getRecord("ft_openregister_test");
+        TestRecord record = testRecordDAO.getRecord("ft_openregister_test", schema);
         assertThat(record.getEntryNumber(), equalTo(1));
         assertThat(record.getPrimaryKey(), equalTo("ft_openregister_test"));
 
@@ -91,7 +93,7 @@ public class DataUploadFunctionalTest {
         JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
         JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
 
-        List<Entry> entries = testEntryDAO.getAllEntries();
+        List<Entry> entries = testEntryDAO.getAllEntries(schema);
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
@@ -100,7 +102,7 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        List<TestDBItem> items = testItemDAO.getItems();
+        List<TestDBItem> items = testItemDAO.getItems(schema);
         assertThat(items,
                 contains(
                         new TestDBItem(canonicalItem1),
@@ -108,10 +110,10 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        TestRecord record1 = testRecordDAO.getRecord("register1");
+        TestRecord record1 = testRecordDAO.getRecord("register1", schema);
         assertThat(record1.getEntryNumber(), equalTo(1));
         assertThat(record1.getPrimaryKey(), equalTo("register1"));
-        TestRecord record2 = testRecordDAO.getRecord("register2");
+        TestRecord record2 = testRecordDAO.getRecord("register2", schema);
         assertThat(record2.getEntryNumber(), equalTo(2));
         assertThat(record2.getPrimaryKey(), equalTo("register2"));
 
@@ -128,7 +130,7 @@ public class DataUploadFunctionalTest {
 
         JsonNode canonicalItem = canonicalJsonMapper.readFromBytes(item1.getBytes());
 
-        List<Entry> entries = testEntryDAO.getAllEntries();
+        List<Entry> entries = testEntryDAO.getAllEntries(schema);
 
         assertThat(entries,
                 contains(
@@ -137,7 +139,7 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        List<TestDBItem> items = testItemDAO.getItems();
+        List<TestDBItem> items = testItemDAO.getItems(schema);
         assertThat(items,
                 contains(
                         new TestDBItem(canonicalItem)
@@ -145,7 +147,7 @@ public class DataUploadFunctionalTest {
         );
 
 
-        TestRecord record = testRecordDAO.getRecord("register1");
+        TestRecord record = testRecordDAO.getRecord("register1", schema);
         assertThat(record.getEntryNumber(), equalTo(2));
         assertThat(record.getPrimaryKey(), equalTo("register1"));
     }
@@ -165,7 +167,7 @@ public class DataUploadFunctionalTest {
         JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
         JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
 
-        List<Entry> entries = testEntryDAO.getAllEntries();
+        List<Entry> entries = testEntryDAO.getAllEntries(schema);
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
@@ -175,7 +177,7 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        List<TestDBItem> items = testItemDAO.getItems();
+        List<TestDBItem> items = testItemDAO.getItems(schema);
         assertThat(items,
                 contains(
                         new TestDBItem(canonicalItem1),
@@ -184,10 +186,10 @@ public class DataUploadFunctionalTest {
         );
 
 
-        TestRecord record1 = testRecordDAO.getRecord("register1");
+        TestRecord record1 = testRecordDAO.getRecord("register1", schema);
         assertThat(record1.getEntryNumber(), equalTo(2));
         assertThat(record1.getPrimaryKey(), equalTo("register1"));
-        TestRecord record2 = testRecordDAO.getRecord("register2");
+        TestRecord record2 = testRecordDAO.getRecord("register2", schema);
         assertThat(record2.getEntryNumber(), equalTo(3));
         assertThat(record2.getPrimaryKey(), equalTo("register2"));
 

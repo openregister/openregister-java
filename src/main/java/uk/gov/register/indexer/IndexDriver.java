@@ -3,22 +3,17 @@ package uk.gov.register.indexer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.Register;
-import uk.gov.register.db.IndexDAO;
-import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.store.DataAccessLayer;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class IndexDriver {
-    private final Register register;
-    private final IndexDAO indexDAO;
-    private final IndexQueryDAO indexQueryDAO;
+    private final DataAccessLayer dataAccessLayer;
 
-    public IndexDriver(Register register, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO) {
-        this.indexDAO = indexDAO;
-        this.register = register;
-        this.indexQueryDAO = indexQueryDAO;
+    public IndexDriver(DataAccessLayer dataAccessLayer) {
+        this.dataAccessLayer = dataAccessLayer;
     }
 
     public void indexEntry(Register register, Entry entry, IndexFunction indexFunction) {
@@ -35,18 +30,17 @@ public class IndexDriver {
 
         TreeMap<String, List<IndexKeyItemPairEvent>> sortedEvents = groupEventsByKey(pairEvents);
 
-        AtomicInteger currentIndexEntryNumber = new AtomicInteger(indexQueryDAO.getCurrentIndexEntryNumber(indexFunction.getName()));
+        AtomicInteger currentIndexEntryNumber = new AtomicInteger(dataAccessLayer.getCurrentIndexEntryNumber(indexFunction.getName()));
 
         for (Map.Entry<String, List<IndexKeyItemPairEvent>> keyValuePair : sortedEvents.entrySet()) {
             int newIndexEntryNumber = currentIndexEntryNumber.get() + 1;
 
             for (IndexKeyItemPairEvent p : keyValuePair.getValue()) {
-                int existingIndexCountForItem = indexQueryDAO.getExistingIndexCountForItem(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
+                int existingIndexCountForItem = dataAccessLayer.getExistingIndexCountForItem(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
 
                 if (p.isStart()) {
                     addIndexKeyToItemHash(indexFunction, currentIndexEntryNumber, entry.getEntryNumber(), newIndexEntryNumber, p, existingIndexCountForItem);
-                }
-                else {
+                } else {
                     removeIndexKeyFromItemHash(entry, indexFunction, currentIndexEntryNumber, newIndexEntryNumber, p, existingIndexCountForItem);
                 }
             }
@@ -79,10 +73,9 @@ public class IndexDriver {
 
     private void addIndexKeyToItemHash(IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int currentEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, int existingIndexCountForItem) {
         if (existingIndexCountForItem > 0) {
-            indexDAO.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
-        }
-        else {
-            indexDAO.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(newIndexEntryNumber));
+            dataAccessLayer.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
+        } else {
+            dataAccessLayer.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(newIndexEntryNumber));
             currentIndexEntryNumber.set(newIndexEntryNumber);
         }
     }
@@ -102,9 +95,9 @@ public class IndexDriver {
 
     private void removeIndexKeyFromItemHash(Entry entry, IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, int existingIndexCountForItem) {
         if (existingIndexCountForItem > 1) {
-            indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.empty());
+            dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.empty());
         } else {
-            indexDAO.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.of(newIndexEntryNumber));
+            dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.of(newIndexEntryNumber));
             currentIndexEntryNumber.set(newIndexEntryNumber);
         }
     }

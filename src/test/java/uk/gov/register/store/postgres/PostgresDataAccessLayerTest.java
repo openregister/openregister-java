@@ -26,6 +26,7 @@ public class PostgresDataAccessLayerTest {
     InMemoryEntryDAO entryQueryDAO;
     InMemoryEntryItemDAO entryItemDAO;
     IndexQueryDAO indexQueryDAO;
+    IndexDAO indexDAO;
     InMemoryItemDAO itemDAO;
     RecordQueryDAO recordQueryDAO;
     InMemoryCurrentKeysUpdateDAO currentKeysUpdateDAO;
@@ -50,12 +51,13 @@ public class PostgresDataAccessLayerTest {
         entryQueryDAO = new InMemoryEntryDAO(entries);
         entryItemDAO = new InMemoryEntryItemDAO();
         indexQueryDAO = mock(IndexQueryDAO.class);
+        indexDAO = mock(IndexDAO.class);
         itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
         recordQueryDAO = mock(RecordQueryDAO.class);
         currentKeysUpdateDAO = new InMemoryCurrentKeysUpdateDAO(currentKeys);
 
         dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
-                itemDAO, itemDAO, recordQueryDAO, currentKeysUpdateDAO);
+                itemDAO, itemDAO, recordQueryDAO, currentKeysUpdateDAO, indexDAO, "zzz");
 
         item1 = new Item(new HashValue(SHA256, "abcd"), objectMapper.readTree("{}"));
         item2 = new Item(new HashValue(SHA256, "jkl1"), objectMapper.readTree("{}"));
