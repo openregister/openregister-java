@@ -3,10 +3,10 @@ package uk.gov.register.functional.app;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
 public enum TestRegister {
-    address("foo", "bar"), postcode("pat", "goggins"), register("sasine", "inhibition");
+    address("foo", "bar"), postcode("pat", "goggins"), register("sasine", "inhibition"), local_authority_eng("bar","baz");
 
     private static final String REGISTER_DOMAIN = "test.register.gov.uk";
-    private final String hostname = name() + "." + REGISTER_DOMAIN;
+    private final String hostname = getSchema() + "." + REGISTER_DOMAIN;
     private final String username;
     private final String password;
     private final String databaseConnectionString = "jdbc:postgresql://localhost:5432/ft_openregister_java_multi?user=postgres&ApplicationName=%s";
@@ -31,6 +31,7 @@ public enum TestRegister {
     }
 
     public String getSchema() {
-        return name();
+        return name().replaceAll("_","-");
     }
+
 }

@@ -24,7 +24,7 @@ public class MigrateDatabaseRule extends ExternalResource {
         for (TestRegister register : registers) {
             FlywayFactory flywayFactory = getFlywayFactory(register.name());
             Flyway flyway = flywayFactory.build(getDataSource(register.getDatabaseConnectionString("MigrateDatabaseRule")));
-            flyway.setSchemas(register.name());
+            flyway.setSchemas(register.getSchema());
             flyway.migrate();
         }
     }

@@ -8,7 +8,7 @@ database:
   #db connection properties
   initialSize: 1
   minSize: 1
-  maxSize: 3
+  maxSize: 4
 
   properties:
     charSet: UTF-8
@@ -48,6 +48,11 @@ registers:
     credentials:
       user: sasine
       password: inhibition
+  local-authority-eng:
+    schema: local-authority-eng
+    credentials:
+      user: bar
+      password: baz
 
 enableDownloadResource: true
 
