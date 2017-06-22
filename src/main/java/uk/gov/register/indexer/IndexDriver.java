@@ -25,8 +25,9 @@ public class IndexDriver {
 
         Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(register, entry);
 
-        List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, indexFunction.getName());
-        pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, indexFunction.getName()));
+        boolean isRecordIndexFunction = indexFunction.getName().equals("records");
+        List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, isRecordIndexFunction);
+        pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, isRecordIndexFunction));
 
         TreeMap<String, List<IndexKeyItemPairEvent>> sortedEvents = groupEventsByKey(pairEvents);
 
@@ -47,11 +48,11 @@ public class IndexDriver {
         }
     }
 
-    protected List<IndexKeyItemPairEvent> getEndIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, String name) {
+    protected List<IndexKeyItemPairEvent> getEndIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, boolean isRecordIndexFunction) {
         List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         existingPairs.forEach(existingPair -> {
-            if (!newPairs.contains(existingPair) || name.equals("records")) {
+            if (!newPairs.contains(existingPair) || isRecordIndexFunction) {
                 pairs.add(new IndexKeyItemPairEvent(existingPair, false));
             }
         });
@@ -59,11 +60,11 @@ public class IndexDriver {
         return pairs;
     }
 
-    protected List<IndexKeyItemPairEvent> getStartIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, String name) {
+    protected List<IndexKeyItemPairEvent> getStartIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, boolean isRecordIndexFunction) {
         List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         newPairs.forEach(newPair -> {
-            if (!existingPairs.contains(newPair) || name.equals("records")) {
+            if (!existingPairs.contains(newPair) || isRecordIndexFunction) {
                 pairs.add(new IndexKeyItemPairEvent(newPair, true));
             }
         });

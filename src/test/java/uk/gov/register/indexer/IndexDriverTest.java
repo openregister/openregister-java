@@ -43,7 +43,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs, "");
+        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs, false);
 
         assertThat(pairsToStart, empty());
     }
@@ -62,7 +62,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs, "");
+        List<IndexKeyItemPairEvent> pairsToStart = indexDriver.getStartIndices(existingPairs, newPairs, false);
 
         assertThat(pairsToStart, contains(new IndexKeyItemPairEvent(new IndexKeyItemPair("C", new HashValue(HashingAlgorithm.SHA256, "ccc")), true)));
     }
@@ -81,7 +81,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs, "");
+        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs, false);
 
         assertThat(pairsToEnd, empty());
     }
@@ -98,7 +98,7 @@ public class IndexDriverTest {
                 new IndexKeyItemPair("B", new HashValue(HashingAlgorithm.SHA256, "bbb"))
         ));
 
-        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs, "");
+        List<IndexKeyItemPairEvent> pairsToEnd = indexDriver.getEndIndices(existingPairs, newPairs, false);
 
         assertThat(pairsToEnd, contains(new IndexKeyItemPairEvent(new IndexKeyItemPair("A", new HashValue(HashingAlgorithm.SHA256, "aaa")), false)));
     }
