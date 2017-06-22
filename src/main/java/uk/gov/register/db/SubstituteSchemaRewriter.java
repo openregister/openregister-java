@@ -1,6 +1,5 @@
 package uk.gov.register.db;
 
-import org.apache.commons.lang3.StringUtils;
 import org.skife.jdbi.v2.Binding;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.StatementContext;
@@ -16,7 +15,7 @@ public class SubstituteSchemaRewriter implements StatementRewriter {
 
     @Override
     public RewrittenStatement rewrite(String sql, Binding params, StatementContext ctx) {
-        String sqlWithSchema = sql.replaceAll(":schema", StringUtils.strip(params.forName("schema").toString(), "'" ));
+        String sqlWithSchema = sql.replaceAll(":schema", params.forName("schema").toString().replace("'","\""));
         return colonRewriter.rewrite(sqlWithSchema, params, ctx);
     }
 }

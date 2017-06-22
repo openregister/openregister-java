@@ -23,10 +23,10 @@ public class WipeDatabaseRule extends ExternalResource {
         for (TestRegister register : registers) {
             DBI dbi = new DBI(register.getDatabaseConnectionString("WipeDatabaseRule"));
             dbi.useHandle(handle -> {
-                handle.attach(TestEntryDAO.class).wipeData(register.name());
-                handle.attach(TestItemCommandDAO.class).wipeData(register.name());
-                handle.attach(TestRecordDAO.class).wipeData(register.name());
-                handle.attach(TestIndexDAO.class).wipeData(register.name());
+                handle.attach(TestEntryDAO.class).wipeData(register.getSchema());
+                handle.attach(TestItemCommandDAO.class).wipeData(register.getSchema());
+                handle.attach(TestRecordDAO.class).wipeData(register.getSchema());
+                handle.attach(TestIndexDAO.class).wipeData(register.getSchema());
             });
         }
     }
