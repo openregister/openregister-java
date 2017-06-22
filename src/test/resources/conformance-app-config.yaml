@@ -42,3 +42,5 @@ externalConfigDirectory: /tmp
 
 downloadConfigs: true
 
+indexes:
+  - records
