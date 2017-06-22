@@ -14,7 +14,7 @@ import java.util.Collection;
 import static org.hamcrest.Matchers.is;
 import static uk.gov.register.functional.app.TestRegister.local_authority_eng;
 
-public class ItemQueryDAOIntegrationTest {
+public class SchemaSubstitutionIntegrationTest {
     private DBI dbi;
 
     @ClassRule
@@ -25,7 +25,7 @@ public class ItemQueryDAOIntegrationTest {
     }
 
     @Test
-    public void shouldFindNoItems(){
+    public void shouldSuccessfullyQueryWhenSchemaContainsHyphens(){
         Collection<Item> items = dbi.withHandle(handle -> handle.attach(ItemQueryDAO.class).getAllItemsNoPagination("local-authority-eng"));
         Assert.assertThat(items.size(), is(0));
     }
