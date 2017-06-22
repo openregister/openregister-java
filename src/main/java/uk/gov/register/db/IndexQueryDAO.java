@@ -28,35 +28,35 @@ public abstract class IndexQueryDAO {
     @SqlQuery(recordForKeyQuery)
     @SingleValueResult(Record.class)
     @RegisterMapper(DerivationRecordMapper.class)
-    public abstract Optional<Record> findRecord(@Bind("key") String derivationKey, @Bind("name") String derivationName, @Bind("schema") String schema );
+    public abstract Optional<Record> findRecord(@Bind("key") String derivationKey, @Bind("name") String derivationName, @Bind("schema") String schema);
 
     @SqlQuery(recordQuery)
     @RegisterMapper(DerivationRecordMapper.class)
-    public abstract List<Record> findRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Bind("name") String derivationName, @Bind("schema") String schema );
+    public abstract List<Record> findRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Bind("name") String derivationName, @Bind("schema") String schema);
 
     @SqlQuery("select max(r.index_entry_number) from (select greatest(start_index_entry_number, end_index_entry_number) as index_entry_number from :schema.index where name = :name) r")
-    public abstract int getCurrentIndexEntryNumber(@Bind("name") String indexName, @Bind("schema") String schema );
+    public abstract int getCurrentIndexEntryNumber(@Bind("name") String indexName, @Bind("schema") String schema);
 
     @SqlQuery(entriesQuery)
     @RegisterMapper(DerivationEntryMapper.class)
-    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("schema") String schema );
+    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("schema") String schema);
 
     @SqlQuery(entriesQueryBetweenEntries)
     @RegisterMapper(DerivationEntryMapper.class)
-    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Bind("schema") String schema );
+    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Bind("schema") String schema);
 
     @SqlQuery("select count(1) from :schema.index where name = :name and key = :key and sha256hex = :sha256hex and end_entry_number is null")
-    public abstract int getExistingIndexCountForItem(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Bind("schema") String schema );
+    public abstract int getExistingIndexCountForItem(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Bind("schema") String schema);
 
     @SqlQuery(recordCountQuery)
-    public abstract int getTotalRecords(@Bind("name") String indexName, @Bind("schema") String schema );
+    public abstract int getTotalRecords(@Bind("name") String indexName, @Bind("schema") String schema);
 
     @SqlQuery(recordsByKeyValue)
     @RegisterMapper(RecordMapper.class)
-    public abstract List<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content, @Bind("key") String key);
+    public abstract List<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content, @Bind("key") String key, @Bind("schema") String schema);
 
-    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
-        return __findMax100RecordsByKeyValue(writePGObject(key, value), key);
+    public List<Record> findMax100RecordsByKeyValue(String key, String value, String schema) {
+        return __findMax100RecordsByKeyValue(writePGObject(key, value), key, schema);
     }
 
     private PGobject writePGObject(String key, String value) {
@@ -182,7 +182,7 @@ public abstract class IndexQueryDAO {
             "  entry_numbers.msen " +
             " ) " +
             "order by " +
-            " entry_number desc " +
+            " key " +
             " limit :limit offset :offset ";
 
     static final String entriesQuery = "select  " +

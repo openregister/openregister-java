@@ -356,9 +356,8 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
         Entry newEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
 
-
         when(register.getDerivationRecord(anyString(), eq("by-x"))).thenReturn(Optional.of(new Record(previousEntry, item)));
-
+ 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         when(dataAccessLayer.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(2);
         IndexFunction indexFunction = mock(IndexFunction.class);
@@ -374,5 +373,27 @@ public class IndexDriverTest {
         verify(dataAccessLayer, times(1)).end("by-x", "B", "P", "aaa", 3, Optional.empty());
         verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), any());
         verify(dataAccessLayer, times(0)).start(anyString(), anyString(), anyString(), anyInt(), any());
+    }
+    
+    @Test
+    public void indexEntry_shouldStartNewIndex_whenUpdatingExistingRecord() throws IOException {
+        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
+        
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "P", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "P", EntryType.user);
+        
+        when(register.getDerivationRecord("P", "records")).thenReturn(Optional.of(new Record(entry1, item)));
+        
+        IndexFunction indexFunction = mock(IndexFunction.class);
+        when(indexFunction.getName()).thenReturn("records");
+        when(indexFunction.execute(register, entry1)).thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+        when(indexFunction.execute(register, entry2)).thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
+        when(dataAccessLayer.getExistingIndexCountForItem("records", "P", "aaa")).thenReturn(1);
+        IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
+        indexDriver.indexEntry(register, entry2, indexFunction);
+
+        verify(dataAccessLayer, times(1)).end("records", "P", "P", "aaa", 2, Optional.of(1));
+        verify(dataAccessLayer, times(1)).start("records", "P", "aaa", 2, Optional.empty()); 
     }
 }

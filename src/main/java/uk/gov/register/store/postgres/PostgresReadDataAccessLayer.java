@@ -134,7 +134,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
         checkpoint();
-        return indexQueryDAO.findMax100RecordsByKeyValue(key, value);
+        return indexQueryDAO.findMax100RecordsByKeyValue(key, value, schema);
     }
 
     @Override
@@ -177,8 +177,6 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     public int getExistingIndexCountForItem(String indexName, String key, String sha256hex){
         return indexQueryDAO.getExistingIndexCountForItem(indexName, key,sha256hex, schema );
     }
-
-
 
     protected abstract void checkpoint();
 }
