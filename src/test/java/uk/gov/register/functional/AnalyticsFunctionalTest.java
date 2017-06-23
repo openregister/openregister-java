@@ -47,7 +47,7 @@ public class AnalyticsFunctionalTest {
 
         register.loadRsf(REGISTER_WITH_MISSING_TRACKING_ID, RsfRegisterDefinition.REGISTER_REGISTER);
         register.loadRsf(REGISTER_WITH_EMPTY_TRACKING_ID, RsfRegisterDefinition.POSTCODE_REGISTER);
-        register.loadRsf(REGISTER_WITH_VALID_TRACKING_ID, RsfRegisterDefinition.ADDRESS_REGISTER + RsfRegisterDefinition.ADDRESS_FIELDS + dataToLoad);
+        register.loadRsf(REGISTER_WITH_VALID_TRACKING_ID, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER + dataToLoad);
     }
 
     private final String targetUrl;

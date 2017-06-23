@@ -142,6 +142,16 @@ public class LoadSerializedFunctionalTest {
     }
 
     @Test
+    public void shouldReturnBadRequestForRegisterDefinitionWhenBeforeFieldDefinitions() throws IOException {
+        String input = new String(RsfRegisterDefinition.ADDRESS_REGISTER + RsfRegisterDefinition.ADDRESS_FIELDS);
+
+        Response r = send(input);
+
+        assertThat(r.getStatus(), equalTo(400));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:2f90a43858c366134a070f563697e04a851c977cd27e491c02885a2f4441e190]}\",\"details\":\"Field undefined: register - address\"}"));
+    }
+
+    @Test
     public void shouldRollbackIfCheckedRootHashDoesNotMatchExpectedOne() throws IOException {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf-invalid-root-hash.tsv")));
 
@@ -158,7 +168,6 @@ public class LoadSerializedFunctionalTest {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry.rsf")));
         Response r = send(input);
         assertThat(r.getStatus(), equalTo(200));
-
     }
 
     @After

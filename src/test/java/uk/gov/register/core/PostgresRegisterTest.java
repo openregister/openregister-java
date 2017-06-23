@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.db.InMemoryEntryDAO;
+import uk.gov.register.exceptions.FieldUndefinedException;
 import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
@@ -47,10 +48,6 @@ public class PostgresRegisterTest {
     @Mock
     private IndexDriver indexDriver;
     @Mock
-    private DataAccessLayer dataAccessLayer;
-    //@Mock
-    //private RegisterFieldsConfiguration registerFieldsConfiguration;
-    @Mock
     private IndexFunction indexFunction;
     @Mock
     private Record fieldRecord;
@@ -59,18 +56,20 @@ public class PostgresRegisterTest {
 
     private PostgresRegister register;
 
+    private String postcodeRegisterItem = "{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"r\",\"registry\":\"r\",\"text\":\"t\"}";
+
     @Before
     public void setup() throws IOException {
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
                 derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator);
 
-        when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem("{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}")));
+        when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
         when(fieldRecord.getItems()).thenReturn(Arrays.asList(getItem("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"field description\"}")));
 
         when(derivationRecordIndex.getRecord("register:postcode", "metadata")).thenReturn(Optional.of(registerRecord));
-        when(derivationRecordIndex.getRecord("field:postcode", "metadata")).thenReturn(Optional.of(fieldRecord));
+        //when(derivationRecordIndex.getRecord("field:postcode", "metadata")).thenReturn(Optional.of(fieldRecord));
     }
 
     @Test(expected = NoSuchFieldException.class)
@@ -97,6 +96,7 @@ public class PostgresRegisterTest {
         JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
         doThrow(new ItemValidationException("error", content)).when(itemValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
+        when(derivationRecordIndex.getRecord("field:postcode", "metadata")).thenReturn(Optional.of(fieldRecord));
         Item item = new Item(hashValue, content);
         Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
@@ -104,17 +104,16 @@ public class PostgresRegisterTest {
         register.appendEntry(entry);
     }
 
-    @Test
-    public void shouldNotValidateSystemItem() throws IOException {
-        JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
+    @Test(expected = FieldUndefinedException.class)
+    public void shouldFailForMissingField() throws IOException {
+        JsonNode content = mapper.readTree( postcodeRegisterItem );
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(hashValue, content);
-        Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.system);
+        Entry entry = new Entry(1, hashValue, Instant.now(),"register:postcode", EntryType.system);
+        when(derivationRecordIndex.getRecord("field:postcode", "metadata")).thenReturn(Optional.empty());
 
         register.putItem(item);
         register.appendEntry(entry);
-
-        verify(itemValidator, never()).validateItem(any(), anyMap(), any(RegisterMetadata.class));
     }
 
     @Test
@@ -125,6 +124,7 @@ public class PostgresRegisterTest {
 
     @Test
     public void shouldGetFields() {
+        when(derivationRecordIndex.getRecord("field:postcode", "metadata")).thenReturn(Optional.of(fieldRecord));
         Map<String, Field> fieldsByName = register.getFieldsByName();
         assertThat(fieldsByName.size(), is(1));
         assertThat(fieldsByName.get("postcode").getText(), is("field description"));

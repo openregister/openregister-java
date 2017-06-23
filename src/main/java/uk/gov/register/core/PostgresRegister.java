@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.register.db.DerivationRecordIndex;
+import uk.gov.register.exceptions.FieldUndefinedException;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.RegisterUndefinedException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -21,7 +21,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public class PostgresRegister implements Register {
@@ -65,6 +64,10 @@ public class PostgresRegister implements Register {
         referencedItems.forEach(i -> {
             if (entry.getEntryType() == EntryType.user) {
                 itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+            } else if (entry.getKey().startsWith("register:")) {
+                RegisterMetadata registerMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
+                // will throw exception if field not present
+                registerMetadata.getFields().forEach(this::getField);
             }
         });
 
@@ -246,12 +249,16 @@ public class PostgresRegister implements Register {
     private Field getField(String fieldName) {
         return getDerivationRecord("field:" + fieldName, "metadata")
                 .map(record -> extractObjectFromRecord(record, Field.class))
-                .orElseThrow(() -> new RegisterUndefinedException(registerName, "field definition not found for " + fieldName));
+                .orElseThrow(() -> new FieldUndefinedException(registerName, fieldName));
     }
 
     private <T> T extractObjectFromRecord(Record record, Class<T> clazz) {
+        return extractObjectFromItem(record.getItems().get(0), clazz);
+    }
+
+    private <T> T extractObjectFromItem(Item item, Class<T> clazz) {
         try {
-            JsonNode content = record.getItems().get(0).getContent();
+            JsonNode content = item.getContent();
             return mapper.treeToValue(content, clazz);
         } catch (JsonProcessingException e) {
             throw new UncheckedIOException(e);
