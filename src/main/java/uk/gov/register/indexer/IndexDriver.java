@@ -17,7 +17,7 @@ public class IndexDriver {
     }
 
     public void indexEntry(Register register, Entry entry, IndexFunction indexFunction) {
-        Optional<Record> currentRecord = register.getDerivationRecord(entry.getKey(), indexFunction.getName());
+        Optional<Record> currentRecord = register.getRecord(entry.getKey());
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentRecord.isPresent()) {
             currentIndexKeyItemPairs.addAll(indexFunction.execute(register, currentRecord.get().getEntry()));
@@ -25,9 +25,8 @@ public class IndexDriver {
 
         Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(register, entry);
 
-        boolean isRecordIndexFunction = indexFunction.getName().equals("records");
-        List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, isRecordIndexFunction);
-        pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs, isRecordIndexFunction));
+        List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs);
+        pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs));
 
         TreeMap<String, List<IndexKeyItemPairEvent>> sortedEvents = groupEventsByKey(pairEvents);
 
@@ -48,11 +47,11 @@ public class IndexDriver {
         }
     }
 
-    protected List<IndexKeyItemPairEvent> getEndIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, boolean isRecordIndexFunction) {
+    protected List<IndexKeyItemPairEvent> getEndIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs) {
         List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         existingPairs.forEach(existingPair -> {
-            if (!newPairs.contains(existingPair) || isRecordIndexFunction) {
+            if (!newPairs.contains(existingPair)) {
                 pairs.add(new IndexKeyItemPairEvent(existingPair, false));
             }
         });
@@ -60,11 +59,11 @@ public class IndexDriver {
         return pairs;
     }
 
-    protected List<IndexKeyItemPairEvent> getStartIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs, boolean isRecordIndexFunction) {
+    protected List<IndexKeyItemPairEvent> getStartIndices(Set<IndexKeyItemPair> existingPairs, Set<IndexKeyItemPair> newPairs) {
         List<IndexKeyItemPairEvent> pairs = new ArrayList<>();
 
         newPairs.forEach(newPair -> {
-            if (!existingPairs.contains(newPair) || isRecordIndexFunction) {
+            if (!existingPairs.contains(newPair)) {
                 pairs.add(new IndexKeyItemPairEvent(newPair, true));
             }
         });
