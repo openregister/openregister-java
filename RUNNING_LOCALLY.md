@@ -4,7 +4,7 @@ You can use this script to run your own register locally and experiment with its
 
 Please note that this script is experimental and has not been fully tested. The outputs and functionality are likely to change as the registers team learns more about the needs of users creating their own registers.
 
-If you'd like to be involved in user research and testing for this in future, please [contact the GDS registers team](https://registers.cloudapps.digital/support.html).
+If you'd like to experiment with creating your own register or would like to be involved in user research, please [contact the GDS registers team](https://registers.cloudapps.digital/support.html).
 
 ## Before you start
 
