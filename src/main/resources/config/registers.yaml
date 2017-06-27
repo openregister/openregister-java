@@ -343,3 +343,20 @@ territory:
     - "text"
     register: "territory"
     registry: "foreign-commonwealth-office"
+local-authority-eng:
+  index-entry-number: "6"
+  entry-number: "6"
+  entry-timestamp: "2016-10-21T15:20:42Z"
+  key: "local-authority-eng"
+  item:
+  - phase: "alpha"
+    registry: "department-for-communities-and-local-government"
+    text: "Local authorities in England"
+    fields:
+    - "local-authority-eng"
+    - "local-authority-type"
+    - "name"
+    - "official-name"
+    - "start-date"
+    - "end-date"
+    register: "local-authority-eng"

@@ -36,12 +36,12 @@ public class IndexDriver {
             int newIndexEntryNumber = currentIndexEntryNumber.get() + 1;
 
             for (IndexKeyItemPairEvent p : keyValuePair.getValue()) {
-                int existingIndexCountForItem = dataAccessLayer.getExistingIndexCountForItem(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
+                IntegerItemPair startIndexEntryNumberItemCountPair = dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
 
                 if (p.isStart()) {
-                    addIndexKeyToItemHash(indexFunction, currentIndexEntryNumber, entry.getEntryNumber(), newIndexEntryNumber, p, existingIndexCountForItem);
+                    addIndexKeyToItemHash(indexFunction, currentIndexEntryNumber, entry.getEntryNumber(), newIndexEntryNumber, p, startIndexEntryNumberItemCountPair);
                 } else {
-                    removeIndexKeyFromItemHash(entry, indexFunction, currentIndexEntryNumber, newIndexEntryNumber, p, existingIndexCountForItem);
+                    removeIndexKeyFromItemHash(entry, indexFunction, currentIndexEntryNumber, newIndexEntryNumber, p, startIndexEntryNumberItemCountPair);
                 }
             }
         }
@@ -71,11 +71,11 @@ public class IndexDriver {
         return pairs;
     }
 
-    private void addIndexKeyToItemHash(IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int currentEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, int existingIndexCountForItem) {
-        if (existingIndexCountForItem > 0) {
-            dataAccessLayer.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.empty());
+    private void addIndexKeyToItemHash(IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int currentEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IntegerItemPair startIndexEntryNumberItemCountPair) {
+        if (startIndexEntryNumberItemCountPair.getStartIndexEntryNumber().isPresent()) {
+            dataAccessLayer.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, startIndexEntryNumberItemCountPair.getStartIndexEntryNumber().get());
         } else {
-            dataAccessLayer.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, Optional.of(newIndexEntryNumber));
+            dataAccessLayer.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, newIndexEntryNumber);
             currentIndexEntryNumber.set(newIndexEntryNumber);
         }
     }
@@ -93,11 +93,11 @@ public class IndexDriver {
         return sortedEvents;
     }
 
-    private void removeIndexKeyFromItemHash(Entry entry, IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, int existingIndexCountForItem) {
-        if (existingIndexCountForItem > 1) {
-            dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.empty());
+    private void removeIndexKeyFromItemHash(Entry entry, IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IntegerItemPair startIndexEntryNumberItemCountPair) {
+        if (startIndexEntryNumberItemCountPair.getExistingItemCount() > 1) {
+            dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), startIndexEntryNumberItemCountPair.getStartIndexEntryNumber().get());
         } else {
-            dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), Optional.of(newIndexEntryNumber));
+            dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), newIndexEntryNumber);
             currentIndexEntryNumber.set(newIndexEntryNumber);
         }
     }

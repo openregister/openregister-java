@@ -1,0 +1,8 @@
+add-item	{"local-authority-eng":"Notts","local-authority-type":"MD"}
+add-item	{"local-authority-eng":"London","local-authority-type":"UA"}
+add-item	{"local-authority-eng":"Leics","local-authority-type":"CTY"}
+append-entry	user	A	2016-04-05T13:23:05Z	sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125
+append-entry	user	A	2016-04-05T13:23:05Z	sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125;sha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6
+append-entry	user	B	2016-04-05T13:23:05Z	sha-256:a726c24e895a56f15699068ea48d61297eed4fb8cc73c019701fd3e8dd26c15e
+append-entry	user	B	2016-04-05T13:23:05Z	sha-256:a726c24e895a56f15699068ea48d61297eed4fb8cc73c019701fd3e8dd26c15e;sha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6
+append-entry	user	A	2016-04-05T13:23:05Z	sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125

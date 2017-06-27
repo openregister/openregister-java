@@ -69,12 +69,12 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void start(String indexName, String key, String itemHash, int startEntryNumber, Optional<Integer> startIndexEntryNumber) {
+    public void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber) {
         indexDAO.start(indexName, key, itemHash, startEntryNumber, startIndexEntryNumber, schema);
     }
 
     @Override
-    public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, Optional<Integer> endIndexEntryNumber) {
+    public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber) {
         indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema);
     }
 

@@ -1,0 +1,29 @@
+[
+  {
+    "index-entry-number": "1",
+    "entry-number": "1",
+    "entry-timestamp": "2016-04-05T13:23:05Z",
+    "key": "1990",
+    "item-hash": [
+      "sha-256:768ccbd7702169778bcc43abe57cd834b977fdef887567c637b296a6e379b4e3"
+    ]
+  },
+  {
+    "index-entry-number": "2",
+    "entry-number": "2",
+    "entry-timestamp": "2016-04-05T13:23:05Z",
+    "key": "1880",
+    "item-hash": [
+      "sha-256:f2ad63acbcff98050b0ba1fe708f33711dee1cce8931ba876f0cf2ad6d0225a0"
+    ]
+  },
+  {
+    "index-entry-number": "3",
+    "entry-number": "3",
+    "entry-timestamp": "2016-04-05T13:23:05Z",
+    "key": "1770",
+    "item-hash": [
+      "sha-256:3300687af84cc4c365407484f93848695a0d82b0918c894e56d2d49ab93ba27c"
+    ]
+  }
+]

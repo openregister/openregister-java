@@ -4,6 +4,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
+import uk.gov.register.indexer.IntegerItemPair;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
@@ -44,11 +45,11 @@ public interface DataAccessLayer {
     int getTotalRecords();
 
     // Index
-    void start(String indexName, String key, String itemHash, int startEntryNumber, Optional<Integer> startIndexEntryNumber);
-    void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, Optional<Integer> endIndexEntryNumber);
+    void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber);
+    void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber);
     Optional<Record> getIndexRecord(String key, String indexName);
     List<Record> getIndexRecords(int limit, int offset, String indexName);
     int getTotalIndexRecords(String indexName);
     int getCurrentIndexEntryNumber(String indexName);
-    int getExistingIndexCountForItem(String indexName, String key, String sha256hex);
+    IntegerItemPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex);
 }
