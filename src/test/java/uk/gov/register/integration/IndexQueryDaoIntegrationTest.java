@@ -14,7 +14,6 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
-import uk.gov.register.db.SubstituteSchemaRewriter;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
 
@@ -158,7 +157,6 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(records.size(), is(0));
     }
 
-
     @Test
     public void shouldReadRecords() {
         nameChangeAndGroupChangeScenario();
@@ -262,7 +260,14 @@ public class IndexQueryDaoIntegrationTest {
     }
 
     @Test
-    public void shouldCountRecords() {
+    public void getTotalRecords_shouldReturnZero_whenNoRecordsExist() {
+        int totalRecords = dao.getTotalRecords("by-type", schema);
+
+        assertThat(totalRecords, is(0));
+    }
+
+    @Test
+    public void getTotalRecords_shouldReturnTotalRecords_whenRecordsExist() {
         nameChangeAndGroupChangeScenario();
         int totalRecords = dao.getTotalRecords("by-type", schema);
 

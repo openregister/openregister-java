@@ -3,6 +3,7 @@ package uk.gov.register.configuration;
 import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
+import uk.gov.register.indexer.function.RecordIndexFunction;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -12,7 +13,8 @@ import static java.util.stream.Collectors.toSet;
 public enum IndexFunctionConfiguration {
 
     CURRENT_COUNTRIES(Constants.CURRENT_COUNTRIES, new CurrentCountriesIndexFunction(Constants.CURRENT_COUNTRIES)),
-    LOCAL_AUTHORITY_BY_TYPE(Constants.LOCAL_AUTHORITY_BY_TYPE, new LocalAuthorityByTypeIndexFunction(Constants.LOCAL_AUTHORITY_BY_TYPE));
+    LOCAL_AUTHORITY_BY_TYPE(Constants.LOCAL_AUTHORITY_BY_TYPE, new LocalAuthorityByTypeIndexFunction(Constants.LOCAL_AUTHORITY_BY_TYPE)),
+    RECORDS(Constants.RECORDS, new RecordIndexFunction(Constants.RECORDS));
 
     public static IndexFunctionConfiguration getValueLowerCase(String name) {
         try {
@@ -41,6 +43,6 @@ public enum IndexFunctionConfiguration {
     private static class Constants {
         private static final String CURRENT_COUNTRIES = "current-countries";
         private static final String LOCAL_AUTHORITY_BY_TYPE = "local-authority-by-type";
+        private static final String RECORDS = "records";
     }
-
 }

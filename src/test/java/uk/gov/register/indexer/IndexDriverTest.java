@@ -111,7 +111,7 @@ public class IndexDriverTest {
         Entry newEntry = new Entry(2, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
 
 
-        when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, item)));
+        when(register.getDerivationRecord("A", "by-x")).thenReturn(Optional.of(new Record(previousEntry, item)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
@@ -136,7 +136,6 @@ public class IndexDriverTest {
 
         Entry previousEntry = new Entry(1, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
-
 
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, item)));
 
@@ -164,7 +163,6 @@ public class IndexDriverTest {
 
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
-
 
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
 
@@ -195,7 +193,6 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemQ)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
@@ -225,7 +222,6 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
 
         IndexDAO indexDAO = mock(IndexDAO.class);
@@ -254,7 +250,6 @@ public class IndexDriverTest {
 
         Entry newEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
-
 
         when(register.getRecord(anyString())).thenReturn(Optional.empty());
 
@@ -357,9 +352,8 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
         Entry newEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
 
-
         when(register.getRecord(anyString())).thenReturn(Optional.of(new Record(previousEntry, item)));
-
+ 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         when(dataAccessLayer.getExistingIndexCountForItem("by-x", "P", "aaa")).thenReturn(2);
         IndexFunction indexFunction = mock(IndexFunction.class);

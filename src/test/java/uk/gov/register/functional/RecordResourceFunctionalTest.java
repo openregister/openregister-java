@@ -13,8 +13,6 @@ import uk.gov.register.functional.app.RegisterRule;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -87,6 +85,22 @@ public class RecordResourceFunctionalTest {
     }
 
     @Test
+    public void recordResource_returnsMostRecentRecord_whenMultipleEntriesExist() throws IOException {
+        Response response = register.getRequest(address, "/record/6789.json");
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        assertThat(res.get("6789").get("item").get(0).get("street").textValue(), equalTo("presley"));
+    }
+
+    @Test
+    public void recordResource_returnsIdenticalResponseAsIndexEndpoint() throws IOException {
+        String indexResponse = register.getRequest(address, "/index/records/record/6789.json").readEntity(String.class);
+        String recordsResponse = register.getRequest(address, "/record/6789.json").readEntity(String.class);
+
+        assertThat(indexResponse, equalTo(recordsResponse));
+    }
+
+    @Test
     public void historyResource_returnsHistoryOfARecord() throws IOException {
         Response response = register.getRequest(address, "/record/6789/entries.json");
 
@@ -107,7 +121,6 @@ public class RecordResourceFunctionalTest {
         assertThat(secondEntry.get("entry-number").textValue(), equalTo("2"));
         assertThat(secondEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:" + DigestUtils.sha256Hex(item1)));
         assertTrue(secondEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
-
     }
 
     @Test

@@ -45,7 +45,7 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
-        return register.getRecord(key).map(viewFactory::getRecordMediaView)
+        return register.getDerivationRecord(key, "records").map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -118,7 +118,7 @@ public class RecordResource {
     }
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalDerivationRecords("records"));
 
         if (pagination.hasNextPage()) {
             httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
