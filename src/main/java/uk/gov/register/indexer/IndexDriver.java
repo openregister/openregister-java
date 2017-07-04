@@ -36,7 +36,7 @@ public class IndexDriver {
             int newIndexEntryNumber = currentIndexEntryNumber.get() + 1;
 
             for (IndexKeyItemPairEvent p : keyValuePair.getValue()) {
-                IntegerItemPair startIndexEntryNumberItemCountPair = dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
+                IndexEntryNumberItemCountPair startIndexEntryNumberItemCountPair = dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
 
                 if (p.isStart()) {
                     addIndexKeyToItemHash(indexFunction, currentIndexEntryNumber, entry.getEntryNumber(), newIndexEntryNumber, p, startIndexEntryNumberItemCountPair);
@@ -71,7 +71,7 @@ public class IndexDriver {
         return pairs;
     }
 
-    private void addIndexKeyToItemHash(IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int currentEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IntegerItemPair startIndexEntryNumberItemCountPair) {
+    private void addIndexKeyToItemHash(IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int currentEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IndexEntryNumberItemCountPair startIndexEntryNumberItemCountPair) {
         if (startIndexEntryNumberItemCountPair.getStartIndexEntryNumber().isPresent()) {
             dataAccessLayer.start(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue(), currentEntryNumber, startIndexEntryNumberItemCountPair.getStartIndexEntryNumber().get());
         } else {
@@ -93,7 +93,7 @@ public class IndexDriver {
         return sortedEvents;
     }
 
-    private void removeIndexKeyFromItemHash(Entry entry, IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IntegerItemPair startIndexEntryNumberItemCountPair) {
+    private void removeIndexKeyFromItemHash(Entry entry, IndexFunction indexFunction, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IndexEntryNumberItemCountPair startIndexEntryNumberItemCountPair) {
         if (startIndexEntryNumberItemCountPair.getExistingItemCount() > 1) {
             dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), startIndexEntryNumberItemCountPair.getStartIndexEntryNumber().get());
         } else {

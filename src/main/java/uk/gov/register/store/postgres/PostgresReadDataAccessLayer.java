@@ -4,7 +4,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
-import uk.gov.register.indexer.IntegerItemPair;
+import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
@@ -173,7 +173,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public IntegerItemPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex){
+    public IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex){
         return indexQueryDAO.getStartIndexEntryNumberAndExistingItemCount(indexName, key,sha256hex, schema);
     }
 

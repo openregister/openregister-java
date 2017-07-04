@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
-import uk.gov.register.db.IndexDAO;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.store.DataAccessLayer;
@@ -110,12 +109,10 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, item)));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -126,8 +123,9 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
         indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(dataAccessLayer, times(1)).start("by-x", "P", "bbb", 2, 1);
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).start("by-x", "P", "bbb", 2, 2);
+        verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, never()).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -139,8 +137,8 @@ public class IndexDriverTest {
 
 
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, item)));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
         when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
         IndexFunction indexFunction = mock(IndexFunction.class);
@@ -154,7 +152,8 @@ public class IndexDriverTest {
         indexDriver.indexEntry(register, newEntry, indexFunction);
 
         verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 1);
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, never()).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -165,12 +164,11 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -182,9 +180,10 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
         indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 1);
-        verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, 2);
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 2);
+        verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, 3);
+        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -198,7 +197,6 @@ public class IndexDriverTest {
 
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemQ)));
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
         when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
         IndexFunction indexFunction = mock(IndexFunction.class);
@@ -208,13 +206,16 @@ public class IndexDriverTest {
         when(indexFunction.execute(register, newEntry))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
 
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
         indexDriver.indexEntry(register, newEntry, indexFunction);
 
         verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 2, 1);
         verify(dataAccessLayer, times(1)).end("by-x", "A", "Q", "bbb", 2, 2);
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -227,10 +228,10 @@ public class IndexDriverTest {
 
 
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
-        IndexDAO indexDAO = mock(IndexDAO.class);
-        IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
-        when(indexQueryDAO.getCurrentIndexEntryNumber("by-x", "x")).thenReturn(0);
+        when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -242,9 +243,10 @@ public class IndexDriverTest {
         IndexDriver indexDriver = new IndexDriver(dataAccessLayer);
         indexDriver.indexEntry(register, newEntry, indexFunction);
 
-        verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 1);
+        verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 2);
         verify(dataAccessLayer, times(1)).start("by-x", "P", "bbb", 2, 2);
-        verifyNoMoreInteractions(indexDAO);
+        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -259,6 +261,9 @@ public class IndexDriverTest {
         when(register.getRecord(anyString())).thenReturn(Optional.empty());
 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1);
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, newEntry1))
@@ -272,8 +277,8 @@ public class IndexDriverTest {
 
         verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 1, 1);
         verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, 2);
-        verify(dataAccessLayer, times(2)).start(anyString(), anyString(), anyString(), anyInt(), any());
-        verify(dataAccessLayer, times(0)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), any());
+        verify(dataAccessLayer, times(2)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, times(0)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -296,10 +301,10 @@ public class IndexDriverTest {
         when(register.getRecord("D")).thenReturn(Optional.empty());
 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 3, 4);
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IntegerItemPair(Optional.empty(), 0), new IntegerItemPair(Optional.of(2), 1));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IntegerItemPair(Optional.empty(), 0));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "S", "ddd")).thenReturn(new IntegerItemPair(Optional.empty(), 0), new IntegerItemPair(Optional.of(3), 1));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "R", "ccc")).thenReturn(new IntegerItemPair(Optional.empty(), 0));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0), new IndexEntryNumberItemCountPair(Optional.of(2), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "S", "ddd")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0), new IndexEntryNumberItemCountPair(Optional.of(3), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "R", "ccc")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -327,6 +332,9 @@ public class IndexDriverTest {
         verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 4, 2);
         verify(dataAccessLayer, times(1)).end("by-x", "C", "S", "ddd", 4, 4);
         verify(dataAccessLayer, times(1)).start("by-x", "R", "ccc", 5, 5);
+
+        verify(dataAccessLayer, times(5)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -340,7 +348,7 @@ public class IndexDriverTest {
         when(register.getRecord(anyString())).thenReturn(Optional.empty());
 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IntegerItemPair(Optional.of(1), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, newEntry))
@@ -350,8 +358,8 @@ public class IndexDriverTest {
         indexDriver.indexEntry(register, newEntry, indexFunction);
 
         verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 2, 1);
-        verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), any());
-        verify(dataAccessLayer, times(0)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), any());
+        verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, times(0)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 
     @Test
@@ -364,7 +372,7 @@ public class IndexDriverTest {
         when(register.getRecord(anyString())).thenReturn(Optional.of(new Record(previousEntry, item)));
 
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IntegerItemPair(Optional.of(2), 2));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(2), 2));
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(register, previousEntry))
@@ -376,7 +384,7 @@ public class IndexDriverTest {
         indexDriver.indexEntry(register, newEntry, indexFunction);
 
         verify(dataAccessLayer, times(1)).end("by-x", "B", "P", "aaa", 3, 2);
-        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), any());
-        verify(dataAccessLayer, times(0)).start(anyString(), anyString(), anyString(), anyInt(), any());
+        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
+        verify(dataAccessLayer, times(0)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
     }
 }

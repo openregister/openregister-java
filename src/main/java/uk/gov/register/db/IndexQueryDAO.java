@@ -10,7 +10,7 @@ import uk.gov.register.core.Record;
 import uk.gov.register.db.mappers.DerivationEntryMapper;
 import uk.gov.register.db.mappers.DerivationRecordMapper;
 import uk.gov.register.db.mappers.IndexItemInfoMapper;
-import uk.gov.register.indexer.IntegerItemPair;
+import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
 
 import java.util.Iterator;
 import java.util.List;
@@ -38,10 +38,9 @@ public interface IndexQueryDAO {
     @RegisterMapper(DerivationEntryMapper.class)
     Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Bind("schema") String schema );
 
-    @SingleValueResult(IntegerItemPair.class)
     @RegisterMapper(IndexItemInfoMapper.class)
     @SqlQuery("select min(i.start_index_entry_number) start_index_entry_number, count(*) existing_item_count from :schema.index i where i.name = :name and i.key = :key and i.sha256hex = :sha256hex and i.end_entry_number is null")
-    IntegerItemPair getStartIndexEntryNumberAndExistingItemCount(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Bind("schema") String schema );
+    IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Bind("schema") String schema );
 
     @SqlQuery(recordCountQuery)
     int getTotalRecords(@Bind("name") String indexName, @Bind("schema") String schema );

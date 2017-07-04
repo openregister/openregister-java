@@ -1,1 +1,0 @@
-# Simple record index test
