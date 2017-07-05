@@ -1,4 +1,6 @@
 assert-root-hash	sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+add-item	{"register-name":"school"}
+append-entry	system	field:register-name	2017-06-21T15:49:20Z	sha-256:f16b0342a7d6946f5cfa367680a74b268fddf0174d3423ea7a648205fa73b1d5
 add-item	{"cardinality":"1","datatype":"string","field":"school","phase":"alpha","register":"school","text":"A school in the UK."}
 append-entry	system	field:school	2017-06-21T15:49:20Z	sha-256:cb945c34ab916fa447a0943e05590cd81e974fafc7ce6b0f570ab9bf87437f39
 add-item	{"cardinality":"1","datatype":"string","field":"name","phase":"alpha","text":"Name of field"}
