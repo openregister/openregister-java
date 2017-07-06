@@ -21,8 +21,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
-
 public class PostgresRegister implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
     private final RecordIndex recordIndex;
@@ -33,6 +31,9 @@ public class PostgresRegister implements Register {
     private final IndexDriver indexDriver;
     private final List<IndexFunction> indexFunctions;
     private final ItemValidator itemValidator;
+
+    private RegisterMetadata registerMetadata;
+    private Map<String, Field> fieldsByName;
 
     public PostgresRegister(RegisterName registerName,
                             EntryLog entryLog,
@@ -215,9 +216,13 @@ public class PostgresRegister implements Register {
 
     @Override
     public RegisterMetadata getRegisterMetadata() {
-        return getDerivationRecord("register:" + registerName.value(), "metadata")
-                .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
-                .orElseThrow(() -> new RegisterUndefinedException(registerName));
+        if (registerMetadata == null) {
+            registerMetadata = getDerivationRecord("register:" + registerName.value(), "metadata")
+                    .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
+                    .orElseThrow(() -> new RegisterUndefinedException(registerName));
+        }
+
+        return registerMetadata;
     }
 
     @Override
@@ -237,11 +242,13 @@ public class PostgresRegister implements Register {
 
     @Override
     public Map<String, Field> getFieldsByName() {
-        RegisterMetadata registerMetadata = getRegisterMetadata();
-        List<String> fieldNames = registerMetadata.getFields();
-        LinkedHashMap<String, Field> fieldsByName = new LinkedHashMap<>();
-        for (String fieldName : fieldNames) {
-            fieldsByName.put(fieldName, getField(fieldName));
+        if (fieldsByName == null) {
+            RegisterMetadata registerMetadata = getRegisterMetadata();
+            List<String> fieldNames = registerMetadata.getFields();
+            fieldsByName = new LinkedHashMap<>();
+            for (String fieldName : fieldNames) {
+                fieldsByName.put(fieldName, getField(fieldName));
+            }
         }
         return fieldsByName;
     }
