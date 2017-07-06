@@ -13,6 +13,10 @@ function on_exit {
 function wait_for_http_on_port {
   while ! curl ":$1" --silent --fail --output /dev/null;
   do
+    if [ $(docker inspect -f {{.State.Running}} $2) != 'true' ]; then
+      echo "Container $2 unexpectedly stopped while waiting for it to open port $1"
+      exit 1
+    fi
     echo "Waiting for HTTP on :$1"
     sleep 1
   done
@@ -37,7 +41,7 @@ fi
 echo "Starting environment based off \"$ENVIRONMENT\""
 echo "Starting basic registers..."
 docker-compose --file docker-compose.basic.yml up -d
-wait_for_http_on_port 8081
+wait_for_http_on_port 8081 openregister-basic
 
 for register in "register" "datatype" "field"; do
   echo "Loading $register..."
@@ -52,7 +56,7 @@ done
 
 echo "Starting register..."
 docker-compose --file docker-compose.register.yml up -d
-wait_for_http_on_port 8080
+wait_for_http_on_port 8080 openregister-register
 
 echo "Loading school-eng data..."
 curl \
