@@ -2,6 +2,7 @@ package uk.gov.register.store.postgres;
 
 import com.google.common.collect.Iterables;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.db.*;
 import uk.gov.register.store.DataAccessLayer;
@@ -43,6 +44,10 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     @Override
     public void appendEntry(Entry entry) {
         stagedEntries.add(entry);
+
+        if (entry.getEntryType().equals(EntryType.system)) {
+            checkpoint();
+        }
     }
 
     @Override

@@ -18,6 +18,10 @@ public class IndexDriver {
     }
 
     public void indexEntry(Register register, Entry entry, IndexFunction indexFunction) {
+        if (indexFunction.getName().equals("metadata") && entry.getEntryType().equals(EntryType.user)) {
+            return;
+        }
+
         Optional<Record> currentRecord = (entry.getEntryType() == EntryType.user)
                 ? register.getRecord(entry.getKey())
                 : register.getDerivationRecord(entry.getKey(), "metadata");

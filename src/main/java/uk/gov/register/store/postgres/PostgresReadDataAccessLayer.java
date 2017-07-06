@@ -96,7 +96,6 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Item> getItemBySha256(HashValue hash) {
-        checkpoint();
         return itemQueryDAO.getItemBySHA256(hash.getValue(), schema);
     }
 
@@ -159,7 +158,6 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public List<Record> getIndexRecords(int limit, int offset, String indexName) {
-        checkpoint();
         return indexQueryDAO.findRecords(limit, offset, indexName, schema);
     }
 
