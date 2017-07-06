@@ -3,10 +3,7 @@ package uk.gov.register.integration;
 import io.dropwizard.jdbi.OptionalContainerFactory;
 import org.apache.log4j.MDC;
 import org.assertj.core.util.Lists;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
@@ -14,7 +11,6 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
-import uk.gov.register.db.SubstituteSchemaRewriter;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
 
@@ -269,7 +265,7 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(totalRecords, is(2));
     }
 
-    @Test
+    @Ignore("Ignore until we decide how to express records which existed before but no longer exist")
     public void shouldFindZeroItemsRecordForUA() {
         zeroItemsEntryScenario();
 

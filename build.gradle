@@ -75,6 +75,7 @@ dependencies {
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }
+    compile jetty
 
     testCompile junit, mockito, dropwizardTest, wiremock
     testCompile dropwizardTest, jsoup, jsonAssert

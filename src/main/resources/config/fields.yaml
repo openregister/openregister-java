@@ -633,3 +633,28 @@ territory:
     datatype: "string"
     register: "territory"
     cardinality: "1"
+local-authority-eng:
+  index-entry-number: "29"
+  entry-number: "29"
+  entry-timestamp: "2017-01-10T17:16:07Z"
+  key: "local-authority-eng"
+  item:
+  - phase: "alpha"
+    field: "local-authority-eng"
+    datatype: "string"
+    text: "The local authority's ISO 3166-1 alpha3 code. Unique codes have been created\
+      \ for local authorities that don't have an existing ISO code."
+    cardinality: "1"
+    register: "local-authority-eng"
+local-authority-type:
+  index-entry-number: "30"
+  entry-number: "30"
+  entry-timestamp: "2017-01-10T17:16:07Z"
+  key: "local-authority-type"
+  item:
+  - phase: "alpha"
+    field: "local-authority-type"
+    datatype: "string"
+    text: "The type of local government organisation."
+    cardinality: "1"
+    register: "local-authority-type"

@@ -1,15 +1,18 @@
 package uk.gov.register.store.postgres;
 
-import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
+import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
@@ -151,8 +154,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
-        Optional<Record> record = indexQueryDAO.findRecord(key, indexName, schema);
-        return record.filter(r -> r.getItems().size() != 0);
+        return indexQueryDAO.findRecord(key, indexName, schema);
     }
 
     @Override
@@ -171,11 +173,9 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public int getExistingIndexCountForItem(String indexName, String key, String sha256hex){
-        return indexQueryDAO.getExistingIndexCountForItem(indexName, key,sha256hex, schema );
+    public IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex){
+        return indexQueryDAO.getStartIndexEntryNumberAndExistingItemCount(indexName, key,sha256hex, schema);
     }
-
-
 
     protected abstract void checkpoint();
 }

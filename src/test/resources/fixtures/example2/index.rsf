@@ -1,0 +1,10 @@
+assert-root-hash	sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+add-item	{"local-authority-eng":"A","local-authority-type":"P"}
+add-item	{"local-authority-eng":"A","local-authority-type":"K"}
+add-item	{"local-authority-eng":"C","local-authority-type":"P"}
+add-item	{"local-authority-eng":"B","local-authority-type":"Q"}
+append-entry	user	P	2016-04-05T13:23:05Z	sha-256:2ecc268b077eaeececb04025f8c3351c7eb9670026be2e8557043349adde7409
+append-entry	user	Q	2016-04-05T13:23:05Z	sha-256:845fbf8ec0624d7d6ed3b9ec84e69a2a2404f57292f0abeefd0e1e98d13d97bf
+append-entry	user	P	2016-04-05T13:23:05Z	sha-256:7c20f9a73d0c3e398efe6078074d5c018848451a2f98eacc08632de595cfde98;sha-256:2ecc268b077eaeececb04025f8c3351c7eb9670026be2e8557043349adde7409
+append-entry	user	K	2016-04-05T13:23:05Z	sha-256:9e89db40a1f80f30a3030190814b7d9e87ca047f03fe13d57f407c2b4701381d
+append-entry	user	P	2016-04-05T13:23:05Z	sha-256:7c20f9a73d0c3e398efe6078074d5c018848451a2f98eacc08632de595cfde98
