@@ -38,9 +38,11 @@ public class IndexFunctionalTest {
     @Before
     public void setup() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
         String inputRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "input.rsf")));
         
         register.wipe();
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
         register.loadRsf(TestRegister.local_authority_eng, inputRsf);
     }
 

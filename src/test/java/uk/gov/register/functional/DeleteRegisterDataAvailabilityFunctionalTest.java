@@ -1,5 +1,6 @@
 package uk.gov.register.functional;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,16 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
 
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
+    
+    @Before
+    public void setup() {
+        register.loadRsf(address, 
+            "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"address\",\"phase\":\"beta\",\"text\":\"An address in the UK.\"}\n" +
+            "append-entry\tsystem\tfield:address\t2016-04-05T13:23:05Z\tsha-256:fc62aba14a2fac9d9653217e7c98cd099051833161b10d19de5cca4adf043379\n" +
+            "add-item\t{\"fields\":[\"address\"],\"phase\":\"beta\",\"register\":\"address\",\"registry\":\"gds\",\"text\":\"Register of addresses.\"}\n" +
+            "append-entry\tsystem\tregister:address\t2016-04-05T13:23:05Z\tsha-256:6cfccf53ba6d1f80cf8ccc615b01367b1e2714431230231d51e6342c4b916fda");
+    }
 
     private final Boolean isAuthenticated;
     private final int expectedStatusCode;
