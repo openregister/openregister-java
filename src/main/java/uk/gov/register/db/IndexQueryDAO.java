@@ -2,9 +2,10 @@ package uk.gov.register.db;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.customizers.OverrideStatementRewriterWith;
+import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.mappers.DerivationEntryMapper;
@@ -16,34 +17,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-@OverrideStatementRewriterWith(SubstituteSchemaRewriter.class)
+@UseStringTemplate3StatementLocator
 public interface IndexQueryDAO {
     @SqlQuery(recordForKeyQuery)
     @SingleValueResult(Record.class)
     @RegisterMapper(DerivationRecordMapper.class)
-    Optional<Record> findRecord(@Bind("key") String derivationKey, @Bind("name") String derivationName, @Bind("schema") String schema );
+    Optional<Record> findRecord(@Bind("key") String derivationKey, @Bind("name") String derivationName, @Define("schema") String schema );
 
     @SqlQuery(recordQuery)
     @RegisterMapper(DerivationRecordMapper.class)
-    List<Record> findRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Bind("name") String derivationName, @Bind("schema") String schema );
+    List<Record> findRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Bind("name") String derivationName, @Define("schema") String schema );
 
-    @SqlQuery("select max(r.index_entry_number) from (select greatest(start_index_entry_number, end_index_entry_number) as index_entry_number from :schema.index where name = :name) r")
-    int getCurrentIndexEntryNumber(@Bind("name") String indexName, @Bind("schema") String schema );
+    @SqlQuery("select max(r.index_entry_number) from (select greatest(start_index_entry_number, end_index_entry_number) as index_entry_number from \"<schema>\".index where name = :name) r")
+    int getCurrentIndexEntryNumber(@Bind("name") String indexName, @Define("schema") String schema );
 
     @SqlQuery(entriesQuery)
     @RegisterMapper(DerivationEntryMapper.class)
-    Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("schema") String schema );
+    Iterator<Entry> getIterator(@Bind("name") String indexName, @Define("schema") String schema );
 
     @SqlQuery(entriesQueryBetweenEntries)
     @RegisterMapper(DerivationEntryMapper.class)
-    Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Bind("schema") String schema );
+    Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Define("schema") String schema );
 
     @RegisterMapper(IndexItemInfoMapper.class)
-    @SqlQuery("select min(i.start_index_entry_number) start_index_entry_number, count(*) existing_item_count from :schema.index i where i.name = :name and i.key = :key and i.sha256hex = :sha256hex and i.end_entry_number is null")
-    IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Bind("schema") String schema );
+    @SqlQuery("select min(i.start_index_entry_number) start_index_entry_number, count(*) existing_item_count from \"<schema>\".index i where i.name = :name and i.key = :key and i.sha256hex = :sha256hex and i.end_entry_number is null")
+    IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Define("schema") String schema );
 
     @SqlQuery(recordCountQuery)
-    int getTotalRecords(@Bind("name") String indexName, @Bind("schema") String schema );
+    int getTotalRecords(@Bind("name") String indexName, @Define("schema") String schema );
 
     String recordForKeyQuery = "select " +
             "    unended.key, " +
@@ -57,8 +58,8 @@ public interface IndexQueryDAO {
             "        array_remove(array_agg(ix.sha256hex), null) as sha256_arr, " +
             "        array_remove(array_agg(im.content), null) as content_arr, " +
             "        ix.key " +
-            "    from :schema.index as ix " +
-            "    join :schema.item as im on ix.sha256hex = im.sha256hex " +
+            "    from \"<schema>\".index as ix " +
+            "    join \"<schema>\".item as im on ix.sha256hex = im.sha256hex " +
             "    where " +
             "        end_index_entry_number is null " +
             "        and name = :name and key = :key group by key) " +
@@ -79,14 +80,14 @@ public interface IndexQueryDAO {
             "                key, " +
             "                start_entry_number as entry_number, " +
             "                start_index_entry_number as index_entry_number " +
-            "            from :schema.index " +
+            "            from \"<schema>\".index " +
             "            where name = :name and key = :key " +
             "            union " +
             "            select " +
             "                key, " +
             "                end_entry_number as entry_number, " +
             "                end_index_entry_number as index_entry_number " +
-            "            from :schema.index " +
+            "            from \"<schema>\".index " +
             "            where name = :name and key = :key and end_entry_number is not null) " +
             "        as all_entries) " +
             "    as with_index_entry_numbers " +
@@ -94,7 +95,7 @@ public interface IndexQueryDAO {
             "    group by max_index_entry_number, key) " +
             "as entry_numbers " +
             "on unended.key = entry_numbers.key " +
-            "join :schema.entry e on e.entry_number = entry_numbers.entry_number;";
+            "join \"<schema>\".entry e on e.entry_number = entry_numbers.entry_number;";
 
     String recordQuery =
             "select " +
@@ -109,8 +110,8 @@ public interface IndexQueryDAO {
             "        array_remove(array_agg(ix.sha256hex), null) as sha256_arr, " +
             "        array_remove(array_agg(im.content), null) as content_arr, " +
             "        ix.key " +
-            "    from :schema.index as ix " +
-            "    join :schema.item as im on ix.sha256hex = im.sha256hex " +
+            "    from \"<schema>\".index as ix " +
+            "    join \"<schema>\".item as im on ix.sha256hex = im.sha256hex " +
             "    where " +
             "        end_index_entry_number is null " +
             "        and name = :name group by key) " +
@@ -131,14 +132,14 @@ public interface IndexQueryDAO {
             "                key, " +
             "                start_entry_number as entry_number, " +
             "                start_index_entry_number as index_entry_number " +
-            "            from :schema.index " +
+            "            from \"<schema>\".index " +
             "            where name = :name " +
             "            union " +
             "            select " +
             "                key, " +
             "                end_entry_number as entry_number, " +
             "                end_index_entry_number as index_entry_number " +
-            "            from :schema.index " +
+            "            from \"<schema>\".index " +
             "            where name = :name and end_entry_number is not null) " +
             "        as all_entries) " +
             "    as with_index_entry_numbers " +
@@ -146,7 +147,7 @@ public interface IndexQueryDAO {
             "    group by max_index_entry_number, key) " +
             "as entry_numbers " +
             "on unended.key = entry_numbers.key " +
-            "join :schema.entry e on e.entry_number = entry_numbers.entry_number " +
+            "join \"<schema>\".entry e on e.entry_number = entry_numbers.entry_number " +
             "order by key " +
             "limit :limit offset :offset;";
 
@@ -164,7 +165,7 @@ public interface IndexQueryDAO {
             "           end_entry_number as en,  " +
             "           key  " +
             "         from  " +
-            "           :schema.index  " +
+            "           \"<schema>\".index  " +
             "         where  " +
             "           name = :name  " +
             "           and end_index_entry_number is not null  " +
@@ -173,11 +174,11 @@ public interface IndexQueryDAO {
             "           start_entry_number as en,  " +
             "           key  " +
             "         from  " +
-            "           :schema.index  " +
+            "           \"<schema>\".index  " +
             "         where  " +
             "           name = :name  " +
             "       ) n order by n.ien, n.key, n.en " +
-            "  ) as index_entry join :schema.entry as e on  " +
+            "  ) as index_entry join \"<schema>\".entry as e on  " +
             "  e.entry_number = index_entry.en left outer join(  " +
             "    select  " +
             "      ix.sha256hex,  " +
@@ -185,11 +186,11 @@ public interface IndexQueryDAO {
             "      ix.end_index_entry_number,  " +
             "      ix.\"key\"  " +
             "    from  " +
-            "      :schema.index as ix " +
+            "      \"<schema>\".index as ix " +
             "      where ix.name = :name " +
             "  ) as unended on  " +
             "  unended.key = index_entry.key  " +
-            "  and unended.start_index_entry_number <= index_entry.ien  " +
+            "  and unended.start_index_entry_number \\<= index_entry.ien  " +
             "  and(  " +
             "    unended.end_index_entry_number is null  " +
             "    or unended.end_index_entry_number > index_entry.ien  " +
@@ -216,21 +217,21 @@ public interface IndexQueryDAO {
             "               end_entry_number as en,  " +
             "               key  " +
             "           from  " +
-            "               :schema.index  " +
+            "               \"<schema>\".index  " +
             "           where  " +
             "               name = :name  " +
-            "               and end_index_entry_number is not null and end_entry_number > :total_entries_1 and end_entry_number <= :total_entries_2" +
+            "               and end_index_entry_number is not null and end_entry_number > :total_entries_1 and end_entry_number \\<= :total_entries_2" +
             "           union select  " +
             "               start_index_entry_number as ien,  " +
             "               start_entry_number as en,  " +
             "               key  " +
             "           from  " +
-            "               :schema.index  " +
+            "               \"<schema>\".index  " +
             "           where  " +
             "               name = :name " +
-            "               and start_index_entry_number is not null and start_entry_number > :total_entries_1 and start_entry_number <= :total_entries_2 " +
+            "               and start_index_entry_number is not null and start_entry_number > :total_entries_1 and start_entry_number \\<= :total_entries_2 " +
             "       ) n order by n.ien, n.key, n.en " +
-            "  ) as index_entry join :schema.entry as e on  " +
+            "  ) as index_entry join \"<schema>\".entry as e on  " +
             "  e.entry_number = index_entry.en left outer join(  " +
             "    select  " +
             "      ix.sha256hex,  " +
@@ -238,11 +239,11 @@ public interface IndexQueryDAO {
             "      ix.end_index_entry_number,  " +
             "      ix.\"key\"  " +
             "    from  " +
-            "      :schema.index as ix" +
+            "      \"<schema>\".index as ix" +
             "    where ix.name = :name " +
             "  ) as unended on  " +
             "  unended.key = index_entry.key  " +
-            "  and unended.start_index_entry_number <= index_entry.ien  " +
+            "  and unended.start_index_entry_number \\<= index_entry.ien  " +
             "  and(  " +
             "    unended.end_index_entry_number is null  " +
             "    or unended.end_index_entry_number > index_entry.ien  " +
@@ -258,7 +259,7 @@ public interface IndexQueryDAO {
     String recordCountQuery = "select " +
             "count( distinct key) " +
             "from " +
-            " :schema.index " +
+            " \"<schema>\".index " +
             "where " +
             " name = :name" +
             " and end_index_entry_number is null";

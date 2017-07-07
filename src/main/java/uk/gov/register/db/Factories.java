@@ -2,11 +2,7 @@ package uk.gov.register.db;
 
 import org.glassfish.hk2.api.Factory;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.AllTheRegisters;
-import uk.gov.register.core.Register;
-import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.*;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

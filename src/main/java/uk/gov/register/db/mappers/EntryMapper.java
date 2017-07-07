@@ -9,7 +9,8 @@ import uk.gov.register.util.HashValue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class EntryMapper implements ResultSetMapper<Entry> {

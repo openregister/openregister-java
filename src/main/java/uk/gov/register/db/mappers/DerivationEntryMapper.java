@@ -1,5 +1,7 @@
 package uk.gov.register.db.mappers;
 
+import org.skife.jdbi.v2.StatementContext;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
@@ -10,9 +12,6 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 public class DerivationEntryMapper implements ResultSetMapper<Entry> {
     private final LongTimestampToInstantMapper longTimestampToInstantMapper;
