@@ -27,13 +27,13 @@ public class EntryTest {
     @Test
     public void getSha256hex_returnsTheSha256HexOfItem() {
         Entry entry = new Entry(123, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.ofEpochSecond(1470403440), "sample-key", EntryType.user);
-        assertThat(entry.getSha256hex().getValue(), equalTo("abc"));
+        assertThat(entry.getItemHashes().get(0).getValue(), equalTo("abc"));
     }
 
     @Test
     public void getItemHash_returnsSha256AsItemHash() {
         Entry entry = new Entry(123, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.ofEpochSecond(1470403440), "sample-key", EntryType.user);
-        assertThat(entry.getSha256hex().toString(), equalTo("sha-256:abc"));
+        assertThat(entry.getItemHashes().get(0).toString(), equalTo("sha-256:abc"));
     }
 
     @Test

@@ -34,7 +34,7 @@ public class EntryMapperTest {
         Instant expectedInstant = Instant.parse(expected);
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key, type) values(5, :timestamp, 'abcdef', 'K', 'user')", expectedInstant.getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", expectedInstant.getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
@@ -54,7 +54,7 @@ public class EntryMapperTest {
     @Test
     public void map_returnsSingleItemHashForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key, type) values(5, :timestamp, 'abcdef', 'K', 'user')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
@@ -68,7 +68,7 @@ public class EntryMapperTest {
     @Test
     public void map_returnsMultipleItemHashesForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key, type) values(5, :timestamp, 'abcdef', 'K', 'user')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'abcdef')");
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
@@ -83,7 +83,7 @@ public class EntryMapperTest {
     @Test
     public void map_returnsNoItemHashesForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, sha256hex, key, type) values(5, :timestamp, 'abcdef', 'K', 'user')", Instant.now().getEpochSecond());
+            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
