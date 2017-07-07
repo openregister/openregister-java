@@ -1,12 +1,11 @@
 package uk.gov.register.functional.db;
 
-import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
-import org.skife.jdbi.v2.sqlobject.customizers.OverrideStatementRewriterWith;
-import uk.gov.register.db.SubstituteSchemaRewriter;
+import org.skife.jdbi.v2.sqlobject.customizers.Define;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 
-@OverrideStatementRewriterWith(SubstituteSchemaRewriter.class)
+@UseStringTemplate3StatementLocator
 public interface TestIndexDAO {
-    @SqlUpdate("delete from :schema.index;")
-    void wipeData(@Bind("schema") String schema);
+    @SqlUpdate("delete from \"<schema>\".index;")
+    void wipeData(@Define("schema") String schema);
 }

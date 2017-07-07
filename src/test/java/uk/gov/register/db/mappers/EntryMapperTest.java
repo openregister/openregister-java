@@ -8,7 +8,6 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.SubstituteSchemaRewriter;
 import uk.gov.register.functional.app.MigrateDatabaseRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
