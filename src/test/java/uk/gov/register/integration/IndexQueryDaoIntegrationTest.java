@@ -98,7 +98,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReadRecordForUA() {
         nameChangeAndGroupChangeScenario();
 
-        Optional<Record> recordOptional = dao.findRecord("UA", "by-type", schema);
+        Optional<Record> recordOptional = dao.findRecord("UA", "by-type", schema, "entry");
 
         assertTrue(recordOptional.isPresent());
         Record record = recordOptional.get();
@@ -121,7 +121,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReadRecordForMD() {
         nameChangeAndGroupChangeScenario();
 
-        Optional<Record> recordOptional = dao.findRecord("MD", "by-type", schema);
+        Optional<Record> recordOptional = dao.findRecord("MD", "by-type", schema, "entry");
 
         assertTrue(recordOptional.isPresent());
         Record record = recordOptional.get();
@@ -143,14 +143,14 @@ public class IndexQueryDaoIntegrationTest {
     @Test
     public void shouldReturnEmptyForMissingKey() {
         nameChangeAndGroupChangeScenario();
-        Optional<Record> recordOptional = dao.findRecord("Z", "by-type", schema);
+        Optional<Record> recordOptional = dao.findRecord("Z", "by-type", schema, "entry");
         assertFalse("should be empty for key Z", recordOptional.isPresent());
     }
 
     @Test
     public void shouldReturnEmptyForMissingIndex() {
         nameChangeAndGroupChangeScenario();
-        List<Record> records = dao.findRecords(10, 0, "zzz", schema);
+        List<Record> records = dao.findRecords(10, 0, "zzz", schema, "entry");
         assertThat(records.size(), is(0));
     }
 
@@ -159,7 +159,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReadRecords() {
         nameChangeAndGroupChangeScenario();
 
-        List<Record> records = dao.findRecords(10, 0, "by-type", schema);
+        List<Record> records = dao.findRecords(10, 0, "by-type", schema, "entry");
 
         assertThat(records.size(), is(2));
 
@@ -199,7 +199,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReadEntries() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("by-type", schema);
+        Iterator<Entry> entryIterator = dao.getIterator("by-type", schema, "entry");
         List<Entry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(7));
@@ -219,7 +219,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReadEntriesBetweenEntryNumbers() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("by-type", 92, 94, schema);
+        Iterator<Entry> entryIterator = dao.getIterator("by-type", 92, 94, schema, "entry");
         List<Entry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(2));
@@ -241,7 +241,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReturnEmptyListForInvalidEntryNumberRange() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("by-type", 94, 92, schema);
+        Iterator<Entry> entryIterator = dao.getIterator("by-type", 94, 92, schema, "entry");
         List<Entry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(0));
@@ -251,7 +251,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldNotReturnResultsForUnknownName() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("sam", schema);
+        Iterator<Entry> entryIterator = dao.getIterator("sam", schema, "entry");
         List<Entry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(0));
@@ -269,7 +269,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldFindZeroItemsRecordForUA() {
         zeroItemsEntryScenario();
 
-        Optional<Record> recordOptional = dao.findRecord("UA", "by-type", schema);
+        Optional<Record> recordOptional = dao.findRecord("UA", "by-type", schema, "entry");
 
         assertTrue(recordOptional.isPresent());
         Record record = recordOptional.get();
@@ -284,7 +284,7 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldFindZeroEntriesForUA() {
         zeroItemsEntryScenario();
 
-        List<Entry> entries = Lists.newArrayList(dao.getIterator("by-type", schema));
+        List<Entry> entries = Lists.newArrayList(dao.getIterator("by-type", schema, "entry"));
 
         assertThat(entries.size(), is(3));
 

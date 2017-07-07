@@ -185,6 +185,7 @@ check {
 
 test {
     dependsOn << compileTestJava
+    include 'uk/gov/register/functional/**'
     testLogging {
         events "skipped", "failed", "standardError"
         showCauses true

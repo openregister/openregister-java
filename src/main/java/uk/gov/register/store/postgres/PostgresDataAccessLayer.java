@@ -80,7 +80,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
     @Override
     public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber) {
-        indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema);
+        indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema, "entry");
     }
 
     @Override
@@ -106,8 +106,8 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         List<EntryItemPair> entryItemPairs = new ArrayList<>();
         stagedEntries.forEach(se -> se.getItemHashes().forEach(h -> entryItemPairs.add(new EntryItemPair(se.getEntryNumber(), h))));
 
-        entryDAO.insertInBatch(stagedEntries, schema);
-        entryItemDAO.insertInBatch(entryItemPairs, schema);
+        entryDAO.insertInBatch(stagedEntries, schema, "entry");
+        entryItemDAO.insertInBatch(entryItemPairs, schema, "entry_item");
         entryDAO.setEntryNumber(entryDAO.currentEntryNumber(schema) + stagedEntries.size(), schema);
         stagedEntries.clear();
     }

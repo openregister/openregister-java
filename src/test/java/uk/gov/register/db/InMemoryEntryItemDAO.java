@@ -5,7 +5,7 @@ import uk.gov.register.util.EntryItemPair;
 
 public class InMemoryEntryItemDAO implements EntryItemDAO {
     @Override
-    public void insertInBatch(@BindBean Iterable<EntryItemPair> entries, String schema) {
+    public void insertInBatch(@BindBean Iterable<EntryItemPair> entries, String schema, String entryItemTable) {
         // Do nothing
     }
 }

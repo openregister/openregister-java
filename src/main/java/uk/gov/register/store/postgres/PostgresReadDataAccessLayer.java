@@ -66,12 +66,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName) {
-        return indexQueryDAO.getIterator(indexName, schema);
+        return indexQueryDAO.getIterator(indexName, schema, "entry");
     }
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema);
+        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema, "entry");
     }
 
     @Override
@@ -152,12 +152,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
-        return indexQueryDAO.findRecord(key, indexName, schema);
+        return indexQueryDAO.findRecord(key, indexName, schema, "entry");
     }
 
     @Override
     public List<Record> getIndexRecords(int limit, int offset, String indexName) {
-        return indexQueryDAO.findRecords(limit, offset, indexName, schema);
+        return indexQueryDAO.findRecords(limit, offset, indexName, schema, "entry");
     }
 
     @Override

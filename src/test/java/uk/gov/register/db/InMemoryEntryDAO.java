@@ -66,7 +66,7 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     }
 
     @Override
-    public void insertInBatch(@BindEntry Iterable<Entry> entries, String schema) {
+    public void insertInBatch(@BindEntry Iterable<Entry> entries, String schema, String entryTable) {
         for (Entry entry : entries) {
             if (!this.entries.contains(entry)) {
                 this.entries.add(entry);

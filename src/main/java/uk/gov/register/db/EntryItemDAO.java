@@ -9,7 +9,7 @@ import uk.gov.register.util.EntryItemPair;
 
 @UseStringTemplate3StatementLocator
 public interface EntryItemDAO {
-    @SqlBatch("insert into \"<schema>\".entry_item(entry_number, sha256hex) values (:entryNumber, :sha256hex)")
+    @SqlBatch("insert into \"<schema>\".<entry_item_table>(entry_number, sha256hex) values (:entryNumber, :sha256hex)")
     @BatchChunkSize(1000)
-    void insertInBatch(@BindBean Iterable<EntryItemPair> entries, @Define("schema") String schema );
+    void insertInBatch(@BindBean Iterable<EntryItemPair> entries, @Define("schema") String schema, @Define("entry_item_table") String entryItemTable);
 }
