@@ -335,32 +335,32 @@ public class IndexQueryDaoIntegrationTest {
 
     private void insertEntries() {
         // Ordinary entries for Bath, Blackburn, Bedford, Birmingham
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 91,'xxx6c4',1490610633,'BAS', 'user'::address.ENTRY_TYPE)");
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 92,'xxx37d',1490610633,'BBD', 'user'::address.ENTRY_TYPE)");
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 93,'xxx01c',1490610633,'BDF', 'user'::address.ENTRY_TYPE)");
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 94,'xxxbdc',1490610633,'BIR', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (92, 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (93, 1490610633, 'BDF', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (91, 1490610633, 'BAS', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (94, 1490610633, 'BIR', 'user'::address.ENTRY_TYPE)");
         // Bath to New Bath
-        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\", \"type\") VALUES ( 95, 'xxx126', 1490610633, 'BAS', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (95, 1490610633, 'BAS', 'user'::address.ENTRY_TYPE)");
         // Blackburn as MD
-        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\", \"type\") VALUES ( 96, 'xxx509', 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (96, 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
         // join table
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 91,'xxx6c4')");
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 92,'xxx37d')");
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 93,'xxx01c')");
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 94,'xxxbdc')");
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 95,'xxx126')");
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 96,'xxx509')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 91, 'xxx6c4')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 92, 'xxx37d')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 93, 'xxx01c')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 94, 'xxxbdc')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 95, 'xxx126')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 96, 'xxx509')");
 
     }
 
     private void insertEntriesZeroItems() {
         // Blackburn as UA
-        handle.execute("INSERT INTO address.entry (entry_number,sha256hex,\"timestamp\",\"key\", \"type\") VALUES ( 91,'xxx37d',1490610633,'BBD', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (91, 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
         // Blackburn as MD
-        handle.execute("INSERT INTO address.entry (entry_number, sha256hex, \"timestamp\", \"key\", \"type\") VALUES ( 92, 'xxx509', 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
+        handle.execute("INSERT INTO address.entry (entry_number, \"timestamp\", \"key\", \"type\") VALUES (92, 1490610633, 'BBD', 'user'::address.ENTRY_TYPE)");
         // join table
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 91,'xxx37d')");
-        handle.execute("INSERT INTO address.entry_item (entry_number,sha256hex) VALUES ( 92,'xxx509')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 91, 'xxx37d')");
+        handle.execute("INSERT INTO address.entry_item (entry_number, sha256hex) VALUES ( 92, 'xxx509')");
 
     }
 

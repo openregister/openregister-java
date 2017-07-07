@@ -60,12 +60,6 @@ public class Entry implements CsvRepresentationView<Entry> {
         return timestamp;
     }
 
-    @SuppressWarnings("unused, used from DAO")
-    @JsonIgnore
-    public HashValue getSha256hex() {
-        return hashValues.isEmpty() ? new HashValue("", "") : hashValues.get(0);
-    }
-
     @JsonProperty("item-hash")
     public List<HashValue> getItemHashes() {
         return hashValues;

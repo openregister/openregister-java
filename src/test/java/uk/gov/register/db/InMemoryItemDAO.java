@@ -1,16 +1,14 @@
 package uk.gov.register.db;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.store.postgres.BindItem;
 import uk.gov.register.util.HashValue;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.google.common.collect.Iterators.transform;
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
@@ -41,13 +39,20 @@ public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
 
     @Override
     public Iterator<Item> getIterator(String schema) {
-        return transform(entryQueryDao.getIterator(schema),
-                entry -> items.get(entry.getSha256hex()));
+        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema));
     }
 
     @Override
     public Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo, String schema) {
-        return transform(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema),
-                entry -> items.get(entry.getSha256hex()));
+        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema));
+    }
+
+    private Iterator<Item> getItemIteratorFromEntryIterator(Iterator<Entry> entryIterator) {
+        List<Item> itemsResult = new ArrayList<>();
+        entryIterator.forEachRemaining(entry -> {
+            List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getItemHashes().contains(hashValue)).collect(Collectors.toList());
+            hashValues.forEach(hashValue -> itemsResult.add(items.remove(hashValue)));
+        });
+        return itemsResult.iterator();
     }
 }
