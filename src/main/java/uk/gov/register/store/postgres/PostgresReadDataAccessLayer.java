@@ -66,12 +66,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName) {
-        return indexQueryDAO.getIterator(indexName, schema, "entry");
+        return indexQueryDAO.getIterator(indexName, schema, indexName.equals("metadata") ? "entry_system" : "entry");
     }
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema, "entry");
+        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema, indexName.equals("metadata") ? "entry_system" : "entry");
     }
 
     @Override
@@ -83,6 +83,11 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public int getTotalEntries() {
         return entryQueryDAO.getTotalEntries(schema);
+    }
+
+    public int getTotalSystemEntries() {
+        checkpoint();
+        return entryQueryDAO.getTotalSystemEntries(schema);
     }
 
     @Override
@@ -114,6 +119,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     public Iterator<Item> getItemIterator(int start, int end) {
         checkpoint();
         return itemQueryDAO.getIterator(start, end, schema);
+    }
+    
+    @Override
+    public Iterator<Item> getSystemItemIterator() {
+        checkpoint();
+        return itemQueryDAO.getSystemItemIterator(schema);
     }
 
     // Record Index
@@ -152,12 +163,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
-        return indexQueryDAO.findRecord(key, indexName, schema, "entry");
+        return indexQueryDAO.findRecord(key, indexName, schema, indexName.equals("metadata") ? "entry_system" : "entry");
     }
 
     @Override
     public List<Record> getIndexRecords(int limit, int offset, String indexName) {
-        return indexQueryDAO.findRecords(limit, offset, indexName, schema, "entry");
+        return indexQueryDAO.findRecords(limit, offset, indexName, schema, indexName.equals("metadata") ? "entry_system" : "entry");
     }
 
     @Override

@@ -1,3 +1,3 @@
 index-entry-number	entry-number	entry-timestamp	key	register	text	registry	phase	copyright	fields
-9	9	2016-03-02T02:03:04Z	value2	value2	The Entry 2				field1;field2
-8	8	2016-03-01T01:02:03Z	value1	value1	The Entry 1				field1
+2	2	2016-03-02T02:03:04Z	value2	value2	The Entry 2				field1;field2
+1	1	2016-03-01T01:02:03Z	value1	value1	The Entry 1				field1

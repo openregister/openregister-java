@@ -41,6 +41,11 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     }
 
     @Override
+    public int getTotalSystemEntries(String schema) {
+        return currentEntryNumber;
+    }
+
+    @Override
     public Collection<Entry> getAllEntriesNoPagination(String schema) {
         return entries;
     }

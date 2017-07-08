@@ -3,6 +3,7 @@ package uk.gov.register.functional.helpers;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterCommand;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,31 +19,48 @@ public class RsfComparisonHelper {
 			return;
 		}
 
-		String[] rsf1Lines = rsf1.split("\n");
-		String[] rsf2Lines = rsf2.split("\n");
+		List<String> rsf1Lines = Arrays.asList(rsf1.split("\n"));
+		List<String> rsf2Lines = Arrays.asList(rsf2.split("\n"));
 
-		assertThat(rsf1Lines.length, equalTo(rsf2Lines.length));
+		assertThat("Different number of lines", rsf1Lines.size(), equalTo(rsf2Lines.size()));
 
-		for (int i = 0; i < rsf1Lines.length; i++) {
-			// If adjacent rsf lines are both add-item, skip to next line
-			if (rsf1Lines[i].startsWith("add-item") && rsf2Lines[i].startsWith("add-item")) {
-				continue;
-			}
+		List<String> rsf1AddItemCommands = new ArrayList<>();
+		List<String> rsf2AddItemCommands = new ArrayList<>();
 
-			// Check that if entry has multiple hashes, the hashes are equal
-			// (but not necessarily in the same order)
-			if (rsf1Lines[i].startsWith("append-entry") && rsf2Lines[i].startsWith("append-entry")) {
-				List<String> entry1Hashes = getItemHashesFromAppendEntryCommand(rsf1Lines[i]);
-				List<String> entry2Hashes = getItemHashesFromAppendEntryCommand(rsf2Lines[i]);
-				
-				assertThat(entry1Hashes.size(), equalTo(entry2Hashes.size()));
-				assertThat(entry1Hashes.containsAll(entry2Hashes), is(true));
-				
-				continue;
-			}
+		List<String> rsf1AppendEntryCommands = new ArrayList<>();
+		List<String> rsf2AppendEntryCommands = new ArrayList<>();
+		
+		parseRsfCommands(rsf1Lines, rsf1AddItemCommands, rsf1AppendEntryCommands);
+		parseRsfCommands(rsf2Lines, rsf2AddItemCommands, rsf2AppendEntryCommands);
+		
+		assertThat("Number of items not equal", rsf1AddItemCommands.size(), equalTo(rsf2AddItemCommands.size()));
+		assertThat("Number of entries not equal", rsf1AppendEntryCommands.size(), equalTo(rsf2AppendEntryCommands.size()));
+		
+		// Check that all items are the same, regardless of order
+		assertThat("Items not equal", rsf1AddItemCommands.containsAll(rsf2AddItemCommands), is(true));
+		
+		int numberOfEntries = rsf1AppendEntryCommands.size();
 
-			assertThat(rsf1Lines[i], equalTo(rsf2Lines[i]));
+		// Check that entries are in the same order
+		for (int i = 0; i < numberOfEntries; i++) {
+			// Check that if an entry has multiple hashes, the hashes are equal (but not necessarily in the same order)
+			List<String> entry1Hashes = getItemHashesFromAppendEntryCommand(rsf1AppendEntryCommands.get(i));
+			List<String> entry2Hashes = getItemHashesFromAppendEntryCommand(rsf2AppendEntryCommands.get(i));
+			
+			assertThat("Number of item hashes in entry not equal", entry1Hashes.size(), equalTo(entry2Hashes.size()));
+			assertThat("Item hashes in entry not equal", entry1Hashes.containsAll(entry2Hashes), is(true));
 		}
+	}
+	
+	private static void parseRsfCommands(List<String> rsfLines, List<String> addItemCommands, List<String> appendEntryCommands) {
+		rsfLines.stream().forEach(command -> {
+			if (command.startsWith("add-item")) {
+				addItemCommands.add(command);
+			}
+			else if (command.startsWith("append-entry")) {
+				appendEntryCommands.add(command);
+			}
+		});
 	}
 	
 	private static List<String> getItemHashesFromAppendEntryCommand(String rsf) {

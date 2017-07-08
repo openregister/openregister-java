@@ -39,7 +39,7 @@ public class RecordResourceFunctionalTest {
         assertThat(response.getHeaderString("Link"), equalTo("</record/6789/entries>; rel=\"version-history\""));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class).get("6789");
-        assertThat(res.get("entry-number").textValue(), equalTo("13"));
+        assertThat(res.get("entry-number").textValue(), equalTo("2"));
         assertThat(res.get("key").textValue(), equalTo("6789"));
         assertTrue(res.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
@@ -91,14 +91,14 @@ public class RecordResourceFunctionalTest {
         assertThat(res.isArray(), equalTo(true));
 
         JsonNode firstEntry = res.get(0);
-        assertThat(firstEntry.get("index-entry-number").textValue(), equalTo("12"));
-        assertThat(firstEntry.get("entry-number").textValue(), equalTo("12"));
+        assertThat(firstEntry.get("index-entry-number").textValue(), equalTo("1"));
+        assertThat(firstEntry.get("entry-number").textValue(), equalTo("1"));
         assertThat(firstEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:9432331d3343a7ceaaee46308069d01836460294c672223b236727a790acf786" ));
         assertTrue(firstEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
 
         JsonNode secondEntry = res.get(1);
-        assertThat(secondEntry.get("index-entry-number").textValue(), equalTo("13"));
-        assertThat(secondEntry.get("entry-number").textValue(), equalTo("13"));
+        assertThat(secondEntry.get("index-entry-number").textValue(), equalTo("2"));
+        assertThat(secondEntry.get("entry-number").textValue(), equalTo("2"));
         assertThat(secondEntry.get("item-hash").get(0).textValue(), equalTo("sha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934" ));
         assertTrue(secondEntry.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
     }

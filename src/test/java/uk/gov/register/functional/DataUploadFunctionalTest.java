@@ -61,11 +61,11 @@ public class DataUploadFunctionalTest {
         assertThat(storedItem.contents, equalTo(inputItem));
         assertThat(storedItem.hashValue, equalTo(Item.itemHash(inputItem)));
 
-        Entry entry = testEntryDAO.getAllEntries(schema).get(7);
-        assertThat(entry, equalTo(new Entry(8, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
+        Entry entry = testEntryDAO.getAllEntries(schema).get(0);
+        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
 
         TestRecord record = testRecordDAO.getRecord("ft_openregister_test", schema);
-        assertThat(record.getEntryNumber(), equalTo(8));
+        assertThat(record.getEntryNumber(), equalTo(1));
         assertThat(record.getPrimaryKey(), equalTo("ft_openregister_test"));
 
         Response response = register.getRequest(TestRegister.register, "/record/ft_openregister_test.json");
@@ -73,7 +73,7 @@ public class DataUploadFunctionalTest {
         assertThat(response.getStatus(), equalTo(200));
         Map actualJson = Jackson.newObjectMapper().convertValue(response.readEntity(JsonNode.class).get("ft_openregister_test"), Map.class);
         actualJson.remove("entry-timestamp"); // ignore the timestamp as we can't do exact match
-        assertThat(actualJson.get("entry-number"), is("8"));
+        assertThat(actualJson.get("entry-number"), is("1"));
         List<Map<String,Object>> itemMaps = (List<Map<String,Object>>)actualJson.get("item");
         assertThat(itemMaps.size(), is(1));
         Map<String, Object> itemMap = itemMaps.get(0);
@@ -91,7 +91,7 @@ public class DataUploadFunctionalTest {
         assertThat(r.getStatus(), equalTo(204));
 
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
-        assertThat(entries.size(), is(9));
+        assertThat(entries.size(), is(2));
 
         List<TestDBItem> items = testItemDAO.getItems(schema);
         assertThat(items.size(), is(9));
@@ -106,7 +106,7 @@ public class DataUploadFunctionalTest {
 
         assertThat(r.getStatus(), equalTo(204));
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
-        assertThat(entries.size(), is(9));
+        assertThat(entries.size(), is(2));
         List<TestDBItem> items = testItemDAO.getItems(schema);
         assertThat(items.size(), is(8));
     }
@@ -124,7 +124,7 @@ public class DataUploadFunctionalTest {
         assertThat(r.getStatus(), equalTo(204));
 
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
-        assertThat(entries.size(), is(10));
+        assertThat(entries.size(), is(3));
 
         List<TestDBItem> items = testItemDAO.getItems(schema);
         assertThat(items.size(), is(9));

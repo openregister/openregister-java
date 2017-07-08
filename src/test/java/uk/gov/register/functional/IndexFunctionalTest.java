@@ -68,7 +68,7 @@ public class IndexFunctionalTest {
         assertThat(indexRsfResponse.getStatus(), is(200));
         String actualIndexRsf = indexRsfResponse.readEntity(String.class);
 
-        rsfComparisonHelper.assertRsfEqual(actualIndexRsf, expectedIndexRsf);
+        rsfComparisonHelper.assertRsfEqual(expectedIndexRsf, actualIndexRsf);
     }
 
     @Test
@@ -79,6 +79,6 @@ public class IndexFunctionalTest {
         assertThat(indexJsonResponse.getStatus(), is(200));
         String actualIndexJson = indexJsonResponse.readEntity(String.class);
 
-        assertJsonEqual(actualIndexJson, expectedRecords);
+        assertJsonEqual(expectedRecords, actualIndexJson);
     }
 }

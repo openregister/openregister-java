@@ -84,23 +84,23 @@ public class EntryResourceFunctionalTest {
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
         assertThat(res.isArray(), equalTo(true));
-        assertEntryInJsonNode(res.get(11), 12, item1Hash);
-        assertEntryInJsonNode(res.get(12), 13, item2Hash);
+        assertEntryInJsonNode(res.get(0), 1, item1Hash);
+        assertEntryInJsonNode(res.get(1), 2, item2Hash);
     }
 
     @Test
     public void getEntryByEntryNumber() throws JSONException, IOException {
-        Response response = register.getRequest(address, "/entry/12.json");
+        Response response = register.getRequest(address, "/entry/1.json");
 
         assertThat(response.getStatus(), equalTo(200));
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
         assertThat(res.size(), equalTo(1));
-        assertEntryInJsonNode(res.get(0), 12, item1Hash);
+        assertEntryInJsonNode(res.get(0), 1, item1Hash);
     }
 
     @Test
     public void entryView_itemHashIsRenderedAsALink() {
-        Response response = register.getRequest(address, "/entry/12", TEXT_HTML);
+        Response response = register.getRequest(address, "/entry/1", TEXT_HTML);
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
         String text = doc.getElementsByTag("table").select("a[href=/item/" + item1Hash + "]").first().text();
@@ -124,7 +124,7 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void entryResource_retrievesTimestampsInUTC() throws IOException {
-        Response response = register.getRequest(address, "/entry/13.json");
+        Response response = register.getRequest(address, "/entry/2.json");
         Map<String, String> responseData = Jackson.newObjectMapper().convertValue(response.readEntity(JsonNode.class).get(0), Map.class);
         assertThat(responseData.get("entry-timestamp"), is("2017-06-09T10:23:22Z"));
     }

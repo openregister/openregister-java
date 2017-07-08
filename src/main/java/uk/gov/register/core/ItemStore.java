@@ -16,4 +16,6 @@ public interface ItemStore {
     Iterator<Item> getIterator();
 
     Iterator<Item> getIterator(int start, int end);
+    
+    Iterator<Item> getSystemItemIterator();
 }

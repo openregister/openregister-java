@@ -76,6 +76,11 @@ public class EntryLogImpl implements EntryLog {
     }
 
     @Override
+    public int getTotalEntries(EntryType entryType) {
+        return dataAccessLayer.getTotalEntries(entryType);
+    }
+
+    @Override
     public Optional<Instant> getLastUpdatedTime() {
         return dataAccessLayer.getLastUpdatedTime();
     }

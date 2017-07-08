@@ -32,6 +32,9 @@ public interface EntryQueryDAO {
     @SqlQuery("SELECT value FROM \"<schema>\".current_entry_number")
     int getTotalEntries( @Define("schema") String schema );
 
+    @SqlQuery("SELECT count(1) FROM \"<schema>\".entry_system")
+    int getTotalSystemEntries(@Define("schema") String schema);
+
     //Note: This is fine for small data registers like country
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number desc")

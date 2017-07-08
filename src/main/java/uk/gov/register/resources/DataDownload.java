@@ -111,7 +111,7 @@ public class DataDownload {
             throw new BadRequestException("start-entry-number must be 0 or greater");
         }
 
-        int totalEntriesInRegister = register.getTotalEntries();
+        int totalEntriesInRegister = register.getTotalEntries(EntryType.user);
 
         if (startEntryNumber > totalEntriesInRegister) {
             throw new BadRequestException("start-entry-number must not exceed number of total entries in the register");

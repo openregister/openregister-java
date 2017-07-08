@@ -58,7 +58,7 @@ public class RegisterResourceFunctionalTest {
 
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
 
-        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(17));
+        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(5));
         assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(3));
         assertThat(registerResourceMapFromAddressRegister.get("custodian"), equalTo("Stephen McAllister"));
         verifyStringIsAnISODate(registerResourceMapFromAddressRegister.get("last-updated").toString());

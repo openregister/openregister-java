@@ -1,8 +1,8 @@
 @prefix register-metadata:  <https://openregister.github.io/specification/#> .
 
-<http://register.test.register.gov.uk/entry/8>
+<http://register.test.register.gov.uk/entry/1>
       register-metadata:entry-number-field
-              "8" ;
+              "1" ;
       register-metadata:entry-timestamp-field
               "2016-03-01T01:02:03Z" ;
       register-metadata:item-resource

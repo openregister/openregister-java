@@ -29,6 +29,7 @@ public interface EntryLog {
     Collection<Entry> getAllEntries();
 
     int getTotalEntries();
+    int getTotalEntries(EntryType entryType);
 
     Optional<Instant> getLastUpdatedTime();
 

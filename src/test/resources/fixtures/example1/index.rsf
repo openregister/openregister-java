@@ -1,7 +1,13 @@
 assert-root-hash	sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+add-item	{"cardinality":"1","datatype":"string","field":"local-authority-eng","phase":"beta","text":"Description"}
+add-item	{"cardinality":"1","datatype":"string","field":"local-authority-type","phase":"beta","text":"Description"}
+add-item	{"fields":["local-authority-eng","local-authority-type"],"phase":"beta","register":"local-authority-eng","registry":"gds","text":"Register of local authorities in England."}
 add-item	{"local-authority-eng":"Notts","local-authority-type":"MD"}
 add-item	{"local-authority-eng":"London","local-authority-type":"UA"}
 add-item	{"local-authority-eng":"Leics","local-authority-type":"CTY"}
+append-entry	system	field:local-authority-eng	2016-04-05T13:23:05Z	sha-256:6582a9fba7d5df86a73b8f6f1b08719c416bab37c1a22908d630227dcb4b10cf
+append-entry	system	field:local-authority-type	2016-04-05T13:23:05Z	sha-256:9dd3c739f2fc34580c95cbfa8eb02a8313a5814b9d03058be3b0d6236aacb33a
+append-entry	system	register:local-authority-eng	2016-04-05T13:23:05Z	sha-256:9de769273a8704897e95ef6784eeb2979abaae9262040e117fd4da06b58f7df8
 append-entry	user	MD	2016-04-05T13:23:05Z	sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125
 append-entry	user	UA	2016-04-05T13:23:05Z	sha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6
 append-entry	user	CTY	2016-04-05T13:23:05Z	sha-256:a726c24e895a56f15699068ea48d61297eed4fb8cc73c019701fd3e8dd26c15e

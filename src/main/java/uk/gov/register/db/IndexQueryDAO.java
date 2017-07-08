@@ -156,6 +156,7 @@ public interface IndexQueryDAO {
             "  index_entry.ien as index_entry_number,  " +
             "  index_entry.en as entry_number,  " +
             "  e.timestamp as timestamp,  " +
+            "  e.type, " +
             "  index_entry.\"key\" as \"key\",  " +
             "  array_remove(array_agg(unended.sha256hex),null) as sha256_arr  " +
             "from  " +
@@ -200,6 +201,7 @@ public interface IndexQueryDAO {
             "  ien,  " +
             "  en,  " +
             "  \"timestamp\",  " +
+            "  type, " +
             "  index_entry.\"key\"  " +
             "order by  " +
             "  ien  ";
@@ -208,6 +210,7 @@ public interface IndexQueryDAO {
             "  index_entry.ien as index_entry_number,  " +
             "  index_entry.en as entry_number,  " +
             "  e.timestamp as timestamp,  " +
+            "  e.type, " +
             "  index_entry.\"key\" as \"key\",  " +
             "  array_remove(array_agg(unended.sha256hex),null) as sha256_arr  " +
             "from  " +
@@ -253,6 +256,7 @@ public interface IndexQueryDAO {
             "  ien,  " +
             "  en,  " +
             "  \"timestamp\",  " +
+            "  type, " +
             "  index_entry.\"key\"  " +
             "order by  " +
             "  ien  ";

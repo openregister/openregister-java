@@ -46,7 +46,7 @@ public class RecordListResourceFunctionalTest {
         assertThat(responseMap.size(), equalTo(3));
 
         Map<String,Object> map1 = responseMap.get("6789");
-        assertThat(map1.get("entry-number"), is("16"));
+        assertThat(map1.get("entry-number"), is("5"));
         List items1 = (List) map1.get("item");
         assertThat(items1.size(), is(1));
         Map<String, String> itemMap1 = (Map<String, String>) items1.get(0);
@@ -54,7 +54,7 @@ public class RecordListResourceFunctionalTest {
         assertThat(itemMap1.get("address"), is("6789"));
 
         Map<String,Object> map2 = responseMap.get("145678");
-        assertThat(map2.get("entry-number"), is("15"));
+        assertThat(map2.get("entry-number"), is("4"));
         List items2 = (List) map2.get("item");
         assertThat(items2.size(), is(1));
         Map<String, String> itemMap2 = (Map<String, String>) items2.get(0);
@@ -62,7 +62,7 @@ public class RecordListResourceFunctionalTest {
         assertThat(itemMap2.get("address"), is("145678"));
 
         Map<String,Object> map3 = responseMap.get("12345");
-        assertThat(map3.get("entry-number"), is("12"));
+        assertThat(map3.get("entry-number"), is("1"));
         List items3 = (List) map3.get("item");
         assertThat(items3.size(), is(1));
         Map<String, String> itemMap3 = (Map<String, String>) items3.get(0);
@@ -114,8 +114,8 @@ public class RecordListResourceFunctionalTest {
 
         Map<String,Object> map1 = responseMap.get("6789");
 
-        assertThat(map1.get("index-entry-number"), is("16"));
-        assertThat(map1.get("entry-number"), is("16"));
+        assertThat(map1.get("index-entry-number"), is("5"));
+        assertThat(map1.get("entry-number"), is("5"));
 
         List items = (List) map1.get("item");
         assertThat(items.size(), is(1));
@@ -124,8 +124,8 @@ public class RecordListResourceFunctionalTest {
         assertThat(itemMap.get("address"), is("6789"));
 
         Map<String,Object> map3 = responseMap.get("12345");
-        assertThat(map3.get("index-entry-number"), is("12"));
-        assertThat(map3.get("entry-number"), is("12"));
+        assertThat(map3.get("index-entry-number"), is("1"));
+        assertThat(map3.get("entry-number"), is("1"));
         List items3 = (List) map3.get("item");
         assertThat(items3.size(), is(1));
         Map<String, String> itemMap3 = (Map<String, String>) items3.get(0);

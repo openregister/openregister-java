@@ -1,7 +1,7 @@
 ---
 value2:
-  index-entry-number: "9"
-  entry-number: "9"
+  index-entry-number: "2"
+  entry-number: "2"
   entry-timestamp: "2016-03-02T02:03:04Z"
   key: "value2"
   item:
@@ -11,8 +11,8 @@ value2:
     - "field2"
     register: "value2"
 value1:
-  index-entry-number: "8"
-  entry-number: "8"
+  index-entry-number: "1"
+  entry-number: "1"
   entry-timestamp: "2016-03-01T01:02:03Z"
   key: "value1"
   item:

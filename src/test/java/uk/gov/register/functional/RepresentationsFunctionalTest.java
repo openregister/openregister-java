@@ -54,11 +54,11 @@ public class RepresentationsFunctionalTest {
     @Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"json", "application/json"}
-           //     {"csv", "text/csv;charset=UTF-8"},
-           //     {"tsv", "text/tab-separated-values;charset=UTF-8"},
-           //     {"ttl", "text/turtle;charset=UTF-8"},
-           //     {"yaml", "text/yaml;charset=UTF-8"}
+                {"json", "application/json"},
+                {"csv", "text/csv;charset=UTF-8"},
+                {"tsv", "text/tab-separated-values;charset=UTF-8"},
+                {"ttl", "text/turtle;charset=UTF-8"},
+                {"yaml", "text/yaml;charset=UTF-8"}
         });
     }
 
@@ -77,7 +77,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForEntryResource() {
         assumeThat(expectedEntryValue, notNullValue());
 
-        Response response = register.getRequest(TestRegister.register, "/entry/8." + extension);
+        Response response = register.getRequest(TestRegister.register, "/entry/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));

@@ -50,7 +50,7 @@ public class AppendEntryCommandHandlerTest {
 
     @Test
     public void execute_appendsEntryToRegister() {
-        when(register.getTotalEntries()).thenReturn(2);
+        when(register.getTotalEntries(EntryType.user)).thenReturn(2);
 
         RegisterResult registerResult = sutHandler.execute(appendEntryCommand, register);
 
@@ -62,7 +62,7 @@ public class AppendEntryCommandHandlerTest {
 
     @Test
     public void execute_appendsMultiItemEntryToRegister() {
-        when(register.getTotalEntries()).thenReturn(2);
+        when(register.getTotalEntries(EntryType.user)).thenReturn(2);
 
         RegisterCommand command = new RegisterCommand("append-entry",
                 Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb"));
@@ -76,7 +76,7 @@ public class AppendEntryCommandHandlerTest {
 
     @Test
     public void execute_appendsZeroItemEntryToRegister() {
-        when(register.getTotalEntries()).thenReturn(2);
+        when(register.getTotalEntries(EntryType.user)).thenReturn(2);
 
         RegisterCommand command = new RegisterCommand("append-entry",
                 Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
@@ -105,7 +105,6 @@ public class AppendEntryCommandHandlerTest {
 
     @Test
     public void execute_failsForCommandWithInvalidArguments() {
-        when(register.getTotalEntries()).thenReturn(2);
         RegisterCommand commandWithInvalidArguments = new RegisterCommand("append-entry", Arrays.asList("sha-2tem-sha", "2016-07-T16:55:00Z"));
 
         RegisterResult registerResult = sutHandler.execute(commandWithInvalidArguments, register);

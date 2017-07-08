@@ -106,6 +106,11 @@ public class PostgresRegister implements Register {
     }
 
     @Override
+    public int getTotalEntries(EntryType entryType) {
+        return entryLog.getTotalEntries(entryType);
+    }
+
+    @Override
     public Collection<Entry> getEntries(int start, int limit) {
         return entryLog.getEntries(start, limit);
     }
@@ -192,6 +197,11 @@ public class PostgresRegister implements Register {
     @Override
     public Iterator<Item> getItemIterator(int start, int end) {
         return itemStore.getIterator(start, end);
+    }
+
+    @Override
+    public Iterator<Item> getSystemItemIterator() {
+        return itemStore.getSystemItemIterator();
     }
 
     @Override

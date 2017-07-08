@@ -33,7 +33,7 @@ public class DeleteRegisterDataFunctionalTest {
 
         Response entriesResponse1 = register.getRequest(REGISTER_WHICH_ALLOWS_DELETING, "/entries.json");
         List<?> entriesList = entriesResponse1.readEntity(List.class);
-        assertThat(entriesList, hasSize(4));
+        assertThat(entriesList, hasSize(2));
 
         Response deleteResponse = register.deleteRegisterData(REGISTER_WHICH_ALLOWS_DELETING);
         assertThat(deleteResponse.getStatus(), equalTo(200));

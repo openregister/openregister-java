@@ -6,7 +6,7 @@
       field:register <http://register.test.register.gov.uk/record/value1> ;
       field:text "The Entry 1" ;
       register-metadata:entry-number-field
-              "8" ;
+              "1" ;
       register-metadata:entry-timestamp-field
               "2016-03-01T01:02:03Z" ;
       register-metadata:item-resource

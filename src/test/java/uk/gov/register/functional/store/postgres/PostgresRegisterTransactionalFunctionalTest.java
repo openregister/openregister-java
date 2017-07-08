@@ -180,7 +180,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         List<HashValue> items = testItemDAO.getItems(schema).stream().map(item -> item.hashValue).collect(Collectors.toList());
         assertThat(items, containsInAnyOrder(addressField.getSha256hex(), addressRegister.getSha256hex(), item1.getSha256hex(), item2.getSha256hex(), item3.getSha256hex()));
-        assertThat(testEntryDAO.getAllEntries(schema), contains(addressFieldEntry, addressRegisterEntry, entry1, entry2, entry3));
+        assertThat(testEntryDAO.getAllEntries(schema), contains(entry1, entry2, entry3));
     }
 
     private PostgresRegister getPostgresRegister(DataAccessLayer dataAccessLayer) {
