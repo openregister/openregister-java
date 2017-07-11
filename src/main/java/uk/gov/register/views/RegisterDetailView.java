@@ -32,13 +32,12 @@ public class RegisterDetailView {
 
     @JsonValue
     public RegisterDetail getRegisterDetail() {
-        RegisterDetail rd = new RegisterDetail(
+        return new RegisterDetail(
                 registerDomain,
                 totalRecords,
                 totalEntries,
                 lastUpdated,
                 registerMetadata,
                 custodianName);
-        return rd;
     }
 }

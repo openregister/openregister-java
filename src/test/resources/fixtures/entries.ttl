@@ -19,7 +19,3 @@
               <http://register.test.register.gov.uk/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18> ;
       register-metadata:key-field
               "value1" .
-
-
-
-

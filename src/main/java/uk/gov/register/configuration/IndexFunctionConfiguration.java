@@ -14,9 +14,9 @@ import static java.util.stream.Collectors.toSet;
 
 public enum IndexFunctionConfiguration {
 
-    CURRENT_COUNTRIES(Constants.CURRENT_COUNTRIES, new CurrentCountriesIndexFunction(Constants.CURRENT_COUNTRIES)),
-    LOCAL_AUTHORITY_BY_TYPE(Constants.LOCAL_AUTHORITY_BY_TYPE, new LocalAuthorityByTypeIndexFunction(Constants.LOCAL_AUTHORITY_BY_TYPE)),
-    METADATA(Constants.METADATA, new MetadataIndexFunction(Constants.METADATA));
+    CURRENT_COUNTRIES(IndexNames.CURRENT_COUNTRIES, new CurrentCountriesIndexFunction(IndexNames.CURRENT_COUNTRIES)),
+    LOCAL_AUTHORITY_BY_TYPE(IndexNames.LOCAL_AUTHORITY_BY_TYPE, new LocalAuthorityByTypeIndexFunction(IndexNames.LOCAL_AUTHORITY_BY_TYPE)),
+    METADATA(IndexNames.METADATA, new MetadataIndexFunction(IndexNames.METADATA));
 
     public static List<IndexFunctionConfiguration> getConfigurations(List<String> indexNames) {
         List<IndexFunctionConfiguration> configurations = indexNames.stream().map(n -> getValueLowerCase(n)).collect(Collectors.toList());
@@ -52,10 +52,10 @@ public enum IndexFunctionConfiguration {
         return indexFunctions;
     }
 
-    private static class Constants {
-        private static final String CURRENT_COUNTRIES = "current-countries";
-        private static final String LOCAL_AUTHORITY_BY_TYPE = "local-authority-by-type";
-        private static final String METADATA = "metadata";
+    public static class IndexNames {
+        public static final String CURRENT_COUNTRIES = "current-countries";
+        public static final String LOCAL_AUTHORITY_BY_TYPE = "local-authority-by-type";
+        public static final String METADATA = "metadata";
     }
 
 }

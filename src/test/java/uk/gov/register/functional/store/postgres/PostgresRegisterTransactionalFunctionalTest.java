@@ -26,6 +26,7 @@ import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -156,11 +157,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         Record addressRegisterRecord = mock(Record.class);
         when(addressRegisterRecord.getItems()).thenReturn(Arrays.asList(addressRegister));
-        when(derivationRecordIndex.getRecord("register:address", "metadata")).thenReturn(Optional.of(addressRegisterRecord));
+        when(derivationRecordIndex.getRecord("register:address", IndexNames.METADATA)).thenReturn(Optional.of(addressRegisterRecord));
 
         Record addressFieldRecord = mock(Record.class);
         when(addressFieldRecord.getItems()).thenReturn(Arrays.asList(addressField));
-        when(derivationRecordIndex.getRecord("field:address", "metadata")).thenReturn(Optional.of(addressFieldRecord));
+        when(derivationRecordIndex.getRecord("field:address", IndexNames.METADATA)).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);

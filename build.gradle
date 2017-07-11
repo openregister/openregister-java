@@ -185,7 +185,7 @@ check {
 
 test {
     dependsOn << compileTestJava
-        testLogging {
+    testLogging {
         events "skipped", "failed", "standardError"
         showCauses true
         showExceptions true

@@ -102,4 +102,3 @@ public class DataUpload {
         register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), key, EntryType.user));
     }
 }
-

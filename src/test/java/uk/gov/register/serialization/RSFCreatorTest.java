@@ -9,12 +9,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import uk.gov.register.configuration.IndexFunctionConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -80,7 +82,7 @@ public class RSFCreatorTest {
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getDerivationEntryIterator("metadata")).thenReturn(Collections.emptyIterator());
+        when(register.getDerivationEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 46464);
@@ -107,7 +109,7 @@ public class RSFCreatorTest {
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireIndex() {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getDerivationEntryIterator("metadata")).thenReturn(Collections.emptyIterator());
+        when(register.getDerivationEntryIterator(IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
         when(register.getDerivationEntryIterator("index")).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, "index");
@@ -154,7 +156,7 @@ public class RSFCreatorTest {
     @Test
     public void createRegisterSerialisationFormat_throwsAnExceptionForUnknownMapperType() throws Exception {
         when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getDerivationEntryIterator("metadata")).thenReturn(Collections.emptyIterator());
+        when(register.getDerivationEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 28828);

@@ -1,5 +1,6 @@
 package uk.gov.register.core;
 
+import com.fasterxml.jackson.annotation.*;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
 import uk.gov.register.views.CsvRepresentationView;
@@ -11,10 +12,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -55,6 +52,18 @@ public class Entry implements CsvRepresentationView<Entry> {
         this.entryType = entryType;
     }
 
+    @JsonCreator
+    public Entry(@JsonProperty("index-entry-number") int indexEntryNumber, @JsonProperty("entry-number") int entryNumber,
+                 @JsonProperty("item-hash") List<HashValue> hashValues, @JsonProperty("entry-timestamp") Instant timestamp,
+                 @JsonProperty("key") String key) {
+        this.indexEntryNumber = indexEntryNumber;
+        this.entryNumber = entryNumber;
+        this.hashValues = hashValues;
+        this.timestamp = timestamp;
+        this.key = key;
+        this.entryType = EntryType.system;
+    }
+
     @JsonIgnore
     public Instant getTimestamp() {
         return timestamp;
@@ -93,7 +102,9 @@ public class Entry implements CsvRepresentationView<Entry> {
     }
 
     @JsonIgnore
-    public EntryType getEntryType() { return entryType; }
+    public EntryType getEntryType() {
+        return entryType;
+    }
 
 
     public static CsvSchema csvSchema() {

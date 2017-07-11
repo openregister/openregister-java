@@ -6,6 +6,7 @@ import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class RSFCreator {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(),
-                register.getDerivationEntryIterator("metadata"),
+                register.getDerivationEntryIterator(IndexNames.METADATA),
                 register.getEntryIterator(),
                 Iterators.singletonIterator(register.getRegisterProof().getRootHash()));
 
@@ -41,7 +42,7 @@ public class RSFCreator {
             HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();
             HashValue nextRootHash = register.getRegisterProof(totalEntries2).getRootHash();
             Iterator<Item> metadataItemIterator = totalEntries1 == 0 ? register.getSystemItemIterator() : Collections.emptyIterator();
-            Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getDerivationEntryIterator("metadata") : Collections.emptyIterator();
+            Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getDerivationEntryIterator(IndexNames.METADATA) : Collections.emptyIterator();
 
             iterators = Iterators.concat(
                     Iterators.singletonIterator(previousRootHash),
@@ -59,8 +60,8 @@ public class RSFCreator {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(),
-                register.getDerivationEntryIterator("metadata"),
-                !indexName.equals("metadata") ? register.getDerivationEntryIterator(indexName) : Collections.emptyIterator());
+                register.getDerivationEntryIterator(IndexNames.METADATA),
+                !indexName.equals(IndexNames.METADATA) ? register.getDerivationEntryIterator(indexName) : Collections.emptyIterator());
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);

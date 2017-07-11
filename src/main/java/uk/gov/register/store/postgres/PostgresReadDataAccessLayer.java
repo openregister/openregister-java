@@ -1,5 +1,6 @@
 package uk.gov.register.store.postgres;
 
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
@@ -66,12 +67,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName) {
-        return indexQueryDAO.getIterator(indexName, schema, indexName.equals("metadata") ? "entry_system" : "entry");
+        return indexQueryDAO.getIterator(indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema, indexName.equals("metadata") ? "entry_system" : "entry");
+        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
@@ -163,12 +164,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
-        return indexQueryDAO.findRecord(key, indexName, schema, indexName.equals("metadata") ? "entry_system" : "entry");
+        return indexQueryDAO.findRecord(key, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
     public List<Record> getIndexRecords(int limit, int offset, String indexName) {
-        return indexQueryDAO.findRecords(limit, offset, indexName, schema, indexName.equals("metadata") ? "entry_system" : "entry");
+        return indexQueryDAO.findRecords(limit, offset, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override

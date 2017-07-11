@@ -100,57 +100,57 @@ public interface IndexQueryDAO {
 
     String recordQuery =
             "select " +
-                    "    unended.key, " +
-                    "    entry_numbers.entry_number, " +
-                    "    entry_numbers.index_entry_number, " +
-                    "    e.timestamp, " +
-                    "    unended.sha256_arr, " +
-                    "    unended.content_arr  " +
-                    "from " +
-                    "    (select " +
-                    "        array_remove(array_agg(ix.sha256hex), null) as sha256_arr, " +
-                    "        array_remove(array_agg(im.content), null) as content_arr, " +
-                    "        ix.key " +
-                    "    from \"<schema>\".index as ix " +
-                    "    join \"<schema>\".item as im on ix.sha256hex = im.sha256hex " +
-                    "    where " +
-                    "        end_index_entry_number is null " +
-                    "        and name = :name group by key) " +
-                    "as unended " +
-                    "join " +
-                    "    (select " +
-                    "        key, " +
-                    "        min(entry_number) as entry_number, " +
-                    "        max_index_entry_number as index_entry_number " +
-                    "    from " +
-                    "        (select " +
-                    "            key, " +
-                    "            entry_number, " +
-                    "            index_entry_number, " +
-                    "            max(index_entry_number) over (partition by key) as max_index_entry_number " +
-                    "        from " +
-                    "            (select " +
-                    "                key, " +
-                    "                start_entry_number as entry_number, " +
-                    "                start_index_entry_number as index_entry_number " +
-                    "            from \"<schema>\".index " +
-                    "            where name = :name " +
-                    "            union " +
-                    "            select " +
-                    "                key, " +
-                    "                end_entry_number as entry_number, " +
-                    "                end_index_entry_number as index_entry_number " +
-                    "            from \"<schema>\".index " +
-                    "            where name = :name and end_entry_number is not null) " +
-                    "        as all_entries) " +
-                    "    as with_index_entry_numbers " +
-                    "    where index_entry_number = max_index_entry_number " +
-                    "    group by max_index_entry_number, key) " +
-                    "as entry_numbers " +
-                    "on unended.key = entry_numbers.key " +
-                    "join \"<schema>\".<entry_table> e on e.entry_number = entry_numbers.entry_number " +
-                    "order by key " +
-                    "limit :limit offset :offset;";
+            "    unended.key, " +
+            "    entry_numbers.entry_number, " +
+            "    entry_numbers.index_entry_number, " +
+            "    e.timestamp, " +
+            "    unended.sha256_arr, " +
+            "    unended.content_arr  " +
+            "from " +
+            "    (select " +
+            "        array_remove(array_agg(ix.sha256hex), null) as sha256_arr, " +
+            "        array_remove(array_agg(im.content), null) as content_arr, " +
+            "        ix.key " +
+            "    from \"<schema>\".index as ix " +
+            "    join \"<schema>\".item as im on ix.sha256hex = im.sha256hex " +
+            "    where " +
+            "        end_index_entry_number is null " +
+            "        and name = :name group by key) " +
+            "as unended " +
+            "join " +
+            "    (select " +
+            "        key, " +
+            "        min(entry_number) as entry_number, " +
+            "        max_index_entry_number as index_entry_number " +
+            "    from " +
+            "        (select " +
+            "            key, " +
+            "            entry_number, " +
+            "            index_entry_number, " +
+            "            max(index_entry_number) over (partition by key) as max_index_entry_number " +
+            "        from " +
+            "            (select " +
+            "                key, " +
+            "                start_entry_number as entry_number, " +
+            "                start_index_entry_number as index_entry_number " +
+            "            from \"<schema>\".index " +
+            "            where name = :name " +
+            "            union " +
+            "            select " +
+            "                key, " +
+            "                end_entry_number as entry_number, " +
+            "                end_index_entry_number as index_entry_number " +
+            "            from \"<schema>\".index " +
+            "            where name = :name and end_entry_number is not null) " +
+            "        as all_entries) " +
+            "    as with_index_entry_numbers " +
+            "    where index_entry_number = max_index_entry_number " +
+            "    group by max_index_entry_number, key) " +
+            "as entry_numbers " +
+            "on unended.key = entry_numbers.key " +
+            "join \"<schema>\".<entry_table> e on e.entry_number = entry_numbers.entry_number " +
+            "order by key " +
+           "limit :limit offset :offset;";
 
     String entriesQuery = "select  " +
             "  index_entry.ien as index_entry_number,  " +

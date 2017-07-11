@@ -15,6 +15,7 @@ import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.io.UncheckedIOException;
 import java.time.Instant;
@@ -227,7 +228,7 @@ public class PostgresRegister implements Register {
     @Override
     public RegisterMetadata getRegisterMetadata() {
         if (registerMetadata == null) {
-            registerMetadata = getDerivationRecord("register:" + registerName.value(), "metadata")
+            registerMetadata = getDerivationRecord("register:" + registerName.value(), IndexNames.METADATA)
                     .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
                     .orElseThrow(() -> new RegisterUndefinedException(registerName));
         }
@@ -256,15 +257,13 @@ public class PostgresRegister implements Register {
             RegisterMetadata registerMetadata = getRegisterMetadata();
             List<String> fieldNames = registerMetadata.getFields();
             fieldsByName = new LinkedHashMap<>();
-            for (String fieldName : fieldNames) {
-                fieldsByName.put(fieldName, getField(fieldName));
-            }
+            fieldNames.forEach(fieldName -> fieldsByName.put(fieldName, getField(fieldName)));
         }
         return fieldsByName;
     }
 
     private Field getField(String fieldName) {
-        return getDerivationRecord("field:" + fieldName, "metadata")
+        return getDerivationRecord("field:" + fieldName, IndexNames.METADATA)
                 .map(record -> extractObjectFromRecord(record, Field.class))
                 .orElseThrow(() -> new FieldUndefinedException(registerName, fieldName));
     }
@@ -283,7 +282,7 @@ public class PostgresRegister implements Register {
     }
 
     private Optional<String> getMetadataField(String fieldName) {
-        return getDerivationRecord(fieldName, "metadata").map(r -> r.getItems().get(0).getValue(fieldName).get());
+        return getDerivationRecord(fieldName, IndexNames.METADATA).map(r -> r.getItems().get(0).getValue(fieldName).get());
     }
 
 }

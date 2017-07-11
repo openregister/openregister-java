@@ -62,10 +62,6 @@ public class ViewFactory {
         return exceptionView("Oops, looks like something went wrong", "500 error");
     }
 
-    public ExceptionView exceptionRegisterUndefinedView(String message) {
-        return exceptionView("Register undefined", message);
-    }
-
     public ExceptionView exceptionView(String heading, String message) {
         return new ExceptionView(requestContext, heading, message, register.get(), registerTrackingConfiguration.get(), registerResolver);
     }

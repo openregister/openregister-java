@@ -25,32 +25,20 @@ import static org.mockito.Mockito.when;
 
 public class ItemValidatorTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    //@Mock
-    //private ConfigManager configManager;
-
     @Mock
     private RegisterMetadata registerMetadata;
-
-    //@Mock
-    //private RegistersConfiguration registersConfiguration;
-
-    //@Mock
-    //private FieldsConfiguration fieldsConfiguration;
 
     private Map<String,Field> fieldsByName;
 
     private ItemValidator itemValidator;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
     public void setup() throws NoSuchConfigException, IOException {
         MockitoAnnotations.initMocks(this);
         RegisterName registerName = new RegisterName("register");
 
-       // when(configManager.getRegistersConfiguration()).thenReturn(registersConfiguration);
-       // when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
-       // when(registersConfiguration.getRegisterMetadata(any(RegisterName.class))).thenReturn(registerMetadata);
         when(registerMetadata.getRegisterName()).thenReturn(registerName);
 
         when(registerMetadata.getFields()).thenReturn(Arrays.asList("register", "text", "registry", "phase", "copyright", "fields"));
@@ -59,11 +47,6 @@ public class ItemValidatorTest {
         Field fieldsField = new Field("fields", "string", registerName, Cardinality.MANY, "fields text");
 
         fieldsByName = ImmutableMap.of("text", textField, "register", registerField, "fields", fieldsField);
-
-//        when(fieldsConfiguration.getField("text")).thenReturn(textField);
-//        when(fieldsConfiguration.getField("register")).thenReturn(registerField);
-//        when(fieldsConfiguration.getField("fields")).thenReturn(fieldsField);
-
         itemValidator = new ItemValidator(new RegisterName("register"));
     }
 
@@ -168,5 +151,4 @@ public class ItemValidatorTest {
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
     }
-
 }

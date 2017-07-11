@@ -2,14 +2,17 @@ package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.flyway.FlywayFactory;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.DatabaseManager;
+import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.service.RegisterLinkService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +44,10 @@ public class RegisterContextFactory {
 
     @Valid
     @JsonProperty
+    private Optional<String> custodianName = Optional.empty();
+
+    @Valid
+    @JsonProperty
     private List<String> similarRegisters = emptyList();
 
     @Valid
@@ -59,6 +66,7 @@ public class RegisterContextFactory {
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("schema") String schema,
             @JsonProperty("historyPageUrl") Optional<String> historyPageUrl,
+            @JsonProperty("custodianName") Optional<String> custodianName,
             @JsonProperty("similarRegisters") List<String> similarRegisters,
             @JsonProperty("indexes") List<String> indexes,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
@@ -67,26 +75,29 @@ public class RegisterContextFactory {
         this.enableDownloadResource = enableDownloadResource;
         this.schema = schema;
         this.historyPageUrl = historyPageUrl;
+        this.custodianName = custodianName;
         this.similarRegisters = similarRegisters != null ? similarRegisters : emptyList();
         this.indexes = indexes != null ? indexes : emptyList();
         this.credentials = credentials;
     }
 
-    private FlywayFactory getFlywayFactory(RegisterName registerName) {
+    private FlywayFactory getFlywayFactory(RegisterName registerName, Optional<String> custodianName, RegisterConfigConfiguration registerConfigConfiguration) {
         FlywayFactory flywayFactory = new FlywayFactory();
-        flywayFactory.setLocations(Collections.singletonList("/sql"));
-        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", registerName.value()));
+        flywayFactory.setLocations(Arrays.asList("/sql", "uk.gov.migration"));
+        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", registerName.value(), "custodianName", custodianName.orElse(""), "fieldsYamlUrl",registerConfigConfiguration.getFieldsYamlLocation(),
+                "registersYamlUrl", registerConfigConfiguration.getRegistersYamlLocation()));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }
 
-    public RegisterContext build(RegisterName registerName, ConfigManager configManager, DatabaseManager databaseManager, RegisterLinkService registerLinkService) {
+    public RegisterContext build(RegisterName registerName, ConfigManager configManager, DatabaseManager databaseManager,
+                                 RegisterLinkService registerLinkService, RegisterConfigConfiguration registerConfigConfiguration) {
         return new RegisterContext(
                 registerName,
                 configManager,
                 registerLinkService,
                 databaseManager.getDbi(),
-                getFlywayFactory(registerName).build(databaseManager.getDataSource()),
+                getFlywayFactory(registerName, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),
                 schema,
                 trackingId,
                 enableRegisterDataDelete,

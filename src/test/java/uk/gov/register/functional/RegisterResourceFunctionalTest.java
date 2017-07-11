@@ -2,12 +2,10 @@ package uk.gov.register.functional;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.RsfRegisterDefinition;
 
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -18,7 +16,6 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.IsNot.not;
 import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.functional.app.TestRegister.postcode;
 
@@ -101,16 +98,11 @@ public class RegisterResourceFunctionalTest {
 
     private HashMap<String, Object> getAddressRegisterMap() {
         HashMap<String, Object> result = new HashMap<>();
-      //  result.put("index-entry-number", "1");
-      //  result.put("entry-number", "1");
-      //  result.put("entry-timestamp", "2016-04-21T10:14:21Z");
-      //  result.put("key", "address");
         result.put("text", "Register of addresses");
         result.put("phase", "alpha");
         result.put("fields", Arrays.asList("address","street","locality","town","area","postcode","country","latitude","longitude"));
         result.put("register", "address");
         result.put("registry", "office-for-national-statistics");
-    //    result.put("copyright", "Contains Ordnance Survey data © Crown copyright & database right 2015\n Contains Royal Mail data © Royal Mail copyright & database right 2015\n");
         return result;
     }
 }
