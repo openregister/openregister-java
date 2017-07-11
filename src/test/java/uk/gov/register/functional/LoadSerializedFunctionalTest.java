@@ -153,6 +153,16 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(400));
         assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:2f90a43858c366134a070f563697e04a851c977cd27e491c02885a2f4441e190]}\",\"details\":\"Field undefined: register - address\"}"));
     }
+    
+    @Test
+    public void shouldReturnBadRequestForSystemEntryAfterUserEntry() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
+        
+        Response r = send(input);
+        
+        assertThat(r.getStatus(), equalTo(400));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"System entries must be added before user entries (line: 19): RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:f202653182ebd63c34177a7176ce77f1aae63482ce6914ec1c71683a6d7131ab]}\"}"));
+    }
 
     @Test
     public void shouldRollbackIfCheckedRootHashDoesNotMatchExpectedOne() throws IOException {
