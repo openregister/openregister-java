@@ -15,10 +15,10 @@ function ensure_user_exists {
 git submodule init
 
 # Set up postgres
+ensure_user_exists postgres
 ensure_db_exists openregister_java
 ensure_db_exists ft_openregister_java_multi
 ensure_db_exists conformance_openregister_java
-ensure_user_exists postgres
 
 # Set up IntelliJ
 if [ ! -f presentation.ipr ]; then
