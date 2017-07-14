@@ -3,6 +3,7 @@ package uk.gov.register.serialization;
 import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
@@ -32,10 +33,12 @@ public class RSFExecutor {
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
         int rsfLine = 1;
+
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
+            boolean allowSystemEntries = register.getTotalEntries(EntryType.user) == 0;
 
-            RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine);
+            RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine, allowSystemEntries);
             if (!validationResult.isSuccessful()) {
                 return validationResult;
             }
@@ -60,7 +63,7 @@ public class RSFExecutor {
         }
     }
 
-    private RegisterResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) {
+    private RegisterResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine, boolean allowSystemEntries) {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
 
@@ -68,17 +71,24 @@ public class RSFExecutor {
         if (commandName.equals("add-item")) {
             validateAddItem(command, rsfLine, hashRefLine);
         } else if (commandName.equals("append-entry")) {
-            if (validateAppendEntry(command, register, hashRefLine))
-                return RegisterResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
+            return validateAppendEntry(command, rsfLine, register, hashRefLine, allowSystemEntries);
+                
         }
         return RegisterResult.createSuccessResult();
     }
 
-    private Boolean validateAppendEntry(RegisterCommand command, Register register, Map<HashValue, Integer> hashRefLine) {
+    private RegisterResult validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine, boolean allowSystemEntries) {
+        EntryType entryType = EntryType.valueOf(command.getCommandArguments().get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
+        
+        if (!allowSystemEntries && entryType == EntryType.system) {
+            return RegisterResult.createFailResult("System entries must be added before user entries (line: " + rsfLine + "): " + command.toString());
+        }
+        
         String delimitedHashes = command.getCommandArguments().get(RSF_HASH_POSITION);
         if (StringUtils.isEmpty(delimitedHashes)) {
-            return false;
+            return RegisterResult.createSuccessResult();
         }
+        
         List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
                 .map(s -> HashValue.decode(SHA256, s)).collect(toList());
 
@@ -88,13 +98,13 @@ public class RSFExecutor {
             } else {
                 Optional<Item> item = register.getItemBySha256(hashValue);
                 if (!item.isPresent()) {
-                    return true;
+                    return RegisterResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
                 } else {
                     hashRefLine.put(hashValue, 0);
                 }
             }
         }
-        return false;
+        return RegisterResult.createSuccessResult();
     }
 
     private void validateAddItem(RegisterCommand command, int rsfLine, Map<HashValue, Integer> hashRefLine) {

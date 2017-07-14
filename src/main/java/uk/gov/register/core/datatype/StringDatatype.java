@@ -12,10 +12,7 @@ public class StringDatatype implements Datatype {
 
     @Override
     public boolean isValid(JsonNode value) {
-        if (value.isTextual() && StringUtils.isNotBlank(value.textValue())) {
-            return true;
-        }
-        return false;
+        return value.isTextual() && StringUtils.isNotBlank(value.textValue());
     }
 
     @Override

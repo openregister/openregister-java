@@ -1,14 +1,15 @@
 package uk.gov.register.db;
 
 import org.glassfish.hk2.api.Factory;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.*;
+import uk.gov.register.core.AllTheRegisters;
+import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterContext;
+import uk.gov.register.core.RegisterName;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public abstract class Factories {
@@ -68,34 +69,6 @@ public abstract class Factories {
         private String getHost() {
             return firstNonNull(requestProvider.get().getHeader("X-Forwarded-Host"),
                     requestProvider.get().getHeader("Host"));
-        }
-    }
-
-    public static class RegisterMetadataFactory extends SimpleFactory<RegisterMetadata> {
-        private final Provider<RegisterContext> registerContextProvider;
-
-        @Inject
-        public RegisterMetadataFactory(Provider<RegisterContext> registerContextProvider) {
-            this.registerContextProvider = registerContextProvider;
-        }
-
-        @Override
-        public RegisterMetadata provide() {
-            return registerContextProvider.get().getRegisterMetadata();
-        }
-    }
-
-    public static class RegisterFieldsConfigurationFactory extends SimpleFactory<RegisterFieldsConfiguration> {
-        private final RegisterMetadata registerMetadata;
-
-        @Inject
-        public RegisterFieldsConfigurationFactory(RegisterMetadata registerMetadata) {
-            this.registerMetadata = registerMetadata;
-        }
-
-        @Override
-        public RegisterFieldsConfiguration provide() {
-            return new RegisterFieldsConfiguration(newArrayList(registerMetadata.getFields()));
         }
     }
 }

@@ -16,6 +16,6 @@ public abstract class InMemoryStubs {
 
     public static ItemStore inMemoryItemStore(ItemValidator itemValidator, InMemoryEntryDAO entryDAO) {
         InMemoryItemDAO itemDAO = new InMemoryItemDAO(new HashMap<>(), entryDAO);
-        return new InMemoryItemStore(itemDAO, itemDAO, itemValidator);
+        return new InMemoryItemStore(itemDAO, itemDAO);
     }
 }

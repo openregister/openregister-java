@@ -3,18 +3,13 @@ package uk.gov.register.functional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.*;
-import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
-import uk.gov.register.functional.app.WipeDatabaseRule;
-import uk.gov.register.functional.db.TestDBItem;
-import uk.gov.register.functional.db.TestEntryDAO;
-import uk.gov.register.functional.db.TestItemCommandDAO;
-import uk.gov.register.functional.db.TestRecord;
-import uk.gov.register.functional.db.TestRecordDAO;
+import uk.gov.register.functional.db.*;
 import uk.gov.register.util.HashValue;
 
 import javax.ws.rs.core.Response;
@@ -32,9 +27,6 @@ import static org.junit.Assert.assertThat;
 public class LoadSerializedFunctionalTest {
     private static final TestRegister testRegister = TestRegister.register;
 
-    @Rule
-    public TestRule wipe = new WipeDatabaseRule();
-
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
     private static TestItemCommandDAO testItemDAO;
@@ -50,29 +42,72 @@ public class LoadSerializedFunctionalTest {
         testRecordDAO = handle.attach(TestRecordDAO.class);
     }
 
+    @Before
+    public void setup() {
+        register.wipe();
+    }
+
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf.tsv")));
         Response r = send(input);
-
+        System.out.println(r.readEntity(String.class));
         assertThat(r.getStatus(), equalTo(200));
 
         TestDBItem expectedItem1 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"register\":\"register\",\"text\":\"A register name.\"}"));
+        TestDBItem expectedItem2 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}"));
+        TestDBItem expectedItem3 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"text\":\"Body responsible for maintaining one or more registers\"}"));
+        TestDBItem expectedItem4 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"phase\",\"phase\":\"alpha\",\"text\":\"Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual).\"}"));
+        TestDBItem expectedItem5 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"copyright\",\"phase\":\"alpha\",\"text\":\"Copyright for the data in the register.\"}"));
+        TestDBItem expectedItem6 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"),
+                nodeOf("{\"cardinality\":\"n\",\"datatype\":\"string\",\"field\":\"fields\",\"phase\":\"alpha\",\"register\":\"field\",\"text\":\"Set of field names.\"}"));
+        TestDBItem expectedItem7 = new TestDBItem(
+                new HashValue(HashingAlgorithm.SHA256, "2238e546c1d9e81a3715d10949dedced0311f596304fbf9bb48c50833f8ab025"),
+                nodeOf("{\"fields\":[\"register\",\"text\",\"registry\",\"phase\",\"copyright\",\"fields\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of registers\"}"));
+        TestDBItem expectedItem8 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"),
                 nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
-        TestDBItem expectedItem2 = new TestDBItem(
+        TestDBItem expectedItem9 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"),
                 nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test2\"}"));
 
 
         List<TestDBItem> storedItems = testItemDAO.getItems(schema);
-        assertThat(storedItems, containsInAnyOrder(expectedItem1, expectedItem2));
+        assertThat(storedItems, containsInAnyOrder(expectedItem1, expectedItem2, expectedItem3, expectedItem4, expectedItem5, expectedItem6, expectedItem7, expectedItem8, expectedItem9));
 
-        List<Entry> entries = testEntryDAO.getAllEntries(schema);
-        assertThat(entries.get(0).getEntryNumber(), is(1));
-        assertThat(entries.get(0).getItemHashes().get(0).getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
-        assertThat(entries.get(1).getEntryNumber(), is(2));
-        assertThat(entries.get(1).getItemHashes().get(0).getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
+        List<Entry> systemEntries = testEntryDAO.getAllSystemEntries(schema);
+        assertThat(systemEntries.get(0).getEntryNumber(), is(1));
+        assertThat(systemEntries.get(0).getItemHashes().get(0).getValue(), is("955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"));
+        assertThat(systemEntries.get(1).getEntryNumber(), is(2));
+        assertThat(systemEntries.get(1).getItemHashes().get(0).getValue(), is("243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b"));
+        assertThat(systemEntries.get(2).getEntryNumber(), is(3));
+        assertThat(systemEntries.get(2).getItemHashes().get(0).getValue(), is("4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"));
+        assertThat(systemEntries.get(3).getEntryNumber(), is(4));
+        assertThat(systemEntries.get(3).getItemHashes().get(0).getValue(), is("1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"));
+        assertThat(systemEntries.get(4).getEntryNumber(), is(5));
+        assertThat(systemEntries.get(4).getItemHashes().get(0).getValue(), is("ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c"));
+        assertThat(systemEntries.get(5).getEntryNumber(), is(6));
+        assertThat(systemEntries.get(5).getItemHashes().get(0).getValue(), is("61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"));
+        assertThat(systemEntries.get(6).getEntryNumber(), is(7));
+        assertThat(systemEntries.get(6).getItemHashes().get(0).getValue(), is("2238e546c1d9e81a3715d10949dedced0311f596304fbf9bb48c50833f8ab025"));
+
+        List<Entry> userEntries = testEntryDAO.getAllEntries(schema);
+
+        assertThat(userEntries.get(0).getEntryNumber(), is(1));
+        assertThat(userEntries.get(0).getItemHashes().get(0).getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        assertThat(userEntries.get(1).getEntryNumber(), is(2));
+        assertThat(userEntries.get(1).getItemHashes().get(0).getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
         TestRecord record1 = testRecordDAO.getRecord("ft_openregister_test", schema);
         assertThat(record1.getEntryNumber(), equalTo(1));
@@ -96,7 +131,7 @@ public class LoadSerializedFunctionalTest {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-orphan-rsf.tsv")));
         Response response = send(input);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Orphan add item (line:3): sha-256:d00d4b610e9b5af160a7e5e836eec9e12626cac61823eda1c3ec9a59a78eefaa\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Orphan add item (line:16): sha-256:d00d4b610e9b5af160a7e5e836eec9e12626cac61823eda1c3ec9a59a78eefaa\"}"));
     }
 
     @Test
@@ -110,14 +145,34 @@ public class LoadSerializedFunctionalTest {
     }
 
     @Test
+    public void shouldReturnBadRequestForRegisterDefinitionWhenBeforeFieldDefinitions() throws IOException {
+        String input = new String(RsfRegisterDefinition.ADDRESS_REGISTER + RsfRegisterDefinition.ADDRESS_FIELDS);
+
+        Response r = send(input);
+
+        assertThat(r.getStatus(), equalTo(400));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:2f90a43858c366134a070f563697e04a851c977cd27e491c02885a2f4441e190]}\",\"details\":\"Field undefined: register - address\"}"));
+    }
+    
+    @Test
+    public void shouldReturnBadRequestForSystemEntryAfterUserEntry() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
+        
+        Response r = send(input);
+        
+        assertThat(r.getStatus(), equalTo(400));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"System entries must be added before user entries (line: 19): RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:f202653182ebd63c34177a7176ce77f1aae63482ce6914ec1c71683a6d7131ab]}\"}"));
+    }
+
+    @Test
     public void shouldRollbackIfCheckedRootHashDoesNotMatchExpectedOne() throws IOException {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf-invalid-root-hash.tsv")));
 
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(testItemDAO.getItems(schema), is(empty()));
-        assertThat(testEntryDAO.getAllEntries(schema), is(empty()));
+        assertThat(testItemDAO.getItems(schema), empty());
+        assertThat(testEntryDAO.getAllEntries(schema), empty());
     }
 
     @Test
@@ -126,16 +181,15 @@ public class LoadSerializedFunctionalTest {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry.rsf")));
         Response r = send(input);
         assertThat(r.getStatus(), equalTo(200));
-
     }
 
     @After
-    public void clearMultiItemsEnabled(){
+    public void clearMultiItemsEnabled() {
         System.clearProperty("multi-item-entries-enabled");
     }
 
     private Response send(String payload) {
-        return register.loadRsf(testRegister, payload);
+        return register.loadRsf(testRegister, RsfRegisterDefinition.REGISTER_REGISTER + payload);
     }
 
     private JsonNode nodeOf(String jsonString) throws IOException {

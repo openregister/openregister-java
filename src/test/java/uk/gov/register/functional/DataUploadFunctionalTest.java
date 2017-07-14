@@ -11,18 +11,17 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.db.*;
 import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.ws.rs.core.Response;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
 import static javax.ws.rs.client.Entity.entity;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -49,6 +48,7 @@ public class DataUploadFunctionalTest {
     @Before
     public void setUp() throws Exception {
         register.wipe();
+        register.loadRsf(TestRegister.register, RsfRegisterDefinition.REGISTER_REGISTER);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class DataUploadFunctionalTest {
         Response r = register.mintLines(TestRegister.register, inputItem.toString());
         assertThat(r.getStatus(), equalTo(204));
 
-        TestDBItem storedItem = testItemDAO.getItems(schema).get(0);
+        TestDBItem storedItem = testItemDAO.getItems(schema).get(7);
         assertThat(storedItem.contents, equalTo(inputItem));
         assertThat(storedItem.hashValue, equalTo(Item.itemHash(inputItem)));
 
@@ -90,33 +90,11 @@ public class DataUploadFunctionalTest {
 
         assertThat(r.getStatus(), equalTo(204));
 
-        JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
-        JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
-
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
-        Instant timestamp = entries.get(0).getTimestamp();
-        assertThat(entries,
-                contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new Entry(2, Item.itemHash(canonicalItem2), timestamp, "register2", EntryType.user)
-                )
-        );
+        assertThat(entries.size(), is(2));
 
         List<TestDBItem> items = testItemDAO.getItems(schema);
-        assertThat(items,
-                contains(
-                        new TestDBItem(canonicalItem1),
-                        new TestDBItem(canonicalItem2)
-                )
-        );
-
-        TestRecord record1 = testRecordDAO.getRecord("register1", schema);
-        assertThat(record1.getEntryNumber(), equalTo(1));
-        assertThat(record1.getPrimaryKey(), equalTo("register1"));
-        TestRecord record2 = testRecordDAO.getRecord("register2", schema);
-        assertThat(record2.getEntryNumber(), equalTo(2));
-        assertThat(record2.getPrimaryKey(), equalTo("register2"));
-
+        assertThat(items.size(), is(9));
     }
 
     @Test
@@ -127,29 +105,10 @@ public class DataUploadFunctionalTest {
         Response r = register.mintLines(TestRegister.register,item1 + "\n" + item2);
 
         assertThat(r.getStatus(), equalTo(204));
-
-        JsonNode canonicalItem = canonicalJsonMapper.readFromBytes(item1.getBytes());
-
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
-
-        assertThat(entries,
-                contains(
-                        new Entry(1, Item.itemHash(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
-                        new Entry(2, Item.itemHash(canonicalItem), entries.get(1).getTimestamp(), "register1", EntryType.user)
-                )
-        );
-
+        assertThat(entries.size(), is(2));
         List<TestDBItem> items = testItemDAO.getItems(schema);
-        assertThat(items,
-                contains(
-                        new TestDBItem(canonicalItem)
-                )
-        );
-
-
-        TestRecord record = testRecordDAO.getRecord("register1", schema);
-        assertThat(record.getEntryNumber(), equalTo(2));
-        assertThat(record.getPrimaryKey(), equalTo("register1"));
+        assertThat(items.size(), is(8));
     }
 
     @Test
@@ -164,42 +123,18 @@ public class DataUploadFunctionalTest {
 
         assertThat(r.getStatus(), equalTo(204));
 
-        JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
-        JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
-
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
-        Instant timestamp = entries.get(0).getTimestamp();
-        assertThat(entries,
-                contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new Entry(2, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new Entry(3, Item.itemHash(canonicalItem2), timestamp, "register2", EntryType.user)
-                )
-        );
+        assertThat(entries.size(), is(3));
 
         List<TestDBItem> items = testItemDAO.getItems(schema);
-        assertThat(items,
-                contains(
-                        new TestDBItem(canonicalItem1),
-                        new TestDBItem(canonicalItem2)
-                )
-        );
-
-
-        TestRecord record1 = testRecordDAO.getRecord("register1", schema);
-        assertThat(record1.getEntryNumber(), equalTo(2));
-        assertThat(record1.getPrimaryKey(), equalTo("register1"));
-        TestRecord record2 = testRecordDAO.getRecord("register2", schema);
-        assertThat(record2.getEntryNumber(), equalTo(3));
-        assertThat(record2.getPrimaryKey(), equalTo("register2"));
-
+        assertThat(items.size(), is(9));
     }
 
     @Test
     public void validation_FailsToLoadEntryWhenNonEmptyPrimaryKeyFieldIsNotExist() {
         Response response = register.mintLines(TestRegister.register, "{}");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry does not contain primary key field 'register'. Error entry: '{}'"));
+        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field. Error entry: '{}'"));
 
         response = register.mintLines(TestRegister.register, "{\"register\":\"  \"}");
         assertThat(response.getStatus(), equalTo(400));
@@ -210,7 +145,7 @@ public class DataUploadFunctionalTest {
     public void validation_FailsToLoadEntryWhenEntryContainsInvalidFields() {
         Response response = register.mintLines(TestRegister.register, "{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry contains invalid fields: [foo, foo1]. Error entry: '{\"foo\":\"bar\",\"foo1\":\"bar1\"}'"));
+        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field. Error entry: '{\"foo\":\"bar\",\"foo1\":\"bar1\"}'"));
     }
 
     @Test

@@ -66,5 +66,3 @@ externalConfigDirectory: /tmp
 fieldsYamlLocation: classpath://config/fields.yaml
 
 registersYamlLocation: classpath://config/registers.yaml
-
-custodianName: Custodian Name

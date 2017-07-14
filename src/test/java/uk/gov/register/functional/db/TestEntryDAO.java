@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 public interface TestEntryDAO {
     @SqlUpdate("delete from \"<schema>\".entry;" +
             "delete from \"<schema>\".entry_item;" +
+            "delete from \"<schema>\".entry_system;" +
+            "delete from \"<schema>\".entry_item_system;" +
             "delete from \"<schema>\".current_entry_number;" +
             "insert into \"<schema>\".current_entry_number values(0);")
     void wipeData(@Define("schema") String schema);
@@ -33,6 +35,10 @@ public interface TestEntryDAO {
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number")
     List<Entry> getAllEntries(@Define("schema") String schema);
+
+    @RegisterMapper(EntryMapper.class)
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from \"<schema>\".entry_system e left join \"<schema>\".entry_item_system ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number")
+    List<Entry> getAllSystemEntries(@Define("schema") String schema);
 
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :entryNumber group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)

@@ -25,6 +25,7 @@ public class DerivationEntryMapper implements ResultSetMapper<Entry> {
         String key = r.getString("key");
         int indexEntryNumber = r.getInt("index_entry_number");
         int entryNumber = r.getInt("entry_number");
+        String entryType = r.getString("type");
         Instant timestamp = longTimestampToInstantMapper.map(index, r, ctx);
         String[] hashes = (String[]) r.getArray("sha256_arr").getArray();
 
@@ -35,7 +36,7 @@ public class DerivationEntryMapper implements ResultSetMapper<Entry> {
                 hashValues.add(hashValue);
         }
 
-        return new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.user);
+        return new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.valueOf(entryType));
     }
 
 }

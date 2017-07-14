@@ -31,7 +31,8 @@ public class RegisterResource {
         return viewFactory.registerDetailView(
                 register.getTotalRecords(),
                 register.getTotalEntries(),
-                register.getLastUpdatedTime()
+                register.getLastUpdatedTime(),
+                register.getCustodianName()
         );
     }
 }

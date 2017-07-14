@@ -38,9 +38,11 @@ public class IndexFunctionalTest {
     @Before
     public void setup() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
         String inputRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "input.rsf")));
         
         register.wipe();
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
         register.loadRsf(TestRegister.local_authority_eng, inputRsf);
     }
 
@@ -66,7 +68,7 @@ public class IndexFunctionalTest {
         assertThat(indexRsfResponse.getStatus(), is(200));
         String actualIndexRsf = indexRsfResponse.readEntity(String.class);
 
-        rsfComparisonHelper.assertRsfEqual(actualIndexRsf, expectedIndexRsf);
+        rsfComparisonHelper.assertRsfEqual(expectedIndexRsf, actualIndexRsf);
     }
 
     @Test
@@ -77,6 +79,6 @@ public class IndexFunctionalTest {
         assertThat(indexJsonResponse.getStatus(), is(200));
         String actualIndexJson = indexJsonResponse.readEntity(String.class);
 
-        assertJsonEqual(actualIndexJson, expectedRecords);
+        assertJsonEqual(expectedRecords, actualIndexJson);
     }
 }

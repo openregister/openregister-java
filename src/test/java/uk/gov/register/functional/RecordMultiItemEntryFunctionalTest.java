@@ -7,6 +7,7 @@ import org.hamcrest.Matchers;
 import org.junit.*;
 import org.junit.rules.TestRule;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 
@@ -21,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static uk.gov.register.functional.app.TestRegister.address;
 
 public class RecordMultiItemEntryFunctionalTest {
 
@@ -38,6 +40,7 @@ public class RecordMultiItemEntryFunctionalTest {
     public static void setup() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
         String payload = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry.rsf")));
+        register.loadRsf(testRegister, RsfRegisterDefinition.REGISTER_REGISTER);
         register.loadRsf(testRegister, payload);
     }
 

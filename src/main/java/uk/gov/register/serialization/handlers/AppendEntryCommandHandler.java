@@ -23,7 +23,6 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
     protected RegisterResult executeCommand(RegisterCommand command, Register register) {
         try {
             List<String> parts = command.getCommandArguments();
-            int newEntryNo = register.getTotalEntries() + 1;
             String delimitedHashes = parts.get(RSFFormatter.RSF_HASH_POSITION);
             List<HashValue> hashValues;
             if (StringUtils.isNotEmpty(delimitedHashes)) {
@@ -33,6 +32,7 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
                 hashValues = new ArrayList<>();
             }
             EntryType entryType = EntryType.valueOf(parts.get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
+            int newEntryNo =  register.getTotalEntries(entryType) + 1;
             Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(RSFFormatter.RSF_TIMESTAMP_POSITION)), parts.get(RSFFormatter.RSF_KEY_POSITION), entryType);
             register.appendEntry(entry);
             return RegisterResult.createSuccessResult();

@@ -44,19 +44,18 @@ public class RegisterContext implements
     private Flyway flyway;
     private final String schema;
     private final Optional<String> historyPageUrl;
-    private final Optional<String> custodianName;
     private final Optional<String> trackingId;
     private final List<String> similarRegisters;
     private final List<IndexFunctionConfiguration> indexFunctionConfigs;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterAuthenticator authenticator;
+    private final ItemValidator itemValidator;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
                            DBI dbi, Flyway flyway, String schema, Optional<String> trackingId, boolean enableRegisterDataDelete,
                            boolean enableDownloadResource, Optional<String> historyPageUrl,
-                           Optional<String> custodianName, List<String> similarRegisters, List<String> indexNames,
-                           RegisterAuthenticator authenticator) {
+                           List<String> similarRegisters, List<String> indexNames, RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
         this.registerLinkService = registerLinkService;
@@ -64,7 +63,6 @@ public class RegisterContext implements
         this.flyway = flyway;
         this.schema = schema;
         this.historyPageUrl = historyPageUrl;
-        this.custodianName = custodianName;
         this.similarRegisters = similarRegisters;
         this.indexFunctionConfigs = mapIndexes(indexNames);
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
@@ -72,14 +70,11 @@ public class RegisterContext implements
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
+        this.itemValidator = new ItemValidator(registerName);
     }
 
     public RegisterName getRegisterName() {
         return registerName;
-    }
-
-    private RegisterFieldsConfiguration getRegisterFieldsConfiguration() {
-        return new RegisterFieldsConfiguration(getRegisterMetadata().getFields());
     }
 
     public RegisterMetadata getRegisterMetadata() {
@@ -99,25 +94,25 @@ public class RegisterContext implements
     public Register buildOnDemandRegister() {
         DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
 
-        return new PostgresRegister(getRegisterMetadata(),
-                getRegisterFieldsConfiguration(),
+        return new PostgresRegister(registerName,
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
-                new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
+                new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
-                new IndexDriver(dataAccessLayer));
+                new IndexDriver(dataAccessLayer),
+                itemValidator);
     }
 
     private Register buildTransactionalRegister(Handle handle, DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
-        return new PostgresRegister(getRegisterMetadata(),
-                getRegisterFieldsConfiguration(),
+        return new PostgresRegister(registerName,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
-                new ItemStoreImpl(dataAccessLayer, new ItemValidator(configManager, registerName)),
+                new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
-                new IndexDriver(dataAccessLayer));
+                new IndexDriver(dataAccessLayer),
+                itemValidator);
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
@@ -179,12 +174,13 @@ public class RegisterContext implements
     }
 
     private List<IndexFunctionConfiguration> mapIndexes(List<String> indexNames) {
-        return indexNames.stream().map(IndexFunctionConfiguration::getValueLowerCase).collect(toList());
+        return IndexFunctionConfiguration.getConfigurations(indexNames);
     }
 
     private DataAccessLayer getOnDemandDataAccessLayer() {
         return new PostgresDataAccessLayer(
                 dbi.onDemand(EntryQueryDAO.class),
+                dbi.onDemand(IndexDAO.class),
                 dbi.onDemand(IndexQueryDAO.class),
                 dbi.onDemand(EntryDAO.class),
                 dbi.onDemand(EntryItemDAO.class),
@@ -192,13 +188,13 @@ public class RegisterContext implements
                 dbi.onDemand(ItemDAO.class),
                 dbi.onDemand(RecordQueryDAO.class),
                 dbi.onDemand(CurrentKeysUpdateDAO.class),
-                dbi.onDemand(IndexDAO.class),
                 schema);
     }
 
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
         return new PostgresDataAccessLayer(
                 handle.attach(EntryQueryDAO.class),
+                handle.attach(IndexDAO.class),
                 handle.attach(IndexQueryDAO.class),
                 handle.attach(EntryDAO.class),
                 handle.attach(EntryItemDAO.class),
@@ -206,7 +202,6 @@ public class RegisterContext implements
                 handle.attach(ItemDAO.class),
                 handle.attach(RecordQueryDAO.class),
                 handle.attach(CurrentKeysUpdateDAO.class),
-                handle.attach(IndexDAO.class),
                 schema);
     }
 
@@ -232,11 +227,6 @@ public class RegisterContext implements
     @Override
     public Optional<String> getRegisterHistoryPageUrl() {
         return historyPageUrl;
-    }
-
-    @Override
-    public Optional<String> getCustodianName() {
-        return custodianName;
     }
 
     @Override

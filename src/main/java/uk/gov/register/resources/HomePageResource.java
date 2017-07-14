@@ -34,7 +34,8 @@ public class HomePageResource {
         return viewFactory.homePageView(
                 register.getTotalRecords(),
                 register.getTotalEntries(),
-                register.getLastUpdatedTime()
+                register.getLastUpdatedTime(),
+                register.getCustodianName()
         );
     }
 

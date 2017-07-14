@@ -2,7 +2,6 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.hamcrest.Matcher;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
@@ -11,6 +10,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
@@ -32,16 +32,16 @@ import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 public class EntryResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
-    private final String item1 = "{\"address\":\"6789\",\"street\":\"elvis\"}";
-    private final String item2 = "{\"address\":\"6790\",\"street\":\"presley\"}";
-    private final String item1Hash = "sha-256:" + DigestUtils.sha256Hex(item1);
-    private final String item2Hash = "sha-256:" + DigestUtils.sha256Hex(item2);
+
+    private final String item1Hash = "sha-256:9432331d3343a7ceaaee46308069d01836460294c672223b236727a790acf786" ;
+    private final String item2Hash = "sha-256:fdd8a3c301f1e8d117ce284d4e67f3b797f4dc573c8d40de502f540709f03007" ;
+
     private final WebTarget addressTarget = register.target(address);
 
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.mintLines(address, item1, item2);
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER + addressRsf());
     }
 
     @Test
@@ -124,13 +124,9 @@ public class EntryResourceFunctionalTest {
 
     @Test
     public void entryResource_retrievesTimestampsInUTC() throws IOException {
-        Instant now = Instant.now();
-
-        Response response = register.getRequest(address, "/entry/1.json");
+        Response response = register.getRequest(address, "/entry/2.json");
         Map<String, String> responseData = Jackson.newObjectMapper().convertValue(response.readEntity(JsonNode.class).get(0), Map.class);
-        Instant entryTimestamp = Instant.parse(responseData.get("entry-timestamp"));
-
-        assertThat(entryTimestamp, between(now.minus(30, SECONDS), now.plus(30, SECONDS)));
+        assertThat(responseData.get("entry-timestamp"), is("2017-06-09T10:23:22Z"));
     }
 
     private void assertEntryInJsonNode(JsonNode actualJsonNode, int expectedEntryNumber, String expectedHash) {
@@ -142,5 +138,12 @@ public class EntryResourceFunctionalTest {
 
     private Matcher<Instant> between(Instant lower, Instant upper) {
         return allOf(greaterThan(lower), lessThan(upper));
+    }
+
+    private String addressRsf(){
+        return "add-item\t{\"address\":\"6789\",\"street\":\"elvis\"}\n" +
+                "append-entry\tuser\t6789\t2017-06-09T10:23:22Z\tsha-256:9432331d3343a7ceaaee46308069d01836460294c672223b236727a790acf786\n" +
+                "add-item\t{\"address\":\"6790\",\"street\":\"presley\"}\n" +
+                "append-entry\tuser\t6790\t2017-06-09T10:23:22Z\tsha-256:fdd8a3c301f1e8d117ce284d4e67f3b797f4dc573c8d40de502f540709f03007";
     }
 }

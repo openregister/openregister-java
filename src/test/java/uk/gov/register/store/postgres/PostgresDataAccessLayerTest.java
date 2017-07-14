@@ -16,8 +16,9 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class PostgresDataAccessLayerTest {
@@ -41,6 +42,8 @@ public class PostgresDataAccessLayerTest {
     private final Entry entry2 = new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user);
     private Item item1;
     private Item item2;
+    private HashValue hash1 ;
+    private HashValue hash2 ;
 
     @Before
     public void setUp() throws Exception {
@@ -50,17 +53,21 @@ public class PostgresDataAccessLayerTest {
 
         entryQueryDAO = new InMemoryEntryDAO(entries);
         entryItemDAO = new InMemoryEntryItemDAO();
+        indexDAO = mock(IndexDAO.class);
         indexQueryDAO = mock(IndexQueryDAO.class);
         indexDAO = mock(IndexDAO.class);
         itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
         recordQueryDAO = mock(RecordQueryDAO.class);
         currentKeysUpdateDAO = new InMemoryCurrentKeysUpdateDAO(currentKeys);
 
-        dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
-                itemDAO, itemDAO, recordQueryDAO, currentKeysUpdateDAO, indexDAO, "zzz");
+        dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
+                itemDAO, itemDAO, recordQueryDAO, currentKeysUpdateDAO, "schema");
 
-        item1 = new Item(new HashValue(SHA256, "abcd"), objectMapper.readTree("{}"));
-        item2 = new Item(new HashValue(SHA256, "jkl1"), objectMapper.readTree("{}"));
+        hash1 = new HashValue(SHA256, "abcd");
+        hash2 = new HashValue(SHA256, "jkl1");
+
+        item1 = new Item(hash1, objectMapper.readTree("{}"));
+        item2 = new Item(hash2, objectMapper.readTree("{}"));
     }
 
     @Test
@@ -139,6 +146,14 @@ public class PostgresDataAccessLayerTest {
         dataAccessLayer.putItem(item2);
 
         assertThat(dataAccessLayer.getItemBySha256(item1.getSha256hex()), is(Optional.of(item1)));
+    }
+
+    @Test
+    public void getItemBySha256_shouldGetFromStagedDataWithoutWritingToDB() throws Exception {
+        dataAccessLayer.putItem(item1);
+        Optional<Item> item = dataAccessLayer.getItemBySha256(item1.getSha256hex());
+        assertThat(item, is(Optional.of(item1)));
+        assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd", "schema").isPresent());
     }
 
     @Test

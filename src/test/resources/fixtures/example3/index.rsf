@@ -1,7 +1,13 @@
 assert-root-hash	sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+add-item	{"cardinality":"1","datatype":"string","field":"local-authority-eng","phase":"beta","text":"Description"}
+add-item	{"cardinality":"1","datatype":"string","field":"local-authority-type","phase":"beta","text":"Description"}
+add-item	{"fields":["local-authority-eng","local-authority-type"],"phase":"beta","register":"local-authority-eng","registry":"gds","text":"Register of local authorities in England."}
 add-item	{"local-authority-eng":"A","local-authority-type":"MD"}
 add-item	{"local-authority-eng":"A","local-authority-type":"CTY"}
 add-item	{"local-authority-eng":"B","local-authority-type":"CTY"}
+append-entry	system	field:local-authority-eng	2016-04-05T13:23:05Z	sha-256:6582a9fba7d5df86a73b8f6f1b08719c416bab37c1a22908d630227dcb4b10cf
+append-entry	system	field:local-authority-type	2016-04-05T13:23:05Z	sha-256:9dd3c739f2fc34580c95cbfa8eb02a8313a5814b9d03058be3b0d6236aacb33a
+append-entry	system	register:local-authority-eng	2016-04-05T13:23:05Z	sha-256:9de769273a8704897e95ef6784eeb2979abaae9262040e117fd4da06b58f7df8
 append-entry	user	MD	2016-04-05T13:23:05Z	sha-256:d72839cd1495fd6d326221820833b5b5f4f5843feac5940d700b068bfe2c9d1e
 append-entry	user	CTY	2016-04-05T13:23:05Z	sha-256:c421ac9f049d6656d863e1739fdfbe04c17b56bbfdd493281e4f894ca21a419e
 append-entry	user	CTY	2016-04-05T13:23:05Z	sha-256:c421ac9f049d6656d863e1739fdfbe04c17b56bbfdd493281e4f894ca21a419e;sha-256:4b45c6d966bbb9c486a74c5fc714145cac96721a114d6e6aef74093369d41c33

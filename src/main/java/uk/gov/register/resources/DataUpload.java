@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
+import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.exceptions.SerializedRegisterParseException;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterResult;
@@ -95,7 +96,9 @@ public class DataUpload {
 
     private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
         register.putItem(item);
-        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), item.getValue(this.registerContext.getRegisterName().value()).get(), EntryType.user));
+        String key = item.getValue(this.registerContext.getRegisterName().value())
+                .orElseThrow(() -> new ItemValidationException("Item did not contain key field", item.getContent()));
+
+        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), key, EntryType.user));
     }
 }
-

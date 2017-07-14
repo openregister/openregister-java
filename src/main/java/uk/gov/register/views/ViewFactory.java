@@ -14,20 +14,17 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ViewFactory {
     private final RequestContext requestContext;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
     private final GovukOrganisationClient organisationClient;
-    private final Provider<RegisterMetadata> registerMetadata;
     private final RegisterDomainConfiguration registerDomainConfiguration;
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
     private final Provider<RegisterTrackingConfiguration> registerTrackingConfiguration;
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
-    private final Provider<ConfigManager> configManager;
     private final Provider<RegisterLinkService> registerLinkService;
     private final ItemConverter itemConverter;
 
@@ -37,22 +34,18 @@ public class ViewFactory {
                        GovukOrganisationClient organisationClient,
                        RegisterDomainConfiguration registerDomainConfiguration,
                        Provider<HomepageContentConfiguration> homepageContentConfiguration,
-                       Provider<RegisterMetadata> registerMetadata,
                        Provider<RegisterTrackingConfiguration> registerTrackingConfiguration,
                        RegisterResolver registerResolver,
                        Provider<RegisterReadOnly> register,
-                       Provider<ConfigManager> configManager,
                        Provider<RegisterLinkService> registerLinkService, ItemConverter itemConverter) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
-        this.registerMetadata = registerMetadata;
         this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerTrackingConfiguration = registerTrackingConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
-        this.configManager = configManager;
         this.registerLinkService = registerLinkService;
         this.itemConverter = itemConverter;
     }
@@ -73,7 +66,7 @@ public class ViewFactory {
         return new ExceptionView(requestContext, heading, message, register.get(), registerTrackingConfiguration.get(), registerResolver);
     }
 
-    public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
+    public HomePageView homePageView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated, Optional<String> custodianName) {
         return new HomePageView(
                 getRegistry(),
                 getBranding(),
@@ -81,24 +74,26 @@ public class ViewFactory {
                 totalRecords,
                 totalEntries,
                 lastUpdated,
-                register.get(),
-                new HomepageContent(homepageContentConfiguration.get().getRegisterHistoryPageUrl(),
-                        homepageContentConfiguration.get().getCustodianName(),
+                custodianName,
+                new HomepageContent(
+                        homepageContentConfiguration.get().getRegisterHistoryPageUrl(),
                         homepageContentConfiguration.get().getSimilarRegisters(),
                         homepageContentConfiguration.get().getIndexes()),
                 registerTrackingConfiguration.get(),
                 registerResolver,
-                configManager.get().getFieldsConfiguration(),
-                registerLinkService.get());
+                getFields(),
+                registerLinkService.get(),
+                register.get()
+        );
     }
 
     public DownloadPageView downloadPageView(Boolean enableDownloadResource) {
         return new DownloadPageView(requestContext, register.get(), enableDownloadResource, registerTrackingConfiguration.get(), registerResolver);
     }
 
-    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated) {
-        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, registerMetadata.get(),
-                registerDomainConfiguration.getRegisterDomain(), homepageContentConfiguration.get().getCustodianName());
+    public RegisterDetailView registerDetailView(int totalRecords, int totalEntries, Optional<Instant> lastUpdated, Optional<String> custodianName) {
+        return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, register.get().getRegisterMetadata(),
+                registerDomainConfiguration.getRegisterDomain(), custodianName);
     }
 
     public <T> AttributionView<T> getAttributionView(String templateName, T fieldValueMap) {
@@ -131,34 +126,31 @@ public class ViewFactory {
     }
 
     public ItemView getItemMediaView(Item item) {
-        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item), getFields());
+        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(Record record) {
-        return new RecordView(record, getFields(), itemConverter);
+        return new RecordView(record, register.get().getFieldsByName(), itemConverter);
     }
 
     public RecordsView getRecordsMediaView(List<Record> records) {
-        return new RecordsView(records, getFields(), itemConverter, false, false);
+        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, false);
     }
 
     public RecordsView getIndexRecordsMediaView(List<Record> records) {
-        return new RecordsView(records, getFields(), itemConverter, false, true);
+        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
     }
 
     private PublicBody getRegistry() {
-        return publicBodiesConfiguration.getPublicBody(registerMetadata.get().getRegistry());
+        return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
     }
 
     private Optional<GovukOrganisation.Details> getBranding() {
-        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(registerMetadata.get().getRegistry());
+        Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(register.get().getRegisterMetadata().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
     }
 
-    private List<Field> getFields() {
-        FieldsConfiguration fieldsConfiguration = configManager.get().getFieldsConfiguration();
-        return register.get().getRegisterMetadata().getFields().stream()
-                .map(fieldsConfiguration::getField)
-                .collect(Collectors.toList());
+    private Collection<Field> getFields() {
+        return register.get().getFieldsByName().values();
     }
 }

@@ -2,6 +2,7 @@ package uk.gov.register.store.postgres;
 
 import com.google.common.collect.Iterables;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.db.*;
 import uk.gov.register.store.DataAccessLayer;
@@ -9,6 +10,7 @@ import uk.gov.register.util.EntryItemPair;
 import uk.gov.register.util.HashValue;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer implements DataAccessLayer {
@@ -24,9 +26,9 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private final IndexDAO indexDAO;
 
     public PostgresDataAccessLayer(
-            EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
+            EntryQueryDAO entryQueryDAO, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
             EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO,
-            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO, IndexDAO indexDAO, String schema) {
+            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO, String schema) {
         super(entryQueryDAO, indexQueryDAO, itemQueryDAO, recordQueryDAO, schema);
         this.entryDAO = entryDAO;
         this.entryItemDAO = entryItemDAO;
@@ -43,6 +45,10 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     @Override
     public void appendEntry(Entry entry) {
         stagedEntries.add(entry);
+
+        if (entry.getEntryType().equals(EntryType.system)) {
+            checkpoint();
+        }
     }
 
     @Override
@@ -52,6 +58,14 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         // falling back to the DB if necessary.
         OptionalInt maxStagedEntryNumber = getMaxStagedEntryNumber();
         return maxStagedEntryNumber.orElseGet(super::getTotalEntries);
+    }
+
+    @Override
+    public int getTotalEntries(EntryType entryType) {
+        if (entryType.equals(EntryType.system)) {
+            return super.getTotalSystemEntries();
+        }
+        return getTotalEntries();
     }
 
     @Override
@@ -75,7 +89,15 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
     @Override
     public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber) {
-        indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema);
+        indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema, "entry");
+    }
+
+    @Override
+    public Optional<Item> getItemBySha256(HashValue hash) {
+        if (stagedItems.containsKey(hash)) {
+            return Optional.of(stagedItems.get(hash));
+        }
+        return super.getItemBySha256(hash);
     }
 
     @Override
@@ -90,13 +112,20 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
             return;
         }
 
-        List<EntryItemPair> entryItemPairs = new ArrayList<>();
-        stagedEntries.forEach(se -> se.getItemHashes().forEach(h -> entryItemPairs.add(new EntryItemPair(se.getEntryNumber(), h))));
-
-        entryDAO.insertInBatch(stagedEntries, schema);
-        entryItemDAO.insertInBatch(entryItemPairs, schema);
-        entryDAO.setEntryNumber(entryDAO.currentEntryNumber(schema) + stagedEntries.size(), schema);
+        insertEntriesInBatch(EntryType.user, "entry", "entry_item");
+        insertEntriesInBatch(EntryType.system, "entry_system", "entry_item_system");
+        entryDAO.setEntryNumber(entryDAO.currentEntryNumber(schema) + stagedEntries.stream().filter(e -> e.getEntryType().equals(EntryType.user)).collect(Collectors.toList()).size(), schema);
         stagedEntries.clear();
+    }
+
+    private void insertEntriesInBatch(EntryType entryType, String entryTableName, String entryItemTableName) {
+        List<Entry> entries = stagedEntries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList());
+
+        entryDAO.insertInBatch(entries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList()), schema, entryTableName);
+        entryItemDAO.insertInBatch(entries.stream()
+                .filter(e -> e.getEntryType().equals(entryType))
+                .flatMap(e -> e.getItemHashes().stream().map(i -> new EntryItemPair(e.getEntryNumber(), i)))
+                .collect(Collectors.toList()), schema, entryItemTableName);
     }
 
     private void writeStagedItemsToDatabase() {
@@ -108,6 +137,10 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     private void writeStagedCurrentKeysToDatabase() {
+        if (stagedCurrentKeys.isEmpty()) {
+            return;
+        }
+
         int noOfRecordsDeleted = removeRecordsWithKeys(stagedCurrentKeys.keySet());
 
         currentKeysDAO.writeCurrentKeys(Iterables.transform(stagedCurrentKeys.entrySet(),

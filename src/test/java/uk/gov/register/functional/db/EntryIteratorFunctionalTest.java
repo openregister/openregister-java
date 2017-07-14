@@ -6,6 +6,7 @@ import org.junit.Test;
 import uk.gov.register.db.EntryIterator;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,6 +28,7 @@ public class EntryIteratorFunctionalTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
+        register.loadRsf(TestRegister.register, RsfRegisterDefinition.REGISTER_REGISTER);
 
         entryQueryDAO = mock(EntryQueryDAO.class);
         when(entryQueryDAO.entriesIteratorFrom(anyInt(), eq(schema))).thenAnswer(invocation ->

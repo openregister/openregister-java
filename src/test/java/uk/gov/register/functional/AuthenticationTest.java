@@ -1,8 +1,11 @@
 package uk.gov.register.functional;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
+import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -15,6 +18,12 @@ import static uk.gov.register.functional.app.TestRegister.postcode;
 public class AuthenticationTest {
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
+
+    @Before
+    public void setup() {
+        register.loadRsf(TestRegister.address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsf(TestRegister.postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
+    }
     
     @Test
     public void correctCredentials_shouldBeAllowed() throws Exception {

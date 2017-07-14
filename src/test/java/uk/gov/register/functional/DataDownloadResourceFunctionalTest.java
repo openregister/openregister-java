@@ -1,10 +1,12 @@
 package uk.gov.register.functional;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
@@ -22,6 +24,12 @@ public class DataDownloadResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
 
+    @Before
+    public void setup() {
+        register.loadRsf(REGISTER_WITH_DOWNLOAD_ENABLED, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsf(REGISTER_WITH_DOWNLOAD_DISABLED, RsfRegisterDefinition.REGISTER_REGISTER);
+    }
+
     private final String targetUrl;
     private final int expectedStatusCode;
     private final Boolean enableDownload;
@@ -33,7 +41,7 @@ public class DataDownloadResourceFunctionalTest {
     }
 
     @Parameterized.Parameters(name = "{index}: with download enabled:{0} -> {1} returns {2}")
-    public static Collection<Object[]> data(){
+    public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 { true, "/download", 200 },
                 { true, "/download-register", 200 },

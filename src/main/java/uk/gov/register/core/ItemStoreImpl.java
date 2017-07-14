@@ -1,6 +1,5 @@
 package uk.gov.register.core;
 
-import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
@@ -10,16 +9,13 @@ import java.util.Optional;
 
 public class ItemStoreImpl implements ItemStore {
     private final DataAccessLayer dataAccessLayer;
-    private final ItemValidator itemValidator;
 
-    public ItemStoreImpl(DataAccessLayer dataAccessLayer, ItemValidator itemValidator) {
+    public ItemStoreImpl(DataAccessLayer dataAccessLayer) {
         this.dataAccessLayer = dataAccessLayer;
-        this.itemValidator = itemValidator;
     }
 
     @Override
     public void putItem(Item item) {
-        itemValidator.validateItem(item.getContent());
         dataAccessLayer.putItem(item);
     }
 
@@ -41,5 +37,10 @@ public class ItemStoreImpl implements ItemStore {
     @Override
     public Iterator<Item> getIterator(int start, int end) {
         return dataAccessLayer.getItemIterator(start, end);
+    }
+
+    @Override
+    public Iterator<Item> getSystemItemIterator() {
+        return dataAccessLayer.getSystemItemIterator();
     }
 }

@@ -17,7 +17,6 @@ registers:
     credentials:
       user: sasine
       password: inhibition
-    custodianName: Government Digital Service
     schema: register
 
 server:

@@ -5,13 +5,11 @@ import java.util.Optional;
 
 public class HomepageContent {
     private final Optional<String> registerHistoryUrl;
-    private final Optional<String> custodianName;
     private final List<String> similarRegisters;
     private final List<String> indexes;
 
-    public HomepageContent(Optional<String> registerHistoryUrl, Optional<String> custodianName, List<String> similarRegisters, List<String> indexes) {
+    public HomepageContent(Optional<String> registerHistoryUrl, List<String> similarRegisters, List<String> indexes) {
         this.registerHistoryUrl = registerHistoryUrl;
-        this.custodianName = custodianName;
         this.similarRegisters = similarRegisters;
         this.indexes = indexes;
     }
@@ -35,8 +33,6 @@ public class HomepageContent {
     public Optional<String> getRegisterHistoryPageUrl() {
         return registerHistoryUrl;
     }
-
-    public Optional<String> getCustodianName() { return custodianName; }
 
     public List<String> getSimilarRegisters() { return similarRegisters; }
 

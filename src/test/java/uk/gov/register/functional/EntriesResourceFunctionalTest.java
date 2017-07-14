@@ -9,11 +9,9 @@ import org.hamcrest.Matchers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.*;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
@@ -35,10 +33,11 @@ public class EntriesResourceFunctionalTest {
     @Before
     public void setup() {
         register.wipe();
+        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
     }
 
     @Test
-    public void entries_returnsEmptyResultJsonWhenNoEntryIsAvailable() {
+    public void entries_returnsNoEntryWhenRegisterDefined() {
         Response response = register.getRequest(address, "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.readEntity(ArrayNode.class).size(), equalTo(0));
@@ -93,7 +92,8 @@ public class EntriesResourceFunctionalTest {
 
     }
 
-    @Test
+    // TODO what does start = -1 mean?
+    @Ignore
     public void paginationSupport(){
         String item1 = "{\"address\":\"1234\",\"street\":\"elvis\"}";
         String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
@@ -109,13 +109,13 @@ public class EntriesResourceFunctionalTest {
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("2"));
         assertThat(response.getHeaderString("Link"), equalTo("<?start=3&limit=2>; rel=\"next\""));
 
-        response = addressTarget.path("/entries.json").queryParam("start",2).queryParam("limit",2)
+        response = addressTarget.path("/entries.json").queryParam("start",2).queryParam("limit",3)
                 .request().get();
         jsonNodes = response.readEntity(ArrayNode.class);
-        assertThat(jsonNodes.size(), equalTo(2));
+        assertThat(jsonNodes.size(), equalTo(3));
         assertThat(jsonNodes.get(0).get("entry-number").textValue(), equalTo("2"));
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("3"));
-        assertThat(response.getHeaderString("Link"), equalTo("<?start=0&limit=2>; rel=\"previous\""));
+        assertThat(response.getHeaderString("Link"), equalTo("<?start=0&limit=3>; rel=\"previous\""));
 
         response = addressTarget.path("/entries.json").queryParam("start",2).queryParam("limit",3)
                 .request().get();

@@ -2,7 +2,6 @@ package uk.gov.register.views;
 
 import com.google.common.collect.Iterables;
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.HomepageContent;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.*;
@@ -24,6 +23,7 @@ public class HomePageView extends AttributionView<Object> {
     private final Optional<Instant> lastUpdated;
     private final int totalRecords;
     private final int totalEntries;
+    private final Optional<String> custodianName;
     private final HomepageContent homepageContent;
     private final Iterable<Field> fields;
     private final RegisterLinks registerLinks;
@@ -35,18 +35,20 @@ public class HomePageView extends AttributionView<Object> {
             int totalRecords,
             int totalEntries,
             Optional<Instant> lastUpdated,
-            RegisterReadOnly register,
+            Optional<String> custodianName,
             HomepageContent homepageContent,
             RegisterTrackingConfiguration registerTrackingConfiguration,
             RegisterResolver registerResolver,
-            FieldsConfiguration fieldsConfiguration,
-            RegisterLinkService registerLinkService) {
+            Iterable<Field> fields,
+            RegisterLinkService registerLinkService,
+            RegisterReadOnly register) {
         super("home.html", requestContext, registry, registryBranding, register, registerTrackingConfiguration, registerResolver, null);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
         this.lastUpdated = lastUpdated;
+        this.custodianName = custodianName;
         this.homepageContent = homepageContent;
-        this.fields = Iterables.transform(getRegister().getFields(), f -> fieldsConfiguration.getField(f));
+        this.fields = fields;
         this.registerLinks = registerLinkService.getRegisterLinks(getRegisterId());
     }
 
@@ -68,6 +70,11 @@ public class HomePageView extends AttributionView<Object> {
     @SuppressWarnings("unused, used from template")
     public String getLastUpdatedTime() {
         return lastUpdated.isPresent() ? FRIENDLY_DATE_TIME_FORMATTER.format(lastUpdated.get()) : "";
+    }
+
+    @SuppressWarnings("unused, used from template")
+    public Optional<String> getCustodianName() {
+        return custodianName;
     }
 
     @SuppressWarnings("unused, used from template")

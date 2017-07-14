@@ -52,7 +52,7 @@ public class Item {
 
     public Optional<String> getValue(String key) {
         JsonNode value = content.get(key);
-        return value != null ? Optional.of(value.textValue()) : Optional.empty();
+        return Optional.ofNullable(value).map(JsonNode::textValue);
     }
 
     public Stream<Map.Entry<String, JsonNode>> getFieldsStream() {

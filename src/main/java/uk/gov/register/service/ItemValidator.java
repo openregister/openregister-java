@@ -11,25 +11,22 @@ import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
 
+import java.util.Map;
 import java.util.Set;
 
 public class ItemValidator {
-    private final ConfigManager configManager;
     private final RegisterName registerName;
 
-    public ItemValidator(ConfigManager configManager, RegisterName registerName) {
-        this.configManager = configManager;
+    public ItemValidator(RegisterName registerName) {
         this.registerName = registerName;
     }
 
-    public void validateItem(JsonNode inputEntry) throws ItemValidationException {
-        RegisterMetadata registerMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
-
+    public void validateItem(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws ItemValidationException {
         validateFields(inputEntry, registerMetadata);
 
         validatePrimaryKeyExists(inputEntry);
 
-        validateFieldsValue(inputEntry);
+        validateFieldsValue(inputEntry, fields);
     }
 
     private void validatePrimaryKeyExists(JsonNode inputEntry) throws ItemValidationException {
@@ -46,9 +43,9 @@ public class ItemValidator {
         throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
     }
 
-    private void validateFieldsValue(JsonNode inputEntry) throws ItemValidationException {
+    private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws ItemValidationException {
         inputEntry.fieldNames().forEachRemaining(fieldName -> {
-            Field field = configManager.getFieldsConfiguration().getField(fieldName);
+            Field field = fields.get(fieldName);
 
             Datatype datatype = field.getDatatype();
 

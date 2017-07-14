@@ -3,23 +3,37 @@ package uk.gov.register.configuration;
 import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
+import uk.gov.register.indexer.function.MetadataIndexFunction;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
 public enum IndexFunctionConfiguration {
 
-    CURRENT_COUNTRIES(Constants.CURRENT_COUNTRIES, new CurrentCountriesIndexFunction(Constants.CURRENT_COUNTRIES)),
-    LOCAL_AUTHORITY_BY_TYPE(Constants.LOCAL_AUTHORITY_BY_TYPE, new LocalAuthorityByTypeIndexFunction(Constants.LOCAL_AUTHORITY_BY_TYPE));
+    CURRENT_COUNTRIES(IndexNames.CURRENT_COUNTRIES, new CurrentCountriesIndexFunction(IndexNames.CURRENT_COUNTRIES)),
+    LOCAL_AUTHORITY_BY_TYPE(IndexNames.LOCAL_AUTHORITY_BY_TYPE, new LocalAuthorityByTypeIndexFunction(IndexNames.LOCAL_AUTHORITY_BY_TYPE)),
+    METADATA(IndexNames.METADATA, new MetadataIndexFunction(IndexNames.METADATA));
 
-    public static IndexFunctionConfiguration getValueLowerCase(String name) {
+    public static List<IndexFunctionConfiguration> getConfigurations(List<String> indexNames) {
+        List<IndexFunctionConfiguration> configurations = indexNames.stream().map(n -> getValueLowerCase(n)).collect(Collectors.toList());
+        configurations.addAll(getDefaultConfigurations());
+        return configurations;
+    }
+
+    private static IndexFunctionConfiguration getValueLowerCase(String name) {
         try {
             return IndexFunctionConfiguration.valueOf(name.toUpperCase().replaceAll("-", "_"));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(String.format("Error: no index function corresponding to index: %s in config.yaml", name), e);
         }
+    }
+
+    private static List<IndexFunctionConfiguration> getDefaultConfigurations() {
+        return Arrays.asList(METADATA);
     }
 
     private String name;
@@ -38,9 +52,10 @@ public enum IndexFunctionConfiguration {
         return indexFunctions;
     }
 
-    private static class Constants {
-        private static final String CURRENT_COUNTRIES = "current-countries";
-        private static final String LOCAL_AUTHORITY_BY_TYPE = "local-authority-by-type";
+    public static class IndexNames {
+        public static final String CURRENT_COUNTRIES = "current-countries";
+        public static final String LOCAL_AUTHORITY_BY_TYPE = "local-authority-by-type";
+        public static final String METADATA = "metadata";
     }
 
 }

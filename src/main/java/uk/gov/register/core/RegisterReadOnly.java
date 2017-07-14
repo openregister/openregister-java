@@ -6,10 +6,7 @@ import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface RegisterReadOnly {
     Optional<Item> getItemBySha256(HashValue hash);
@@ -19,6 +16,7 @@ public interface RegisterReadOnly {
     Collection<Entry> getEntries(int start, int limit);
     Collection<Entry> getAllEntries();
     int getTotalEntries();
+    int getTotalEntries(EntryType entryType);
 
     Optional<Instant> getLastUpdatedTime();
 
@@ -39,11 +37,13 @@ public interface RegisterReadOnly {
 
     Iterator<Item> getItemIterator();
     Iterator<Item> getItemIterator(int start, int end);
-
+    Iterator<Item> getSystemItemIterator();
+    
     Iterator<Entry> getDerivationEntryIterator(String indexName);
     Iterator<Entry> getDerivationEntryIterator(String indexName, int totalEntries1, int totalEntries2);
 
     RegisterName getRegisterName();
+    Optional<String> getCustodianName();
 
     RegisterMetadata getRegisterMetadata();
 
@@ -52,5 +52,7 @@ public interface RegisterReadOnly {
     List<Record> getDerivationRecords(int limit, int offset, String derivationName);
 
     int getTotalDerivationRecords(String derivationName);
+
+    Map<String, Field> getFieldsByName();
 }
 

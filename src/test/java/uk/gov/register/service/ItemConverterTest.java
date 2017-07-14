@@ -1,6 +1,7 @@
 package uk.gov.register.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Before;
 import org.junit.Rule;
@@ -8,10 +9,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
-import uk.gov.register.core.FieldValue;
-import uk.gov.register.core.LinkValue;
-import uk.gov.register.core.ListValue;
-import uk.gov.register.core.StringValue;
+import uk.gov.register.core.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.IOException;
@@ -27,25 +25,11 @@ import static org.mockito.Mockito.when;
 
 public class ItemConverterTest {
 
-    @Rule
-    public TemporaryFolder externalConfigsFolder = new TemporaryFolder();
-    private ConfigManager configManager;
     private ItemConverter itemConverter;
-    private String registersConfigFileUrl = Paths.get("src/main/resources/config/registers.yaml").toUri().toString();
-    private String fieldsConfigFileUrl = Paths.get("src/main/resources/config/fields.yaml").toUri().toString();
 
     @Before
     public void setup() throws IOException, NoSuchConfigException {
-        RegisterConfigConfiguration registerConfigConfiguration = mock(RegisterConfigConfiguration.class);
-        when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(fieldsConfigFileUrl);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(registersConfigFileUrl);
-        String externalConfigsFolderPath = externalConfigsFolder.getRoot().toString();
-        when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
-
-        configManager = new ConfigManager(registerConfigConfiguration);
-        configManager.refreshConfig();
-        itemConverter = new ItemConverter(configManager);
+        itemConverter = new ItemConverter();
     }
 
     @Test
@@ -55,8 +39,10 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("citizen-names");
         when(entry.getValue()).thenReturn(jsonNode);
+        Field citizenNameField = new Field("citizen-names", "string", null, Cardinality.ONE, "Name of the citizens of a country");
+        Map<String, Field> fieldsByName = ImmutableMap.of("citizen-names", citizenNameField);
 
-        FieldValue result = itemConverter.convert(entry);
+        FieldValue result = itemConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(StringValue.class));
         assertThat(result.getValue(), equalTo("Name for the citzens of a country."));
@@ -69,8 +55,10 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("parent-bodies");
         when(entry.getValue()).thenReturn(res);
+        Field parentBodiesField = new Field("parent-bodies", "string", null, Cardinality.MANY, "Parent Bodies");
+        Map<String, Field> fieldsByName = ImmutableMap.of("parent-bodies", parentBodiesField);
 
-        FieldValue result = itemConverter.convert(entry);
+        FieldValue result = itemConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(ListValue.class));
     }
@@ -82,8 +70,10 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("school");
         when(entry.getValue()).thenReturn(jsonNode);
+        Field schoolField = new Field("school", "string", new RegisterName("school"), Cardinality.ONE, "A school in the UK.");
+        Map<String, Field> fieldsByName = ImmutableMap.of("school", schoolField);
 
-        FieldValue result = itemConverter.convert(entry);
+        FieldValue result = itemConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(LinkValue.class));
         assertThat(result.getValue(), equalTo("A school in the UK."));
@@ -96,8 +86,11 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("business");
         when(entry.getValue()).thenReturn(jsonNode);
+        Field businessField = new Field("business", "curie", new RegisterName("company"), Cardinality.ONE, "A Limited Company ...");
+        Map<String, Field> fieldsByName = ImmutableMap.of("business", businessField);
 
-        FieldValue result = itemConverter.convert(entry);
+
+        FieldValue result = itemConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(LinkValue.CurieValue.class));
         assertThat(result.getValue(), equalTo("business:13245"));

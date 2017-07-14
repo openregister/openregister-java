@@ -94,7 +94,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
 
-        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService);
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService, configuration);
         allTheRegisters.stream().parallel().forEach(RegisterContext::migrate);
 
         RSFExecutor rsfExecutor = new RSFExecutor();
@@ -115,8 +115,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             @Override
             protected void configure() {
 
-                bindFactory(Factories.RegisterFieldsConfigurationFactory.class).to(RegisterFieldsConfiguration.class);
-                bindFactory(Factories.RegisterMetadataFactory.class).to(RegisterMetadata.class);
                 bind(allTheRegisters);
                 bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class)
                         .to(RegisterTrackingConfiguration.class).to(DeleteRegisterDataConfiguration.class)

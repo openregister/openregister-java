@@ -1,5 +1,6 @@
 package uk.gov.register.store.postgres;
 
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
@@ -18,7 +19,7 @@ import java.util.function.Function;
 public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     private final EntryQueryDAO entryQueryDAO;
     private final IndexQueryDAO indexQueryDAO;
-    private final ItemQueryDAO itemQueryDAO;
+    final ItemQueryDAO itemQueryDAO;
     private final RecordQueryDAO recordQueryDAO;
     final String schema;
 
@@ -66,12 +67,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName) {
-        return indexQueryDAO.getIterator(indexName, schema);
+        return indexQueryDAO.getIterator(indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
     public Iterator<Entry> getIndexEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema);
+        return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
@@ -82,8 +83,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public int getTotalEntries() {
-        checkpoint();
         return entryQueryDAO.getTotalEntries(schema);
+    }
+
+    public int getTotalSystemEntries() {
+        checkpoint();
+        return entryQueryDAO.getTotalSystemEntries(schema);
     }
 
     @Override
@@ -96,7 +101,6 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Item> getItemBySha256(HashValue hash) {
-        checkpoint();
         return itemQueryDAO.getItemBySHA256(hash.getValue(), schema);
     }
 
@@ -116,6 +120,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     public Iterator<Item> getItemIterator(int start, int end) {
         checkpoint();
         return itemQueryDAO.getIterator(start, end, schema);
+    }
+    
+    @Override
+    public Iterator<Item> getSystemItemIterator() {
+        checkpoint();
+        return itemQueryDAO.getSystemItemIterator(schema);
     }
 
     // Record Index
@@ -154,12 +164,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
-        return indexQueryDAO.findRecord(key, indexName, schema);
+        return indexQueryDAO.findRecord(key, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
     public List<Record> getIndexRecords(int limit, int offset, String indexName) {
-        return indexQueryDAO.findRecords(limit, offset, indexName, schema);
+        return indexQueryDAO.findRecords(limit, offset, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override

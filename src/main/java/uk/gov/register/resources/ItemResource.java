@@ -12,7 +12,6 @@ import uk.gov.register.views.representations.ExtraMediaType;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Map;
 import java.util.Optional;
 
 @Path("/item")
@@ -21,7 +20,7 @@ public class ItemResource {
     private final ViewFactory viewFactory;
 
     @Inject
-    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter, RegisterMetadata registerMetadata) {
+    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory) {
         this.register = register;
         this.viewFactory = viewFactory;
     }

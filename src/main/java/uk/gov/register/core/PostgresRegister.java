@@ -1,48 +1,57 @@
 package uk.gov.register.core;
 
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.register.db.DerivationRecordIndex;
+import uk.gov.register.exceptions.FieldUndefinedException;
 import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.exceptions.RegisterUndefinedException;
+import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
+import java.io.UncheckedIOException;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PostgresRegister implements Register {
+    private static ObjectMapper mapper = new ObjectMapper();
     private final RecordIndex recordIndex;
     private final DerivationRecordIndex derivationRecordIndex;
     private final RegisterName registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
-    private final RegisterFieldsConfiguration registerFieldsConfiguration;
-    private final RegisterMetadata registerMetadata;
     private final IndexDriver indexDriver;
     private final List<IndexFunction> indexFunctions;
+    private final ItemValidator itemValidator;
 
-    public PostgresRegister(RegisterMetadata registerMetadata,
-                            RegisterFieldsConfiguration registerFieldsConfiguration,
+    private RegisterMetadata registerMetadata;
+    private Map<String, Field> fieldsByName;
+
+    public PostgresRegister(RegisterName registerName,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             RecordIndex recordIndex,
                             DerivationRecordIndex derivationRecordIndex,
-                            List<IndexFunction> indexFunctions, IndexDriver indexDriver) {
-        registerName = registerMetadata.getRegisterName();
+                            List<IndexFunction> indexFunctions,
+                            IndexDriver indexDriver,
+                            ItemValidator itemValidator) {
+        this.registerName = registerName;
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
         this.derivationRecordIndex = derivationRecordIndex;
-        this.registerFieldsConfiguration = registerFieldsConfiguration;
-        this.registerMetadata = registerMetadata;
         this.indexDriver = indexDriver;
         this.indexFunctions = indexFunctions;
+        this.itemValidator = itemValidator;
     }
 
     @Override
@@ -51,14 +60,35 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public void appendEntry(Entry entry) {
+    public void appendEntry(final Entry entry) {
+        List<Item> referencedItems = getReferencedItems(entry);
+
+        referencedItems.forEach(i -> {
+            if (entry.getEntryType() == EntryType.user) {
+                itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+            } else if (entry.getKey().startsWith("register:")) {
+                RegisterMetadata registerMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
+                // will throw exception if field not present
+                registerMetadata.getFields().forEach(this::getField);
+            }
+        });
+
         entryLog.appendEntry(entry);
 
         for (IndexFunction indexFunction : indexFunctions) {
             indexDriver.indexEntry(this, entry, indexFunction);
         }
 
-        recordIndex.updateRecordIndex(entry);
+        if (entry.getEntryType() == EntryType.user) {
+            recordIndex.updateRecordIndex(entry);
+        }
+    }
+
+    private List<Item> getReferencedItems(Entry entry) {
+        return entry.getItemHashes().stream()
+                .map(h -> itemStore.getItemBySha256(h).orElseThrow(
+                        () -> new SerializationFormatValidationException("Failed to find item referenced by " + h.getValue())))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,6 +104,11 @@ public class PostgresRegister implements Register {
     @Override
     public int getTotalEntries() {
         return entryLog.getTotalEntries();
+    }
+
+    @Override
+    public int getTotalEntries(EntryType entryType) {
+        return entryLog.getTotalEntries(entryType);
     }
 
     @Override
@@ -118,7 +153,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
-        if (!registerFieldsConfiguration.containsField(key)) {
+        if (!getRegisterMetadata().getFields().contains(key)) {
             throw new NoSuchFieldException(registerName, key);
         }
 
@@ -166,6 +201,11 @@ public class PostgresRegister implements Register {
     }
 
     @Override
+    public Iterator<Item> getSystemItemIterator() {
+        return itemStore.getSystemItemIterator();
+    }
+
+    @Override
     public Iterator<Entry> getDerivationEntryIterator(String indexName) {
         return entryLog.getDerivationIterator(indexName);
     }
@@ -181,7 +221,18 @@ public class PostgresRegister implements Register {
     }
 
     @Override
+    public Optional<String> getCustodianName() {
+        return getMetadataField("custodian");
+    }
+
+    @Override
     public RegisterMetadata getRegisterMetadata() {
+        if (registerMetadata == null) {
+            registerMetadata = getDerivationRecord("register:" + registerName.value(), IndexNames.METADATA)
+                    .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
+                    .orElseThrow(() -> new RegisterUndefinedException(registerName));
+        }
+
         return registerMetadata;
     }
 
@@ -198,6 +249,40 @@ public class PostgresRegister implements Register {
     @Override
     public int getTotalDerivationRecords(String derivationName) {
         return derivationRecordIndex.getTotalRecords(derivationName);
+    }
+
+    @Override
+    public Map<String, Field> getFieldsByName() {
+        if (fieldsByName == null) {
+            RegisterMetadata registerMetadata = getRegisterMetadata();
+            List<String> fieldNames = registerMetadata.getFields();
+            fieldsByName = new LinkedHashMap<>();
+            fieldNames.forEach(fieldName -> fieldsByName.put(fieldName, getField(fieldName)));
+        }
+        return fieldsByName;
+    }
+
+    private Field getField(String fieldName) {
+        return getDerivationRecord("field:" + fieldName, IndexNames.METADATA)
+                .map(record -> extractObjectFromRecord(record, Field.class))
+                .orElseThrow(() -> new FieldUndefinedException(registerName, fieldName));
+    }
+
+    private <T> T extractObjectFromRecord(Record record, Class<T> clazz) {
+        return extractObjectFromItem(record.getItems().get(0), clazz);
+    }
+
+    private <T> T extractObjectFromItem(Item item, Class<T> clazz) {
+        try {
+            JsonNode content = item.getContent();
+            return mapper.treeToValue(content, clazz);
+        } catch (JsonProcessingException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private Optional<String> getMetadataField(String fieldName) {
+        return getDerivationRecord(fieldName, IndexNames.METADATA).map(r -> r.getItems().get(0).getValue(fieldName).get());
     }
 
 }

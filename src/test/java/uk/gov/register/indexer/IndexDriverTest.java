@@ -135,7 +135,6 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, item)));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
 
@@ -194,7 +193,6 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemQ)));
 
         IndexQueryDAO indexQueryDAO = mock(IndexQueryDAO.class);
@@ -226,7 +224,6 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.of(new Record(previousEntry, itemP)));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
@@ -257,9 +254,7 @@ public class IndexDriverTest {
         Entry newEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
 
-
         when(register.getRecord(anyString())).thenReturn(Optional.empty());
-
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1);
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
@@ -294,12 +289,10 @@ public class IndexDriverTest {
         Entry newEntry4 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "C", EntryType.user);
         Entry newEntry5 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D", EntryType.user);
 
-
         when(register.getRecord("A")).thenReturn(Optional.empty());
         when(register.getRecord("B")).thenReturn(Optional.empty());
         when(register.getRecord("C")).thenReturn(Optional.empty(), Optional.of(new Record(newEntry3, itemS)));
         when(register.getRecord("D")).thenReturn(Optional.empty());
-
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(0, 1, 2, 3, 4);
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0), new IndexEntryNumberItemCountPair(Optional.of(2), 1));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
@@ -344,9 +337,7 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
 
-
         when(register.getRecord(anyString())).thenReturn(Optional.empty());
-
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
         IndexFunction indexFunction = mock(IndexFunction.class);
@@ -370,7 +361,6 @@ public class IndexDriverTest {
         Entry newEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
 
         when(register.getRecord(anyString())).thenReturn(Optional.of(new Record(previousEntry, item)));
-
         when(dataAccessLayer.getCurrentIndexEntryNumber("by-x")).thenReturn(1);
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(2), 2));
         IndexFunction indexFunction = mock(IndexFunction.class);

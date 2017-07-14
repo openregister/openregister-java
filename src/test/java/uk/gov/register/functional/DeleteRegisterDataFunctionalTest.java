@@ -3,6 +3,7 @@ package uk.gov.register.functional;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 
 import javax.ws.rs.core.Response;
@@ -22,6 +23,8 @@ public class DeleteRegisterDataFunctionalTest {
 
     @Test
     public void deleteRegisterData_deletesAllDataFromDb() throws Exception {
+        register.loadRsf(postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
+
         String item1 = "{\"postcode\":\"P1\"}";
         String item2 = "{\"postcode\":\"P2\"}";
 
@@ -43,6 +46,8 @@ public class DeleteRegisterDataFunctionalTest {
 
     @Test
     public void deleteRegisterData_deletesProofCache() throws Exception {
+        register.loadRsf(postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
+
         String item1 = "{\"postcode\":\"P1\"}";
         String item2 = "{\"postcode\":\"P2\"}";
 
@@ -54,6 +59,7 @@ public class DeleteRegisterDataFunctionalTest {
         String proof1 = proof1Response.readEntity(String.class);
 
         register.deleteRegisterData(REGISTER_WHICH_ALLOWS_DELETING);
+        register.loadRsf(postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
         register.mintLines(REGISTER_WHICH_ALLOWS_DELETING, item2, item1);
 
         Response proof2Response = register.getRequest(REGISTER_WHICH_ALLOWS_DELETING, "/proof/register/merkle:sha-256");
