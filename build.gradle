@@ -85,6 +85,7 @@ jar.baseName = "openregister-java"
 
 shadowJar {
     mergeServiceFiles()
+    exclude "license/**"
 
     baseName = "openregister-java"
     manifest {
