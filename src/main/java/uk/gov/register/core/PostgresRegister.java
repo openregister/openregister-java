@@ -3,6 +3,7 @@ package uk.gov.register.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.exceptions.FieldUndefinedException;
 import uk.gov.register.exceptions.NoSuchFieldException;
@@ -32,6 +33,7 @@ public class PostgresRegister implements Register {
     private final IndexDriver indexDriver;
     private final List<IndexFunction> indexFunctions;
     private final ItemValidator itemValidator;
+    private final ConfigManager configManager;
 
     private RegisterMetadata registerMetadata;
     private Map<String, Field> fieldsByName;
@@ -43,7 +45,8 @@ public class PostgresRegister implements Register {
                             DerivationRecordIndex derivationRecordIndex,
                             List<IndexFunction> indexFunctions,
                             IndexDriver indexDriver,
-                            ItemValidator itemValidator) {
+                            ItemValidator itemValidator,
+                            ConfigManager configManager) {
         this.registerName = registerName;
         this.entryLog = entryLog;
         this.itemStore = itemStore;
@@ -52,6 +55,7 @@ public class PostgresRegister implements Register {
         this.indexDriver = indexDriver;
         this.indexFunctions = indexFunctions;
         this.itemValidator = itemValidator;
+        this.configManager = configManager;
     }
 
     @Override
@@ -67,9 +71,24 @@ public class PostgresRegister implements Register {
             if (entry.getEntryType() == EntryType.user) {
                 itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
             } else if (entry.getKey().startsWith("register:")) {
-                RegisterMetadata registerMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
+                RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
                 // will throw exception if field not present
-                registerMetadata.getFields().forEach(this::getField);
+                localRegisterMetadata.getFields().forEach(this::getField);
+
+                RegisterMetadata environmentRegisterMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
+                List<String> environmentRegisterFields = environmentRegisterMetadata.getFields();
+                List<String> localRegisterFields = localRegisterMetadata.getFields();
+                if (environmentRegisterFields.size() != localRegisterFields.size() || !environmentRegisterFields.containsAll(localRegisterFields)) {
+                    throw new RuntimeException("Register definition not valid");
+                }
+
+                localRegisterFields.forEach(field -> {
+                    Field localField = getField(field);
+                    Field environmentField =  configManager.getFieldsConfiguration().getField(field);
+                    if (!localField.getDatatype().equals(environmentField.getDatatype())) {
+                        throw new RuntimeException("Field definitions are not valid");
+                    }
+                });
             }
         });
 

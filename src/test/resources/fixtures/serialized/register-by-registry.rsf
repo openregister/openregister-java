@@ -1,11 +1,3 @@
-add-item	{"fields":["register","text"],"phase":"alpha","register":"register","registry":"registry","text":"Register of Registers"}
-append-entry	system	register:register	2017-06-06T09:54:11Z	sha-256:303f6b8db71cf40b56b1230fb0e6c0d2fad569a184926e80d06ef6acfefabb76
-add-item	{"cardinality":"1","datatype":"text","field":"text","phase":"alpha","text":"Description of register entry."}
-append-entry	system	field:text	2017-06-09T14:56:28Z	sha-256:ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f
-add-item	{"cardinality":"1","datatype":"string","field":"register","phase":"alpha","register":"register","text":"A register name."}
-append-entry	system	field:register	2017-06-09T14:56:28Z	sha-256:955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0
-add-item	{"cardinality":"1","datatype":"string","field":"registry","phase":"alpha","register":"register","text":"Body responsible for maintaining one or more registers"}
-append-entry	system	field:registry	2017-06-09T14:56:28Z	sha-256:0d6728b77de5a26e90f8948061feb32c4d4146a21f70ae1aecb0793099db4c9b
 add-item	{"register":"address","registry":"government-digital-service","text":"Addresses"}
 add-item	{"register":"food-authority","registry":"government-digital-service","text":"Food Authority"}
 append-entry	user	government-digital-service	2016-11-02T14:45:54Z	sha-256:4bdfee6268fd1365ad9ef378799c1ce567d237c1c0d38d0cf64e64c51aaec559;sha-256:6344e3925465464b317795010fc400ffa8c10380429a3d0260b71ccd9ffc08c7

@@ -101,7 +101,8 @@ public class RegisterContext implements
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
-                itemValidator);
+                itemValidator,
+                configManager);
     }
 
     private Register buildTransactionalRegister(Handle handle, DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
@@ -112,7 +113,8 @@ public class RegisterContext implements
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
-                itemValidator);
+                itemValidator,
+                configManager);
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {

@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.db.InMemoryEntryDAO;
@@ -52,6 +53,9 @@ public class PostgresRegisterTest {
     private Record fieldRecord;
     @Mock
     private Record registerRecord;
+    @Mock
+    private ConfigManager configManager;
+
 
     private PostgresRegister register;
 
@@ -61,7 +65,7 @@ public class PostgresRegisterTest {
     public void setup() throws IOException {
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator);
+                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator, configManager);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 

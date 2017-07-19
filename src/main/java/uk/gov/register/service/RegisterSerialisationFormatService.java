@@ -2,21 +2,15 @@ package uk.gov.register.service;
 
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.serialization.RSFCreator;
-import uk.gov.register.serialization.RSFExecutor;
-import uk.gov.register.serialization.RSFFormatter;
-import uk.gov.register.serialization.RegisterCommand;
-import uk.gov.register.serialization.RegisterResult;
-import uk.gov.register.serialization.RegisterSerialisationFormat;
+import uk.gov.register.serialization.*;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.function.Function;
-
-import javax.inject.Inject;
 
 public class RegisterSerialisationFormatService {
     private final RegisterContext registerContext;

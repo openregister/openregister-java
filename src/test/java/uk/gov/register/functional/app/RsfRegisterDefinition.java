@@ -6,8 +6,8 @@ public class RsfRegisterDefinition {
             "append-entry\tsystem\tregister-name\t2017-06-01T10:00:00Z\tsha-256:50e3d51c16e203c0124e8bf3a8807abc7693f0d01cb0569499c608f98d2924e9\n";
 
     public static String ADDRESS_REGISTER =
-        "add-item\t{\"fields\":[\"address\",\"street\",\"locality\",\"town\",\"area\",\"postcode\",\"country\",\"latitude\",\"longitude\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}\n" +
-        "append-entry\tsystem\tregister:address\t2017-06-06T09:54:11Z\tsha-256:2f90a43858c366134a070f563697e04a851c977cd27e491c02885a2f4441e190\n";
+        "add-item\t{\"fields\":[\"address\",\"street\",\"locality\",\"town\",\"area\",\"postcode\",\"country\",\"latitude\",\"longitude\",\"property\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}\n" +
+        "append-entry\tsystem\tregister:address\t2017-06-06T09:54:11Z\tsha-256:8d824e2afa57f1a71980237341b0c75d61fdc5c32e52d91e64c6fc3c6265ae63\n";
 
     public static String ADDRESS_FIELDS = "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"extra\",\"phase\":\"alpha\",\"text\":\"extra field to make the test fail initially\"}\n" +
             "append-entry\tsystem\tfield:extra\t2017-06-09T12:59:51Z\tsha-256:bca2e5228ff9ebc8a2b4553afb46d51dbdf74f2484527c8897df90cbaaa00514\n" +
@@ -28,25 +28,29 @@ public class RsfRegisterDefinition {
             "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"latitude\",\"phase\":\"alpha\",\"text\":\"Latitude of a place.\"}\n" +
             "append-entry\tsystem\tfield:latitude\t2017-06-09T12:59:51Z\tsha-256:52c98b6782a4631243970b55535cc6b90eb236006ee80a64bd8531d075a9065f\n" +
             "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"longitude\",\"phase\":\"alpha\",\"text\":\"Longitude of a place.\"}\n" +
-            "append-entry\tsystem\tfield:longitude\t2017-06-09T12:59:51Z\tsha-256:105621a1707510d16be14b6a5a11347eda4dab0314a9d9a5f89a50602f7b71c6\n";
+            "append-entry\tsystem\tfield:longitude\t2017-06-09T12:59:51Z\tsha-256:105621a1707510d16be14b6a5a11347eda4dab0314a9d9a5f89a50602f7b71c6\n" +
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"property\",\"phase\":\"alpha\",\"text\":\"A building, institution or house name in an address.\"}\n" +
+            "append-entry\tsystem\tfield:property\t2017-06-09T12:59:51Z\tsha-256:b91ad25f9d6db4b2588ff1724c09e4bf18f13538862efdeb051c7b9c0a5f0eed\n";
 
     public static String POSTCODE_REGISTER =
         "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
         "append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a\n" +
-        "add-item\t{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
-        "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n";
+        "add-item\t{\"cardinality\":\"1\",\"datatype\":\"point\",\"field\":\"point\",\"phase\":\"alpha\",\"text\":\"A geographical point\"}\n" +
+        "append-entry\tsystem\tfield:point\t2017-06-09T12:59:51Z\tsha-256:7f7f01febb44bada60e4a7a6642f5def6e93f28c043b59eec3a4ccaa44f4ad0b\n" +
+        "add-item\t{\"fields\":[\"postcode\",\"point\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
+        "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:ee2fd6546a8362d98e3cd63d914ca55d93f15801c35fdd108b9294c4f0a1d01e\n";
 
     public static String REGISTER_REGISTER =
         "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"register\":\"register\",\"text\":\"A register name.\"}\n" +
         "append-entry\tsystem\tfield:register\t2017-06-09T12:59:51Z\tsha-256:955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0\n" +
-        "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}\n" +
-        "append-entry\tsystem\tfield:text\t2017-06-09T12:59:51Z\tsha-256:243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b\n" +
+        "add-item\t{\"cardinality\":\"1\",\"datatype\":\"text\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}\n" +
+        "append-entry\tsystem\tfield:text\t2017-06-09T12:59:51Z\tsha-256:ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f\n" +
         "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"text\":\"Body responsible for maintaining one or more registers\"}\n" +
         "append-entry\tsystem\tfield:registry\t2017-06-09T12:59:51Z\tsha-256:4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2\n" +
         "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"phase\",\"phase\":\"alpha\",\"text\":\"Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual).\"}\n" +
         "append-entry\tsystem\tfield:phase\t2017-06-09T12:59:51Z\tsha-256:1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4\n" +
-        "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"copyright\",\"phase\":\"alpha\",\"text\":\"Copyright for the data in the register.\"}\n" +
-        "append-entry\tsystem\tfield:copyright\t2017-06-09T12:59:51Z\tsha-256:ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c\n" +
+        "add-item\t{\"cardinality\":\"1\",\"datatype\":\"text\",\"field\":\"copyright\",\"phase\":\"alpha\",\"text\":\"Copyright for the data in the register.\"}\n" +
+        "append-entry\tsystem\tfield:copyright\t2017-06-09T12:59:51Z\tsha-256:c7e5a90c020f7686d9a275cb0cc164636745b10ae168a72538772692cc90d633\n" +
         "add-item\t{\"cardinality\":\"n\",\"datatype\":\"string\",\"field\":\"fields\",\"phase\":\"alpha\",\"register\":\"field\",\"text\":\"Set of field names.\"}\n" +
         "append-entry\tsystem\tfield:fields\t2017-06-09T12:59:51Z\tsha-256:61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26\n" +
         "add-item\t{\"fields\":[\"register\",\"text\",\"registry\",\"phase\",\"copyright\",\"fields\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of registers\"}\n" +

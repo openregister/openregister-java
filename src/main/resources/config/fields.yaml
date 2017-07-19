@@ -482,7 +482,7 @@ registry:
   - text: "Body responsible for maintaining one or more registers"
     field: "registry"
     phase: "alpha"
-    datatype: "curie"
+    datatype: "string"
     register: "public-body"
     cardinality: "1"
 website:
