@@ -3,7 +3,7 @@ package uk.gov.register.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.exceptions.FieldUndefinedException;
 import uk.gov.register.exceptions.NoSuchFieldException;
@@ -11,12 +11,12 @@ import uk.gov.register.exceptions.RegisterUndefinedException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.io.UncheckedIOException;
 import java.time.Instant;
@@ -33,11 +33,11 @@ public class PostgresRegister implements Register {
     private final IndexDriver indexDriver;
     private final List<IndexFunction> indexFunctions;
     private final ItemValidator itemValidator;
-    private final ConfigManager configManager;
+    private final EnvironmentValidator environmentValidator;
 
     private RegisterMetadata registerMetadata;
     private Map<String, Field> fieldsByName;
-
+    
     public PostgresRegister(RegisterName registerName,
                             EntryLog entryLog,
                             ItemStore itemStore,
@@ -46,7 +46,7 @@ public class PostgresRegister implements Register {
                             List<IndexFunction> indexFunctions,
                             IndexDriver indexDriver,
                             ItemValidator itemValidator,
-                            ConfigManager configManager) {
+                            EnvironmentValidator environmentValidator) {
         this.registerName = registerName;
         this.entryLog = entryLog;
         this.itemStore = itemStore;
@@ -55,7 +55,7 @@ public class PostgresRegister implements Register {
         this.indexDriver = indexDriver;
         this.indexFunctions = indexFunctions;
         this.itemValidator = itemValidator;
-        this.configManager = configManager;
+        this.environmentValidator = environmentValidator;
     }
 
     @Override
@@ -70,25 +70,16 @@ public class PostgresRegister implements Register {
         referencedItems.forEach(i -> {
             if (entry.getEntryType() == EntryType.user) {
                 itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+            } else if (entry.getKey().startsWith("field:")) {
+                Field field = extractObjectFromItem(i, Field.class);
+                environmentValidator.validateFieldAgainstEnvironment(field);
+                
             } else if (entry.getKey().startsWith("register:")) {
                 RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
                 // will throw exception if field not present
                 localRegisterMetadata.getFields().forEach(this::getField);
-
-                RegisterMetadata environmentRegisterMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
-                List<String> environmentRegisterFields = environmentRegisterMetadata.getFields();
-                List<String> localRegisterFields = localRegisterMetadata.getFields();
-                if (environmentRegisterFields.size() != localRegisterFields.size() || !environmentRegisterFields.containsAll(localRegisterFields)) {
-                    throw new RuntimeException("Register definition not valid");
-                }
-
-                localRegisterFields.forEach(field -> {
-                    Field localField = getField(field);
-                    Field environmentField =  configManager.getFieldsConfiguration().getField(field);
-                    if (!localField.getDatatype().equals(environmentField.getDatatype())) {
-                        throw new RuntimeException("Field definitions are not valid");
-                    }
-                });
+                
+                environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
             }
         });
 

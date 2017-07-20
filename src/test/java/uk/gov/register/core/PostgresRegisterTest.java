@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.db.InMemoryEntryDAO;
@@ -17,6 +16,7 @@ import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
 
@@ -54,7 +54,7 @@ public class PostgresRegisterTest {
     @Mock
     private Record registerRecord;
     @Mock
-    private ConfigManager configManager;
+    private EnvironmentValidator environmentValidator;
 
 
     private PostgresRegister register;
@@ -65,7 +65,7 @@ public class PostgresRegisterTest {
     public void setup() throws IOException {
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator, configManager);
+                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator, environmentValidator);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 

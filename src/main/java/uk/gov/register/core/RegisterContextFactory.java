@@ -8,12 +8,12 @@ import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.DatabaseManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.RegisterLinkService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,10 +91,12 @@ public class RegisterContextFactory {
     }
 
     public RegisterContext build(RegisterName registerName, ConfigManager configManager, DatabaseManager databaseManager,
-                                 RegisterLinkService registerLinkService, RegisterConfigConfiguration registerConfigConfiguration) {
+                                 EnvironmentValidator environmentValidator, RegisterLinkService registerLinkService, 
+                                 RegisterConfigConfiguration registerConfigConfiguration) {
         return new RegisterContext(
                 registerName,
                 configManager,
+                environmentValidator,
                 registerLinkService,
                 databaseManager.getDbi(),
                 getFlywayFactory(registerName, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),

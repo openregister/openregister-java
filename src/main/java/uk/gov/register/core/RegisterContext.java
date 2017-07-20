@@ -14,6 +14,7 @@ import uk.gov.register.exceptions.RegisterResultException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.serialization.RegisterResult;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.store.DataAccessLayer;
@@ -38,6 +39,7 @@ public class RegisterContext implements
         ResourceConfiguration {
     private RegisterName registerName;
     private ConfigManager configManager;
+    private final EnvironmentValidator environmentValidator;
     private RegisterLinkService registerLinkService;
     private AtomicReference<MemoizationStore> memoizationStore;
     private DBI dbi;
@@ -52,12 +54,14 @@ public class RegisterContext implements
     private RegisterAuthenticator authenticator;
     private final ItemValidator itemValidator;
 
-    public RegisterContext(RegisterName registerName, ConfigManager configManager, RegisterLinkService registerLinkService,
-                           DBI dbi, Flyway flyway, String schema, Optional<String> trackingId, boolean enableRegisterDataDelete,
-                           boolean enableDownloadResource, Optional<String> historyPageUrl,
-                           List<String> similarRegisters, List<String> indexNames, RegisterAuthenticator authenticator) {
+    public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator, 
+                           RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema, 
+                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource, 
+                           Optional<String> historyPageUrl, List<String> similarRegisters, List<String> indexNames, 
+                           RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
+        this.environmentValidator = environmentValidator;
         this.registerLinkService = registerLinkService;
         this.dbi = dbi;
         this.flyway = flyway;
@@ -102,10 +106,10 @@ public class RegisterContext implements
                 getIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
                 itemValidator,
-                configManager);
+                environmentValidator);
     }
 
-    private Register buildTransactionalRegister(Handle handle, DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
+    private Register buildTransactionalRegister(DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
         return new PostgresRegister(registerName,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
                 new ItemStoreImpl(dataAccessLayer),
@@ -114,14 +118,14 @@ public class RegisterContext implements
                 getIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
                 itemValidator,
-                configManager);
+                environmentValidator);
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
         useTransaction(dbi, handle -> {
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
-            Register register = buildTransactionalRegister(handle, dataAccessLayer, transactionalMemoizationStore);
+            Register register = buildTransactionalRegister(dataAccessLayer, transactionalMemoizationStore);
             consumer.accept(register);
             dataAccessLayer.checkpoint();
         });
@@ -133,7 +137,7 @@ public class RegisterContext implements
         try {
             return inTransaction(dbi, handle -> {
                 PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
-                Register register = buildTransactionalRegister(handle, dataAccessLayer, transactionalMemoizationStore);
+                Register register = buildTransactionalRegister(dataAccessLayer, transactionalMemoizationStore);
                 RegisterResult result = registerOperationFunc.apply(register);
                 if (result.isSuccessful()) {
                     dataAccessLayer.checkpoint();

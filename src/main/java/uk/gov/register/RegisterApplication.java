@@ -34,6 +34,7 @@ import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
@@ -90,11 +91,13 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         ConfigManager configManager = new ConfigManager(configuration);
         configManager.refreshConfig();
 
+        EnvironmentValidator environmentValidator = new EnvironmentValidator(configManager);
+
         DatabaseManager databaseManager = new DatabaseManager(configuration, environment, dbiFactory);
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
 
-        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService, configuration);
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService, environmentValidator, configuration);
         allTheRegisters.stream().parallel().forEach(RegisterContext::migrate);
 
         RSFExecutor rsfExecutor = new RSFExecutor();
@@ -123,6 +126,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bindAsContract(RegisterFieldsConfiguration.class);
 
                 bind(configManager).to(ConfigManager.class);
+                bind(environmentValidator).to(EnvironmentValidator.class);
                 bind(registerLinkService).to(RegisterLinkService.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 

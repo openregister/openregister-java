@@ -19,8 +19,8 @@ public class FieldsConfiguration {
         fields = fieldConfigRecords.stream().map(FieldConfigRecord::getSingleItem).collect(toList());
     }
 
-    public Field getField(String fieldName) {
-        return fields.stream().filter(f -> Objects.equals(f.fieldName, fieldName)).findFirst().get();
+    public Optional<Field> getField(String fieldName) {
+        return fields.stream().filter(f -> Objects.equals(f.fieldName, fieldName)).findFirst();
     }
 
     public Collection<Field> getAllFields() {

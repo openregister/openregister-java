@@ -24,6 +24,7 @@ import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.indexer.IndexDriver;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
@@ -195,12 +196,15 @@ public class PostgresRegisterTransactionalFunctionalTest {
         RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
         when(registersConfiguration.getRegisterMetadata(registerName)).thenReturn(new RegisterMetadata(registerName, Arrays.asList("address"), "copyright", "registry", "text", "phase"));
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
-        when(fieldsConfiguration.getField("address")).thenReturn(new Field("address", "string", registerName, Cardinality.ONE, "A place in the UK with a postal address."));
+        when(fieldsConfiguration.getField("address")).thenReturn(Optional.of(new Field("address", "string", registerName, Cardinality.ONE, "A place in the UK with a postal address.")));
+        
         ConfigManager configManager = mock(ConfigManager.class);
         when(configManager.getRegistersConfiguration()).thenReturn(registersConfiguration);
         when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
         RegisterMetadata registerData = mock(RegisterMetadata.class);
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
+
+        EnvironmentValidator environmentValidator = mock(EnvironmentValidator.class);
 
         return new PostgresRegister(registerData.getRegisterName(),
                 entryLog,
@@ -210,7 +214,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 new ArrayList<>(IndexFunctionConfiguration.METADATA.getIndexFunctions()),
                 indexDriver,
                 itemValidator,
-                configManager);
+                environmentValidator);
     }
 
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {

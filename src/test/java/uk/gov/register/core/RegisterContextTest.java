@@ -8,6 +8,7 @@ import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.exceptions.NoSuchConfigException;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.RegisterLinkService;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
 public class RegisterContextTest {
     private RegisterName registerName;
     private ConfigManager configManager;
+    private EnvironmentValidator environmentValidator;
     private RegisterLinkService registerLinkService;
     private DBI dbi;
     private Flyway flyway;
@@ -32,6 +34,7 @@ public class RegisterContextTest {
         registerName = new RegisterName("register");
         schema = "register";
         configManager = mock(ConfigManager.class, RETURNS_DEEP_STUBS);
+        environmentValidator = mock(EnvironmentValidator.class);
         registerLinkService = mock(RegisterLinkService.class);
         dbi = mock(DBI.class);
         flyway = mock(Flyway.class);
@@ -39,7 +42,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, schema, Optional.empty(), false, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(), false, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -49,7 +52,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();
@@ -82,7 +85,7 @@ public class RegisterContextTest {
                 .thenReturn(expectedInitialMetadata)
                 .thenReturn(expectedUpdatedMetadata);
 
-        RegisterContext context = new RegisterContext(registerName, configManager, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
 
         RegisterMetadata actualInitialMetadata = context.getRegisterMetadata();
         assertThat(actualInitialMetadata, equalTo(expectedInitialMetadata));
