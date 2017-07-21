@@ -44,9 +44,9 @@ public interface DataAccessLayer {
     Optional<Record> getRecord(String key);
     List<Record> getRecords(int limit, int offset);
     List<Record> findMax100RecordsByKeyValue(String key, String value);
-    Collection<Entry> findAllEntriesOfRecordBy(String key);
-
-    int getTotalRecords();
+    Collection<Entry> getAllEntriesByKey(String key);
+    //int getTotalRecords();
+    
     // Index
     void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber);
     void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber);
