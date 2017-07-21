@@ -98,7 +98,10 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
 
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService, environmentValidator, configuration);
-        allTheRegisters.stream().parallel().forEach(RegisterContext::migrate);
+        allTheRegisters.stream().parallel().forEach(registerContext -> {
+            registerContext.migrate();
+            environmentValidator.validateExistingMetadataAgainstEnvironment(registerContext);
+        });
 
         RSFExecutor rsfExecutor = new RSFExecutor();
         rsfExecutor.register(new AddItemCommandHandler());

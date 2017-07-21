@@ -72,7 +72,7 @@ public class PostgresRegisterTest {
         when(fieldRecord.getItems()).thenReturn(Arrays.asList(getItem("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"field description\"}")));
 
         when(derivationRecordIndex.getRecord("register:postcode", IndexNames.METADATA)).thenReturn(Optional.of(registerRecord));
-        //when(derivationRecordIndex.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
+        when(derivationRecordIndex.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
     }
 
     @Test(expected = NoSuchFieldException.class)

@@ -183,15 +183,26 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(200));
     }
 
+	@Test
+	public void shouldReturnBadRequestWhenRegisterIsMissingFieldsDefinedInEnvironment() throws Exception {
+		Response response = register.loadRsf(TestRegister.postcode,
+				"add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
+						"append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a\n" +
+						"add-item\t{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
+						"append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
+		assertThat(response.getStatus(), equalTo(400));
+		assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}\",\"details\":\"Definition of field postcode does not match Field Register\"}"));
+	}
+    
     @Test
-    public void shouldReturnBadRequestWhenRegisterIsMissingFieldsDefinedInEnvironment() throws Exception {
+    public void shouldReturnBadRequestWhenLocalFieldDoesNotExistInEnvironment() throws Exception {
         Response response = register.loadRsf(TestRegister.postcode,
-            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
-            "append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a\n" +
-            "add-item\t{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"test-postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
+            "append-entry\tsystem\tfield:test-postcode\t2017-06-09T12:59:51Z\tsha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe\n" +
+            "add-item\t{\"fields\":[\"test-postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
             "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}\",\"details\":\"Definition of field postcode does not match Field Register\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:test-postcode, 2017-06-09T12:59:51Z, sha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe]}\",\"details\":\"Field test-postcode does not exist in Field Register\"}"));
     }
 
     @Test

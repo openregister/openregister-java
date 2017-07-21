@@ -2,10 +2,13 @@ package uk.gov.register.service;
 
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.exceptions.FieldValidationException;
 import uk.gov.register.exceptions.RegisterValidationException;
 import uk.gov.register.util.FieldComparer;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.util.List;
 
@@ -34,5 +37,17 @@ public class EnvironmentValidator {
         if (!FieldComparer.equals(localField, environmentField)) {
             throw new FieldValidationException("Definition of field " + localField.fieldName + " does not match Field Register");
         }
+    }
+    
+    public void validateExistingMetadataAgainstEnvironment(RegisterContext registerContext) {
+        Register register = registerContext.buildOnDemandRegister();
+
+        if (register.getTotalDerivationRecords(IndexNames.METADATA) == 0) {
+            return;
+        }
+        
+        RegisterMetadata localRegisterMetadata = register.getRegisterMetadata();
+        register.getFieldsByName().values().forEach(f -> validateFieldAgainstEnvironment(f));
+        validateRegisterAgainstEnvironment(localRegisterMetadata);
     }
 }
