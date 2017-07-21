@@ -1,6 +1,5 @@
 package uk.gov.register.store.postgres;
 
-import com.google.common.collect.Iterables;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
@@ -11,7 +10,6 @@ import uk.gov.register.util.HashValue;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer implements DataAccessLayer {
     private final List<Entry> stagedEntries;
@@ -22,18 +20,16 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private final EntryDAO entryDAO;
     private final EntryItemDAO entryItemDAO;
     private final ItemDAO itemDAO;
-    private final CurrentKeysUpdateDAO currentKeysDAO;
     private final IndexDAO indexDAO;
 
     public PostgresDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
             EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO,
-            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, CurrentKeysUpdateDAO currentKeysUpdateDAO, String schema) {
+            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, String schema) {
         super(entryQueryDAO, indexQueryDAO, itemQueryDAO, recordQueryDAO, schema);
         this.entryDAO = entryDAO;
         this.entryItemDAO = entryItemDAO;
         this.itemDAO = itemDAO;
-        this.currentKeysDAO = currentKeysUpdateDAO;
         this.indexDAO = indexDAO;
 
         stagedEntries = new ArrayList<>();
@@ -104,7 +100,6 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     public void checkpoint() {
         writeStagedEntriesToDatabase();
         writeStagedItemsToDatabase();
-        writeStagedCurrentKeysToDatabase();
     }
 
     private void writeStagedEntriesToDatabase() {
@@ -135,32 +130,11 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         itemDAO.insertInBatch(stagedItems.values(), schema);
         stagedItems.clear();
     }
-
-    private void writeStagedCurrentKeysToDatabase() {
-        if (stagedCurrentKeys.isEmpty()) {
-            return;
-        }
-
-        int noOfRecordsDeleted = removeRecordsWithKeys(stagedCurrentKeys.keySet());
-
-        currentKeysDAO.writeCurrentKeys(Iterables.transform(stagedCurrentKeys.entrySet(),
-                keyValue -> new CurrentKey(keyValue.getKey(), keyValue.getValue()))
-                , schema);
-
-        currentKeysDAO.updateTotalRecords(stagedCurrentKeys.size() - noOfRecordsDeleted - entriesWithoutItems.size(), schema);
-        stagedCurrentKeys.clear();
-        entriesWithoutItems.clear();
-    }
-
+    
     private OptionalInt getMaxStagedEntryNumber() {
         if (stagedEntries.isEmpty()) {
             return OptionalInt.empty();
         }
         return OptionalInt.of(stagedEntries.get(stagedEntries.size() - 1).getEntryNumber());
-    }
-
-    private int removeRecordsWithKeys(Iterable<String> keySet) {
-        int[] noOfRecordsDeletedPerBatch = currentKeysDAO.removeRecordWithKeys(keySet, schema);
-        return IntStream.of(noOfRecordsDeletedPerBatch).sum();
     }
 }

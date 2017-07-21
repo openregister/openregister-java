@@ -14,8 +14,7 @@ import java.sql.SQLException;
 
 @UseStringTemplate3StatementLocator
 public interface TestRecordDAO {
-    @SqlUpdate("delete from \"<schema>\".current_keys;" +
-            "delete from \"<schema>\".total_records;" +
+    @SqlUpdate("delete from \"<schema>\".total_records;" +
             "insert into \"<schema>\".total_records values(0)")
     void wipeData(@Define("schema") String schema);
 

@@ -139,13 +139,13 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public List<Record> getRecords(int limit, int offset) {
         checkpoint();
-        return recordQueryDAO.getRecords(limit, offset, schema);
+        return indexQueryDAO.findRecords(limit, offset, IndexNames.RECORDS, schema, "entry");
     }
 
     @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
         checkpoint();
-        return recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema);
+        return indexQueryDAO.findMax100RecordsByKeyValue(key, value, schema);
     }
 
     @Override
@@ -164,6 +164,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
+        checkpoint(); // TODO: do we need this?
         return indexQueryDAO.findRecord(key, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 

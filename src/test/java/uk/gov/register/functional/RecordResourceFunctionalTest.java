@@ -81,6 +81,22 @@ public class RecordResourceFunctionalTest {
     }
 
     @Test
+    public void recordResource_returnsMostRecentRecord_whenMultipleEntriesExist() throws IOException {
+        Response response = register.getRequest(address, "/record/6789.json");
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        assertThat(res.get("6789").get("item").get(0).get("street").textValue(), equalTo("presley"));
+    }
+
+    @Test
+    public void recordResource_returnsIdenticalResponseAsIndexEndpoint() throws IOException {
+        String indexResponse = register.getRequest(address, "/index/records/record/6789.json").readEntity(String.class);
+        String recordsResponse = register.getRequest(address, "/record/6789.json").readEntity(String.class);
+
+        assertThat(indexResponse, equalTo(recordsResponse));
+    }
+
+    @Test
     public void historyResource_returnsHistoryOfARecord() throws IOException {
         Response response = register.getRequest(address, "/record/6789/entries.json");
 
