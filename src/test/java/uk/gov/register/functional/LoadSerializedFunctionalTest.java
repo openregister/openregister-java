@@ -61,8 +61,8 @@ public class LoadSerializedFunctionalTest {
                 new HashValue(HashingAlgorithm.SHA256, "ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"text\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}"));
         TestDBItem expectedItem3 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "8d720e24af4cf63a43b0f9ccd759ed7f36b16617c776124e00faf6ccd30bcc45"),
-                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"register\":\"public-body\",\"text\":\"Body responsible for maintaining one or more registers\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"text\":\"Body responsible for maintaining one or more registers\"}"));
         TestDBItem expectedItem4 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"phase\",\"phase\":\"alpha\",\"text\":\"Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual).\"}"));
@@ -92,7 +92,7 @@ public class LoadSerializedFunctionalTest {
         assertThat(systemEntries.get(1).getEntryNumber(), is(2));
         assertThat(systemEntries.get(1).getItemHashes().get(0).getValue(), is("ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f"));
         assertThat(systemEntries.get(2).getEntryNumber(), is(3));
-        assertThat(systemEntries.get(2).getItemHashes().get(0).getValue(), is("8d720e24af4cf63a43b0f9ccd759ed7f36b16617c776124e00faf6ccd30bcc45"));
+        assertThat(systemEntries.get(2).getItemHashes().get(0).getValue(), is("4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"));
         assertThat(systemEntries.get(3).getEntryNumber(), is(4));
         assertThat(systemEntries.get(3).getItemHashes().get(0).getValue(), is("1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"));
         assertThat(systemEntries.get(4).getEntryNumber(), is(5));
