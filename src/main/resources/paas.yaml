@@ -1,0 +1,43 @@
+database:
+  driverClass: org.postgresql.Driver
+  url: "dummy-value"
+
+  initialSize: 1
+  minSize: 1
+  maxSize: 4
+
+  properties:
+    charSet: UTF-8
+
+server:
+  requestLog:
+    type: classic
+    appenders:
+      - type: logstash-console
+
+  registerDefaultExceptionMappers: false
+
+register: ${REGISTER}
+schema: ${REGISTER}
+registerDomain: ${REGISTER_DOMAIN}
+
+enableDownloadResource: true
+
+externalConfigDirectory: /tmp
+
+downloadConfigs: true
+
+fieldsYamlLocation: classpath://config/fields.yaml
+registersYamlLocation: classpath://config/registers.yaml
+
+credentials:
+  user: ${USER}
+  password: ${PASSWORD}
+
+logging:
+  level: INFO
+  loggers:
+    "uk.gov": DEBUG
+    "org.skife.jdbi.v2": TRACE
+  appenders:
+    - type: logstash-console
