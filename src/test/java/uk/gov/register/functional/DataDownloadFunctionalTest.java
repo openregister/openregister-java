@@ -272,8 +272,8 @@ public class DataDownloadFunctionalTest {
         List<String> partialRsfLines = getRsfLinesFrom(partialRsfResponse);
 
         assertThat(partialRsfLines.get(0), is(fullRsfLines.get(0)));
-        assertThat(partialRsfLines.subList(1, 18).containsAll(fullRsfLines.subList(1, 18)), is(true));
-        assertThat(partialRsfLines.subList(18, 36), equalTo(fullRsfLines.subList(18, 36)));
+        assertThat(partialRsfLines.subList(1, 20).containsAll(fullRsfLines.subList(1, 20)), is(true));
+        assertThat(partialRsfLines.subList(20, 36), equalTo(fullRsfLines.subList(20, 36)));
         assertThat(partialRsfLines.get(36), is(fullRsfLines.get(36)));
     }
 
@@ -286,8 +286,8 @@ public class DataDownloadFunctionalTest {
         List<String> partialRsfLines = getRsfLinesFrom(partialRsfResponse);
 
         assertThat(partialRsfLines.get(0), is(fullRsfLines.get(0)));
-        assertThat(partialRsfLines.subList(1, 18).containsAll(fullRsfLines.subList(1, 18)), is(true));
-        assertThat(partialRsfLines.subList(18, 36), equalTo(fullRsfLines.subList(18, 36)));
+        assertThat(partialRsfLines.subList(1, 20).containsAll(fullRsfLines.subList(1, 20)), is(true));
+        assertThat(partialRsfLines.subList(20, 36), equalTo(fullRsfLines.subList(20, 36)));
         assertThat(partialRsfLines.get(36), is(fullRsfLines.get(36)));
     }
 

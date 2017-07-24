@@ -4,7 +4,6 @@ import io.dropwizard.testing.ResourceHelpers;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
-import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -14,7 +13,7 @@ public class FieldsConfigurationTest {
     public void loadConfigurationWithDefaultFieldsResourceFile() {
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration("src/main/resources/config/fields.yaml");
 
-        assertThat(fieldsConfiguration.getField("register").fieldName, equalTo("register"));
+        assertThat(fieldsConfiguration.getField("register").get().fieldName, equalTo("register"));
     }
 
     @Test
@@ -24,6 +23,6 @@ public class FieldsConfigurationTest {
 
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(fileUrl);
 
-        assertThat(fieldsConfiguration.getField("register").fieldName, equalTo("register"));
+        assertThat(fieldsConfiguration.getField("register").get().fieldName, equalTo("register"));
     }
 }

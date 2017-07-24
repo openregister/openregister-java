@@ -16,6 +16,7 @@ import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
 
@@ -52,6 +53,9 @@ public class PostgresRegisterTest {
     private Record fieldRecord;
     @Mock
     private Record registerRecord;
+    @Mock
+    private EnvironmentValidator environmentValidator;
+
 
     private PostgresRegister register;
 
@@ -61,14 +65,14 @@ public class PostgresRegisterTest {
     public void setup() throws IOException {
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator);
+                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator, environmentValidator);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
         when(fieldRecord.getItems()).thenReturn(Arrays.asList(getItem("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"field description\"}")));
 
         when(derivationRecordIndex.getRecord("register:postcode", IndexNames.METADATA)).thenReturn(Optional.of(registerRecord));
-        //when(derivationRecordIndex.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
+        when(derivationRecordIndex.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
     }
 
     @Test(expected = NoSuchFieldException.class)

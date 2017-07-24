@@ -58,23 +58,23 @@ public class LoadSerializedFunctionalTest {
                 new HashValue(HashingAlgorithm.SHA256, "955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"register\":\"register\",\"text\":\"A register name.\"}"));
         TestDBItem expectedItem2 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b"),
-                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"text\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}"));
         TestDBItem expectedItem3 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"),
-                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"text\":\"Body responsible for maintaining one or more registers\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "8d720e24af4cf63a43b0f9ccd759ed7f36b16617c776124e00faf6ccd30bcc45"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"register\":\"public-body\",\"text\":\"Body responsible for maintaining one or more registers\"}"));
         TestDBItem expectedItem4 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"phase\",\"phase\":\"alpha\",\"text\":\"Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual).\"}"));
         TestDBItem expectedItem5 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c"),
-                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"copyright\",\"phase\":\"alpha\",\"text\":\"Copyright for the data in the register.\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "c7e5a90c020f7686d9a275cb0cc164636745b10ae168a72538772692cc90d633"),
+                nodeOf("{\"cardinality\":\"1\",\"datatype\":\"text\",\"field\":\"copyright\",\"phase\":\"alpha\",\"text\":\"Copyright for the data in the register.\"}"));
         TestDBItem expectedItem6 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"),
                 nodeOf("{\"cardinality\":\"n\",\"datatype\":\"string\",\"field\":\"fields\",\"phase\":\"alpha\",\"register\":\"field\",\"text\":\"Set of field names.\"}"));
         TestDBItem expectedItem7 = new TestDBItem(
-                new HashValue(HashingAlgorithm.SHA256, "2238e546c1d9e81a3715d10949dedced0311f596304fbf9bb48c50833f8ab025"),
-                nodeOf("{\"fields\":[\"register\",\"text\",\"registry\",\"phase\",\"copyright\",\"fields\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of registers\"}"));
+                new HashValue(HashingAlgorithm.SHA256, "f404b4739b51afeb39bba26f3bbf1aa8c6f7d25f0d54444992fc00f24587ef77"),
+                nodeOf("{\"fields\":[\"register\",\"text\",\"registry\",\"phase\",\"copyright\",\"fields\"],\"phase\":\"alpha\",\"register\":\"register\",\"registry\":\"cabinet-office\",\"text\":\"Register of registers\"}"));
         TestDBItem expectedItem8 = new TestDBItem(
                 new HashValue(HashingAlgorithm.SHA256, "3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"),
                 nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
@@ -90,17 +90,17 @@ public class LoadSerializedFunctionalTest {
         assertThat(systemEntries.get(0).getEntryNumber(), is(1));
         assertThat(systemEntries.get(0).getItemHashes().get(0).getValue(), is("955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"));
         assertThat(systemEntries.get(1).getEntryNumber(), is(2));
-        assertThat(systemEntries.get(1).getItemHashes().get(0).getValue(), is("243a2dafca693363f99c38487a03d1a241915c47a38ad5627ad941c9e52b4c7b"));
+        assertThat(systemEntries.get(1).getItemHashes().get(0).getValue(), is("ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f"));
         assertThat(systemEntries.get(2).getEntryNumber(), is(3));
-        assertThat(systemEntries.get(2).getItemHashes().get(0).getValue(), is("4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"));
+        assertThat(systemEntries.get(2).getItemHashes().get(0).getValue(), is("8d720e24af4cf63a43b0f9ccd759ed7f36b16617c776124e00faf6ccd30bcc45"));
         assertThat(systemEntries.get(3).getEntryNumber(), is(4));
         assertThat(systemEntries.get(3).getItemHashes().get(0).getValue(), is("1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"));
         assertThat(systemEntries.get(4).getEntryNumber(), is(5));
-        assertThat(systemEntries.get(4).getItemHashes().get(0).getValue(), is("ecbbde36c6a9808b5f116c63f9ca14773ac3fac251b53e21a1d9fd4b2dd1b35c"));
+        assertThat(systemEntries.get(4).getItemHashes().get(0).getValue(), is("c7e5a90c020f7686d9a275cb0cc164636745b10ae168a72538772692cc90d633"));
         assertThat(systemEntries.get(5).getEntryNumber(), is(6));
         assertThat(systemEntries.get(5).getItemHashes().get(0).getValue(), is("61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"));
         assertThat(systemEntries.get(6).getEntryNumber(), is(7));
-        assertThat(systemEntries.get(6).getItemHashes().get(0).getValue(), is("2238e546c1d9e81a3715d10949dedced0311f596304fbf9bb48c50833f8ab025"));
+        assertThat(systemEntries.get(6).getItemHashes().get(0).getValue(), is("f404b4739b51afeb39bba26f3bbf1aa8c6f7d25f0d54444992fc00f24587ef77"));
 
         List<Entry> userEntries = testEntryDAO.getAllEntries(schema);
 
@@ -151,7 +151,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:2f90a43858c366134a070f563697e04a851c977cd27e491c02885a2f4441e190]}\",\"details\":\"Field undefined: register - address\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:8d824e2afa57f1a71980237341b0c75d61fdc5c32e52d91e64c6fc3c6265ae63]}\",\"details\":\"Field undefined: register - address\"}"));
     }
     
     @Test
@@ -181,6 +181,43 @@ public class LoadSerializedFunctionalTest {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry.rsf")));
         Response r = send(input);
         assertThat(r.getStatus(), equalTo(200));
+    }
+
+	@Test
+	public void shouldReturnBadRequestWhenRegisterIsMissingFieldsDefinedInEnvironment() throws Exception {
+		Response response = register.loadRsf(TestRegister.postcode,
+				"add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
+						"append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a\n" +
+						"add-item\t{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
+						"append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
+		assertThat(response.getStatus(), equalTo(400));
+		assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}\",\"details\":\"Definition of field postcode does not match Field Register\"}"));
+	}
+    
+    @Test
+    public void shouldReturnBadRequestWhenLocalFieldDoesNotExistInEnvironment() throws Exception {
+        Response response = register.loadRsf(TestRegister.postcode,
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"test-postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
+            "append-entry\tsystem\tfield:test-postcode\t2017-06-09T12:59:51Z\tsha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe\n" +
+            "add-item\t{\"fields\":[\"test-postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
+            "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:test-postcode, 2017-06-09T12:59:51Z, sha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe]}\",\"details\":\"Field test-postcode does not exist in Field Register\"}"));
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenLocalFieldDoesNotMatchEnvironmentField() throws Exception {
+        String rsf =
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"point\",\"phase\":\"alpha\",\"text\":\"A geographical point\"}\n" +
+            "append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a\n" +
+            "append-entry\tsystem\tfield:point\t2017-06-09T12:59:51Z\tsha-256:48d0ad5afa2502674a2253c62e5af3f9bc10f5c6fbc5d16784c9dcfbc60d066b\n" +
+            "add-item\t{\"fields\":[\"postcode\",\"point\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
+            "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:ee2fd6546a8362d98e3cd63d914ca55d93f15801c35fdd108b9294c4f0a1d01e\n";
+
+        Response response = register.loadRsf(TestRegister.postcode, rsf);
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}\",\"details\":\"Definition of field postcode does not match Field Register\"}"));
     }
 
     @After

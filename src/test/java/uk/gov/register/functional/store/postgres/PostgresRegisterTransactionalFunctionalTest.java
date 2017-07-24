@@ -14,13 +14,17 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.IndexFunctionConfiguration;
+import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.indexer.IndexDriver;
+import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
@@ -188,8 +192,19 @@ public class PostgresRegisterTransactionalFunctionalTest {
         EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
         ItemValidator itemValidator = mock(ItemValidator.class);
         ItemStore itemStore = new ItemStoreImpl(dataAccessLayer);
+        RegisterName registerName = new RegisterName("address");
+        RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
+        when(registersConfiguration.getRegisterMetadata(registerName)).thenReturn(new RegisterMetadata(registerName, Arrays.asList("address"), "copyright", "registry", "text", "phase"));
+        FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
+        when(fieldsConfiguration.getField("address")).thenReturn(Optional.of(new Field("address", "string", registerName, Cardinality.ONE, "A place in the UK with a postal address.")));
+        
+        ConfigManager configManager = mock(ConfigManager.class);
+        when(configManager.getRegistersConfiguration()).thenReturn(registersConfiguration);
+        when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
         RegisterMetadata registerData = mock(RegisterMetadata.class);
         when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
+
+        EnvironmentValidator environmentValidator = mock(EnvironmentValidator.class);
 
         return new PostgresRegister(registerData.getRegisterName(),
                 entryLog,
@@ -198,7 +213,8 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 derivationRecordIndex,
                 new ArrayList<>(IndexFunctionConfiguration.METADATA.getIndexFunctions()),
                 indexDriver,
-                itemValidator);
+                itemValidator,
+                environmentValidator);
     }
 
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {

@@ -23,7 +23,7 @@ public class DeleteRegisterDataFunctionalTest {
 
     @Test
     public void deleteRegisterData_deletesAllDataFromDb() throws Exception {
-        register.loadRsf(postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
+        Response r = register.loadRsf(postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
 
         String item1 = "{\"postcode\":\"P1\"}";
         String item2 = "{\"postcode\":\"P2\"}";

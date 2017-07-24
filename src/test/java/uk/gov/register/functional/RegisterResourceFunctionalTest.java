@@ -73,7 +73,7 @@ public class RegisterResourceFunctionalTest {
         Map<?, ?> registerRecordMapFromAddressRegister = (Map) registerResourceMapFromAddressRegister.get("register-record");
 
         assertThat(registerRecordMapFromAddressRegister.get("text"), equalTo("Register of addresses"));
-        assertThat((List<String>) registerRecordMapFromAddressRegister.get("fields"), containsInAnyOrder("address", "street", "locality", "town", "area", "postcode", "country", "latitude", "longitude"));
+        assertThat((List<String>) registerRecordMapFromAddressRegister.get("fields"), containsInAnyOrder("address", "street", "locality", "town", "area", "postcode", "country", "latitude", "longitude", "property"));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class RegisterResourceFunctionalTest {
         HashMap<String, Object> result = new HashMap<>();
         result.put("text", "Register of addresses");
         result.put("phase", "alpha");
-        result.put("fields", Arrays.asList("address","street","locality","town","area","postcode","country","latitude","longitude"));
+        result.put("fields", Arrays.asList("address","street","locality","town","area","postcode","country","latitude","longitude","property"));
         result.put("register", "address");
         result.put("registry", "office-for-national-statistics");
         return result;
