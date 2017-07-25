@@ -54,10 +54,10 @@ public class RegisterContext implements
     private RegisterAuthenticator authenticator;
     private final ItemValidator itemValidator;
 
-    public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator, 
-                           RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema, 
-                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource, 
-                           Optional<String> historyPageUrl, List<String> similarRegisters, List<String> indexNames, 
+    public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator,
+                           RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema,
+                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource,
+                           Optional<String> historyPageUrl, List<String> similarRegisters, List<String> indexNames,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
@@ -91,8 +91,14 @@ public class RegisterContext implements
         return flyway.migrate();
     }
 
-    private List<IndexFunction> getIndexFunctions() {
-        return indexFunctionConfigs.stream().flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
+    private List<IndexFunction> getUserIndexFunctions() {
+        return indexFunctionConfigs.stream().filter(c -> c.getEntryType() == EntryType.user)
+                .flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
+    }
+
+    private List<IndexFunction> getSystemIndexFunctions() {
+        return indexFunctionConfigs.stream().filter(c -> c.getEntryType() == EntryType.system)
+                .flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
     }
 
     public Register buildOnDemandRegister() {
@@ -103,7 +109,8 @@ public class RegisterContext implements
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
-                getIndexFunctions(),
+                getUserIndexFunctions(),
+                getSystemIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
                 itemValidator,
                 environmentValidator);
@@ -115,7 +122,8 @@ public class RegisterContext implements
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
-                getIndexFunctions(),
+                getUserIndexFunctions(),
+                getSystemIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
                 itemValidator,
                 environmentValidator);

@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import org.flywaydb.core.Flyway;
+import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
@@ -8,10 +9,13 @@ import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.exceptions.NoSuchConfigException;
+import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
+import uk.gov.register.indexer.function.AddAllIndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.RegisterLinkService;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -92,5 +96,25 @@ public class RegisterContextTest {
 
         RegisterMetadata actualUpdatedMetadata = context.getRegisterMetadata();
         assertThat(actualUpdatedMetadata, equalTo(expectedUpdatedMetadata));
+    }
+
+    @Test
+    public void shouldSetUserIndexFunctions(){
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
+                true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries"), new RegisterAuthenticator("", ""));
+        PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
+        assertThat(register.getUserIndexFunctions().size(), Is.is(1));
+        assertThat(register.getUserIndexFunctions().get(0).getClass().getName(), Is.is(CurrentCountriesIndexFunction.class.getName()));
+
+    }
+
+    @Test
+    public void shouldSetSystemIndexFunctions(){
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
+                true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries"), new RegisterAuthenticator("", ""));
+        PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
+        assertThat(register.getSystemIndexFunctions().size(), Is.is(1));
+        assertThat(register.getSystemIndexFunctions().get(0).getClass().getName(), Is.is(AddAllIndexFunction.class.getName()));
+
     }
 }

@@ -33,10 +33,7 @@ import uk.gov.verifiablelog.store.memoization.DoNothing;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -211,6 +208,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 itemStore,
                 new RecordIndexImpl(dataAccessLayer),
                 derivationRecordIndex,
+                Collections.emptyList(),
                 new ArrayList<>(IndexFunctionConfiguration.METADATA.getIndexFunctions()),
                 indexDriver,
                 itemValidator,

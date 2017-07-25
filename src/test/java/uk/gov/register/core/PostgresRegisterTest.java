@@ -50,6 +50,8 @@ public class PostgresRegisterTest {
     @Mock
     private IndexFunction indexFunction;
     @Mock
+    private IndexFunction systemIndexFunction;
+    @Mock
     private Record fieldRecord;
     @Mock
     private Record registerRecord;
@@ -65,7 +67,7 @@ public class PostgresRegisterTest {
     public void setup() throws IOException {
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator, environmentValidator);
+                derivationRecordIndex, Arrays.asList(indexFunction), Arrays.asList(systemIndexFunction), indexDriver, itemValidator, environmentValidator);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
@@ -131,6 +133,18 @@ public class PostgresRegisterTest {
         Map<String, Field> fieldsByName = register.getFieldsByName();
         assertThat(fieldsByName.size(), is(1));
         assertThat(fieldsByName.get("postcode").getText(), is("field description"));
+    }
+
+    @Test
+    public void shouldCallSystemIndexFunction() throws IOException {
+        JsonNode content = mapper.readTree( "{\"name\":\"school\"}" );
+        HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
+        Item item = new Item(hashValue, content);
+        Entry entry = new Entry(1, hashValue, Instant.now(),"name", EntryType.system);
+
+        register.putItem(item);
+        register.appendEntry(entry);
+        verify(indexDriver).indexEntry(register, entry, systemIndexFunction);
     }
 
     private Item getItem(String json) throws IOException {
