@@ -483,7 +483,6 @@ registry:
     field: "registry"
     phase: "alpha"
     datatype: "string"
-    register: "public-body"
     cardinality: "1"
 website:
   entry-number: "60"
