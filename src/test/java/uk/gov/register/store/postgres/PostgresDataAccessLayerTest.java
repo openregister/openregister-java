@@ -29,7 +29,6 @@ public class PostgresDataAccessLayerTest {
     IndexQueryDAO indexQueryDAO;
     IndexDAO indexDAO;
     InMemoryItemDAO itemDAO;
-    RecordQueryDAO recordQueryDAO;
 
     private List<Entry> entries;
     private Map<HashValue, Item> itemMap;
@@ -54,10 +53,9 @@ public class PostgresDataAccessLayerTest {
         indexQueryDAO = mock(IndexQueryDAO.class);
         indexDAO = mock(IndexDAO.class);
         itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
-        recordQueryDAO = mock(RecordQueryDAO.class);
 
         dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
-                itemDAO, itemDAO, recordQueryDAO, "schema");
+                itemDAO, itemDAO, "schema");
 
         hash1 = new HashValue(SHA256, "abcd");
         hash2 = new HashValue(SHA256, "jkl1");
@@ -97,6 +95,16 @@ public class PostgresDataAccessLayerTest {
         dataAccessLayer.appendEntry(entry2);
 
         assertThat(dataAccessLayer.getAllEntries(), equalTo(ImmutableList.of(entry1, entry2)));
+    }
+
+    @Test
+    public void getAllEntriesByKey_shouldCauseCheckpoint() {
+        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+
+        Collection<Entry> ignored = dataAccessLayer.getAllEntriesByKey("bar");
+
+        // ignore the result, but check that committed to DB
+        assertThat(dataAccessLayer.getTotalEntries(), is(1));
     }
 
     @Test
@@ -178,8 +186,7 @@ public class PostgresDataAccessLayerTest {
     public void updateRecordIndex_shouldNotCommitChanges() throws Exception {
         dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
-        // TODO: Fix
-//        assertThat(currentKeys.entrySet(), is(empty()));
+        assertThat(dataAccessLayer.getTotalEntries(), is(0));
     }
 
     @Test
@@ -207,26 +214,6 @@ public class PostgresDataAccessLayerTest {
         dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         List<Record> ignored = dataAccessLayer.findMax100RecordsByKeyValue("foo", "bar");
-
-        // ignore the result, but check that we flushed out to currentKeys
-        assertThat(dataAccessLayer.getTotalEntries(), is(1));
-    }
-
-    @Test
-    public void findAllEntriesOfRecordBy_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
-
-        Collection<Entry> ignored = dataAccessLayer.findAllEntriesOfRecordBy("bar");
-
-        // ignore the result, but check that committed to DB
-        assertThat(dataAccessLayer.getTotalEntries(), is(1));
-    }
-
-    @Test
-    public void getTotalRecords_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
-
-        int ignored = dataAccessLayer.getTotalRecords();
 
         // ignore the result, but check that we flushed out to currentKeys
         assertThat(dataAccessLayer.getTotalEntries(), is(1));

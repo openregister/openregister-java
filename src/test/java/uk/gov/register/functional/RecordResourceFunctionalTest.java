@@ -49,6 +49,27 @@ public class RecordResourceFunctionalTest {
         assertThat(itemMap.get("street").asText(), is("presley"));
         assertThat(itemMap.get("address").asText(), is("6789"));
     }
+    
+    @Test
+    public void getRecords() throws IOException {
+        Response response = register.getRequest(address, "/records.json");
+        
+        assertThat(response.getStatus(), equalTo(200));
+
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        JsonNode firstRecord = res.get("145678");
+        assertThat(firstRecord.get("entry-number").textValue(), equalTo("3"));
+        assertThat(firstRecord.get("index-entry-number").textValue(), equalTo("3"));
+        assertTrue(firstRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+        assertThat(firstRecord.get("item").size(), equalTo(1));
+
+        JsonNode secondRecord = res.get("6789");
+        assertThat(secondRecord.get("entry-number").textValue(), equalTo("2"));
+        assertThat(secondRecord.get("index-entry-number").textValue(), equalTo("2"));
+        assertTrue(secondRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+        assertThat(secondRecord.get("item").size(), equalTo(1));
+    }
 
     @Test
     public void recordResource_return404ResponseWhenRecordNotExist() {

@@ -20,16 +20,14 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     private final EntryQueryDAO entryQueryDAO;
     private final IndexQueryDAO indexQueryDAO;
     final ItemQueryDAO itemQueryDAO;
-    private final RecordQueryDAO recordQueryDAO;
     final String schema;
 
     public PostgresReadDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO,
-            ItemQueryDAO itemQueryDAO, RecordQueryDAO recordQueryDAO, String schema) {
+            ItemQueryDAO itemQueryDAO, String schema) {
         this.entryQueryDAO = entryQueryDAO;
         this.indexQueryDAO = indexQueryDAO;
         this.itemQueryDAO = itemQueryDAO;
-        this.recordQueryDAO = recordQueryDAO;
         this.schema = schema;
     }
 
@@ -133,7 +131,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public Optional<Record> getRecord(String key) {
         checkpoint();
-        return recordQueryDAO.findByPrimaryKey(key, schema);
+        return indexQueryDAO.findRecord(key, IndexNames.RECORDS, schema, "entry");
     }
 
     @Override
@@ -149,27 +147,22 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Collection<Entry> findAllEntriesOfRecordBy(String key) {
+    public Collection<Entry> getAllEntriesByKey(String key) {
         checkpoint();
-        return recordQueryDAO.findAllEntriesOfRecordBy(key, schema);
-    }
-
-    @Override
-    public int getTotalRecords() {
-        checkpoint();
-        return recordQueryDAO.getTotalRecords(schema);
+        return entryQueryDAO.getAllEntriesByKey(key, schema);
     }
 
     // Index
 
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
-        checkpoint(); // TODO: do we need this?
+        checkpoint();
         return indexQueryDAO.findRecord(key, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
     public List<Record> getIndexRecords(int limit, int offset, String indexName) {
+        checkpoint();
         return indexQueryDAO.findRecords(limit, offset, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 

@@ -2,6 +2,7 @@ package uk.gov.register.db;
 
 import org.skife.jdbi.v2.ResultIterator;
 import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import uk.gov.register.core.Entry;
 import uk.gov.register.store.postgres.BindEntry;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     private final List<Entry> entries;
@@ -53,6 +55,11 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     @Override
     public Collection<Entry> getEntries(int start, int limit, String schema) {
         return entries.subList(start-1, start-1+limit);
+    }
+
+    @Override
+    public Collection<Entry> getAllEntriesByKey(@Bind("key") String key, @Define("schema") String schema) {
+        return entries.stream().filter(e -> e.getKey().equals(key)).collect(Collectors.toList());
     }
 
     @Override

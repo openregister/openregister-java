@@ -225,7 +225,6 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 handle.attach(EntryItemDAO.class),
                 handle.attach(ItemQueryDAO.class),
                 handle.attach(ItemDAO.class),
-                handle.attach(RecordQueryDAO.class),
                 "address");
     }
 

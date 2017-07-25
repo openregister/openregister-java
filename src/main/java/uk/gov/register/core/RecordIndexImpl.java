@@ -24,11 +24,6 @@ public class RecordIndexImpl implements RecordIndex {
     }
 
     @Override
-    public int getTotalRecords() {
-        return dataAccessLayer.getTotalRecords();
-    }
-
-    @Override
     public List<Record> getRecords(int limit, int offset) {
         return dataAccessLayer.getRecords(limit, offset);
     }
@@ -40,6 +35,6 @@ public class RecordIndexImpl implements RecordIndex {
 
     @Override
     public Collection<Entry> findAllEntriesOfRecordBy(String key) {
-        return dataAccessLayer.findAllEntriesOfRecordBy(key);
+        return dataAccessLayer.getAllEntriesByKey(key);
     }
 }

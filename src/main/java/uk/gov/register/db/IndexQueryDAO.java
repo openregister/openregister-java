@@ -46,8 +46,7 @@ public abstract class IndexQueryDAO {
 
     @SqlQuery(entriesQueryBetweenEntries)
     @RegisterMapper(DerivationEntryMapper.class)
-    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2,
-                                @Define("schema") String schema, @Define("entry_table") String entryTable);
+    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Define("schema") String schema, @Define("entry_table") String entryTable);
 
     @RegisterMapper(IndexItemInfoMapper.class)
     @SqlQuery("select min(i.start_index_entry_number) start_index_entry_number, count(*) existing_item_count from \"<schema>\".index i where i.name = :name and i.key = :key and i.sha256hex = :sha256hex and i.end_entry_number is null")
