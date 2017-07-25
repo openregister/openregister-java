@@ -7,6 +7,7 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -59,6 +60,10 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         }
     }
 
+    private static boolean isRunningOnCloudFoundry(){
+       return System.getenv().containsKey("CF_INSTANCE_GUID");
+    }
+
     @Override
     public String getName() {
         return "openregister";
@@ -67,6 +72,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
     @Override
     public void initialize(Bootstrap<RegisterConfiguration> bootstrap) {
         bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new ThymeleafViewRenderer("HTML5", "/templates/", ".html", false))));
+
+        if (isRunningOnCloudFoundry()) {
+            bootstrap.setConfigurationSourceProvider(new ResourceConfigurationSourceProvider());
+        }
+
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
                         new EnvironmentVariableSubstitutor(false)
@@ -80,8 +90,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
     @Override
     public void run(RegisterConfiguration configuration, Environment environment) throws Exception {
-        DBIFactory dbiFactory = new DBIFactory();
-
         JerseyEnvironment jersey = environment.jersey();
         jersey.property(CommonProperties.OUTBOUND_CONTENT_LENGTH_BUFFER, 0);
 
@@ -93,7 +101,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         EnvironmentValidator environmentValidator = new EnvironmentValidator(configManager);
 
-        DatabaseManager databaseManager = new DatabaseManager(configuration, environment, dbiFactory);
+        DBIFactory dbiFactory = new DBIFactory();
+        DatabaseManager databaseManager = new DatabaseManager(configuration, environment, dbiFactory, isRunningOnCloudFoundry());
 
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
 

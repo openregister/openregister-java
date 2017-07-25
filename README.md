@@ -26,6 +26,14 @@ If the basic registers change you can restart your register so that it sees the 
 
     docker restart openregister-register
 
+### Running on Cloud Foundry/PaaS
+
+- [Configure PaaS access](https://docs.cloud.service.gov.uk/#quick-setup-guide).
+- Build the application (`./gradlew assemble`)
+- Configure [a Postgres service](https://docs.cloud.service.gov.uk/#using-database-services). (NB: A PaaS provided Postgres instance requires the manual addition of `CREATE SCHEMA` permissions for the user with credentials in `VCAP_SERVICES`. You will need to submit a ticket with PaaS.)
+- Tweak `manifest.yml` so it has appropriate values.
+- Deploy (`cf push {name} -p deploy/openregister-java.jar`).
+
 ## Development
 
 ### Requirements

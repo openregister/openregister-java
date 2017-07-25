@@ -1,0 +1,14 @@
+---
+applications:
+- name: change-me
+  memory: 512M
+  buildpack: java_buildpack
+  env:
+    JBP_CONFIG_JAVA_MAIN: '{ arguments: "server paas.yaml" }'
+  services:
+    - change-me-db
+  env:
+    REGISTER: change-me
+    REGISTER_DOMAIN: change-me.cloudapps.digital
+    USER: change-me
+    PASSWORD: change-me
