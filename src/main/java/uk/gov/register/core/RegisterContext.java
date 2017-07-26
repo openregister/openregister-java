@@ -23,11 +23,11 @@ import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -91,14 +91,15 @@ public class RegisterContext implements
         return flyway.migrate();
     }
 
-    private List<IndexFunction> getUserIndexFunctions() {
-        return indexFunctionConfigs.stream().filter(c -> c.getEntryType() == EntryType.user)
-                .flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
-    }
+    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions() {
+        Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = new HashMap<>();
+        indexFunctionsByEntryType.put(EntryType.user, new HashSet<>());
+        indexFunctionsByEntryType.put(EntryType.system, new HashSet<>());
 
-    private List<IndexFunction> getSystemIndexFunctions() {
-        return indexFunctionConfigs.stream().filter(c -> c.getEntryType() == EntryType.system)
-                .flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
+        for (IndexFunctionConfiguration indexFunctionConfig : indexFunctionConfigs) {
+            indexFunctionsByEntryType.get(indexFunctionConfig.getEntryType()).addAll(indexFunctionConfig.getIndexFunctions());
+        }
+        return indexFunctionsByEntryType;
     }
 
     public Register buildOnDemandRegister() {
@@ -109,8 +110,7 @@ public class RegisterContext implements
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
-                getUserIndexFunctions(),
-                getSystemIndexFunctions(),
+                getIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
                 itemValidator,
                 environmentValidator);
@@ -122,8 +122,7 @@ public class RegisterContext implements
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
-                getUserIndexFunctions(),
-                getSystemIndexFunctions(),
+                getIndexFunctions(),
                 new IndexDriver(dataAccessLayer),
                 itemValidator,
                 environmentValidator);

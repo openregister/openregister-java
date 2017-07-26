@@ -3,6 +3,7 @@ package uk.gov.register.functional.store.postgres;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
@@ -24,6 +25,8 @@ import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.indexer.IndexDriver;
+import uk.gov.register.indexer.function.AddAllIndexFunction;
+import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
@@ -208,8 +211,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 itemStore,
                 new RecordIndexImpl(dataAccessLayer),
                 derivationRecordIndex,
-                Collections.emptyList(),
-                new ArrayList<>(IndexFunctionConfiguration.METADATA.getIndexFunctions()),
+                getIndexFunctions(),
                 indexDriver,
                 itemValidator,
                 environmentValidator);
@@ -236,6 +238,10 @@ public class PostgresRegisterTransactionalFunctionalTest {
         dataSourceFactory.setUser("postgres");
         dataSourceFactory.setPassword("");
         return dataSourceFactory;
+    }
+
+    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions(){
+        return ImmutableMap.of(EntryType.user, Collections.emptyList(), EntryType.system, Arrays.asList(new AddAllIndexFunction(IndexNames.METADATA)));
     }
 
 }

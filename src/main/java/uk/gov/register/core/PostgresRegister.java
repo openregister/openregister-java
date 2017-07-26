@@ -31,8 +31,7 @@ public class PostgresRegister implements Register {
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final IndexDriver indexDriver;
-    private final List<IndexFunction> userIndexFunctions;
-    private final List<IndexFunction> systemIndexFunctions;
+    private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
     private final ItemValidator itemValidator;
     private final EnvironmentValidator environmentValidator;
 
@@ -44,8 +43,7 @@ public class PostgresRegister implements Register {
                             ItemStore itemStore,
                             RecordIndex recordIndex,
                             DerivationRecordIndex derivationRecordIndex,
-                            List<IndexFunction> userIndexFunctions,
-                            List<IndexFunction> systemIndexFunctions,
+                            Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
                             IndexDriver indexDriver,
                             ItemValidator itemValidator,
                             EnvironmentValidator environmentValidator) {
@@ -55,8 +53,7 @@ public class PostgresRegister implements Register {
         this.recordIndex = recordIndex;
         this.derivationRecordIndex = derivationRecordIndex;
         this.indexDriver = indexDriver;
-        this.userIndexFunctions = userIndexFunctions;
-        this.systemIndexFunctions = systemIndexFunctions;
+        this.indexFunctionsByEntryType = indexFunctionsByEntryType;
         this.itemValidator = itemValidator;
         this.environmentValidator = environmentValidator;
     }
@@ -89,12 +86,12 @@ public class PostgresRegister implements Register {
         entryLog.appendEntry(entry);
 
         if (entry.getEntryType() == EntryType.user) {
-            for (IndexFunction indexFunction : userIndexFunctions) {
+            for (IndexFunction indexFunction : indexFunctionsByEntryType.get(EntryType.user)) {
                 indexDriver.indexEntry(this, entry, indexFunction);
             }
             recordIndex.updateRecordIndex(entry);
         } else {
-            for (IndexFunction indexFunction : systemIndexFunctions) {
+            for (IndexFunction indexFunction : indexFunctionsByEntryType.get(EntryType.system)) {
                 indexDriver.indexEntry(this, entry, indexFunction);
             }
         }
@@ -301,11 +298,7 @@ public class PostgresRegister implements Register {
         return getDerivationRecord(fieldName, IndexNames.METADATA).map(r -> r.getItems().get(0).getValue(fieldName).get());
     }
 
-    public List<IndexFunction> getUserIndexFunctions() {
-        return userIndexFunctions;
-    }
-
-    public List<IndexFunction> getSystemIndexFunctions() {
-        return systemIndexFunctions;
+    public Map<EntryType, Collection<IndexFunction>> getIndexFunctionsByEntryType() {
+        return indexFunctionsByEntryType;
     }
 }

@@ -9,18 +9,19 @@ import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.exceptions.NoSuchConfigException;
-import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
-import uk.gov.register.indexer.function.AddAllIndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.RegisterLinkService;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
 
@@ -101,20 +102,31 @@ public class RegisterContextTest {
     @Test
     public void shouldSetUserIndexFunctions(){
         RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
-                true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries"), new RegisterAuthenticator("", ""));
+                true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries","local-authority-by-type"), new RegisterAuthenticator("", ""));
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
-        assertThat(register.getUserIndexFunctions().size(), Is.is(1));
-        assertThat(register.getUserIndexFunctions().get(0).getClass().getName(), Is.is(CurrentCountriesIndexFunction.class.getName()));
+        assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(2));
+        List<String> indexFunctionNames = register.getIndexFunctionsByEntryType().get(EntryType.user).stream().map(ifn -> ifn.getClass().getName()).collect(toList());
+        assertThat(indexFunctionNames, containsInAnyOrder("uk.gov.register.indexer.function.CurrentCountriesIndexFunction","uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction"));
 
     }
+
+    @Test
+    public void shouldHandleNoUserIndexFunctions(){
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
+                true, false, Optional.empty(), emptyList(), Collections.emptyList(), new RegisterAuthenticator("", ""));
+        PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
+        assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(0));
+    }
+
 
     @Test
     public void shouldSetSystemIndexFunctions(){
         RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
                 true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries"), new RegisterAuthenticator("", ""));
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
-        assertThat(register.getSystemIndexFunctions().size(), Is.is(1));
-        assertThat(register.getSystemIndexFunctions().get(0).getClass().getName(), Is.is(AddAllIndexFunction.class.getName()));
+        assertThat(register.getIndexFunctionsByEntryType().get(EntryType.system).size(), Is.is(1));
+        List<String> indexFunctionNames = register.getIndexFunctionsByEntryType().get(EntryType.system).stream().map(ifn -> ifn.getClass().getName()).collect(toList());
+        assertThat(indexFunctionNames, containsInAnyOrder("uk.gov.register.indexer.function.AddAllIndexFunction"));
 
     }
 }

@@ -2,6 +2,7 @@ package uk.gov.register.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,10 +23,7 @@ import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -65,9 +63,12 @@ public class PostgresRegisterTest {
 
     @Before
     public void setup() throws IOException {
+
+        Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = ImmutableMap.of(EntryType.system, Arrays.asList(systemIndexFunction), EntryType.user, Arrays.asList(indexFunction));
+
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, Arrays.asList(indexFunction), Arrays.asList(systemIndexFunction), indexDriver, itemValidator, environmentValidator);
+                derivationRecordIndex, indexFunctionsByEntryType, indexDriver, itemValidator, environmentValidator);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
