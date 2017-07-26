@@ -21,22 +21,18 @@ import uk.gov.register.db.*;
 import uk.gov.register.util.EntryItemPair;
 import uk.gov.register.util.HashValue;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import static java.util.stream.Collectors.toList;
 
@@ -185,62 +181,4 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 	public Integer getChecksum() {
 		return 1;
 	}
-
-	private class TempDataSource implements DataSource {
-
-		private Connection connection;
-
-		private PrintWriter out;
-
-		public TempDataSource(Connection connection) {
-			this.connection = connection;
-		}
-
-		@Override
-		public Connection getConnection() throws SQLException {
-			return connection;
-		}
-
-		@Override
-		public Connection getConnection(String username, String password) throws SQLException {
-			return connection;
-		}
-
-		@Override
-		public <T> T unwrap(Class<T> iface) throws SQLException {
-			return null;
-		}
-
-		@Override
-		public boolean isWrapperFor(Class<?> iface) throws SQLException {
-			return false;
-		}
-
-		@Override
-		public PrintWriter getLogWriter() throws SQLException {
-			return out;
-		}
-
-		@Override
-		public void setLogWriter(PrintWriter out) throws SQLException {
-			this.out = out;
-		}
-
-		@Override
-		public void setLoginTimeout(int seconds) throws SQLException {
-
-		}
-
-		@Override
-		public int getLoginTimeout() throws SQLException {
-			return 1;
-		}
-
-		@Override
-		public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-			return null;
-		}
-	}
-
-
 }
