@@ -45,7 +45,7 @@ ext {
 
     thymeleaf = 'org.thymeleaf:thymeleaf:2.1.5.RELEASE'
 
-    dropwizardLogstash = "uk.gov.ida:dropwizard-logstash:1.1.0-2"
+    dropwizardLogstash = "uk.gov.ida:dropwizard-logstash:1.1.2-build_45"
     
     jetty = [
             "org.eclipse.jetty:jetty-continuation:9.4.6.v20170531",

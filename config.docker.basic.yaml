@@ -21,9 +21,8 @@ server:
     - type: http
       port: 9092
   requestLog:
-    type: classic
     appenders:
-      - type: logstash-console
+      - type: access-logstash-console
 
 registerDomain: openregister.dev:8080
 
