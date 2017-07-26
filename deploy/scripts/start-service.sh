@@ -27,7 +27,7 @@ docker run \
     --network openregisters \
     --env REGISTER_NAME=${REGISTER_NAME} \
     --env DATACENTER=${DATACENTER} \
-    telegraf
+    telegraf:1.3.4
 
 docker run \
     --detach \
@@ -37,7 +37,7 @@ docker run \
     --volume /srv/openregister-java/fluentd.conf:/fluentd/etc/fluentd.conf:ro \
     --network openregisters \
     --env FLUENTD_CONF=fluentd.conf \
-    openregister/fluentd-sumologic
+    openregister/fluentd-sumologic:v0.0.1
 
 docker run \
     --detach \
@@ -49,7 +49,7 @@ docker run \
     --network openregisters \
     --log-driver=fluentd \
     --log-opt fluentd-async-connect=true \
-    openjdk:8-jre-alpine \
+    openjdk:8u131-jre-alpine \
     java \
       -Xmx"${MAX_JVM_HEAP_SIZE}k" \
       -Dfile.encoding=UTF-8 \
