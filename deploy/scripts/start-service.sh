@@ -49,7 +49,7 @@ docker run \
     --network openregisters \
     --log-driver=fluentd \
     --log-opt fluentd-async-connect=true \
-    openjdk:8u131-jre-alpine \
+    openjdk:8u141-jre \
     java \
       -Xmx"${MAX_JVM_HEAP_SIZE}k" \
       -Dfile.encoding=UTF-8 \
