@@ -17,7 +17,6 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.IndexFunctionConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
@@ -25,7 +24,7 @@ import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.indexer.IndexDriver;
-import uk.gov.register.indexer.function.AddAllIndexFunction;
+import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
@@ -240,9 +239,8 @@ public class PostgresRegisterTransactionalFunctionalTest {
         return dataSourceFactory;
     }
 
-    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions(){
-        return ImmutableMap.of(EntryType.user, Collections.emptyList(), EntryType.system, Arrays.asList(new AddAllIndexFunction(IndexNames.METADATA)));
+    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions() {
+        return ImmutableMap.of(EntryType.user, Collections.emptyList(), EntryType.system, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.METADATA)));
     }
-
 }
 

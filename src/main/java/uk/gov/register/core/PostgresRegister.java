@@ -85,15 +85,12 @@ public class PostgresRegister implements Register {
 
         entryLog.appendEntry(entry);
 
+        for (IndexFunction indexFunction : indexFunctionsByEntryType.get(entry.getEntryType())) {
+            indexDriver.indexEntry(this, entry, indexFunction);
+        }
+
         if (entry.getEntryType() == EntryType.user) {
-            for (IndexFunction indexFunction : indexFunctionsByEntryType.get(EntryType.user)) {
-                indexDriver.indexEntry(this, entry, indexFunction);
-            }
             recordIndex.updateRecordIndex(entry);
-        } else {
-            for (IndexFunction indexFunction : indexFunctionsByEntryType.get(EntryType.system)) {
-                indexDriver.indexEntry(this, entry, indexFunction);
-            }
         }
     }
 

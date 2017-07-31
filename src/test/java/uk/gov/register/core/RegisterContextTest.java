@@ -126,7 +126,7 @@ public class RegisterContextTest {
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
         assertThat(register.getIndexFunctionsByEntryType().get(EntryType.system).size(), Is.is(1));
         List<String> indexFunctionNames = register.getIndexFunctionsByEntryType().get(EntryType.system).stream().map(ifn -> ifn.getClass().getName()).collect(toList());
-        assertThat(indexFunctionNames, containsInAnyOrder("uk.gov.register.indexer.function.AddAllIndexFunction"));
+        assertThat(indexFunctionNames, containsInAnyOrder("uk.gov.register.indexer.function.LatestByKeyIndexFunction"));
 
     }
 }

@@ -7,8 +7,8 @@ import uk.gov.register.util.HashValue;
 
 import java.util.Set;
 
-public class AddAllIndexFunction extends BaseIndexFunction {
-    public AddAllIndexFunction(String name) {
+public class LatestByKeyIndexFunction extends BaseIndexFunction {
+    public LatestByKeyIndexFunction(String name) {
         super(name);
     }
 

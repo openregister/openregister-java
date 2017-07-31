@@ -4,7 +4,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.indexer.function.CurrentCountriesIndexFunction;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
-import uk.gov.register.indexer.function.AddAllIndexFunction;
+import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +17,7 @@ public enum IndexFunctionConfiguration {
 
     CURRENT_COUNTRIES(IndexNames.CURRENT_COUNTRIES, EntryType.user, new CurrentCountriesIndexFunction(IndexNames.CURRENT_COUNTRIES)),
     LOCAL_AUTHORITY_BY_TYPE(IndexNames.LOCAL_AUTHORITY_BY_TYPE, EntryType.user, new LocalAuthorityByTypeIndexFunction(IndexNames.LOCAL_AUTHORITY_BY_TYPE)),
-    METADATA(IndexNames.METADATA, EntryType.system, new AddAllIndexFunction(IndexNames.METADATA));
+    METADATA(IndexNames.METADATA, EntryType.system, new LatestByKeyIndexFunction(IndexNames.METADATA));
 
     public static List<IndexFunctionConfiguration> getConfigurations(List<String> indexNames) {
         List<IndexFunctionConfiguration> configurations = indexNames.stream().map(n -> getValueLowerCase(n)).collect(Collectors.toList());
