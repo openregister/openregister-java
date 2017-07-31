@@ -11,9 +11,8 @@ database:
 
 server:
   requestLog:
-    type: classic
     appenders:
-      - type: logstash-console
+      - type: access-logstash-console
 
   registerDefaultExceptionMappers: false
 
