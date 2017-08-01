@@ -30,7 +30,7 @@ If the basic registers change you can restart your register so that it sees the 
 
 - [Configure PaaS access](https://docs.cloud.service.gov.uk/#quick-setup-guide).
 - Build the application (`./gradlew assemble`)
-- Configure [a Postgres service](https://docs.cloud.service.gov.uk/#using-database-services). (NB: A PaaS provided Postgres instance requires the manual addition of `CREATE SCHEMA` permissions for the user with credentials in `VCAP_SERVICES`. You will need to submit a ticket with PaaS.)
+- Configure [a Postgres service](https://docs.cloud.service.gov.uk/#using-database-services).
 - Tweak `manifest.yml` so it has appropriate values.
 - Deploy (`cf push {name} -p deploy/openregister-java.jar`).
 
