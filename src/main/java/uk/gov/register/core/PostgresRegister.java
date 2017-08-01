@@ -31,19 +31,19 @@ public class PostgresRegister implements Register {
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final IndexDriver indexDriver;
-    private final List<IndexFunction> indexFunctions;
+    private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
     private final ItemValidator itemValidator;
     private final EnvironmentValidator environmentValidator;
 
     private RegisterMetadata registerMetadata;
     private Map<String, Field> fieldsByName;
-    
+
     public PostgresRegister(RegisterName registerName,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             RecordIndex recordIndex,
                             DerivationRecordIndex derivationRecordIndex,
-                            List<IndexFunction> indexFunctions,
+                            Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
                             IndexDriver indexDriver,
                             ItemValidator itemValidator,
                             EnvironmentValidator environmentValidator) {
@@ -53,7 +53,7 @@ public class PostgresRegister implements Register {
         this.recordIndex = recordIndex;
         this.derivationRecordIndex = derivationRecordIndex;
         this.indexDriver = indexDriver;
-        this.indexFunctions = indexFunctions;
+        this.indexFunctionsByEntryType = indexFunctionsByEntryType;
         this.itemValidator = itemValidator;
         this.environmentValidator = environmentValidator;
     }
@@ -67,25 +67,25 @@ public class PostgresRegister implements Register {
     public void appendEntry(final Entry entry) {
         List<Item> referencedItems = getReferencedItems(entry);
 
-        referencedItems.forEach(i -> {
+        referencedItems.forEach(item -> {
             if (entry.getEntryType() == EntryType.user) {
-                itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+                itemValidator.validateItem(item.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
             } else if (entry.getKey().startsWith("field:")) {
-                Field field = extractObjectFromItem(i, Field.class);
+                Field field = extractObjectFromItem(item, Field.class);
                 environmentValidator.validateFieldAgainstEnvironment(field);
-                
+
             } else if (entry.getKey().startsWith("register:")) {
-                RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
+                RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(item, RegisterMetadata.class);
                 // will throw exception if field not present
                 localRegisterMetadata.getFields().forEach(this::getField);
-                
+
                 environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
             }
         });
 
         entryLog.appendEntry(entry);
 
-        for (IndexFunction indexFunction : indexFunctions) {
+        for (IndexFunction indexFunction : indexFunctionsByEntryType.get(entry.getEntryType())) {
             indexDriver.indexEntry(this, entry, indexFunction);
         }
 
@@ -295,4 +295,7 @@ public class PostgresRegister implements Register {
         return getDerivationRecord(fieldName, IndexNames.METADATA).map(r -> r.getItems().get(0).getValue(fieldName).get());
     }
 
+    public Map<EntryType, Collection<IndexFunction>> getIndexFunctionsByEntryType() {
+        return indexFunctionsByEntryType;
+    }
 }

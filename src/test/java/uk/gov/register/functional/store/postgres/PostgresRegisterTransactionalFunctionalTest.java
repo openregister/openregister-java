@@ -3,6 +3,7 @@ package uk.gov.register.functional.store.postgres;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
@@ -16,7 +17,6 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.IndexFunctionConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
@@ -24,6 +24,8 @@ import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.indexer.IndexDriver;
+import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
+import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
@@ -33,10 +35,7 @@ import uk.gov.verifiablelog.store.memoization.DoNothing;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -211,7 +210,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 itemStore,
                 new RecordIndexImpl(dataAccessLayer),
                 derivationRecordIndex,
-                new ArrayList<>(IndexFunctionConfiguration.METADATA.getIndexFunctions()),
+                getIndexFunctions(),
                 indexDriver,
                 itemValidator,
                 environmentValidator);
@@ -240,5 +239,8 @@ public class PostgresRegisterTransactionalFunctionalTest {
         return dataSourceFactory;
     }
 
+    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions() {
+        return ImmutableMap.of(EntryType.user, Collections.emptyList(), EntryType.system, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.METADATA)));
+    }
 }
 

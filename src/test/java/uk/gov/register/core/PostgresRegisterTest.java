@@ -2,6 +2,7 @@ package uk.gov.register.core;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,10 +23,7 @@ import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -50,6 +48,8 @@ public class PostgresRegisterTest {
     @Mock
     private IndexFunction indexFunction;
     @Mock
+    private IndexFunction systemIndexFunction;
+    @Mock
     private Record fieldRecord;
     @Mock
     private Record registerRecord;
@@ -63,9 +63,12 @@ public class PostgresRegisterTest {
 
     @Before
     public void setup() throws IOException {
+
+        Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = ImmutableMap.of(EntryType.system, Arrays.asList(systemIndexFunction), EntryType.user, Arrays.asList(indexFunction));
+
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, Arrays.asList(indexFunction), indexDriver, itemValidator, environmentValidator);
+                derivationRecordIndex, indexFunctionsByEntryType, indexDriver, itemValidator, environmentValidator);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
@@ -131,6 +134,18 @@ public class PostgresRegisterTest {
         Map<String, Field> fieldsByName = register.getFieldsByName();
         assertThat(fieldsByName.size(), is(1));
         assertThat(fieldsByName.get("postcode").getText(), is("field description"));
+    }
+
+    @Test
+    public void shouldCallSystemIndexFunction() throws IOException {
+        JsonNode content = mapper.readTree( "{\"name\":\"school\"}" );
+        HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
+        Item item = new Item(hashValue, content);
+        Entry entry = new Entry(1, hashValue, Instant.now(),"name", EntryType.system);
+
+        register.putItem(item);
+        register.appendEntry(entry);
+        verify(indexDriver).indexEntry(register, entry, systemIndexFunction);
     }
 
     private Item getItem(String json) throws IOException {

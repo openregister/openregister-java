@@ -23,11 +23,11 @@ import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -54,10 +54,10 @@ public class RegisterContext implements
     private RegisterAuthenticator authenticator;
     private final ItemValidator itemValidator;
 
-    public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator, 
-                           RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema, 
-                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource, 
-                           Optional<String> historyPageUrl, List<String> similarRegisters, List<String> indexNames, 
+    public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator,
+                           RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema,
+                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource,
+                           Optional<String> historyPageUrl, List<String> similarRegisters, List<String> indexNames,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
@@ -91,8 +91,15 @@ public class RegisterContext implements
         return flyway.migrate();
     }
 
-    private List<IndexFunction> getIndexFunctions() {
-        return indexFunctionConfigs.stream().flatMap(c -> c.getIndexFunctions().stream()).collect(toList());
+    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions() {
+        Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = new HashMap<>();
+        indexFunctionsByEntryType.put(EntryType.user, new HashSet<>());
+        indexFunctionsByEntryType.put(EntryType.system, new HashSet<>());
+
+        for (IndexFunctionConfiguration indexFunctionConfig : indexFunctionConfigs) {
+            indexFunctionsByEntryType.get(indexFunctionConfig.getEntryType()).addAll(indexFunctionConfig.getIndexFunctions());
+        }
+        return indexFunctionsByEntryType;
     }
 
     public Register buildOnDemandRegister() {
