@@ -17,7 +17,7 @@ server:
   registerDefaultExceptionMappers: false
 
 register: ${REGISTER}
-schema: ${REGISTER}
+schema: public
 registerDomain: ${REGISTER_DOMAIN}
 
 enableDownloadResource: true
