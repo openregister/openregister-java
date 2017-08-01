@@ -14,11 +14,6 @@ public class RecordIndexImpl implements RecordIndex {
     }
 
     @Override
-    public void updateRecordIndex(Entry entry) {
-        dataAccessLayer.updateRecordIndex(entry);
-    }
-
-    @Override
     public Optional<Record> getRecord(String key) {
         return dataAccessLayer.getRecord(key);
     }

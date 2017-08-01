@@ -34,6 +34,7 @@ public class EntryMapperTest {
         Instant expectedInstant = Instant.parse(expected);
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
+            h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
             h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", expectedInstant.getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
@@ -54,6 +55,7 @@ public class EntryMapperTest {
     @Test
     public void map_returnsSingleItemHashForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
+            h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
             h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
@@ -68,6 +70,8 @@ public class EntryMapperTest {
     @Test
     public void map_returnsMultipleItemHashesForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
+            h.execute("insert into address.item (sha256hex, content) values ('abcdef', '{\"address\":\"K\"}')");
+            h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
             h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'abcdef')");
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");

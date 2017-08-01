@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
+import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
@@ -29,6 +30,7 @@ public class PostgresDataAccessLayerTest {
     IndexQueryDAO indexQueryDAO;
     IndexDAO indexDAO;
     InMemoryItemDAO itemDAO;
+    IndexDriver indexDriver;
 
     private List<Entry> entries;
     private Map<HashValue, Item> itemMap;
@@ -53,9 +55,10 @@ public class PostgresDataAccessLayerTest {
         indexQueryDAO = mock(IndexQueryDAO.class);
         indexDAO = mock(IndexDAO.class);
         itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
+        indexDriver = mock(IndexDriver.class);
 
         dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
-                itemDAO, itemDAO, "schema");
+                itemDAO, itemDAO, "schema", indexDriver, new HashMap<>());
 
         hash1 = new HashValue(SHA256, "abcd");
         hash2 = new HashValue(SHA256, "jkl1");
@@ -181,14 +184,7 @@ public class PostgresDataAccessLayerTest {
         List<Item> items = newArrayList(dataAccessLayer.getItemIterator(1,2));
         assertThat(items, is(singletonList(item2)));
     }
-
-    @Test
-    public void updateRecordIndex_shouldNotCommitChanges() throws Exception {
-        dataAccessLayer.updateRecordIndex(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
-
-        assertThat(dataAccessLayer.getTotalEntries(), is(0));
-    }
-
+    
     @Test
     public void getRecord_shouldCauseCheckpoint() {
         dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));

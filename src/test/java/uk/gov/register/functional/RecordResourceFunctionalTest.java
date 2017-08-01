@@ -111,7 +111,7 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void recordResource_returnsIdenticalResponseAsIndexEndpoint() throws IOException {
-        String indexResponse = register.getRequest(address, "/index/records/record/6789.json").readEntity(String.class);
+        String indexResponse = register.getRequest(address, "/index/record/record/6789.json").readEntity(String.class);
         String recordsResponse = register.getRequest(address, "/record/6789.json").readEntity(String.class);
 
         assertThat(indexResponse, equalTo(recordsResponse));

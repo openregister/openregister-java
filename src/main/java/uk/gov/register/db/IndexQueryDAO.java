@@ -9,29 +9,25 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
-import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.mappers.DerivationEntryMapper;
-import uk.gov.register.db.mappers.DerivationRecordMapper;
-import uk.gov.register.db.mappers.IndexItemInfoMapper;
-import uk.gov.register.db.mappers.RecordMapper;
+import uk.gov.register.core.StartIndex;
+import uk.gov.register.db.mappers.*;
 import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
 
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 @UseStringTemplate3StatementLocator
 public abstract class IndexQueryDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     
     @SqlQuery(recordForKeyQuery)
-    @SingleValueResult(Record.class)
     @RegisterMapper(DerivationRecordMapper.class)
-    public abstract Optional<Record> findRecord(@Bind("key") String derivationKey, @Bind("name") String derivationName, @Define("schema") String schema, @Define("entry_table") String entryTable);
+    public abstract List<Record> findRecords(@BindIn("keys") List<String> derivationKeys, @Bind("name") String derivationName, @Define("schema") String schema, @Define("entry_table") String entryTable);
 
     @SqlQuery(recordQuery)
     @RegisterMapper(DerivationRecordMapper.class)
@@ -39,6 +35,10 @@ public abstract class IndexQueryDAO {
 
     @SqlQuery("select max(r.index_entry_number) from (select greatest(start_index_entry_number, end_index_entry_number) as index_entry_number from \"<schema>\".index where name = :name) r")
     public abstract int getCurrentIndexEntryNumber(@Bind("name") String indexName, @Define("schema") String schema);
+    
+    @SqlQuery("select * from \"<schema>\".index where name = :name and key = :key and sha256hex = :sha256hex and end_entry_number is null order by start_index_entry_number asc")
+    @RegisterMapper(StartIndexMapper.class)
+    public abstract List<StartIndex> getCurrentStartIndexesForKey(@Bind("name") String indexName, @Bind("key") String key, @Bind("sha256hex") String sha256hex, @Define("schema") String schema);
 
     @SqlQuery(entriesQuery)
     @RegisterMapper(DerivationEntryMapper.class)
@@ -86,7 +86,7 @@ public abstract class IndexQueryDAO {
             "join \"<schema>\".item i on i.sha256hex = ei.sha256hex " +
             "join \"<schema>\".index idx on idx.sha256hex = i.sha256hex " +
             "where i.content @> :contentPGobject " +
-            "and idx.name = 'records' " +
+            "and idx.name = 'record' " +
             "and idx.end_index_entry_number is null " +
             "group by e.entry_number " +
             "limit 100";
@@ -108,7 +108,7 @@ public abstract class IndexQueryDAO {
             "    join \"<schema>\".item as im on ix.sha256hex = im.sha256hex " +
             "    where " +
             "        end_index_entry_number is null " +
-            "        and name = :name and key = :key group by key) " +
+            "        and name = :name and key in (<keys>) group by key) " +
             "as unended " +
             "join " +
             "    (select " +
@@ -127,14 +127,14 @@ public abstract class IndexQueryDAO {
             "                start_entry_number as entry_number, " +
             "                start_index_entry_number as index_entry_number " +
             "            from \"<schema>\".index " +
-            "            where name = :name and key = :key " +
+            "            where name = :name and key in (<keys>) " +
             "            union " +
             "            select " +
             "                key, " +
             "                end_entry_number as entry_number, " +
             "                end_index_entry_number as index_entry_number " +
             "            from \"<schema>\".index " +
-            "            where name = :name and key = :key and end_entry_number is not null) " +
+            "            where name = :name and key in (<keys>) and end_entry_number is not null) " +
             "        as all_entries) " +
             "    as with_index_entry_numbers " +
             "    where index_entry_number = max_index_entry_number " +

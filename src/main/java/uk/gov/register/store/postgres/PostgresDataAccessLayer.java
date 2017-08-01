@@ -1,9 +1,12 @@
 package uk.gov.register.store.postgres;
 
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
+import com.google.common.collect.Lists;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
+import uk.gov.register.core.*;
 import uk.gov.register.db.*;
+import uk.gov.register.indexer.IndexDriver;
+import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
+import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.EntryItemPair;
 import uk.gov.register.util.HashValue;
@@ -14,37 +17,85 @@ import java.util.stream.Collectors;
 public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer implements DataAccessLayer {
     private final List<Entry> stagedEntries;
     private final Map<HashValue, Item> stagedItems;
-    private final HashMap<String, Integer> stagedCurrentKeys;
-    private final Set<String> entriesWithoutItems;
+    private final HashSet<String> stagedEntryKeys;
+    private final Map<String, Map<String, List<StartIndex>>> existingStartIndexes;
+    private final Map<String, Map<String, List<StartIndex>>> stagedStartIndexes;
+    private final Map<String, List<EndIndex>> stagedEndIndexes;
 
     private final EntryDAO entryDAO;
     private final EntryItemDAO entryItemDAO;
     private final ItemDAO itemDAO;
     private final IndexDAO indexDAO;
+    private final IndexQueryDAO indexQueryDAO;
+    private final IndexDriver indexDriver;
+    private final Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType;
 
     public PostgresDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
             EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO,
-            ItemDAO itemDAO, String schema) {
+            ItemDAO itemDAO, String schema, IndexDriver indexDriver, Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType) {
         super(entryQueryDAO, indexQueryDAO, itemQueryDAO, schema);
         this.entryDAO = entryDAO;
         this.entryItemDAO = entryItemDAO;
         this.itemDAO = itemDAO;
+        this.indexQueryDAO = indexQueryDAO;
         this.indexDAO = indexDAO;
+        
+        this.indexDriver = indexDriver;
+        this.indexFunctionsByEntryType = indexFunctionsByEntryType;
 
         stagedEntries = new ArrayList<>();
         stagedItems = new HashMap<>();
-        stagedCurrentKeys = new HashMap<>();
-        entriesWithoutItems = new HashSet<>();
+        stagedEntryKeys = new HashSet<>();
+        stagedStartIndexes = new HashMap<>();
+        existingStartIndexes = new HashMap<>();
+        stagedEndIndexes = new HashMap<>();
     }
 
     @Override
     public void appendEntry(Entry entry) {
         stagedEntries.add(entry);
+        stagedEntryKeys.add(entry.getKey());
 
         if (entry.getEntryType().equals(EntryType.system)) {
             checkpoint();
         }
+    }
+
+    @Override
+    public IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex){
+        if (!existingStartIndexes.containsKey(indexName)) {
+            existingStartIndexes.put(indexName, new HashMap<>());
+        }
+
+        if (!stagedStartIndexes.containsKey(indexName)) {
+            stagedStartIndexes.put(indexName, new HashMap<>());
+        }
+        
+        if (!existingStartIndexes.get(indexName).containsKey(key + sha256hex)) {
+            List<StartIndex> currentStartIndexes = indexQueryDAO.getCurrentStartIndexesForKey(indexName, key, sha256hex, schema);
+            existingStartIndexes.get(indexName).put(key + sha256hex, currentStartIndexes);
+        }
+        
+        if (existingStartIndexes.get(indexName).get(key + sha256hex).isEmpty() && (!stagedStartIndexes.containsKey(indexName) || stagedStartIndexes.get(indexName).isEmpty() || !stagedStartIndexes.get(indexName).containsKey(key) 
+                || stagedStartIndexes.get(indexName).get(key).isEmpty())) {
+            return new IndexEntryNumberItemCountPair(Optional.empty(), 0);
+        }
+
+        List<StartIndex> currentStartIndexes = new ArrayList<>(existingStartIndexes.get(indexName).get(key + sha256hex));
+        
+        if (stagedStartIndexes.containsKey(indexName) && stagedStartIndexes.get(indexName).containsKey(key)) {
+            currentStartIndexes.addAll(stagedStartIndexes.get(indexName).get(key).stream()
+                .filter(i -> i.getItemHash().equals(sha256hex) && !i.isEnded())
+                .sorted((i1, i2) -> Integer.compare(i1.getStartIndexEntryNumber(), i2.getStartIndexEntryNumber()))
+                .collect(Collectors.toList()));
+        }
+
+        if (currentStartIndexes.isEmpty()) {
+            return new IndexEntryNumberItemCountPair(Optional.empty(), 0);
+        }
+        
+        return new IndexEntryNumberItemCountPair(Optional.of(currentStartIndexes.get(0).getStartEntryNumber()), currentStartIndexes.size());
     }
 
     @Override
@@ -70,22 +121,42 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void updateRecordIndex(Entry entry) {
-        stagedCurrentKeys.put(entry.getKey(), entry.getEntryNumber());
-
-        if (entry.getItemHashes().isEmpty()) {
-            entriesWithoutItems.add(entry.getKey());
-        }
-    }
-
-    @Override
     public void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber) {
-        indexDAO.start(indexName, key, itemHash, startEntryNumber, startIndexEntryNumber, schema);
+        if (!stagedStartIndexes.containsKey(indexName)) {
+            stagedStartIndexes.put(indexName, new HashMap<>());
+        }
+        
+        if (!stagedStartIndexes.get(indexName).containsKey(key)) {
+            stagedStartIndexes.get(indexName).put(key, new ArrayList<>());
+        }
+
+        stagedStartIndexes.get(indexName).get(key).add(new StartIndex(indexName, key, itemHash, startEntryNumber, startIndexEntryNumber));
     }
 
     @Override
-    public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber) {
-        indexDAO.end(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, schema, "entry");
+    public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber, int entryNumberToEnd) {
+        if (!stagedEndIndexes.containsKey(indexName)) {
+            stagedEndIndexes.put(indexName, new ArrayList<>());
+        }
+        
+        stagedEndIndexes.get(indexName).add(new EndIndex(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, entryNumberToEnd));
+        
+        Optional<StartIndex> currentIndexToEnd = existingStartIndexes.containsKey(indexName) && existingStartIndexes.get(indexName).containsKey(indexKey + itemHash)
+                ? existingStartIndexes.get(indexName).get(indexKey + itemHash).stream().filter(i -> i.getItemHash().equals(itemHash) && !i.isEnded()).findFirst()
+                : Optional.empty();
+        
+        if (currentIndexToEnd.isPresent()) {
+            currentIndexToEnd.get().end();
+            return;
+        }
+
+        Optional<StartIndex> stagedIndexToEnd = stagedStartIndexes.containsKey(indexName) && stagedStartIndexes.get(indexName).containsKey(indexKey)
+                ? stagedStartIndexes.get(indexName).get(indexKey).stream().filter(i -> i.getItemHash().equals(itemHash) && !i.isEnded()).findFirst()
+                : Optional.empty();
+        
+        if (stagedIndexToEnd.isPresent()) {
+            stagedIndexToEnd.get().end();
+        }
     }
 
     @Override
@@ -93,13 +164,46 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         if (stagedItems.containsKey(hash)) {
             return Optional.of(stagedItems.get(hash));
         }
+        
         return super.getItemBySha256(hash);
     }
 
     @Override
     public void checkpoint() {
+        updateIndexes();
+        
         writeStagedEntriesToDatabase();
         writeStagedItemsToDatabase();
+
+        writeStagedStartIndexesToDatabase();
+        writeStagedEndIndexesToDatabase();
+    }
+    
+    private void updateIndexes() {
+        if (stagedEntries.isEmpty()) {
+            return;
+        }
+        
+        List<String> keysForStagedEntries = stagedEntryKeys.stream().collect(Collectors.toList());
+
+        for (EntryType entryType : indexFunctionsByEntryType.keySet()) {
+            String indexName = entryType == EntryType.user ? IndexNames.RECORD : IndexNames.METADATA;
+            Map<String, Record> indexRecords = getIndexRecordsForKeys(indexName, keysForStagedEntries);
+
+            for (IndexFunction indexFunction : indexFunctionsByEntryType.get(entryType)) {
+                int currentIndexEntryNumber = getCurrentIndexEntryNumber(indexFunction.getName());
+                
+                // Deep copy the index records to ensure that each index function gets the same set of records that were
+                // correct for this register as of the time we started updating all indexes. This ensures that index
+                // functions can be run in any order, as updating the records or metadata for the register first would
+                // otherwise alter the outcome of any remaining index function runs.
+                Map<String, Record> tempIndexRecords = new HashMap<>(indexRecords);
+
+                stagedEntries.stream().filter(entry -> entry.getEntryType().equals(entryType)).forEach(entry -> {
+                    indexDriver.indexEntry(this, entry, indexFunction, tempIndexRecords, currentIndexEntryNumber);
+                });
+            }
+        }
     }
 
     private void writeStagedEntriesToDatabase() {
@@ -111,6 +215,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         insertEntriesInBatch(EntryType.system, "entry_system", "entry_item_system");
         entryDAO.setEntryNumber(entryDAO.currentEntryNumber(schema) + stagedEntries.stream().filter(e -> e.getEntryType().equals(EntryType.user)).collect(Collectors.toList()).size(), schema);
         stagedEntries.clear();
+        stagedEntryKeys.clear();
     }
 
     private void insertEntriesInBatch(EntryType entryType, String entryTableName, String entryItemTableName) {
@@ -130,11 +235,48 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         itemDAO.insertInBatch(stagedItems.values(), schema);
         stagedItems.clear();
     }
+
+    private void writeStagedStartIndexesToDatabase() {
+        if (stagedStartIndexes.isEmpty()) {
+            return;
+        }
+        
+        List<StartIndex> startIndexes = stagedStartIndexes.values().stream().flatMap(m -> m.values().stream().flatMap(l -> l.stream())).collect(Collectors.toList());
+        indexDAO.startInBatch(startIndexes, schema);
+        
+        stagedStartIndexes.clear();
+        existingStartIndexes.clear();
+    }
+
+    private void writeStagedEndIndexesToDatabase() {
+        if (stagedEndIndexes.isEmpty()) {
+            return;
+        }
+        
+        List<EndIndex> endIndexes = stagedEndIndexes.values().stream().flatMap(l -> l.stream()).collect(Collectors.toList());
+        indexDAO.endInBatch(endIndexes, schema);
+        
+        stagedEndIndexes.clear();
+    }
     
     private OptionalInt getMaxStagedEntryNumber() {
         if (stagedEntries.isEmpty()) {
             return OptionalInt.empty();
         }
+        
         return OptionalInt.of(stagedEntries.get(stagedEntries.size() - 1).getEntryNumber());
+    }
+    
+    private Map<String, Record> getIndexRecordsForKeys(String indexName, List<String> entryKeys) {
+        Map<String, Record> indexRecords = new HashMap<>();
+
+        if (getTotalIndexRecords(indexName) > 0) {
+            List<List<String>> entryKeyBatches = Lists.partition(entryKeys, 1000);
+            entryKeyBatches.stream().forEach(keyBatches -> {
+                indexRecords.putAll(getIndexRecords(keyBatches, indexName).stream().collect(Collectors.toMap(k -> k.getEntry().getKey(), v -> v)));
+            });
+        }
+        
+        return indexRecords;
     }
 }

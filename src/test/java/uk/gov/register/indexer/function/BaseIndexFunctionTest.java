@@ -7,8 +7,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Register;
 import uk.gov.register.indexer.IndexKeyItemPair;
+import uk.gov.register.store.DataAccessLayer;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -21,9 +21,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
 public class BaseIndexFunctionTest {
-
     @Mock
-    private Register register;
+    private DataAccessLayer dataAccessLayer;
 
     @Before
     public void setup(){
@@ -36,7 +35,7 @@ public class BaseIndexFunctionTest {
 
         BaseIndexFunction func = mock(BaseIndexFunction.class, Mockito.CALLS_REAL_METHODS);
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, entry);
+        func.execute(h -> dataAccessLayer.getItemBySha256(h), entry);
 
         assertThat(resultSet, is(empty()));
     }

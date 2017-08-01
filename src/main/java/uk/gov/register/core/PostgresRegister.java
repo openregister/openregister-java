@@ -9,7 +9,6 @@ import uk.gov.register.exceptions.FieldUndefinedException;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.RegisterUndefinedException;
 import uk.gov.register.exceptions.SerializationFormatValidationException;
-import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
@@ -30,7 +29,6 @@ public class PostgresRegister implements Register {
     private final RegisterName registerName;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
-    private final IndexDriver indexDriver;
     private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
     private final ItemValidator itemValidator;
     private final EnvironmentValidator environmentValidator;
@@ -44,7 +42,6 @@ public class PostgresRegister implements Register {
                             RecordIndex recordIndex,
                             DerivationRecordIndex derivationRecordIndex,
                             Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
-                            IndexDriver indexDriver,
                             ItemValidator itemValidator,
                             EnvironmentValidator environmentValidator) {
         this.registerName = registerName;
@@ -52,7 +49,6 @@ public class PostgresRegister implements Register {
         this.itemStore = itemStore;
         this.recordIndex = recordIndex;
         this.derivationRecordIndex = derivationRecordIndex;
-        this.indexDriver = indexDriver;
         this.indexFunctionsByEntryType = indexFunctionsByEntryType;
         this.itemValidator = itemValidator;
         this.environmentValidator = environmentValidator;
@@ -67,31 +63,22 @@ public class PostgresRegister implements Register {
     public void appendEntry(final Entry entry) {
         List<Item> referencedItems = getReferencedItems(entry);
 
-        referencedItems.forEach(item -> {
+        referencedItems.forEach(i -> {
             if (entry.getEntryType() == EntryType.user) {
-                itemValidator.validateItem(item.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+                itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
             } else if (entry.getKey().startsWith("field:")) {
-                Field field = extractObjectFromItem(item, Field.class);
+                Field field = extractObjectFromItem(i, Field.class);
                 environmentValidator.validateFieldAgainstEnvironment(field);
-
             } else if (entry.getKey().startsWith("register:")) {
-                RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(item, RegisterMetadata.class);
+                RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
                 // will throw exception if field not present
                 localRegisterMetadata.getFields().forEach(this::getField);
-
+                
                 environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
             }
         });
 
         entryLog.appendEntry(entry);
-
-        for (IndexFunction indexFunction : indexFunctionsByEntryType.get(entry.getEntryType())) {
-            indexDriver.indexEntry(this, entry, indexFunction);
-        }
-
-        if (entry.getEntryType() == EntryType.user) {
-            recordIndex.updateRecordIndex(entry);
-        }
     }
 
     private List<Item> getReferencedItems(Entry entry) {
@@ -128,7 +115,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Record> getRecord(String key) {
-        return derivationRecordIndex.getRecord(key, IndexNames.RECORDS);
+        return derivationRecordIndex.getRecord(key, IndexNames.RECORD);
     }
 
     @Override
@@ -153,7 +140,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public int getTotalRecords() {
-        return getTotalDerivationRecords(IndexNames.RECORDS);
+        return getTotalDerivationRecords(IndexNames.RECORD);
     }
 
     @Override

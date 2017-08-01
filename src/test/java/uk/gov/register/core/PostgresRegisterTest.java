@@ -68,7 +68,7 @@ public class PostgresRegisterTest {
 
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, indexFunctionsByEntryType, indexDriver, itemValidator, environmentValidator);
+                derivationRecordIndex, indexFunctionsByEntryType, itemValidator, environmentValidator);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
@@ -134,18 +134,6 @@ public class PostgresRegisterTest {
         Map<String, Field> fieldsByName = register.getFieldsByName();
         assertThat(fieldsByName.size(), is(1));
         assertThat(fieldsByName.get("postcode").getText(), is("field description"));
-    }
-
-    @Test
-    public void shouldCallSystemIndexFunction() throws IOException {
-        JsonNode content = mapper.readTree( "{\"name\":\"school\"}" );
-        HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
-        Item item = new Item(hashValue, content);
-        Entry entry = new Entry(1, hashValue, Instant.now(),"name", EntryType.system);
-
-        register.putItem(item);
-        register.appendEntry(entry);
-        verify(indexDriver).indexEntry(register, entry, systemIndexFunction);
     }
 
     private Item getItem(String json) throws IOException {

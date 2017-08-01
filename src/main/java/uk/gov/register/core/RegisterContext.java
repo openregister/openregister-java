@@ -27,7 +27,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -111,7 +110,6 @@ public class RegisterContext implements
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
-                new IndexDriver(dataAccessLayer),
                 itemValidator,
                 environmentValidator);
     }
@@ -123,7 +121,6 @@ public class RegisterContext implements
                 new RecordIndexImpl(dataAccessLayer),
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
-                new IndexDriver(dataAccessLayer),
                 itemValidator,
                 environmentValidator);
     }
@@ -199,7 +196,9 @@ public class RegisterContext implements
                 dbi.onDemand(EntryItemDAO.class),
                 dbi.onDemand(ItemQueryDAO.class),
                 dbi.onDemand(ItemDAO.class),
-                schema);
+                schema,
+                new IndexDriver(),
+                getIndexFunctions());
     }
 
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
@@ -211,7 +210,9 @@ public class RegisterContext implements
                 handle.attach(EntryItemDAO.class),
                 handle.attach(ItemQueryDAO.class),
                 handle.attach(ItemDAO.class),
-                schema);
+                schema,
+                new IndexDriver(),
+                getIndexFunctions());
     }
 
     @Override

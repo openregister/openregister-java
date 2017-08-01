@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -112,10 +113,10 @@ public class LoadSerializedFunctionalTest {
         assertThat(userEntries.get(1).getEntryNumber(), is(2));
         assertThat(userEntries.get(1).getItemHashes().get(0).getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
-        Record record1 = testRecordDAO.findRecord("ft_openregister_test", IndexNames.RECORDS, schema, "entry").get();
+        Record record1 = testRecordDAO.findRecords(Arrays.asList("ft_openregister_test"), IndexNames.RECORD, schema, "entry").get(0);
         assertThat(record1.getEntry().getEntryNumber(), equalTo(1));
         assertThat(record1.getEntry().getKey(), equalTo("ft_openregister_test"));
-        Record record2 = testRecordDAO.findRecord("ft_openregister_test2", IndexNames.RECORDS, schema, "entry").get();
+        Record record2 = testRecordDAO.findRecords(Arrays.asList("ft_openregister_test2"), IndexNames.RECORD, schema, "entry").get(0);
         assertThat(record2.getEntry().getEntryNumber(), equalTo(2));
         assertThat(record2.getEntry().getKey(), equalTo("ft_openregister_test2"));
     }

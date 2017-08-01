@@ -5,8 +5,8 @@ import org.junit.Test;
 import uk.gov.register.configuration.IndexFunctionConfiguration;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Register;
 import uk.gov.register.indexer.IndexKeyItemPair;
+import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -18,14 +18,14 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-public class RecordIndexFunctionTest{
-	RecordIndexFunction func;
-	Register register;
+public class LatestByKeyIndexFunctionTest {
+	LatestByKeyIndexFunction func;
+	DataAccessLayer dataAccessLayer;
 
 	@Before
 	public void setup() {
-		register = mock(Register.class);
-		func = new RecordIndexFunction(IndexFunctionConfiguration.IndexNames.RECORDS);
+		dataAccessLayer = mock(DataAccessLayer.class);
+		func = new LatestByKeyIndexFunction(IndexFunctionConfiguration.IndexNames.RECORD);
 	}
 
 	@Test
@@ -33,7 +33,7 @@ public class RecordIndexFunctionTest{
 		HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
 
 		Set<IndexKeyItemPair> resultSet = new HashSet<>();
-		func.execute(register, EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+		func.execute(h -> dataAccessLayer.getItemBySha256(h), EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
 		assertThat(resultSet.size(), is(1));
 		assertThat(resultSet, contains(new IndexKeyItemPair("LND", itemHash)));

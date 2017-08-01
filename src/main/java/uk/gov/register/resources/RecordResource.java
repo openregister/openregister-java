@@ -2,7 +2,6 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterName;
@@ -50,7 +49,7 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
-        return register.getDerivationRecord(key, IndexNames.RECORDS).map(viewFactory::getRecordMediaView)
+        return register.getRecord(key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -123,7 +122,7 @@ public class RecordResource {
     }
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalDerivationRecords(IndexNames.RECORDS));
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
 
         if (pagination.hasNextPage()) {
             httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());

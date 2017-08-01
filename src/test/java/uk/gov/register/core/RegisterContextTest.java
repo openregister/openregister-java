@@ -104,9 +104,9 @@ public class RegisterContextTest {
         RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
                 true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries","local-authority-by-type"), new RegisterAuthenticator("", ""));
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
-        assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(2));
+        assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(3));
         List<String> indexFunctionNames = register.getIndexFunctionsByEntryType().get(EntryType.user).stream().map(ifn -> ifn.getClass().getName()).collect(toList());
-        assertThat(indexFunctionNames, containsInAnyOrder("uk.gov.register.indexer.function.CurrentCountriesIndexFunction","uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction"));
+        assertThat(indexFunctionNames, containsInAnyOrder("uk.gov.register.indexer.function.CurrentCountriesIndexFunction", "uk.gov.register.indexer.function.LatestByKeyIndexFunction", "uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction"));
 
     }
 
@@ -115,10 +115,9 @@ public class RegisterContextTest {
         RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
                 true, false, Optional.empty(), emptyList(), Collections.emptyList(), new RegisterAuthenticator("", ""));
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
-        assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(0));
+        assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(1));
     }
-
-
+    
     @Test
     public void shouldSetSystemIndexFunctions(){
         RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
