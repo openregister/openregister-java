@@ -1,9 +1,6 @@
 package uk.gov.register.indexer;
 
-import uk.gov.register.core.Entry;
-import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Record;
-import uk.gov.register.core.Register;
+import uk.gov.register.core.*;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
@@ -18,7 +15,7 @@ public class IndexDriver {
         this.dataAccessLayer = dataAccessLayer;
     }
 
-    public void indexEntry(Register register, Entry entry, IndexFunction indexFunction) {
+    public void indexEntry(RegisterReadOnly register, Entry entry, IndexFunction indexFunction) {
         Optional<Record> currentRecord = (entry.getEntryType() == EntryType.user)
                 ? register.getRecord(entry.getKey())
                 : register.getDerivationRecord(entry.getKey(), IndexNames.METADATA);

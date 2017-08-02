@@ -128,7 +128,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Record> getRecord(String key) {
-        return recordIndex.getRecord(key);
+        return derivationRecordIndex.getRecord(key, IndexNames.RECORDS);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public int getTotalRecords() {
-        return recordIndex.getTotalRecords();
+        return getTotalDerivationRecords(IndexNames.RECORDS);
     }
 
     @Override

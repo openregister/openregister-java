@@ -258,7 +258,14 @@ public class IndexQueryDaoIntegrationTest {
     }
 
     @Test
-    public void shouldCountRecords() {
+    public void getTotalRecords_shouldReturnZero_whenNoRecordsExist() {
+        int totalRecords = dao.getTotalRecords("by-type", schema);
+
+        assertThat(totalRecords, is(0));
+    }
+
+    @Test
+    public void getTotalRecords_shouldReturnTotalRecords_whenRecordsExist() {
         nameChangeAndGroupChangeScenario();
         int totalRecords = dao.getTotalRecords("by-type", schema);
 

@@ -11,8 +11,7 @@ public class InMemoryItemStore extends ItemStoreImpl {
 
     public InMemoryItemStore(ItemQueryDAO itemQueryDAO, ItemDAO itemDAO) {
         super(new PostgresDataAccessLayer(mock(EntryQueryDAO.class), mock(IndexDAO.class), mock(IndexQueryDAO.class), mock(EntryDAO.class),
-                mock(EntryItemDAO.class), itemQueryDAO, itemDAO,
-                mock(RecordQueryDAO.class), mock(CurrentKeysUpdateDAO.class), "schema"));
+                mock(EntryItemDAO.class), itemQueryDAO, itemDAO, "schema"));
         this.itemDAO = itemDAO;
     }
 

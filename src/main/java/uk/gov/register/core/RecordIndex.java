@@ -9,8 +9,6 @@ public interface RecordIndex {
 
     Optional<Record> getRecord(String key);
 
-    int getTotalRecords();
-
     List<Record> getRecords(int limit, int offset);
 
     List<Record> findMax100RecordsByKeyValue(String key, String value);

@@ -49,6 +49,27 @@ public class RecordResourceFunctionalTest {
         assertThat(itemMap.get("street").asText(), is("presley"));
         assertThat(itemMap.get("address").asText(), is("6789"));
     }
+    
+    @Test
+    public void getRecords() throws IOException {
+        Response response = register.getRequest(address, "/records.json");
+        
+        assertThat(response.getStatus(), equalTo(200));
+
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        JsonNode firstRecord = res.get("145678");
+        assertThat(firstRecord.get("entry-number").textValue(), equalTo("3"));
+        assertThat(firstRecord.get("index-entry-number").textValue(), equalTo("3"));
+        assertTrue(firstRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+        assertThat(firstRecord.get("item").size(), equalTo(1));
+
+        JsonNode secondRecord = res.get("6789");
+        assertThat(secondRecord.get("entry-number").textValue(), equalTo("2"));
+        assertThat(secondRecord.get("index-entry-number").textValue(), equalTo("2"));
+        assertTrue(secondRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+        assertThat(secondRecord.get("item").size(), equalTo(1));
+    }
 
     @Test
     public void recordResource_return404ResponseWhenRecordNotExist() {
@@ -78,6 +99,22 @@ public class RecordResourceFunctionalTest {
         Response response = register.getRequest(address, "/record/6789", MediaType.TEXT_HTML);
 
         assertThat(response.getStatus(), equalTo(200));
+    }
+
+    @Test
+    public void recordResource_returnsMostRecentRecord_whenMultipleEntriesExist() throws IOException {
+        Response response = register.getRequest(address, "/record/6789.json");
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        assertThat(res.get("6789").get("item").get(0).get("street").textValue(), equalTo("presley"));
+    }
+
+    @Test
+    public void recordResource_returnsIdenticalResponseAsIndexEndpoint() throws IOException {
+        String indexResponse = register.getRequest(address, "/index/records/record/6789.json").readEntity(String.class);
+        String recordsResponse = register.getRequest(address, "/record/6789.json").readEntity(String.class);
+
+        assertThat(indexResponse, equalTo(recordsResponse));
     }
 
     @Test
