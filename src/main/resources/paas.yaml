@@ -26,8 +26,8 @@ externalConfigDirectory: /tmp
 
 downloadConfigs: true
 
-fieldsYamlLocation: classpath://config/fields.yaml
-registersYamlLocation: classpath://config/registers.yaml
+fieldsYamlLocation: ${FIELDS_YAML_LOCATION:-classpath://config/fields.yaml}
+registersYamlLocation: ${REGISTERS_YAML_LOCATION:-classpath://config/registers.yaml}
 
 credentials:
   user: ${USER}

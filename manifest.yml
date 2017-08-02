@@ -11,3 +11,6 @@ applications:
     REGISTER_DOMAIN: change-me.cloudapps.digital
     USER: change-me
     PASSWORD: change-me
+    # Optional
+    # REGISTERS_YAML_LOCATION: https://register.register.gov.uk/records.yaml
+    # FIELDS_YAML_LOCATION: https://field.register.gov.uk/records.yaml
