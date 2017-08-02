@@ -32,7 +32,7 @@ public class DatabaseManager {
         return new ObjectMapper()
                 .readTree(System.getenv("VCAP_SERVICES"))
                 .at("/postgres/0/credentials/jdbcuri")
-                .textValue() + "&ssl=true";
+                .textValue();
     }
 
     public ManagedDataSource getDataSource() {
