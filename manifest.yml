@@ -3,12 +3,14 @@ applications:
 - name: change-me
   memory: 512M
   buildpack: java_buildpack
-  env:
-    JBP_CONFIG_JAVA_MAIN: '{ arguments: "server paas.yaml" }'
   services:
     - change-me-db
   env:
+    JBP_CONFIG_JAVA_MAIN: '{ arguments: "server paas.yaml" }'
     REGISTER: change-me
     REGISTER_DOMAIN: change-me.cloudapps.digital
     USER: change-me
     PASSWORD: change-me
+    # Optional
+    # REGISTERS_YAML_LOCATION: https://register.register.gov.uk/records.yaml
+    # FIELDS_YAML_LOCATION: https://field.register.gov.uk/records.yaml
