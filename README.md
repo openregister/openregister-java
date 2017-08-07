@@ -48,6 +48,8 @@ If the basic registers change you can restart your register so that it sees the 
 - Install and run postgres db
 - Checkout project
 - Run the `./go` script to set everything up
+- `$ git submodule init`
+- `$ git submodule update`
 - Build project using command `./gradlew clean build`
 
 ### Working on the frontend
