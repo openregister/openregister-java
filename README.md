@@ -50,6 +50,22 @@ If the basic registers change you can restart your register so that it sees the 
 - Run the `./go` script to set everything up
 - Build project using command `./gradlew clean build`
 
+### IntelliJ setup
+- `File > Open` your checkout directory
+- `Run > Edit Configurations`
+- Edit `RegisterRunner`
+- Use classpath of module: `openregister-java_main`
+- JRE: `1.8`
+- `Run > Run... > RegisterRunner`
+
+To test if everything has worked:
+
+`$ curl 127.0.0.1:8080/records -H "Host: field"` 
+
+should respond with:
+ 
+ `Register undefined`
+
 ### Working on the frontend
 
 [![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
