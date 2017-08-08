@@ -15,7 +15,7 @@
         <h1 class="heading-large" th:utext="${friendlyRegisterName}"></h1>
         <th:block th:utext="${registerText}"></th:block>
         <p>
-          <a href="/records" class="button">View Register</a>
+          <a href="/records" class="button" role="button">View Register</a>
         </p>
         <p>The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span> records and includes the following fields:</p>
         <div th:replace="fragments/field-list.html::field-list(${fields})"></div>
