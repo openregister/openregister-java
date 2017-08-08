@@ -2,8 +2,8 @@ package uk.gov.register.functional.app;
 
 public class RsfRegisterDefinition {
 
-    public static String ADDRESS_NAME = "add-item\t{\"register-name\":\"address\"}\n" +
-            "append-entry\tsystem\tregister-name\t2017-06-01T10:00:00Z\tsha-256:50e3d51c16e203c0124e8bf3a8807abc7693f0d01cb0569499c608f98d2924e9\n";
+    public static String ADDRESS_NAME = "add-item\t{\"name\":\"address\"}\n" +
+            "append-entry\tsystem\tname\t2017-06-01T10:00:00Z\tsha-256:eb5064e317d2d673634e4a40782ab727573bd2075a82cf69c05af919d7518794\n";
 
     public static String ADDRESS_REGISTER =
             "add-item\t{\"fields\":[\"address\",\"street\",\"locality\",\"town\",\"area\",\"postcode\",\"country\",\"latitude\",\"longitude\",\"property\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}\n" +
