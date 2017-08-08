@@ -7,7 +7,7 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.configuration.UrlConfigurationSourceProvider;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -74,7 +74,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new ThymeleafViewRenderer("HTML5", "/templates/", ".html", false))));
 
         if (isRunningOnCloudFoundry()) {
-            bootstrap.setConfigurationSourceProvider(new ResourceConfigurationSourceProvider());
+            bootstrap.setConfigurationSourceProvider(new UrlConfigurationSourceProvider());
         }
 
         bootstrap.setConfigurationSourceProvider(
