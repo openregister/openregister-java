@@ -7,12 +7,6 @@ applications:
     - change-me-db
   env:
     JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://change-me/change-me.yaml" }'
-    REGISTER: change-me
-    REGISTER_DOMAIN: change-me.cloudapps.digital
-    USER: change-me
-    PASSWORD: change-me
     AWS_ACCESS_KEY_ID: change-me
     AWS_SECRET_ACCESS_KEY: change-me
-    # Optional
-    # REGISTERS_YAML_LOCATION: https://register.register.gov.uk/records.yaml
-    # FIELDS_YAML_LOCATION: https://field.register.gov.uk/records.yaml
+    AWS_DEFAULT_REGION: change-me
