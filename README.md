@@ -55,12 +55,12 @@ If the basic registers change you can restart your register so that it sees the 
 - `Run > Edit Configurations`
 - Edit `RegisterRunner`
 - Use classpath of module: `openregister-java_main`
-- JRE: `1.8`
+- JRE: *select your installed JRE e.g.* `1.8`
 - `Run > Run... > RegisterRunner`
 
 To test if everything has worked:
 
-`$ curl 127.0.0.1:8080/records -H "Host: field"` 
+`$ curl 127.0.0.1:8080/records -H "Host: school"` 
 
 should respond with:
  
