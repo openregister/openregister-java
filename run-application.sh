@@ -11,7 +11,7 @@ function on_exit {
 }
 
 function wait_for_http_on_port {
-  while ! curl ":$1" --silent --fail --output /dev/null;
+  while ! curl "http://localhost:$1" --silent --fail --output /dev/null;
   do
     if [ $(docker inspect -f {{.State.Running}} $2) != 'true' ]; then
       echo "Container $2 unexpectedly stopped while waiting for it to open port $1"
