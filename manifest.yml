@@ -3,6 +3,7 @@ applications:
 - name: change-me
   memory: 512M
   buildpack: java_buildpack
+  health-check-http-endpoint: /records
   services:
     - change-me-db
   env:
