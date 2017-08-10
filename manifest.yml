@@ -3,10 +3,11 @@ applications:
 - name: change-me
   memory: 512M
   buildpack: java_buildpack
+  health-check-http-endpoint: /records
   services:
     - change-me-db
   env:
     JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://change-me/change-me.yaml" }'
     AWS_ACCESS_KEY_ID: change-me
     AWS_SECRET_ACCESS_KEY: change-me
-    AWS_DEFAULT_REGION: change-me
+    AWS_REGION: change-me
