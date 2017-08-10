@@ -130,8 +130,8 @@ public class DataDownloadFunctionalTest {
         List<String> rsfLines = getRsfLinesFrom(response);
 
         assertThat(rsfLines.get(0), equalTo("assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
-        assertThat(rsfLines.contains("add-item\t{\"register-name\":\"address\"}"), is(true));
-        assertThat(rsfLines.get(15), equalTo("append-entry\tsystem\tregister-name\t2017-06-01T10:00:00Z\tsha-256:50e3d51c16e203c0124e8bf3a8807abc7693f0d01cb0569499c608f98d2924e9"));
+        assertThat(rsfLines.contains("add-item\t{\"name\":\"address\"}"), is(true));
+        assertThat(rsfLines.get(15), equalTo("append-entry\tsystem\tname\t2017-06-01T10:00:00Z\tsha-256:eb5064e317d2d673634e4a40782ab727573bd2075a82cf69c05af919d7518794"));
     }
 
     @Test
