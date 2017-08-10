@@ -60,10 +60,10 @@ If the basic registers change you can restart your register so that it sees the 
 
 To test if everything has worked:
 
-`$ curl 127.0.0.1:8080/records -H "Host: school"` 
+`$ curl 127.0.0.1:8080/records -H "Host: school"`
 
 should respond with:
- 
+
  `Register undefined`
 
 ### Working on the frontend
@@ -85,6 +85,6 @@ While compassWatch is running, any changed `.scss` file will
 automatically be compiled to `.css` and picked up by the running app.
 
 
-### Update the govuk_frontend_toolkit and govuk_template
+### Update the govuk_frontend_toolkit and govuk_template to the latest version
 
-    $ git submodule update
+    $ git submodule foreach git pull origin master
