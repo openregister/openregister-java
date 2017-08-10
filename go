@@ -12,7 +12,7 @@ function ensure_user_exists {
 
 # Set up submodules
 
-git submodule init
+git submodule update --init
 
 # Set up postgres
 ensure_user_exists postgres
