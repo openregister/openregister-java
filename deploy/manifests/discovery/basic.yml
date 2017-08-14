@@ -1,0 +1,15 @@
+---
+applications:
+- name: discovery-basic
+  memory: 1024M
+  instances: 2
+  buildpack: java_buildpack
+  health-check-http-endpoint: /records
+  random-route: true
+  services:
+    - discovery-db
+  env:
+    JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://openregister.discovery.config/basic/openregister/paas-config.yaml" }'
+    AWS_ACCESS_KEY_ID: change-me
+    AWS_SECRET_ACCESS_KEY: change-me
+    AWS_REGION: eu-west-1

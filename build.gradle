@@ -214,6 +214,7 @@ task createDeployableBundle(type: Zip) {
     from('deploy/')
     include('*')
     include('scripts/**/*.sh')
+    include('manifests/**/*.yml')
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
 
