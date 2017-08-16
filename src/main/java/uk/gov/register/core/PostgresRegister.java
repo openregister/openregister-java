@@ -66,6 +66,8 @@ public class PostgresRegister implements Register {
         referencedItems.forEach(i -> {
             if (entry.getEntryType() == EntryType.user) {
                 itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+                //TODO: Validate system entries
+
             } else if (entry.getKey().startsWith("field:")) {
                 Field field = extractObjectFromItem(i, Field.class);
                 environmentValidator.validateFieldAgainstEnvironment(field);

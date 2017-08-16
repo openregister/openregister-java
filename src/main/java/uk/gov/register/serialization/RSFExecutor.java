@@ -33,11 +33,16 @@ public class RSFExecutor {
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
         int rsfLine = 1;
-        boolean allowSystemEntries = true;
-
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
-            
+                //TODO: Remove check
+            boolean allowSystemEntries = true;
+
+
+            // If is SYSTEM ++ updating FIELD NAME EXISTS ++
+            // entry trable
+            //index table contains metadata
+
             RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine, allowSystemEntries);
             if (!validationResult.isSuccessful()) {
                 return validationResult;
@@ -77,6 +82,9 @@ public class RSFExecutor {
             }
             
             return validateAppendEntry(command, rsfLine, register, hashRefLine, allowSystemEntries);
+
+            //TODO: Do we need a new validation rule at this point?
+                
         }
         
         return RegisterResult.createSuccessResult();
@@ -85,6 +93,7 @@ public class RSFExecutor {
     private RegisterResult validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine, boolean allowSystemEntries) {
         EntryType entryType = EntryType.valueOf(command.getCommandArguments().get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
         
+       //TODO: Unless entry is in whitelist of allowed system types
         if (!allowSystemEntries && entryType == EntryType.system) {
             return RegisterResult.createFailResult("System entries must be added before user entries (line: " + rsfLine + "): " + command.toString());
         }

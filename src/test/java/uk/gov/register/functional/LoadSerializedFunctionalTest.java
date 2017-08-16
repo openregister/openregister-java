@@ -159,7 +159,7 @@ public class LoadSerializedFunctionalTest {
     }
     
     @Test
-    public void shouldReturnBadRequestForSystemEntryAfterUserEntry() throws IOException {
+    public void shouldReturnBadRequestForNonLegalSystemEntryAfterUserEntry() throws IOException {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
         
         Response r = send(input);
