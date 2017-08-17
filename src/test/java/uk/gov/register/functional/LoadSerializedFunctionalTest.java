@@ -2,6 +2,8 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.*;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
@@ -21,12 +23,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static uk.gov.register.functional.app.TestRegister.address;
+import static uk.gov.register.functional.app.TestRegister.postcode;
 
 public class LoadSerializedFunctionalTest {
     private static final TestRegister testRegister = TestRegister.register;
@@ -159,13 +165,28 @@ public class LoadSerializedFunctionalTest {
     }
     
     @Test
-    public void shouldReturnBadRequestForNonLegalSystemEntryAfterUserEntry() throws IOException {
-        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
+    public void shouldAllowRegisterTextToBeUpdatedAfterUserEntry() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-valid-entry-ordering.rsf")));
         
         Response r = send(input);
         
-        assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"System entries must be added before user entries (line: 19): RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:f202653182ebd63c34177a7176ce77f1aae63482ce6914ec1c71683a6d7131ab]}\"}"));
+        assertThat(r.getStatus(), equalTo(200));
+        Response response = register.getRequest(testRegister, "/register.json");
+        String bar = response.readEntity(String.class);
+        assertThat(bar.contains("Register of registers X"), is(true));
+
+    }
+
+    @Test
+    public void shouldNotAllowRegisterNonTextValuesToBeUpdatedAfterUserEntry() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
+
+        Response r = send(input);
+
+        assertThat(r.getStatus(), equalTo(200));
+        Response response = register.getRequest(testRegister, "/register.json");
+        String bar = response.readEntity(String.class);
+
     }
 
     @Test

@@ -78,7 +78,7 @@ public class RSFExecutor {
         } else if (commandName.equals("append-entry")) {
             // Check that we should still allow system entries
             if (allowSystemEntries) {
-                allowSystemEntries = register.getTotalEntries(EntryType.user) == 0;
+                allowSystemEntries = true;
             }
             
             return validateAppendEntry(command, rsfLine, register, hashRefLine, allowSystemEntries);

@@ -64,7 +64,6 @@ public class RegisterResourceFunctionalTest {
 
         assertAddressRegisterMapIsEqualTo(registerRecordMapFromAddressRegister);
     }
-
     @Test
     public void registerJsonShouldContainCorrectFieldsForRegister() {
         register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);

@@ -12,6 +12,7 @@ import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
+import uk.gov.register.util.FieldComparer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -75,7 +76,6 @@ public class PostgresRegister implements Register {
                 RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
                 // will throw exception if field not present
                 localRegisterMetadata.getFields().forEach(this::getField);
-                
                 environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
             }
         });
@@ -237,6 +237,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Record> getDerivationRecord(String key, String derivationName) {
+        Optional<Record> foo = derivationRecordIndex.getRecord(key, derivationName);
         return derivationRecordIndex.getRecord(key, derivationName);
     }
 
