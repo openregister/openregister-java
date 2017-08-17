@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - apt-get update -y
+      - apt-get install -y apt-transport-https
+      - wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | apt-key add -
+      - echo 'deb http://packages.cloudfoundry.org/debian stable main' > /etc/apt/sources.list.d/cloudfoundry-cli.list
+      - apt-get update -y
+      - apt-get install -y cf-cli
+  pre_build:
+    commands:
+      - export CF_USER="$(aws ssm get-parameters --name paas-deploy-user --query 'Parameters[0].Value' --output text)"
+      - export CF_PASSWORD="$(aws ssm get-parameters --name paas-deploy-password --with-decryption --query 'Parameters[0].Value' --output text)"
+      - export AWS_KEY="$(aws ssm get-parameters --name paas-deploy-aws-key --query 'Parameters[0].Value' --output text)"
+      - export AWS_SECRET="$(aws ssm get-parameters --name paas-deploy-aws-secret --with-decryption --query 'Parameters[0].Value' --output text)"
+      - cf api "https://api.cloud.service.gov.uk"
+      - cf auth "$CF_USER" "$CF_PASSWORD"
+      - cf target -o "$CF_ORGANIZATION" -s "$CF_SPACE"
+  build:
+    commands:
+      - 'sed -i "s/    AWS_ACCESS_KEY_ID: change-me/    AWS_ACCESS_KEY_ID: $AWS_KEY/" manifests/$ENVIRONMENT/$REGISTER_GROUP.yml'
+      - 'sed -i "s/    AWS_SECRET_ACCESS_KEY: change-me/    AWS_SECRET_ACCESS_KEY: $AWS_SECRET/" manifests/$ENVIRONMENT/$REGISTER_GROUP.yml'
+      - cf push -p openregister-java.jar -f manifests/$ENVIRONMENT/$REGISTER_GROUP.yml
+  post_build:
+    commands:
+      - cf logout
