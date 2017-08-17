@@ -40,8 +40,7 @@ If the basic registers change you can restart your register so that it sees the 
 
 - Java 1.8+
 - Postgres DB 9.5+ (and in particular `psql` and `createuser` need to be on your PATH)
-- Python 3 (and in particular the `pyvenv` script needs to be on your
-  PATH)
+- Python 3.6
 
 ### Build and Run project
 
