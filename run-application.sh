@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
-ENVIRONMENT=${ENVIRONMENT:-alpha}
+ENVIRONMENT=${ENVIRONMENT:-beta}
+REGISTERS=${REGISTERS:-"country"}
+
+if [ $ENVIRONMENT == beta ]
+then
+  DOMAIN="register.gov.uk"
+else
+  DOMAIN="$ENVIRONMENT.openregister.org"
+fi
 
 function on_exit {
   echo "Stopping and removing containers..."
@@ -49,7 +57,7 @@ for register in "register" "datatype" "field"; do
     --fail \
     --header "Content-Type: application/uk-gov-rsf" \
     --header "Host: $register" \
-    --data-binary @<(curl "https://$register.$ENVIRONMENT.openregister.org/download-rsf") \
+    --data-binary @<(curl "https://$register.$DOMAIN/download-rsf") \
     --user foo:bar \
     "http://localhost:8081/load-rsf"
 done
@@ -58,13 +66,16 @@ echo "Starting register..."
 docker-compose --file docker-compose.register.yml up -d
 wait_for_http_on_port 8080 openregister-register
 
-echo "Loading school-eng data..."
-curl \
-  --fail \
-  --header "Content-type: application/uk-gov-rsf" \
-  --data-binary @<(curl "https://school-eng.alpha.openregister.org/download-rsf") \
-  --user foo:bar \
-  "http://localhost:8080/load-rsf"
+for register in $REGISTERS; do
+  echo "Loading $register..."
+  curl \
+    --fail \
+    --header "Content-Type: application/uk-gov-rsf" \
+    --header "Host: $register" \
+    --data-binary @<(curl "https://$register.$DOMAIN/download-rsf") \
+    --user foo:bar \
+    "http://localhost:8080/load-rsf"
+done
 
 echo "Register is ready on http://localhost:8080"
 do_nothing_forever

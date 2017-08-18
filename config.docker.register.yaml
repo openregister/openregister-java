@@ -23,8 +23,8 @@ server:
 
 registerDomain: openregister.dev:8080
 
-register: school-eng
-schema: school-eng
+register: country
+schema: country
 
 enableDownloadResource: true
 
@@ -54,3 +54,10 @@ logging:
     "org.skife.jdbi.v2": TRACE
   appenders:
     - type: logstash-console
+
+registers:
+  territory:
+    credentials:
+      user: foo
+      password: bar
+    schema: territory
