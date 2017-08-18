@@ -33,11 +33,11 @@ public class RSFExecutor {
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
         int rsfLine = 1;
+        boolean allowSystemEntries = true;
 
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
-            boolean allowSystemEntries = register.getTotalEntries(EntryType.user) == 0;
-
+            
             RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine, allowSystemEntries);
             if (!validationResult.isSuccessful()) {
                 return validationResult;
@@ -50,7 +50,7 @@ public class RSFExecutor {
 
             rsfLine++;
         }
-
+        
         return validateOrphanAddItems(hashRefLine);
     }
 
@@ -71,9 +71,14 @@ public class RSFExecutor {
         if (commandName.equals("add-item")) {
             validateAddItem(command, rsfLine, hashRefLine);
         } else if (commandName.equals("append-entry")) {
+            // Check that we should still allow system entries
+            if (allowSystemEntries) {
+                allowSystemEntries = register.getTotalEntries(EntryType.user) == 0;
+            }
+            
             return validateAppendEntry(command, rsfLine, register, hashRefLine, allowSystemEntries);
-                
         }
+        
         return RegisterResult.createSuccessResult();
     }
 

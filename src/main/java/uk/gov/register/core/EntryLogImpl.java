@@ -1,5 +1,6 @@
 package uk.gov.register.core;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.db.EntryMerkleLeafStore;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
@@ -9,6 +10,7 @@ import uk.gov.register.views.RegisterProof;
 import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
+import javax.xml.bind.DatatypeConverter;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,10 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.apache.commons.codec.digest.DigestUtils;
 
 public class EntryLogImpl implements EntryLog {
     private final DataAccessLayer dataAccessLayer;
@@ -44,7 +42,7 @@ public class EntryLogImpl implements EntryLog {
     public Collection<Entry> getEntries(int start, int limit) {
         return dataAccessLayer.getEntries(start, limit);
     }
-
+    
     @Override
     public Iterator<Entry> getIterator() {
         return dataAccessLayer.getEntryIterator();

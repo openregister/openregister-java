@@ -10,7 +10,7 @@ public interface ItemStore {
     void putItem(Item item);
 
     Optional<Item> getItemBySha256(HashValue hash);
-
+    
     Collection<Item> getAllItems();
 
     Iterator<Item> getIterator();

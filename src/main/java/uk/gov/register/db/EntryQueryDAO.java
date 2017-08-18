@@ -44,6 +44,10 @@ public interface EntryQueryDAO {
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :start and e.entry_number \\< :start + :limit group by e.entry_number order by e.entry_number asc")
     Collection<Entry> getEntries(@Bind("start") int start, @Bind("limit") int limit, @Define("schema") String schema );
 
+    @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.key = :key group by e.entry_number order by e.entry_number asc")
+    @RegisterMapper(EntryMapper.class)
+    Collection<Entry> getAllEntriesByKey(@Bind("key") String key, @Define("schema") String schema);
+
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :entryNumber group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144) // Has to be non-zero to enable cursor mode https://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor

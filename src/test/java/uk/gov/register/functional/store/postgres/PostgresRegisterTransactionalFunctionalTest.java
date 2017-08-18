@@ -17,6 +17,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.FieldsConfiguration;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
@@ -24,15 +25,14 @@ import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.indexer.IndexDriver;
-import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
 import uk.gov.register.indexer.function.IndexFunction;
+import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.time.Instant;
 import java.util.*;
@@ -211,7 +211,6 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 new RecordIndexImpl(dataAccessLayer),
                 derivationRecordIndex,
                 getIndexFunctions(),
-                indexDriver,
                 itemValidator,
                 environmentValidator);
     }
@@ -225,9 +224,9 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 handle.attach(EntryItemDAO.class),
                 handle.attach(ItemQueryDAO.class),
                 handle.attach(ItemDAO.class),
-                handle.attach(RecordQueryDAO.class),
-                handle.attach(CurrentKeysUpdateDAO.class),
-                "address");
+                "address",
+                indexDriver,
+                ImmutableMap.of(EntryType.user, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.RECORD)), EntryType.system, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.METADATA))));
     }
 
     private DataSourceFactory getDataSourceFactory() {

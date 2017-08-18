@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.indexer.IndexKeyItemPair;
+import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -22,20 +23,22 @@ public class LocalAuthorityByTypeIndexFunctionTest {
 
     LocalAuthorityByTypeIndexFunction func;
     Register register;
+    DataAccessLayer dataAccessLayer;
 
     @Before
     public void setup(){
         register = mock(Register.class);
+        dataAccessLayer = mock(DataAccessLayer.class);
         func = new LocalAuthorityByTypeIndexFunction("local-authority-by-type");
     }
 
     @Test
     public void executeWithKeyAndHash_shouldReturnEmptySet_whenItemDoesNotExist() {
-        when(register.getItemBySha256(any())).thenReturn(Optional.empty());
+        when(dataAccessLayer.getItemBySha256(any())).thenReturn(Optional.empty());
 
         LocalAuthorityByTypeIndexFunction func = new LocalAuthorityByTypeIndexFunction("local-authority-by-type");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register,EntryType.user,  "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+        func.execute(h -> dataAccessLayer.getItemBySha256(h),EntryType.user,  "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -44,10 +47,10 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     public void executeWithKeyAndHash_shouldReturnEmptySet_whenLocalAuthorityTypeIsNotSpecifiedInItem() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"name\":\"City of London\"}"));
-        when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
+        when(dataAccessLayer.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+        func.execute(h -> dataAccessLayer.getItemBySha256(h), EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -56,10 +59,10 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     public void executeWithKeyAndHash_shouldReturnIndexValueItemPairByLocalAuthType_whenItemExists() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
-        when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
+        when(dataAccessLayer.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(register, EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+        func.execute(h -> dataAccessLayer.getItemBySha256(h), EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("CC", itemHash)));
@@ -70,9 +73,9 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
         Entry entry = new Entry(1, itemHash, Instant.now(), "LND", EntryType.user);
-        when(register.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
+        when(dataAccessLayer.getItemBySha256(itemHash)).thenReturn(Optional.of(item));
 
-        Set<IndexKeyItemPair> resultSet = func.execute(register, entry);
+        Set<IndexKeyItemPair> resultSet = func.execute(h -> dataAccessLayer.getItemBySha256(h), entry);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("CC", itemHash)));
@@ -85,10 +88,10 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         Item item1 = new Item(itemHash1, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
         Item item2 = new Item(itemHash2, objectMapper.readTree("{\"local-authority-eng\":\"WOT\",\"local-authority-type\":\"NMD\",\"name\":\"Worthing\"}"));
         Entry entry = new Entry(1, Arrays.asList(itemHash1, itemHash2), Instant.now(), "key", EntryType.user);
-        when(register.getItemBySha256(itemHash1)).thenReturn(Optional.of(item1));
-        when(register.getItemBySha256(itemHash2)).thenReturn(Optional.of(item2));
+        when(dataAccessLayer.getItemBySha256(itemHash1)).thenReturn(Optional.of(item1));
+        when(dataAccessLayer.getItemBySha256(itemHash2)).thenReturn(Optional.of(item2));
 
-        Set<IndexKeyItemPair> resultSet = func.execute(register, entry);
+        Set<IndexKeyItemPair> resultSet = func.execute(h -> dataAccessLayer.getItemBySha256(h), entry);
 
         assertThat(resultSet.size(), is(2));
         assertThat(resultSet, containsInAnyOrder(new IndexKeyItemPair("CC", itemHash1), new IndexKeyItemPair("NMD", itemHash2)));

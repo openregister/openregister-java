@@ -20,7 +20,7 @@ public interface RegisterReadOnly {
 
     Optional<Instant> getLastUpdatedTime();
 
-    Optional<Record> getRecord(String key); // TODO: is "record" the right word?
+    Optional<Record> getRecord(String key);
     int getTotalRecords();
     Collection<Entry> allEntriesOfRecord(String key);
     List<Record> getRecords(int limit, int offset);

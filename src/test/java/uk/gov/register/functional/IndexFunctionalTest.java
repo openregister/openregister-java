@@ -1,5 +1,6 @@
 package uk.gov.register.functional;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -16,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -23,62 +25,67 @@ import static uk.gov.register.functional.helpers.RecordJsonComparisonHelper.asse
 
 @RunWith(Parameterized.class)
 public class IndexFunctionalTest {
-    private final String testDirectory;
-    private final String expectedJsonFile;
     
     @ClassRule
     public static RegisterRule register = new RegisterRule();
     public static RsfComparisonHelper rsfComparisonHelper = new RsfComparisonHelper();
+    private final Map<String, String> inputAndExpectedData;
 
-    public IndexFunctionalTest(String testDirectory, String expectedJsonFile) {
-        this.testDirectory = testDirectory;
-        this.expectedJsonFile = expectedJsonFile;
+    public IndexFunctionalTest(Map<String, String> inputAndExpectedData) {
+        this.inputAndExpectedData = inputAndExpectedData;
     }
     
     @Before
     public void setup() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
-        String inputRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "input.rsf")));
         
         register.wipe();
         register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
-        register.loadRsf(TestRegister.local_authority_eng, inputRsf);
     }
 
     @After
     public void teardown() {
         System.clearProperty("multi-item-entries-enabled");
     }
-
+    
     @Parameterized.Parameters
-    public static Collection<Object[]> data(){
-        return Arrays.asList(new Object[][] {
-                { "example1", "5.json" },
-                { "example2", "4.json" },
-                { "example3", "3.json" }
-        });
+    public static Collection<Map<String, String>> data(){
+        return Arrays.asList(
+                ImmutableMap.of("example1", "5.json"),
+                ImmutableMap.of("example2", "4.json"),
+                ImmutableMap.of("example3", "3.json"),
+                ImmutableMap.of("example4/1", "1.json", "example4/2", "2.json"),
+                ImmutableMap.of("example5/1", "2.json", "example5/2", "3.json")
+        );
     }
 
     @Test
     public void shouldAllowDownloadOfIndexAsRsf() throws IOException {
-        String expectedIndexRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "index.rsf")));
-
-        Response indexRsfResponse = register.getRequest(TestRegister.local_authority_eng, "/index/local-authority-by-type/download-rsf");
-        assertThat(indexRsfResponse.getStatus(), is(200));
-        String actualIndexRsf = indexRsfResponse.readEntity(String.class);
-
-        rsfComparisonHelper.assertRsfEqual(expectedIndexRsf, actualIndexRsf);
+        for (String testDirectory : inputAndExpectedData.keySet()) {
+            String rsfInput = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "input.rsf")));
+            register.loadRsf(TestRegister.local_authority_eng, rsfInput);
+            
+            String expectedIndexRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "index.rsf")));
+            Response rsfInputResponse = register.getRequest(TestRegister.local_authority_eng, "/index/local-authority-by-type/download-rsf");
+            assertThat(rsfInputResponse.getStatus(), is(200));
+            String actualIndexRsf = rsfInputResponse.readEntity(String.class);
+            rsfComparisonHelper.assertRsfEqual(expectedIndexRsf, actualIndexRsf);
+        }
     }
 
     @Test
     public void shouldDisplyIndexRecordsAsJson() throws IOException {
-        String expectedRecords = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/"+ testDirectory +"/records", expectedJsonFile)));
-
-        Response indexJsonResponse = register.getRequest(TestRegister.local_authority_eng, "/index/local-authority-by-type/records.json");
-        assertThat(indexJsonResponse.getStatus(), is(200));
-        String actualIndexJson = indexJsonResponse.readEntity(String.class);
-
-        assertJsonEqual(expectedRecords, actualIndexJson);
+        for (String testDirectory : inputAndExpectedData.keySet()) {
+            String rsfInput = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "input.rsf")));
+            register.loadRsf(TestRegister.local_authority_eng, rsfInput);
+            
+            String expectedJsonFile = inputAndExpectedData.get(testDirectory);
+            String expectedRecords = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/"+ testDirectory + "/records", expectedJsonFile)));
+            Response indexJsonResponse = register.getRequest(TestRegister.local_authority_eng, "/index/local-authority-by-type/records.json");
+            assertThat(indexJsonResponse.getStatus(), is(200));
+            String actualIndexJson1 = indexJsonResponse.readEntity(String.class);
+            assertJsonEqual(expectedRecords, actualIndexJson1);
+        }
     }
 }

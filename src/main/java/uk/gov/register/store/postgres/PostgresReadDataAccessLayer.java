@@ -4,32 +4,29 @@ import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.*;
-import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
+import uk.gov.register.db.EntryIterator;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.IndexQueryDAO;
+import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     private final EntryQueryDAO entryQueryDAO;
-    private final IndexQueryDAO indexQueryDAO;
-    final ItemQueryDAO itemQueryDAO;
-    private final RecordQueryDAO recordQueryDAO;
-    final String schema;
-
+    private final ItemQueryDAO itemQueryDAO;
+    protected final IndexQueryDAO indexQueryDAO;
+    protected final String schema;
+    
     public PostgresReadDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO,
-            ItemQueryDAO itemQueryDAO, RecordQueryDAO recordQueryDAO, String schema) {
+            ItemQueryDAO itemQueryDAO, String schema) {
         this.entryQueryDAO = entryQueryDAO;
         this.indexQueryDAO = indexQueryDAO;
         this.itemQueryDAO = itemQueryDAO;
-        this.recordQueryDAO = recordQueryDAO;
         this.schema = schema;
     }
 
@@ -133,38 +130,37 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public Optional<Record> getRecord(String key) {
         checkpoint();
-        return recordQueryDAO.findByPrimaryKey(key, schema);
+        return getIndexRecord(key, IndexNames.RECORD);
     }
 
     @Override
     public List<Record> getRecords(int limit, int offset) {
         checkpoint();
-        return recordQueryDAO.getRecords(limit, offset, schema);
+        return indexQueryDAO.findRecords(limit, offset, IndexNames.RECORD, schema, "entry");
     }
 
     @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
         checkpoint();
-        return recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema);
+        return indexQueryDAO.findMax100RecordsByKeyValue(key, value, schema);
     }
 
     @Override
-    public Collection<Entry> findAllEntriesOfRecordBy(String key) {
+    public Collection<Entry> getAllEntriesByKey(String key) {
         checkpoint();
-        return recordQueryDAO.findAllEntriesOfRecordBy(key, schema);
-    }
-
-    @Override
-    public int getTotalRecords() {
-        checkpoint();
-        return recordQueryDAO.getTotalRecords(schema);
+        return entryQueryDAO.getAllEntriesByKey(key, schema);
     }
 
     // Index
-
     @Override
     public Optional<Record> getIndexRecord(String key, String indexName) {
-        return indexQueryDAO.findRecord(key, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
+        List<Record> records = getIndexRecords(Arrays.asList(key), indexName);
+        
+        return records.size() == 1 ? Optional.of(records.get(0)) : Optional.empty();
+    }
+    
+    protected List<Record> getIndexRecords(List<String> keys, String indexName) {
+        return indexQueryDAO.findRecords(keys, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
@@ -180,11 +176,6 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public int getCurrentIndexEntryNumber(String indexName) {
         return indexQueryDAO.getCurrentIndexEntryNumber(indexName, schema);
-    }
-
-    @Override
-    public IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex){
-        return indexQueryDAO.getStartIndexEntryNumberAndExistingItemCount(indexName, key,sha256hex, schema);
     }
 
     protected abstract void checkpoint();

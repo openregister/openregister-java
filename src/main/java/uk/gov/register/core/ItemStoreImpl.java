@@ -23,7 +23,7 @@ public class ItemStoreImpl implements ItemStore {
     public Optional<Item> getItemBySha256(HashValue hash) {
         return dataAccessLayer.getItemBySha256(hash);
     }
-
+    
     @Override
     public Collection<Item> getAllItems() {
         return dataAccessLayer.getAllItems();

@@ -17,6 +17,7 @@ public enum IndexFunctionConfiguration {
 
     CURRENT_COUNTRIES(IndexNames.CURRENT_COUNTRIES, EntryType.user, new CurrentCountriesIndexFunction(IndexNames.CURRENT_COUNTRIES)),
     LOCAL_AUTHORITY_BY_TYPE(IndexNames.LOCAL_AUTHORITY_BY_TYPE, EntryType.user, new LocalAuthorityByTypeIndexFunction(IndexNames.LOCAL_AUTHORITY_BY_TYPE)),
+    RECORD(IndexNames.RECORD, EntryType.user, new LatestByKeyIndexFunction(IndexNames.RECORD)),
     METADATA(IndexNames.METADATA, EntryType.system, new LatestByKeyIndexFunction(IndexNames.METADATA));
 
     public static List<IndexFunctionConfiguration> getConfigurations(List<String> indexNames) {
@@ -34,7 +35,7 @@ public enum IndexFunctionConfiguration {
     }
 
     private static List<IndexFunctionConfiguration> getDefaultConfigurations() {
-        return Arrays.asList(METADATA);
+        return Arrays.asList(RECORD, METADATA);
     }
 
     private String name;
@@ -62,6 +63,7 @@ public enum IndexFunctionConfiguration {
     public static class IndexNames {
         public static final String CURRENT_COUNTRIES = "current-countries";
         public static final String LOCAL_AUTHORITY_BY_TYPE = "local-authority-by-type";
+        public static final String RECORD = "record";
         public static final String METADATA = "metadata";
     }
 

@@ -2,16 +2,20 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.core.*;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Record;
+import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
-import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Path("/")
 public class RecordResource {
