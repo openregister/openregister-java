@@ -38,6 +38,20 @@ If you want to amend this register, you can:
 * create a new register
 * change the configuration
 
+## Clone a different register
+
+The `./run-application.sh` script is configured to spin up a clone of the [Country beta register](https://country.register.gov.uk/). To clone a different register from another phase, you need to change some configuration.
+
+For example, you might want to clone the [School type register](https://school-type.alpha.openregister.org/) from the alpha phase.
+
+Go to the `config.docker.register.yaml` file.
+
+Change `register: country` to `register: school-type`.
+
+Update the schema in the same way, to `schema: school-type`.
+
+Now re-run the application using `ENVIRONMENT=alpha REGISTERS=school-type ./run-application.sh`. You should now see the School type register locally at `127.0.0.1:8080`.
+
 ## Create a new register
 
 To create a new register, you first need to create a new entry in the register register.
