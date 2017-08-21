@@ -172,9 +172,9 @@ public class LoadSerializedFunctionalTest {
         
         assertThat(r.getStatus(), equalTo(200));
         Response response = register.getRequest(testRegister, "/register.json");
-        String bar = response.readEntity(String.class);
-        assertThat(bar.contains("Register of registers X"), is(true));
-
+        Map registerResourceMapFromRegisterRegister = response.readEntity(Map.class);
+        Map<?, ?> registerRecordMapFromRegisterRegister = (Map) registerResourceMapFromRegisterRegister.get("register-record");
+        assertThat(registerRecordMapFromRegisterRegister.get("text"), equalTo("Register of registers X"));
     }
 
     @Test
