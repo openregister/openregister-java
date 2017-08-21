@@ -35,15 +35,8 @@ public class RSFExecutor {
         int rsfLine = 1;
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
-                //TODO: Remove check
-            boolean allowSystemEntries = true;
 
-
-            // If is SYSTEM ++ updating FIELD NAME EXISTS ++
-            // entry trable
-            //index table contains metadata
-
-            RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine, allowSystemEntries);
+            RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine);
             if (!validationResult.isSuccessful()) {
                 return validationResult;
             }
@@ -68,7 +61,7 @@ public class RSFExecutor {
         }
     }
 
-    private RegisterResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine, boolean allowSystemEntries) {
+    private RegisterResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
 
@@ -76,28 +69,17 @@ public class RSFExecutor {
         if (commandName.equals("add-item")) {
             validateAddItem(command, rsfLine, hashRefLine);
         } else if (commandName.equals("append-entry")) {
-            // Check that we should still allow system entries
-            if (allowSystemEntries) {
-                allowSystemEntries = true;
-            }
-            
-            return validateAppendEntry(command, rsfLine, register, hashRefLine, allowSystemEntries);
 
-            //TODO: Do we need a new validation rule at this point?
-                
+            return validateAppendEntry(command, rsfLine, register, hashRefLine);
+
+
         }
         
         return RegisterResult.createSuccessResult();
     }
 
-    private RegisterResult validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine, boolean allowSystemEntries) {
-        EntryType entryType = EntryType.valueOf(command.getCommandArguments().get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
-        
-       //TODO: Unless entry is in whitelist of allowed system types
-        if (!allowSystemEntries && entryType == EntryType.system) {
-            return RegisterResult.createFailResult("System entries must be added before user entries (line: " + rsfLine + "): " + command.toString());
-        }
-        
+    private RegisterResult validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine) {
+
         String delimitedHashes = command.getCommandArguments().get(RSF_HASH_POSITION);
         if (StringUtils.isEmpty(delimitedHashes)) {
             return RegisterResult.createSuccessResult();

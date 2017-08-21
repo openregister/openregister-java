@@ -9,6 +9,7 @@ import uk.gov.register.exceptions.FieldValidationException;
 import uk.gov.register.exceptions.RegisterValidationException;
 import uk.gov.register.util.FieldComparer;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
+import uk.gov.register.util.RegisterComparer;
 
 import java.util.List;
 
@@ -22,10 +23,8 @@ public class EnvironmentValidator {
 
     public void validateRegisterAgainstEnvironment(RegisterMetadata registerMetadata) {
         RegisterMetadata environmentRegisterMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerMetadata.getRegisterName());
-        List<String> environmentRegisterFields = environmentRegisterMetadata.getFields();
-        List<String> localRegisterFields = registerMetadata.getFields();
 
-        if (environmentRegisterFields.size() != localRegisterFields.size() || !environmentRegisterFields.containsAll(localRegisterFields)) {
+        if (!RegisterComparer.equals(registerMetadata, environmentRegisterMetadata)) {
             throw new RegisterValidationException(registerMetadata.getRegisterName());
         }
     }

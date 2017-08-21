@@ -12,7 +12,6 @@ import uk.gov.register.exceptions.SerializationFormatValidationException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.register.util.FieldComparer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;

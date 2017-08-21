@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.StringContains;
 import org.junit.*;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
@@ -25,9 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -183,10 +182,8 @@ public class LoadSerializedFunctionalTest {
 
         Response r = send(input);
 
-        assertThat(r.getStatus(), equalTo(200));
-        Response response = register.getRequest(testRegister, "/register.json");
-        String bar = response.readEntity(String.class);
-
+        assertThat(r.getStatus(), equalTo(400));
+        assertThat(r.readEntity(String.class), containsString("Definition of register register does not match Register Register"));
     }
 
     @Test
