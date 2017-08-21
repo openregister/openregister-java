@@ -6,6 +6,7 @@ applications:
   buildpack: java_buildpack
   health-check-type: http
   health-check-http-endpoint: /records
+  path: ../../openregister-java.jar
   random-route: true
   services:
     - test-db

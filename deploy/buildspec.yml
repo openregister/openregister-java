@@ -9,6 +9,13 @@ phases:
       - echo 'deb http://packages.cloudfoundry.org/debian stable main' > /etc/apt/sources.list.d/cloudfoundry-cli.list
       - apt-get update -y
       - apt-get install -y cf-cli
+      - export CF_BGD_VERSION="1.2.0"
+      - export CF_BGD_CHECKSUM="a5677bf250077858dc2d39af12f48803a7d852a400efa246887556247e1203c4"
+      - export CF_BGD_TEMPFILE="/tmp/blue-green-deploy.linux64"
+      - wget -q -O "${CF_BGD_TEMPFILE}" "https://github.com/bluemixgaragelondon/cf-blue-green-deploy/releases/download/v${CF_BGD_VERSION}/blue-green-deploy.linux64"
+      - echo "${CF_BGD_CHECKSUM}  ${CF_BGD_TEMPFILE}" | sha256sum -c -
+      - chmod +x "${CF_BGD_TEMPFILE}"
+      - cf install-plugin -f "${CF_BGD_TEMPFILE}"
   pre_build:
     commands:
       - export CF_USER="$(aws ssm get-parameters --name paas-deploy-user --query 'Parameters[0].Value' --output text)"
@@ -22,7 +29,8 @@ phases:
     commands:
       - 'sed -i "s/    AWS_ACCESS_KEY_ID: change-me/    AWS_ACCESS_KEY_ID: $AWS_KEY/" manifests/$ENVIRONMENT/$REGISTER_GROUP.yml'
       - 'sed -i "s/    AWS_SECRET_ACCESS_KEY: change-me/    AWS_SECRET_ACCESS_KEY: $AWS_SECRET/" manifests/$ENVIRONMENT/$REGISTER_GROUP.yml'
-      - cf push -p openregister-java.jar -f manifests/$ENVIRONMENT/$REGISTER_GROUP.yml
+      - cf blue-green-deploy "$ENVIRONMENT-$REGISTER_GROUP" -f "manifests/$ENVIRONMENT/$REGISTER_GROUP.yml"
   post_build:
     commands:
+      - cf delete -f "$ENVIRONMENT-$REGISTER_GROUP-old"
       - cf logout
