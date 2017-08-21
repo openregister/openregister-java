@@ -42,8 +42,7 @@ See detailed steps for experimenting locally [here](RUNNING_LOCALLY.md).
 
 - Java 1.8+
 - Postgres DB 9.5+ (and in particular `psql` and `createuser` need to be on your PATH)
-- Python 3 (and in particular the `pyvenv` script needs to be on your
-  PATH)
+- Python 3.6
 
 ### Build and Run project
 

@@ -161,7 +161,7 @@ task(loadSchoolDataForConformance, type: Exec) {
 }
 
 task createConformanceTestVenv(type: Exec) {
-    commandLine 'pyvenv-3.5','.venv'
+    commandLine 'python3.6', '-m', 'venv', '.venv'
 }
 
 task installConformanceTestDeps(type: Exec) {
