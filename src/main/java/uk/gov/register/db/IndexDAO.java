@@ -24,7 +24,7 @@ public interface IndexDAO {
     @BatchChunkSize(1000)
     void startInBatch(@BindBean Iterable<StartIndex> indexes, @Define("schema") String schema);
 
-    @SqlBatch("update \"<schema>\".index i set end_entry_number = :endEntryNumber, end_index_entry_number = :endIndexEntryNumber from \"<schema>\".entry e where e.entry_number = i.start_entry_number and e.entry_number = :entryNumberToEnd and e.key = :entryKey and i.name = :indexName and i.key = :indexKey and i.sha256hex = :itemHash")
+    @SqlBatch("update \"<schema>\".index i set end_entry_number = :endEntryNumber, end_index_entry_number = :endIndexEntryNumber from \"<schema>\".<entry_table> e where e.entry_number = i.start_entry_number and e.entry_number = :entryNumberToEnd and e.key = :entryKey and i.name = :indexName and i.key = :indexKey and i.sha256hex = :itemHash")
     @BatchChunkSize(1000)
-    void endInBatch(@BindBean Iterable<EndIndex> indexes, @Define("schema") String schema);
+    void endInBatch(@BindBean Iterable<EndIndex> indexes, @Define("schema") String schema, @Define("entry_table") String entryTable);
 }

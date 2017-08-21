@@ -252,10 +252,13 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         if (stagedEndIndexes.isEmpty()) {
             return;
         }
-        
-        List<EndIndex> endIndexes = stagedEndIndexes.values().stream().flatMap(l -> l.stream()).collect(Collectors.toList());
-        indexDAO.endInBatch(endIndexes, schema);
-        
+
+        stagedEndIndexes.keySet().forEach(indexName -> {
+            String entryTable = indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry";
+            List<EndIndex> endIndexes = stagedEndIndexes.get(indexName);
+            indexDAO.endInBatch(endIndexes, schema, entryTable);
+        });
+
         stagedEndIndexes.clear();
     }
     
