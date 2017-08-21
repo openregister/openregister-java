@@ -107,7 +107,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
 
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService, environmentValidator, configuration);
-        allTheRegisters.stream().parallel().forEach(registerContext -> {
+        allTheRegisters.stream().forEach(registerContext -> {
             registerContext.migrate();
             environmentValidator.validateExistingMetadataAgainstEnvironment(registerContext);
         });
