@@ -24,9 +24,10 @@ A Python 3 script to convert JSON to RSF. JSON must be an array of objects, the 
 
 ### Usage
 
-JSON will be read from the standard input. 
+JSON will be read from the standard input and there are two required arguments for the Python script. 
 
-The name of the field which is the Key for the item local-authority-eng in the example.
-Must be passed as an argument.
+entry-type: The type of the entry, either `user` or `system`
+key-field-name: If the entry-type is `user`, this should be the name of the primary key field in the JSON (also the name of the register). If the entry-type is `system`, this should be the key of the entry.
 
-    cat la.json | python3 json2rsf.py local-authority-eng
+    cat la.json | python3 json2rsf.py user local-authority-eng
+    cat la-field.json | python3 json2rsf.py system field:local-authority-eng

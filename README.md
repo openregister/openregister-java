@@ -7,7 +7,7 @@ A java implementation of a register
 
 You can spin up a local copy of `openregister-java` using Docker with the following:
 
-    ENVIRONMENT=alpha ./run-application.sh
+    ENVIRONMENT=beta REGISTERS=country ./run-application.sh
 
 This will do the following in Docker containers:
 
@@ -25,6 +25,8 @@ If you want to view/change the basic registers you can do that by sending reques
 If the basic registers change you can restart your register so that it sees the changes:
 
     docker restart openregister-register
+
+See detailed steps for experimenting locally [here](RUNNING_LOCALLY.md).
 
 ### Running on Cloud Foundry/PaaS
 
