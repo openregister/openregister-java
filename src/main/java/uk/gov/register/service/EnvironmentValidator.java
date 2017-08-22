@@ -30,7 +30,6 @@ public class EnvironmentValidator {
     }
     
     public void validateFieldAgainstEnvironment(Field localField) {
-        System.out.println(localField.fieldName);
         Field environmentField = configManager.getFieldsConfiguration().getField(localField.fieldName)
                 .orElseThrow(() -> new FieldValidationException("Field " + localField.fieldName + " does not exist in Field Register"));
 
