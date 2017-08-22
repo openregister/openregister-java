@@ -4,6 +4,7 @@ applications:
   memory: 1024M
   instances: 2
   buildpack: java_buildpack
+  health-check-type: http
   health-check-http-endpoint: /records
   random-route: true
   services:
