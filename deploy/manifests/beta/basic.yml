@@ -10,6 +10,7 @@ applications:
   random-route: true
   services:
     - beta-db
+    - logit-ssl-drain
   env:
     JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://openregister.beta.config/basic/openregister/paas-config.yaml" }'
     AWS_ACCESS_KEY_ID: change-me
