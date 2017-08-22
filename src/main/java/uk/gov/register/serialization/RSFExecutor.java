@@ -69,12 +69,8 @@ public class RSFExecutor {
         if (commandName.equals("add-item")) {
             validateAddItem(command, rsfLine, hashRefLine);
         } else if (commandName.equals("append-entry")) {
-
             return validateAppendEntry(command, rsfLine, register, hashRefLine);
-
-
         }
-        
         return RegisterResult.createSuccessResult();
     }
 

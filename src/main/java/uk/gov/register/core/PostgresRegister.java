@@ -66,8 +66,6 @@ public class PostgresRegister implements Register {
         referencedItems.forEach(i -> {
             if (entry.getEntryType() == EntryType.user) {
                 itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
-                //TODO: Validate system entries
-
             } else if (entry.getKey().startsWith("field:")) {
                 Field field = extractObjectFromItem(i, Field.class);
                 environmentValidator.validateFieldAgainstEnvironment(field);
@@ -75,6 +73,7 @@ public class PostgresRegister implements Register {
                 RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
                 // will throw exception if field not present
                 localRegisterMetadata.getFields().forEach(this::getField);
+                
                 environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
             }
         });
@@ -236,7 +235,6 @@ public class PostgresRegister implements Register {
 
     @Override
     public Optional<Record> getDerivationRecord(String key, String derivationName) {
-        Optional<Record> foo = derivationRecordIndex.getRecord(key, derivationName);
         return derivationRecordIndex.getRecord(key, derivationName);
     }
 

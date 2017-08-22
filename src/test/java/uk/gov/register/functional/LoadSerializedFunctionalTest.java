@@ -2,9 +2,6 @@ package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.hamcrest.core.StringContains;
 import org.junit.*;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
@@ -30,8 +27,6 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static uk.gov.register.functional.app.TestRegister.address;
-import static uk.gov.register.functional.app.TestRegister.postcode;
 
 public class LoadSerializedFunctionalTest {
     private static final TestRegister testRegister = TestRegister.register;
