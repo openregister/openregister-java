@@ -11,74 +11,83 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class RegisterComparerTest {
     @Test
-    public void equals_shouldReturnFalseIfPhaseDiffers() {
+    public void equals_shouldReturnFalse_whenPhaseDiffers() {
         RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList(), "foo", "bar", "baz", "beta");
+                new RegisterName("register"), Arrays.asList(), "copyright", "registry", "text", "beta");
         RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList(), "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList(), "copyright", "registry", "text", "alpha");
          assertThat(RegisterComparer.equals(one,two), equalTo(false));
     }
 
     @Test
-    public void equals_shouldReturnFalseIfCopyrightDiffers() {
+    public void equals_shouldReturnFalse_whenCopyrightDiffers() {
         RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList(), "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList(), "copyright", "registry", "text", "alpha");
         RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList(), "bar", "bar", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList(), "edit copyright", "registry", "text", "alpha");
          assertThat(RegisterComparer.equals(one,two), equalTo(false));
     }
 
     @Test
-    public void equals_shouldReturnFalseIfRegistryDiffers() {
+    public void equals_shouldReturnFalse_whenRegistryDiffers() {
         RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList(), "foo", "foo", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList(), "copyright", "registry", "text", "alpha");
         RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList(), "bar", "bar", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList(), "copyright", "edit registry", "text", "alpha");
          assertThat(RegisterComparer.equals(one,two), equalTo(false));
     }
 
     @Test
-    public void equals_shouldReturnFalseIfRegisterNameDiffers() {
+    public void equals_shouldReturnFalse_whenRegisterNameDiffers() {
         RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Goodbye"), Arrays.asList(), "foo", "foo", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList(), "copyright", "registry", "text", "alpha");
         RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList(), "foo", "bar", "baz", "alpha");
+                new RegisterName("register edit"), Arrays.asList(), "copyright", "registry", "text", "alpha");
          assertThat(RegisterComparer.equals(one,two), equalTo(false));
     }
 
     @Test
-    public void equals_shouldReturnFalseIfFieldsDiffer(){
+    public void equals_shouldReturnFalse_whenSingleRegisterHasNullFields(){
         RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Goodbye"), Arrays.asList("FieldA"), "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), null, "copyright", "registry", "text", "alpha");
         RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Hello"), Arrays.asList("FieldB"), "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList("FieldA"), "copyright", "registry", "text", "alpha");
         assertThat(RegisterComparer.equals(one,two), equalTo(false));
     }
 
     @Test
-    public void equals_shouldReturnTrueIfRegistersMatch(){
+    public void equals_shouldReturnFalse_whenFieldsForBothRegistersAreDefinedButDiffer(){
         RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Goodbye"), Arrays.asList("FieldA"), "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList("FieldA"), "copyright", "registry", "text", "alpha");
         RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Goodbye"), Arrays.asList("FieldA"), "foo", "bar", "baz", "alpha");
-        assertThat(RegisterComparer.equals(one,two), equalTo(true));
-    }
-
-    @Test
-    public void equals_shouldReturnFalseIfFieldIsNull(){
-        RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Goodbye"), null, "foo", "bar", "baz", "alpha");
-        RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Goodbye"), Arrays.asList("FieldA"), "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), Arrays.asList("FieldB"), "copyright", "registry", "text", "alpha");
         assertThat(RegisterComparer.equals(one,two), equalTo(false));
     }
+
     @Test
-    public void equals_shouldReturnTrueIfBothFieldsNull(){
+    public void equals_shouldReturnTrue_whenBothRegistersHaveNullFields(){
         RegisterMetadata one = new RegisterMetadata(
-                new RegisterName("Goodbye"), null, "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), null, "copyright", "registry", "text", "alpha");
         RegisterMetadata two = new RegisterMetadata(
-                new RegisterName("Goodbye"), null, "foo", "bar", "baz", "alpha");
+                new RegisterName("register"), null, "copyright", "registry", "text", "alpha");
         assertThat(RegisterComparer.equals(one,two), equalTo(true));
     }
 
+    @Test
+    public void equals_shouldReturnTrue_whenRegistersMatchButTextDiffers() {
+        RegisterMetadata one = new RegisterMetadata(
+                new RegisterName("register"), Arrays.asList("FieldA"), "copyright", "registry", "text", "alpha");
+        RegisterMetadata two = new RegisterMetadata(
+                new RegisterName("register"), Arrays.asList("FieldA"), "copyright", "registry", "updated text", "alpha");
+        assertThat(RegisterComparer.equals(one,two), equalTo(true));
+    }
+
+    @Test
+    public void equals_shouldReturnTrue_whenRegistersMatch(){
+        RegisterMetadata one = new RegisterMetadata(
+                new RegisterName("register"), Arrays.asList("FieldA"), "copyright", "registry", "text", "alpha");
+        RegisterMetadata two = new RegisterMetadata(
+                new RegisterName("register"), Arrays.asList("FieldA"), "copyright", "registry", "text", "alpha");
+        assertThat(RegisterComparer.equals(one,two), equalTo(true));
+    }
 }
