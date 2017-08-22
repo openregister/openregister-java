@@ -178,7 +178,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), containsString("Definition of register register does not match Register Register"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:e46ec43a2a9734d26834c2e75fab0c547aa4fccdec8da29c29f331d629ad0e71]}\",\"details\":\"Definition of register register does not match Register Register\"}"));
     }
 
     @Test
