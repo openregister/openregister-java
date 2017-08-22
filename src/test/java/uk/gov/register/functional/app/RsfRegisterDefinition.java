@@ -32,11 +32,11 @@ public class RsfRegisterDefinition {
 
     public static String POSTCODE_REGISTER =
             "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"UK Postcodes.\"}\n" +
-                    "append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:bc2ac1d18b2172c19372fba27308ed05554fdc6f9d938cff1c903b86313bbab8\n" +
-                    "add-item\t{\"cardinality\":\"1\",\"datatype\":\"point\",\"field\":\"point\",\"phase\":\"alpha\",\"text\":\"A geographical point\"}\n" +
-                    "append-entry\tsystem\tfield:point\t2017-06-09T12:59:51Z\tsha-256:7f7f01febb44bada60e4a7a6642f5def6e93f28c043b59eec3a4ccaa44f4ad0b\n" +
-                    "add-item\t{\"fields\":[\"postcode\",\"point\"],\"phase\":\"alpha\",\"register\":\"postcode\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
-                    "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:2439510b4f79a2cdd412660c1110fe7862421f229a0e1069a2a30588f25cf51d\n";
+            "append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:bc2ac1d18b2172c19372fba27308ed05554fdc6f9d938cff1c903b86313bbab8\n" +
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"point\",\"field\":\"point\",\"phase\":\"alpha\",\"text\":\"A geographical point\"}\n" +
+            "append-entry\tsystem\tfield:point\t2017-06-09T12:59:51Z\tsha-256:7f7f01febb44bada60e4a7a6642f5def6e93f28c043b59eec3a4ccaa44f4ad0b\n" +
+            "add-item\t{\"copyright\":\"Contains National Statistics data © [Crown copyright and database right 2013](http://www.nationalarchives.gov.uk/doc/open-government-licence/),\\n Contains Ordnance Survey data © [Crown copyright and database right 2013](http://www.ordnancesurvey.co.uk/oswebsite/docs/licences/os-opendata-licence.pdf),\\n Contains Royal Mail data © [Royal Mail copyright and database right 2013](http://www.dfpni.gov.uk/lps/index/copyright_licensing_publishing.htm)\",\"fields\":[\"postcode\",\"point\"],\"phase\":\"alpha\",\"register\":\"postcode\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of postcodes\"}\n" +
+            "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:0a63146b7817f399b91bbeb1261017f0a111109946b1ca62788a760bf5ccb447\n";
 
     public static String REGISTER_REGISTER =
             "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"register\":\"register\",\"text\":\"A register name.\"}\n" +
