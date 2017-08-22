@@ -7,7 +7,8 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  random-route: true
+  routes:
+    - route: country.test.openregister.org
   services:
     - test-db
     - logit-ssl-drain

@@ -7,7 +7,10 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  random-route: true
+  routes:
+    - route: datatype.beta.openregister.org
+    - route: field.beta.openregister.org
+    - route: register.beta.openregister.org
   services:
     - beta-db
     - logit-ssl-drain
