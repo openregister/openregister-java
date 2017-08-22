@@ -331,7 +331,7 @@ territory:
   entry-timestamp: "2016-04-21T10:14:21Z"
   key: "territory"
   item:
-  - text: "British English-language names and descriptive terms for territories"
+  - text: "British English-language names and descriptive terms for territƒories"
     phase: "alpha"
     fields:
     - "territory"

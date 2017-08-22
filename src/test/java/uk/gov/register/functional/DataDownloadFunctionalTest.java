@@ -41,7 +41,7 @@ public class DataDownloadFunctionalTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_NAME + RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        Response foo = register.loadRsf(address, RsfRegisterDefinition.ADDRESS_NAME + RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
         register.loadRsf(
             address,
             "add-item\t{\"custodian\":\"John Smith\"}\n" +

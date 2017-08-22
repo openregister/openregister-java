@@ -160,7 +160,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:8d824e2afa57f1a71980237341b0c75d61fdc5c32e52d91e64c6fc3c6265ae63]}\",\"details\":\"Field undefined: register - address\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e]}\",\"details\":\"Field undefined: register - address\"}"));
     }
     
     @Test

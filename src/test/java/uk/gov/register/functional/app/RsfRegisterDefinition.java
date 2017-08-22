@@ -6,8 +6,8 @@ public class RsfRegisterDefinition {
             "append-entry\tsystem\tname\t2017-06-01T10:00:00Z\tsha-256:eb5064e317d2d673634e4a40782ab727573bd2075a82cf69c05af919d7518794\n";
 
     public static String ADDRESS_REGISTER =
-            "add-item\t{\"fields\":[\"address\",\"street\",\"locality\",\"town\",\"area\",\"postcode\",\"country\",\"latitude\",\"longitude\",\"property\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}\n" +
-                    "append-entry\tsystem\tregister:address\t2017-06-06T09:54:11Z\tsha-256:8d824e2afa57f1a71980237341b0c75d61fdc5c32e52d91e64c6fc3c6265ae63\n";
+            "add-item\t{\"copyright\":\"Contains Ordnance Survey data © Crown copyright & database right 2015\\n Contains Royal Mail data © Royal Mail copyright & database right 2015\\n\",\"fields\":[\"address\",\"street\",\"locality\",\"town\",\"area\",\"postcode\",\"country\",\"latitude\",\"longitude\",\"property\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}\n" +
+            "append-entry\tsystem\tregister:address\t2017-06-06T09:54:11Z\tsha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e\n";
 
     public static String ADDRESS_FIELDS = "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"address\",\"phase\":\"alpha\",\"register\":\"address\",\"text\":\"A place in the UK with a postal address.\"}\n" +
             "append-entry\tsystem\tfield:address\t2017-06-09T12:59:51Z\tsha-256:cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011\n" +
