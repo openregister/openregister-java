@@ -7,9 +7,13 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  random-route: true
+  routes:
+    - route: datatype.test.openregister.org
+    - route: field.test.openregister.org
+    - route: register.test.openregister.org
   services:
     - test-db
+    - logit-ssl-drain
   env:
     JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://openregister.test.config/basic/openregister/paas-config.yaml" }'
     AWS_ACCESS_KEY_ID: change-me

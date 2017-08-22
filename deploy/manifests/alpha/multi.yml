@@ -7,9 +7,22 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  random-route: true
+  routes:
+    - route: government-domain.alpha.openregister.org
+    - route: industrial-classification.alpha.openregister.org
+    - route: internal-drainage-board.alpha.openregister.org
+    - route: occupation.alpha.openregister.org
+    - route: principal-local-authority.alpha.openregister.org
+    - route: school-eng.alpha.openregister.org
+    - route: school-type.alpha.openregister.org
+    - route: social-housing-provider-designation.alpha.openregister.org
+    - route: social-housing-provider-legal-entity.alpha.openregister.org
+    - route: social-housing-provider.alpha.openregister.org
+    - route: statistical-geography-unitary-authority-wls.alpha.openregister.org
+    - route: statistical-geography.alpha.openregister.org
   services:
     - alpha-db
+    - logit-ssl-drain
   env:
     JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://openregister.alpha.config/multi/openregister/paas-config.yaml" }'
     AWS_ACCESS_KEY_ID: change-me
