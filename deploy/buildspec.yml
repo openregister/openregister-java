@@ -9,19 +9,19 @@ phases:
       - echo 'deb http://packages.cloudfoundry.org/debian stable main' > /etc/apt/sources.list.d/cloudfoundry-cli.list
       - apt-get update -y
       - apt-get install -y cf-cli
-      - export CF_AUTOPILOT_VERSION="0.0.3"
-      - export CF_AUTOPILOT_CHECKSUM="c3b5a38ba7a9817e12d6ab4c98418d707c49c1d3eb68e5a79e701531bd8fa1cd"
-      - export CF_AUTOPILOT_TEMPFILE="/tmp/autopilot.linux64"
+      - CF_AUTOPILOT_VERSION="0.0.3"
+      - CF_AUTOPILOT_CHECKSUM="c3b5a38ba7a9817e12d6ab4c98418d707c49c1d3eb68e5a79e701531bd8fa1cd"
+      - CF_AUTOPILOT_TEMPFILE="/tmp/autopilot.linux64"
       - wget -q -O "${CF_AUTOPILOT_TEMPFILE}" "https://github.com/contraband/autopilot/releases/download/${CF_AUTOPILOT_VERSION}/autopilot-linux"
       - echo "${CF_AUTOPILOT_CHECKSUM}  ${CF_AUTOPILOT_TEMPFILE}" | sha256sum -c -
       - chmod +x "${CF_AUTOPILOT_TEMPFILE}"
       - cf install-plugin -f "${CF_AUTOPILOT_TEMPFILE}"
   pre_build:
     commands:
-      - export CF_USER="$(aws ssm get-parameters --name paas-deploy-user --query 'Parameters[0].Value' --output text)"
-      - export CF_PASSWORD="$(aws ssm get-parameters --name paas-deploy-password --with-decryption --query 'Parameters[0].Value' --output text)"
-      - export AWS_KEY="$(aws ssm get-parameters --name paas-deploy-aws-key --query 'Parameters[0].Value' --output text)"
-      - export AWS_SECRET="$(aws ssm get-parameters --name paas-deploy-aws-secret --with-decryption --query 'Parameters[0].Value' --output text)"
+      - CF_USER="$(aws ssm get-parameters --name paas-deploy-user --query 'Parameters[0].Value' --output text)"
+      - CF_PASSWORD="$(aws ssm get-parameters --name paas-deploy-password --with-decryption --query 'Parameters[0].Value' --output text)"
+      - AWS_KEY="$(aws ssm get-parameters --name paas-deploy-aws-key --query 'Parameters[0].Value' --output text)"
+      - AWS_SECRET="$(aws ssm get-parameters --name paas-deploy-aws-secret --with-decryption --query 'Parameters[0].Value' --output text)"
       - cf api "https://api.cloud.service.gov.uk"
       - cf auth "${CF_USER}" "${CF_PASSWORD}"
       - cf target -o "${CF_ORGANIZATION}" -s "${CF_SPACE}"
