@@ -7,10 +7,12 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  routes:
-    - route: datatype.alpha.openregister.org
-    - route: field.alpha.openregister.org
-    - route: register.alpha.openregister.org
+  domains:
+    - alpha.openregister.org
+  hosts:
+    - datatype
+    - field
+    - register
   services:
     - alpha-db
     - logit-ssl-drain

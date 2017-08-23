@@ -7,8 +7,10 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  routes:
-    - route: country.test.openregister.org
+  domains:
+    - test.openregister.org
+  hosts:
+    - country
   services:
     - test-db
     - logit-ssl-drain

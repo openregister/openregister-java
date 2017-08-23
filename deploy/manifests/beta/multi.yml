@@ -7,18 +7,21 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  routes:
-    - route: country.beta.openregister.org
-    - route: government-organisation.beta.openregister.org
-    - route: government-service.beta.openregister.org
-    - route: internal-drainage-board.beta.openregister.org
-    - route: local-authority-eng.beta.openregister.org
-    - route: local-authority-sct.beta.openregister.org
-    - route: local-authority-type.beta.openregister.org
-    - route: principal-local-authority.beta.openregister.org
-    - route: prison-estate.beta.openregister.org
-    - route: registration-district.beta.openregister.org
-    - route: territory.beta.openregister.org
+  domains:
+    - beta.openregister.org
+    - register.gov.uk
+  hosts:
+    - country
+    - government-organisation
+    - government-service
+    - internal-drainage-board
+    - local-authority-eng
+    - local-authority-sct
+    - local-authority-type
+    - principal-local-authority
+    - prison-estate
+    - registration-district
+    - territory
   services:
     - beta-db
     - logit-ssl-drain

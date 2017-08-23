@@ -7,10 +7,13 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  routes:
-    - route: datatype.beta.openregister.org
-    - route: field.beta.openregister.org
-    - route: register.beta.openregister.org
+  domains:
+    - beta.openregister.org
+    - register.gov.uk
+  hosts:
+    - datatype
+    - field
+    - register
   services:
     - beta-db
     - logit-ssl-drain

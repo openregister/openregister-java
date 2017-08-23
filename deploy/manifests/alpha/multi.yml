@@ -7,19 +7,21 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  routes:
-    - route: government-domain.alpha.openregister.org
-    - route: industrial-classification.alpha.openregister.org
-    - route: internal-drainage-board.alpha.openregister.org
-    - route: occupation.alpha.openregister.org
-    - route: principal-local-authority.alpha.openregister.org
-    - route: school-eng.alpha.openregister.org
-    - route: school-type.alpha.openregister.org
-    - route: social-housing-provider-designation.alpha.openregister.org
-    - route: social-housing-provider-legal-entity.alpha.openregister.org
-    - route: social-housing-provider.alpha.openregister.org
-    - route: statistical-geography-unitary-authority-wls.alpha.openregister.org
-    - route: statistical-geography.alpha.openregister.org
+  domains:
+    - alpha.openregister.org
+  hosts:
+    - government-domain
+    - industrial-classification
+    - internal-drainage-board
+    - occupation
+    - principal-local-authority
+    - school-eng
+    - school-type
+    - social-housing-provider-designation
+    - social-housing-provider-legal-entity
+    - social-housing-provider
+    - statistical-geography-unitary-authority-wls
+    - statistical-geography
   services:
     - alpha-db
     - logit-ssl-drain
