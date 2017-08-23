@@ -21,9 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -155,17 +155,30 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:8d824e2afa57f1a71980237341b0c75d61fdc5c32e52d91e64c6fc3c6265ae63]}\",\"details\":\"Field undefined: register - address\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e]}\",\"details\":\"Field undefined: register - address\"}"));
     }
     
     @Test
-    public void shouldReturnBadRequestForSystemEntryAfterUserEntry() throws IOException {
-        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
+    public void shouldAllowRegisterTextToBeUpdatedAfterUserEntry() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-valid-entry-ordering.rsf")));
         
         Response r = send(input);
         
+        assertThat(r.getStatus(), equalTo(200));
+        Response response = register.getRequest(testRegister, "/register.json");
+        Map registerResourceMapFromRegisterRegister = response.readEntity(Map.class);
+        Map<?, ?> registerRecordMapFromRegisterRegister = (Map) registerResourceMapFromRegisterRegister.get("register-record");
+        assertThat(registerRecordMapFromRegisterRegister.get("text"), equalTo("Register of registers X"));
+    }
+
+    @Test
+    public void shouldNotAllowRegisterNonTextValuesToBeUpdatedAfterUserEntry() throws IOException {
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
+
+        Response r = send(input);
+
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"System entries must be added before user entries (line: 19): RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:f202653182ebd63c34177a7176ce77f1aae63482ce6914ec1c71683a6d7131ab]}\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:e46ec43a2a9734d26834c2e75fab0c547aa4fccdec8da29c29f331d629ad0e71]}\",\"details\":\"Definition of register register does not match Register Register\"}"));
     }
 
     @Test

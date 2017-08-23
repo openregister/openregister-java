@@ -6,8 +6,8 @@ public class RsfRegisterDefinition {
             "append-entry\tsystem\tname\t2017-06-01T10:00:00Z\tsha-256:eb5064e317d2d673634e4a40782ab727573bd2075a82cf69c05af919d7518794\n";
 
     public static String ADDRESS_REGISTER =
-            "add-item\t{\"fields\":[\"address\",\"street\",\"locality\",\"town\",\"area\",\"postcode\",\"country\",\"latitude\",\"longitude\",\"property\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}\n" +
-                    "append-entry\tsystem\tregister:address\t2017-06-06T09:54:11Z\tsha-256:8d824e2afa57f1a71980237341b0c75d61fdc5c32e52d91e64c6fc3c6265ae63\n";
+            "add-item\t{\"copyright\":\"Contains Ordnance Survey data © Crown copyright & database right 2015\\n Contains Royal Mail data © Royal Mail copyright & database right 2015\\n\",\"fields\":[\"address\",\"street\",\"locality\",\"town\",\"area\",\"postcode\",\"country\",\"latitude\",\"longitude\",\"property\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}\n" +
+            "append-entry\tsystem\tregister:address\t2017-06-06T09:54:11Z\tsha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e\n";
 
     public static String ADDRESS_FIELDS = "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"address\",\"phase\":\"alpha\",\"register\":\"address\",\"text\":\"A place in the UK with a postal address.\"}\n" +
             "append-entry\tsystem\tfield:address\t2017-06-09T12:59:51Z\tsha-256:cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011\n" +
@@ -32,11 +32,11 @@ public class RsfRegisterDefinition {
 
     public static String POSTCODE_REGISTER =
             "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"UK Postcodes.\"}\n" +
-                    "append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:bc2ac1d18b2172c19372fba27308ed05554fdc6f9d938cff1c903b86313bbab8\n" +
-                    "add-item\t{\"cardinality\":\"1\",\"datatype\":\"point\",\"field\":\"point\",\"phase\":\"alpha\",\"text\":\"A geographical point\"}\n" +
-                    "append-entry\tsystem\tfield:point\t2017-06-09T12:59:51Z\tsha-256:7f7f01febb44bada60e4a7a6642f5def6e93f28c043b59eec3a4ccaa44f4ad0b\n" +
-                    "add-item\t{\"fields\":[\"postcode\",\"point\"],\"phase\":\"alpha\",\"register\":\"postcode\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
-                    "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:2439510b4f79a2cdd412660c1110fe7862421f229a0e1069a2a30588f25cf51d\n";
+            "append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:bc2ac1d18b2172c19372fba27308ed05554fdc6f9d938cff1c903b86313bbab8\n" +
+            "add-item\t{\"cardinality\":\"1\",\"datatype\":\"point\",\"field\":\"point\",\"phase\":\"alpha\",\"text\":\"A geographical point\"}\n" +
+            "append-entry\tsystem\tfield:point\t2017-06-09T12:59:51Z\tsha-256:7f7f01febb44bada60e4a7a6642f5def6e93f28c043b59eec3a4ccaa44f4ad0b\n" +
+            "add-item\t{\"copyright\":\"Contains National Statistics data © [Crown copyright and database right 2013](http://www.nationalarchives.gov.uk/doc/open-government-licence/),\\n Contains Ordnance Survey data © [Crown copyright and database right 2013](http://www.ordnancesurvey.co.uk/oswebsite/docs/licences/os-opendata-licence.pdf),\\n Contains Royal Mail data © [Royal Mail copyright and database right 2013](http://www.dfpni.gov.uk/lps/index/copyright_licensing_publishing.htm)\",\"fields\":[\"postcode\",\"point\"],\"phase\":\"alpha\",\"register\":\"postcode\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of postcodes\"}\n" +
+            "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:0a63146b7817f399b91bbeb1261017f0a111109946b1ca62788a760bf5ccb447\n";
 
     public static String REGISTER_REGISTER =
             "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"register\":\"register\",\"text\":\"A register name.\"}\n" +

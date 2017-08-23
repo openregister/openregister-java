@@ -11,5 +11,5 @@ add-item	{"cardinality":"1","datatype":"datetime","field":"start-date","phase":"
 append-entry	system	field:start-date	2016-04-05T13:23:05Z	sha-256:fe5b4abb055cacfb0c71d139b50ec88fa6697e7b094f1d032578914b4bda6526
 add-item	{"cardinality":"1","datatype":"datetime","field":"end-date","phase":"alpha","text":"End datetime for the applicability of a register entry."}
 append-entry	system	field:end-date	2016-04-05T13:23:05Z	sha-256:af1ea3d47321ec6ef2f0ab13ad039a130303574188f4a1ce1916703c5c5fa7f1
-add-item	{"fields":["local-authority-eng","local-authority-type","name","official-name","start-date","end-date"],"phase":"beta","register":"local-authority-eng","registry":"gds","text":"Register of local authorities in England."}
-append-entry	system	register:local-authority-eng	2016-04-05T13:23:05Z	sha-256:78fe6468a28854287a82e95aad37c37c3f065c6633e9e76f9f354558916b0e9d
+add-item	{"fields":["local-authority-eng","local-authority-type","name","official-name","start-date","end-date"],"phase":"alpha","register":"local-authority-eng","registry":"department-for-communities-and-local-government","text":"Register of local authorities in England."}
+append-entry	system	register:local-authority-eng	2016-04-05T13:23:05Z	sha-256:ae0a04e859f4d1ac15a60264479b3cacd78b71f370361b762d58d1d28a092f76

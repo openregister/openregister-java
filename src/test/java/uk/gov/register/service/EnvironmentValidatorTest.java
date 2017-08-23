@@ -34,6 +34,10 @@ public class EnvironmentValidatorTest {
         
         RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
         when(localRegisterMetadata.getRegisterName()).thenReturn(registerName);
+		when(environmentRegisterMetadata.getRegisterName()).thenReturn(new RegisterName("postcode"));
+		when(environmentRegisterMetadata.getPhase()).thenReturn("alpha");
+		when(environmentRegisterMetadata.getCopyright()).thenReturn("Contains National Statistics data © [Crown copyright and database right 2013](http://www.nationalarchives.gov.uk/doc/open-government-licence/),\n Contains Ordnance Survey data © [Crown copyright and database right 2013](http://www.ordnancesurvey.co.uk/oswebsite/docs/licences/os-opendata-licence.pdf),\n Contains Royal Mail data © [Royal Mail copyright and database right 2013](http://www.dfpni.gov.uk/lps/index/copyright_licensing_publishing.htm)");
+		when(environmentRegisterMetadata.getRegistry()).thenReturn("office-for-national-statistics");
         when(environmentRegisterMetadata.getFields()).thenReturn(Arrays.asList("postcode", "point"));
         when(registersConfiguration.getRegisterMetadata(registerName)).thenReturn(environmentRegisterMetadata);
 		when(configManager.getRegistersConfiguration()).thenReturn(registersConfiguration);
@@ -60,6 +64,10 @@ public class EnvironmentValidatorTest {
     @Test
     public void validateRegisterDefinitionAgainstEnvironment_shouldNotThrowException_whenSameFieldsAreSpecified() {
 		when(localRegisterMetadata.getFields()).thenReturn(Arrays.asList("point", "postcode"));
+		when(localRegisterMetadata.getRegisterName()).thenReturn(new RegisterName("postcode"));
+		when(localRegisterMetadata.getPhase()).thenReturn("alpha");
+		when(localRegisterMetadata.getCopyright()).thenReturn("Contains National Statistics data © [Crown copyright and database right 2013](http://www.nationalarchives.gov.uk/doc/open-government-licence/),\n Contains Ordnance Survey data © [Crown copyright and database right 2013](http://www.ordnancesurvey.co.uk/oswebsite/docs/licences/os-opendata-licence.pdf),\n Contains Royal Mail data © [Royal Mail copyright and database right 2013](http://www.dfpni.gov.uk/lps/index/copyright_licensing_publishing.htm)");
+		when(localRegisterMetadata.getRegistry()).thenReturn("office-for-national-statistics");
 		EnvironmentValidator environmentValidator = new EnvironmentValidator(configManager);
 		environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
 	}
@@ -153,6 +161,9 @@ public class EnvironmentValidatorTest {
 		localRegisterMetadata = mock(RegisterMetadata.class);
 		when(localRegisterMetadata.getFields()).thenReturn(Arrays.asList("postcode", "point"));
 		when(localRegisterMetadata.getRegisterName()).thenReturn(new RegisterName("postcode"));
+		when(localRegisterMetadata.getPhase()).thenReturn("alpha");
+		when(localRegisterMetadata.getCopyright()).thenReturn("Contains National Statistics data © [Crown copyright and database right 2013](http://www.nationalarchives.gov.uk/doc/open-government-licence/),\n Contains Ordnance Survey data © [Crown copyright and database right 2013](http://www.ordnancesurvey.co.uk/oswebsite/docs/licences/os-opendata-licence.pdf),\n Contains Royal Mail data © [Royal Mail copyright and database right 2013](http://www.dfpni.gov.uk/lps/index/copyright_licensing_publishing.htm)");
+		when(localRegisterMetadata.getRegistry()).thenReturn("office-for-national-statistics");
 
 		Field postcodeField = new Field("postcode", "string", registerName, Cardinality.ONE, "Postcode in the UK");
 		Field pointField = new Field("point", "point", null, Cardinality.ONE, "A geographical location");
