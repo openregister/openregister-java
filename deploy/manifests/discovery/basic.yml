@@ -9,7 +9,7 @@ applications:
   path: ../../openregister-java.jar
   domains:
     - discovery.openregister.org
-  host:
+  hosts:
     - datatype
     - field
     - register
