@@ -7,22 +7,24 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  routes:
-    - route: address.discovery.openregister.org
-    - route: clinical-commissioning-group.discovery.openregister.org
-    - route: government-domain.discovery.openregister.org
-    - route: green-deal-certification-body.discovery.openregister.org
-    - route: jobcentre.discovery.openregister.org
-    - route: local-authority-nir.discovery.openregister.org
-    - route: local-authority-type.discovery.openregister.org
-    - route: place.discovery.openregister.org
-    - route: prison.discovery.openregister.org
-    - route: statistical-geography-unitary-authority-wls.discovery.openregister.org
-    - route: statistical-geography.discovery.openregister.org
-    - route: street-custodian.discovery.openregister.org
-    - route: street.discovery.openregister.org
-    - route: uk.discovery.openregister.org
-    - route: vehicle-colour.discovery.openregister.org
+  domains:
+    - discovery.openregister.org
+  hosts:
+    - address
+    - clinical-commissioning-group
+    - government-domain
+    - green-deal-certification-body
+    - jobcentre
+    - local-authority-nir
+    - local-authority-type
+    - place
+    - prison
+    - statistical-geography-unitary-authority-wls
+    - statistical-geography
+    - street-custodian
+    - street
+    - uk
+    - vehicle-colour
   services:
     - discovery-db
     - logit-ssl-drain

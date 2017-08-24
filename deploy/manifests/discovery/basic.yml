@@ -7,10 +7,12 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /records
   path: ../../openregister-java.jar
-  routes:
-    - route: datatype.discovery.openregister.org
-    - route: field.discovery.openregister.org
-    - route: register.discovery.openregister.org
+  domains:
+    - discovery.openregister.org
+  host:
+    - datatype
+    - field
+    - register
   services:
     - discovery-db
     - logit-ssl-drain
