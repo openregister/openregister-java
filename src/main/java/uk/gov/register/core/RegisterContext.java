@@ -111,6 +111,7 @@ public class RegisterContext implements
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
                 itemValidator,
+                configManager,
                 environmentValidator);
     }
 
@@ -122,6 +123,7 @@ public class RegisterContext implements
                 new DerivationRecordIndex(dataAccessLayer),
                 getIndexFunctions(),
                 itemValidator,
+                configManager,
                 environmentValidator);
     }
 

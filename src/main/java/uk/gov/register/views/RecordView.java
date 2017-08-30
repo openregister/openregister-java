@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class RecordView extends RecordsView {
 
-    public RecordView(Record record, Map<String,Field> fields, ItemConverter itemConverter) {
-        super(ImmutableList.of(record), fields, itemConverter, true, false);
+    public RecordView(Record record, Map<String,Field> registerFields, Map<String,Field> metadataFields, ItemConverter itemConverter) {
+        super(ImmutableList.of(record), registerFields, metadataFields, itemConverter, true, false);
     }
 
     @SuppressWarnings("unused, used by template")

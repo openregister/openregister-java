@@ -13,7 +13,9 @@ import uk.gov.register.service.RegisterLinkService;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ViewFactory {
@@ -126,31 +128,31 @@ public class ViewFactory {
     }
 
     public ItemView getItemMediaView(Item item) {
-        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
+        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getRegisterFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(Record record) {
-        return new RecordView(record, register.get().getFieldsByName(), itemConverter);
+        return new RecordView(record, register.get().getRegisterFieldsByName(), register.get().getMetadataFieldsByName(), itemConverter);
     }
 
     public RecordsView getRecordsMediaView(List<Record> records) {
-        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, false);
+        return new RecordsView(records, register.get().getRegisterFieldsByName(), register.get().getMetadataFieldsByName(), itemConverter, false, false);
     }
 
     public RecordsView getIndexRecordsMediaView(List<Record> records) {
-        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
+        return new RecordsView(records, register.get().getRegisterFieldsByName(), register.get().getMetadataFieldsByName(), itemConverter, false, true);
     }
 
     private PublicBody getRegistry() {
         return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
     }
-
+    
     private Optional<GovukOrganisation.Details> getBranding() {
         Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(register.get().getRegisterMetadata().getRegistry());
         return organisation.map(GovukOrganisation::getDetails);
     }
 
     private Collection<Field> getFields() {
-        return register.get().getFieldsByName().values();
+        return register.get().getRegisterFieldsByName().values();
     }
 }

@@ -212,6 +212,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 derivationRecordIndex,
                 getIndexFunctions(),
                 itemValidator,
+                configManager,
                 environmentValidator);
     }
 

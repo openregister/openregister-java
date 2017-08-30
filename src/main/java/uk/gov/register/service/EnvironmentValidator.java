@@ -11,8 +11,6 @@ import uk.gov.register.util.FieldComparer;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.util.RegisterComparer;
 
-import java.util.List;
-
 public class EnvironmentValidator {
 
     private final ConfigManager configManager;
@@ -46,7 +44,7 @@ public class EnvironmentValidator {
         }
         
         RegisterMetadata localRegisterMetadata = register.getRegisterMetadata();
-        register.getFieldsByName().values().forEach(f -> validateFieldAgainstEnvironment(f));
+        register.getRegisterFieldsByName().values().forEach(f -> validateFieldAgainstEnvironment(f));
         validateRegisterAgainstEnvironment(localRegisterMetadata);
     }
 }

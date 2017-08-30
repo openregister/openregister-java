@@ -20,7 +20,9 @@ public class ItemConverter {
     FieldValue convert(Map.Entry<String, JsonNode> fieldNameToJson, Map<String, Field> fieldsByName) {
         String fieldName = fieldNameToJson.getKey();
         JsonNode value = fieldNameToJson.getValue();
-        return convert(value, fieldsByName.get(fieldName));
+        return fieldsByName.containsKey(fieldName) 
+                ? convert(value, fieldsByName.get(fieldName))
+                : new StringValue(value.textValue());
     }
 
     private FieldValue convert(JsonNode propertyJson, final Field field) {

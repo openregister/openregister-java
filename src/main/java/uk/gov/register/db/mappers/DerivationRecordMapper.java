@@ -35,6 +35,7 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
     @Override
     public Record map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         String key = r.getString("key");
+        EntryType entryType = EntryType.valueOf(r.getString("type"));
         int indexEntryNumber = r.getInt("index_entry_number");
         int entryNumber = r.getInt("entry_number");
         Instant timestamp = longTimestampToInstantMapper.map(index, r, ctx);
@@ -58,7 +59,7 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
             items.add(item);
         }
 
-        Entry entry = new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.user);
+        Entry entry = new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, entryType);
 
         return new Record(entry, items);
     }

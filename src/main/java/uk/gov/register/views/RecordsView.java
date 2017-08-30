@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
 import uk.gov.register.service.ItemConverter;
@@ -20,16 +21,19 @@ public class RecordsView implements CsvRepresentationView {
     private final boolean displayEntryKeyColumn;
     private final boolean resolveAllItemLinks;
 
-    private final Map<String,Field> fieldsByName;
+    private final Map<String,Field> registerFieldsByName;
+    private final Map<String,Field> metadataFieldsByName;
     private final Map<Entry, List<ItemView>> recordMap;
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-    public RecordsView(List<Record> records, Map<String, Field> fieldsByName, ItemConverter itemConverter,
+    public RecordsView(List<Record> records, Map<String, Field> registerFieldsByName, 
+                       Map<String, Field> metadataFieldsByName, ItemConverter itemConverter, 
                        boolean resolveAllItemLinks, boolean displayEntryKeyColumn) {
         this.displayEntryKeyColumn = displayEntryKeyColumn;
         this.resolveAllItemLinks = resolveAllItemLinks;
-        this.fieldsByName = fieldsByName;
+        this.registerFieldsByName = registerFieldsByName;
+        this.metadataFieldsByName = metadataFieldsByName;
         this.recordMap = getItemViews(records, itemConverter);
     }
 
@@ -38,7 +42,7 @@ public class RecordsView implements CsvRepresentationView {
     }
 
     public Iterable<Field> getFields() {
-        return fieldsByName.values();
+        return registerFieldsByName.values();
     }
 
     @SuppressWarnings("unused, used by JSON renderer")
@@ -85,9 +89,16 @@ public class RecordsView implements CsvRepresentationView {
     private Map<Entry, List<ItemView>> getItemViews(Collection<Record> records, ItemConverter itemConverter) {
         Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
-            map.put(record.getEntry(), record.getItems().stream().map(item ->
-                    new ItemView(item.getSha256hex(), itemConverter.convertItem(item, fieldsByName), getFields()))
-                    .collect(Collectors.toList()));
+            if (record.getEntry().getEntryType() == EntryType.user) {
+                map.put(record.getEntry(), record.getItems().stream().map(item ->
+                        new ItemView(item.getSha256hex(), itemConverter.convertItem(item, registerFieldsByName), getFields()))
+                        .collect(Collectors.toList()));
+            }
+            else {
+                map.put(record.getEntry(), record.getItems().stream().map(item ->
+                        new ItemView(item.getSha256hex(), itemConverter.convertItem(item, metadataFieldsByName), getFields()))
+                        .collect(Collectors.toList()));
+            }
         });
         return map;
     }

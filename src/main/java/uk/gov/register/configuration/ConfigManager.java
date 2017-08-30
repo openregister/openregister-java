@@ -1,5 +1,8 @@
 package uk.gov.register.configuration;
 
+import uk.gov.register.core.Field;
+import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.core.RegisterName;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.FileNotFoundException;
@@ -8,7 +11,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class ConfigManager {
     private final String registersConfigFileUrl;
@@ -50,7 +55,13 @@ public class ConfigManager {
     public FieldsConfiguration getFieldsConfiguration() {
         return fieldsConfiguration.get();
     }
-
+    
+    public List<Field> getFieldsForRegister(String registerName) {
+        RegisterMetadata registerMetadata = getRegistersConfiguration().getRegisterMetadata(new RegisterName(registerName));
+        
+        return registerMetadata.getFields().stream().map(fieldName -> getFieldsConfiguration().getField(fieldName).get()).collect(Collectors.toList());
+    }
+ 
     private RegistersConfiguration createRegistersConfiguration() {
         return new RegistersConfiguration(registersConfigFilePath);
     }

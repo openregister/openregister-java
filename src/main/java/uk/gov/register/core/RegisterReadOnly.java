@@ -53,6 +53,8 @@ public interface RegisterReadOnly {
 
     int getTotalDerivationRecords(String derivationName);
 
-    Map<String, Field> getFieldsByName();
+    Map<String, Field> getRegisterFieldsByName();
+    
+    Map<String, Field> getMetadataFieldsByName();
 }
 

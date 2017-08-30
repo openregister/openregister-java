@@ -15,8 +15,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -34,11 +32,12 @@ public class RecordViewTest {
         Record record = new Record(entry, Arrays.asList(item, item2));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
-        Map<String, Field> fieldsByName = mock(Map.class);
-        when(itemConverter.convertItem(item, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
-        when(itemConverter.convertItem(item2, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
+        Map<String, Field> registerFieldsByName = mock(Map.class);
+        Map<String, Field> metadataFieldsByName = mock(Map.class);
+        when(itemConverter.convertItem(item, registerFieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
+        when(itemConverter.convertItem(item2, registerFieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
 
-        recordView = new RecordView(record, fieldsByName, itemConverter);
+        recordView = new RecordView(record, registerFieldsByName, metadataFieldsByName, itemConverter);
     }
 
     @Test

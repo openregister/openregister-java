@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.db.InMemoryEntryDAO;
@@ -44,6 +45,8 @@ public class PostgresRegisterTest {
     @Mock
     private ItemValidator itemValidator;
     @Mock
+    private ConfigManager configManager;
+    @Mock
     private IndexDriver indexDriver;
     @Mock
     private IndexFunction indexFunction;
@@ -68,7 +71,7 @@ public class PostgresRegisterTest {
 
         register = new PostgresRegister(new RegisterName("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO), recordIndex,
-                derivationRecordIndex, indexFunctionsByEntryType, itemValidator, environmentValidator);
+                derivationRecordIndex, indexFunctionsByEntryType, itemValidator, configManager, environmentValidator);
 
         when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
@@ -131,7 +134,7 @@ public class PostgresRegisterTest {
     @Test
     public void shouldGetFields() {
         when(derivationRecordIndex.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
-        Map<String, Field> fieldsByName = register.getFieldsByName();
+        Map<String, Field> fieldsByName = register.getRegisterFieldsByName();
         assertThat(fieldsByName.size(), is(1));
         assertThat(fieldsByName.get("postcode").getText(), is("field description"));
     }

@@ -141,7 +141,7 @@ public class EnvironmentValidatorTest {
 		Register register = mock(Register.class);
 		when(register.getTotalDerivationRecords(IndexNames.METADATA)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
-		when(register.getFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
+		when(register.getRegisterFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
 
 		RegisterContext registerContext = mock(RegisterContext.class);
 		when(registerContext.buildOnDemandRegister()).thenReturn(register);
@@ -171,7 +171,7 @@ public class EnvironmentValidatorTest {
 		Register register = mock(Register.class);
 		when(register.getTotalDerivationRecords(IndexNames.METADATA)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
-		when(register.getFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
+		when(register.getRegisterFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
 
 		RegisterContext registerContext = mock(RegisterContext.class);
 		when(registerContext.buildOnDemandRegister()).thenReturn(register);

@@ -3,6 +3,7 @@ package uk.gov.register.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.DerivationRecordIndex;
 import uk.gov.register.exceptions.FieldUndefinedException;
@@ -21,6 +22,7 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PostgresRegister implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -31,6 +33,7 @@ public class PostgresRegister implements Register {
     private final ItemStore itemStore;
     private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
     private final ItemValidator itemValidator;
+    private final ConfigManager configManager;
     private final EnvironmentValidator environmentValidator;
 
     private RegisterMetadata registerMetadata;
@@ -43,6 +46,7 @@ public class PostgresRegister implements Register {
                             DerivationRecordIndex derivationRecordIndex,
                             Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
                             ItemValidator itemValidator,
+                            ConfigManager configManager,
                             EnvironmentValidator environmentValidator) {
         this.registerName = registerName;
         this.entryLog = entryLog;
@@ -51,6 +55,7 @@ public class PostgresRegister implements Register {
         this.derivationRecordIndex = derivationRecordIndex;
         this.indexFunctionsByEntryType = indexFunctionsByEntryType;
         this.itemValidator = itemValidator;
+        this.configManager = configManager;
         this.environmentValidator = environmentValidator;
     }
 
@@ -65,7 +70,7 @@ public class PostgresRegister implements Register {
 
         referencedItems.forEach(i -> {
             if (entry.getEntryType() == EntryType.user) {
-                itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+                itemValidator.validateItem(i.getContent(), this.getRegisterFieldsByName(), this.getRegisterMetadata());
             } else if (entry.getKey().startsWith("field:")) {
                 Field field = extractObjectFromItem(i, Field.class);
                 environmentValidator.validateFieldAgainstEnvironment(field);
@@ -249,13 +254,26 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Map<String, Field> getFieldsByName() {
+    public Map<String, Field> getRegisterFieldsByName() {
         if (fieldsByName == null) {
             RegisterMetadata registerMetadata = getRegisterMetadata();
             List<String> fieldNames = registerMetadata.getFields();
             fieldsByName = new LinkedHashMap<>();
             fieldNames.forEach(fieldName -> fieldsByName.put(fieldName, getField(fieldName)));
         }
+        return fieldsByName;
+    }
+    
+    @Override
+    public Map<String, Field> getMetadataFieldsByName() {
+        Map<String, Field> fieldsByName = new HashMap<>();
+
+        // If the Register register contains any of the same fields as the Field register, the definitions from the Register register will be used.
+        // This shouldn't make any real difference as the fields ought to be considered equal.
+        Stream.of(configManager.getFieldsForRegister("field"), configManager.getFieldsForRegister("register")).flatMap(s -> s.stream()).forEach(field -> {
+            fieldsByName.put(field.fieldName, field);
+        });
+
         return fieldsByName;
     }
 

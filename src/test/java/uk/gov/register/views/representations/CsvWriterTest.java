@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.core.Is.is;
@@ -122,17 +123,18 @@ public class CsvWriterTest {
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"key1\":\"item2\"}"));
         Record record = new Record(entry, Arrays.asList(item, item2));
 
-        ImmutableMap<String, Field> fields = ImmutableMap.of(
+        ImmutableMap<String, Field> registerFieldsByName = ImmutableMap.of(
                 "key1", new Field("key1", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
                 "key2", new Field("key2", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
                 "key3", new Field("key3", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
                 "key4", new Field("key4", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+        Map<String, Field> metadataFieldsByName = mock(Map.class);
 
         ItemConverter itemConverter = mock(ItemConverter.class);
-        when(itemConverter.convertItem(item, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
-        when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item2")));
+        when(itemConverter.convertItem(item, registerFieldsByName)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
+        when(itemConverter.convertItem(item2, registerFieldsByName)).thenReturn(ImmutableMap.of("key1", new StringValue("item2")));
 
-        RecordView recordView = new RecordView(record, fields, itemConverter);
+        RecordView recordView = new RecordView(record, registerFieldsByName, metadataFieldsByName, itemConverter);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -165,19 +167,20 @@ public class CsvWriterTest {
 
         ItemConverter itemConverter = mock(ItemConverter.class);
 
-        ImmutableMap<String,Field> fields = ImmutableMap.of(
+        ImmutableMap<String,Field> registerFieldsByName = ImmutableMap.of(
                 "address",new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
                 "street", new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+        Map<String, Field> metadataFieldsByName = mock(Map.class);
 
-        when(itemConverter.convertItem(item1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(itemConverter.convertItem(item1, registerFieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(item2, registerFieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
-        when(itemConverter.convertItem(item3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(item3, registerFieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("baz")));
 
 
-        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fields, itemConverter, false, false);
+        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), registerFieldsByName, metadataFieldsByName, itemConverter, false, false);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
