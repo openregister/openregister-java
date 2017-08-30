@@ -19,6 +19,8 @@ applications:
     - local-authority-type
     - place
     - prison
+    - public-body
+    - public-body-classification
     - statistical-geography-unitary-authority-wls
     - statistical-geography
     - street-custodian
