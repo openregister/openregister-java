@@ -64,4 +64,18 @@
         <gav regex="true">^org\.eclipse\.jetty\.toolchain\.setuid:jetty-setuid-java:.*$</gav>
         <cpe>cpe:/a:eclipse:jetty</cpe>
     </suppress>
+    <suppress>
+       <notes><![CDATA[
+   file name: tomcat-jdbc-8.5.9.jar
+   ]]></notes>
+       <sha1>3d34018a222959ca69e0e0da5bc9988741cbe7ba</sha1>
+       <cpe>cpe:/a:apache:tomcat</cpe>
+    </suppress>
+    <suppress>
+       <notes><![CDATA[
+   file name: tomcat-juli-8.5.9.jar
+   ]]></notes>
+       <sha1>f4ea80fb56636ad9afac5bb9d71f9dce092b9abe</sha1>
+       <cpe>cpe:/a:apache:tomcat</cpe>
+    </suppress>
 </suppressions>
