@@ -28,9 +28,14 @@ public class ItemValidatorTest {
     @Mock
     private RegisterMetadata registerMetadata;
 
+    @Mock
+    private RegisterMetadata countryRegisterMetadata;
+
     private Map<String,Field> fieldsByName;
+    private Map<String,Field> countryFieldsByName;
 
     private ItemValidator itemValidator;
+    private ItemValidator countryItemValidator;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,16 +43,26 @@ public class ItemValidatorTest {
     public void setup() throws NoSuchConfigException, IOException {
         MockitoAnnotations.initMocks(this);
         RegisterName registerName = new RegisterName("register");
+        RegisterName countryRegisterName = new RegisterName("country");
 
         when(registerMetadata.getRegisterName()).thenReturn(registerName);
+        when(countryRegisterMetadata.getRegisterName()).thenReturn(countryRegisterName);
 
         when(registerMetadata.getFields()).thenReturn(Arrays.asList("register", "text", "registry", "phase", "copyright", "fields"));
+        when(countryRegisterMetadata.getFields()).thenReturn(Arrays.asList("country", "start-date"));
+
         Field textField = new Field("text", "text", registerName, Cardinality.ONE, "text text");
         Field registerField = new Field("register", "text", registerName, Cardinality.ONE, "register text");
         Field fieldsField = new Field("fields", "string", registerName, Cardinality.MANY, "fields text");
 
+        Field countryField = new Field("country", "string", countryRegisterName, Cardinality.ONE, "countryName");
+        Field startDateField = new Field("start-date\"", "datetime", null, Cardinality.ONE, "Start date text");
+
         fieldsByName = ImmutableMap.of("text", textField, "register", registerField, "fields", fieldsField);
-        itemValidator = new ItemValidator(new RegisterName("register"));
+        countryFieldsByName = ImmutableMap.of("country", countryField, "start-date", startDateField);
+
+        itemValidator = new ItemValidator(registerName);
+        countryItemValidator = new ItemValidator(countryRegisterName);
     }
 
     @Test
@@ -149,6 +164,91 @@ public class ItemValidatorTest {
         } catch (ItemValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'fields' values must be of type 'string'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
+        }
+    }
+
+    @Test
+    public void validateItem_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYY() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"2012\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+        } catch (ItemValidationException e) {
+            fail("Must not execute this statement");
+        }
+    }
+
+    @Test
+    public void validateItem_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYYDDMM() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"2012-04\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+        } catch (ItemValidationException e) {
+            fail("Must not execute this statement");
+        }
+    }
+
+    @Test
+    public void validateItem_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYYMMDD() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"2012-04-01\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+        } catch (ItemValidationException e) {
+            fail("Must not execute this statement");
+        }
+    }
+
+    @Test
+    public void validateItem_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYYMMDDThhmmss() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"2012-04-01T23:23:23\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+        } catch (ItemValidationException e) {
+            fail("Must not execute this statement");
+        }
+    }
+
+    @Test
+    public void validateItem_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYYMMDDThhmmssZ() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"2012-04-01T23:23:23Z\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+        } catch (ItemValidationException e) {
+            fail("Must not execute this statement");
+        }
+    }
+
+    @Test
+    public void validateItem_throwsValidationException_whenInputDateTimeIsNotValid() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"18/12/2009\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            fail("Must not execute this statement");
+        } catch (ItemValidationException e) {
+            assertThat(e.getMessage(), equalTo("Field 'start-date' value must be of type 'datetime'"));
+        }
+    }
+
+    @Test
+    public void validateItem_shouldValidateSuccessfully_whenInputDateTimeIsEmpty() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"\"}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+        } catch (ItemValidationException e) {
+            fail("Must not execute this statement");
         }
     }
 }

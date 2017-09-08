@@ -1,6 +1,7 @@
 package uk.gov.register.core.datatype;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import uk.gov.register.util.DateFormatChecker;
 
 public class DatetimeDatatype implements Datatype {
     private final String datatypeName;
@@ -9,10 +10,9 @@ public class DatetimeDatatype implements Datatype {
         this.datatypeName = datatypeName;
     }
 
-    //TODO: implement the validations for Datetime datatype
     @Override
     public boolean isValid(JsonNode value) {
-        return true;
+        return DateFormatChecker.isDateFormatValid(value.textValue());
     }
 
     @Override

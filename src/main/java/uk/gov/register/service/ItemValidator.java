@@ -3,7 +3,6 @@ package uk.gov.register.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.RegisterMetadata;
