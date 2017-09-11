@@ -3,11 +3,7 @@ package uk.gov.register.thymeleaf;
 import io.dropwizard.views.View;
 import org.markdownj.MarkdownProcessor;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
-import uk.gov.register.core.LinkResolver;
-import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.core.RegisterReadOnly;
-import uk.gov.register.core.RegisterResolver;
+import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -22,14 +18,14 @@ public class ThymeleafView extends View {
     protected final RequestContext requestContext;
     private final RegisterResolver registerResolver;
     private final RegisterReadOnly register;
-    private Optional<String> registerTrackingId;
+    private final Optional<String> registerTrackingId;
     private String thymeleafTemplateName;
     protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    public ThymeleafView(RequestContext requestContext, String templateName, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, RegisterReadOnly register) {
+    public ThymeleafView(final RequestContext requestContext, final String templateName, final RegisterTrackingConfiguration registerTrackingConfiguration, final RegisterResolver registerResolver, final RegisterReadOnly register) {
         super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
-        this.registerTrackingId = registerTrackingConfiguration.getRegisterTrackingId();
+        registerTrackingId = registerTrackingConfiguration.getRegisterTrackingId();
         this.registerResolver = registerResolver;
         this.register = register;
     }
@@ -44,8 +40,8 @@ public class ThymeleafView extends View {
 
     }
 
-    private String convertToThymeleafTemplateName(String templateName) {
-        String[] names = templateName.split("/");
+    private String convertToThymeleafTemplateName(final String templateName) {
+        final String[] names = templateName.split("/");
 
         return names[names.length - 1];
     }
@@ -81,7 +77,7 @@ public class ThymeleafView extends View {
 
     @SuppressWarnings("unused, used by templates")
     public List<String> getOrderedFieldNames() {
-        List<String> orderedFieldNames = new ArrayList<>();
+        final List<String> orderedFieldNames = new ArrayList<>();
         getRegister().getPrimaryKeyField().ifPresent(orderedFieldNames::add);
         getRegister().getNonPrimaryFields().forEach(orderedFieldNames::add);
         return orderedFieldNames;
