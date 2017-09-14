@@ -19,6 +19,7 @@ applications:
     - public-body-classification
     - school-eng
     - school-type
+    - school-type-eng
     - social-housing-provider-designation
     - social-housing-provider-legal-entity
     - social-housing-provider
