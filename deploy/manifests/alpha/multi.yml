@@ -1,7 +1,7 @@
 ---
 applications:
 - name: alpha-multi
-  memory: 1024M
+  memory: 4GB
   instances: 2
   buildpack: java_buildpack
   health-check-type: http
