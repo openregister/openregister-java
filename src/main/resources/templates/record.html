@@ -43,7 +43,7 @@
       </div>
       <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
     </div>
-    <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.records})" class="table-wrapper"></div>
+    <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})" class="table-wrapper"></div>
     <p>
       <a th:href="${'/record/' + content.entryKey +'/entries'}">View all versions of this record</a>
     </p>

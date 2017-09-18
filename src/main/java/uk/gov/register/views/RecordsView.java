@@ -37,6 +37,15 @@ public class RecordsView implements CsvRepresentationView {
         return recordMap;
     }
 
+    @SuppressWarnings("unused, used by the template")
+    public List<ItemView> getRecordsSimple() {
+        return recordMap.entrySet()
+                .stream()
+                .map(e -> new ItemSimpleView(e.getKey().getKey(), e.getValue().iterator().next()))
+                .collect(Collectors.toList());
+
+    }
+
     public Iterable<Field> getFields() {
         return fieldsByName.values();
     }
