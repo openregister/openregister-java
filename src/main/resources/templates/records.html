@@ -39,7 +39,7 @@
       <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
     </div>
 
-    <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.records})"
+    <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})"
          class="table-wrapper"></div>
 
     <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
