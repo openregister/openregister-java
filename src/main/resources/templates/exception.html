@@ -7,7 +7,9 @@
 
   <div id="wrapper">
     <main id="main" role="main">
-      <div th:replace="fragments/phase-banner.html::phase"></div>
+      <th:block th:unless="${register.phase == 'beta'}">
+        <div th:replace="fragments/phase-banner.html::phase"></div>
+      </th:block>
       <h1 class="heading-large" th:text="${heading}"></h1>
       <p class="lede" th:text="${message}"></p>
     </main>

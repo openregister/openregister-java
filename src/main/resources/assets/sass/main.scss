@@ -38,6 +38,7 @@ $light-gray: #f9f9f9;
 @import "elements-typography";
 @import "lists";
 @import "breadcrumbs";
+@import "panels";
 
 // Register styles
 @import "organisations";
@@ -113,6 +114,10 @@ $light-gray: #f9f9f9;
   .header-global .header-logo {
     width: auto;
 
+    .phase-tag {
+      margin-top: 6px
+    }
+
     #product-name {
       font-weight: normal;
     }
@@ -124,19 +129,21 @@ $light-gray: #f9f9f9;
   padding-bottom: $gutter*3;
 }
 
-.phase-banner {
-  @include phase-banner();
+.phase-tag {
+  @include phase-tag();
 
   .openregister-org & {
-    .phase-tag {
-      font-family: $Helvetica-Regular;
-      padding: 2px 5px;
-    }
-
-    p {
-      font-family: $Helvetica-Regular;
-    }
+    font-family: $Helvetica-Regular;
+    padding: 2px 5px;
   }
+}
+
+.phase-banner {
+  @include phase-banner();
+}
+
+.panel.phase {
+  margin-top: 40px;
 }
 
 .button {
