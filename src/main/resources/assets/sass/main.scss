@@ -109,14 +109,12 @@ $light-gray: #f9f9f9;
   }
 }
 
-#global-header.with-proposition .header-wrapper {
+#global-header .header-wrapper {
   .header-global .header-logo {
     width: auto;
-  }
 
-  @include media(tablet) {
-    .header-proposition {
-      margin-top: 8px;
+    #product-name {
+      font-weight: normal;
     }
   }
 }
