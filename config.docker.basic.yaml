@@ -37,8 +37,8 @@ externalConfigDirectory: /tmp
 downloadConfigs: true
 
 # can be http: file s3: or classpath: url
-fieldsYamlLocation: classpath://config/fields.yaml
-registersYamlLocation: classpath://config/registers.yaml
+fieldsYamlLocation: https://field.register.gov.uk/records.yaml
+registersYamlLocation: https://register.register.gov.uk/records.yaml
 
 credentials:
   user: foo

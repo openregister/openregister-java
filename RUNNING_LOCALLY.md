@@ -50,6 +50,26 @@ Change `register: country` to `register: school-type`.
 
 Update the schema in the same way, to `schema: school-type`.
 
+Update fields and registers location for environments other than beta in the same way.
+
+Fields locations per environment:
+
+Variable: `fieldsYamlLocation`
+
+Possible values:
+* alpha: https://field.alpha.openregister.org/records.yaml
+* beta: https://field.register.gov.uk/records.yaml
+* discovery: https://field.discovery.openregister.org/records.yaml
+
+Registers locations per environment:
+
+Variable: `registersYamlLocation`
+
+Possible values:
+* alpha: https://register.alpha.openregister.org/records.yaml
+* beta: https://register.register.gov.uk/records.yaml
+* discovery: https://register.discovery.openregister.org/records.yaml
+
 Now re-run the application using `ENVIRONMENT=alpha REGISTERS=school-type ./run-application.sh`. You should now see the School type register locally at `127.0.0.1:8080`.
 
 ## Create a new register
