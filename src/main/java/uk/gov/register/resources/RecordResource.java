@@ -44,7 +44,14 @@ public class RecordResource {
 
     @GET
     @Path("/record/{record-key}")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
     @Timed
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
@@ -70,7 +77,14 @@ public class RecordResource {
 
     @GET
     @Path("/record/{record-key}/entries")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
     @Timed
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
         Collection<Entry> allEntries = register.allEntriesOfRecord(key);
@@ -93,7 +107,14 @@ public class RecordResource {
 
     @GET
     @Path("/records/{key}/{value}")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
     @Timed
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
@@ -113,11 +134,19 @@ public class RecordResource {
 
     @GET
     @Path("/records")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
     @Timed
     public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
         setContentDisposition();
+
         return getRecordsView(pagination.pageSize(), pagination.offset());
     }
 
