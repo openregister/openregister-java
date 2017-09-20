@@ -6,8 +6,9 @@
   <header th:replace="fragments/global-header.html::global-header"></header>
 
   <div id="wrapper">
-
-    <div th:replace="fragments/phase-banner.html::phase"></div>
+    <th:block th:unless="${register.phase == 'beta'}">
+      <div th:unless="${register.phase == 'beta'}" th:replace="fragments/phase-banner.html::phase"></div>
+    </th:block>
 
     <div class="grid-row">
 

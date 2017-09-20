@@ -2,15 +2,15 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <body>
-  <div th:fragment="phase" th:class="phase-banner">
-    <p>
-      <strong class="phase-tag" th:text="${#strings.toUpperCase(register.phase)}">ALPHA</strong>
-      <span>
-        This is a new register – your
-        <a href="https://registers.cloudapps.digital/support" target="_blank">feedback</a>
-        will help us to improve it.
-      </span>
-    </p>
-  </div>
+  <th:block th:fragment="phase">
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <div class="panel panel-border-wide phase">
+          <span class="phase-tag">In progress</span>
+          <p>This data is in progress and it's not ready for use. <a href='https://registers.cloudapps.digital/support' target="_blank">Contact the team</a> to give us feedback.</p>
+        </div>
+      </div>
+    </div>
+  </th:block>
 </body>
 </html>
