@@ -12,7 +12,6 @@ applications:
   hosts:
     - address
     - clinical-commissioning-group
-    - government-domain
     - green-deal-certification-body
     - jobcentre
     - local-authority-nir
@@ -22,8 +21,6 @@ applications:
     - public-body
     - public-body-classification
     - statistical-geography-council-area-sct
-    - statistical-geography-unitary-authority-wls
-    - statistical-geography
     - street-custodian
     - street
     - uk

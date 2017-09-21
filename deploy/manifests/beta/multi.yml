@@ -12,6 +12,7 @@ applications:
     - register.gov.uk
   hosts:
     - country
+    - government-domain
     - government-organisation
     - government-service
     - internal-drainage-board
@@ -21,6 +22,8 @@ applications:
     - principal-local-authority
     - prison-estate
     - registration-district
+    - statistical-geography
+    - statistical-geography-unitary-authority-wls
     - territory
   services:
     - beta-db
