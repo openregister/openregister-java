@@ -21,6 +21,7 @@ applications:
     - prison
     - public-body
     - public-body-classification
+    - statistical-geography-council-area-sct
     - statistical-geography-unitary-authority-wls
     - statistical-geography
     - street-custodian
