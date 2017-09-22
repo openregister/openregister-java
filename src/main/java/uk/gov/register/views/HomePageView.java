@@ -1,6 +1,5 @@
 package uk.gov.register.views;
 
-import com.google.common.collect.Iterables;
 import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.HomepageContent;
 import uk.gov.register.configuration.RegisterTrackingConfiguration;
@@ -29,19 +28,19 @@ public class HomePageView extends AttributionView<Object> {
     private final RegisterLinks registerLinks;
 
     public HomePageView(
-            PublicBody registry,
-            Optional<GovukOrganisation.Details> registryBranding,
-            RequestContext requestContext,
-            int totalRecords,
-            int totalEntries,
-            Optional<Instant> lastUpdated,
-            Optional<String> custodianName,
-            HomepageContent homepageContent,
-            RegisterTrackingConfiguration registerTrackingConfiguration,
-            RegisterResolver registerResolver,
-            Iterable<Field> fields,
-            RegisterLinkService registerLinkService,
-            RegisterReadOnly register) {
+            final PublicBody registry,
+            final Optional<GovukOrganisation.Details> registryBranding,
+            final RequestContext requestContext,
+            final int totalRecords,
+            final int totalEntries,
+            final Optional<Instant> lastUpdated,
+            final Optional<String> custodianName,
+            final HomepageContent homepageContent,
+            final RegisterTrackingConfiguration registerTrackingConfiguration,
+            final RegisterResolver registerResolver,
+            final Iterable<Field> fields,
+            final RegisterLinkService registerLinkService,
+            final RegisterReadOnly register) {
         super("home.html", requestContext, registry, registryBranding, register, registerTrackingConfiguration, registerResolver, null);
         this.totalRecords = totalRecords;
         this.totalEntries = totalEntries;
@@ -49,7 +48,7 @@ public class HomePageView extends AttributionView<Object> {
         this.custodianName = custodianName;
         this.homepageContent = homepageContent;
         this.fields = fields;
-        this.registerLinks = registerLinkService.getRegisterLinks(getRegisterId());
+        registerLinks = registerLinkService.getRegisterLinks(getRegisterId());
     }
 
     @SuppressWarnings("unused, used from template")
@@ -91,5 +90,7 @@ public class HomePageView extends AttributionView<Object> {
         return fields;
     }
 
-    public RegisterLinks getRegisterLinks() { return registerLinks; }
+    public RegisterLinks getRegisterLinks() {
+        return registerLinks;
+    }
 }

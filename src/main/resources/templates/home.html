@@ -1,94 +1,99 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="fragments/head.html::head"></head>
-<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-  <header th:replace="fragments/global-header.html::global-header"></header>
+  <head th:include="fragments/head.html::head"></head>
+  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+    <header th:replace="fragments/global-header.html::global-header"></header>
 
-  <div id="wrapper">
-    <th:block th:unless="${register.phase == 'beta'}">
-      <div th:unless="${register.phase == 'beta'}" th:replace="fragments/phase-banner.html::phase"></div>
-    </th:block>
+    <div id="wrapper">
+      <th:block th:unless="${register.phase == 'beta'}">
+        <div th:unless="${register.phase == 'beta'}" th:replace="fragments/phase-banner.html::phase"></div>
+      </th:block>
 
-    <div class="grid-row">
+      <div class="grid-row">
 
-      <main class="column-two-thirds" id="main" role="main">
-        <h1 class="heading-large" th:utext="${friendlyRegisterName}"></h1>
-        <th:block th:utext="${registerText}"></th:block>
-        <p>
-          <a href="/records" class="button" role="button">View Register</a>
-        </p>
-        <p>The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span> records and includes the following fields:</p>
-        <div th:replace="fragments/field-list.html::field-list(${fields})"></div>
+        <main class="column-two-thirds" id="main" role="main">
+          <h1 class="heading-large" th:utext="${friendlyRegisterName}"></h1>
+          <th:block th:utext="${registerText}"></th:block>
+          <p>
+            <a href="/records" class="button" role="button">View Register</a>
+          </p>
+          <p>The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span>
+            records and includes the following fields:</p>
+          <div th:replace="fragments/field-list.html::field-list(${fields})"></div>
 
-        <h3 class="heading-small">Using this register</h3>
-        <p><a href="/download">Download</a> a copy of this register. You'll need to regularly update it to make sure you have the most current version of the data.</p>
-        <p>Each register has an open API you can use to access the data without any authentication. There's more information about using the register APIs in the <a th:href="${homepageContent.techDocsUrl}" target="_blank">technical documentation</a>.</p>
-        <p>If you're building a service, you can use this data to create elements for forms.</p>
-        <p>You might need to combine data from this register with data from another source to do this.</p>
-      </main>
+          <h3 class="heading-small">Using this register</h3>
+          <p th:replace="fragments/download-and-preview-home.html::download-and-preview-home"></p>
+          <p>Each register has an open API you can use to access the data without any authentication. There's more
+            information about using the register APIs in the <a th:href="${homepageContent.techDocsUrl}"
+                                                                target="_blank">technical documentation</a>.</p>
+          <p>If you're building a service, you can use this data to create elements for forms.</p>
+          <p>You might need to combine data from this register with data from another source to do this.</p>
+        </main>
 
-      <div class="column-third">
-        <aside class="govuk-related-items" role="complementary">
-          <h2 class="heading-medium">About this register</h2>
-          <th:block th:if="${#bools.isTrue(custodianName.isPresent())}">
-            <h3 class="heading-small">Custodian</h3>
-            <p th:text="${custodianName.get()}"></p>
-          </th:block>
-          <th:block th:replace="fragments/attribution.html::attribution"></th:block>
-          <h3 class="heading-small">Last updated</h3>
-          <ul class="list">
-            <li th:text="${lastUpdatedTime}">Last updated</li>
-            <li>
-              <a href="/entries">View recent updates</a>
-            </li>
-          </ul>
-          <th:block th:unless="${registerLinks.registersLinkedTo.empty}">
-            <h3 class="medium-small">Links to</h3>
+        <div class="column-third">
+          <aside class="govuk-related-items" role="complementary">
+            <h2 class="heading-medium">About this register</h2>
+            <th:block th:if="${#bools.isTrue(custodianName.isPresent())}">
+              <h3 class="heading-small">Custodian</h3>
+              <p th:text="${custodianName.get()}"></p>
+            </th:block>
+            <th:block th:replace="fragments/attribution.html::attribution"></th:block>
+            <h3 class="heading-small">Last updated</h3>
             <ul class="list">
-              <li th:each="registerLinkTo : ${registerLinks.registersLinkedTo}">
-                <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkTo))}" th:text="${#strings.capitalize(registerLinkTo)} + ' register'"></a>
+              <li th:text="${lastUpdatedTime}">Last updated</li>
+              <li>
+                <a href="/entries">View recent updates</a>
               </li>
             </ul>
-          </th:block>
-          <th:block th:unless="${registerLinks.registersLinkedFrom.empty}">
-            <h3 class="medium-small">Links from</h3>
+            <th:block th:unless="${registerLinks.registersLinkedTo.empty}">
+              <h3 class="medium-small">Links to</h3>
+              <ul class="list">
+                <li th:each="registerLinkTo : ${registerLinks.registersLinkedTo}">
+                  <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkTo))}"
+                     th:text="${#strings.capitalize(registerLinkTo)} + ' register'"></a>
+                </li>
+              </ul>
+            </th:block>
+            <th:block th:unless="${registerLinks.registersLinkedFrom.empty}">
+              <h3 class="medium-small">Links from</h3>
+              <ul class="list">
+                <li th:each="registerLinkFrom : ${registerLinks.registersLinkedFrom}">
+                  <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkFrom))}"
+                     th:text="${#strings.capitalize(registerLinkFrom)} + ' register'"></a>
+                </li>
+              </ul>
+            </th:block>
+            <th:block th:unless="${homepageContent.similarRegisters.empty}">
+              <h3 class="heading-small">Similar registers</h3>
+              <ul class="list">
+                <li th:each="similarRegister : ${homepageContent.similarRegisters}">
+                  <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(similarRegister))}"
+                     th:text="${#strings.capitalize(similarRegister)} + ' register'"></a>
+                </li>
+              </ul>
+            </th:block>
+            <h3 class="heading-medium">More information</h3>
             <ul class="list">
-              <li th:each="registerLinkFrom : ${registerLinks.registersLinkedFrom}">
-                <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkFrom))}" th:text="${#strings.capitalize(registerLinkFrom)} + ' register'"></a>
+              <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
+                <a th:href="${homepageContent.registerHistoryPageUrl.get()}">Register history</a>
+              </li>
+              <li>
+                <a th:href="${homepageContent.registersIntroductionUrl}">Introducing registers</a>
+              </li>
+              <li>
+                <a th:href="${homepageContent.usingRegistersGuidanceUrl}">Guidance for using registers</a>
+              </li>
+              <li>
+                <a th:href="${homepageContent.techDocsUrl}">Technical documentation</a>
               </li>
             </ul>
-          </th:block>
-          <th:block th:unless="${homepageContent.similarRegisters.empty}">
-            <h3 class="heading-small">Similar registers</h3>
-            <ul class="list">
-              <li th:each="similarRegister : ${homepageContent.similarRegisters}">
-                <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(similarRegister))}" th:text="${#strings.capitalize(similarRegister)} + ' register'"></a>
-              </li>
-            </ul>
-          </th:block>
-          <h3 class="heading-medium">More information</h3>
-          <ul class="list">
-            <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
-              <a th:href="${homepageContent.registerHistoryPageUrl.get()}">Register history</a>
-            </li>
-            <li>
-              <a th:href="${homepageContent.registersIntroductionUrl}">Introducing registers</a>
-            </li>
-            <li>
-              <a th:href="${homepageContent.usingRegistersGuidanceUrl}">Guidance for using registers</a>
-            </li>
-            <li>
-              <a th:href="${homepageContent.techDocsUrl}">Technical documentation</a>
-            </li>
-          </ul>
-        </aside>
+          </aside>
+        </div>
       </div>
-
     </div>
-  </div>
 
-  <footer th:replace="fragments/footer.html::footer"></footer>
+    <footer th:replace="fragments/footer.html::footer"></footer>
 
-</body>
+  </body>
 </html>

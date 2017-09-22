@@ -38,6 +38,7 @@ $light-gray: #f9f9f9;
 @import "elements-typography";
 @import "lists";
 @import "breadcrumbs";
+@import "prism";
 @import "panels";
 
 // Register styles
@@ -305,4 +306,12 @@ dl {
     padding-bottom: 1em;
     width: 65%;
   }
+}
+
+.preview-box {
+    border: 1px solid $grey-2;
+}
+
+pre {
+    margin: 0;
 }

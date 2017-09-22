@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head th:include="fragments/head.html::head"></head>
+<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+<header th:replace="fragments/global-header.html::global-header"></header>
+
+<div id="wrapper">
+
+  <main id="main" role="main">
+    <div th:replace="fragments/phase-banner.html::phase"></div>
+
+    <div class="breadcrumbs">
+      <ol>
+        <li>
+          <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+        </li>
+        <li>
+          <a href="/records">Records</a>
+        </li>
+        <li>
+          <th:block th:utext="${previewTypeTag}"></th:block>
+          view
+        </li>
+      </ol>
+    </div>
+
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <h1 class="heading-large">
+          <th:block th:utext="${previewTypeTag}"></th:block>
+          view
+        </h1>
+        <p th:if="${!isSingleKey}">
+          The are
+          <th:block th:utext="${totalElements}"></th:block>
+          items
+          <th:block th:if="${totalObjects} gt 100">, this sample shows only the first 100</th:block>
+          .
+        </p>
+        <p th:if="${isSingleKey}">
+          There is 1 item.
+        </p>
+        <p>
+          <a th:href="${homepageContent.techDocsUrl}" target="_blank">View the API documentation</a>
+          to access <span th:if="${!isSingleKey}">these items</span><span th:if="${isSingleKey}">this item</span> or
+          <span th:if="${!isSingleKey or #strings.isEmpty(key)}">
+            <a th:href="${urlMultipleElements + '?page-size=5000'}" rel="alternate" class="js-download"
+               th:attr="data-download-type=${previewTypeTag}">download a <th:block
+                th:utext="${previewTypeTag}"></th:block> file</a>
+          </span>
+          <span th:if="${isSingleKey and !#strings.isEmpty(key)}">
+            <a th:href="${urlSingleElements}" rel="alternate" class="js-download"
+               th:attr="data-download-type=${previewTypeTag}">download a <th:block
+                th:utext="${previewTypeTag}"></th:block> file</a>
+          </span>
+          <span th:if="${isSingleKey}">with the item.</span>
+          <span th:if="${!isSingleKey}">
+            <span th:if="${totalObjects} le 5000">with the items.</span>
+            <span th:if="${totalObjects} gt 5000">with the first 5,000.</span>
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="grid-row">
+      <div class="column-full">
+        <pre class="preview-box">
+          <code
+              th:class="${#strings.equals(previewTypeTag, 'YAML')} ? language-yaml : (${#strings.equals(previewTypeTag, 'TTL')} ? language-stylus : language-json)"><th:block
+              th:utext="${registerValues}"></th:block></code>
+        </pre>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer th:replace="fragments/footer.html::footer"></footer>
+
+</body>
+</html>

@@ -1,45 +1,45 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="fragments/head.html::head"></head>
-<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-  <header th:replace="fragments/global-header.html::global-header"></header>
+  <head th:include="fragments/head.html::head"></head>
+  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+    <header th:replace="fragments/global-header.html::global-header"></header>
 
-  <div id="wrapper">
-    <main id="main" role="main">
-      <th:block th:unless="${register.phase == 'beta'}">
-        <div th:replace="fragments/phase-banner.html::phase"></div>
-      </th:block>
+    <div id="wrapper">
+      <main id="main" role="main">
+        <th:block th:unless="${register.phase == 'beta'}">
+          <div th:replace="fragments/phase-banner.html::phase"></div>
+        </th:block>
 
-      <div class="breadcrumbs">
-        <ol>
-          <li>
-            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-          </li>
-          <li>
-            <a href="/entries">Entries</a>
-          </li>
-          <li th:text="${'Entry ' + content.entryNumber}"></li>
-        </ol>
-      </div>
-
-      <div class="grid-row">
-        <div class="column-two-thirds">
-          <h1 class="heading-large">
-            Entry
-            <span th:text="${content.entryNumber}">Entry Number Header</span>
-          </h1>
-          <div th:include="fragments/data-formats.html::data-formats"></div>
+        <div class="breadcrumbs">
+          <ol>
+            <li>
+              <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+            </li>
+            <li>
+              <a href="/entries">Entries</a>
+            </li>
+            <li th:text="${'Entry ' + content.entryNumber}"></li>
+          </ol>
         </div>
-        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
-      </div>
 
-      <div th:include="fragments/entry-table.html :: entry-table (entry = ${content})" class="table-wrapper"></div>
+        <div class="grid-row">
+          <div class="column-two-thirds">
+            <h1 class="heading-large">
+              Entry
+              <span th:text="${content.entryNumber}">Entry Number Header</span>
+            </h1>
+            <div th:include="fragments/download-and-preview-single.html::download-and-preview-single('entries')"></div>
+          </div>
+          <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
+        </div>
 
-    </main>
-  </div>
+        <div th:include="fragments/entry-table.html :: entry-table (entry = ${content})" class="table-wrapper"></div>
 
-  <footer th:replace="fragments/footer.html::footer"></footer>
+      </main>
+    </div>
 
-</body>
+    <footer th:replace="fragments/footer.html::footer"></footer>
+
+  </body>
 </html>

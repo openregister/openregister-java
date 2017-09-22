@@ -27,8 +27,8 @@ def assetsDir = new File(projectDir, "src/main/resources/assets")
 
 compass {
     importPath = files(
-        new File(assetsDir, "govuk_frontend_toolkit/stylesheets"),
-        new File(assetsDir, "govuk_template/source/assets/stylesheets")
+            new File(assetsDir, "govuk_frontend_toolkit/stylesheets"),
+            new File(assetsDir, "govuk_template/source/assets/stylesheets")
     )
     sassDir = new File(assetsDir, "sass")
     cssDir = file("build/resources/main/assets/css")
@@ -135,7 +135,7 @@ void waitForApplicationToStart() {
         }
     }
 
-    if(!appRunning){
+    if (!appRunning) {
         throw new Exception("Application start timeout (10s)")
     }
 }
@@ -149,19 +149,19 @@ void stopApp() {
 }
 
 task(loadSchoolDataForConformance, type: Exec) {
-    doFirst{
-        exec{
+    doFirst {
+        exec {
             executable "$projectDir/drop_schema.sh"
             args 'http://localhost:9090', 'foo:bar'
         }
     }
     mustRunAfter startAppForConformance
     commandLine 'curl', '-u', 'foo:bar', '-s', '-H', 'Content-type: application/uk-gov-rsf', '--data-binary', '@school-data.rsf',
-                'http://localhost:9090/load-rsf'
+            'http://localhost:9090/load-rsf'
 }
 
 task createConformanceTestVenv(type: Exec) {
-    commandLine 'pyvenv-3.5','.venv'
+    commandLine 'pyvenv-3.5', '.venv'
 }
 
 task installConformanceTestDeps(type: Exec) {
