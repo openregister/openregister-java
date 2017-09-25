@@ -60,8 +60,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         }
     }
 
-    private static boolean isRunningOnCloudFoundry(){
-       return System.getenv().containsKey("CF_INSTANCE_GUID");
+    private static boolean isRunningOnCloudFoundry() {
+        return System.getenv().containsKey("CF_INSTANCE_GUID");
     }
 
     @Override
@@ -109,7 +109,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService, environmentValidator, configuration);
         allTheRegisters.stream().forEach(registerContext -> {
             registerContext.migrate();
-            environmentValidator.validateExistingMetadataAgainstEnvironment(registerContext);
+            registerContext.validate();
         });
 
         RSFExecutor rsfExecutor = new RSFExecutor();

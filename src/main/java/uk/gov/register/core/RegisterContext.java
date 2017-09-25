@@ -9,8 +9,10 @@ import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
+import uk.gov.register.exceptions.FieldValidationException;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.exceptions.RegisterResultException;
+import uk.gov.register.exceptions.RegisterValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.serialization.RegisterResult;
@@ -52,6 +54,7 @@ public class RegisterContext implements
     private final boolean enableDownloadResource;
     private RegisterAuthenticator authenticator;
     private final ItemValidator itemValidator;
+    private boolean hasConsistentState;
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator,
                            RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema,
@@ -74,6 +77,7 @@ public class RegisterContext implements
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
         this.itemValidator = new ItemValidator(registerName);
+        this.hasConsistentState = true;
     }
 
     public RegisterName getRegisterName() {
@@ -164,6 +168,8 @@ public class RegisterContext implements
             registerLinkService.updateRegisterLinks(registerName);
             memoizationStore.set(new InMemoryPowOfTwoNoLeaves());
             flyway.migrate();
+
+            hasConsistentState = true;
         }
     }
 
@@ -215,6 +221,14 @@ public class RegisterContext implements
                 getIndexFunctions());
     }
 
+    public void validate() {
+        try {
+            environmentValidator.validateExistingMetadataAgainstEnvironment(this);
+        } catch (FieldValidationException | RegisterValidationException ex) {
+            hasConsistentState = false;
+        }
+    }
+
     @Override
     public Optional<String> getRegisterTrackingId() {
         return trackingId;
@@ -251,5 +265,9 @@ public class RegisterContext implements
 
     public String getSchema() {
         return schema;
+    }
+
+    public boolean hasConsistentState() {
+        return hasConsistentState;
     }
 }

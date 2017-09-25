@@ -67,6 +67,10 @@ public class ViewFactory {
         return exceptionView("Invalid field value", message);
     }
 
+    public ExceptionView exceptionInconsistencyView(final String message) {
+        return exceptionView("Inconsistency in the register data", message);
+    }
+
     public ExceptionView exceptionServerErrorView() {
         return exceptionView("Oops, looks like something went wrong", "500 error");
     }
