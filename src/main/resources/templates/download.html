@@ -7,12 +7,21 @@
 
   <div id="wrapper">
     <main id="main" role="main">
+      <div class="breadcrumbs">
+        <ol>
+          <li>
+            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+          </li>
+          <li>Download</li>
+        </ol>
+      </div>
+
       <th:block th:unless="${register.phase == 'beta'}">
         <div th:replace="fragments/phase-banner.html::phase"></div>
       </th:block>
+
       <div class="grid-row">
         <div class="column-two-thirds">
-          <a href="/" class="link-back">Back</a>
 
           <h1 class="heading-large">
             Download register data

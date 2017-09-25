@@ -3,6 +3,7 @@
 
 .breadcrumbs {
   @include breadcrumbs;
+  padding-bottom: 0;
 
   ol {
     margin: 0;
