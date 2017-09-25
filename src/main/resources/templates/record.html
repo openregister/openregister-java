@@ -7,10 +7,6 @@
 
 <div id="wrapper">
   <main id="main" role="main">
-    <th:block th:unless="${register.phase == 'beta'}">
-      <div th:replace="fragments/phase-banner.html::phase"></div>
-    </th:block>
-
     <div class="breadcrumbs">
       <ol>
         <li>
@@ -22,6 +18,10 @@
         <li th:utext="${'Record ' + content.entryKey}"></li>
       </ol>
     </div>
+
+    <th:block th:unless="${register.phase == 'beta'}">
+      <div th:replace="fragments/phase-banner.html::phase"></div>
+    </th:block>
 
     <div class="grid-row">
       <div class="column-two-thirds">
