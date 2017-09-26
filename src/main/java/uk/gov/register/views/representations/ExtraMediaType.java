@@ -16,4 +16,8 @@ public class ExtraMediaType {
     public static final MediaType TEXT_YAML_TYPE = new MediaType("text", "yaml", "UTF-8");
     public static final String APPLICATION_RSF = "application/uk-gov-rsf";
     public static final MediaType APPLICATION_RSF_TYPE = new MediaType("application", "uk-gov-rsf", "UTF-8");
+
+    public static String transform(final String mediaType) {
+        return "ttl".equals(mediaType) ? "turtle" : mediaType;
+    }
 }
