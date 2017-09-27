@@ -35,9 +35,8 @@
         <p th:if="${!isSingleKey}">
           The are
           <th:block th:utext="${totalElements}"></th:block>
-          items
-          <th:block th:if="${totalObjects} gt 100">, this sample shows only the first 100</th:block>
-          .
+          items<th:block th:if="${totalObjects} gt 100">, this sample
+          shows only the first 100</th:block>.
         </p>
         <p th:if="${isSingleKey}">
           There is 1 item.
