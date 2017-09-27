@@ -14,7 +14,7 @@ public class DatatypeFactoryTest {
     @Test
     public void get_returnsStringDatatype_whenDatatypeIsCurie() {
         Datatype datatype = DatatypeFactory.get("curie");
-        assertTrue(datatype instanceof StringDatatype);
+        assertTrue(datatype instanceof CurieDatatype);
     }
 
     @Test

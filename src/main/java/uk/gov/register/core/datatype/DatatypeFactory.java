@@ -10,6 +10,7 @@ public class DatatypeFactory {
             case "url":
                 return new UrlDatatype(datatypeName);
             case "curie":
+                return new CurieDatatype(datatypeName);
             case "text":
             case "string":
                 return new StringDatatype(datatypeName);
