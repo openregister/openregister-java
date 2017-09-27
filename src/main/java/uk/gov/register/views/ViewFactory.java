@@ -63,6 +63,10 @@ public class ViewFactory {
         return exceptionView("Page not found", "If you entered a web address please check it was correct.");
     }
 
+    public ExceptionView exceptionFieldConversionView(final String message) {
+        return exceptionView("Invalid field value", message);
+    }
+
     public ExceptionView exceptionServerErrorView() {
         return exceptionView("Oops, looks like something went wrong", "500 error");
     }
