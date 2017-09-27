@@ -10,7 +10,6 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
-    - government-domain
     - industrial-classification
     - internal-drainage-board
     - occupation
@@ -18,13 +17,10 @@ applications:
     - public-body
     - public-body-classification
     - school-eng
-    - school-type
     - school-type-eng
     - social-housing-provider-designation
     - social-housing-provider-legal-entity
     - social-housing-provider
-    - statistical-geography-unitary-authority-wls
-    - statistical-geography
   services:
     - alpha-db
     - logit-ssl-drain
