@@ -33,6 +33,6 @@ public class PreviewItemsResource {
         final Item item = register.getItemBySha256(hash)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
 
-        return viewFactory.previewItemPageView(item, itemHash, mediaType);
+        return viewFactory.previewItemPageView(item, itemHash, ExtraMediaType.transform(mediaType));
     }
 }

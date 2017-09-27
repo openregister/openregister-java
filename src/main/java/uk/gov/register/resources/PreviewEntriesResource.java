@@ -36,7 +36,7 @@ public class PreviewEntriesResource {
                 : register.getTotalEntries();
         final Collection<Entry> entries = register.getEntries(START, limit);
 
-        return viewFactory.previewEntriesPageView(entries, null, mediaType);
+        return viewFactory.previewEntriesPageView(entries, null, ExtraMediaType.transform(mediaType));
     }
 
     @GET
@@ -46,6 +46,6 @@ public class PreviewEntriesResource {
     public View jsonByKeyPreview(@PathParam("media-type") final String mediaType, @PathParam("entry-key") final int key) {
         final Collection<Entry> entries = Collections.singletonList(register.getEntry(key).orElseThrow(NotFoundException::new));
 
-        return viewFactory.previewEntriesPageView(entries, key, mediaType);
+        return viewFactory.previewEntriesPageView(entries, key, ExtraMediaType.transform(mediaType));
     }
 }

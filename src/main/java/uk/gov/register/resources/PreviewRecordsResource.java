@@ -36,7 +36,7 @@ public class PreviewRecordsResource {
                 : register.getTotalRecords();
         final List<Record> records = register.getRecords(limit, DEFAULT_OFFSET);
 
-        return viewFactory.previewRecordsPageView(records, null, mediaType);
+        return viewFactory.previewRecordsPageView(records, null, ExtraMediaType.transform(mediaType));
     }
 
     @GET
@@ -47,6 +47,6 @@ public class PreviewRecordsResource {
         final List<Record> records = Collections.singletonList(register.getRecord(key)
                 .orElseThrow(() -> new NotFoundException("No records found with key: " + key)));
 
-        return viewFactory.previewRecordsPageView(records, key, mediaType);
+        return viewFactory.previewRecordsPageView(records, key, ExtraMediaType.transform(mediaType));
     }
 }
