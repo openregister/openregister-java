@@ -1,8 +1,9 @@
 package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import uk.gov.register.core.*;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.ItemView;
@@ -36,7 +37,14 @@ public class ItemResource {
 
     @GET
     @Path("/sha-256:{item-hash}")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_TTL, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV})
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
     @Timed
     public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) {
         return getItem(itemHash).map(viewFactory::getItemMediaView)

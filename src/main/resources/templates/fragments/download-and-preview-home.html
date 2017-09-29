@@ -6,8 +6,7 @@
       <th:block th:if="${totalRecords} gt 5000">Download the first 5,000 records as</th:block>
       <a href="/records.csv?page-size=5000" rel="alternate" class="js-download" data-download-type="CSV">CSV</a>,
       <a href="/records.tsv?page-size=5000" rel="alternate" class="js-download" data-download-type="TSV">TSV</a> or as a
-      <a href="/records.csv?page-size=5000" rel="alternate" class="js-download"
-         data-download-type="spreadsheet">spreadsheet</a>.
+      <a href="/records.xlsx?page-size=5000" rel="alternate" class="js-download" data-download-type="XLSX">spreadsheet</a>.
       <th:block th:if="${totalRecords} le 100">You can also preview as</th:block>
       <th:block th:if="${totalRecords} gt 100">You can also preview a sample as</th:block>
       <a href="/preview-records/json">JSON</a>,

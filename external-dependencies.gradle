@@ -22,13 +22,16 @@ ext {
             "io.dropwizard.modules:dropwizard-java8-jdbi:0.9.0-1"
     ]
 
-    stringTemplate= 'org.antlr:stringtemplate:3.2.1'
+    stringTemplate = 'org.antlr:stringtemplate:3.2.1'
 
     postgresClient = 'org.postgresql:postgresql:9.4.1211'
 
     apacheCommonsCodec = 'commons-codec:commons-codec:1.10'
     apacheCommonsCollections = 'org.apache.commons:commons-collections4:4.1'
     apacheCommonsLang3 = 'org.apache.commons:commons-lang3:3.6'
+
+    apachePoi = 'org.apache.poi:poi:3.17'
+    apachePoiOoxml = 'org.apache.poi:poi-ooxml:3.17'
 
     // force AWS's dependency on dataformat-cbor to match our jackson_version
     awsS3 = ['com.amazonaws:aws-java-sdk-s3:1.11.77', "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jackson_version}"]
@@ -47,7 +50,7 @@ ext {
     thymeleaf = 'org.thymeleaf:thymeleaf:2.1.5.RELEASE'
 
     dropwizardLogstash = "uk.gov.ida:dropwizard-logstash:1.1.2-build_46"
-    
+
     jetty = [
             "org.eclipse.jetty:jetty-continuation:9.4.6.v20170531",
             "org.eclipse.jetty:jetty-http:9.4.6.v20170531",
@@ -63,9 +66,9 @@ ext {
 
     // test dependencies
     dropwizardTest = "io.dropwizard:dropwizard-testing:${dropwizard_version}"
-    junit = ['junit:junit:4.12','org.hamcrest:hamcrest-library:1.3']
+    junit = ['junit:junit:4.12', 'org.hamcrest:hamcrest-library:1.3']
     jsoup = 'org.jsoup:jsoup:1.9.2'
-    jsonAssert ='org.skyscreamer:jsonassert:1.3.0'
+    jsonAssert = 'org.skyscreamer:jsonassert:1.3.0'
     mockito = 'org.mockito:mockito-core:2.7.8'
     wiremock = 'com.github.tomakehurst:wiremock:2.1.12'
 }

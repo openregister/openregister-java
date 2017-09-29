@@ -14,6 +14,8 @@ public class ExtraMediaType {
     public static final MediaType TEXT_TTL_TYPE = new MediaType("text", "turtle", "UTF-8");
     public static final String TEXT_YAML = "text/yaml; charset=UTF-8";
     public static final MediaType TEXT_YAML_TYPE = new MediaType("text", "yaml", "UTF-8");
+    public static final String APPLICATION_SPREADSHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public static final MediaType APPLICATION_SPREADSHEET_TYPE = new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet", "UTF-8");
     public static final String APPLICATION_RSF = "application/uk-gov-rsf";
     public static final MediaType APPLICATION_RSF_TYPE = new MediaType("application", "uk-gov-rsf", "UTF-8");
 

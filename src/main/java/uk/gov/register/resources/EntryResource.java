@@ -48,7 +48,14 @@ public class EntryResource {
 
     @GET
     @Path("/entry/{entry-number}")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
     @Timed
     public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = register.getEntry(entryNumber);
@@ -72,7 +79,14 @@ public class EntryResource {
 
     @GET
     @Path("/entries")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
     @Timed
     public EntryListView entries(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
         int totalEntries = register.getTotalEntries();

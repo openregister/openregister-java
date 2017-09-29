@@ -22,13 +22,14 @@ public class UriDataFormatFilter implements ContainerRequestFilter {
     private final UriConnegFilter uriConnegFilter;
 
     public UriDataFormatFilter() {
-        this(ImmutableMap.of(
-                "csv", ExtraMediaType.TEXT_CSV_TYPE,
-                "tsv", ExtraMediaType.TEXT_TSV_TYPE,
-                "ttl", ExtraMediaType.TEXT_TTL_TYPE,
-                "json", MediaType.APPLICATION_JSON_TYPE,
-                "yaml", ExtraMediaType.TEXT_YAML_TYPE
-        ));
+        this(ImmutableMap.<String, MediaType>builder()
+                .put("csv", ExtraMediaType.TEXT_CSV_TYPE)
+                .put("tsv", ExtraMediaType.TEXT_TSV_TYPE)
+                .put("ttl", ExtraMediaType.TEXT_TTL_TYPE)
+                .put("json", MediaType.APPLICATION_JSON_TYPE)
+                .put("yaml", ExtraMediaType.TEXT_YAML_TYPE)
+                .put("xlsx", ExtraMediaType.APPLICATION_SPREADSHEET_TYPE)
+                .build());
     }
 
     public UriDataFormatFilter(Map<String, MediaType> mediaTypeMappings) {
