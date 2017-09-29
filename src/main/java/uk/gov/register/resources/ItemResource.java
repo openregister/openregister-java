@@ -19,11 +19,14 @@ import java.util.Optional;
 public class ItemResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
+    private final HeaderProvider headerProvider;
 
     @Inject
-    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory) {
+    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory,
+                        final RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
+        this.headerProvider = new HeaderProvider(requestContext, new HttpServletResponseAdapter(requestContext.httpServletResponse));
     }
 
     @GET
@@ -47,6 +50,8 @@ public class ItemResource {
     })
     @Timed
     public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) {
+        headerProvider.setAttachmentContentDisposition(new HashValue(HashingAlgorithm.SHA256, itemHash).toString());
+
         return getItem(itemHash).map(viewFactory::getItemMediaView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
@@ -55,6 +60,4 @@ public class ItemResource {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
         return register.getItemBySha256(hash);
     }
-
-
 }
