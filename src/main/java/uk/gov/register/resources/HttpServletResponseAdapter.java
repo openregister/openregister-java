@@ -18,6 +18,11 @@ class HttpServletResponseAdapter {
         httpServletResponse.addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
     }
 
+    void addAttachmentContentDispositionHeader(String fileName) {
+        ContentDisposition contentDisposition = ContentDisposition.type("attachment").fileName(fileName).build();
+        httpServletResponse.addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+    }
+
     void addLinkHeader(String rel, String value) {
         String existingHeaderValue = httpServletResponse.getHeader("Link");
         String newHeaderToAppend = String.format("<%s>; rel=\"%s\"", value, rel);
