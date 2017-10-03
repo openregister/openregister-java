@@ -7,6 +7,7 @@ import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.datatype.CurieDatatype;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
 
@@ -60,6 +61,11 @@ public class ItemValidator {
                 throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(fieldValue), inputEntry, String.format("Field '%s' value must be of type '%s'", fieldName, datatype.getName()));
             }
 
+            if ("curie".equals(datatype.getName()) && !fieldValue.textValue().contains(CurieDatatype.CURIE_SEPARATOR)) {
+                throwEntryValidationExceptionIfConditionIsFalse(
+                        !field.getRegister().isPresent(), inputEntry,
+                        String.format("Field '%s' must contain a curie in a valid format or the '%s' field specified.", fieldName, "register"));
+            }
         });
     }
 
