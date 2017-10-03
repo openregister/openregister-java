@@ -19,8 +19,11 @@ applications:
     - school-eng
     - school-type-eng
     - social-housing-provider-designation
+    - social-housing-provider-designation-eng
     - social-housing-provider-legal-entity
+    - social-housing-provider-legal-entity-eng
     - social-housing-provider
+    - social-housing-provider-eng
   services:
     - alpha-db
     - logit-ssl-drain
