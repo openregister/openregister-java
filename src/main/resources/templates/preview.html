@@ -35,39 +35,35 @@
         <p th:if="${!isSingleKey}">
           There are
           <th:block th:utext="${totalElements}"></th:block>
-          items<th:block th:if="${totalObjects} gt 100">, this sample
-          shows only the first 100</th:block>.
+          items<th:block th:if="${totalObjects} gt 100">, this preview
+          only displays the first 100</th:block>.
         </p>
         <p th:if="${isSingleKey}">
-          There is 1 item.
+          There is one item.
         </p>
         <p>
-          <a th:href="${homepageContent.techDocsUrl}" target="_blank">View the API documentation</a>
-          to access <span th:if="${!isSingleKey}">these items</span><span th:if="${isSingleKey}">this item</span> or
+          To access <span th:text="${isSingleKey ? 'this item' : 'these items'}"></span>,
+          <a th:href="${homepageContent.techDocsUrl}" target="_blank">view the API documentation</a>
+          or
           <span th:if="${!isSingleKey or #strings.isEmpty(key)}">
             <a th:href="${urlMultipleElements + '?page-size=5000'}" rel="alternate" class="js-download"
-               th:attr="data-download-type=${previewTypeTag}">download a <th:block
-                th:utext="${previewTypeTag}"></th:block> file</a>
+               th:attr="data-download-type=${previewTypeTag}">download a <th:block th:utext="${previewTypeTag}"></th:block> file</a>
           </span>
           <span th:if="${isSingleKey and !#strings.isEmpty(key)}">
             <a th:href="${urlSingleElements}" rel="alternate" class="js-download"
-               th:attr="data-download-type=${previewTypeTag}">download a <th:block
-                th:utext="${previewTypeTag}"></th:block> file</a>
+               th:attr="data-download-type=${previewTypeTag}">download a
+              <th:block th:utext="${previewTypeTag}"></th:block> file</a>
           </span>
-          <span th:if="${isSingleKey}">with the item.</span>
-          <span th:if="${!isSingleKey}">
-            <span th:if="${totalObjects} le 5000">with the items.</span>
-            <span th:if="${totalObjects} gt 5000">with the first 5,000.</span>
-          </span>
+          <span th:text="${isSingleKey} ? 'with the item' : (${totalObjects} le 5000 ? 'with the items' : 'with the first 5,000 items')"></span>.
         </p>
       </div>
     </div>
     <div class="grid-row">
       <div class="column-full">
         <pre class="preview-box">
-          <code
-              th:class="${#strings.equals(previewTypeTag, 'YAML')} ? language-yaml : (${#strings.equals(previewTypeTag, 'TTL')} ? language-stylus : language-json)"><th:block
-              th:utext="${registerValues}"></th:block></code>
+          <code th:class="${#strings.equals(previewTypeTag, 'YAML')} ? language-yaml : (${#strings.equals(previewTypeTag, 'TTL')} ? language-stylus : language-json)">
+            <th:block th:utext="${registerValues}"></th:block>
+          </code>
         </pre>
       </div>
     </div>
