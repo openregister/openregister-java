@@ -127,7 +127,6 @@ public class RecordResource {
     @Timed
     public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        setContentDisposition();
         RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset());
         return viewFactory.getRecordsView(pagination, recordsView);
     }
@@ -145,7 +144,6 @@ public class RecordResource {
     @Timed
     public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        setContentDisposition();
 
         return getRecordsView(pagination.pageSize(), pagination.offset());
     }
@@ -161,12 +159,6 @@ public class RecordResource {
             httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
         }
         return pagination;
-    }
-
-    private void setContentDisposition() {
-        requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-records." + ext)
-        );
     }
 
     private RecordsView getRecordsView(int limit, int offset) {

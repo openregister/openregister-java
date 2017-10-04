@@ -47,11 +47,11 @@
           or
           <span th:if="${!isSingleKey or #strings.isEmpty(key)}">
             <a th:href="${urlMultipleElements + '?page-size=5000'}" rel="alternate" class="js-download"
-               th:attr="data-download-type=${previewTypeTag}">download a <th:block th:utext="${previewTypeTag}"></th:block> file</a>
+               th:attr="data-download-type=${previewTypeTag}" download="">download a <th:block th:utext="${previewTypeTag}"></th:block> file</a>
           </span>
           <span th:if="${isSingleKey and !#strings.isEmpty(key)}">
             <a th:href="${urlSingleElements}" rel="alternate" class="js-download"
-               th:attr="data-download-type=${previewTypeTag}">download a
+               th:attr="data-download-type=${previewTypeTag}" download="">download a
               <th:block th:utext="${previewTypeTag}"></th:block> file</a>
           </span>
           <span th:text="${isSingleKey} ? 'with the item' : (${totalObjects} le 5000 ? 'with the items' : 'with the first 5,000 items')"></span>.

@@ -55,6 +55,4 @@ public class ItemResource {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
         return register.getItemBySha256(hash);
     }
-
-
 }
