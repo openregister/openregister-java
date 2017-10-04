@@ -147,6 +147,121 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(400));
         assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"RSF parsing error\",\"details\":\"Non canonical JSON: { \\\"register\\\":\\\"ft_openregister_test\\\",   \\\"text\\\":\\\"SomeText\\\" }\"}"));
     }
+    
+    @Test
+    public void shouldReturnBadRequestWhenLoadingDuplicateItemForExistingRecord() throws IOException {
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+        
+        Response initialResponse = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
+            "add-item\t{\"local-authority-eng\":\"Leics\",\"local-authority-type\":\"CTY\"}\n" +
+            "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
+            "append-entry\tuser\tLondon\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6\n" +
+            "append-entry\tuser\tLeics\t2016-04-05T13:23:05Z\tsha-256:a726c24e895a56f15699068ea48d61297eed4fb8cc73c019701fd3e8dd26c15e");
+        
+        assertThat(initialResponse.getStatus(), equalTo(200));
+
+        Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
+        
+        assertThat(duplicateItemResponse.getStatus(), equalTo(400));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Entry #4 with key Notts - Cannot contain identical items to previous entry"));
+    }
+    
+    @Test
+    public void shouldReturnBadRequestWhenLoadingDuplicateItemForNewRecord() throws IOException {
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+        
+        Response response = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
+            "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
+
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Entry #2 with key Notts - Cannot contain identical items to previous entry"));
+    }
+    
+    @Test
+    public void shouldReturnBadRequestWhenLoadingDuplicateItemsForNewRecord() throws IOException {
+        System.setProperty("multi-item-entries-enabled", "true");
+
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+
+        Response response = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125;sha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
+        
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Entry #2 with key EastMidlands - Cannot contain identical items to previous entry"));
+    }
+    
+    @Test
+    public void shouldReturnBadRequestWhenLoadingDuplicateItemsForExistingRecord() throws IOException {
+        System.setProperty("multi-item-entries-enabled", "true");
+
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+
+        Response initialResponse = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125;sha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6");
+
+        assertThat(initialResponse.getStatus(), equalTo(200));
+
+        Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
+        
+        assertThat(duplicateItemResponse.getStatus(), equalTo(400));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Entry #2 with key EastMidlands - Cannot contain identical items to previous entry"));
+    }
+    
+    @Test
+    public void shouldReturnBadRequestWhenLoadingDuplicateTombstoneForNewRecord() throws IOException {
+        System.setProperty("multi-item-entries-enabled", "true");
+
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+
+        Response response = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\t\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\t");
+        
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Entry #3 with key EastMidlands - Cannot tombstone a record which does not exist"));
+    }
+    
+    @Test
+    public void shouldReturnBadRequestWhenLoadingDuplicateTombstoneForExistingRecord() throws IOException {
+        System.setProperty("multi-item-entries-enabled", "true");
+
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+
+        Response response = register.loadRsf(TestRegister.local_authority_eng,
+            "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:24:05Z\t\n");
+        
+        assertThat(response.getStatus(), equalTo(200));
+
+        Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:25:05Z\t");
+
+        assertThat(duplicateItemResponse.getStatus(), equalTo(400));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Entry #3 with key EastMidlands - Cannot tombstone a record which does not exist"));
+    }
 
     @Test
     public void shouldReturnBadRequestForRegisterDefinitionWhenBeforeFieldDefinitions() throws IOException {

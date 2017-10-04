@@ -188,19 +188,19 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
         for (EntryType entryType : indexFunctionsByEntryType.keySet()) {
             String indexName = entryType == EntryType.user ? IndexNames.RECORD : IndexNames.METADATA;
-            Map<String, Record> indexRecords = getIndexRecordsForKeys(indexName, keysForStagedEntries);
+            Map<String, Entry> entries = getEntriesForKeys(indexName, keysForStagedEntries);
 
             for (IndexFunction indexFunction : indexFunctionsByEntryType.get(entryType)) {
                 int currentIndexEntryNumber = getCurrentIndexEntryNumber(indexFunction.getName());
-                
-                // Deep copy the index records to ensure that each index function gets the same set of records that were
+
+                // Deep copy the register entries to ensure that each index function gets the same set of entries that were
                 // correct for this register as of the time we started updating all indexes. This ensures that index
-                // functions can be run in any order, as updating the records or metadata for the register first would
+                // functions can be run in any order, as updating the user or system entries the register first would
                 // otherwise alter the outcome of any remaining index function runs.
-                Map<String, Record> tempIndexRecords = new HashMap<>(indexRecords);
+                Map<String, Entry> tempEntries = new HashMap<>(entries);
 
                 stagedEntries.stream().filter(entry -> entry.getEntryType().equals(entryType)).forEach(entry -> {
-                    indexDriver.indexEntry(this, entry, indexFunction, tempIndexRecords, currentIndexEntryNumber);
+                    indexDriver.indexEntry(this, entry, indexFunction, tempEntries, currentIndexEntryNumber);
                 });
             }
         }
@@ -272,7 +272,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     
     private Map<String, Record> getIndexRecordsForKeys(String indexName, List<String> entryKeys) {
         Map<String, Record> indexRecords = new HashMap<>();
-
+        
         if (getTotalIndexRecords(indexName) > 0) {
             List<List<String>> entryKeyBatches = Lists.partition(entryKeys, 1000);
             entryKeyBatches.stream().forEach(keyBatches -> {
@@ -281,5 +281,25 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         }
         
         return indexRecords;
+    }
+    
+    private Map<String, Entry> getEntriesForKeys(String indexName, List<String> entryKeys) {
+        int totalEntries = indexName.equals(IndexNames.METADATA) ? entryQueryDAO.getTotalSystemEntries(schema) : entryQueryDAO.getTotalEntries(schema);
+        
+        if (totalEntries == 0) {
+            return new HashMap<>();
+        }
+        
+        List<Entry> entries = new ArrayList<>();
+            
+        String entryTable = indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry";
+        String entryItemTable = indexName.equals(IndexNames.METADATA) ? "entry_item_system" : "entry_item";
+
+        List<List<String>> entryKeyBatches = Lists.partition(entryKeys, 1000);
+        entryKeyBatches.stream().forEach(keyBatches -> {
+            entries.addAll(entryQueryDAO.getEntriesByKeys(entryKeys, schema, entryTable, entryItemTable));
+        });
+
+        return entries.stream().collect(Collectors.toMap(k -> k.getKey(), e -> e, (e1, e2) -> e2));
     }
 }

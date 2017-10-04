@@ -7,8 +7,8 @@ import org.flywaydb.core.api.migration.jdbc.BaseJdbcMigration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
@@ -16,8 +16,8 @@ import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 
 import java.sql.Connection;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class R__11_Migrate_current_keys_to_index extends BaseJdbcMigration implements MigrationChecksumProvider {
 	@Override
@@ -41,12 +41,11 @@ public class R__11_Migrate_current_keys_to_index extends BaseJdbcMigration imple
 
 		IndexDriver indexDriver = new IndexDriver();
 
-		int recordCount = dataAccessLayer.getTotalIndexRecords(IndexNames.RECORD);
-		Map<String, Record> indexRecords = dataAccessLayer.getIndexRecords(recordCount, 0, IndexNames.RECORD).stream().collect(Collectors.toMap(k -> k.getEntry().getKey(), v -> v));
-		int currentIndexEntryNumber = dataAccessLayer.getCurrentIndexEntryNumber(IndexNames.RECORD);
+		Map<String, Entry> entries = new HashMap<>();
+		int currentIndexEntryNumber = 0;
 
 		dataAccessLayer.getEntryIterator().forEachRemaining(entry -> {
-			indexDriver.indexEntry(dataAccessLayer, entry, new LatestByKeyIndexFunction(IndexNames.RECORD), indexRecords, currentIndexEntryNumber);
+			indexDriver.indexEntry(dataAccessLayer, entry, new LatestByKeyIndexFunction(IndexNames.RECORD), entries, currentIndexEntryNumber);
 		});
 		
 		dataAccessLayer.checkpoint();

@@ -118,11 +118,11 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")), new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         
-        Map<String, Record> currentRecords = new HashMap<>();
-        currentRecords.put("A", new Record(previousEntry, itemP));
+        Map<String, Entry> currentEntries = new HashMap<>();
+        currentEntries.put("A", previousEntry);
 
         IndexDriver indexDriver = new IndexDriver();
-        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentRecords, 1);
+        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentEntries, 1);
 
         verify(dataAccessLayer, times(1)).start("by-x", "P", "bbb", 2, 2);
         verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
@@ -147,11 +147,11 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         
-        Map<String, Record> currentRecords = new HashMap<>();
-        currentRecords.put("A", new Record(previousEntry, Arrays.asList(itemP, itemQ)));
+        Map<String, Entry> currentEntries = new HashMap<>();
+        currentEntries.put("A", previousEntry);
 
         IndexDriver indexDriver = new IndexDriver();
-        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentRecords, 2);
+        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentEntries, 2);
 
         verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 3, 1);
         verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt(), anyInt());
@@ -177,11 +177,11 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
-        Map<String, Record> currentRecords = new HashMap<>();
-        currentRecords.put("A", new Record(previousEntry, itemP));
+        Map<String, Entry> currentEntries = new HashMap<>();
+        currentEntries.put("A", previousEntry);
         
         IndexDriver indexDriver = new IndexDriver();
-        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentRecords, 1);
+        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentEntries, 1);
 
         verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 2, 1);
         verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, 3);
@@ -209,11 +209,11 @@ public class IndexDriverTest {
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
-        Map<String, Record> currentRecords = new HashMap<>();
-        currentRecords.put("A", new Record(previousEntry, itemQ));
+        Map<String, Entry> currentEntries = new HashMap<>();
+        currentEntries.put("A", previousEntry);
         
         IndexDriver indexDriver = new IndexDriver();
-        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentRecords, 0);
+        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentEntries, 0);
 
         verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 2, 1);
         verify(dataAccessLayer, times(1)).end("by-x", "A", "Q", "bbb", 2, 2, 1);
@@ -240,11 +240,11 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         
-        Map<String, Record> currentRecords = new HashMap<>();
-        currentRecords.put("A", new Record(previousEntry, itemP));
+        Map<String, Entry> currentEntries = new HashMap<>();
+        currentEntries.put("A", previousEntry);
         
         IndexDriver indexDriver = new IndexDriver();
-        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentRecords, 1);
+        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentEntries, 1);
 
         verify(dataAccessLayer, times(1)).end("by-x", "A", "P", "aaa", 2, 2, 1);
         verify(dataAccessLayer, times(1)).start("by-x", "P", "bbb", 2, 2);
@@ -271,7 +271,7 @@ public class IndexDriverTest {
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry2)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
-
+        
         IndexDriver indexDriver = new IndexDriver();
         indexDriver.indexEntry(dataAccessLayer, newEntry1, indexFunction, new HashMap<>(), 0);
         indexDriver.indexEntry(dataAccessLayer, newEntry2, indexFunction, new HashMap<>(), 1);
@@ -316,16 +316,16 @@ public class IndexDriverTest {
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry5)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("R", new HashValue(HashingAlgorithm.SHA256, "ccc")))));
-
-        Map<String, Record> currentRecordsAtEntry4 = new HashMap<>();
-        currentRecordsAtEntry4.put("C", new Record(newEntry3, itemS));
+        
+        Map<String, Entry> currentEntriesAtEntry4 = new HashMap<>();
+        currentEntriesAtEntry4.put("C", newEntry3);
         
         IndexDriver indexDriver = new IndexDriver();
         indexDriver.indexEntry(dataAccessLayer, newEntry1, indexFunction, new HashMap<>(), 0);
         indexDriver.indexEntry(dataAccessLayer, newEntry2, indexFunction, new HashMap<>(), 1);
         indexDriver.indexEntry(dataAccessLayer, newEntry3, indexFunction, new HashMap<>(), 2);
-        indexDriver.indexEntry(dataAccessLayer, newEntry4, indexFunction, currentRecordsAtEntry4, 3);
-        indexDriver.indexEntry(dataAccessLayer, newEntry5, indexFunction, new HashMap<>(), 4);
+        indexDriver.indexEntry(dataAccessLayer, newEntry4, indexFunction, currentEntriesAtEntry4, 3);
+        indexDriver.indexEntry(dataAccessLayer, newEntry5, indexFunction, currentEntriesAtEntry4, 4);
 
         verify(dataAccessLayer, times(1)).start("by-x", "P", "aaa", 1, 1);
         verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 2, 2);
@@ -359,33 +359,6 @@ public class IndexDriverTest {
         verify(dataAccessLayer, times(1)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
         verify(dataAccessLayer, times(0)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt(), anyInt());
     }
-
-    @Test
-    public void indexEntry_shouldEndIndexUsingNewIndexEntryNumber_whenItemExistsUnderAnExistingSingleIndex() throws IOException {
-        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
-
-        Entry previousEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
-        Entry newEntry = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
-
-        when(dataAccessLayer.getItemBySha256(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(item));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(2), 1));
-        IndexFunction indexFunction = mock(IndexFunction.class);
-        when(indexFunction.getName()).thenReturn("by-x");
-        when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(previousEntry)))
-                .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
-        when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
-                .thenReturn(new HashSet<>());
-        
-        Map<String, Record> currentRecords = new HashMap<>();
-        currentRecords.put("B", new Record(previousEntry, item));
-
-        IndexDriver indexDriver = new IndexDriver();
-        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentRecords, 2);
-
-        verify(dataAccessLayer, times(1)).end("by-x", "B", "P", "aaa", 3, 3, 2);
-        verify(dataAccessLayer, times(1)).end(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt(), anyInt());
-        verify(dataAccessLayer, times(0)).start(anyString(), anyString(), anyString(), anyInt(), anyInt());
-    }
     
     @Test
     public void indexEntry_shouldEndIndexUsingStartEntryNumber_whenItemExistsUnderMultipleExistingIndexes() throws IOException {
@@ -408,11 +381,11 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
-        Map<String, Record> currentRecords = new HashMap<>();
-        currentRecords.put("B", new Record(previousEntry1, itemP));
+        Map<String, Entry> currentEntries = new HashMap<>();
+        currentEntries.put("B", previousEntry1);
 
         IndexDriver indexDriver = new IndexDriver();
-        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentRecords, 1);
+        indexDriver.indexEntry(dataAccessLayer, newEntry, indexFunction, currentEntries, 1);
 
         verify(dataAccessLayer, times(1)).end("by-x", "B", "P", "aaa", 4, 1, 1);
         verify(dataAccessLayer, times(1)).start("by-x", "Q", "bbb", 4, 2);

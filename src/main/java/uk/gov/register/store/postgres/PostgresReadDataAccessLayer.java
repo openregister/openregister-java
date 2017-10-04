@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
-    private final EntryQueryDAO entryQueryDAO;
+    protected final EntryQueryDAO entryQueryDAO;
     private final ItemQueryDAO itemQueryDAO;
     protected final IndexQueryDAO indexQueryDAO;
     protected final String schema;
