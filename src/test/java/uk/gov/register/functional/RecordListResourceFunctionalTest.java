@@ -82,13 +82,6 @@ public class RecordListResourceFunctionalTest {
     }
 
     @Test
-    public void newRecords_setsAppropriateFilenameForDownload() {
-        Response response = register.getRequest(address, "/records.json");
-        assertThat(response.getStatus(), equalTo(200));
-        assertThat(response.getHeaderString(HttpHeaders.CONTENT_DISPOSITION), containsString("filename=\"address-records.json\""));
-    }
-
-    @Test
     public void newRecords_hasLinkHeaderForNextAndPreviousPage() {
         Response response = addressTarget.path("/records.json").queryParam("page-index",1).queryParam("page-size",1)
                 .request().get();
