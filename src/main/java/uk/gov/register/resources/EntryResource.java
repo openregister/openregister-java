@@ -24,17 +24,17 @@ public class EntryResource {
 
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
+    private final RequestContext requestContext;
     private final HttpServletResponseAdapter httpServletResponseAdapter;
     private final RegisterName registerPrimaryKey;
-    private final HeaderProvider headerProvider;
 
     @Inject
     public EntryResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
+        this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
         this.registerPrimaryKey = register.getRegisterName();
-        this.headerProvider = new HeaderProvider(requestContext, httpServletResponseAdapter);
     }
 
     @GET
@@ -59,7 +59,6 @@ public class EntryResource {
     @Timed
     public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = register.getEntry(entryNumber);
-        headerProvider.setAttachmentContentDisposition(String.valueOf(entryNumber));
         return entry.map(function -> new EntryListView(Collections.singletonList(function)));
     }
 
@@ -73,7 +72,6 @@ public class EntryResource {
 
         Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
 
-        headerProvider.setInlineContentDisposition(registerPrimaryKey.value(), "entries");
         setHeaders(startLimitPagination);
 
         return viewFactory.getEntriesView(entries, startLimitPagination);
@@ -96,13 +94,16 @@ public class EntryResource {
 
         Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
 
-        headerProvider.setAttachmentContentDisposition(registerPrimaryKey.value(), "entries");
         setHeaders(startLimitPagination);
 
         return new EntryListView(entries);
     }
 
     private void setHeaders(StartLimitPagination startLimitPagination) {
+        requestContext.resourceExtension().ifPresent(
+                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
+        );
+
         if (startLimitPagination.hasNextPage()) {
             httpServletResponseAdapter.addLinkHeader("next", startLimitPagination.getNextPageLink());
         }

@@ -22,16 +22,12 @@ public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final RegisterName registerPrimaryKey;
-    private final HeaderProvider headerProvider;
 
     @Inject
     public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        this.registerPrimaryKey = register.getRegisterName();
-        this.headerProvider = new HeaderProvider(requestContext, httpServletResponseAdapter);
     }
 
     @GET
@@ -55,7 +51,7 @@ public class RecordResource {
     @Timed
     public RecordView getRecordByKey(@PathParam("record-key") String key) {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
-        headerProvider.setAttachmentContentDisposition(key);
+
         return register.getRecord(key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
@@ -88,7 +84,6 @@ public class RecordResource {
     @Timed
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
         Collection<Entry> allEntries = register.allEntriesOfRecord(key);
-        headerProvider.setAttachmentContentDisposition(registerPrimaryKey.value(), "entries");
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
@@ -119,7 +114,6 @@ public class RecordResource {
     @Timed
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        headerProvider.setAttachmentContentDisposition(key);
         return viewFactory.getRecordsMediaView(records);
     }
 
@@ -129,7 +123,6 @@ public class RecordResource {
     @Timed
     public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        headerProvider.setInlineContentDisposition(registerPrimaryKey.value(), "records");
         RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset());
         return viewFactory.getRecordsView(pagination, recordsView);
     }
@@ -147,7 +140,7 @@ public class RecordResource {
     @Timed
     public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        headerProvider.setAttachmentContentDisposition(registerPrimaryKey.value(), "records");
+
         return getRecordsView(pagination.pageSize(), pagination.offset());
     }
 
