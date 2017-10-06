@@ -15,8 +15,8 @@ import uk.gov.register.views.representations.ExtraMediaType;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 @Path("/")
@@ -59,7 +59,7 @@ public class EntryResource {
     @Timed
     public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.isPresent() ? Optional.of(new EntryListView(Arrays.asList(entry.get()))) : Optional.empty();
+        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
     }
 
     @GET

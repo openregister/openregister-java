@@ -20,18 +20,14 @@ import java.util.Optional;
 @Path("/")
 public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
-    private final RequestContext requestContext;
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final RegisterName registerPrimaryKey;
 
     @Inject
     public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        this.registerPrimaryKey = register.getRegisterName();
     }
 
     @GET
