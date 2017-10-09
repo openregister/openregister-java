@@ -42,11 +42,7 @@ public class RegisterResourceFunctionalTest {
                 "add-item\t{\"address\":\"6789\"}\n" +
                 "append-entry\tuser\t6789\t2017-05-23T10:12:34Z\tsha-256:f715806d5b3a85ee3593f53653eb274188cf02de00d4a2064a2c8952617de7fe\n" +
                 "add-item\t{\"address\":\"145678\"}\n" +
-                "append-entry\tuser\t145678\t2017-05-23T10:12:34Z\tsha-256:921c14161f7c13a18a52e8418c0c69ac7211d40cbaf53c58513dc668d68376d8\n" +
-                "add-item\t{\"address\":\"145678\"}\n" +
-                "append-entry\tuser\t145678\t2017-05-23T10:12:34Z\tsha-256:921c14161f7c13a18a52e8418c0c69ac7211d40cbaf53c58513dc668d68376d8\n" +
-                "add-item\t{\"address\":\"6789\"}\n" +
-                "append-entry\tuser\t6789\t2017-05-23T10:12:34Z\tsha-256:f715806d5b3a85ee3593f53653eb274188cf02de00d4a2064a2c8952617de7fe";
+                "append-entry\tuser\t145678\t2017-05-23T10:12:34Z\tsha-256:921c14161f7c13a18a52e8418c0c69ac7211d40cbaf53c58513dc668d68376d8";
 
         register.loadRsf(address, payload);
 
@@ -55,7 +51,7 @@ public class RegisterResourceFunctionalTest {
 
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
 
-        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(5));
+        assertThat(registerResourceMapFromAddressRegister.get("total-entries"), equalTo(3));
         assertThat(registerResourceMapFromAddressRegister.get("total-records"), equalTo(3));
         assertThat(registerResourceMapFromAddressRegister.get("custodian"), equalTo("Stephen McAllister"));
         verifyStringIsAnISODate(registerResourceMapFromAddressRegister.get("last-updated").toString());

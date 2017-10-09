@@ -63,6 +63,11 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     }
 
     @Override
+    public Collection<Entry> getEntriesByKeys(List<String> entryKeys, String schema, String entryTable, String entryItemTable) {
+        return entries.stream().filter(e -> entryKeys.contains(e.getKey())).collect(Collectors.toList());
+    }
+
+    @Override
     public ResultIterator<Entry> entriesIteratorFrom(int entryNumber, String schema) {
         return new FakeResultIterator(entries.subList(entryNumber-1, entries.size()).iterator());
     }

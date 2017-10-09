@@ -1,14 +1,14 @@
 package uk.gov.register.indexer;
 
+import org.apache.commons.collections4.CollectionUtils;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.Item;
-import uk.gov.register.core.Record;
+import uk.gov.register.core.EntryType;
+import uk.gov.register.exceptions.EntryValidationException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.store.DataAccessLayer;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class IndexDriver {
     private final Map<String, AtomicInteger> currentIndexEntryNumbers;
@@ -18,22 +18,30 @@ public class IndexDriver {
     }
 
     public void indexEntry(DataAccessLayer dataAccessLayer, Entry entry, IndexFunction indexFunction,
-                           Map<String, Record> indexRecords, final int initialIndexEntryNumber) {
+        Map<String, Entry> entries, final int initialIndexEntryNumber) {
         if (!currentIndexEntryNumbers.containsKey(indexFunction.getName())) {
             currentIndexEntryNumbers.put(indexFunction.getName(), new AtomicInteger(initialIndexEntryNumber));
         }
 
-        Optional<Record> currentRecord = indexRecords.containsKey(entry.getKey())
-                ? Optional.of(indexRecords.get(entry.getKey()))
+        Optional<Entry> currentEntry = entries.containsKey(entry.getKey())
+                ? Optional.of(entries.get(entry.getKey()))
                 : Optional.empty();
 
-        // Always update our cached index records to reflect the incoming entry
-        List<Item> items = entry.getItemHashes().stream().map(h -> dataAccessLayer.getItemBySha256(h).get()).collect(Collectors.toList());
-        indexRecords.put(entry.getKey(), new Record(entry, items));
+        if (entry.getEntryType() == EntryType.user) {
+            if (currentEntry.isPresent() && currentEntry.get().getItemHashes().isEmpty() && entry.getItemHashes().isEmpty()) {
+                throw new EntryValidationException(entry, "Cannot tombstone a record which does not exist");
+            }
+            else if (currentEntry.isPresent() && CollectionUtils.isEqualCollection(currentEntry.get().getItemHashes(), entry.getItemHashes())) {
+                throw new EntryValidationException(entry, "Cannot contain identical items to previous entry");
+            }
+        }
+
+        // Always update our cached entries to reflect the incoming entry
+        entries.put(entry.getKey(), entry);
 
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
-        if (currentRecord.isPresent()) {
-            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItemBySha256, currentRecord.get().getEntry()));
+        if (currentEntry.isPresent()) {
+            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItemBySha256, currentEntry.get()));
         }
 
         Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getItemBySha256, entry);
@@ -53,7 +61,7 @@ public class IndexDriver {
                 if (p.isStart()) {
                     addIndexKeyToItemHash(indexFunction, dataAccessLayer, currentIndexEntryNumber, entry.getEntryNumber(), newIndexEntryNumber, p, startIndexEntryNumberItemCountPair);
                 } else {
-                    removeIndexKeyFromItemHash(entry, indexFunction, dataAccessLayer, currentIndexEntryNumber, newIndexEntryNumber, p, startIndexEntryNumberItemCountPair, currentRecord.get().getEntry().getEntryNumber());
+                    removeIndexKeyFromItemHash(entry, indexFunction, dataAccessLayer, currentIndexEntryNumber, newIndexEntryNumber, p, startIndexEntryNumberItemCountPair, currentEntry.get().getEntryNumber());
                 }
             }
         }
