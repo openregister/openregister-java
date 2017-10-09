@@ -4,6 +4,7 @@ import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.exceptions.FieldConversionException;
+import uk.gov.register.exceptions.InconsistencyException;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -38,6 +39,13 @@ public class ThrowableExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
                     .entity(viewFactory.exceptionFieldConversionView(exception.getMessage()))
+                    .build();
+        }
+
+        if (exception instanceof InconsistencyException) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header(HttpHeaders.CONTENT_TYPE, ExtraMediaType.TEXT_HTML)
+                    .entity(viewFactory.exceptionInconsistencyView(exception.getMessage()))
                     .build();
         }
 
