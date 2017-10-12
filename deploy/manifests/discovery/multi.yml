@@ -18,8 +18,6 @@ applications:
     - local-authority-type
     - place
     - prison
-    - public-body
-    - public-body-classification
     - statistical-geography-council-area-sct
     - street-custodian
     - street
