@@ -24,6 +24,7 @@ applications:
     - social-housing-provider-legal-entity-eng
     - social-housing-provider
     - social-housing-provider-eng
+    - statistical-geography-council-area-sct
   services:
     - alpha-db
     - logit-ssl-drain
