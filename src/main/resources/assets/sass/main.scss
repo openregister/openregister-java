@@ -315,3 +315,13 @@ dl {
 pre {
     margin: 0;
 }
+
+.open-government-licence {
+  .logo {
+    background: image-url("images/open-government-licence.png") 0 0 no-repeat;
+	@include device-pixel-ratio() {
+	  background-image: image-url("images/open-government-licence_2x.png");
+	  background-size: 41px 17px;
+	}
+  }
+}
