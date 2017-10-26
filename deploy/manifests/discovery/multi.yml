@@ -11,6 +11,8 @@ applications:
     - discovery.openregister.org
   hosts:
     - address
+    - charity
+    - charity-class
     - clinical-commissioning-group
     - green-deal-certification-body
     - jobcentre
