@@ -20,6 +20,10 @@ applications:
     - local-authority-type
     - place
     - prison
+    - qualification-asssessment-method
+    - qualification-level
+    - qualification-subject
+    - qualification-type
     - statistical-geography-council-area-sct
     - street-custodian
     - street
