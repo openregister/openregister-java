@@ -29,6 +29,7 @@ applications:
     - street
     - uk
     - vehicle-colour
+    - westminster-parliamentary-constituency
   services:
     - discovery-db
     - logit-ssl-drain
