@@ -297,7 +297,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
         List<List<String>> entryKeyBatches = Lists.partition(entryKeys, 1000);
         entryKeyBatches.stream().forEach(keyBatches -> {
-            entries.addAll(entryQueryDAO.getEntriesByKeys(entryKeys, schema, entryTable, entryItemTable));
+            entries.addAll(entryQueryDAO.getEntriesByKeys(keyBatches, schema, entryTable, entryItemTable));
         });
 
         return entries.stream().collect(Collectors.toMap(k -> k.getKey(), e -> e, (e1, e2) -> e2));
