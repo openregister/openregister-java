@@ -11,6 +11,8 @@ applications:
     - discovery.openregister.org
   hosts:
     - address
+    - allergen
+    - approved-meat-establishment
     - charity
     - charity-class
     - clinical-commissioning-group
@@ -18,6 +20,9 @@ applications:
     - jobcentre
     - local-authority-nir
     - local-authority-type
+    - meat-establishment-operation
+    - meat-establishment-outcome
+    - meat-establishment-type
     - place
     - prison
     - qualification-assessment-method
