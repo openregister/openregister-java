@@ -2854,3 +2854,6 @@ department-for-business-energy-and-industrial-strategy:
 the-electoral-commission:
   name: "The Electoral Commission"
   public-body: "the-electoral-commission"
+department-for-communities-northern-ireland:
+  name: "Department for Communities (Northern Ireland)"
+  public-body: "department-for-communities-northern-ireland" 
