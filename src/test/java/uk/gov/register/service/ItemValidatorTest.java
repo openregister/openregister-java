@@ -50,7 +50,7 @@ public class ItemValidatorTest {
         when(countryRegisterMetadata.getRegisterName()).thenReturn(countryRegisterName);
 
         when(registerMetadata.getFields()).thenReturn(Arrays.asList("register", "text", "registry", "phase", "copyright", "fields"));
-        when(countryRegisterMetadata.getFields()).thenReturn(Arrays.asList("country", "start-date", "curie-info", "curie-info2"));
+        when(countryRegisterMetadata.getFields()).thenReturn(Arrays.asList("country", "start-date", "curie-info", "curie-info2", "curie-cardinality-n"));
 
         Field textField = new Field("text", "text", registerName, Cardinality.ONE, "text text");
         Field registerField = new Field("register", "text", registerName, Cardinality.ONE, "register text");
@@ -60,9 +60,11 @@ public class ItemValidatorTest {
         Field startDateField = new Field("start-date", "datetime", null, Cardinality.ONE, "Start date text");
         final Field curieFieldWithRegisterSpecified = new Field("curie-info", "curie", forCurieRegisterName, Cardinality.ONE, "Link to curie");
         final Field curieFieldWithoutRegisterSpecified = new Field("curie-info2", "curie", null, Cardinality.ONE, "Link to curie2");
+        Field curieFieldWithRegisterSpecifiedCardinalityN = new Field("curie-cardinality-n", "curie", forCurieRegisterName, Cardinality.MANY, "Many curies");
 
         fieldsByName = ImmutableMap.of("text", textField, "register", registerField, "fields", fieldsField);
-        countryFieldsByName = ImmutableMap.of("country", countryField, "start-date", startDateField, "curie-info", curieFieldWithRegisterSpecified, "curie-info2", curieFieldWithoutRegisterSpecified);
+        countryFieldsByName = ImmutableMap.of("country", countryField, "start-date", startDateField, "curie-info", curieFieldWithRegisterSpecified,
+                "curie-info2", curieFieldWithoutRegisterSpecified, "curie-cardinality-n", curieFieldWithRegisterSpecifiedCardinalityN);
 
         itemValidator = new ItemValidator(registerName);
         countryItemValidator = new ItemValidator(countryRegisterName);
@@ -141,6 +143,31 @@ public class ItemValidatorTest {
             fail("Must not execute this statement");
         } catch (ItemValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info' value must be of type 'curie'"));
+        }
+    }
+
+    @Test
+    public void validateItem_shouldValidateSuccessfully_validCurieInCardinalityNField() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"curie-cardinality-n\":[\"myCurie:VAL\",\"myCurie:VAL2\"]}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+        } catch (ItemValidationException e) {
+            fail("Must not execute this statement");
+        }
+    }
+
+    @Test
+    public void validateItem_throwsValidationException_invalidCurieInCardinalityNField() throws IOException {
+        String jsonString = "{\"country\":\"myCountry\",\"curie-cardinality-n\":[\"myCurie:VAL\",\"myCurie:VAL:\"]}";
+        JsonNode jsonNode = nodeOf(jsonString);
+
+        try {
+            countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            fail("Must not execute this statement");
+        } catch (ItemValidationException e) {
+            assertThat(e.getMessage(), equalTo("Field 'curie-cardinality-n' values must be of type 'curie'"));
         }
     }
 
