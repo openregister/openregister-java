@@ -47,6 +47,9 @@ GOVUK.registers.analytics = (function () {
       })(window, document, 'script', '//www.google-analytics.com/analytics.js','ga');
 
       ga('create', trackerId, 'auto');
+      ga('set', 'anonymizeIp', true);
+      ga('set', 'displayFeaturesTask', null);
+      ga('set', 'transport', 'beacon');
     }, 'Cannot initialise GA.');
   };
 
