@@ -46,31 +46,34 @@ public class ItemValidator {
     private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws ItemValidationException {
         inputEntry.fieldNames().forEachRemaining(fieldName -> {
             Field field = fields.get(fieldName);
-
-            Datatype datatype = field.getDatatype();
-
             JsonNode fieldValue = inputEntry.get(fieldName);
 
             if (field.getCardinality().equals(Cardinality.MANY)) {
+                throwEntryValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), inputEntry, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, field.getDatatype().getName()));
 
-                throwEntryValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), inputEntry, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, datatype.getName()));
-
-                fieldValue.elements().forEachRemaining(element -> throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(element), inputEntry, String.format("Field '%s' values must be of type '%s'", fieldName, datatype.getName())));
-
+                fieldValue.elements().forEachRemaining(element -> validateSingleValue(field, element, inputEntry));
             } else {
-                throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(fieldValue), inputEntry, String.format("Field '%s' value must be of type '%s'", fieldName, datatype.getName()));
-            }
-
-            if ("curie".equals(datatype.getName()) && !fieldValue.textValue().contains(CurieDatatype.CURIE_SEPARATOR)) {
-                throwEntryValidationExceptionIfConditionIsFalse(
-                        !field.getRegister().isPresent(), inputEntry,
-                        String.format("Field '%s' must contain a curie in a valid format or the '%s' field specified.", fieldName, "register"));
+                validateSingleValue(field, fieldValue, inputEntry);
             }
         });
     }
 
     private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
         throwEntryValidationExceptionIfConditionIsFalse(condition, inputJsonEntry, errorMessage);
+    }
+
+    private void validateSingleValue(Field field, JsonNode value, JsonNode inputEntry) {
+        Datatype datatype = field.getDatatype();
+        String fieldName = field.fieldName;
+
+        throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(value), inputEntry,
+                String.format("Field '%s' %s must be of type '%s'", fieldName, field.getCardinality().equals(Cardinality.MANY) ? "values" : "value", datatype.getName()));
+
+        if ("curie".equals(datatype.getName()) && !value.textValue().contains(CurieDatatype.CURIE_SEPARATOR)) {
+            throwEntryValidationExceptionIfConditionIsFalse(
+                    !field.getRegister().isPresent(), inputEntry,
+                    String.format("Field '%s' must contain a curie in a valid format or the '%s' field specified.", fieldName, "register"));
+        }
     }
 
     private void throwEntryValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
