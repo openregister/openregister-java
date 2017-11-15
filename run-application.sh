@@ -36,6 +36,8 @@ function do_nothing_forever {
 
 trap on_exit EXIT
 
+git submodule update --init
+
 if [ ! -e "./deploy/openregister-java.jar" ]
 then
   docker run \
