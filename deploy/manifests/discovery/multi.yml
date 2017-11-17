@@ -24,6 +24,8 @@ applications:
     - meat-establishment-outcome
     - meat-establishment-type
     - place
+    - police-force
+    - police-neighbourhood
     - prison
     - qualification-assessment-method
     - qualification-level
