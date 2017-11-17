@@ -40,37 +40,42 @@ If you want to amend this register, you can:
 
 ## Clone a different register
 
-The `./run-application.sh` script is configured to spin up a clone of the [Country beta register](https://country.register.gov.uk/). To clone a different register from another phase, you need to change some configuration.
+The `./run-application.sh` script is configured to spin up a clone of the [Country beta register](https://country.register.gov.uk/). To clone a different register or from a different phase (phase is beta, alpha or discovery), you need to change some configuration.
 
-For example, you might want to clone the [School type register](https://school-type.alpha.openregister.org/) from the alpha phase.
+Registers available to be cloned can be seen in the Register register in the respective phase:
+* beta: https://register.register.gov.uk/records
+* alpha: https://register.alpha.openregister.org/records
+* discovery: https://register.discovery.openregister.org/records
+
+For example, you might want to clone a register called `myregister` from the `myphase` phase.
 
 Go to the `config.docker.register.yaml` file.
 
-Change `register: country` to `register: school-type`.
+Change `register: country` to `register: myregister`.
 
-Update the schema in the same way, to `schema: school-type`.
+Update the schema in the same way, to `schema: myregister`.
 
-Update fields and registers location for environments other than beta in the same way.
+Next, update fields and registers location for environments other than beta in the same way.
 
 Fields locations per environment:
 
 Variable: `fieldsYamlLocation`
 
 Possible values:
-* alpha: https://field.alpha.openregister.org/records.yaml
-* beta: https://field.register.gov.uk/records.yaml
-* discovery: https://field.discovery.openregister.org/records.yaml
+* beta: `fieldsYamlLocation: https://field.register.gov.uk/records.yaml`
+* alpha: `fieldsYamlLocation: https://field.alpha.openregister.org/records.yaml`
+* discovery: `fieldsYamlLocation: https://field.discovery.openregister.org/records.yaml`
 
 Registers locations per environment:
 
 Variable: `registersYamlLocation`
 
 Possible values:
-* alpha: https://register.alpha.openregister.org/records.yaml
-* beta: https://register.register.gov.uk/records.yaml
-* discovery: https://register.discovery.openregister.org/records.yaml
+* beta: `registersYamlLocation: https://register.register.gov.uk/records.yaml`
+* alpha: `registersYamlLocation: https://register.alpha.openregister.org/records.yaml`
+* discovery: `registersYamlLocation: https://register.discovery.openregister.org/records.yaml`
 
-Now re-run the application using `ENVIRONMENT=alpha REGISTERS=school-type ./run-application.sh`. You should now see the School type register locally at `127.0.0.1:8080`.
+Now re-run the application using `ENVIRONMENT=myphase REGISTERS=myregister ./run-application.sh`. You should now see the School type register locally at `127.0.0.1:8080`.
 
 ## Create a new register
 
