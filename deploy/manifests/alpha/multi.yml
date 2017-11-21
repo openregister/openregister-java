@@ -11,7 +11,6 @@ applications:
     - alpha.openregister.org
   hosts:
     - industrial-classification
-    - internal-drainage-board
     - local-authority-nir
     - occupation
     - principal-local-authority
