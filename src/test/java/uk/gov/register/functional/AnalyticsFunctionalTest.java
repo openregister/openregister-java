@@ -2,7 +2,9 @@ package uk.gov.register.functional;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import uk.gov.register.functional.app.RegisterRule;
@@ -16,7 +18,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
@@ -103,9 +104,11 @@ public class AnalyticsFunctionalTest {
         Boolean docIncludesAnalyticsId = doc.getElementById("analytics-tracking-id") != null;
         Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
         Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
+        Boolean docIncludesDownloadTypes = doc.getElementById("analytics-download-types") != null;
 
         assertThat(docIncludesAnalyticsId, equalTo(shouldIncludeAnalytics));
         assertThat(docIncludesMainAnalytics, equalTo(shouldIncludeAnalytics));
         assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
+        assertThat(docIncludesDownloadTypes, equalTo(shouldIncludeAnalytics));
     }
 }
