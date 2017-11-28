@@ -1,6 +1,21 @@
-# Contributor Covenant Code of Conduct
+# Code of conduct for `openregister`
 
-## Our Pledge
+Contributors to repositories hosted in `openregister` are expected to
+follow the Contributor Covenant Code of
+Conduct, and those working within Government are also expected to follow the Civil Service Code 
+
+## Civil Service Code
+
+The [Civil Service Code](https://www.gov.uk/government/publications/civil-service-code/the-civil-service-code)
+
+## Contributor Covenant Code of Conduct
+
+> Note: 
+> * where the code of conduct says "project" we mean GDS, `openregister` and all repositories hosted within it. 
+> * where the code of conduct says "maintainer" we mean `openregister` organisation owners
+> * where the code of conduct says "leadership" we mean both `openregister` organisation owners, line managers, and other leadership within GDS
+
+### Our Pledge
 
 In the interest of fostering an open and welcoming environment, we as
 contributors and maintainers pledge to making participation in our project and
@@ -9,7 +24,7 @@ size, disability, ethnicity, gender identity and expression, level of experience
 nationality, personal appearance, race, religion, or sexual identity and
 orientation.
 
-## Our Standards
+### Our Standards
 
 Examples of behavior that contributes to creating a positive environment
 include:
@@ -31,7 +46,7 @@ Examples of unacceptable behavior by participants include:
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
 
-## Our Responsibilities
+### Our Responsibilities
 
 Project maintainers are responsible for clarifying the standards of acceptable
 behavior and are expected to take appropriate and fair corrective action in
@@ -43,7 +58,7 @@ that are not aligned to this Code of Conduct, or to ban temporarily or
 permanently any contributor for other behaviors that they deem inappropriate,
 threatening, offensive, or harmful.
 
-## Scope
+### Scope
 
 This Code of Conduct applies both within project spaces and in public spaces
 when an individual is representing the project or its community. Examples of
@@ -52,21 +67,20 @@ address, posting via an official social media account, or acting as an appointed
 representative at an online or offline event. Representation of a project may be
 further defined and clarified by project maintainers.
 
-## Enforcement
+### Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at
-registerteam+code-of-conduct@digital.cabinet-office.gov.uk. All complaints
-will be reviewed and investigated and will result in a response that is deemed
-necessary and appropriate to the circumstances. The project team is obligated
-to maintain confidentiality with regard to the reporter of an incident.
+reported by contacting the project team at registers+code-of-conduct@digital.cabinet-office.gov.uk. All
+complaints will be reviewed and investigated and will result in a response that
+is deemed necessary and appropriate to the circumstances. The project team is
+obligated to maintain confidentiality with regard to the reporter of an incident.
 Further details of specific enforcement policies may be posted separately.
 
 Project maintainers who do not follow or enforce the Code of Conduct in good
 faith may face temporary or permanent repercussions as determined by other
 members of the project's leadership.
 
-## Attribution
+### Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
 available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
