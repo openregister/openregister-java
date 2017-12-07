@@ -12,7 +12,6 @@ applications:
   hosts:
     - allergen
     - industrial-classification
-    - local-authority-nir
     - occupation
     - public-body-account
     - public-body-account-classification
