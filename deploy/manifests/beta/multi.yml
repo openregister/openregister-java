@@ -17,6 +17,7 @@ applications:
     - government-service
     - internal-drainage-board
     - local-authority-eng
+    - local-authority-nir
     - local-authority-sct
     - local-authority-type
     - principal-local-authority
