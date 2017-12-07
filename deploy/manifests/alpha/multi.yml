@@ -15,8 +15,8 @@ applications:
     - local-authority-nir
     - occupation
     - principal-local-authority
-    - public-body
-    - public-body-classification
+    - public-body-account
+    - public-body-account-classification
     - school-eng
     - school-type-eng
     - social-housing-provider-designation
