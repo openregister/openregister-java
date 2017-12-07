@@ -17,8 +17,6 @@ applications:
     - clinical-commissioning-group
     - green-deal-certification-body
     - jobcentre
-    - local-authority-nir
-    - local-authority-type
     - meat-establishment-operation
     - meat-establishment-outcome
     - meat-establishment-type
