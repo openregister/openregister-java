@@ -14,7 +14,6 @@ applications:
     - industrial-classification
     - local-authority-nir
     - occupation
-    - principal-local-authority
     - public-body-account
     - public-body-account-classification
     - school-eng
