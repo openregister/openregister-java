@@ -6,7 +6,7 @@ jdk:
 services: 
   - postgresql
 addons:
-  postgresql: '9.5'
+  postgresql: '9.6'
   apt:
     packages:
     - python3
