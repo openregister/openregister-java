@@ -21,6 +21,14 @@ public class UriTemplateLinkResolverTest {
     }
 
     @Test
+    public void urlValueReturnsLink() {
+        UrlValue urlValue = new UrlValue("http://www.example.com");
+
+        assertThat(localResolver.resolve(urlValue), is(URI.create("http://www.example.com")));
+        assertThat(prodResolver.resolve(urlValue), is(URI.create("http://www.example.com")));
+    }
+
+    @Test
     public void curieValueReturnsCorrectLink() {
         LinkValue.CurieValue charityCurieValue = new LinkValue.CurieValue("charity:123456");
         LinkValue.CurieValue companyCurieValue = new LinkValue.CurieValue("company:654321");
