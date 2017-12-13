@@ -95,4 +95,22 @@ public class ItemConverterTest {
         assertThat(result, instanceOf(LinkValue.CurieValue.class));
         assertThat(result.getValue(), equalTo("business:13245"));
     }
+    @Test
+    public void convert_shouldConvertEntryToUrlValue() {
+        JsonNode jsonNode = mock(JsonNode.class);
+        when(jsonNode.textValue()).thenReturn("http://www.example.com");
+        Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
+        when(entry.getKey()).thenReturn("website");
+        when(entry.getValue()).thenReturn(jsonNode);
+        Field websiteField = new Field("website", "url", new RegisterName("company"), Cardinality.ONE, "A Limited Company ...");
+        Map<String, Field> fieldsByName = ImmutableMap.of("website", websiteField);
+
+
+        FieldValue result = itemConverter.convert(entry, fieldsByName);
+
+        assertThat(result, instanceOf(UrlValue.class));
+        assertThat(result.getValue(), equalTo("http://www.example.com"));
+    }
+
+
 }
