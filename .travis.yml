@@ -12,7 +12,6 @@ addons:
     packages:
     - python3
     - python3-pip
-    - python3.4-venv
 cache:
   directories:
   - $HOME/.gradle/caches
@@ -20,7 +19,6 @@ cache:
   - $HOME/.m2
 before_script:
 # work around https://github.com/travis-ci/travis-ci/issues/8363
-- pyenv global system 3.5
 - psql --version
 - psql -c 'create database ft_openregister_java_multi;' -U postgres
 - psql -c 'create database conformance_openregister_java;' -U postgres
