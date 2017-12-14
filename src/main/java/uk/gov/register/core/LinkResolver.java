@@ -7,4 +7,6 @@ public interface LinkResolver {
         return resolve(linkValue.getTargetRegister(), linkValue.getLinkKey());
     }
     URI resolve(RegisterName register, String linkKey);
+
+    URI resolve(UrlValue urlValue);
 }

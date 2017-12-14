@@ -22,4 +22,9 @@ public class UriTemplateLinkResolver implements LinkResolver {
 
         return UriBuilder.fromUri(baseUri).path("record").path(linkKey).build();
     }
+
+    @Override
+    public URI resolve(UrlValue urlValue) {
+        return URI.create(urlValue.getValue());
+    }
 }
