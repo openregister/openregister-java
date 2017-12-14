@@ -78,4 +78,19 @@
        <sha1>f4ea80fb56636ad9afac5bb9d71f9dce092b9abe</sha1>
        <cpe>cpe:/a:apache:tomcat</cpe>
     </suppress>
+    <suppress>
+       <notes><![CDATA[
+       file name: postgresql-42.1.4.jar
+       ]]></notes>
+       <gav regex="true">^org\.postgresql:postgresql:.*$</gav>
+       <cpe>cpe:/a:postgresql:postgresql</cpe>
+    </suppress>
+    <suppress>
+   <notes><![CDATA[
+   file name: postgresql-42.1.4.jar
+   ]]></notes>
+   <gav regex="true">^org\.postgresql:postgresql:.*$</gav>
+   <cve>CVE-2017-8806</cve>
+</suppress>
+  
 </suppressions>

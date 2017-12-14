@@ -24,7 +24,7 @@ ext {
 
     stringTemplate = 'org.antlr:stringtemplate:3.2.1'
 
-    postgresClient = 'org.postgresql:postgresql:9.4.1211'
+    postgresClient = 'org.postgresql:postgresql:42.1.4'
 
     apacheCommonsCodec = 'commons-codec:commons-codec:1.10'
     apacheCommonsCollections = 'org.apache.commons:commons-collections4:4.1'
