@@ -24,6 +24,13 @@ applications:
     - prison-estate
     - registration-district
     - statistical-geography
+    - statistical-geography-county-eng
+    - statistical-geography-london-borough-eng
+    - statistical-geography-metropolitan-district-eng
+    - statistical-geography-registration-district-eng
+    - statistical-geography-registration-district-wls
+    - statistical-geography-non-metropolitan-district-eng
+    - statistical-geography-unitary-authority-eng
     - statistical-geography-unitary-authority-wls
     - territory
   services:
