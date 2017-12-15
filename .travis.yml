@@ -7,10 +7,6 @@ services:
   - postgresql
 addons:
   postgresql: '9.5'
-  apt:
-    packages:
-    - python3
-    - python3-pip
 cache:
   directories:
   - $HOME/.gradle/caches
