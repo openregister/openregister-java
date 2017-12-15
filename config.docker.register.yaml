@@ -21,7 +21,7 @@ server:
     appenders:
       - type: access-logstash-console
 
-registerDomain: openregister.dev:8080
+registerDomain: openregister.local:8080
 
 register: country
 schema: country
