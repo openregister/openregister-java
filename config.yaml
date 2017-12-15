@@ -29,7 +29,7 @@ server:
     - type: http
       port: 9092
 
-registerDomain: openregister.dev:8080
+registerDomain: openregister.local:8080
 
 register: school
 
