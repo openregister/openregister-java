@@ -21,14 +21,6 @@ applications:
     - social-housing-provider-legal-entity-eng
     - social-housing-provider-eng
     - statistical-geography-council-area-sct
-    - statistical-geography-county-eng
-    - statistical-geography-london-borough-eng
-    - statistical-geography-metropolitan-counties-eng
-    - statistical-geography-metropolitan-district-eng
-    - statistical-geography-registration-district-eng
-    - statistical-geography-registration-district-wls
-    - statistical-geography-non-metropolitan-district-eng
-    - statistical-geography-unitary-authority-eng
   services:
     - alpha-db
     - logit-ssl-drain
