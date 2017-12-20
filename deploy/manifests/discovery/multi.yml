@@ -16,7 +16,6 @@ applications:
     - charity-class
     - clinical-commissioning-group
     - green-deal-certification-body
-    - jobcentre
     - meat-establishment-operation
     - meat-establishment-outcome
     - meat-establishment-type
@@ -24,10 +23,6 @@ applications:
     - police-force
     - police-neighbourhood
     - prison
-    - qualification-assessment-method
-    - qualification-level
-    - qualification-subject
-    - qualification-type
     - street-custodian
     - street
     - uk
