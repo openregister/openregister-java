@@ -10,7 +10,6 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
-    - allergen
     - industrial-classification
     - jobcentre
     - jobcentre-district
