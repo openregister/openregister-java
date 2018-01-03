@@ -5,7 +5,7 @@ applications:
   instances: 2
   buildpack: java_buildpack
   health-check-type: http
-  health-check-http-endpoint: /records
+  health-check-http-endpoint: /healthcheck
   path: ../../openregister-java.jar
   domains:
     - beta.openregister.org
