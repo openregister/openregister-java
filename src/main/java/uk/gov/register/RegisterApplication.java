@@ -1,5 +1,6 @@
 package uk.gov.register;
 
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
@@ -125,11 +126,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         environment.servlets()
                 .addFilter("HttpToHttpsRedirectFilter", new HttpToHttpsRedirectFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-
+        
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
-
+                bind(environment.healthChecks()).to(HealthCheckRegistry.class);
                 bind(allTheRegisters);
                 bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class)
                         .to(RegisterTrackingConfiguration.class).to(DeleteRegisterDataConfiguration.class)
