@@ -25,8 +25,7 @@ public class HealthCheckResource {
 	public Response getCurrentHealth() {
 		HealthCheck.Result result = healthCheckRegistry.runHealthCheck("openregister_java");
 		Response.Status status = result.isHealthy() ? Response.Status.OK : Response.Status.INTERNAL_SERVER_ERROR;
-		Response.ResponseBuilder responseBuilder = Response.status(status);
 		
-		return responseBuilder.entity(result).build();
+		return Response.status(status).entity(result).build();
 	}
 }
