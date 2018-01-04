@@ -35,7 +35,7 @@ public class BaseIndexFunctionTest {
 
         BaseIndexFunction func = mock(BaseIndexFunction.class, Mockito.CALLS_REAL_METHODS);
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(h -> dataAccessLayer.getItemBySha256(h), entry);
+        func.execute(h -> dataAccessLayer.getItem(h), entry);
 
         assertThat(resultSet, is(empty()));
     }

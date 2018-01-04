@@ -2,6 +2,7 @@ package uk.gov.register.store.postgres;
 
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
@@ -51,24 +52,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator() {
-        checkpoint();
-        return entryQueryDAO.getIterator(schema);
-    }
-
-    @Override
-    public Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2) {
-        checkpoint();
-        return entryQueryDAO.getIterator(totalEntries1, totalEntries2, schema);
-    }
-
-    @Override
-    public Iterator<Entry> getIndexEntryIterator(String indexName) {
+    public Iterator<Entry> getEntryIterator(String indexName) {
         return indexQueryDAO.getIterator(indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
-    public Iterator<Entry> getIndexEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
         return indexQueryDAO.getIterator(indexName, totalEntries1, totalEntries2, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
@@ -97,7 +86,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     // Item Store
 
     @Override
-    public Optional<Item> getItemBySha256(HashValue hash) {
+    public Optional<Item> getItem(HashValue hash) {
         return itemQueryDAO.getItemBySHA256(hash.getValue(), schema);
     }
 
@@ -108,36 +97,23 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Iterator<Item> getItemIterator() {
+    public Iterator<Item> getItemIterator(EntryType entryType) {
         checkpoint();
+
+        switch (entryType) {
+            case user: return itemQueryDAO.getIterator(schema);
+            case system: return itemQueryDAO.getSystemItemIterator(schema);
+        }
         return itemQueryDAO.getIterator(schema);
     }
 
     @Override
-    public Iterator<Item> getItemIterator(int start, int end) {
+    public Iterator<Item> getItemIterator(int startEntryNumber, int endEntryNumber) {
         checkpoint();
-        return itemQueryDAO.getIterator(start, end, schema);
-    }
-    
-    @Override
-    public Iterator<Item> getSystemItemIterator() {
-        checkpoint();
-        return itemQueryDAO.getSystemItemIterator(schema);
+        return itemQueryDAO.getIterator(startEntryNumber, endEntryNumber, schema);
     }
 
     // Record Index
-
-    @Override
-    public Optional<Record> getRecord(String key) {
-        checkpoint();
-        return getIndexRecord(key, IndexNames.RECORD);
-    }
-
-    @Override
-    public List<Record> getRecords(int limit, int offset) {
-        checkpoint();
-        return indexQueryDAO.findRecords(limit, offset, IndexNames.RECORD, schema, "entry");
-    }
 
     @Override
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
@@ -153,23 +129,25 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     // Index
     @Override
-    public Optional<Record> getIndexRecord(String key, String indexName) {
+    public Optional<Record> getRecord(String key, String indexName) {
         List<Record> records = getIndexRecords(Arrays.asList(key), indexName);
         
         return records.size() == 1 ? Optional.of(records.get(0)) : Optional.empty();
     }
     
     protected List<Record> getIndexRecords(List<String> keys, String indexName) {
+        checkpoint();
         return indexQueryDAO.findRecords(keys, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
-    public List<Record> getIndexRecords(int limit, int offset, String indexName) {
+    public List<Record> getRecords(int limit, int offset, String indexName) {
+        checkpoint();
         return indexQueryDAO.findRecords(limit, offset, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
     @Override
-    public int getTotalIndexRecords(String indexName) {
+    public int getTotalRecords(String indexName) {
         return indexQueryDAO.getTotalRecords(indexName, schema);
     }
 

@@ -95,7 +95,7 @@ public class DataUpload {
     }
 
     private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
-        register.putItem(item);
+        register.addItem(item);
         String key = item.getValue(this.registerContext.getRegisterName().value())
                 .orElseThrow(() -> new ItemValidationException("Item did not contain key field", item.getContent()));
 

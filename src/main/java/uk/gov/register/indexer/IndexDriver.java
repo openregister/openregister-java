@@ -41,10 +41,10 @@ public class IndexDriver {
 
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentEntry.isPresent()) {
-            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItemBySha256, currentEntry.get()));
+            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItem, currentEntry.get()));
         }
 
-        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getItemBySha256, entry);
+        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getItem, entry);
 
         List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs);
         pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs));

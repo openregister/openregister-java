@@ -113,7 +113,7 @@ public class EnvironmentValidatorTest {
 		when(localRegisterMetadata.getRegisterName()).thenReturn(new RegisterName("postcode"));
 		
 		Register register = mock(Register.class);
-		when(register.getTotalDerivationRecords(IndexNames.METADATA)).thenReturn(3);
+		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
 		
 		RegisterContext registerContext = mock(RegisterContext.class);
@@ -139,7 +139,7 @@ public class EnvironmentValidatorTest {
 		Field pointField = new Field("point", "point", null, Cardinality.ONE, "A geographical location");
 		
 		Register register = mock(Register.class);
-		when(register.getTotalDerivationRecords(IndexNames.METADATA)).thenReturn(3);
+		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
 		when(register.getFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
 
@@ -169,7 +169,7 @@ public class EnvironmentValidatorTest {
 		Field pointField = new Field("point", "point", null, Cardinality.ONE, "A geographical location");
 
 		Register register = mock(Register.class);
-		when(register.getTotalDerivationRecords(IndexNames.METADATA)).thenReturn(3);
+		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
 		when(register.getFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
 
@@ -185,7 +185,7 @@ public class EnvironmentValidatorTest {
 	@Test
 	public void validateExistingMetadataAgainstEnvironment_shouldValidateSuccessfully_whenExistingRegisterIsEmpty() {
 		Register register = mock(Register.class);
-		when(register.getTotalDerivationRecords(IndexNames.METADATA)).thenReturn(0);
+		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(0);
 
 		RegisterContext registerContext = mock(RegisterContext.class);
 		when(registerContext.buildOnDemandRegister()).thenReturn(register);

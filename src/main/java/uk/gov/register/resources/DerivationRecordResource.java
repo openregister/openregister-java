@@ -43,7 +43,7 @@ public class DerivationRecordResource {
     public RecordView getRecordByKey(@PathParam("index-name") String indexName, @PathParam("record-key") String key) {
         ensureIndexIsAccessible(indexName);
 
-        return register.getDerivationRecord(key, indexName)
+        return register.getRecord(key, indexName)
                 .map(r -> viewFactory.getRecordMediaView(r))
                 .orElseThrow(NotFoundException::new);
     }
@@ -90,7 +90,7 @@ public class DerivationRecordResource {
     }
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize, String indexName) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalDerivationRecords(indexName));
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords(indexName));
 
         if (pagination.hasNextPage()) {
             httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
@@ -109,7 +109,7 @@ public class DerivationRecordResource {
     }
 
     private RecordsView getRecordsView(int limit, int offset, String indexName) {
-        List<Record> records = register.getDerivationRecords(limit, offset, indexName);
+        List<Record> records = register.getRecords(limit, offset, indexName);
         return viewFactory.getIndexRecordsMediaView(records);
     }
 }

@@ -40,7 +40,7 @@ public class EnvironmentValidator {
             throws FieldValidationException, RegisterValidationException {
         Register register = registerContext.buildOnDemandRegister();
 
-        if (register.getTotalDerivationRecords(IndexNames.METADATA) == 0) {
+        if (register.getTotalRecords(IndexNames.METADATA) == 0) {
             return;
         }
 

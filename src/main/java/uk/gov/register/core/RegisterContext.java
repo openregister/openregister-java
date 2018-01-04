@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
+import uk.gov.register.db.Index;
 import uk.gov.register.exceptions.FieldValidationException;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.exceptions.RegisterResultException;
@@ -103,8 +104,7 @@ public class RegisterContext implements
         return new PostgresRegister(registerName,
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
                 new ItemStoreImpl(dataAccessLayer),
-                new RecordIndexImpl(dataAccessLayer),
-                new DerivationRecordIndex(dataAccessLayer),
+                new Index(dataAccessLayer),
                 getIndexFunctions(),
                 itemValidator,
                 environmentValidator);
@@ -114,8 +114,7 @@ public class RegisterContext implements
         return new PostgresRegister(registerName,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
                 new ItemStoreImpl(dataAccessLayer),
-                new RecordIndexImpl(dataAccessLayer),
-                new DerivationRecordIndex(dataAccessLayer),
+                new Index(dataAccessLayer),
                 getIndexFunctions(),
                 itemValidator,
                 environmentValidator);

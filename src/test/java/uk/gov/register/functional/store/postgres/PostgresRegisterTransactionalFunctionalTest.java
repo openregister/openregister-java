@@ -21,6 +21,7 @@ import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
+import uk.gov.register.db.Index;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
@@ -58,7 +59,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
     private TestItemCommandDAO testItemDAO;
     private TestEntryDAO testEntryDAO;
     private IndexDriver indexDriver = mock(IndexDriver.class);
-    private DerivationRecordIndex derivationRecordIndex;
+    private Index index;
 
     @Before
     public void setUp() throws Exception {
@@ -68,7 +69,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         handle = dbi.open();
         testItemDAO = handle.attach(TestItemCommandDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
-        derivationRecordIndex = mock(DerivationRecordIndex.class);
+        index = mock(Index.class);
     }
 
     @After
@@ -85,17 +86,17 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresRegister postgresRegister = getPostgresRegister(getTransactionalDataAccessLayer(handle));
-            postgresRegister.putItem(item1);
+            postgresRegister.addItem(item1);
 
             assertThat(postgresRegister.getAllItems().size(), is(1));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.putItem(item2);
+            postgresRegister.addItem(item2);
 
             assertThat(postgresRegister.getAllItems().size(), is(2));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.putItem(item3);
+            postgresRegister.addItem(item3);
 
             assertThat(postgresRegister.getAllItems().size(), is(3));
             assertThat(testItemDAO.getItems(schema), is(empty()));
@@ -114,19 +115,19 @@ public class PostgresRegisterTransactionalFunctionalTest {
             RegisterContext.useTransaction(dbi, handle -> {
                 PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
                 PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
-                postgresRegister.putItem(item1);
+                postgresRegister.addItem(item1);
                 dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(1));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.putItem(item2);
+                postgresRegister.addItem(item2);
                 dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(2));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.putItem(item3);
+                postgresRegister.addItem(item3);
                 dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(3));
@@ -160,20 +161,20 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         Record addressRegisterRecord = mock(Record.class);
         when(addressRegisterRecord.getItems()).thenReturn(Arrays.asList(addressRegister));
-        when(derivationRecordIndex.getRecord("register:address", IndexNames.METADATA)).thenReturn(Optional.of(addressRegisterRecord));
+        when(index.getRecord("register:address", IndexNames.METADATA)).thenReturn(Optional.of(addressRegisterRecord));
 
         Record addressFieldRecord = mock(Record.class);
         when(addressFieldRecord.getItems()).thenReturn(Arrays.asList(addressField));
-        when(derivationRecordIndex.getRecord("field:address", IndexNames.METADATA)).thenReturn(Optional.of(addressFieldRecord));
+        when(index.getRecord("field:address", IndexNames.METADATA)).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
             PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
-            postgresRegister.putItem(addressField);
-            postgresRegister.putItem(addressRegister);
-            postgresRegister.putItem(item1);
-            postgresRegister.putItem(item2);
-            postgresRegister.putItem(item3);
+            postgresRegister.addItem(addressField);
+            postgresRegister.addItem(addressRegister);
+            postgresRegister.addItem(item1);
+            postgresRegister.addItem(item2);
+            postgresRegister.addItem(item3);
             postgresRegister.appendEntry(addressFieldEntry);
             postgresRegister.appendEntry(addressRegisterEntry);
             postgresRegister.appendEntry(entry1);
@@ -208,8 +209,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         return new PostgresRegister(registerData.getRegisterName(),
                 entryLog,
                 itemStore,
-                new RecordIndexImpl(dataAccessLayer),
-                derivationRecordIndex,
+                index,
                 getIndexFunctions(),
                 itemValidator,
                 environmentValidator);

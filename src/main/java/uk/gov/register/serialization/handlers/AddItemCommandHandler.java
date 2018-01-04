@@ -20,7 +20,7 @@ public class AddItemCommandHandler extends RegisterCommandHandler {
         try {
             String jsonContent = command.getCommandArguments().get(RSFFormatter.RSF_ITEM_ARGUMENT_POSITION);
             Item item = new Item(objectReconstructor.reconstruct(jsonContent));
-            register.putItem(item);
+            register.addItem(item);
             return RegisterResult.createSuccessResult();
         } catch (Exception e) {
             return RegisterResult.createFailResult("Exception when executing command: " + command, e);
