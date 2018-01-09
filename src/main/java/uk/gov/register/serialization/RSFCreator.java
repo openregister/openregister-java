@@ -1,6 +1,7 @@
 package uk.gov.register.serialization;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
@@ -9,6 +10,7 @@ import uk.gov.register.util.HashValue;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 public class RSFCreator {
 
@@ -29,7 +31,7 @@ public class RSFCreator {
                 Iterators.singletonIterator(register.getRegisterProof().getRootHash()));
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
+        return new RegisterSerialisationFormat(Lists.newArrayList(commands));
     }
 
     public RegisterSerialisationFormat create(Register register, int totalEntries1, int totalEntries2) {
@@ -53,7 +55,7 @@ public class RSFCreator {
                     Iterators.singletonIterator(nextRootHash));
         }
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
+        return new RegisterSerialisationFormat(Lists.newArrayList(commands));
     }
 
     public RegisterSerialisationFormat create(Register register, String indexName) {
@@ -64,7 +66,7 @@ public class RSFCreator {
                 !indexName.equals(IndexNames.METADATA) ? register.getDerivationEntryIterator(indexName) : Collections.emptyIterator());
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
+        return new RegisterSerialisationFormat(Lists.newArrayList(commands));
     }
 
 
@@ -79,7 +81,7 @@ public class RSFCreator {
                     register.getDerivationEntryIterator(indexName, totalEntries1, totalEntries2));
         }
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
+        return new RegisterSerialisationFormat(Lists.newArrayList(commands));
     }
 
     public void register(RegisterCommandMapper commandMapper) {

@@ -72,7 +72,7 @@ public class RSFFormatter {
             throw new SerializedRegisterParseException("Command " + commandName + " is not recognised");
         }
 
-        return new RegisterCommand(commandName, commandParameters);
+        return new RegisterCommand(commandName, commandParameters, str);
     }
 
     private Consumer<List<String>> getAddItemValidator() {

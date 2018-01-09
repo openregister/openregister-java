@@ -31,11 +31,11 @@ server:
 
 registerDomain: openregister.local:8080
 
-register: school
+register: country
 
 enableDownloadResource: true
 
-schema: school
+schema: country
 
 historyPageUrl: https://registers-history.herokuapp.com/school-eng
 
@@ -44,9 +44,9 @@ externalConfigDirectory: /tmp
 downloadConfigs: true
 
 # can be http: file s3: or classpath: url
-fieldsYamlLocation: classpath://config/fields.yaml
+fieldsYamlLocation: https://field.register.gov.uk/records.yaml
 
-registersYamlLocation: classpath://config/registers.yaml
+registersYamlLocation: https://register.register.gov.uk/records.yaml
 
 similarRegisters:
   - address

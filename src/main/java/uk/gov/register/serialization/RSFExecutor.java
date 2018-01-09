@@ -3,7 +3,6 @@ package uk.gov.register.serialization;
 import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
@@ -31,8 +30,9 @@ public class RSFExecutor {
     public RegisterResult execute(RegisterSerialisationFormat rsf, Register register) {
         // HashValue and RSF file line number
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
-        Iterator<RegisterCommand> commands = rsf.getCommands();
+        Iterator<RegisterCommand> commands = rsf.getCommands().iterator();
         int rsfLine = 1;
+
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
 
@@ -48,7 +48,7 @@ public class RSFExecutor {
 
             rsfLine++;
         }
-        
+
         return validateOrphanAddItems(hashRefLine);
     }
 
@@ -79,7 +79,7 @@ public class RSFExecutor {
         if (StringUtils.isEmpty(delimitedHashes)) {
             return RegisterResult.createSuccessResult();
         }
-        
+
         List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
                 .map(s -> HashValue.decode(SHA256, s)).collect(toList());
 

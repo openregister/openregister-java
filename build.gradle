@@ -68,7 +68,7 @@ configurations {
 }
 
 dependencies {
-    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3
+    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3, awsSNS
     compile jacksonCsv, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
     compile jdbi, jersey_client
     compile dropwizardLogstash
@@ -161,7 +161,7 @@ task(loadSchoolDataForConformance, type: Exec) {
 }
 
 task createConformanceTestVenv(type: Exec) {
-    commandLine 'pyvenv-3.5', '.venv'
+    commandLine 'pyvenv-3.6', '.venv'
 }
 
 task installConformanceTestDeps(type: Exec) {
@@ -179,10 +179,10 @@ task runConformanceTests(type: Exec) {
     commandLine '.venv/bin/openregister-conformance', '--no-https', '--register', 'school', 'http://localhost:9090', '--register-domain', 'test.register.gov.uk'
 }
 
-check {
-    dependsOn << runConformanceTests
-    dependsOn << 'dependencyCheck'
-}
+//check {
+//    dependsOn << runConformanceTests
+//    dependsOn << 'dependencyCheck'
+//}
 
 test {
     dependsOn << compileTestJava

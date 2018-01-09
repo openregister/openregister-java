@@ -13,7 +13,9 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -88,14 +90,14 @@ public class RSFExecutorTest {
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 assertEmptyRootHashCommand,
                 addItem1Command,
                 addItem2Command,
                 appendEntry1Command,
                 assertMiddleRootHashCommand,
                 appendEntry2Command,
-                assertLastRootHashCommand).iterator());
+                assertLastRootHashCommand));
 
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
@@ -117,9 +119,9 @@ public class RSFExecutorTest {
 
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.empty());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 appendEntry1Command,
-                addItem1Command).iterator());
+                addItem1Command));
 
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
@@ -136,7 +138,7 @@ public class RSFExecutorTest {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItemBySha256(entry1hashValue)).thenReturn(Optional.of(item1));
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(appendEntry1Command).iterator());
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(appendEntry1Command));
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
         verify(register, times(1)).getItemBySha256(entry1hashValue);
@@ -149,10 +151,10 @@ public class RSFExecutorTest {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 addItem1Command,
                 addItem2Command,
-                appendEntry1Command).iterator());
+                appendEntry1Command));
 
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
@@ -165,10 +167,10 @@ public class RSFExecutorTest {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 addItem1Command,
                 appendEntry1Command,
-                addItem1Command).iterator());
+                addItem1Command));
 
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
@@ -179,8 +181,8 @@ public class RSFExecutorTest {
 
     @Test
     public void execute_failsForUnknownCommand() {
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(
-                new RegisterCommand("unknown-command", asList("some", "data"))).iterator());
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
+                new RegisterCommand("unknown-command", asList("some", "data"))));
 
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
@@ -193,16 +195,16 @@ public class RSFExecutorTest {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(
                 addItem1Command,
                 appendEntry1Command,
-                addItem1Command).iterator());
+                addItem1Command));
 
         // it has to be a new iterator because after 1st execution the iterator is going to be empty
-        RegisterSerialisationFormat rsf2 = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf2 = new RegisterSerialisationFormat(Arrays.asList(
                 addItem1Command,
                 appendEntry1Command,
-                addItem1Command).iterator());
+                addItem1Command));
 
         RegisterResult registerResult1 = sutExecutor.execute(rsf, register);
         RegisterResult registerResult2 = sutExecutor.execute(rsf2, register);
@@ -222,7 +224,7 @@ public class RSFExecutorTest {
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(addItem1, addItem2, appendEntry).iterator());
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(Arrays.asList(addItem1, addItem2, appendEntry));
         RegisterResult registerResult = sutExecutor.execute(rsf, register);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);

@@ -1,15 +1,15 @@
 package uk.gov.register.serialization;
 
-import java.util.Iterator;
+import java.util.List;
 
 public class RegisterSerialisationFormat {
-    private Iterator<RegisterCommand> commands;
+    private List<RegisterCommand> commands;
 
-    public RegisterSerialisationFormat(Iterator<RegisterCommand> commands) {
+    public RegisterSerialisationFormat(List<RegisterCommand> commands) {
         this.commands = commands;
     }
 
-    public Iterator<RegisterCommand> getCommands() {
+    public List<RegisterCommand> getCommands() {
         return commands;
     }
 }

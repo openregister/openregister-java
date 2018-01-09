@@ -40,9 +40,7 @@ public class IndexDriver {
         entries.put(entry.getKey(), entry);
 
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
-        if (currentEntry.isPresent()) {
-            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItemBySha256, currentEntry.get()));
-        }
+        currentEntry.ifPresent(e -> currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItemBySha256, e)));
 
         Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getItemBySha256, entry);
 

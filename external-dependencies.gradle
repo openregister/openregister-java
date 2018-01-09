@@ -35,6 +35,7 @@ ext {
 
     // force AWS's dependency on dataformat-cbor to match our jackson_version
     awsS3 = ['com.amazonaws:aws-java-sdk-s3:1.11.77', "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jackson_version}"]
+    awsSNS = 'com.amazonaws:aws-java-sdk-sns:1.11.258'
 
     jdbi = 'org.jdbi:jdbi:2.78'
     jersey_client = "org.glassfish.jersey.core:jersey-client:${jersey_version}"

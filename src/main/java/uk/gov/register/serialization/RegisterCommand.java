@@ -3,12 +3,24 @@ package uk.gov.register.serialization;
 import java.util.List;
 
 public class RegisterCommand {
+    private final String original;
     private final String commandName;
     private final List<String> arguments;
 
     public RegisterCommand(String commandName, List<String> arguments) {
         this.commandName = commandName;
         this.arguments = arguments;
+        this.original = null;
+    }
+
+    public RegisterCommand(final String commandName, final List<String> arguments, final String original) {
+        this.commandName = commandName;
+        this.arguments = arguments;
+        this.original = original;
+    }
+
+    public String getOriginal() {
+        return original;
     }
 
     public String getCommandName() {
