@@ -139,7 +139,7 @@ public class RSFCreatorTest {
         when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, 1, 2);
-        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
+        List<RegisterCommand> actualCommands = actualRSF.getCommands();
 
         verify(register, times(1)).getItemIterator(1, 2);
         verify(register, times(1)).getEntryIterator(1, 2);
