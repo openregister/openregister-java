@@ -89,7 +89,7 @@ public class RSFCreatorTest {
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register);
-        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
+        List<RegisterCommand> actualCommands = actualRSF.getCommands();
 
         verify(register, times(1)).getItemIterator();
         verify(register, times(1)).getEntryIterator();
@@ -113,7 +113,7 @@ public class RSFCreatorTest {
         when(register.getDerivationEntryIterator("index")).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, "index");
-        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
+        List<RegisterCommand> actualCommands = actualRSF.getCommands();
 
         verify(register, times(1)).getItemIterator();
         verify(register, times(1)).getDerivationEntryIterator("index");
@@ -167,6 +167,6 @@ public class RSFCreatorTest {
 
         RSFCreator creatorWithoutMappers = new RSFCreator();
         RegisterSerialisationFormat rsf = creatorWithoutMappers.create(register);
-        IteratorUtils.toList(rsf.getCommands());
+        rsf.getCommands();
     }
 }
