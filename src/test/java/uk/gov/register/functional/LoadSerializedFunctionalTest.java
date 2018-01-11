@@ -28,6 +28,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 public class LoadSerializedFunctionalTest {
     private static final TestRegister testRegister = TestRegister.register;
 

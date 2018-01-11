@@ -37,5 +37,5 @@ deploy:
   region: eu-west-1
   skip_cleanup: true
   on:
-    branch: master
+    branch: firehose
     condition: $DEPLOY=true

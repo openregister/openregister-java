@@ -3,10 +3,7 @@ package uk.gov.register.functional;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.*;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
@@ -35,6 +32,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
+@Ignore
 public class DataUploadFunctionalTest {
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
