@@ -32,10 +32,7 @@
     <script src="/assets/js/application.js"></script>
     <script src="/assets/js/prism.js"></script>
     <th:block th:if="${registerTrackingId != null and registerTrackingId.present and !#strings.isEmpty(registerTrackingId.get())}">
-      <script id="analytics-tracking-id" src="/analytics-code.js"></script>
-      <script id="analytics-main" type="text/javascript" src="/assets/js/analytics.js"></script>
-      <script id="analytics-external-links" type="text/javascript" src="/assets/js/analytics-external-links.js"></script>
-      <script id="analytics-download-types" type="text/javascript" src="/assets/js/analytics-download-type.js"></script>
+      <script id="analytics-tracking" type="text/javascript" src="/assets/js/analytics-tracking.js"></script>
     </th:block>
   </footer>
 </body>

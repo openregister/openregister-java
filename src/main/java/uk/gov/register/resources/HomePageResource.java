@@ -49,7 +49,7 @@ public class HomePageResource {
     }
 
     @GET
-    @Path("/analytics-code.js")
+    @Path("/analytics-id.js")
     @Produces(ExtraMediaType.APPLICATION_JAVASCRIPT)
     @Timed
     public String analyticsTrackingId() {

@@ -101,14 +101,12 @@ public class AnalyticsFunctionalTest {
         Document doc = Jsoup.parse(response.readEntity(String.class));
         assertThat(response.getStatus(), lessThan(500));
 
-        Boolean docIncludesAnalyticsId = doc.getElementById("analytics-tracking-id") != null;
-        Boolean docIncludesMainAnalytics = doc.getElementById("analytics-main") != null;
-        Boolean docIncludesExtLinksAnalytics = doc.getElementById("analytics-external-links") != null;
-        Boolean docIncludesDownloadTypes = doc.getElementById("analytics-download-types") != null;
+        Boolean docIncludesAnalyticsId = doc.getElementById("analytics-id") != null;
+        Boolean docIncludesAnalyticsInit = doc.getElementById("analytics-init") != null;
+        Boolean docIncludesAnalyticsTracking = doc.getElementById("analytics-tracking") != null;
 
         assertThat(docIncludesAnalyticsId, equalTo(shouldIncludeAnalytics));
-        assertThat(docIncludesMainAnalytics, equalTo(shouldIncludeAnalytics));
-        assertThat(docIncludesExtLinksAnalytics, equalTo(shouldIncludeAnalytics));
-        assertThat(docIncludesDownloadTypes, equalTo(shouldIncludeAnalytics));
+        assertThat(docIncludesAnalyticsInit, equalTo(shouldIncludeAnalytics));
+        assertThat(docIncludesAnalyticsTracking, equalTo(shouldIncludeAnalytics));
     }
 }
