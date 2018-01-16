@@ -3,9 +3,11 @@
   <div th:fragment="download-and-preview-single(records_or_entries_or_items_string)">
     <p class="data-representations">
       Download a copy as
-      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}" download="">CSV</a>,
-      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}" download="">TSV</a> or as a
-      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'xlsx')}" download="">spreadsheet</a>.
+      <span data-click-events="" data-click-category="Content" data-click-action="Register Download">
+        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}" download="">CSV</a>,
+        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}" download="">TSV</a> or as a
+        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'xlsx')}" download="">spreadsheet</a>.
+      </span>
       You can also preview as
       <a th:href="${'/preview-' + records_or_entries_or_items_string + '/json/' + (#strings.equals(records_or_entries_or_items_string, 'records') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entries') ? content.entryNumber : content.itemHash))}">JSON</a>,
       <a th:href="${'/preview-' + records_or_entries_or_items_string + '/yaml/' + (#strings.equals(records_or_entries_or_items_string, 'records') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entries') ? content.entryNumber : content.itemHash))}">YAML</a>
