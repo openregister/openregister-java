@@ -16,7 +16,7 @@
           <main class="column-two-thirds" id="main" role="main">
             <h1 class="heading-large" th:utext="${friendlyRegisterName}"></h1>
             <th:block th:utext="${registerText}"></th:block>
-            <p>
+            <p data-click-events="" data-click-category="Content" data-click-action="Button Clicked">
               <a href="/records" class="button" role="button">View Register</a>
             </p>
             <p>The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span>
@@ -49,7 +49,7 @@
               </ul>
               <th:block th:unless="${registerLinks.registersLinkedTo.empty}">
                 <h3 class="medium-small">Links to</h3>
-                <ul class="list">
+                <ul class="list" data-click-events="" data-click-category="Related Content" data-click-action="Links to Register Clicked">
                   <li th:each="registerLinkTo : ${registerLinks.registersLinkedTo}">
                     <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkTo))}"
                        th:text="${#strings.capitalize(registerLinkTo)} + ' register'"></a>
@@ -58,7 +58,7 @@
               </th:block>
               <th:block th:unless="${registerLinks.registersLinkedFrom.empty}">
                 <h3 class="medium-small">Links from</h3>
-                <ul class="list">
+                <ul class="list" data-click-events="" data-click-category="Related Content" data-click-action="Links from Register Clicked">
                   <li th:each="registerLinkFrom : ${registerLinks.registersLinkedFrom}">
                     <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkFrom))}"
                        th:text="${#strings.capitalize(registerLinkFrom)} + ' register'"></a>
@@ -67,7 +67,7 @@
               </th:block>
               <th:block th:unless="${homepageContent.similarRegisters.empty}">
                 <h3 class="heading-small">Similar registers</h3>
-                <ul class="list">
+                <ul class="list" data-click-events="" data-click-category="Related Content" data-click-action="Similar Register Clicked">
                   <li th:each="similarRegister : ${homepageContent.similarRegisters}">
                     <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(similarRegister))}"
                        th:text="${#strings.capitalize(similarRegister)} + ' register'"></a>
