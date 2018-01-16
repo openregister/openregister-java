@@ -8,7 +8,7 @@
 <div id="wrapper">
   <main id="main" role="main">
     <div class="breadcrumbs">
-      <ol data-click-events data-click-category="Content" data-click-action="Internal Link Clicked">
+      <ol data-click-events="" data-click-category="Header" data-click-action="Breadcrumb Clicked">
         <li>
           <a href="/" th:utext="${friendlyRegisterName}">Home</a>
         </li>
@@ -42,19 +42,16 @@
           There is one item.
         </p>
         <p>
-          To access <span th:text="${isSingleKey ? 'this item' : 'these items'}"></span>,
+          To access <th:block th:text="${isSingleKey ? 'this item' : 'these items'}"></th:block>,
           <a th:href="${homepageContent.techDocsUrl}" target="_blank">view the API documentation</a>
           or
-          <span th:if="${!isSingleKey or #strings.isEmpty(key)}">
-            <a th:href="${urlMultipleElements + '?page-size=5000'}" rel="alternate" class="js-download"
-               th:attr="data-download-type=${previewTypeTag}" download="">download a <th:block th:utext="${previewTypeTag}"></th:block> file</a>
-          </span>
-          <span th:if="${isSingleKey and !#strings.isEmpty(key)}">
-            <a th:href="${urlSingleElements}" rel="alternate" class="js-download"
-               th:attr="data-download-type=${previewTypeTag}" download="">download a
-              <th:block th:utext="${previewTypeTag}"></th:block> file</a>
-          </span>
-          <span th:text="${isSingleKey} ? 'with the item' : (${totalObjects} le 5000 ? 'with the items' : 'with the first 5,000 items')"></span>.
+          <th:block th:if="${!isSingleKey or #strings.isEmpty(key)}">
+            <a th:href="${urlMultipleElements + '?page-size=5000'}" rel="alternate" class="js-download" download="" th:utext="${'download a ' + previewTypeTag + ' file'}">download a JSON file</a>
+          </th:block>
+          <th:block th:if="${isSingleKey and !#strings.isEmpty(key)}">
+            <a th:href="${urlSingleElements}" rel="alternate" class="js-download" download="" th:utext="${'download a ' + previewTypeTag + ' file'}">download a JSON file</a>
+          </th:block>
+          <th:block th:text="${isSingleKey} ? 'with the item' : (${totalObjects} le 5000 ? 'with the items' : 'with the first 5,000 items')"></th:block>.
         </p>
       </div>
     </div>
