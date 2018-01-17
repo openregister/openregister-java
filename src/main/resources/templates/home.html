@@ -76,9 +76,6 @@
               </th:block>
               <h3 class="heading-medium">More information</h3>
               <ul class="list">
-                <li th:if="${#bools.isTrue(homepageContent.registerHistoryPageUrl.isPresent())}">
-                  <a th:href="${homepageContent.registerHistoryPageUrl.get()}">Register history</a>
-                </li>
                 <li>
                   <a th:href="${homepageContent.registersIntroductionUrl}">Introducing registers</a>
                 </li>

@@ -4,12 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class HomepageContent {
-    private final Optional<String> registerHistoryUrl;
     private final List<String> similarRegisters;
     private final List<String> indexes;
 
-    public HomepageContent(Optional<String> registerHistoryUrl, List<String> similarRegisters, List<String> indexes) {
-        this.registerHistoryUrl = registerHistoryUrl;
+    public HomepageContent(List<String> similarRegisters, List<String> indexes) {
         this.similarRegisters = similarRegisters;
         this.indexes = indexes;
     }
@@ -27,11 +25,6 @@ public class HomepageContent {
     @SuppressWarnings("unused, used from template")
     public String getTechDocsUrl() {
         return "https://registers-docs.cloudapps.digital";
-    }
-
-    @SuppressWarnings("unused, used from template")
-    public Optional<String> getRegisterHistoryPageUrl() {
-        return registerHistoryUrl;
     }
 
     public List<String> getSimilarRegisters() { return similarRegisters; }

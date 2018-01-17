@@ -40,7 +40,7 @@ public class HomePageViewTest {
     @Mock
     RegisterLinkService registerLinkService;
 
-    HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
+    HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
 
     @Test
     public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
@@ -86,32 +86,14 @@ public class HomePageViewTest {
     }
 
     @Test
-    public void shouldGetHistoryPageIfAvailable() {
-        final RegisterReadOnly register = mock(RegisterReadOnly.class);
-
-        HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
-
-        assertThat(homePageView.getHomepageContent().getRegisterHistoryPageUrl().isPresent(), is(false));
-
-        final String historyUrl = "http://register-history.openregister.org";
-        homepageContent = new HomepageContent(Optional.of(historyUrl), emptyList(), emptyList());
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
-
-        assertThat(homePageView.getHomepageContent().getRegisterHistoryPageUrl().isPresent(), is(true));
-        assertThat(homePageView.getHomepageContent().getRegisterHistoryPageUrl().get(), is(historyUrl));
-    }
-
-    @Test
     public void shouldGetCustodianNameIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
+        HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getCustodianName().isPresent(), is(false));
 
         final String custodianName = "John Smith";
-        homepageContent = new HomepageContent(Optional.of(custodianName), emptyList(), emptyList());
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.of(custodianName), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getCustodianName().isPresent(), is(true));
@@ -142,7 +124,7 @@ public class HomePageViewTest {
         when(register.getRegisterName()).thenReturn(registerName);
         when(registerLinkService.getRegisterLinks(registerName)).thenReturn(new RegisterLinks(new ArrayList<>(), new ArrayList<>()));
 
-        final HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
+        final HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getRegisterLinks().getRegistersLinkedFrom(), is(empty()));
@@ -161,13 +143,13 @@ public class HomePageViewTest {
     @Test
     public void getSimilarRegisters_shouldGetSimilarRegistersIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
+        HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getSimilarRegisters(), is(empty()));
 
         final List<String> similarRegisters = Arrays.asList("address", "territory");
-        homepageContent = new HomepageContent(Optional.empty(), similarRegisters, emptyList());
+        homepageContent = new HomepageContent(similarRegisters, emptyList());
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getSimilarRegisters(), IsIterableContainingInOrder.contains("address", "territory"));
@@ -176,13 +158,13 @@ public class HomePageViewTest {
     @Test
     public void getIndexes_shouldGetIndexesIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
+        HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), is(emptyList()));
 
         final List<String> indexes = Arrays.asList("current-countries", "local-authority-by-type");
-        homepageContent = new HomepageContent(Optional.empty(), emptyList(), indexes);
+        homepageContent = new HomepageContent(emptyList(), indexes);
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), IsIterableContainingInOrder.contains("current-countries", "local-authority-by-type"));

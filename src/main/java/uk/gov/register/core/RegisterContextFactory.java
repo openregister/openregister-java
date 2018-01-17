@@ -35,11 +35,6 @@ public class RegisterContextFactory {
     @JsonProperty
     private String schema;
 
-    @SuppressWarnings("unused")
-    @Valid
-    @JsonProperty
-    private Optional<String> historyPageUrl = Optional.empty();
-
     @Valid
     @JsonProperty
     private Optional<String> custodianName = Optional.empty();
@@ -62,7 +57,6 @@ public class RegisterContextFactory {
             @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("schema") String schema,
-            @JsonProperty("historyPageUrl") Optional<String> historyPageUrl,
             @JsonProperty("custodianName") Optional<String> custodianName,
             @JsonProperty("similarRegisters") List<String> similarRegisters,
             @JsonProperty("indexes") List<String> indexes,
@@ -70,7 +64,6 @@ public class RegisterContextFactory {
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.schema = schema;
-        this.historyPageUrl = historyPageUrl;
         this.custodianName = custodianName;
         this.similarRegisters = similarRegisters != null ? similarRegisters : emptyList();
         this.indexes = indexes != null ? indexes : emptyList();
@@ -99,7 +92,6 @@ public class RegisterContextFactory {
                 schema,
                 enableRegisterDataDelete,
                 enableDownloadResource,
-                historyPageUrl,
                 similarRegisters,
                 indexes,
                 credentials.buildAuthenticator());
