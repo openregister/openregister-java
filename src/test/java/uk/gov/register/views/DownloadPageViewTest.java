@@ -12,7 +12,6 @@ import uk.gov.register.resources.RequestContext;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -50,7 +49,7 @@ public class DownloadPageViewTest {
         when(registerReadOnly.getTotalRecords()).thenReturn(1);
 
         downloadPageView = new DownloadPageView(mockRequestContext, registerReadOnly, enableResourceDownload,
-                Optional::empty, register -> URI.create("http://" + register + ".test.register.gov.uk"));
+                register -> URI.create("http://" + register + ".test.register.gov.uk"));
 
         assertThat(downloadPageView.getDownloadEnabled(), equalTo(enableResourceDownload));
     }

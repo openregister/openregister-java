@@ -2,7 +2,6 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;
-import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -18,13 +17,11 @@ import javax.ws.rs.core.MediaType;
 public class HomePageResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final RegisterTrackingConfiguration config;
 
     @Inject
-    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory, RegisterTrackingConfiguration config) {
+    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.config = config;
     }
 
     @GET
@@ -46,15 +43,5 @@ public class HomePageResource {
     public String robots() {
         return "User-agent: *\n" +
                 "Disallow: /\n";
-    }
-
-    @GET
-    @Path("/analytics-id.js")
-    @Produces(ExtraMediaType.APPLICATION_JAVASCRIPT)
-    @Timed
-    public String analyticsTrackingId() {
-        return config.getRegisterTrackingId().map(
-                trackingId -> "var gaTrackingId = \"" + trackingId + "\";\n"
-        ).orElse("");
     }
 }

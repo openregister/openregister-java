@@ -38,7 +38,7 @@ public class HomePageResourceTest {
         when(registerMock.getCustodianName()).thenReturn(custodianName);
         when(viewFactoryMock.homePageView(totalRecords, totalEntries, lastUpdated, custodianName)).thenReturn(homePageView);
 
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("trackingId"));
+        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock);
         homePageResource.home();
 
         verify(registerMock, times(1)).getTotalRecords();
@@ -47,23 +47,4 @@ public class HomePageResourceTest {
         verify(registerMock, times(1)).getCustodianName();
         verify(viewFactoryMock, times(1)).homePageView(totalRecords, totalEntries, lastUpdated, custodianName);
     }
-
-    @Test
-    public void shouldRenderAnalyticsCodeIfPresent() throws Exception {
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.of("codeForTest"));
-
-        String s = homePageResource.analyticsTrackingId();
-
-        assertThat(s, equalTo("var gaTrackingId = \"codeForTest\";\n"));
-    }
-
-    @Test
-    public void shouldRenderEmptyJsFileIfCodeIsAbsent() throws Exception {
-        HomePageResource homePageResource = new HomePageResource(registerMock, viewFactoryMock, () -> Optional.empty());
-
-        String s = homePageResource.analyticsTrackingId();
-
-        assertThat(s, equalTo(""));
-    }
 }
-

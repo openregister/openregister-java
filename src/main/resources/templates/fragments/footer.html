@@ -31,9 +31,7 @@
     <script src="/assets/govuk_frontend_toolkit/javascripts/govuk/shim-links-with-button-role.js"></script>
     <script src="/assets/js/application.js"></script>
     <script src="/assets/js/prism.js"></script>
-    <th:block th:if="${registerTrackingId != null and registerTrackingId.present and !#strings.isEmpty(registerTrackingId.get())}">
-      <script id="analytics-tracking" type="text/javascript" src="/assets/gaap-analytics/build/gaap-analytics.min.js"></script>
-    </th:block>
+    <script id="analytics-tracking" type="text/javascript" src="/assets/gaap-analytics/build/gaap-analytics.min.js"></script>
   </footer>
 </body>
 </html>

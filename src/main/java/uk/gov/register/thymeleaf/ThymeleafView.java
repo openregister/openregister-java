@@ -2,7 +2,6 @@ package uk.gov.register.thymeleaf;
 
 import io.dropwizard.views.View;
 import org.markdownj.MarkdownProcessor;
-import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
 
@@ -18,14 +17,12 @@ public class ThymeleafView extends View {
     protected final RequestContext requestContext;
     private final RegisterResolver registerResolver;
     private final RegisterReadOnly register;
-    private final Optional<String> registerTrackingId;
     private String thymeleafTemplateName;
     protected final MarkdownProcessor markdownProcessor = new MarkdownProcessor();
 
-    public ThymeleafView(final RequestContext requestContext, final String templateName, final RegisterTrackingConfiguration registerTrackingConfiguration, final RegisterResolver registerResolver, final RegisterReadOnly register) {
+    public ThymeleafView(final RequestContext requestContext, final String templateName, final RegisterResolver registerResolver, final RegisterReadOnly register) {
         super(templateName, StandardCharsets.UTF_8);
         this.requestContext = requestContext;
-        registerTrackingId = registerTrackingConfiguration.getRegisterTrackingId();
         this.registerResolver = registerResolver;
         this.register = register;
     }
@@ -103,9 +100,5 @@ public class ThymeleafView extends View {
     @SuppressWarnings("unused, used by templates")
     public Boolean getIsGovukBranded() {
         return requestContext.getHost().endsWith("register.gov.uk");
-    }
-
-    public Optional<String> getRegisterTrackingId() {
-        return registerTrackingId;
     }
 }

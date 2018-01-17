@@ -126,16 +126,15 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         environment.servlets()
                 .addFilter("HttpToHttpsRedirectFilter", new HttpToHttpsRedirectFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-        
+
         jersey.register(new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(environment.healthChecks()).to(HealthCheckRegistry.class);
                 bind(allTheRegisters);
                 bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class)
-                        .to(RegisterTrackingConfiguration.class).to(DeleteRegisterDataConfiguration.class)
-                        .to(ResourceConfiguration.class).to(HomepageContentConfiguration.class)
-                        .to(IndexConfiguration.class);
+                        .to(DeleteRegisterDataConfiguration.class).to(ResourceConfiguration.class)
+                        .to(HomepageContentConfiguration.class).to(IndexConfiguration.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
 
                 bind(configManager).to(ConfigManager.class);
