@@ -45,7 +45,6 @@ public class RegisterContext implements
     private DBI dbi;
     private Flyway flyway;
     private final String schema;
-    private final Optional<String> historyPageUrl;
     private final List<String> similarRegisters;
     private final List<IndexFunctionConfiguration> indexFunctionConfigs;
     private final boolean enableRegisterDataDelete;
@@ -57,7 +56,7 @@ public class RegisterContext implements
     public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator,
                            RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema,
                            boolean enableRegisterDataDelete, boolean enableDownloadResource,
-                           Optional<String> historyPageUrl, List<String> similarRegisters, List<String> indexNames,
+                           List<String> similarRegisters, List<String> indexNames,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
         this.configManager = configManager;
@@ -66,7 +65,6 @@ public class RegisterContext implements
         this.dbi = dbi;
         this.flyway = flyway;
         this.schema = schema;
-        this.historyPageUrl = historyPageUrl;
         this.similarRegisters = similarRegisters;
         this.indexFunctionConfigs = mapIndexes(indexNames);
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
@@ -238,11 +236,6 @@ public class RegisterContext implements
 
     public RegisterAuthenticator getAuthenticator() {
         return authenticator;
-    }
-
-    @Override
-    public Optional<String> getRegisterHistoryPageUrl() {
-        return historyPageUrl;
     }
 
     @Override
