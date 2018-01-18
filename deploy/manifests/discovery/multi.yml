@@ -11,22 +11,15 @@ applications:
     - discovery.openregister.org
   hosts:
     - address
-    - approved-meat-establishment
     - charity
     - charity-class
     - clinical-commissioning-group
-    - green-deal-certification-body
-    - meat-establishment-operation
-    - meat-establishment-outcome
-    - meat-establishment-type
     - place
     - police-force
     - police-neighbourhood
-    - prison
     - street-custodian
     - street
     - uk
-    - vehicle-colour
     - westminster-parliamentary-constituency
   services:
     - discovery-db
