@@ -9,6 +9,7 @@ applications:
   path: ../../openregister-java.jar
   domains:
     - discovery.openregister.org
+    - cloudapps.digital
   hosts:
     - address
     - charity
