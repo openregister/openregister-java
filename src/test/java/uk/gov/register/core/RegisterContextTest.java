@@ -47,7 +47,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldNotResetRegister_whenEnableRegisterDataDeleteIsDisabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(), false, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, false, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, never()).clean();
@@ -57,7 +57,7 @@ public class RegisterContextTest {
 
     @Test
     public void resetRegister_shouldResetRegister_whenEnableRegisterDataDeleteIsEnabled() throws IOException, NoSuchConfigException {
-        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
         context.resetRegister();
 
         verify(flyway, times(1)).clean();
@@ -90,7 +90,7 @@ public class RegisterContextTest {
                 .thenReturn(expectedInitialMetadata)
                 .thenReturn(expectedUpdatedMetadata);
 
-        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(), true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, true, false, Optional.empty(), emptyList(), emptyList(), new RegisterAuthenticator("", ""));
 
         RegisterMetadata actualInitialMetadata = context.getRegisterMetadata();
         assertThat(actualInitialMetadata, equalTo(expectedInitialMetadata));
@@ -101,7 +101,7 @@ public class RegisterContextTest {
 
     @Test
     public void shouldSetUserIndexFunctions(){
-        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema,
                 true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries","local-authority-by-type"), new RegisterAuthenticator("", ""));
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
         assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(3));
@@ -112,15 +112,15 @@ public class RegisterContextTest {
 
     @Test
     public void shouldHandleNoUserIndexFunctions(){
-        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema,
                 true, false, Optional.empty(), emptyList(), Collections.emptyList(), new RegisterAuthenticator("", ""));
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
         assertThat(register.getIndexFunctionsByEntryType().get(EntryType.user).size(), Is.is(1));
     }
-    
+
     @Test
     public void shouldSetSystemIndexFunctions(){
-        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema, Optional.empty(),
+        RegisterContext context = new RegisterContext(registerName, configManager, environmentValidator, registerLinkService, dbi, flyway, schema,
                 true, false, Optional.empty(), emptyList(), Arrays.asList("current-countries"), new RegisterAuthenticator("", ""));
         PostgresRegister register = (PostgresRegister)context.buildOnDemandRegister();
         assertThat(register.getIndexFunctionsByEntryType().get(EntryType.system).size(), Is.is(1));

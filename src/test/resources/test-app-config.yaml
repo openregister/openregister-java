@@ -33,12 +33,9 @@ credentials:
 jerseyClient:
   timeout: 3000ms
 
-trackingId: "UA-12345678-1"
-
 registers:
   postcode:
     schema: postcode
-    trackingId: ""
     enableRegisterDataDelete: true
     credentials:
       user: pat

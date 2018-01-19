@@ -11,7 +11,6 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.resources.RequestContext;
 
 import java.net.URI;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -32,7 +31,7 @@ public class ThymeleafViewTest {
         when(register.getRegisterName()).thenReturn(new RegisterName("company-limited-by-guarantee"));
         when(register.getRegisterMetadata()).thenReturn(metadata);
 
-        thymeleafView = new ThymeleafView(requestContext, "don't care", () -> Optional.empty(), registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"), register);
+        thymeleafView = new ThymeleafView(requestContext, "don't care", registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"), register);
     }
 
     @Test

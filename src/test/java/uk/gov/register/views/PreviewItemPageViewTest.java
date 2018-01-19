@@ -44,7 +44,6 @@ public class PreviewItemPageViewTest {
         final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "json",
                 homepageContent,
@@ -60,7 +59,6 @@ public class PreviewItemPageViewTest {
         final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "yaml",
                 homepageContent,
@@ -76,7 +74,6 @@ public class PreviewItemPageViewTest {
         final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "turtle",
                 homepageContent,
@@ -92,7 +89,6 @@ public class PreviewItemPageViewTest {
         final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "json",
                 homepageContent,
@@ -108,7 +104,6 @@ public class PreviewItemPageViewTest {
         final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "yaml",
                 homepageContent,
@@ -124,7 +119,6 @@ public class PreviewItemPageViewTest {
         final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "turtle",
                 homepageContent,

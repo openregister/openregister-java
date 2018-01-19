@@ -1,7 +1,6 @@
 package uk.gov.register.views;
 
 import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.register.configuration.RegisterTrackingConfiguration;
 import uk.gov.register.core.PublicBody;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
@@ -17,8 +16,8 @@ public class AttributionView<T> extends ThymeleafView {
     private final Optional<GovukOrganisation.Details> registryBranding;
     private final T baseView;
 
-    public AttributionView(String templateName, RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, RegisterReadOnly registerReadOnly, RegisterTrackingConfiguration registerTrackingConfiguration, RegisterResolver registerResolver, T baseView) {
-        super(requestContext, templateName, registerTrackingConfiguration, registerResolver, registerReadOnly);
+    public AttributionView(String templateName, RequestContext requestContext, PublicBody registry, Optional<GovukOrganisation.Details> registryBranding, RegisterReadOnly registerReadOnly, RegisterResolver registerResolver, T baseView) {
+        super(requestContext, templateName, registerResolver, registerReadOnly);
         this.registry = registry;
         this.registryBranding = registryBranding;
         this.baseView = baseView;

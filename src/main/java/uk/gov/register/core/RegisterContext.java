@@ -33,7 +33,6 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 
 public class RegisterContext implements
-        RegisterTrackingConfiguration,
         DeleteRegisterDataConfiguration,
         HomepageContentConfiguration,
         IndexConfiguration,
@@ -47,7 +46,6 @@ public class RegisterContext implements
     private Flyway flyway;
     private final String schema;
     private final Optional<String> historyPageUrl;
-    private final Optional<String> trackingId;
     private final List<String> similarRegisters;
     private final List<IndexFunctionConfiguration> indexFunctionConfigs;
     private final boolean enableRegisterDataDelete;
@@ -58,7 +56,7 @@ public class RegisterContext implements
 
     public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator,
                            RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema,
-                           Optional<String> trackingId, boolean enableRegisterDataDelete, boolean enableDownloadResource,
+                           boolean enableRegisterDataDelete, boolean enableDownloadResource,
                            Optional<String> historyPageUrl, List<String> similarRegisters, List<String> indexNames,
                            RegisterAuthenticator authenticator) {
         this.registerName = registerName;
@@ -72,7 +70,6 @@ public class RegisterContext implements
         this.similarRegisters = similarRegisters;
         this.indexFunctionConfigs = mapIndexes(indexNames);
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
-        this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
@@ -227,11 +224,6 @@ public class RegisterContext implements
         } catch (FieldValidationException | RegisterValidationException ex) {
             hasConsistentState = false;
         }
-    }
-
-    @Override
-    public Optional<String> getRegisterTrackingId() {
-        return trackingId;
     }
 
     @Override

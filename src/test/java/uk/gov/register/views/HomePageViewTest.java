@@ -51,7 +51,7 @@ public class HomePageViewTest {
         when(register.getRegisterName()).thenReturn(new RegisterName("widget"));
         when(register.getRegisterMetadata()).thenReturn(registerMetadata);
 
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         final String result = homePageView.getRegisterText();
 
@@ -62,7 +62,7 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         final Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
@@ -70,7 +70,7 @@ public class HomePageViewTest {
     @Test
     public void getLastUpdatedTime_returnsEmptyStringIfLastUpdatedTimeNotPresent() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getLastUpdatedTime(), isEmptyString());
     }
@@ -80,7 +80,7 @@ public class HomePageViewTest {
         final Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
         when(register.getRegisterName()).thenReturn(new RegisterName("school"));
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.of(instant), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getLinkToRegisterRegister(), equalTo(URI.create("http://register.test.register.gov.uk/record/school")));
     }
@@ -90,13 +90,13 @@ public class HomePageViewTest {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
 
         HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getRegisterHistoryPageUrl().isPresent(), is(false));
 
         final String historyUrl = "http://register-history.openregister.org";
         homepageContent = new HomepageContent(Optional.of(historyUrl), emptyList(), emptyList());
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getRegisterHistoryPageUrl().isPresent(), is(true));
         assertThat(homePageView.getHomepageContent().getRegisterHistoryPageUrl().get(), is(historyUrl));
@@ -106,13 +106,13 @@ public class HomePageViewTest {
     public void shouldGetCustodianNameIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
         HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getCustodianName().isPresent(), is(false));
 
         final String custodianName = "John Smith";
         homepageContent = new HomepageContent(Optional.of(custodianName), emptyList(), emptyList());
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.of(custodianName), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.of(custodianName), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getCustodianName().isPresent(), is(true));
         assertThat(homePageView.getCustodianName().get(), is(custodianName));
@@ -128,7 +128,7 @@ public class HomePageViewTest {
 
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
         when(register.getRegisterName()).thenReturn(new RegisterName("widget"));
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, fields, registerLinkService, register);
+        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, Optional.empty(), homepageContent, registerResolver, fields, registerLinkService, register);
 
         final List<Field> actualFields = Lists.newArrayList(homePageView.getFields());
 
@@ -143,7 +143,7 @@ public class HomePageViewTest {
         when(registerLinkService.getRegisterLinks(registerName)).thenReturn(new RegisterLinks(new ArrayList<>(), new ArrayList<>()));
 
         final HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getRegisterLinks().getRegistersLinkedFrom(), is(empty()));
         assertThat(homePageView.getRegisterLinks().getRegistersLinkedTo(), is(empty()));
@@ -152,7 +152,7 @@ public class HomePageViewTest {
         final List<String> expectedLinkedToRegisters = Arrays.asList("company", "industry");
 
         when(registerLinkService.getRegisterLinks(registerName)).thenReturn(new RegisterLinks(expectedLinkedFromRegisters, expectedLinkedToRegisters));
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getRegisterLinks().getRegistersLinkedFrom(), equalTo(expectedLinkedFromRegisters));
         assertThat(homePageView.getRegisterLinks().getRegistersLinkedTo(), equalTo(expectedLinkedToRegisters));
@@ -162,13 +162,13 @@ public class HomePageViewTest {
     public void getSimilarRegisters_shouldGetSimilarRegistersIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
         HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getSimilarRegisters(), is(empty()));
 
         final List<String> similarRegisters = Arrays.asList("address", "territory");
         homepageContent = new HomepageContent(Optional.empty(), similarRegisters, emptyList());
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getSimilarRegisters(), IsIterableContainingInOrder.contains("address", "territory"));
     }
@@ -177,13 +177,13 @@ public class HomePageViewTest {
     public void getIndexes_shouldGetIndexesIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
         HomepageContent homepageContent = new HomepageContent(Optional.empty(), emptyList(), emptyList());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), is(emptyList()));
 
         final List<String> indexes = Arrays.asList("current-countries", "local-authority-by-type");
         homepageContent = new HomepageContent(Optional.empty(), emptyList(), indexes);
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, () -> Optional.empty(), registerResolver, Arrays.asList(field), registerLinkService, register);
+        homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), IsIterableContainingInOrder.contains("current-countries", "local-authority-by-type"));
     }

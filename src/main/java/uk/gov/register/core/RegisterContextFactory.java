@@ -23,10 +23,6 @@ public class RegisterContextFactory {
 
     @Valid
     @JsonProperty
-    private Optional<String> trackingId;
-
-    @Valid
-    @JsonProperty
     private boolean enableRegisterDataDelete = false;
 
     @Valid
@@ -61,7 +57,6 @@ public class RegisterContextFactory {
 
     @JsonCreator
     public RegisterContextFactory(
-            @JsonProperty("trackingId") Optional<String> trackingId,
             @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("schema") String schema,
@@ -70,7 +65,6 @@ public class RegisterContextFactory {
             @JsonProperty("similarRegisters") List<String> similarRegisters,
             @JsonProperty("indexes") List<String> indexes,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
-        this.trackingId = trackingId;
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.schema = schema;
@@ -91,7 +85,7 @@ public class RegisterContextFactory {
     }
 
     public RegisterContext build(RegisterName registerName, ConfigManager configManager, DatabaseManager databaseManager,
-                                 EnvironmentValidator environmentValidator, RegisterLinkService registerLinkService, 
+                                 EnvironmentValidator environmentValidator, RegisterLinkService registerLinkService,
                                  RegisterConfigConfiguration registerConfigConfiguration) {
         return new RegisterContext(
                 registerName,
@@ -101,7 +95,6 @@ public class RegisterContextFactory {
                 databaseManager.getDbi(),
                 getFlywayFactory(registerName, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),
                 schema,
-                trackingId,
                 enableRegisterDataDelete,
                 enableDownloadResource,
                 historyPageUrl,

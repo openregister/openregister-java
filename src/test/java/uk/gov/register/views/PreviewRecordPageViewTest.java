@@ -48,7 +48,6 @@ public class PreviewRecordPageViewTest {
         final PreviewRecordPageView previewRecordPageView = new PreviewRecordPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "json",
                 homepageContent,
@@ -64,7 +63,6 @@ public class PreviewRecordPageViewTest {
         final PreviewRecordPageView previewRecordPageView = new PreviewRecordPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "yaml",
                 homepageContent,
@@ -80,7 +78,6 @@ public class PreviewRecordPageViewTest {
         final PreviewRecordPageView previewRecordPageView = new PreviewRecordPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "turtle",
                 homepageContent,
@@ -96,7 +93,6 @@ public class PreviewRecordPageViewTest {
         final PreviewRecordPageView previewRecordPageView = new PreviewRecordPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "json",
                 homepageContent,
@@ -112,7 +108,6 @@ public class PreviewRecordPageViewTest {
         final PreviewRecordPageView previewRecordPageView = new PreviewRecordPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "yaml",
                 homepageContent,
@@ -128,7 +123,6 @@ public class PreviewRecordPageViewTest {
         final PreviewRecordPageView previewRecordPageView = new PreviewRecordPageView(
                 requestContext,
                 registerReadOnly,
-                Optional::empty,
                 registerResolver,
                 "turtle",
                 homepageContent,

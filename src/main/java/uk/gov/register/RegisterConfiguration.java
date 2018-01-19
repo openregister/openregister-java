@@ -88,11 +88,6 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     @JsonProperty
     private Optional<String> historyPageUrl = Optional.empty();
 
-    @SuppressWarnings("unused")
-    @Valid
-    @JsonProperty
-    private Optional<String> trackingId = Optional.empty();
-
     @Valid
     @JsonProperty
     private boolean enableRegisterDataDelete = false;
@@ -123,7 +118,7 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     private String registersYamlLocation;
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(trackingId, enableRegisterDataDelete, enableDownloadResource, schema, historyPageUrl, custodianName, similarRegisters, indexes, credentials);
+        return new RegisterContextFactory(enableRegisterDataDelete, enableDownloadResource, schema, historyPageUrl, custodianName, similarRegisters, indexes, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
