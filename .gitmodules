@@ -6,4 +6,4 @@
 	url = https://github.com/alphagov/govuk_frontend_toolkit.git
 [submodule "src/main/resources/assets/gaap-analytics"]
 	path = src/main/resources/assets/gaap-analytics
-	url = git@github.com:/alphagov/gaap-analytics.git
+	url = https://github.com/alphagov/gaap-analytics.git
