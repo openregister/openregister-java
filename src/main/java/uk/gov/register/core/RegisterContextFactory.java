@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.flyway.FlywayFactory;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterContextFactory {
 
     @Valid
