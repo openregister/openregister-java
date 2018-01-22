@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="fragments/head.html::head"></head>
-<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-  <header th:replace="fragments/global-header.html::global-header"></header>
+  <head th:include="fragments/head.html::head"></head>
+  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+    <header th:replace="fragments/global-header.html::global-header"></header>
 
-  <div id="wrapper">
-    <main id="main" role="main">
+    <main id="wrapper" role="main">
       <th:block th:unless="${register.phase == 'beta'}">
         <div th:replace="fragments/phase-banner.html::phase"></div>
       </th:block>
       <h1 class="heading-large" th:text="${heading}"></h1>
       <p class="lede" th:text="${message}"></p>
     </main>
-  </div>
 
-  <footer th:replace="fragments/footer.html::footer"></footer>
-</body>
+    <footer th:replace="fragments/footer.html::footer"></footer>
+  </body>
 </html>

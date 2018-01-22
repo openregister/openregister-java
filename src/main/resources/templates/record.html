@@ -1,61 +1,59 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="fragments/head.html::head"></head>
-<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-<header th:replace="fragments/global-header.html::global-header"></header>
+  <head th:include="fragments/head.html::head"></head>
+  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+    <header th:replace="fragments/global-header.html::global-header"></header>
 
-<div id="wrapper">
-  <main id="main" role="main">
-    <div class="breadcrumbs">
-      <ol data-click-events="" data-click-category="Header" data-click-action="Breadcrumb Clicked">
-        <li>
-          <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-        </li>
-        <li>
-          <a href="/records">Records</a>
-        </li>
-        <li th:utext="${'Record ' + content.entryKey}"></li>
-      </ol>
-    </div>
-
-    <th:block th:unless="${register.phase == 'beta'}">
-      <div th:replace="fragments/phase-banner.html::phase"></div>
-    </th:block>
-
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <h1 class="heading-large">
-          Record
-          <th:block th:utext="${content.entryKey}"></th:block>
-        </h1>
-        <p th:if="${#bools.isTrue(registerId.value() == 'register')}">
-          <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.entryKey))}"
-             th:utext="${'View ' + content.entryKey + ' register'}">View this register.</a>
-        </p>
-        <div th:include="fragments/download-and-preview-single.html::download-and-preview-single('records')"></div>
-        <details role="group">
-          <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-            <span class="summary">What are the table headers?</span>
-          </summary>
-          <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-            <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
-          </div>
-        </details>
+    <main id="wrapper" role="main">
+      <div class="breadcrumbs">
+        <ol data-click-events="" data-click-category="Header" data-click-action="Breadcrumb Clicked">
+          <li>
+            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
+          </li>
+          <li>
+            <a href="/records">Records</a>
+          </li>
+          <li th:utext="${'Record ' + content.entryKey}"></li>
+        </ol>
       </div>
-      <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
-    </div>
-    <div
-        th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})"
-        class="table-wrapper"></div>
-    <p>
-      <a th:href="${'/record/' + content.entryKey +'/entries'}">View all versions of this record</a>
-    </p>
 
-  </main>
-</div>
+      <th:block th:unless="${register.phase == 'beta'}">
+        <div th:replace="fragments/phase-banner.html::phase"></div>
+      </th:block>
 
-<footer th:replace="fragments/footer.html::footer"></footer>
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="heading-large">
+            Record
+            <th:block th:utext="${content.entryKey}"></th:block>
+          </h1>
+          <p th:if="${#bools.isTrue(registerId.value() == 'register')}">
+            <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.entryKey))}"
+               th:utext="${'View ' + content.entryKey + ' register'}">View this register.</a>
+          </p>
+          <div th:include="fragments/download-and-preview-single.html::download-and-preview-single('records')"></div>
+          <details role="group">
+            <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+              <span class="summary">What are the table headers?</span>
+            </summary>
+            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+              <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
+            </div>
+          </details>
+        </div>
+        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
+      </div>
+      <div
+          th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})"
+          class="table-wrapper"></div>
+      <p>
+        <a th:href="${'/record/' + content.entryKey +'/entries'}">View all versions of this record</a>
+      </p>
 
-</body>
+    </main>
+
+    <footer th:replace="fragments/footer.html::footer"></footer>
+
+  </body>
 </html>
