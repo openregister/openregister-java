@@ -17,6 +17,7 @@ cache:
   - $HOME/.gradle/wrapper
   - $HOME/.m2
 before_script:
+- python3 --version
 - psql --version
 - psql -c 'create database ft_openregister_java_multi;' -U postgres
 - psql -c 'create database conformance_openregister_java;' -U postgres
