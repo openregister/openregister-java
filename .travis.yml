@@ -3,21 +3,23 @@ sudo: required
 language: java
 jdk:
 - oraclejdk8
+python:
+  - "3.6"
 services:
   - postgresql
 addons:
   postgresql: '9.5'
-  apt:
-    packages:
-    - python3=3.6*
-    - python3-pip
-    - python3-setuptools
-    - python3-dev
 cache:
   directories:
   - $HOME/.gradle/caches
   - $HOME/.gradle/wrapper
   - $HOME/.m2
+before_install:
+  - sudo apt-get -y install python3-pip python-dev
+  - sudo pip3 install -U setuptools
+  - sudo pip3 install -U virtualenvwrapper
+  - python3 -V
+  - pip3 -V
 before_script:
 - python3 --version
 - psql --version
