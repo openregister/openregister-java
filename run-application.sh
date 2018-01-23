@@ -4,12 +4,11 @@ set -e
 ENVIRONMENT=${ENVIRONMENT:-beta}
 REGISTERS=${REGISTERS:-"country"}
 
-if [ $ENVIRONMENT == beta ]
-then
-  DOMAIN="register.gov.uk"
-else
-  DOMAIN="$ENVIRONMENT.openregister.org"
-fi
+case ${ENVIRONMENT} in
+  beta)      DOMAIN="register.gov.uk";;
+  discovery) DOMAIN="cloudapps.digital";;
+  *)         DOMAIN="$ENVIRONMENT.openregister.org";;
+esac
 
 function on_exit {
   echo "Stopping and removing containers..."

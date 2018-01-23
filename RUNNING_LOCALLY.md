@@ -45,7 +45,7 @@ The `./run-application.sh` script is configured to spin up a clone of the [Count
 Registers available to be cloned can be seen in the Register register in the respective phase:
 * beta: https://register.register.gov.uk/records
 * alpha: https://register.alpha.openregister.org/records
-* discovery: https://register.discovery.openregister.org/records
+* discovery: https://register.cloudapps.digital/records
 
 For example, you might want to clone a register called `myregister` from the `myphase` phase.
 
@@ -64,7 +64,7 @@ Variable: `fieldsYamlLocation`
 Possible values:
 * beta: `fieldsYamlLocation: https://field.register.gov.uk/records.yaml`
 * alpha: `fieldsYamlLocation: https://field.alpha.openregister.org/records.yaml`
-* discovery: `fieldsYamlLocation: https://field.discovery.openregister.org/records.yaml`
+* discovery: `fieldsYamlLocation: https://field.discovery.cloudapps.digital/records.yaml`
 
 Registers locations per environment:
 
@@ -73,7 +73,7 @@ Variable: `registersYamlLocation`
 Possible values:
 * beta: `registersYamlLocation: https://register.register.gov.uk/records.yaml`
 * alpha: `registersYamlLocation: https://register.alpha.openregister.org/records.yaml`
-* discovery: `registersYamlLocation: https://register.discovery.openregister.org/records.yaml`
+* discovery: `registersYamlLocation: https://register.discovery.cloudapps.digital/records.yaml`
 
 Now re-run the application using `ENVIRONMENT=myphase REGISTERS=myregister ./run-application.sh`. You should now see the `myregister` register locally at `127.0.0.1:8080`.
 
