@@ -5,11 +5,14 @@ jdk:
 - oraclejdk8
 language: python
 python:
-  - "3.6"
+  - '3.6'
 services:
   - postgresql
 addons:
   postgresql: '9.5'
+  apt:
+    packages:
+      - python3-pip
 cache:
   directories:
   - $HOME/.gradle/caches
