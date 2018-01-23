@@ -55,7 +55,7 @@ Change `register: country` to `register: myregister`.
 
 Update the schema in the same way, to `schema: myregister`.
 
-Next, update fields and registers location for environments other than beta in the same way.
+Next, go to `config.docker.basic.yaml` and update the fields and registers location if you are cloning an environment other than beta.
 
 Fields locations per environment:
 
@@ -75,7 +75,7 @@ Possible values:
 * alpha: `registersYamlLocation: https://register.alpha.openregister.org/records.yaml`
 * discovery: `registersYamlLocation: https://register.discovery.openregister.org/records.yaml`
 
-Now re-run the application using `ENVIRONMENT=myphase REGISTERS=myregister ./run-application.sh`. You should now see the School type register locally at `127.0.0.1:8080`.
+Now re-run the application using `ENVIRONMENT=myphase REGISTERS=myregister ./run-application.sh`. You should now see the `myregister` register locally at `127.0.0.1:8080`.
 
 ## Create a new register
 
