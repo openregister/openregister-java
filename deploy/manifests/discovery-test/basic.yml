@@ -1,0 +1,23 @@
+---
+applications:
+- name: discovery-test-basic
+  memory: 2GB
+  instances: 2
+  buildpack: java_buildpack
+  health-check-type: http
+  health-check-http-endpoint: /healthcheck
+  path: ../../openregister-java.jar
+  domains:
+    - discovery-test.openregister.org
+  hosts:
+    - datatype
+    - field
+    - register
+  services:
+    - discovery-test-db
+    - logit-ssl-drain
+  env:
+    JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://openregister.discovery-test.config/basic/openregister/paas-config.yaml" }'
+    AWS_ACCESS_KEY_ID: change-me
+    AWS_SECRET_ACCESS_KEY: change-me
+    AWS_REGION: eu-west-1
