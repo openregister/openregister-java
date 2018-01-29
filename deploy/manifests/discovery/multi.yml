@@ -15,8 +15,6 @@ applications:
     - charity-class
     - clinical-commissioning-group
     - place
-    - police-force
-    - police-neighbourhood
     - street-custodian
     - street
     - uk
