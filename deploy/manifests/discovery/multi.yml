@@ -7,18 +7,6 @@ applications:
   health-check-type: http
   health-check-http-endpoint: /healthcheck
   path: ../../openregister-java.jar
-  domains:
-    - cloudapps.digital
-  hosts:
-    - address
-    - charity
-    - charity-class
-    - clinical-commissioning-group
-    - place
-    - street-custodian
-    - street
-    - uk
-    - westminster-parliamentary-constituency
   services:
     - discovery-db
     - logit-ssl-drain
