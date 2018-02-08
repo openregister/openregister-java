@@ -51,6 +51,7 @@ import javax.servlet.DispatcherType;
 import javax.ws.rs.client.Client;
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class RegisterApplication extends Application<RegisterConfiguration> {
     public static void main(String[] args) {
@@ -111,6 +112,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         allTheRegisters.stream().forEach(registerContext -> {
             registerContext.migrate();
             registerContext.validate();
+            
+            CompletableFuture.runAsync(() -> registerContext.buildOnDemandRegister().getRegisterProof());
         });
 
         RSFExecutor rsfExecutor = new RSFExecutor();
