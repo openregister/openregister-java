@@ -69,7 +69,7 @@ configurations {
 
 dependencies {
     compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3
-    compile jacksonCsv, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
+    compile jacksonCsv, jacksonDatabind, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
     compile jdbi, jersey_client
     compile dropwizardLogstash
     compile(postgresClient) {
