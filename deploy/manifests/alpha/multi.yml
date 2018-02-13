@@ -10,7 +10,6 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
-    - industrial-classification
     - jobcentre
     - jobcentre-district
     - jobcentre-group
