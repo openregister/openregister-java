@@ -4,6 +4,8 @@ ext {
     jersey_version = '2.25.1'
     jackson_version = '2.8.11'
 
+    jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.11.1'
+
     verifiableLog = 'verifiable-log:verifiable-log:0.2.77'
 
     dropwizard = [
