@@ -27,6 +27,7 @@ applications:
     - statistical-geography
     - statistical-geography-county-eng
     - statistical-geography-london-borough-eng
+    - statistical-geography-local-government-district-nir
     - statistical-geography-metropolitan-district-eng
     - statistical-geography-registration-district-eng
     - statistical-geography-registration-district-wls
