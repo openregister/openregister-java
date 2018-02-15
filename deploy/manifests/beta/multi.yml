@@ -17,6 +17,9 @@ applications:
     - government-organisation
     - government-service
     - internal-drainage-board
+    - jobcentre
+    - jobcentre-district
+    - jobcentre-group
     - local-authority-eng
     - local-authority-nir
     - local-authority-sct
