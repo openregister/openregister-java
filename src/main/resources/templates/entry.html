@@ -6,18 +6,6 @@
     <header th:replace="fragments/global-header.html::global-header"></header>
 
     <main id="wrapper" role="main">
-      <div class="breadcrumbs">
-        <ol data-click-events="" data-click-category="Header" data-click-action="Breadcrumb Clicked">
-          <li>
-            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-          </li>
-          <li>
-            <a href="/entries">Entries</a>
-          </li>
-          <li th:text="${'Entry ' + content.entryNumber}"></li>
-        </ol>
-      </div>
-
       <th:block th:unless="${register.phase == 'beta'}">
         <div th:replace="fragments/phase-banner.html::phase"></div>
       </th:block>

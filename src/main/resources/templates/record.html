@@ -6,18 +6,6 @@
     <header th:replace="fragments/global-header.html::global-header"></header>
 
     <main id="wrapper" role="main">
-      <div class="breadcrumbs">
-        <ol data-click-events="" data-click-category="Header" data-click-action="Breadcrumb Clicked">
-          <li>
-            <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-          </li>
-          <li>
-            <a href="/records">Records</a>
-          </li>
-          <li th:utext="${'Record ' + content.entryKey}"></li>
-        </ol>
-      </div>
-
       <th:block th:unless="${register.phase == 'beta'}">
         <div th:replace="fragments/phase-banner.html::phase"></div>
       </th:block>
@@ -33,14 +21,6 @@
                th:utext="${'View ' + content.entryKey + ' register'}">View this register.</a>
           </p>
           <div th:include="fragments/download-and-preview-single.html::download-and-preview-single('records')"></div>
-          <details role="group">
-            <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-              <span class="summary">What are the table headers?</span>
-            </summary>
-            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-              <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
-            </div>
-          </details>
         </div>
         <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>

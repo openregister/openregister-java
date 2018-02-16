@@ -43,22 +43,6 @@ public class HomePageViewTest {
     HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
 
     @Test
-    public void getRegisterText_rendersRegisterTextAsMarkdown() throws Exception {
-        final String registerText = "foo *bar* [baz](/quux)";
-
-        final RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("widget"), new ArrayList<>(), null, null, registerText, "alpha");
-        final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        when(register.getRegisterName()).thenReturn(new RegisterName("widget"));
-        when(register.getRegisterMetadata()).thenReturn(registerMetadata);
-
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, null, Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
-
-        final String result = homePageView.getRegisterText();
-
-        assertThat(result, equalTo("<p>foo <em>bar</em> <a href=\"/quux\">baz</a></p>\n"));
-    }
-
-    @Test
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         final Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
         final RegisterReadOnly register = mock(RegisterReadOnly.class);

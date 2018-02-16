@@ -2,8 +2,8 @@
 // ==========================================================================
 
 @mixin border {
-  background-color: $pale-grey;
-  border: 1px solid $dark-grey;
+  background-color: $panel-colour;
+  border: 1px solid $border-colour;
 }
 
 @mixin font-code {

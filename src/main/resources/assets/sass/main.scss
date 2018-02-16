@@ -23,12 +23,6 @@ $is-print: false !default;
   }
 }
 
-// Variables
-$pale-grey: #f5f5f5;
-$dark-grey: #bfc1c3;
-$register: #2b8cc4;
-$light-gray: #f9f9f9;
-
 // Import from govuk_frontend_toolkit
 @import "colours";
 @import "css3";
@@ -67,38 +61,29 @@ body {
   }
 }
 
+.header {
+  background-color: $govuk-blue;
+  border-bottom: 0;
+  margin-bottom: 0;
+
+  &__container {
+    border-bottom: 0;
+    margin-bottom: 0;
+  }
+}
+
+a:visited {
+  color: $govuk-blue;
+}
+
 .openregister-org {
   font-family: $Helvetica-Regular;
 
   .header {
-    background-color: $register;
-    border-bottom: 0;
-    margin-bottom: 0;
-
-    &__container {
-      border-bottom: 0;
-      margin-bottom: 0;
-    }
-
     &__title,
     &__navigation {
       font-family: $Helvetica-Regular;
     }
-  }
-
-  .govuk-logo {
-    background: none;
-  }
-
-  .govuk-logo__printable-crown {
-    display: none;
-  }
-
-  .phase-banner {
-    font-family: $Helvetica-Regular;
-    padding: 2px 5px;
-    position: relative;
-    top: -1px;
   }
 }
 
@@ -239,17 +224,18 @@ table {
   }
 
   th {
-    background-color: $pale-grey;
+    background-color: $grey-3;
   }
 
   tr:nth-child(2n) {
-    background-color: $light-gray;
+    background-color: $grey-4;
   }
 
   &.entry {
     tr {
-      background-color: $pale-grey;
+      background-color: $grey-2;
     }
+
     th, td {
       border-bottom: 1px solid $border-colour;
     }
