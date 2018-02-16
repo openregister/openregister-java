@@ -11,80 +11,48 @@
       </th:block>
 
       <div class="grid-row">
-
-        <main class="column-two-thirds" id="main" role="main">
-          <h1 class="heading-large" th:utext="${friendlyRegisterName}"></h1>
-          <th:block th:utext="${registerText}"></th:block>
-          <p data-click-events="" data-click-category="Content" data-click-action="Button Clicked">
+        <div class="column-two-thirds">
+          <h1 class="heading-large">
+            <th:block th:utext="${friendlyRegisterName}"></th:block>
+            <span class="heading-secondary" th:utext="${registerText}"></span>
+          </h1>
+          <span data-click-events="" data-click-category="Content" data-click-action="Button Clicked">
             <a href="/records" class="button" role="button">View Register</a>
-          </p>
-          <p>The <span th:utext="${friendlyRegisterName}"></span> contains <span th:text="${totalRecords}"></span>
-            records and includes the following fields:</p>
-          <div th:replace="fragments/field-list.html::field-list(${fields})"></div>
+          </span>
 
-          <h2>Using this register</h2>
+          <h2 class="heading-medium">Using this register</h2>
+
+          <h3 class="heading-small">Base URL</h3>
+          <pre class="preview-box"><code class="language-markup" th:utext="${registerResolver.baseUriFor(registerName)}"></code></pre>
+
+          <h3 class="heading-small">Endpoints</h3>
           <p th:replace="fragments/download-and-preview-home.html::download-and-preview-home"></p>
-          <p>Each register has an open API you can use to access the data without any authentication. There's more
-            information about using the register APIs in the <a th:href="${homepageContent.techDocsUrl}"
-                                                                target="_blank">technical documentation</a>.</p>
-          <p>If you're building a service, you can use this data to create elements for forms.</p>
-          <p>You might need to combine data from this register with data from another source to do this.</p>
-        </main>
+          <p>Users can add <a th:href="${homepageContent.techDocsUrl} + '#get-records'">facets</a> to their queries to adjust the page size returned, or to query against a <a th:href="${homepageContent.techDocsUrl} + '#get-record-field-value'">specific record</a> or <a th:href="${homepageContent.techDocsUrl} + '#get-records-field-name-field-value'">subset of records</a>. You can find more details about specific requests in our <a th:href="${homepageContent.techDocsUrl} + '#api-reference'">API Reference</a>.</p>
+
+          <h3 class="heading-small">/records</h3>
+          <p>Returns the most recent item for every key in a register.</p>
+
+          <h3 class="heading-small">/entries</h3>
+          <p>Returns the log of all entries appended to a register and the hash of the item attached to each entry, ordered by entry number.</p>
+          <p>Regular queries can be made against /entries to allow users to check for changes to the register since their last request.</p>
+
+          <h3 class="heading-small">/item{hash}</h3>
+          <p>An item is a blob of data. Each item in a register is linked to an entry by a unique hash. The entry describes when the item was added to the register.</p>
+          <p>Users can query individual hashes to identify the specific data added to the register by a given entry.</p>
+
+          <h3 class="heading-small">Ruby client library</h3>
+          <p>We have a <a href="https://github.com/openregister/registers-ruby-client" target="_blank">client library</a> where you can find and use methods for common queries and implementations.</p>
+        </div>
 
         <div class="column-third">
           <aside class="govuk-related-items" role="complementary">
-            <h2 class="heading-medium">About this register</h2>
-            <th:block th:if="${#bools.isTrue(custodianName.isPresent())}">
-              <h3 class="heading-small">Custodian</h3>
-              <p th:text="${custodianName.get()}"></p>
-            </th:block>
+            <h2 class="heading-medium">Find out more</h2>
+            <ul class="list">
+              <li>
+                <a th:href="${homepageContent.registersIntroductionUrl}">About registers</a>
+              </li>
+            </ul>
             <th:block th:replace="fragments/attribution.html::attribution"></th:block>
-            <h3 class="heading-small">Last updated</h3>
-            <ul class="list">
-              <li th:text="${lastUpdatedTime}">Last updated</li>
-              <li>
-                <a href="/entries">View recent updates</a>
-              </li>
-            </ul>
-            <th:block th:unless="${registerLinks.registersLinkedTo.empty}">
-              <h3 class="medium-small">Links to</h3>
-              <ul class="list" data-click-events="" data-click-category="Related Content" data-click-action="Links to Register Clicked">
-                <li th:each="registerLinkTo : ${registerLinks.registersLinkedTo}">
-                  <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkTo))}"
-                     th:text="${#strings.capitalize(registerLinkTo)} + ' register'"></a>
-                </li>
-              </ul>
-            </th:block>
-            <th:block th:unless="${registerLinks.registersLinkedFrom.empty}">
-              <h3 class="medium-small">Links from</h3>
-              <ul class="list" data-click-events="" data-click-category="Related Content" data-click-action="Links from Register Clicked">
-                <li th:each="registerLinkFrom : ${registerLinks.registersLinkedFrom}">
-                  <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(registerLinkFrom))}"
-                     th:text="${#strings.capitalize(registerLinkFrom)} + ' register'"></a>
-                </li>
-              </ul>
-            </th:block>
-            <th:block th:unless="${homepageContent.similarRegisters.empty}">
-              <h3 class="heading-small">Similar registers</h3>
-              <ul class="list" data-click-events="" data-click-category="Related Content" data-click-action="Similar Register Clicked">
-                <li th:each="similarRegister : ${homepageContent.similarRegisters}">
-                  <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(similarRegister))}"
-                     th:text="${#strings.capitalize(similarRegister)} + ' register'"></a>
-                </li>
-              </ul>
-            </th:block>
-            <h3 class="heading-medium">More information</h3>
-            <ul class="list">
-              <li>
-                <a th:href="${homepageContent.registersIntroductionUrl}">Introducing registers</a>
-              </li>
-              <li>
-                <a th:href="${homepageContent.usingRegistersGuidanceUrl}">Guidance for using registers</a>
-              </li>
-              <li>
-                <a th:href="${homepageContent.techDocsUrl}">Technical documentation</a>
-              </li>
-            </ul>
           </aside>
         </div>
       </div>
