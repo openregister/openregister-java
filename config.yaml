@@ -46,9 +46,6 @@ fieldsYamlLocation: classpath://config/fields.yaml
 
 registersYamlLocation: classpath://config/registers.yaml
 
-similarRegisters:
-  - address
-
 credentials:
   user: foo
   password: bar
