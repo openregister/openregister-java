@@ -33,7 +33,7 @@ public class PreviewEntryPageViewTest {
     @Mock
     private RegisterReadOnly registerReadOnly;
 
-    private final HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
+    private final HomepageContent homepageContent = new HomepageContent(emptyList());
     private final Provider<RegisterName> provider = mock(Provider.class);
 
     @Test

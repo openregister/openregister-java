@@ -86,7 +86,6 @@ public class ViewFactory {
                 lastUpdated,
                 custodianName,
                 new HomepageContent(
-                        homepageContentConfiguration.get().getSimilarRegisters(),
                         homepageContentConfiguration.get().getIndexes()),
                 registerResolver,
                 getFields(),
@@ -157,7 +156,6 @@ public class ViewFactory {
         return new PreviewRecordPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(
-                        homepageContentConfiguration.get().getSimilarRegisters(),
                         homepageContentConfiguration.get().getIndexes()),
                 getRecordsMediaView(records),
                 registerNameProvider,
@@ -168,7 +166,6 @@ public class ViewFactory {
         return new PreviewEntryPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(
-                        homepageContentConfiguration.get().getSimilarRegisters(),
                         homepageContentConfiguration.get().getIndexes()),
                 getEntriesView(entries),
                 registerNameProvider,
@@ -179,7 +176,6 @@ public class ViewFactory {
         return new PreviewItemPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(
-                        homepageContentConfiguration.get().getSimilarRegisters(),
                         homepageContentConfiguration.get().getIndexes()),
                 getItemMediaView(item),
                 registerNameProvider,

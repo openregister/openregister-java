@@ -36,9 +36,6 @@ downloadConfigs: true
 fieldsYamlLocation: http://field/records.yaml?page-size=5000
 registersYamlLocation: http://register/records.yaml?page-size=5000
 
-similarRegisters:
-  - address
-
 credentials:
   user: foo
   password: bar

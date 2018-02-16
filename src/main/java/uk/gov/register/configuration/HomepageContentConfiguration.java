@@ -7,6 +7,5 @@ import java.util.Optional;
 
 @Contract
 public interface HomepageContentConfiguration {
-    List<String> getSimilarRegisters();
     List<String> getIndexes();
 }

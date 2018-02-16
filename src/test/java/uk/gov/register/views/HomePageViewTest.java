@@ -40,18 +40,18 @@ public class HomePageViewTest {
     @Mock
     RegisterLinkService registerLinkService;
 
-    HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
+    HomepageContent homepageContent = new HomepageContent(emptyList());
 
     @Test
     public void getIndexes_shouldGetIndexesIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        HomepageContent homepageContent = new HomepageContent(emptyList(), emptyList());
+        HomepageContent homepageContent = new HomepageContent(emptyList());
         HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), is(emptyList()));
 
         final List<String> indexes = Arrays.asList("current-countries", "local-authority-by-type");
-        homepageContent = new HomepageContent(emptyList(), indexes);
+        homepageContent = new HomepageContent(indexes);
         homePageView = new HomePageView(null, null, mockRequestContext, 1, 2, Optional.empty(), Optional.empty(), homepageContent, registerResolver, Arrays.asList(field), registerLinkService, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), IsIterableContainingInOrder.contains("current-countries", "local-authority-by-type"));

@@ -40,10 +40,6 @@ public class RegisterContextFactory {
     private Optional<String> custodianName = Optional.empty();
 
     @Valid
-    @JsonProperty
-    private List<String> similarRegisters = emptyList();
-
-    @Valid
     @NotNull
     @JsonProperty
     private RegisterAuthenticatorFactory credentials;
@@ -58,14 +54,12 @@ public class RegisterContextFactory {
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("schema") String schema,
             @JsonProperty("custodianName") Optional<String> custodianName,
-            @JsonProperty("similarRegisters") List<String> similarRegisters,
             @JsonProperty("indexes") List<String> indexes,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.schema = schema;
         this.custodianName = custodianName;
-        this.similarRegisters = similarRegisters != null ? similarRegisters : emptyList();
         this.indexes = indexes != null ? indexes : emptyList();
         this.credentials = credentials;
     }
@@ -92,7 +86,6 @@ public class RegisterContextFactory {
                 schema,
                 enableRegisterDataDelete,
                 enableDownloadResource,
-                similarRegisters,
                 indexes,
                 credentials.buildAuthenticator());
     }

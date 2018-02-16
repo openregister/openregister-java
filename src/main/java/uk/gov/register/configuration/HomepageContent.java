@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class HomepageContent {
-    private final List<String> similarRegisters;
     private final List<String> indexes;
 
-    public HomepageContent(List<String> similarRegisters, List<String> indexes) {
-        this.similarRegisters = similarRegisters;
+    public HomepageContent(List<String> indexes) {
         this.indexes = indexes;
     }
 
@@ -26,8 +24,6 @@ public class HomepageContent {
     public String getTechDocsUrl() {
         return "https://registers-docs.cloudapps.digital";
     }
-
-    public List<String> getSimilarRegisters() { return similarRegisters; }
 
     public List<String> getIndexes() { return indexes; }
 }
