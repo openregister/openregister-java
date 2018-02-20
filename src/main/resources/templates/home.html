@@ -27,18 +27,12 @@
 
           <h3 class="heading-small">Endpoints</h3>
           <p th:replace="fragments/download-and-preview-home.html::download-and-preview-home"></p>
-          <p>Users can add <a th:href="${homepageContent.techDocsUrl} + '#get-records'">facets</a> to their queries to adjust the page size returned, or to query against a <a th:href="${homepageContent.techDocsUrl} + '#get-record-field-value'">specific record</a> or <a th:href="${homepageContent.techDocsUrl} + '#get-records-field-name-field-value'">subset of records</a>. You can find more details about specific requests in our <a th:href="${homepageContent.techDocsUrl} + '#api-reference'">API Reference</a>.</p>
 
-          <h3 class="heading-small">/records</h3>
-          <p>Returns the most recent item for every key in a register.</p>
+          <p><code class="code">/records</code> returns the most recent item for every key in a register.</p>
 
-          <h3 class="heading-small">/entries</h3>
-          <p>Returns the log of all entries appended to a register and the hash of the item attached to each entry, ordered by entry number.</p>
-          <p>Regular queries can be made against /entries to allow users to check for changes to the register since their last request.</p>
+          <p><code class="code">/entries</code> returns the log of all entries appended to a register and the hash of the item attached to each entry, ordered by entry number.</p>
 
-          <h3 class="heading-small">/item{hash}</h3>
-          <p>An item is a blob of data. Each item in a register is linked to an entry by a unique hash. The entry describes when the item was added to the register.</p>
-          <p>Users can query individual hashes to identify the specific data added to the register by a given entry.</p>
+          <p><code class="code">/item{hash}</code> returns an item is a blob of data. Each item in a register is linked to an entry by a unique hash. The entry describes when the item was added to the register.</p>
 
           <h3 class="heading-small">Ruby client library</h3>
           <p>We have a <a href="https://github.com/openregister/registers-ruby-client" target="_blank">client library</a> where you can find and use methods for common queries and implementations.</p>
@@ -46,13 +40,13 @@
 
         <div class="column-third">
           <aside class="govuk-related-items" role="complementary">
-            <h2 class="heading-medium">Find out more</h2>
+            <th:block th:replace="fragments/attribution.html::attribution"></th:block>
+            <h3 class="heading-small">Find out more</h3>
             <ul class="list">
               <li>
                 <a th:href="${homepageContent.registersIntroductionUrl}">About registers</a>
               </li>
             </ul>
-            <th:block th:replace="fragments/attribution.html::attribution"></th:block>
           </aside>
         </div>
       </div>
