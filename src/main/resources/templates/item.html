@@ -15,7 +15,6 @@
           <h1 class="heading-large">Item</h1>
           <div th:include="fragments/download-and-preview-single.html::download-and-preview-single('items')"></div>
         </div>
-        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/item-table.html :: item-table (content = ${content.content})"
