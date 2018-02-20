@@ -19,7 +19,6 @@
           </h1>
           <div th:include="fragments/download-and-preview.html::download-and-preview('records')"></div>
         </div>
-        <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
       </div>
 
       <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})"
