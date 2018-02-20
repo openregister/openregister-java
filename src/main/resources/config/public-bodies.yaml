@@ -363,6 +363,9 @@ civil-service-government-science-engineering:
 department-for-communities-and-local-government:
   name: "Department for Communities and Local Government"
   public-body: "department-for-communities-and-local-government"
+ministry-of-housing-communities-and-local-government:
+  name: "Ministry of Housing, Communities & Local Government"
+  public-body: "ministry-of-housing-communities-and-local-government"
 working-ventures-uk:
   name: "Working Ventures UK"
   public-body: "working-ventures-uk"
