@@ -43,9 +43,7 @@ public class DataDownloadResourceFunctionalTest {
     @Parameterized.Parameters(name = "{index}: with download enabled:{0} -> {1} returns {2}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                { true, "/download", 200 },
                 { true, "/download-register", 200 },
-                { false, "/download", 200 },
                 { false, "/download-register", 501 }
         });
     }
@@ -55,7 +53,7 @@ public class DataDownloadResourceFunctionalTest {
         TestRegister testRegister = enableDownload ? REGISTER_WITH_DOWNLOAD_ENABLED : REGISTER_WITH_DOWNLOAD_DISABLED;
 
         Response response = register.getRequest(testRegister, targetUrl);
-        
+
         assertThat(response.getStatus(), equalTo(expectedStatusCode));
     }
 }
