@@ -2,14 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <div th:fragment="download-and-preview-single(records_or_entries_or_items_string)">
     <p class="data-representations">
-      Get a copy as
+      Get this data as
       <a th:href="${'/' + records_or_entries_or_items_string + '.json/' + (#strings.equals(records_or_entries_or_items_string, 'records') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entries') ? content.entryNumber : content.itemHash))}">JSON</a>,
       <a th:href="${'/' + records_or_entries_or_items_string + '.yaml/' + (#strings.equals(records_or_entries_or_items_string, 'records') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entries') ? content.entryNumber : content.itemHash))}">YAML</a>,
         <a th:href="${'/' + records_or_entries_or_items_string + '.ttl/' + (#strings.equals(records_or_entries_or_items_string, 'records') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entries') ? content.entryNumber : content.itemHash))}">TTL</a>
       <span data-click-events="" data-click-category="Content" data-click-action="Register Download">
-        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}" download="">CSV</a>,
-        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}" download="">TSV</a> or as a
-        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'xlsx')}" download="">spreadsheet</a>.
+        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}" download="">CSV</a> or
+        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}" download="">TSV</a>.
       </span>
     </p>
   </div>
