@@ -42,6 +42,6 @@ public class ConsistencyFilter implements ContainerRequestFilter {
     }
 
     private boolean skipFilter(final String path) {
-        return path.contains("delete-register-data");
+        return path.contains("delete-register-data") || path.contains("load-rsf");
     }
 }
