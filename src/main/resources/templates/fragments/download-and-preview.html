@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <div th:fragment="download-and-preview(records_or_entries_string)">
-    <p class="data-representations">
+    <p class="data-representations" data-click-events="" data-click-category="Content" data-click-action="Register Download">
       <th:block th:if="${pagination.totalEntries} le 5000">Get this data as</th:block>
       <th:block th:if="${pagination.totalEntries} gt 5000">Get the first 5,000 records as</th:block>
-      <a th:href="${'/' + records_or_entries_string + '.json'}">JSON</a>,
-      <a th:href="${'/' + records_or_entries_string + '.yaml'}">YAML</a>,
-      <a th:href="${'/' + records_or_entries_string + '.ttl'}">TTL</a>,
-      <span data-click-events="" data-click-category="Content" data-click-action="Register Download">
-        <a th:href="${'/' + records_or_entries_string + '.csv?page-size=5000'}" rel="alternate" class="js-download"
-          data-download-type="CSV" download="">CSV</a> or
-        <a th:href="${'/' + records_or_entries_string + '.tsv?page-size=5000'}" rel="alternate" class="js-download"
-         data-download-type="TSV" download="">TSV</a>.
-      </span>
+      <a th:href="${'/' + records_or_entries_string + '.json'}" data-download-type="JSON">JSON</a>,
+      <a th:href="${'/' + records_or_entries_string + '.yaml'}" data-download-type="YAML">YAML</a>,
+      <a th:href="${'/' + records_or_entries_string + '.ttl'}" data-download-type="TTL">TTL</a>,
+      <a th:href="${'/' + records_or_entries_string + '.csv'}" data-download-type="CSV">CSV</a> or
+      <a th:href="${'/' + records_or_entries_string + '.tsv'}" data-download-type="TSV">TSV</a>.
     </p>
   </div>
 </html>

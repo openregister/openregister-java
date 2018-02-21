@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <div th:fragment="download-and-preview-single(records_or_entries_or_items_string)">
-    <p class="data-representations">
+    <p class="data-representations" data-click-events="" data-click-category="Content" data-click-action="Register Download">
       Get this data as
-      <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.json'}">JSON</a>,
-      <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.yaml' }">YAML</a>,
-        <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.ttl'}">TTL</a>
-      <span data-click-events="" data-click-category="Content" data-click-action="Register Download">
-        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}" download="">CSV</a> or
-        <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}" download="">TSV</a>.
-      </span>
+      <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.json'}" data-download-type="JSON">JSON</a>,
+      <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.yaml' }" data-download-type="YAML">YAML</a>,
+      <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.ttl'}" data-download-type="TTL">TTL</a>
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}" data-download-type="CSV">CSV</a> or
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}" data-download-type="TSV">TSV</a>.
     </p>
   </div>
 </html>
