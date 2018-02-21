@@ -28,9 +28,9 @@
 
           <p>You can find the correct path for the query that interests you in our <a href="https://registers-docs.cloudapps.digital/#api-reference" target="_blank">API Reference</a>. Users should append the path to the base URL and specify a preferred format, such as <a href="/records.json" target="_blank">JSON</a>.</p>
 
-          <p><code class="code">/records</code> returns all records, the latest version of the data in the register. A record is the most recent entry for a key and its associated items.</p>
+          <p><code class="code"><a href="/records">/records</a></code> returns all records, the latest version of the data in the register. A record is the most recent entry for a key and its associated items.</p>
 
-          <p><code class="code">/entries</code> returns a list of all entries, ordered by entry number. An entry describes an update to the register and the list of entries can be used to see historic changes or check for new updates to a register. Each entry in a register is linked to an item by a unique item-hash.</p>
+          <p><code class="code"><a href="/entries">/entries</a></code> returns a list of all entries, ordered by entry number. An entry describes an update to the register and the list of entries can be used to see historic changes or check for new updates to a register. Each entry in a register is linked to an item by a unique item-hash.</p>
 
           <p><code class="code">/item{hash}</code> returns an individual item. Items are the actual data contained within a register.</p>
 

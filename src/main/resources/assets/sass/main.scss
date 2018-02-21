@@ -60,6 +60,14 @@ body {
   }
 }
 
+.heading-with-subtitle {
+  margin-bottom: 0;
+
+  & + p {
+    color: $grey-1;
+  }
+}
+
 .header {
   background-color: $govuk-blue;
   border-bottom: 0;
