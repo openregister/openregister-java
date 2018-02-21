@@ -51,7 +51,7 @@ public class HomePageView extends AttributionView<Object> {
 
     @SuppressWarnings("unused, used from template")
     public String getRegisterText() {
-        return getRegister().getText();
+        return markdownProcessor.markdown(getRegister().getText());
     }
 
     @SuppressWarnings("unused, used from template")
