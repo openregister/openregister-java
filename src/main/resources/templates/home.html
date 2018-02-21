@@ -23,7 +23,7 @@
           <h2 class="heading-medium">Using this register</h2>
 
           <h3 class="heading-small">Base URL</h3>
-          <pre class="preview-box"><code class="language-markup" th:utext="${registerResolver.baseUriFor(registerName)}"></code></pre>
+          <pre class="preview-box"><code class="language-markup" th:utext="${registerResolver.baseUriFor(registerId)}"></code></pre>
 
           <h3 class="heading-small">Endpoints</h3>
           <p th:replace="fragments/download-and-preview-home.html::download-and-preview-home"></p>
@@ -32,7 +32,7 @@
 
           <p><code class="code">/entries</code> returns the log of all entries appended to a register and the hash of the item attached to each entry, ordered by entry number.</p>
 
-          <p><code class="code">/item{hash}</code> returns an item is a blob of data. Each item in a register is linked to an entry by a unique hash. The entry describes when the item was added to the register.</p>
+          <p><code class="code">/item/{hash}</code> returns an item is a blob of data. Each item in a register is linked to an entry by a unique hash. The entry describes when the item was added to the register.</p>
 
           <h3 class="heading-small">Ruby client library</h3>
           <p>We have a <a href="https://github.com/openregister/registers-ruby-client" target="_blank">client library</a> where you can find and use methods for common queries and implementations.</p>

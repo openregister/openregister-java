@@ -22,7 +22,7 @@
             <span class="heading-secondary"
                   th:include="fragments/pagination.html::pagination-top('entries')"></span>
           </h1>
-          <div th:include="fragments/download-and-preview.html::download-and-preview('entries')"></div>
+          <div th:include="fragments/download-and-preview.html::download-and-preview(${'record/' + content.recordKey.get() + '/entries'})"></div>
         </div>
       </div>
 
