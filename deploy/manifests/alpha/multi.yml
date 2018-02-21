@@ -10,9 +10,6 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
-    - jobcentre
-    - jobcentre-district
-    - jobcentre-group
     - occupation
     - public-body-account
     - public-body-account-classification
@@ -26,7 +23,6 @@ applications:
     - social-housing-provider-legal-entity-eng
     - social-housing-provider-eng
     - statistical-geography-council-area-sct
-    - statistical-geography-local-government-district-nir
   services:
     - alpha-db
     - logit-ssl-drain
