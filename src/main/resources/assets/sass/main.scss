@@ -237,16 +237,6 @@ table {
   tr:nth-child(2n) {
     background-color: $grey-4;
   }
-
-  &.entry {
-    tr {
-      background-color: $grey-2;
-    }
-
-    th, td {
-      border-bottom: 1px solid $border-colour;
-    }
-  }
 }
 
 // Defintion lists
