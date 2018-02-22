@@ -3,8 +3,9 @@ version: 0.2
 phases:
   install:
     commands:
+      - rm -rf /var/lib/apt/lists/*
       - apt-get clean -y
-      - apt-get update -y --fix-broken
+      - apt-get update -y
       - apt-get install -y apt-transport-https
       - wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | apt-key add -
       - echo 'deb http://packages.cloudfoundry.org/debian stable main' > /etc/apt/sources.list.d/cloudfoundry-cli.list
