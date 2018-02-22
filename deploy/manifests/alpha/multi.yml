@@ -23,6 +23,7 @@ applications:
     - social-housing-provider-legal-entity-eng
     - social-housing-provider-eng
     - statistical-geography-council-area-sct
+    - fire-authority
   services:
     - alpha-db
     - logit-ssl-drain
