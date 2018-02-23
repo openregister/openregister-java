@@ -26,6 +26,10 @@ applications:
     - local-authority-type
     - principal-local-authority
     - prison-estate
+    - qualification-assessment-method
+    - qualification-level
+    - qualification-sector-subject-area
+    - qualification-type
     - registration-district
     - statistical-geography
     - statistical-geography-county-eng
