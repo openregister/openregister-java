@@ -95,6 +95,12 @@ public class EntryListView implements CsvRepresentationView {
         return recordKey;
     }
 
+    @SuppressWarnings("unused, used from templates")
+    public String getDownloadLink() {
+        Optional<String> recordKey = getRecordKey();
+        return recordKey.isPresent() ? String.format("record/%s/entries", recordKey.get()) : "entries"; 
+    }
+
     @Override
     public CsvRepresentation<Collection<Entry>> csvRepresentation() {
         return new CsvRepresentation<>(Entry.csvSchema(), getEntries());
