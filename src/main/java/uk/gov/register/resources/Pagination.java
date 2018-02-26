@@ -22,4 +22,6 @@ public interface Pagination {
     String getPreviousPageLink();
 
     int getTotalPages();
+
+    String getFormattedPageQueryParams();
 }
