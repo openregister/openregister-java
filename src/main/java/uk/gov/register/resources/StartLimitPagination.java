@@ -47,6 +47,11 @@ public class StartLimitPagination implements Pagination {
     }
 
     @Override
+    public String getFormattedPageQueryParams() {
+        return String.format("?start=%s&limit=%s", start, limit);
+    }
+
+    @Override
     public int getFirstEntryNumberOnThisPage() {
         return start > 0 ? start : 1;
     }
