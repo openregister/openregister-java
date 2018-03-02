@@ -141,6 +141,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bindAsContract(RegisterFieldsConfiguration.class);
 
                 bind(configManager).to(ConfigManager.class);
+                bind(databaseManager).to(DatabaseManager.class);
                 bind(environmentValidator).to(EnvironmentValidator.class);
                 bind(registerLinkService).to(RegisterLinkService.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
