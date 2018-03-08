@@ -148,13 +148,5 @@ public class DataDownload {
                 .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, totalEntries1, totalEntries2))
                 .header("Content-Disposition", rsfFileName).build();
     }
-
-    @GET
-    @Path("/download")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public View download() {
-        return viewFactory.downloadPageView(resourceConfiguration.getEnableDownloadResource());
-    }
 }
 
