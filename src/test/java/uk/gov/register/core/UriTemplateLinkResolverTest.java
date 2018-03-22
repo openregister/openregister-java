@@ -14,10 +14,10 @@ public class UriTemplateLinkResolverTest {
 
     @Test
     public void linkValueReturnsLink() {
-        LinkValue linkValue = new LinkValue(new RegisterName("address"), "1111112");
+        RegisterLinkValue registerLinkValue = new RegisterLinkValue(new RegisterName("address"), "1111112");
 
-        assertThat(localResolver.resolve(linkValue), is(URI.create("http://address.openregister.dev:8080/record/1111112")));
-        assertThat(prodResolver.resolve(linkValue), is(URI.create("https://address.register.gov.uk/record/1111112")));
+        assertThat(localResolver.resolve(registerLinkValue), is(URI.create("http://address.openregister.dev:8080/record/1111112")));
+        assertThat(prodResolver.resolve(registerLinkValue), is(URI.create("https://address.register.gov.uk/record/1111112")));
     }
 
     @Test
@@ -30,8 +30,8 @@ public class UriTemplateLinkResolverTest {
 
     @Test
     public void curieValueReturnsCorrectLink() {
-        LinkValue.CurieValue charityCurieValue = new LinkValue.CurieValue("charity:123456");
-        LinkValue.CurieValue companyCurieValue = new LinkValue.CurieValue("company:654321");
+        RegisterLinkValue.CurieValue charityCurieValue = new RegisterLinkValue.CurieValue("charity:123456");
+        RegisterLinkValue.CurieValue companyCurieValue = new RegisterLinkValue.CurieValue("company:654321");
 
         assertThat(localResolver.resolve(charityCurieValue), is(URI.create("http://charity.openregister.dev:8080/record/123456")));
         assertThat(localResolver.resolve(companyCurieValue), is(URI.create("http://company.openregister.dev:8080/record/654321")));

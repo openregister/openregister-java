@@ -10,21 +10,19 @@ public class UriTemplateLinkResolver implements LinkResolver {
         this.registerResolver = registerResolver;
     }
 
-    // OGNL (Thymeleaf's language) can't find default methods by reflection
     @Override
     public URI resolve(LinkValue linkValue) {
-        return LinkResolver.super.resolve(linkValue);
+        if (linkValue.isLinkToRegister()) {
+            RegisterLinkValue registerLinkValue = (RegisterLinkValue) linkValue;
+            return resolve(registerLinkValue.getTargetRegister(), registerLinkValue.getLinkKey());
+        } else {
+            return URI.create(linkValue.getValue());
+        }
     }
 
-    @Override
     public URI resolve(RegisterName register, String linkKey) {
         URI baseUri = registerResolver.baseUriFor(register);
 
         return UriBuilder.fromUri(baseUri).path("record").path(linkKey).build();
-    }
-
-    @Override
-    public URI resolve(UrlValue urlValue) {
-        return URI.create(urlValue.getValue());
     }
 }

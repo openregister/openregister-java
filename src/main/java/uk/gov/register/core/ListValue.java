@@ -14,6 +14,7 @@ public class ListValue implements FieldValue, Iterable<FieldValue> {
         this.elements = ImmutableList.copyOf(elements);
     }
 
+    @Override
     public boolean isList() {
         return true;
     }
@@ -33,6 +34,7 @@ public class ListValue implements FieldValue, Iterable<FieldValue> {
         return elements.stream();
     }
 
+    @Override
     public boolean isLink() {
         return false;
     }

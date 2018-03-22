@@ -37,16 +37,16 @@ public class ItemConverter {
         try {
             if (field.getDatatype().getName().equals("curie")) {
                 if (value.textValue().contains(":")) {
-                    return new LinkValue.CurieValue(value.textValue());
+                    return new RegisterLinkValue.CurieValue(value.textValue());
                 }
 
-                return new LinkValue(field.getRegister().get(), value.textValue());
+                return new RegisterLinkValue(field.getRegister().get(), value.textValue());
             }
             else if (field.getDatatype().getName().equals("url")) {
                 return new UrlValue(value.textValue());
             }
             else if (field.getRegister().isPresent()) {
-                return new LinkValue(field.getRegister().get(), value.textValue());
+                return new RegisterLinkValue(field.getRegister().get(), value.textValue());
                 //Note: the equals check below must be replaced with the specified datatype, instead of doing string comparision
                 // We should replace this once the datatype register is available
             } else {

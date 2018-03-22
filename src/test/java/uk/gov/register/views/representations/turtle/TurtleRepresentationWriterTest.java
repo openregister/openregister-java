@@ -63,8 +63,8 @@ public class TurtleRepresentationWriterTest {
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "address", new LinkValue(new RegisterName("address"), "1111111"),
-                        "location", new LinkValue(new RegisterName("address"), "location-value"),
+                        "address", new RegisterLinkValue(new RegisterName("address"), "1111111"),
+                        "location", new RegisterLinkValue(new RegisterName("address"), "location-value"),
                         "name", new StringValue("foo")
                 );
 
@@ -86,7 +86,7 @@ public class TurtleRepresentationWriterTest {
     public void rendersLists() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "link-values", new ListValue(asList(new LinkValue(new RegisterName("address"), "1111111"), new LinkValue(new RegisterName("address"), "2222222"))),
+                        "link-values", new ListValue(asList(new RegisterLinkValue(new RegisterName("address"), "1111111"), new RegisterLinkValue(new RegisterName("address"), "2222222"))),
                         "string-values", new ListValue(asList(new StringValue("value1"), new StringValue("value2"))),
                         "name", new StringValue("foo")
                 );
