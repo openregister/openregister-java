@@ -8,6 +8,7 @@ import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -25,7 +26,8 @@ public class TurtleRepresentationWriterTest {
             new Field("address", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
             new Field("location", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
             new Field("link-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("string-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
+            new Field("string-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
+            new Field("website", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
 
     @Test
     public void rendersFieldPrefixFromConfiguration() throws Exception {
@@ -104,5 +106,25 @@ public class TurtleRepresentationWriterTest {
         assertThat(generatedTtl, containsString("field:link-values <http://address.test.register.gov.uk/record/1111111> , <http://address.test.register.gov.uk/record/2222222>"));
         assertThat(generatedTtl, containsString("field:string-values \"value2\" , \"value1\""));
         assertThat(generatedTtl, containsString("field:name \"foo\""));
+    }
+
+    @Test
+    public void rendersUrlValuesAsResources() throws IOException {
+        Map<String, FieldValue> map =
+                ImmutableMap.of(
+                        "name", new StringValue("foo"),
+                        "website", new UrlValue("https://www.gov.uk")
+                );
+
+        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterName("government-organisation"), registerResolver);
+        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+
+        byte[] bytes = outputStream.toByteArray();
+        String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
+        assertThat(generatedTtl, containsString("field:website <https://www.gov.uk>"));
     }
 }
