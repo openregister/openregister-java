@@ -40,8 +40,8 @@ public class DateFormatCheckerTest {
     }
 
     @Test
-    public void validateFormat_shouldValidateSuccessfully_whenInputDateTimeIsEmpty() throws IOException {
-        assertTrue("Format should be valid", DateFormatChecker.isDateTimeFormatValid(""));
+    public void validateFormat_throwsValidationException_whenInputDateTimeIsEmpty() throws IOException {
+        assertFalse("Format should not be valid", DateFormatChecker.isDateTimeFormatValid(""));
     }
 
     @Test

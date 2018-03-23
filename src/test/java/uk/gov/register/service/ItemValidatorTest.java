@@ -347,14 +347,15 @@ public class ItemValidatorTest {
     }
 
     @Test
-    public void validateItem_shouldValidateSuccessfully_whenInputDateTimeIsEmpty() throws IOException {
+    public void validateItem_shouldNotValidateSuccessfully_whenInputDateTimeIsEmpty() throws IOException {
         String jsonString = "{\"country\":\"myCountry\",\"start-date\":\"\"}";
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
             fail("Must not execute this statement");
+        } catch (ItemValidationException e) {
+            assertThat(e.getMessage(), equalTo("Field 'start-date' value must be of type 'datetime'"));
         }
     }
 }
