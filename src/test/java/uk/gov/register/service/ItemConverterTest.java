@@ -4,18 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import uk.gov.register.configuration.ConfigManager;
-import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -75,7 +69,7 @@ public class ItemConverterTest {
 
         FieldValue result = itemConverter.convert(entry, fieldsByName);
 
-        assertThat(result, instanceOf(LinkValue.class));
+        assertThat(result, instanceOf(RegisterLinkValue.class));
         assertThat(result.getValue(), equalTo("A school in the UK."));
     }
 
@@ -92,9 +86,10 @@ public class ItemConverterTest {
 
         FieldValue result = itemConverter.convert(entry, fieldsByName);
 
-        assertThat(result, instanceOf(LinkValue.CurieValue.class));
+        assertThat(result, instanceOf(RegisterLinkValue.CurieValue.class));
         assertThat(result.getValue(), equalTo("business:13245"));
     }
+
     @Test
     public void convert_shouldConvertEntryToUrlValue() {
         JsonNode jsonNode = mock(JsonNode.class);
@@ -111,6 +106,4 @@ public class ItemConverterTest {
         assertThat(result, instanceOf(UrlValue.class));
         assertThat(result.getValue(), equalTo("http://www.example.com"));
     }
-
-
 }
