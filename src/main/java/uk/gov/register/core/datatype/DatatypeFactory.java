@@ -16,6 +16,8 @@ public class DatatypeFactory {
                 return new StringDatatype(datatypeName);
             case "datetime":
                 return new DatetimeDatatype(datatypeName);
+            case "period":
+                return new PeriodDatatype(datatypeName);
             default:
                 return new UnvalidatedDatatype(datatypeName);
         }

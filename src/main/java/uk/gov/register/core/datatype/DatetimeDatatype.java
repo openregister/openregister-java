@@ -11,6 +11,6 @@ public class DatetimeDatatype extends AbstractDatatype {
 
     @Override
     public boolean isValid(JsonNode value) {
-        return DateFormatChecker.isDateFormatValid(value.textValue());
+        return DateFormatChecker.isDateTimeFormatValid(value.textValue());
     }
 }
