@@ -14,7 +14,7 @@ public class UriTemplateLinkResolverTest {
 
     @Test
     public void linkValueReturnsLink() {
-        RegisterLinkValue registerLinkValue = new RegisterLinkValue(new RegisterName("address"), "1111112");
+        RegisterLinkValue registerLinkValue = new RegisterLinkValue(new RegisterId("address"), "1111112");
 
         assertThat(localResolver.resolve(registerLinkValue), is(URI.create("http://address.openregister.dev:8080/record/1111112")));
         assertThat(prodResolver.resolve(registerLinkValue), is(URI.create("https://address.register.gov.uk/record/1111112")));
@@ -39,6 +39,6 @@ public class UriTemplateLinkResolverTest {
 
     @Test
     public void separateRegisterAndValueReturnsCorrectLink() throws Exception {
-        assertThat(localResolver.resolve(new RegisterName("country"),"CZ"), is(URI.create("http://country.openregister.dev:8080/record/CZ")));
+        assertThat(localResolver.resolve(new RegisterId("country"),"CZ"), is(URI.create("http://country.openregister.dev:8080/record/CZ")));
     }
 }

@@ -4,7 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.configuration.IndexConfiguration;
 import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.*;
@@ -23,7 +23,7 @@ public class DerivationRecordResource {
     private final RequestContext requestContext;
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final RegisterName registerPrimaryKey;
+    private final RegisterId registerPrimaryKey;
     private final Provider<IndexConfiguration> indexConfiguration;
 
     @Inject
@@ -33,7 +33,7 @@ public class DerivationRecordResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        this.registerPrimaryKey = register.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterId();
         this.indexConfiguration = indexConfiguration;
     }
 

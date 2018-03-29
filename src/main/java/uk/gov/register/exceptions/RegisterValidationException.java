@@ -1,9 +1,9 @@
 package uk.gov.register.exceptions;
 
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 
 public class RegisterValidationException extends RuntimeException {
-	public RegisterValidationException(RegisterName registerName) {
-		super("Definition of register " + registerName.value() + " does not match Register Register");
+	public RegisterValidationException(RegisterId registerId) {
+		super("Definition of register " + registerId.value() + " does not match Register Register");
 	}
 }

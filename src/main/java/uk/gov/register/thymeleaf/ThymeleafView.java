@@ -49,8 +49,8 @@ public class ThymeleafView extends View {
         return getRegisterId().getFriendlyRegisterName() + " register";
     }
 
-    public RegisterName getRegisterId() {
-        return register.getRegisterName();
+    public RegisterId getRegisterId() {
+        return register.getRegisterId();
     }
 
     public RegisterMetadata getRegister() {

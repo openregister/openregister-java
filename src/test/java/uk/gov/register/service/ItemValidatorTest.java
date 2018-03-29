@@ -9,8 +9,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
 import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
@@ -42,32 +42,32 @@ public class ItemValidatorTest {
     @Before
     public void setup() throws NoSuchConfigException, IOException {
         MockitoAnnotations.initMocks(this);
-        RegisterName registerName = new RegisterName("register");
-        RegisterName countryRegisterName = new RegisterName("country");
-        final RegisterName forCurieRegisterName = new RegisterName("forCurie");
+        RegisterId registerId = new RegisterId("register");
+        RegisterId countryRegisterId = new RegisterId("country");
+        final RegisterId forCurieRegisterId = new RegisterId("forCurie");
 
-        when(registerMetadata.getRegisterName()).thenReturn(registerName);
-        when(countryRegisterMetadata.getRegisterName()).thenReturn(countryRegisterName);
+        when(registerMetadata.getRegisterId()).thenReturn(registerId);
+        when(countryRegisterMetadata.getRegisterId()).thenReturn(countryRegisterId);
 
         when(registerMetadata.getFields()).thenReturn(Arrays.asList("register", "text", "registry", "phase", "copyright", "fields"));
         when(countryRegisterMetadata.getFields()).thenReturn(Arrays.asList("country", "start-date", "curie-info", "curie-info2", "curie-cardinality-n"));
 
-        Field textField = new Field("text", "text", registerName, Cardinality.ONE, "text text");
-        Field registerField = new Field("register", "text", registerName, Cardinality.ONE, "register text");
-        Field fieldsField = new Field("fields", "string", registerName, Cardinality.MANY, "fields text");
+        Field textField = new Field("text", "text", registerId, Cardinality.ONE, "text text");
+        Field registerField = new Field("register", "text", registerId, Cardinality.ONE, "register text");
+        Field fieldsField = new Field("fields", "string", registerId, Cardinality.MANY, "fields text");
 
-        Field countryField = new Field("country", "string", countryRegisterName, Cardinality.ONE, "countryName");
+        Field countryField = new Field("country", "string", countryRegisterId, Cardinality.ONE, "countryName");
         Field startDateField = new Field("start-date", "datetime", null, Cardinality.ONE, "Start date text");
-        final Field curieFieldWithRegisterSpecified = new Field("curie-info", "curie", forCurieRegisterName, Cardinality.ONE, "Link to curie");
+        final Field curieFieldWithRegisterSpecified = new Field("curie-info", "curie", forCurieRegisterId, Cardinality.ONE, "Link to curie");
         final Field curieFieldWithoutRegisterSpecified = new Field("curie-info2", "curie", null, Cardinality.ONE, "Link to curie2");
-        Field curieFieldWithRegisterSpecifiedCardinalityN = new Field("curie-cardinality-n", "curie", forCurieRegisterName, Cardinality.MANY, "Many curies");
+        Field curieFieldWithRegisterSpecifiedCardinalityN = new Field("curie-cardinality-n", "curie", forCurieRegisterId, Cardinality.MANY, "Many curies");
 
         fieldsByName = ImmutableMap.of("text", textField, "register", registerField, "fields", fieldsField);
         countryFieldsByName = ImmutableMap.of("country", countryField, "start-date", startDateField, "curie-info", curieFieldWithRegisterSpecified,
                 "curie-info2", curieFieldWithoutRegisterSpecified, "curie-cardinality-n", curieFieldWithRegisterSpecifiedCardinalityN);
 
-        itemValidator = new ItemValidator(registerName);
-        countryItemValidator = new ItemValidator(countryRegisterName);
+        itemValidator = new ItemValidator(registerId);
+        countryItemValidator = new ItemValidator(countryRegisterId);
     }
 
     @Test

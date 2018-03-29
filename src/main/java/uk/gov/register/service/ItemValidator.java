@@ -5,8 +5,8 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.datatype.CurieDatatype;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class ItemValidator {
-    private final RegisterName registerName;
+    private final RegisterId registerId;
 
-    public ItemValidator(RegisterName registerName) {
-        this.registerName = registerName;
+    public ItemValidator(RegisterId registerId) {
+        this.registerId = registerId;
     }
 
     public void validateItem(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws ItemValidationException {
@@ -30,9 +30,9 @@ public class ItemValidator {
     }
 
     private void validatePrimaryKeyExists(JsonNode inputEntry) throws ItemValidationException {
-        JsonNode primaryKeyNode = inputEntry.get(registerName.value());
-        throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerName + "'");
-        validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerName + "' must have a valid value");
+        JsonNode primaryKeyNode = inputEntry.get(registerId.value());
+        throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerId + "'");
+        validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerId + "' must have a valid value");
     }
 
     private void validateFields(JsonNode inputEntry, RegisterMetadata registerMetadata) throws ItemValidationException {

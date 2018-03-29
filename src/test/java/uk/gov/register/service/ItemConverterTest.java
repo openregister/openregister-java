@@ -64,7 +64,7 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("school");
         when(entry.getValue()).thenReturn(jsonNode);
-        Field schoolField = new Field("school", "string", new RegisterName("school"), Cardinality.ONE, "A school in the UK.");
+        Field schoolField = new Field("school", "string", new RegisterId("school"), Cardinality.ONE, "A school in the UK.");
         Map<String, Field> fieldsByName = ImmutableMap.of("school", schoolField);
 
         FieldValue result = itemConverter.convert(entry, fieldsByName);
@@ -80,7 +80,7 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("business");
         when(entry.getValue()).thenReturn(jsonNode);
-        Field businessField = new Field("business", "curie", new RegisterName("company"), Cardinality.ONE, "A Limited Company ...");
+        Field businessField = new Field("business", "curie", new RegisterId("company"), Cardinality.ONE, "A Limited Company ...");
         Map<String, Field> fieldsByName = ImmutableMap.of("business", businessField);
 
 
@@ -97,7 +97,7 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("website");
         when(entry.getValue()).thenReturn(jsonNode);
-        Field websiteField = new Field("website", "url", new RegisterName("company"), Cardinality.ONE, "A Limited Company ...");
+        Field websiteField = new Field("website", "url", new RegisterId("company"), Cardinality.ONE, "A Limited Company ...");
         Map<String, Field> fieldsByName = ImmutableMap.of("website", websiteField);
 
 

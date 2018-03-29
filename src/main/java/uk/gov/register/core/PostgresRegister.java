@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class PostgresRegister implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
     private final Index index;
-    private final RegisterName registerName;
+    private final RegisterId registerId;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
@@ -38,14 +38,14 @@ public class PostgresRegister implements Register {
     private final String defaultIndexForTypeUser = IndexNames.RECORD;
     private final String defaultIndexForTypeSystem = IndexNames.METADATA;
 
-    public PostgresRegister(RegisterName registerName,
+    public PostgresRegister(RegisterId registerId,
                             EntryLog entryLog,
                             ItemStore itemStore,
                             Index index,
                             Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
                             ItemValidator itemValidator,
                             EnvironmentValidator environmentValidator) {
-        this.registerName = registerName;
+        this.registerId = registerId;
         this.entryLog = entryLog;
         this.itemStore = itemStore;
         this.index = index;
@@ -189,7 +189,7 @@ public class PostgresRegister implements Register {
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
         if (!getRegisterMetadata().getFields().contains(key)) {
-            throw new NoSuchFieldException(registerName, key);
+            throw new NoSuchFieldException(registerId, key);
         }
 
         return index.findMax100RecordsByKeyValue(key, value);
@@ -238,9 +238,8 @@ public class PostgresRegister implements Register {
 
     //region Metadata
 
-    @Override
-    public RegisterName getRegisterName() {
-        return registerName;
+    public RegisterId getRegisterId() {
+        return registerId;
     }
 
     @Override
@@ -251,9 +250,9 @@ public class PostgresRegister implements Register {
     @Override
     public RegisterMetadata getRegisterMetadata() {
         if (registerMetadata == null) {
-            registerMetadata = getRecord("register:" + registerName.value(), defaultIndexForTypeSystem)
+            registerMetadata = getRecord("register:" + registerId.value(), defaultIndexForTypeSystem)
                     .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
-                    .orElseThrow(() -> new RegisterUndefinedException(registerName));
+                    .orElseThrow(() -> new RegisterUndefinedException(registerId));
         }
 
         return registerMetadata;
@@ -275,7 +274,7 @@ public class PostgresRegister implements Register {
     private Field getField(String fieldName) {
         return getRecord("field:" + fieldName, defaultIndexForTypeSystem)
                 .map(record -> extractObjectFromRecord(record, Field.class))
-                .orElseThrow(() -> new FieldUndefinedException(registerName, fieldName));
+                .orElseThrow(() -> new FieldUndefinedException(registerId, fieldName));
     }
 
     private <T> T extractObjectFromRecord(Record record, Class<T> clazz) {

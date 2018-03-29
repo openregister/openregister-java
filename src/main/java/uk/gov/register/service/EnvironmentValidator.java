@@ -20,10 +20,10 @@ public class EnvironmentValidator {
     }
 
     public void validateRegisterAgainstEnvironment(RegisterMetadata registerMetadata) {
-        RegisterMetadata environmentRegisterMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerMetadata.getRegisterName());
+        RegisterMetadata environmentRegisterMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerMetadata.getRegisterId());
 
         if (!RegisterComparer.equals(registerMetadata, environmentRegisterMetadata)) {
-            throw new RegisterValidationException(registerMetadata.getRegisterName());
+            throw new RegisterValidationException(registerMetadata.getRegisterId());
         }
     }
 

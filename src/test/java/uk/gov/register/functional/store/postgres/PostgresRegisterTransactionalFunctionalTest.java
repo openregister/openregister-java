@@ -192,21 +192,21 @@ public class PostgresRegisterTransactionalFunctionalTest {
         EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
         ItemValidator itemValidator = mock(ItemValidator.class);
         ItemStore itemStore = new ItemStoreImpl(dataAccessLayer);
-        RegisterName registerName = new RegisterName("address");
+        RegisterId registerId = new RegisterId("address");
         RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
-        when(registersConfiguration.getRegisterMetadata(registerName)).thenReturn(new RegisterMetadata(registerName, Arrays.asList("address"), "copyright", "registry", "text", "phase"));
+        when(registersConfiguration.getRegisterMetadata(registerId)).thenReturn(new RegisterMetadata(registerId, Arrays.asList("address"), "copyright", "registry", "text", "phase"));
         FieldsConfiguration fieldsConfiguration = mock(FieldsConfiguration.class);
-        when(fieldsConfiguration.getField("address")).thenReturn(Optional.of(new Field("address", "string", registerName, Cardinality.ONE, "A place in the UK with a postal address.")));
+        when(fieldsConfiguration.getField("address")).thenReturn(Optional.of(new Field("address", "string", registerId, Cardinality.ONE, "A place in the UK with a postal address.")));
         
         ConfigManager configManager = mock(ConfigManager.class);
         when(configManager.getRegistersConfiguration()).thenReturn(registersConfiguration);
         when(configManager.getFieldsConfiguration()).thenReturn(fieldsConfiguration);
         RegisterMetadata registerData = mock(RegisterMetadata.class);
-        when(registerData.getRegisterName()).thenReturn(new RegisterName("address"));
+        when(registerData.getRegisterId()).thenReturn(new RegisterId("address"));
 
         EnvironmentValidator environmentValidator = mock(EnvironmentValidator.class);
 
-        return new PostgresRegister(registerData.getRegisterName(),
+        return new PostgresRegister(registerData.getRegisterId(),
                 entryLog,
                 itemStore,
                 index,

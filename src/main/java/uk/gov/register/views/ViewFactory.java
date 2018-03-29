@@ -28,7 +28,7 @@ public class ViewFactory {
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
     private final Provider<RegisterLinkService> registerLinkService;
     private final ItemConverter itemConverter;
-    private final Provider<RegisterName> registerNameProvider;
+    private final Provider<RegisterId> registerIdProvider;
 
     @Inject
     public ViewFactory(final RequestContext requestContext,
@@ -39,7 +39,7 @@ public class ViewFactory {
                        final RegisterResolver registerResolver,
                        final Provider<RegisterReadOnly> register,
                        final Provider<RegisterLinkService> registerLinkService, final ItemConverter itemConverter,
-                       final Provider<RegisterName> registerNameProvider) {
+                       final Provider<RegisterId> registerIdProvider) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
@@ -49,7 +49,7 @@ public class ViewFactory {
         this.register = register;
         this.registerLinkService = registerLinkService;
         this.itemConverter = itemConverter;
-        this.registerNameProvider = registerNameProvider;
+        this.registerIdProvider = registerIdProvider;
     }
 
     public ExceptionView exceptionBadRequestView(final String message) {
@@ -158,7 +158,7 @@ public class ViewFactory {
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 getRecordsMediaView(records),
-                registerNameProvider,
+                registerIdProvider,
                 key);
     }
 
@@ -168,7 +168,7 @@ public class ViewFactory {
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 getEntriesView(entries),
-                registerNameProvider,
+                registerIdProvider,
                 key);
     }
 
@@ -178,7 +178,7 @@ public class ViewFactory {
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 getItemMediaView(item),
-                registerNameProvider,
+                registerIdProvider,
                 key);
     }
 

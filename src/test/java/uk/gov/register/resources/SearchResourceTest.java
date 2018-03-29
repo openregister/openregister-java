@@ -15,13 +15,11 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,14 +51,14 @@ public class SearchResourceTest {
     @Test(expected = NotFoundException.class)
     public void find_doesNotRedirect_whenKeyDoesNotExistAsFieldInRegister() throws Exception {
 
-        resource = new SearchResource(new RegisterName("school"), register);
+        resource = new SearchResource(new RegisterId("school"), register);
         resource.find("invalid-field-name", "United Kingdom");
     }
 
     @Test
     public void find_returns301_whenKeyExistsAsFieldInRegister() throws Exception {
         when(registerFieldsConfiguration.containsField("country-name")).thenReturn(true);
-        resource = new SearchResource(new RegisterName("school"), register);
+        resource = new SearchResource(new RegisterId("school"), register);
 
         Response r = (Response) resource.find("country-name", "United Kingdom");
         assertThat(r.getStatus(), equalTo(301));

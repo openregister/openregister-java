@@ -38,7 +38,7 @@ public class RegisterContext implements
         HomepageContentConfiguration,
         IndexConfiguration,
         ResourceConfiguration {
-    private RegisterName registerName;
+    private RegisterId registerId;
     private ConfigManager configManager;
     private final EnvironmentValidator environmentValidator;
     private RegisterLinkService registerLinkService;
@@ -53,11 +53,11 @@ public class RegisterContext implements
     private final ItemValidator itemValidator;
     private boolean hasConsistentState;
 
-    public RegisterContext(RegisterName registerName, ConfigManager configManager, EnvironmentValidator environmentValidator,
+    public RegisterContext(RegisterId registerId, ConfigManager configManager, EnvironmentValidator environmentValidator,
                            RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema,
                            boolean enableRegisterDataDelete, boolean enableDownloadResource,
                            List<String> indexNames, RegisterAuthenticator authenticator) {
-        this.registerName = registerName;
+        this.registerId = registerId;
         this.configManager = configManager;
         this.environmentValidator = environmentValidator;
         this.registerLinkService = registerLinkService;
@@ -69,16 +69,16 @@ public class RegisterContext implements
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
-        this.itemValidator = new ItemValidator(registerName);
+        this.itemValidator = new ItemValidator(registerId);
         this.hasConsistentState = true;
     }
 
-    public RegisterName getRegisterName() {
-        return registerName;
+    public RegisterId getRegisterId() {
+        return registerId;
     }
 
     public RegisterMetadata getRegisterMetadata() {
-        return configManager.getRegistersConfiguration().getRegisterMetadata(registerName);
+        return configManager.getRegistersConfiguration().getRegisterMetadata(registerId);
     }
 
     public int migrate() {
@@ -101,7 +101,7 @@ public class RegisterContext implements
     public Register buildOnDemandRegister() {
         DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
 
-        return new PostgresRegister(registerName,
+        return new PostgresRegister(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
                 new ItemStoreImpl(dataAccessLayer),
                 new Index(dataAccessLayer),
@@ -111,7 +111,7 @@ public class RegisterContext implements
     }
 
     private Register buildTransactionalRegister(DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
-        return new PostgresRegister(registerName,
+        return new PostgresRegister(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
                 new ItemStoreImpl(dataAccessLayer),
                 new Index(dataAccessLayer),
@@ -156,7 +156,7 @@ public class RegisterContext implements
         if (enableRegisterDataDelete) {
             flyway.clean();
             configManager.refreshConfig();
-            registerLinkService.updateRegisterLinks(registerName);
+            registerLinkService.updateRegisterLinks(registerId);
             memoizationStore.set(new InMemoryPowOfTwoNoLeaves());
             flyway.migrate();
 

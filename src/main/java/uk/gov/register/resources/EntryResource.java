@@ -3,7 +3,7 @@ package uk.gov.register.resources;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.AttributionView;
@@ -26,7 +26,7 @@ public class EntryResource {
     private final ViewFactory viewFactory;
     private final RequestContext requestContext;
     private final HttpServletResponseAdapter httpServletResponseAdapter;
-    private final RegisterName registerPrimaryKey;
+    private final RegisterId registerPrimaryKey;
 
     @Inject
     public EntryResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
@@ -34,7 +34,7 @@ public class EntryResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        this.registerPrimaryKey = register.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterId();
     }
 
     @GET

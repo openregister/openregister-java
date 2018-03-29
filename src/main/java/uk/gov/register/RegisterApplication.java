@@ -153,7 +153,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(RegisterSerialisationFormatService.class).to(RegisterSerialisationFormatService.class);
 
                 bind(RequestContext.class).to(RequestContext.class).to(SchemeContext.class);
-                bindFactory(Factories.RegisterNameProvider.class).to(RegisterName.class);
+                bindFactory(Factories.RegisterIdProvider.class).to(RegisterId.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);

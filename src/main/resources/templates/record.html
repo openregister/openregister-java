@@ -17,7 +17,7 @@
             <th:block th:utext="${content.entryKey}"></th:block>
           </h1>
           <p th:if="${#bools.isTrue(registerId.value() == 'register')}">
-            <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterName(content.entryKey))}"
+            <a th:href="${registerResolver.baseUriFor(new uk.gov.register.core.RegisterId(content.entryKey))}"
                th:utext="${'View ' + content.entryKey + ' register'}">View this register.</a>
           </p>
           <div th:include="fragments/download-and-preview-single.html::download-and-preview-single('record')"></div>

@@ -64,7 +64,7 @@ public class PostgresRegisterTest {
 
         Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = ImmutableMap.of(EntryType.system, Arrays.asList(systemIndexFunction), EntryType.user, Arrays.asList(indexFunction));
 
-        register = new PostgresRegister(new RegisterName("postcode"),
+        register = new PostgresRegister(new RegisterId("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO),
                 index, indexFunctionsByEntryType, itemValidator, environmentValidator);
 

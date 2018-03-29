@@ -55,7 +55,7 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
         return new CsvRepresentation<>(Item.csvSchema(fieldNames), fieldValueMap);
     }
 
-    public String itemsTo(final String mediaType, final Provider<RegisterName> registerNameProvider, final RegisterResolver registerResolver) {
+    public String itemsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
         final ByteArrayOutputStream outputStream;
         final ItemTurtleWriter entryTurtleWriter;
         String registerInTextFormatted = StringUtils.EMPTY;
@@ -63,7 +63,7 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
         try {
             if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
                 outputStream = new ByteArrayOutputStream();
-                entryTurtleWriter = new ItemTurtleWriter(registerNameProvider, registerResolver);
+                entryTurtleWriter = new ItemTurtleWriter(registerIdProvider, registerResolver);
 
                 entryTurtleWriter.writeTo(this, EntryListView.class, EntryListView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
 

@@ -10,16 +10,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * is the Curie as a string, while the "linkKey" is the second half of the Curie (after the colon).
  */
 public class RegisterLinkValue extends LinkValue implements FieldValue {
-    private final RegisterName targetRegister;
+    private final RegisterId targetRegister;
     private final String value;
     private final String linkKey;
 
-    public RegisterLinkValue(RegisterName registerName, String value) {
-        this(registerName, value, value);
+    public RegisterLinkValue(RegisterId registerId, String value) {
+        this(registerId, value, value);
     }
 
-    private RegisterLinkValue(RegisterName registerName, String value, String linkKey){
-        this.targetRegister = registerName;
+    private RegisterLinkValue(RegisterId registerId, String value, String linkKey){
+        this.targetRegister = registerId;
         this.value = value;
         this.linkKey = linkKey;
     }
@@ -35,7 +35,7 @@ public class RegisterLinkValue extends LinkValue implements FieldValue {
         return true;
     }
 
-    public RegisterName getTargetRegister() {
+    public RegisterId getTargetRegister() {
         return targetRegister;
     }
 
@@ -45,7 +45,7 @@ public class RegisterLinkValue extends LinkValue implements FieldValue {
 
     public static class CurieValue extends RegisterLinkValue {
         public CurieValue(String curieValue) {
-            super(new RegisterName(curieValue.split(":")[0]), curieValue, curieValue.split(":")[1]);
+            super(new RegisterId(curieValue.split(":")[0]), curieValue, curieValue.split(":")[1]);
         }
     }
 }

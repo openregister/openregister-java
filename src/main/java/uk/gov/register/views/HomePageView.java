@@ -76,7 +76,7 @@ public class HomePageView extends AttributionView<Object> {
 
     @SuppressWarnings("unused, used from template")
     public URI getLinkToRegisterRegister() {
-        return getLinkResolver().resolve(new RegisterName("register"), getRegisterId().value());
+        return getLinkResolver().resolve(new RegisterId("register"), getRegisterId().value());
     }
 
     @SuppressWarnings("unused, used from template")

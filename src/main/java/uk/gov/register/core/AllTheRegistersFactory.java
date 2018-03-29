@@ -12,31 +12,31 @@ import static java.util.stream.Collectors.toMap;
 
 public class AllTheRegistersFactory {
     private RegisterContextFactory defaultRegisterFactory;
-    private final Map<RegisterName, RegisterContextFactory> otherRegisters;
-    private final RegisterName defaultRegisterName;
+    private final Map<RegisterId, RegisterContextFactory> otherRegisters;
+    private final RegisterId defaultRegisterId;
 
-    public AllTheRegistersFactory(RegisterContextFactory defaultRegisterFactory, Map<RegisterName, RegisterContextFactory> otherRegisters, RegisterName defaultRegisterName) {
+    public AllTheRegistersFactory(RegisterContextFactory defaultRegisterFactory, Map<RegisterId, RegisterContextFactory> otherRegisters, RegisterId defaultRegisterId) {
         this.defaultRegisterFactory = defaultRegisterFactory;
         this.otherRegisters = otherRegisters;
-        this.defaultRegisterName = defaultRegisterName;
+        this.defaultRegisterId = defaultRegisterId;
     }
 
     public AllTheRegisters build(ConfigManager configManager, DatabaseManager databaseManager, RegisterLinkService registerLinkService, EnvironmentValidator environmentValidator, RegisterConfigConfiguration registerConfigConfiguration) {
-        Map<RegisterName, RegisterContext> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
+        Map<RegisterId, RegisterContext> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
                 e -> buildRegister(e.getKey(), e.getValue(), configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration)));
         return new AllTheRegisters(
-                defaultRegisterFactory.build(defaultRegisterName, configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration),
+                defaultRegisterFactory.build(defaultRegisterId, configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration),
                 builtRegisters
         );
     }
 
-    private RegisterContext buildRegister(RegisterName registerName, 
+    private RegisterContext buildRegister(RegisterId registerId,
           RegisterContextFactory registerFactory, 
           ConfigManager configManager, 
           DatabaseManager databaseManager, 
           EnvironmentValidator environmentValidator, 
           RegisterLinkService registerLinkService, 
           RegisterConfigConfiguration registerConfigConfiguration) {
-        return registerFactory.build(registerName, configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration);
+        return registerFactory.build(registerId, configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration);
     }
 }

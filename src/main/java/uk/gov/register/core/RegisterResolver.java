@@ -3,7 +3,7 @@ package uk.gov.register.core;
 import java.net.URI;
 
 public interface RegisterResolver {
-    URI baseUriFor(RegisterName name);
+    URI baseUriFor(RegisterId name);
 
     default LinkResolver getLinkResolver() {
         return new UriTemplateLinkResolver(this);

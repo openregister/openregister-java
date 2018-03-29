@@ -64,25 +64,25 @@ public class RegisterContextFactory {
         this.credentials = credentials;
     }
 
-    private FlywayFactory getFlywayFactory(RegisterName registerName, Optional<String> custodianName, RegisterConfigConfiguration registerConfigConfiguration) {
+    private FlywayFactory getFlywayFactory(RegisterId registerId, Optional<String> custodianName, RegisterConfigConfiguration registerConfigConfiguration) {
         FlywayFactory flywayFactory = new FlywayFactory();
         flywayFactory.setLocations(Arrays.asList("/sql", "uk.gov.migration"));
-        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", registerName.value(), "custodianName", custodianName.orElse(""), "fieldsYamlUrl",registerConfigConfiguration.getFieldsYamlLocation(),
+        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", registerId.value(), "custodianName", custodianName.orElse(""), "fieldsYamlUrl",registerConfigConfiguration.getFieldsYamlLocation(),
                 "registersYamlUrl", registerConfigConfiguration.getRegistersYamlLocation()));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }
 
-    public RegisterContext build(RegisterName registerName, ConfigManager configManager, DatabaseManager databaseManager,
+    public RegisterContext build(RegisterId registerId, ConfigManager configManager, DatabaseManager databaseManager,
                                  EnvironmentValidator environmentValidator, RegisterLinkService registerLinkService,
                                  RegisterConfigConfiguration registerConfigConfiguration) {
         return new RegisterContext(
-                registerName,
+                registerId,
                 configManager,
                 environmentValidator,
                 registerLinkService,
                 databaseManager.getDbi(),
-                getFlywayFactory(registerName, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),
+                getFlywayFactory(registerId, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),
                 schema,
                 enableRegisterDataDelete,
                 enableDownloadResource,

@@ -1,15 +1,13 @@
 package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import uk.gov.register.core.Field;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.util.ResourceYamlFileReader;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,11 +21,11 @@ public class RegistersConfiguration {
         registers = configRecords.stream().map(RegisterConfigRecord::getSingleItem).collect(toList());
     }
 
-    public RegisterMetadata getRegisterMetadata(RegisterName registerName) {
+    public RegisterMetadata getRegisterMetadata(RegisterId registerId) {
         try {
-            return registers.stream().filter(f -> Objects.equals(f.getRegisterName(), registerName)).findFirst().get();
+            return registers.stream().filter(f -> Objects.equals(f.getRegisterId(), registerId)).findFirst().get();
         } catch (RuntimeException e) {
-            throw new RuntimeException("Cannot get register data for " + registerName, e);
+            throw new RuntimeException("Cannot get register data for " + registerId, e);
         }
     }
 

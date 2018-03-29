@@ -106,7 +106,7 @@ public class RecordsView implements CsvRepresentationView {
         return resolveAllItemLinks;
     }
 
-    public String recordsTo(final String mediaType, final Provider<RegisterName> registerNameProvider, final RegisterResolver registerResolver) {
+    public String recordsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
         final ByteArrayOutputStream outputStream;
         final RecordsTurtleWriter recordsTurtleWriter;
         String registerInTextFormatted = StringUtils.EMPTY;
@@ -114,7 +114,7 @@ public class RecordsView implements CsvRepresentationView {
         try {
             if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
                 outputStream = new ByteArrayOutputStream();
-                recordsTurtleWriter = new RecordsTurtleWriter(registerNameProvider, registerResolver);
+                recordsTurtleWriter = new RecordsTurtleWriter(registerIdProvider, registerResolver);
 
                 recordsTurtleWriter.writeTo(this, RecordsView.class, RecordsView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
 

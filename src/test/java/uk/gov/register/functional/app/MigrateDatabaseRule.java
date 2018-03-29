@@ -29,10 +29,10 @@ public class MigrateDatabaseRule extends ExternalResource {
         }
     }
 
-    private FlywayFactory getFlywayFactory(String registerName) {
+    private FlywayFactory getFlywayFactory(String registerId) {
         FlywayFactory flywayFactory = new FlywayFactory();
         flywayFactory.setLocations(Collections.singletonList("/sql"));
-        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", registerName));
+        flywayFactory.setPlaceholders(Collections.singletonMap("registerId", registerId));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }

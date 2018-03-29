@@ -1,7 +1,6 @@
 package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.views.View;
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.serialization.RSFFormatter;
@@ -23,7 +22,7 @@ public class DataDownload {
 
     private final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
-    private final RegisterName registerPrimaryKey;
+    private final RegisterId registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
     private final RegisterSerialisationFormatService rsfService;
     private final RSFFormatter rsfFormatter;
@@ -36,7 +35,7 @@ public class DataDownload {
                         RegisterSerialisationFormatService rsfService) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.registerPrimaryKey = register.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterId();
         this.resourceConfiguration = resourceConfiguration;
         this.rsfService = rsfService;
         this.rsfFormatter = new RSFFormatter();

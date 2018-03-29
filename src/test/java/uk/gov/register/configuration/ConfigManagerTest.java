@@ -120,9 +120,9 @@ public class ConfigManagerTest {
         configManager.refreshConfig();
 
         Collection<RegisterMetadata> allRegisterMetaData = configManager.getRegistersConfiguration().getAllRegisterMetaData();
-        List<String> registerNames = allRegisterMetaData.stream().map(md -> md.getRegisterName().toString()).collect(toList());
+        List<String> registerIds = allRegisterMetaData.stream().map(md -> md.getRegisterId().toString()).collect(toList());
 
-        assertThat(registerNames, hasItems("food-premises","country"));
+        assertThat(registerIds, hasItems("food-premises","country"));
     }
 
     @Test(expected = NoSuchConfigException.class)
