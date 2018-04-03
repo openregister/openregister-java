@@ -4,7 +4,6 @@ import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.DatabaseManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.RegisterLinkService;
 
 import java.util.Map;
 
@@ -21,11 +20,11 @@ public class AllTheRegistersFactory {
         this.defaultRegisterId = defaultRegisterId;
     }
 
-    public AllTheRegisters build(ConfigManager configManager, DatabaseManager databaseManager, RegisterLinkService registerLinkService, EnvironmentValidator environmentValidator, RegisterConfigConfiguration registerConfigConfiguration) {
+    public AllTheRegisters build(ConfigManager configManager, DatabaseManager databaseManager, EnvironmentValidator environmentValidator, RegisterConfigConfiguration registerConfigConfiguration) {
         Map<RegisterId, RegisterContext> builtRegisters = otherRegisters.entrySet().stream().collect(toMap(Map.Entry::getKey,
-                e -> buildRegister(e.getKey(), e.getValue(), configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration)));
+                e -> buildRegister(e.getKey(), e.getValue(), configManager, databaseManager, environmentValidator, registerConfigConfiguration)));
         return new AllTheRegisters(
-                defaultRegisterFactory.build(defaultRegisterId, configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration),
+                defaultRegisterFactory.build(defaultRegisterId, configManager, databaseManager, environmentValidator, registerConfigConfiguration),
                 builtRegisters
         );
     }
@@ -35,8 +34,7 @@ public class AllTheRegistersFactory {
           ConfigManager configManager, 
           DatabaseManager databaseManager, 
           EnvironmentValidator environmentValidator, 
-          RegisterLinkService registerLinkService, 
           RegisterConfigConfiguration registerConfigConfiguration) {
-        return registerFactory.build(registerId, configManager, databaseManager, environmentValidator, registerLinkService, registerConfigConfiguration);
+        return registerFactory.build(registerId, configManager, databaseManager, environmentValidator, registerConfigConfiguration);
     }
 }

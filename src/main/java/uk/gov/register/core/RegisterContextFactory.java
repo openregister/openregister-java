@@ -10,7 +10,6 @@ import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.DatabaseManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.RegisterLinkService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -74,13 +73,12 @@ public class RegisterContextFactory {
     }
 
     public RegisterContext build(RegisterId registerId, ConfigManager configManager, DatabaseManager databaseManager,
-                                 EnvironmentValidator environmentValidator, RegisterLinkService registerLinkService,
+                                 EnvironmentValidator environmentValidator,
                                  RegisterConfigConfiguration registerConfigConfiguration) {
         return new RegisterContext(
                 registerId,
                 configManager,
                 environmentValidator,
-                registerLinkService,
                 databaseManager.getDbi(),
                 getFlywayFactory(registerId, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),
                 schema,

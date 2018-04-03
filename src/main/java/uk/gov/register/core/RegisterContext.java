@@ -19,7 +19,6 @@ import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
-import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
@@ -41,7 +40,6 @@ public class RegisterContext implements
     private RegisterId registerId;
     private ConfigManager configManager;
     private final EnvironmentValidator environmentValidator;
-    private RegisterLinkService registerLinkService;
     private AtomicReference<MemoizationStore> memoizationStore;
     private DBI dbi;
     private Flyway flyway;
@@ -54,13 +52,12 @@ public class RegisterContext implements
     private boolean hasConsistentState;
 
     public RegisterContext(RegisterId registerId, ConfigManager configManager, EnvironmentValidator environmentValidator,
-                           RegisterLinkService registerLinkService, DBI dbi, Flyway flyway, String schema,
+                           DBI dbi, Flyway flyway, String schema,
                            boolean enableRegisterDataDelete, boolean enableDownloadResource,
                            List<String> indexNames, RegisterAuthenticator authenticator) {
         this.registerId = registerId;
         this.configManager = configManager;
         this.environmentValidator = environmentValidator;
-        this.registerLinkService = registerLinkService;
         this.dbi = dbi;
         this.flyway = flyway;
         this.schema = schema;
@@ -156,7 +153,6 @@ public class RegisterContext implements
         if (enableRegisterDataDelete) {
             flyway.clean();
             configManager.refreshConfig();
-            registerLinkService.updateRegisterLinks(registerId);
             memoizationStore.set(new InMemoryPowOfTwoNoLeaves());
             flyway.migrate();
 

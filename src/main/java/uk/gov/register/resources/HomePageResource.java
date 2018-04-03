@@ -28,12 +28,7 @@ public class HomePageResource {
     @Produces({ExtraMediaType.TEXT_HTML})
     @Timed
     public View home() {
-        return viewFactory.homePageView(
-                register.getTotalRecords(),
-                register.getTotalEntries(),
-                register.getLastUpdatedTime(),
-                register.getCustodianName()
-        );
+        return viewFactory.homePageView();
     }
 
     @GET

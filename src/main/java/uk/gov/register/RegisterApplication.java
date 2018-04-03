@@ -38,7 +38,6 @@ import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.service.RegisterLinkService;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.CanonicalJsonMapper;
@@ -106,9 +105,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         DBIFactory dbiFactory = new DBIFactory();
         DatabaseManager databaseManager = new DatabaseManager(configuration, environment, dbiFactory, isRunningOnCloudFoundry());
 
-        RegisterLinkService registerLinkService = new RegisterLinkService(configManager);
-
-        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, registerLinkService, environmentValidator, configuration);
+        AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, environmentValidator, configuration);
         allTheRegisters.stream().forEach(registerContext -> {
             registerContext.migrate();
             registerContext.validate();
@@ -142,7 +139,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
                 bind(configManager).to(ConfigManager.class);
                 bind(environmentValidator).to(EnvironmentValidator.class);
-                bind(registerLinkService).to(RegisterLinkService.class);
                 bind(new PublicBodiesConfiguration(Optional.ofNullable(System.getProperty("publicBodiesYaml")))).to(PublicBodiesConfiguration.class);
 
                 bind(CanonicalJsonMapper.class).to(CanonicalJsonMapper.class);
