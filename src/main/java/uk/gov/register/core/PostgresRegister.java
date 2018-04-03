@@ -238,8 +238,14 @@ public class PostgresRegister implements Register {
 
     //region Metadata
 
+    @Override
     public RegisterId getRegisterId() {
         return registerId;
+    }
+
+    @Override
+    public String getRegisterName() {
+        return getMetadataField("register-name").orElse(getRegisterId().getFriendlyRegisterName());
     }
 
     @Override
