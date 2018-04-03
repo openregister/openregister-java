@@ -85,10 +85,6 @@ public class ViewFactory {
         );
     }
 
-    public DownloadPageView downloadPageView(final Boolean enableDownloadResource) {
-        return new DownloadPageView(requestContext, register.get(), enableDownloadResource, registerResolver);
-    }
-
     public RegisterDetailView registerDetailView(final int totalRecords, final int totalEntries, final Optional<Instant> lastUpdated, final Optional<String> custodianName) {
         return new RegisterDetailView(totalRecords, totalEntries, lastUpdated, register.get().getRegisterMetadata(),
                 registerDomainConfiguration.getRegisterDomain(), custodianName);
