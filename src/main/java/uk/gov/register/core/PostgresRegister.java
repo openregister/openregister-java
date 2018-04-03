@@ -244,8 +244,8 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public String getRegisterName() {
-        return getMetadataField("register-name").orElse(getRegisterId().getFriendlyRegisterName());
+    public Optional<String> getRegisterName() {
+        return getMetadataField("register-name");
     }
 
     @Override

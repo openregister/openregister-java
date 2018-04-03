@@ -43,7 +43,7 @@ public interface RegisterReadOnly {
     Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
 
     RegisterId getRegisterId();
-    String getRegisterName();
+    Optional<String> getRegisterName();
     Optional<String> getCustodianName();
 
     RegisterMetadata getRegisterMetadata();

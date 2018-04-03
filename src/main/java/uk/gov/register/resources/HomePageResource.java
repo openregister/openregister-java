@@ -15,12 +15,10 @@ import javax.ws.rs.core.MediaType;
 @Path("/")
 @Timed
 public class HomePageResource {
-    private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
 
     @Inject
-    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory) {
-        this.register = register;
+    public HomePageResource(ViewFactory viewFactory) {
         this.viewFactory = viewFactory;
     }
 
