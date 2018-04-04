@@ -91,6 +91,12 @@
    ]]></notes>
    <gav regex="true">^org\.postgresql:postgresql:.*$</gav>
    <cve>CVE-2017-8806</cve>
-</suppress>
-  
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: dropwizard-views-1.1.0.jar
+   ]]></notes>
+        <gav regex="true">^io\.dropwizard:dropwizard-views:.*$</gav>
+        <cpe>cpe:/a:views_project:views</cpe>
+    </suppress>
 </suppressions>
