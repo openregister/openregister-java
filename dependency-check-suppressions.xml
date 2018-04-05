@@ -99,4 +99,11 @@
         <gav regex="true">^io\.dropwizard:dropwizard-views:.*$</gav>
         <cpe>cpe:/a:views_project:views</cpe>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: xercesImpl-2.11.0.jar
+   ]]></notes>
+        <gav regex="true">^xerces:xercesImpl:.*$</gav>
+        <cve>CVE-2012-0881</cve>
+    </suppress>
 </suppressions>
