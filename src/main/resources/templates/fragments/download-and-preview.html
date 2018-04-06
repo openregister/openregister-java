@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-  <div th:fragment="download-and-preview(records_or_entries_string)">
+  <div th:fragment="download-and-preview">
     <p class="data-representations" data-click-events="" data-click-category="Content" data-click-action="Register Download">
-      <th:block th:if="${pagination.totalEntries} le 5000">Get this data as</th:block>
-      <th:block th:if="${pagination.totalEntries} gt 5000">Get the first 5,000 records as</th:block>
-      <a th:href="${'/' + records_or_entries_string + '.json' + pagination.formattedPageQueryParams }" data-download-type="JSON">JSON</a>,
-      <a th:href="${'/' + records_or_entries_string + '.yaml' + pagination.formattedPageQueryParams }" data-download-type="YAML">YAML</a>,
-      <a th:href="${'/' + records_or_entries_string + '.ttl' + pagination.formattedPageQueryParams }" data-download-type="TTL">TTL</a>,
-      <a th:href="${'/' + records_or_entries_string + '.csv' + pagination.formattedPageQueryParams }" data-download-type="CSV">CSV</a> or
-      <a th:href="${'/' + records_or_entries_string + '.tsv' + pagination.formattedPageQueryParams }" data-download-type="TSV">TSV</a>.
+      Get this data as
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(httpServletRequest, 'json')}" data-download-type="JSON">JSON</a>,
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(httpServletRequest, 'yaml')}" data-download-type="YAML">YAML</a>,
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(httpServletRequest, 'ttl')}" data-download-type="TTL">TTL</a>,
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(httpServletRequest, 'csv')}" data-download-type="CSV">CSV</a> or
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(httpServletRequest, 'tsv')}" data-download-type="TSV">TSV</a>.
     </p>
   </div>
 </html>
