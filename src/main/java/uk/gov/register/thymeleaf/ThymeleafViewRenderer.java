@@ -3,8 +3,9 @@ package uk.gov.register.thymeleaf;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.resourceresolver.FileResourceResolver;
-import org.thymeleaf.templateresolver.TemplateResolver;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
@@ -28,14 +29,13 @@ public class ThymeleafViewRenderer implements ViewRenderer {
 
         this.suffix = suffix;
 
-        TemplateResolver templateResolver = new TemplateResolver();
-
+        AbstractConfigurableTemplateResolver templateResolver;
         String baseDirForTemplates = System.getProperty("baseDirForTemplates");
         if (baseDirForTemplates != null) {
-            templateResolver.setResourceResolver(new FileResourceResolver());
+            templateResolver = new FileTemplateResolver();
             templateResolver.setPrefix(baseDirForTemplates + prefix);
         } else {
-            templateResolver.setResourceResolver(new ThymeleafResourceResolver());
+            templateResolver = new ClassLoaderTemplateResolver();
             templateResolver.setPrefix(prefix);
         }
 
