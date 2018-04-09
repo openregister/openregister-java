@@ -49,7 +49,7 @@ ext {
 
     markdown = 'org.markdownj:markdownj-core:0.4'
 
-    thymeleaf = 'org.thymeleaf:thymeleaf:2.1.5.RELEASE'
+    thymeleaf = 'org.thymeleaf:thymeleaf:3.0.9.RELEASE'
 
     dropwizardLogstash = "uk.gov.ida:dropwizard-logstash:1.1.2-build_46"
 

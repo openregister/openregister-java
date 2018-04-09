@@ -5,9 +5,9 @@
       Get this data as
       <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.json'}" data-download-type="JSON">JSON</a>,
       <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.yaml' }" data-download-type="YAML">YAML</a>,
-      <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.ttl'}" data-download-type="TTL">TTL</a>
-      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'csv')}" data-download-type="CSV">CSV</a> or
-      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(#httpServletRequest, 'tsv')}" data-download-type="TSV">TSV</a>.
+      <a th:href="${'/' + records_or_entries_or_items_string + '/' + (#strings.equals(records_or_entries_or_items_string, 'record') ? content.entryKey : (#strings.equals(records_or_entries_or_items_string, 'entry') ? content.entryNumber : content.itemHash)) + '.ttl'}" data-download-type="TTL">TTL</a>,
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(httpServletRequest, 'csv')}" data-download-type="CSV">CSV</a> or
+      <a th:href="${@uk.gov.register.util.HtmlViewSupport@representationLink(httpServletRequest, 'tsv')}" data-download-type="TSV">TSV</a>.
     </p>
   </div>
 </html>
