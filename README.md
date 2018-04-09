@@ -56,7 +56,7 @@ See detailed steps for experimenting locally [here](RUNNING_LOCALLY.md).
 - `File > Open` your checkout directory
 - `Run > Edit Configurations`
 - Edit `RegisterRunner`
-- Use classpath of module: `openregister-java_main`
+- Use classpath of module: `openregister-java`
 - JRE: *select your installed JRE e.g.* `1.8`
 - `Run > Run... > RegisterRunner`
 
