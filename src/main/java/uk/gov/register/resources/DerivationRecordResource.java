@@ -4,7 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.configuration.IndexConfiguration;
 import uk.gov.register.core.Record;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.*;
@@ -23,7 +23,7 @@ public class DerivationRecordResource {
     private final RequestContext requestContext;
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
-    private final RegisterName registerPrimaryKey;
+    private final RegisterId registerPrimaryKey;
     private final Provider<IndexConfiguration> indexConfiguration;
 
     @Inject
@@ -33,7 +33,7 @@ public class DerivationRecordResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        this.registerPrimaryKey = register.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterId();
         this.indexConfiguration = indexConfiguration;
     }
 
@@ -43,7 +43,7 @@ public class DerivationRecordResource {
     public RecordView getRecordByKey(@PathParam("index-name") String indexName, @PathParam("record-key") String key) {
         ensureIndexIsAccessible(indexName);
 
-        return register.getDerivationRecord(key, indexName)
+        return register.getRecord(key, indexName)
                 .map(r -> viewFactory.getRecordMediaView(r))
                 .orElseThrow(NotFoundException::new);
     }
@@ -90,7 +90,7 @@ public class DerivationRecordResource {
     }
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize, String indexName) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalDerivationRecords(indexName));
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords(indexName));
 
         if (pagination.hasNextPage()) {
             httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
@@ -109,7 +109,7 @@ public class DerivationRecordResource {
     }
 
     private RecordsView getRecordsView(int limit, int offset, String indexName) {
-        List<Record> records = register.getDerivationRecords(limit, offset, indexName);
+        List<Record> records = register.getRecords(limit, offset, indexName);
         return viewFactory.getIndexRecordsMediaView(records);
     }
 }

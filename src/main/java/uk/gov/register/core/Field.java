@@ -12,14 +12,14 @@ import java.util.Optional;
 public class Field {
     public final String fieldName;
     final Datatype datatype;
-    final Optional<RegisterName> register;
+    final Optional<RegisterId> register;
     final Cardinality cardinality;
     final String text;
 
     @JsonCreator
     public Field(@JsonProperty("field") String fieldName,
                  @JsonProperty("datatype") String datatype,
-                 @JsonProperty("register") RegisterName register,
+                 @JsonProperty("register") RegisterId register,
                  @JsonProperty("cardinality") Cardinality cardinality,
                  @JsonProperty("text") String text) {
         this.fieldName = fieldName;
@@ -29,7 +29,7 @@ public class Field {
         this.datatype = DatatypeFactory.get(datatype);
     }
 
-    public Optional<RegisterName> getRegister() {
+    public Optional<RegisterId> getRegister() {
         return register;
     }
 

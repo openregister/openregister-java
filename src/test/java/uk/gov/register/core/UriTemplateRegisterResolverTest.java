@@ -13,7 +13,7 @@ public class UriTemplateRegisterResolverTest {
 
     @Test
     public void linkValueReturnsLink() {
-        assertThat(localResolver.baseUriFor(new RegisterName("address")), is(URI.create("http://address.openregister.dev:8080")));
-        assertThat(prodResolver.baseUriFor(new RegisterName("address")), is(URI.create("https://address.register.gov.uk")));
+        assertThat(localResolver.baseUriFor(new RegisterId("address")), is(URI.create("http://address.openregister.dev:8080")));
+        assertThat(prodResolver.baseUriFor(new RegisterId("address")), is(URI.create("https://address.register.gov.uk")));
     }
 }

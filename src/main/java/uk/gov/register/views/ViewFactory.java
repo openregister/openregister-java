@@ -8,7 +8,6 @@ import uk.gov.register.core.*;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.service.RegisterLinkService;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -26,9 +25,8 @@ public class ViewFactory {
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
-    private final Provider<RegisterLinkService> registerLinkService;
     private final ItemConverter itemConverter;
-    private final Provider<RegisterName> registerNameProvider;
+    private final Provider<RegisterId> registerIdProvider;
 
     @Inject
     public ViewFactory(final RequestContext requestContext,
@@ -38,8 +36,8 @@ public class ViewFactory {
                        final Provider<HomepageContentConfiguration> homepageContentConfiguration,
                        final RegisterResolver registerResolver,
                        final Provider<RegisterReadOnly> register,
-                       final Provider<RegisterLinkService> registerLinkService, final ItemConverter itemConverter,
-                       final Provider<RegisterName> registerNameProvider) {
+                       final ItemConverter itemConverter,
+                       final Provider<RegisterId> registerIdProvider) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
@@ -47,9 +45,8 @@ public class ViewFactory {
         this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
-        this.registerLinkService = registerLinkService;
         this.itemConverter = itemConverter;
-        this.registerNameProvider = registerNameProvider;
+        this.registerIdProvider = registerIdProvider;
     }
 
     public ExceptionView exceptionBadRequestView(final String message) {
@@ -76,26 +73,16 @@ public class ViewFactory {
         return new ExceptionView(requestContext, heading, message, register.get(), registerResolver);
     }
 
-    public HomePageView homePageView(final int totalRecords, final int totalEntries, final Optional<Instant> lastUpdated, final Optional<String> custodianName) {
+    public HomePageView homePageView() {
         return new HomePageView(
                 getRegistry(),
                 getBranding(),
                 requestContext,
-                totalRecords,
-                totalEntries,
-                lastUpdated,
-                custodianName,
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 registerResolver,
-                getFields(),
-                registerLinkService.get(),
                 register.get()
         );
-    }
-
-    public DownloadPageView downloadPageView(final Boolean enableDownloadResource) {
-        return new DownloadPageView(requestContext, register.get(), enableDownloadResource, registerResolver);
     }
 
     public RegisterDetailView registerDetailView(final int totalRecords, final int totalEntries, final Optional<Instant> lastUpdated, final Optional<String> custodianName) {
@@ -158,7 +145,7 @@ public class ViewFactory {
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 getRecordsMediaView(records),
-                registerNameProvider,
+                registerIdProvider,
                 key);
     }
 
@@ -168,7 +155,7 @@ public class ViewFactory {
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 getEntriesView(entries),
-                registerNameProvider,
+                registerIdProvider,
                 key);
     }
 
@@ -178,7 +165,7 @@ public class ViewFactory {
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 getItemMediaView(item),
-                registerNameProvider,
+                registerIdProvider,
                 key);
     }
 

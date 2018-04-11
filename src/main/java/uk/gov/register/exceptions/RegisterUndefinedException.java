@@ -1,9 +1,9 @@
 package uk.gov.register.exceptions;
 
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 
 public class RegisterUndefinedException extends RuntimeException {
-    public RegisterUndefinedException(RegisterName registerName) {
-        super("Register undefined for " + registerName.value());
+    public RegisterUndefinedException(RegisterId registerId) {
+        super("Register undefined for " + registerId.value());
     }
 }

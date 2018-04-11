@@ -3,7 +3,6 @@ package uk.gov.register.serialization;
 import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
@@ -87,7 +86,7 @@ public class RSFExecutor {
             if (hashRefLine.containsKey(hashValue)) {
                 hashRefLine.put(hashValue, 0);
             } else {
-                Optional<Item> item = register.getItemBySha256(hashValue);
+                Optional<Item> item = register.getItem(hashValue);
                 if (!item.isPresent()) {
                     return RegisterResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
                 } else {

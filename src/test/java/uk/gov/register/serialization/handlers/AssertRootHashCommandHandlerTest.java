@@ -89,7 +89,7 @@ public class AssertRootHashCommandHandlerTest {
 
         RegisterResult registerResult = sutHandler.execute(commandWithInvalidArguments, register);
 
-        verify(register, never()).putItem(any());
+        verify(register, never()).addItem(any());
         assertThat(registerResult.isSuccessful(), equalTo(false));
         assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
         assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));

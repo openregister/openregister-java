@@ -56,7 +56,7 @@ public class AddItemCommandHandlerTest {
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
 
-        verify(register, times(1)).putItem(expectedItem);
+        verify(register, times(1)).addItem(expectedItem);
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
@@ -66,7 +66,7 @@ public class AddItemCommandHandlerTest {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).putItem(any(Item.class));
+        }).when(register).addItem(any(Item.class));
 
         RegisterResult registerResult = sutHandler.execute(addItemCommand, register);
 
@@ -81,7 +81,7 @@ public class AddItemCommandHandlerTest {
 
         RegisterResult registerResult = sutHandler.execute(commandWithInvalidArguments, register);
 
-        verify(register, never()).putItem(any());
+        verify(register, never()).addItem(any());
         assertThat(registerResult.isSuccessful(), equalTo(false));
         assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
         assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));

@@ -30,7 +30,7 @@ public class PreviewItemsResource {
     @Timed
     public View jsonByKeyPreview(@PathParam("media-type") final String mediaType, @PathParam("item-hash") final String itemHash) {
         final HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
-        final Item item = register.getItemBySha256(hash)
+        final Item item = register.getItem(hash)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
 
         return viewFactory.previewItemPageView(item, itemHash, ExtraMediaType.transform(mediaType));

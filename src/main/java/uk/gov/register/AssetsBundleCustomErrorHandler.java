@@ -13,7 +13,7 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 import uk.gov.register.core.AllTheRegisters;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.db.Factories;
 
 import javax.servlet.ServletContext;
@@ -61,14 +61,14 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         // so we have to manually new up the factory
         RegisterContext register = new Factories.RegisterContextProvider(allTheRegisters, () -> request).provide();
 
-        RegisterName registerName = register.getRegisterName();
+        RegisterId registerId = register.getRegisterId();
 
         RegisterMetadata rm = register.getRegisterMetadata();
 
         WebContext wc = new WebContext(request, response, sc,
                 request.getLocale());
         wc.setVariable("register", rm);
-        wc.setVariable("friendlyRegisterName", registerName.getFriendlyRegisterName() + " register");
+        wc.setVariable("friendlyRegisterName", registerId.getFriendlyRegisterName() + " register");
         wc.setVariable("renderedCopyrightText", Optional.ofNullable(rm.getCopyright()));
         wc.setVariable("heading", "Page not found");
         wc.setVariable("message", "If you entered a web address please check it was correct.");

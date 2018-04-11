@@ -2,7 +2,7 @@ package uk.gov.register.views;
 
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.configuration.HomepageContent;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
@@ -26,7 +26,7 @@ public abstract class PreviewPageView extends ThymeleafView {
     private final String key;
     private final String previewType;
     private final HomepageContent homepageContent;
-    private final Provider<RegisterName> registerNameProvider;
+    private final Provider<RegisterId> registerIdProvider;
     private final ElementType elementType;
     private final int totalRecords;
     private final int totalEntries;
@@ -38,13 +38,13 @@ public abstract class PreviewPageView extends ThymeleafView {
                            final String previewType,
                            final ElementType elementType,
                            final HomepageContent homepageContent,
-                           final Provider<RegisterName> registerNameProvider) {
+                           final Provider<RegisterId> registerIdProvider) {
         super(requestContext, PREVIEW_HTML_PAGE, registerResolver, register);
         this.key = key;
         this.previewType = previewType;
         this.elementType = elementType;
         this.homepageContent = homepageContent;
-        this.registerNameProvider = registerNameProvider;
+        this.registerIdProvider = registerIdProvider;
         totalRecords = register.getTotalRecords();
         totalEntries = register.getTotalEntries();
     }
@@ -109,7 +109,7 @@ public abstract class PreviewPageView extends ThymeleafView {
         return homepageContent;
     }
 
-    public Provider<RegisterName> getRegisterNameProvider() {
-        return registerNameProvider;
+    public Provider<RegisterId> getRegisterIdProvider() {
+        return registerIdProvider;
     }
 }

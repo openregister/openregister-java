@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.*;
 
 public interface RegisterReadOnly {
-    Optional<Item> getItemBySha256(HashValue hash);
+    Optional<Item> getItem(HashValue hash);
     Collection<Item> getAllItems();
 
     Optional<Entry> getEntry(int entryNumber);
@@ -39,19 +39,20 @@ public interface RegisterReadOnly {
     Iterator<Item> getItemIterator(int start, int end);
     Iterator<Item> getSystemItemIterator();
     
-    Iterator<Entry> getDerivationEntryIterator(String indexName);
-    Iterator<Entry> getDerivationEntryIterator(String indexName, int totalEntries1, int totalEntries2);
+    Iterator<Entry> getEntryIterator(String indexName);
+    Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
 
-    RegisterName getRegisterName();
+    RegisterId getRegisterId();
+    Optional<String> getRegisterName();
     Optional<String> getCustodianName();
 
     RegisterMetadata getRegisterMetadata();
 
-    Optional<Record> getDerivationRecord(String key, String derivationName);
+    Optional<Record> getRecord(String key, String derivationName);
 
-    List<Record> getDerivationRecords(int limit, int offset, String derivationName);
+    List<Record> getRecords(int limit, int offset, String derivationName);
 
-    int getTotalDerivationRecords(String derivationName);
+    int getTotalRecords(String derivationName);
 
     Map<String, Field> getFieldsByName();
 }

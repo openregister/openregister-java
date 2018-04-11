@@ -116,7 +116,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void putItem(Item item) {
+    public void addItem(Item item) {
         stagedItems.put(item.getSha256hex(), item);
     }
 
@@ -160,12 +160,12 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public Optional<Item> getItemBySha256(HashValue hash) {
+    public Optional<Item> getItem(HashValue hash) {
         if (stagedItems.containsKey(hash)) {
             return Optional.of(stagedItems.get(hash));
         }
         
-        return super.getItemBySha256(hash);
+        return super.getItem(hash);
     }
 
     @Override
@@ -273,7 +273,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private Map<String, Record> getIndexRecordsForKeys(String indexName, List<String> entryKeys) {
         Map<String, Record> indexRecords = new HashMap<>();
         
-        if (getTotalIndexRecords(indexName) > 0) {
+        if (getTotalRecords(indexName) > 0) {
             List<List<String>> entryKeyBatches = Lists.partition(entryKeys, 1000);
             entryKeyBatches.stream().forEach(keyBatches -> {
                 indexRecords.putAll(getIndexRecords(keyBatches, indexName).stream().collect(Collectors.toMap(k -> k.getEntry().getKey(), v -> v)));

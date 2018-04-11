@@ -11,10 +11,10 @@ public class WorkbookGenerator {
 
     private static final int DEFAULT_COLUMN_SIZE = 6000;
 
-    public static Workbook toSpreadSheet(final String registerName, final List<String> fieldNames,
+    public static Workbook toSpreadSheet(final String registerId, final List<String> fieldNames,
                                          final List<Map<String, String>> elements) {
         final Workbook workbook = new XSSFWorkbook();
-        final Sheet sheet = workbook.createSheet(registerName);
+        final Sheet sheet = workbook.createSheet(registerId);
 
         customiseColumnSizes(fieldNames, sheet);
         writeHeader(fieldNames, workbook, sheet);

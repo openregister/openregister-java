@@ -13,7 +13,7 @@ import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.configuration.RegisterDomainConfiguration;
 import uk.gov.register.core.AllTheRegistersFactory;
 import uk.gov.register.core.RegisterContextFactory;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -68,7 +68,7 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     @Valid
     @NotNull
     @JsonProperty
-    private RegisterName register;
+    private RegisterId register;
 
     @Override
     public String getRegisterDomain() {
@@ -96,7 +96,7 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
 
     @Valid
     @JsonProperty
-    private Map<RegisterName, RegisterContextFactory> registers = new HashMap<>();
+    private Map<RegisterId, RegisterContextFactory> registers = new HashMap<>();
 
     @JsonProperty
     @NotNull
@@ -113,10 +113,10 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {
-        return new AllTheRegistersFactory(getDefaultRegister(), registers, getDefaultRegisterName());
+        return new AllTheRegistersFactory(getDefaultRegister(), registers, getDefaultRegisterId());
     }
 
-    public RegisterName getDefaultRegisterName() {
+    public RegisterId getDefaultRegisterId() {
         return register;
     }
 

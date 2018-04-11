@@ -8,7 +8,7 @@
     <tr>
       <th scope="col" th:if="${view.displayEntryKeyColumn()}">key</th>
       <th scope="col" th:each="fieldName : ${itemFieldNames}">
-        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterName('field'), fieldName)}"
+        <a th:href="${linkResolver.resolve(new uk.gov.register.core.RegisterId('field'), fieldName)}"
            th:text="${fieldName}"></a>
       </th>
     </tr>

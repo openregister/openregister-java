@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class PreviewEntryPageViewTest {
 
-    private final RegisterResolver registerResolver = registerName -> URI.create("http://" + registerName + ".test.register.gov.uk");
+    private final RegisterResolver registerResolver = registerId -> URI.create("http://" + registerId + ".test.register.gov.uk");
 
     @Mock
     private RequestContext requestContext;
@@ -34,7 +33,7 @@ public class PreviewEntryPageViewTest {
     private RegisterReadOnly registerReadOnly;
 
     private final HomepageContent homepageContent = new HomepageContent(emptyList());
-    private final Provider<RegisterName> provider = mock(Provider.class);
+    private final Provider<RegisterId> provider = mock(Provider.class);
 
     @Test
     public void getPreviewType_JSON() throws IOException, JSONException {

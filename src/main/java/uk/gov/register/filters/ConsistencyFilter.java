@@ -1,7 +1,7 @@
 package uk.gov.register.filters;
 
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.exceptions.InconsistencyException;
 
 import javax.inject.Inject;
@@ -14,12 +14,12 @@ import java.io.IOException;
 @Provider
 public class ConsistencyFilter implements ContainerRequestFilter {
 
-    private final javax.inject.Provider<RegisterName> registerPrimaryKey;
+    private final javax.inject.Provider<RegisterId> registerPrimaryKey;
     private final UriInfo uriInfo;
     private final javax.inject.Provider<RegisterContext> registerContext;
 
     @Inject
-    public ConsistencyFilter(final javax.inject.Provider<RegisterName> registerPrimaryKey,
+    public ConsistencyFilter(final javax.inject.Provider<RegisterId> registerPrimaryKey,
                              final UriInfo uriInfo,
                              javax.inject.Provider<RegisterContext> registerContext) {
         this.registerPrimaryKey = registerPrimaryKey;

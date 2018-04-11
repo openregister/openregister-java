@@ -1,8 +1,7 @@
 package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import uk.gov.register.configuration.RegisterFieldsConfiguration;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -18,12 +17,12 @@ import java.nio.charset.StandardCharsets;
 @Path("/")
 public class SearchResource {
 
-    private final RegisterName registerPrimaryKey;
+    private final RegisterId registerPrimaryKey;
     private final RegisterReadOnly register;
 
     @Inject
-    public SearchResource(RegisterName registerName, RegisterReadOnly register) {
-        registerPrimaryKey = registerName;
+    public SearchResource(RegisterId registerId, RegisterReadOnly register) {
+        registerPrimaryKey = registerId;
         this.register = register;
     }
 

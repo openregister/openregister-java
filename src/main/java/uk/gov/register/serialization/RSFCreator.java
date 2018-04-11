@@ -24,7 +24,7 @@ public class RSFCreator {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(),
-                register.getDerivationEntryIterator(IndexNames.METADATA),
+                register.getEntryIterator(IndexNames.METADATA),
                 register.getEntryIterator(),
                 Iterators.singletonIterator(register.getRegisterProof().getRootHash()));
 
@@ -42,7 +42,7 @@ public class RSFCreator {
             HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();
             HashValue nextRootHash = register.getRegisterProof(totalEntries2).getRootHash();
             Iterator<Item> metadataItemIterator = totalEntries1 == 0 ? register.getSystemItemIterator() : Collections.emptyIterator();
-            Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getDerivationEntryIterator(IndexNames.METADATA) : Collections.emptyIterator();
+            Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getEntryIterator(IndexNames.METADATA) : Collections.emptyIterator();
 
             iterators = Iterators.concat(
                     Iterators.singletonIterator(previousRootHash),
@@ -60,8 +60,8 @@ public class RSFCreator {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(),
-                register.getDerivationEntryIterator(IndexNames.METADATA),
-                !indexName.equals(IndexNames.METADATA) ? register.getDerivationEntryIterator(indexName) : Collections.emptyIterator());
+                register.getEntryIterator(IndexNames.METADATA),
+                !indexName.equals(IndexNames.METADATA) ? register.getEntryIterator(indexName) : Collections.emptyIterator());
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);
@@ -76,7 +76,7 @@ public class RSFCreator {
         } else {
             iterators = Iterators.concat(
                     register.getItemIterator(totalEntries1, totalEntries2),
-                    register.getDerivationEntryIterator(indexName, totalEntries1, totalEntries2));
+                    register.getEntryIterator(indexName, totalEntries1, totalEntries2));
         }
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);

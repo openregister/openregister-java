@@ -17,7 +17,7 @@ import static com.google.common.base.Predicates.not;
 @JsonInclude(NON_NULL)
 public class RegisterMetadata {
     @JsonProperty("register")
-    private RegisterName registerName;
+    private RegisterId registerId;
     @JsonProperty
     private List<String> fields;
     @JsonProperty
@@ -47,13 +47,13 @@ public class RegisterMetadata {
     public RegisterMetadata() {
     }
 
-    public RegisterMetadata(RegisterName registerName,
+    public RegisterMetadata(RegisterId registerId,
                             List<String> fields,
                             String copyright,
                             String registry,
                             String text,
                             String phase) {
-        this.registerName = registerName;
+        this.registerId = registerId;
         this.phase = phase;
         this.fields = fields;
         this.copyright = StringUtils.isNotEmpty(copyright) ? copyright : null;
@@ -61,8 +61,8 @@ public class RegisterMetadata {
         this.text = text;
     }
 
-    public RegisterName getRegisterName() {
-        return registerName;
+    public RegisterId getRegisterId() {
+        return registerId;
     }
 
     public String getCopyright() {
@@ -100,7 +100,7 @@ public class RegisterMetadata {
     }
 
     private boolean isFieldPrimaryKey(String field) {
-        return field.equals(registerName.value());
+        return field.equals(registerId.value());
     }
 
     @Override
@@ -110,7 +110,7 @@ public class RegisterMetadata {
 
         RegisterMetadata that = (RegisterMetadata) o;
 
-        if (registerName != null ? !registerName.equals(that.registerName) : that.registerName != null) return false;
+        if (registerId != null ? !registerId.equals(that.registerId) : that.registerId != null) return false;
         if (fields != null ? !fields.equals(that.fields) : that.fields != null) return false;
         if (copyright != null ? !copyright.equals(that.copyright) : that.copyright != null) return false;
         if (registry != null ? !registry.equals(that.registry) : that.registry != null) return false;
@@ -122,7 +122,7 @@ public class RegisterMetadata {
 
     @Override
     public int hashCode() {
-        int result = registerName != null ? registerName.hashCode() : 0;
+        int result = registerId != null ? registerId.hashCode() : 0;
         result = 31 * result + (fields != null ? fields.hashCode() : 0);
         result = 31 * result + (copyright != null ? copyright.hashCode() : 0);
         result = 31 * result + (registry != null ? registry.hashCode() : 0);

@@ -46,11 +46,11 @@ public class ThymeleafView extends View {
     @SuppressWarnings("unused, used by templates")
     public String getFriendlyRegisterName() {
         // FIXME: this string concat should be in the template?
-        return getRegisterId().getFriendlyRegisterName() + " register";
+        return register.getRegisterName().orElse(getRegisterId().getFriendlyRegisterName()) + " register";
     }
 
-    public RegisterName getRegisterId() {
-        return register.getRegisterName();
+    public RegisterId getRegisterId() {
+        return register.getRegisterId();
     }
 
     public RegisterMetadata getRegister() {

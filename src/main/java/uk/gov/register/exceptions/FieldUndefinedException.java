@@ -1,9 +1,9 @@
 package uk.gov.register.exceptions;
 
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 
 public class FieldUndefinedException extends RuntimeException {
-    public FieldUndefinedException(RegisterName registerName, String fieldName) {
-        super(String.format("Field undefined: %s - %s", registerName.value(), fieldName));
+    public FieldUndefinedException(RegisterId registerId, String fieldName) {
+        super(String.format("Field undefined: %s - %s", registerId.value(), fieldName));
     }
 }

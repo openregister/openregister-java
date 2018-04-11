@@ -8,7 +8,7 @@ import java.util.Objects;
 public class RegisterComparer {
 
     public static boolean equals(RegisterMetadata registerMetadata1, RegisterMetadata registerMetadata2) {
-        return registerMetadata1.getRegisterName().equals(registerMetadata2.getRegisterName())
+        return registerMetadata1.getRegisterId().equals(registerMetadata2.getRegisterId())
                 && Objects.equals(registerMetadata1.getPhase(), registerMetadata2.getPhase())
                 && Objects.equals(registerMetadata1.getRegistry(), registerMetadata2.getRegistry())
                 && Objects.equals(registerMetadata1.getCopyright(), registerMetadata2.getCopyright())

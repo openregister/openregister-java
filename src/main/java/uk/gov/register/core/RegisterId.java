@@ -4,25 +4,25 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.StringUtils;
 
-/* dumb wrapper around String to give a type to a register's name */
-public class RegisterName {
-    private final String name;
+/* dumb wrapper around String to give a type to a register's id */
+public class RegisterId {
+    private final String id;
 
     @JsonCreator
-    public RegisterName(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name cannot be null");
+    public RegisterId(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
         }
-        this.name = name;
+        this.id = id;
     }
 
     @JsonValue
     public String value() {
-        return name;
+        return id;
     }
 
     public String getFriendlyRegisterName() {
-        return StringUtils.capitalize(name.replace('-', ' '));
+        return StringUtils.capitalize(id.replace('-', ' '));
     }
 
     @Override
@@ -30,18 +30,18 @@ public class RegisterName {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RegisterName that = (RegisterName) o;
+        RegisterId that = (RegisterId) o;
 
-        return name.equals(that.name);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return id.hashCode();
     }
 
     @Override
     public String toString() {
-        return name;
+        return id;
     }
 }

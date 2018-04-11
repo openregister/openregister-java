@@ -29,10 +29,10 @@ public class CsvWriterTest {
 
     CsvWriter csvWriter = new CsvWriter();
     private final ImmutableList<Field> fields = ImmutableList.of(
-            new Field("key1", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("key2", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("key3", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("key4", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
+            new Field("key1", "datatype", new RegisterId("register"), Cardinality.ONE, "text"),
+            new Field("key2", "datatype", new RegisterId("register"), Cardinality.ONE, "text"),
+            new Field("key3", "datatype", new RegisterId("register"), Cardinality.ONE, "text"),
+            new Field("key4", "datatype", new RegisterId("register"), Cardinality.ONE, "text"));
 
     @Test
     public void writes_EntryListView_to_output_stream() throws IOException {
@@ -123,10 +123,10 @@ public class CsvWriterTest {
         Record record = new Record(entry, Arrays.asList(item, item2));
 
         ImmutableMap<String, Field> fields = ImmutableMap.of(
-                "key1", new Field("key1", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                "key2", new Field("key2", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                "key3", new Field("key3", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                "key4", new Field("key4", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+                "key1", new Field("key1", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
+                "key2", new Field("key2", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
+                "key3", new Field("key3", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
+                "key4", new Field("key4", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
         when(itemConverter.convertItem(item, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
@@ -166,8 +166,8 @@ public class CsvWriterTest {
         ItemConverter itemConverter = mock(ItemConverter.class);
 
         ImmutableMap<String,Field> fields = ImmutableMap.of(
-                "address",new Field("address", "datatype", new RegisterName("address"), Cardinality.ONE, "text"),
-                "street", new Field("street", "datatype", new RegisterName("address"), Cardinality.ONE, "text"));
+                "address",new Field("address", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
+                "street", new Field("street", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
         when(itemConverter.convertItem(item1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));

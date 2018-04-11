@@ -53,6 +53,6 @@ public class ItemResource {
 
     private Optional<Item> getItem(String itemHash) {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
-        return register.getItemBySha256(hash);
+        return register.getItem(hash);
     }
 }

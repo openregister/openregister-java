@@ -4,7 +4,7 @@ import org.glassfish.hk2.api.Factory;
 import uk.gov.register.core.AllTheRegisters;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -34,17 +34,17 @@ public abstract class Factories {
         }
     }
 
-    public static class RegisterNameProvider extends SimpleFactory<RegisterName> {
+    public static class RegisterIdProvider extends SimpleFactory<RegisterId> {
         private final RegisterContext registerContext;
 
         @Inject
-        public RegisterNameProvider(RegisterContext registerContext) {
+        public RegisterIdProvider(RegisterContext registerContext) {
             this.registerContext = registerContext;
         }
 
         @Override
-        public RegisterName provide() {
-            return registerContext.getRegisterName();
+        public RegisterId provide() {
+            return registerContext.getRegisterId();
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class Factories {
         public RegisterContext provide() {
             String host = getHost();
             String register = host.split("\\.")[0];
-            return allTheRegisters.getRegisterByName(new RegisterName(register));
+            return allTheRegisters.getRegisterById(new RegisterId(register));
         }
 
         private String getHost() {
