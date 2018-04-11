@@ -32,7 +32,7 @@ public class MigrateDatabaseRule extends ExternalResource {
     private FlywayFactory getFlywayFactory(String registerId) {
         FlywayFactory flywayFactory = new FlywayFactory();
         flywayFactory.setLocations(Collections.singletonList("/sql"));
-        flywayFactory.setPlaceholders(Collections.singletonMap("registerId", registerId));
+        flywayFactory.setPlaceholders(Collections.singletonMap("registerName", registerId));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }
