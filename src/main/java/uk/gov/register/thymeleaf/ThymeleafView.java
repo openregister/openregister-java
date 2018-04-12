@@ -49,6 +49,11 @@ public class ThymeleafView extends View {
         return register.getRegisterName().orElse(getRegisterId().getFriendlyRegisterName()) + " register";
     }
 
+    @SuppressWarnings("unused, used by templates")
+    public String getFriendlyRegisterId() {
+        return getRegisterId().getFriendlyRegisterName() + " register";
+    }
+
     public RegisterId getRegisterId() {
         return register.getRegisterId();
     }
