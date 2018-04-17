@@ -39,10 +39,10 @@
           <tbody>
             <tr th:each="entry : ${content.entries}">
               <td>
-                <a th:href="${'/entry/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
+                <a th:href="${'/entries/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
               </td>
               <td>
-                <p th:each="sha : ${entry.itemHashes}"><a th:href="${'/item/' + sha}" th:text="${sha}"></a></p>
+                <p th:each="sha : ${entry.itemHashes}"><a th:href="${'/items/' + sha}" th:text="${sha}"></a></p>
               </td>
               <td th:text="${entry.timestamp}"></td>
               <td th:text="${entry.key}"></td>
