@@ -23,6 +23,6 @@ public class UriTemplateLinkResolver implements LinkResolver {
     public URI resolve(RegisterId register, String linkKey) {
         URI baseUri = registerResolver.baseUriFor(register);
 
-        return UriBuilder.fromUri(baseUri).path("record").path(linkKey).build();
+        return UriBuilder.fromUri(baseUri).path("records").path(linkKey).build();
     }
 }

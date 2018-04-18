@@ -43,7 +43,7 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
 
     private String fieldUri(String key) {
         URI fieldBaseUri = registerResolver.baseUriFor(new RegisterId("field"));
-        return UriBuilder.fromUri(fieldBaseUri).path("record").path(key).build().toString();
+        return UriBuilder.fromUri(fieldBaseUri).path("records").path(key).build().toString();
     }
 
     private class FieldRenderer {

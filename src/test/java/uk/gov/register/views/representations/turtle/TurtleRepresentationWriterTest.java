@@ -45,7 +45,7 @@ public class TurtleRepresentationWriterTest {
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedTtl, containsString("@prefix field:   <http://field.test.register.gov.uk/record/> ."));
+        assertThat(generatedTtl, containsString("@prefix field:   <http://field.test.register.gov.uk/records/> ."));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class TurtleRepresentationWriterTest {
         writer.writeTo(entry, entry.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/entry/52>"));
+        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/entries/52>"));
     }
 
     @Test
@@ -78,10 +78,10 @@ public class TurtleRepresentationWriterTest {
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedTtl, containsString("field:address <http://address.test.register.gov.uk/record/1111111>"));
-        assertThat(generatedTtl, containsString("field:location <http://address.test.register.gov.uk/record/location-value>"));
+        assertThat(generatedTtl, containsString("field:address <http://address.test.register.gov.uk/records/1111111>"));
+        assertThat(generatedTtl, containsString("field:location <http://address.test.register.gov.uk/records/location-value>"));
         assertThat(generatedTtl, containsString("field:name \"foo\""));
-        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/item/sha-256:itemhash>"));
+        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/items/sha-256:itemhash>"));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class TurtleRepresentationWriterTest {
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
 
-        assertThat(generatedTtl, containsString("field:link-values <http://address.test.register.gov.uk/record/1111111> , <http://address.test.register.gov.uk/record/2222222>"));
+        assertThat(generatedTtl, containsString("field:link-values <http://address.test.register.gov.uk/records/1111111> , <http://address.test.register.gov.uk/records/2222222>"));
         assertThat(generatedTtl, containsString("field:string-values \"value2\" , \"value1\""));
         assertThat(generatedTtl, containsString("field:name \"foo\""));
     }
