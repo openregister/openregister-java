@@ -15,6 +15,15 @@ import static javax.ws.rs.core.Response.status;
 @Path("/")
 public class RedirectResource {
     @GET
+    @Path("/proof/entry/{entry-number}/{total-entries}/merkle:sha-256")
+    public Response getProofRedirect(
+            @Context HttpServletRequest request
+    )
+    {
+        return redirectByPath(request, "/entry/", "/entries/");
+    }
+
+    @GET
     @Path("/item/sha-256:{item-hash}")
     public Response getEntryByNumberRedirect(
             @Context HttpServletRequest request
@@ -32,14 +41,6 @@ public class RedirectResource {
         return redirectByPath(request, "/entry/", "/entries/");
     }
 
-    @GET
-    @Path("/proof/entry/{entry-number}/{total-entries}/merkle:sha-256")
-    public Response getProofRedirect(
-            @Context HttpServletRequest request
-    )
-    {
-        return redirectByPath(request, "/entry/", "/entries/");
-    }
 
     @GET
     @Path("/record/{record-key}")
@@ -64,7 +65,7 @@ public class RedirectResource {
         return status(Response.Status.MOVED_PERMANENTLY).location(location);
     }
 
-    private static Response redirectByPath(@Context HttpServletRequest request, String oldPath, String newPath) {
+    public static Response redirectByPath(@Context HttpServletRequest request, String oldPath, String newPath) {
         String requestUrl = request.getRequestURL().toString();
         String redirectUrl = requestUrl.replaceFirst(oldPath, newPath);
         URI uri = UriBuilder.fromUri(redirectUrl).build();
