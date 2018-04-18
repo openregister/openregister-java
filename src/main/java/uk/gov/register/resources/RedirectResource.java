@@ -33,6 +33,15 @@ public class RedirectResource {
     }
 
     @GET
+    @Path("/proof/entry/{entry-number}/{total-entries}/merkle:sha-256")
+    public Response getProofRedirect(
+            @Context HttpServletRequest request
+    )
+    {
+        return redirectByPath(request, "/entry/", "/entries/");
+    }
+
+    @GET
     @Path("/record/{record-key}")
     public Response getRecordByKeyRedirect(
             @Context HttpServletRequest request
@@ -48,6 +57,8 @@ public class RedirectResource {
     {
         return redirectByPath(request, "/record/", "/records/");
     }
+
+
 
     private static ResponseBuilder movedPermanently(URI location) {
         return status(Response.Status.MOVED_PERMANENTLY).location(location);

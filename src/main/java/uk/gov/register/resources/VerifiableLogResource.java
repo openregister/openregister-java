@@ -28,7 +28,7 @@ public class VerifiableLogResource {
     }
 
     @GET
-    @Path("/entry/{entry-number}/{total-entries}/merkle:sha-256")
+    @Path("/entries/{entry-number}/{total-entries}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) {
