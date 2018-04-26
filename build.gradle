@@ -181,7 +181,6 @@ task runConformanceTests(type: Exec) {
 }
 
 check {
-// TODO: re-add this once we have updated the conformance tests to reflect RFC 0002
     dependsOn << runConformanceTests
     dependsOn << 'dependencyCheckAnalyze'
 }
