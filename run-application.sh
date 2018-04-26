@@ -13,7 +13,7 @@ esac
 function on_exit {
   echo "Stopping and removing containers..."
   docker-compose --file docker-compose.register.yml down
-  docker-compose --file docker-compose.basic.yml down
+  docker-compose -p registers --file docker-compose.basic.yml down
   exit
 }
 
@@ -49,7 +49,7 @@ fi
 
 echo "Starting environment based off \"$ENVIRONMENT\""
 echo "Starting basic registers..."
-docker-compose --file docker-compose.basic.yml up -d
+docker-compose -p registers --file docker-compose.basic.yml up -d
 wait_for_http_on_port 8081 openregister-basic
 
 for register in "register" "datatype" "field"; do
