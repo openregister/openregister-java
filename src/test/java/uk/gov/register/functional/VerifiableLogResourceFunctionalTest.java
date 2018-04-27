@@ -67,7 +67,7 @@ public class VerifiableLogResourceFunctionalTest {
 
     @Test
     public void getEntryProof() {
-        Response response = register.getRequest(address, "/proof/entry/1/5/" + proofIdentifier);
+        Response response = register.getRequest(address, "/proof/entries/1/5/" + proofIdentifier);
 
         assertThat(response.getStatus(), equalTo(200));
 
@@ -97,8 +97,8 @@ public class VerifiableLogResourceFunctionalTest {
         // This tests that we are mapping entry numbers (one-indexed) to leaf indexes correctly (zero-indexed).
         // In the case that we accidentally map to zero-indexed entry nubers this test would fail
 
-        Response entry1Proof = register.getRequest(address, "/proof/entry/1/2/" + proofIdentifier);
-        Response entry2Proof = register.getRequest(address, "/proof/entry/2/2/" + proofIdentifier);
+        Response entry1Proof = register.getRequest(address, "/proof/entries/1/2/" + proofIdentifier);
+        Response entry2Proof = register.getRequest(address, "/proof/entries/2/2/" + proofIdentifier);
 
         assertThat(entry1Proof.getStatus(), equalTo(200));
         assertThat(entry2Proof.getStatus(), equalTo(200));
@@ -122,9 +122,9 @@ public class VerifiableLogResourceFunctionalTest {
         // We get a proof of the same shape from two different registers, and verify that there are no
         // hashes that exist in both proofs.
 
-        List<String> addressAuditPath = (List<String>) register.getRequest(address, "/proof/entry/3/5/" + proofIdentifier)
+        List<String> addressAuditPath = (List<String>) register.getRequest(address, "/proof/entries/3/5/" + proofIdentifier)
                 .readEntity(Map.class).get("merkle-audit-path");
-        List<String> postcodeAuditPath = (List<String>) register.getRequest(postcode, "/proof/entry/3/5/" + proofIdentifier)
+        List<String> postcodeAuditPath = (List<String>) register.getRequest(postcode, "/proof/entries/3/5/" + proofIdentifier)
                 .readEntity(Map.class).get("merkle-audit-path");
 
         assertThat(addressAuditPath, everyItem(not(isIn(postcodeAuditPath))));

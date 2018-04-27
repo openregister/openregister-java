@@ -15,9 +15,9 @@
     </thead>
     <tbody>
     <th:block th:each="record : ${records}">
-      <tr th:each="item : ${record}" th:with="firstItemColumnLink = ${view.displayEntryKeyColumn()} ? ${null} : ${'../record/' + record.key}">
+      <tr th:each="item : ${record}" th:with="firstItemColumnLink = ${view.displayEntryKeyColumn()} ? ${null} : ${'../records/' + record.key}">
         <td th:if="${view.displayEntryKeyColumn()}">
-          <a th:href="${'./record/' + record.key}" th:text="${record.key}"></a>
+          <a th:href="${'./records/' + record.key}" th:text="${record.key}"></a>
         </td>
         <div th:include="fragments/record-table-item-cells.html :: record-table-item-cells (item = ${item}, fieldNames = ${itemFieldNames}, resolveAllLinks = ${view.resolveAllItemLinks()}, firstColumnLink = ${firstItemColumnLink})"></div>
       </tr>

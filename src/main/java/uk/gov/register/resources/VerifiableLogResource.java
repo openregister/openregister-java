@@ -7,8 +7,13 @@ import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import static uk.gov.register.resources.RedirectResource.redirectByPath;
 
 @Path("/proof")
 public class VerifiableLogResource {
@@ -29,6 +34,15 @@ public class VerifiableLogResource {
 
     @GET
     @Path("/entry/{entry-number}/{total-entries}/merkle:sha-256")
+    public Response getProofRedirect(
+            @Context HttpServletRequest request
+    )
+    {
+        return redirectByPath(request, "/entry/", "/entries/");
+    }
+
+    @GET
+    @Path("/entries/{entry-number}/{total-entries}/merkle:sha-256")
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) {

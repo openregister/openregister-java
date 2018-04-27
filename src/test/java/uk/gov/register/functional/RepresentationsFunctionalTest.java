@@ -77,7 +77,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForEntryResource() {
         assumeThat(expectedEntryValue, notNullValue());
 
-        Response response = register.getRequest(TestRegister.register, "/entry/1." + extension);
+        Response response = register.getRequest(TestRegister.register, "/entries/1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -88,7 +88,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForItemResource() {
         assumeThat(expectedItemValue, notNullValue());
 
-        Response response = register.getRequest(TestRegister.register, "/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18." + extension);
+        Response response = register.getRequest(TestRegister.register, "/items/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -99,7 +99,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordResource() {
         assumeThat(expectedRecordValue, notNullValue());
 
-        Response response = register.getRequest(TestRegister.register, "/record/value1." + extension);
+        Response response = register.getRequest(TestRegister.register, "/records/value1." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));
@@ -132,7 +132,7 @@ public class RepresentationsFunctionalTest {
     public void representationIsSupportedForRecordEntriesResource() {
         assumeThat(expectedRecordEntriesValue, notNullValue());
 
-        Response response = register.getRequest(TestRegister.register, "/record/value1/entries." + extension);
+        Response response = register.getRequest(TestRegister.register, "/records/value1/entries." + extension);
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo(expectedContentType));

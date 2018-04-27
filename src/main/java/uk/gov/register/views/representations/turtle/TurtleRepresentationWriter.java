@@ -34,7 +34,7 @@ public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter
     protected abstract Model rdfModelFor(T view);
 
     protected URI entryUri(String entryNumber) {
-        return UriBuilder.fromUri(ourBaseUri()).path("entry").path(entryNumber).build();
+        return UriBuilder.fromUri(ourBaseUri()).path("entries").path(entryNumber).build();
     }
 
     protected URI ourBaseUri() {
@@ -42,7 +42,7 @@ public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter
     }
 
     protected URI itemUri(String itemHash) {
-        return UriBuilder.fromUri(ourBaseUri()).path("item").path(itemHash).build();
+        return UriBuilder.fromUri(ourBaseUri()).path("items").path(itemHash).build();
     }
 
 }

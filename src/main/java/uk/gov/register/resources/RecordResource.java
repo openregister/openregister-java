@@ -10,11 +10,13 @@ import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
 
 @Path("/")
 public class RecordResource {
@@ -30,15 +32,17 @@ public class RecordResource {
     }
 
     @GET
-    @Path("/record/{record-key}")
+    @Path("/records/{record-key}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) {
         return viewFactory.getRecordView(getRecordByKey(key));
     }
 
+
+
     @GET
-    @Path("/record/{record-key}")
+    @Path("/records/{record-key}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -55,8 +59,10 @@ public class RecordResource {
                 .orElseThrow(NotFoundException::new);
     }
 
+
+
     @GET
-    @Path("/record/{record-key}/entries")
+    @Path("/records/{record-key}/entries")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public PaginatedView<EntryListView> getAllEntriesOfARecordHtml(@PathParam("record-key") String key) {
@@ -71,7 +77,7 @@ public class RecordResource {
     }
 
     @GET
-    @Path("/record/{record-key}/entries")
+    @Path("/records/{record-key}/entries")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,

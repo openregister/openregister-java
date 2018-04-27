@@ -58,6 +58,6 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
     }
 
     protected URI recordUri(String primaryKey) {
-        return UriBuilder.fromUri(ourBaseUri()).path("record").path(primaryKey).build();
+        return UriBuilder.fromUri(ourBaseUri()).path("records").path(primaryKey).build();
     }
 }
