@@ -53,6 +53,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getEntryIterator(String indexName) {
+    // TODO: Remove if statement and use indexQueryDAO for RECORD index. This can only be done once the government-service
+    // register no longer contains duplicate consecutive entries. Else we should not make the assumption that duplicate
+    // consecutive entries do not exist.
+        if (indexName.equals(IndexNames.RECORD)) {
+            entryQueryDAO.getIterator(schema);
+        }
         return indexQueryDAO.getIterator(indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
