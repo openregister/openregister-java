@@ -7,7 +7,7 @@ A java implementation of a register
 
 You can spin up a local copy of `openregister-java` using Docker with the following:
 
-    ENVIRONMENT=beta REGISTERS=country ./run-application.sh
+    bash -c 'ENVIRONMENT=beta REGISTERS=country ./run-application.sh'
 
 This will do the following in Docker containers:
 
