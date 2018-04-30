@@ -53,6 +53,9 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getEntryIterator(String indexName) {
+        if (indexName.equals(IndexNames.RECORD)) {
+            entryQueryDAO.getIterator(schema);
+        }
         return indexQueryDAO.getIterator(indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
 
