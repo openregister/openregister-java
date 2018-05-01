@@ -57,7 +57,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     // register no longer contains duplicate consecutive entries. Else we should not make the assumption that duplicate
     // consecutive entries do not exist.
         if (indexName.equals(IndexNames.RECORD)) {
-            entryQueryDAO.getIterator(schema);
+            return entryQueryDAO.getIterator(schema);
         }
         return indexQueryDAO.getIterator(indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
     }
