@@ -10,6 +10,8 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
+    - approved-open-standard
+    - approved-open-standard-guidance
     - occupation
     - public-body-account
     - public-body-account-classification
