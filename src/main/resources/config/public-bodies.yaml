@@ -2860,6 +2860,6 @@ the-electoral-commission:
 department-for-communities-northern-ireland:
   name: "Department for Communities (Northern Ireland)"
   public-body: "department-for-communities-northern-ireland"
-nhs-digital
+nhs-digital:
   name: "NHS Digital"
   public-body: "nhs-digital" 
