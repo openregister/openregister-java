@@ -2859,4 +2859,7 @@ the-electoral-commission:
   public-body: "the-electoral-commission"
 department-for-communities-northern-ireland:
   name: "Department for Communities (Northern Ireland)"
-  public-body: "department-for-communities-northern-ireland" 
+  public-body: "department-for-communities-northern-ireland"
+nhs-digital:
+  name: "NHS Digital"
+  public-body: "nhs-digital" 
