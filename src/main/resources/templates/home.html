@@ -6,48 +6,42 @@
     <header th:replace="fragments/global-header.html::global-header"></header>
 
     <main id="wrapper" role="main">
+      <th:block th:if="${register.phase == 'beta'}">
+        <div th:replace="fragments/register-intro.html::register-intro"></div>
+      </th:block>
       <th:block th:unless="${register.phase == 'beta'}">
-        <div th:unless="${register.phase == 'beta'}" th:replace="fragments/phase-banner.html::phase"></div>
+        <div th:replace="fragments/phase-banner.html::phase"></div>
       </th:block>
 
       <div class="grid-row">
         <div class="column-two-thirds">
-          <h1 class="heading-large heading-with-subtitle" th:utext="${friendlyRegisterName}">Register name</h1>
-          <th:block th:utext="${registerText}"></th:block>
-          <span data-click-events="" data-click-category="Content" data-click-action="Button Clicked">
-            <a href="/records" class="button" role="button">View register</a>
-          </span>
-
-          <h2 class="heading-medium">Using this register</h2>
-
-          <h3 class="heading-small">Base URL</h3>
-          <pre class="preview-box"><code class="language-markup" th:utext="${registerResolver.baseUriFor(registerId)}"></code></pre>
-
-          <h3 class="heading-small">Endpoints</h3>
-          <p th:replace="fragments/download-and-preview-home.html::download-and-preview-home"></p>
-
-          <p>You can find the correct path for the query that interests you in our <a href="https://registers-docs.cloudapps.digital/#api-reference" target="_blank">API Reference</a>. Users should append the path to the base URL and specify a preferred format, such as <a href="/records.json" target="_blank">JSON</a>.</p>
-
-          <p><code class="code"><a href="/records">/records</a></code> returns all records, the latest version of the data in the register. A record is the most recent entry for a key and its associated items.</p>
-
-          <p><code class="code"><a href="/entries">/entries</a></code> returns a list of all entries, ordered by entry number. An entry describes an update to the register and the list of entries can be used to see historic changes or check for new updates to a register. Each entry in a register is linked to an item by a unique item-hash.</p>
-
-          <p><code class="code">/items/{item-hash}</code> returns an individual item. Items are the actual data contained within a register.</p>
-
-          <h3 class="heading-small">Ruby client library</h3>
-          <p>We have a <a href="https://github.com/openregister/registers-ruby-client" target="_blank">client library</a> that provides the same API in the Ruby language.</p>
-        </div>
-
-        <div class="column-third">
-          <aside class="govuk-related-items" role="complementary">
-            <th:block th:replace="fragments/attribution.html::attribution"></th:block>
-            <h3 class="heading-small">Find out more</h3>
-            <ul class="list">
-              <li>
-                <a th:href="${homepageContent.registersIntroductionUrl}" target="_blank">About registers</a>
-              </li>
-            </ul>
-          </aside>
+          <h2 class="heading-small">Details</h2>
+          <ul class="register-metadata">
+            <li>
+              <span class="left">Name:</span>
+              <span class="right" th:utext="${friendlyRegisterId}"></span>
+            </li>
+            <li>
+              <span class="left">Description:</span>
+              <span class="right" th:utext="${registerText}"></span>
+            </li>
+            <li>
+              <span class="left">Managed by:</span>
+              <span class="right"<th:block th:include="fragments/organisation.html::organisation(${registry}, ${branding})"></th:block></span>
+            </li>
+            <li>
+              <span class="left">Number of records:</span>
+              <span class="right" th:text="${totalRecords}"></span>
+            </li>
+            <li>
+              <span class="left">Last updated:</span>
+              <span class="right" th:text="${lastUpdatedTime}"></span>
+            </li>
+            <li>
+              <span class="left">Base URL</span>
+              <span class="right" th:utext="${registerResolver.baseUriFor(registerId)}"></span>
+            </li>
+          </ul>
         </div>
       </div>
     </main>
@@ -56,3 +50,4 @@
 
   </body>
 </html>
+

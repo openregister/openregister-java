@@ -2,6 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;
+import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -14,10 +15,12 @@ import javax.ws.rs.core.MediaType;
 @Path("/")
 @Timed
 public class HomePageResource {
+    private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
 
     @Inject
-    public HomePageResource(ViewFactory viewFactory) {
+    public HomePageResource(RegisterReadOnly register, ViewFactory viewFactory) {
+        this.register = register;
         this.viewFactory = viewFactory;
     }
 
@@ -25,7 +28,10 @@ public class HomePageResource {
     @Produces({ExtraMediaType.TEXT_HTML})
     @Timed
     public View home() {
-        return viewFactory.homePageView();
+        return viewFactory.homePageView(
+                register.getTotalRecords(),
+                register.getLastUpdatedTime()
+        );
     }
 
     @GET

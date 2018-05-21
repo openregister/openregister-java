@@ -115,28 +115,6 @@ a:visited {
   }
 }
 
-.govuk-related-items {
-  margin-top: 50px;
-
-  li {
-    margin-bottom: $gutter-one-third;
-    list-style-type: none;
-  }
-
-  .heading-medium {
-    margin-top: 0.3em;
-    margin-bottom: 0.5em;
-  }
-
-  .organisation {
-    margin-top: 0;
-  }
-}
-
-.organisation {
-  margin-top: 50px;
-}
-
 #footer .footer-meta .footer-meta-inner {
   .custom-government-licence {
     @extend .open-government-licence;
@@ -237,34 +215,6 @@ table {
   }
 }
 
-// Defintion lists
-dl {
-  overflow: hidden;
-
-  dt {
-    clear: left;
-    float: left;
-    font-weight: bold;
-    padding-bottom: 1em;
-    width: 35%;
-  }
-
-  dd {
-    float: left;
-    margin: 0;
-    padding-bottom: 1em;
-    width: 65%;
-  }
-}
-
-.preview-box {
-  border: 1px solid $grey-2;
-}
-
-pre {
-  margin: 0;
-}
-
 .open-government-licence {
   .logo {
     background: image-url("images/open-government-licence.png") 0 0 no-repeat;
@@ -273,5 +223,41 @@ pre {
 	    background-image: image-url("images/open-government-licence_2x.png");
 	    background-size: 41px 17px;
 	  }
+  }
+}
+
+.registers-intro {
+  padding-bottom: 10px;
+}
+
+.register-metadata {
+  font-size: 16px;
+  padding: 0;
+
+  li {
+    border-bottom: 1px solid $border-colour;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+
+  .left {
+    display: block;
+
+    @include media(tablet) {
+      float: left;
+      width: 30%;
+    }
+  }
+
+  .right {
+    @include media(tablet) {
+      float: left;
+      width: 70%;
+    }
+  }
+
+  p {
+    margin: 0;
   }
 }
