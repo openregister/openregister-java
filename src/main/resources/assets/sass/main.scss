@@ -100,10 +100,14 @@ a:visited {
 }
 
 .panel.phase {
-  margin-top: 40px;
+  margin-top: $gutter;
 
   .phase-banner {
     color: $white;
+  }
+
+  p {
+    margin-bottom: 0;
   }
 }
 
