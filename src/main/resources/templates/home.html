@@ -18,15 +18,15 @@
           <h2 class="heading-small">Details</h2>
           <ul class="register-metadata">
             <li>
-              <span class="register-metadata__left">Name:</span>
+              <span class="register-metadata__left">Register:</span>
               <span class="register-metadata__right" th:utext="${friendlyRegisterId}"></span>
             </li>
             <li>
-              <span class="register-metadata__left">Description:</span>
+              <span class="register-metadata__left">Text:</span>
               <span class="register-metadata__right" th:utext="${registerText}"></span>
             </li>
             <li>
-              <span class="register-metadata__left">Managed by:</span>
+              <span class="register-metadata__left">Registry:</span>
               <span class="register-metadata__right"<th:block th:include="fragments/organisation.html::organisation(${registry}, ${branding})"></th:block></span>
             </li>
             <li>
