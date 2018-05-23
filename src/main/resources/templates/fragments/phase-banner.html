@@ -8,7 +8,7 @@
         <div class="panel panel-border-wide phase">
           <span class="phase-banner">In progress</span>
           <p>This data is in progress and it's not ready for use.</p>
-          <th:block th:unless="${register.phase == 'discovery' || 'test'}">
+          <th:block th:unless="${register.phase == 'discovery' || register.phase == 'test'}">
             <p>You can <a th:href="@{'https://www.registers.service.gov.uk/registers/' + ${registerId}}" target="_blank">preview the data and give us feedback</a>.</p>
           </th:block>
         </div>
