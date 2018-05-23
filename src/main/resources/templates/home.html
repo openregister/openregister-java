@@ -2,7 +2,7 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head th:include="fragments/head.html::head"></head>
-  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+  <body class="homepage" th:classappend="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
     <header th:replace="fragments/global-header.html::global-header"></header>
 
     <main id="wrapper" role="main">
@@ -18,28 +18,28 @@
           <h2 class="heading-small">Details</h2>
           <ul class="register-metadata">
             <li>
-              <span class="left">Name:</span>
-              <span class="right" th:utext="${friendlyRegisterId}"></span>
+              <span class="register-metadata__left">Name:</span>
+              <span class="register-metadata__right" th:utext="${friendlyRegisterId}"></span>
             </li>
             <li>
-              <span class="left">Description:</span>
-              <span class="right" th:utext="${registerText}"></span>
+              <span class="register-metadata__left">Description:</span>
+              <span class="register-metadata__right" th:utext="${registerText}"></span>
             </li>
             <li>
-              <span class="left">Managed by:</span>
-              <span class="right"<th:block th:include="fragments/organisation.html::organisation(${registry}, ${branding})"></th:block></span>
+              <span class="register-metadata__left">Managed by:</span>
+              <span class="register-metadata__right"<th:block th:include="fragments/organisation.html::organisation(${registry}, ${branding})"></th:block></span>
             </li>
             <li>
-              <span class="left">Number of records:</span>
-              <span class="right" th:text="${totalRecords}"></span>
+              <span class="register-metadata__left">Number of records:</span>
+              <span class="register-metadata__right" th:text="${totalRecords}"></span>
             </li>
             <li>
-              <span class="left">Last updated:</span>
-              <span class="right" th:text="${lastUpdatedTime}"></span>
+              <span class="register-metadata__left">Last updated:</span>
+              <span class="register-metadata__right" th:text="${lastUpdatedTime}"></span>
             </li>
             <li>
-              <span class="left">Base URL</span>
-              <span class="right" th:utext="${registerResolver.baseUriFor(registerId)}"></span>
+              <span class="register-metadata__left">Base URL:</span>
+              <span class="register-metadata__right" th:utext="${registerResolver.baseUriFor(registerId)}"></span>
             </li>
           </ul>
         </div>
