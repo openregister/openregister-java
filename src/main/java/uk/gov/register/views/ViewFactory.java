@@ -73,11 +73,13 @@ public class ViewFactory {
         return new ExceptionView(requestContext, heading, message, register.get(), registerResolver);
     }
 
-    public HomePageView homePageView() {
+    public HomePageView homePageView(final int totalRecords, final Optional<Instant> lastUpdated) {
         return new HomePageView(
                 getRegistry(),
                 getBranding(),
                 requestContext,
+                totalRecords,
+                lastUpdated,
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
                 registerResolver,

@@ -6,18 +6,20 @@
     <header th:replace="fragments/global-header.html::global-header"></header>
 
     <main id="wrapper" role="main">
+      <th:block th:if="${register.phase == 'beta'}">
+        <div th:replace="fragments/register-intro.html::register-intro"></div>
+      </th:block>
       <th:block th:unless="${register.phase == 'beta'}">
         <div th:replace="fragments/phase-banner.html::phase"></div>
       </th:block>
 
       <div class="grid-row">
-        <div class="column-two-thirds">
+        <div class="column-full">
           <h1 class="heading-large">
             Records
             <span class="heading-secondary"
                   th:include="fragments/pagination.html::pagination-top('records')"></span>
           </h1>
-          <div th:include="fragments/download-and-preview.html::download-and-preview"></div>
         </div>
       </div>
 

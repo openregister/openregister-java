@@ -7,7 +7,10 @@
       <div class="column-two-thirds">
         <div class="panel panel-border-wide phase">
           <span class="phase-banner">In progress</span>
-          <p>This data is in progress and it's not ready for use. <a href='https://registers.cloudapps.digital/support' target="_blank">Contact the team</a> to give us feedback.</p>
+          <p>This data is in progress and it's not ready for use.</p>
+          <th:block th:unless="${register.phase == 'discovery' || 'test'}">
+            <p>You can <a th:href="@{'https://www.registers.service.gov.uk/registers/' + ${registerId}}" target="_blank">preview the data and give us feedback</a>.</p>
+          </th:block>
         </div>
       </div>
     </div>
