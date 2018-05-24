@@ -5,6 +5,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.util.HashValue;
 
 import java.nio.charset.StandardCharsets;
@@ -56,7 +57,7 @@ public class RSFExecutor {
             RegisterCommandHandler registerCommandHandler = registeredHandlers.get(command.getCommandName());
             return registerCommandHandler.execute(command, register);
         } else {
-            return RegisterResult.createFailResult("Handler not registered for command: " + command.getCommandName());
+            throw new RSFParseException("Handler not registered for command: " + command.getCommandName());
         }
     }
 
@@ -88,7 +89,7 @@ public class RSFExecutor {
             } else {
                 Optional<Item> item = register.getItem(hashValue);
                 if (!item.isPresent()) {
-                    return RegisterResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
+                    throw new RSFParseException("Orphan append entry (line:" + rsfLine + "): " + command.toString());
                 } else {
                     hashRefLine.put(hashValue, 0);
                 }
@@ -113,7 +114,7 @@ public class RSFExecutor {
         if (orphanItems.isEmpty()) {
             return RegisterResult.createSuccessResult();
         } else {
-            return RegisterResult.createFailResult(String.join("; ", orphanItems));
+            throw new RSFParseException(String.join("; ", orphanItems));
         }
     }
 }

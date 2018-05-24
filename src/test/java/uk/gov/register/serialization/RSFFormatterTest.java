@@ -2,7 +2,7 @@ package uk.gov.register.serialization;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.exceptions.RSFParseException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -65,13 +65,13 @@ public class RSFFormatterTest {
         System.clearProperty("multi-item-entries-enabled");
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_failToParseEntryMultiItemCommandIfNotEnabled() {
         String line = "append-entry\tuser\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
         rsfFormatter.parse(line);
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_failToParseInvalidType() {
         String line = "append-entry\tZZZZ\t2016-11-02T14:45:54Z\tsha-256:a;sha-256:b\tft_openregister_test";
         rsfFormatter.parse(line);
@@ -84,38 +84,38 @@ public class RSFFormatterTest {
         assertThat(parsedCommand.getCommandArguments(), equalTo(Collections.singletonList("sha-256:root-hash")));
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_throwsExceptionWhenCommandArgumentsEmpty() throws Exception {
         rsfFormatter.parse("append-entry");
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_throwsExceptionWhenCommandNotRecognised() throws Exception {
         rsfFormatter.parse("some-new-stuff");
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_throwsExceptionWhenDataMissingForAppendEntry() throws Exception {
         rsfFormatter.parse("append-entry\t2016-10-12T17:45:19.757132");
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_throwsExceptionWhenHashInWrongFormat() throws Exception {
         rsfFormatter.parse("append-entry\tuser\t2016-11-02T14:45:54Z\tsha-25:cee6dfc567f2157208edc4b417302bad69ee06b3e96f80988b37f254\tft_openregister_test");
     }
 
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_throwsExceptionWhenTimestampNotIso() throws Exception {
         rsfFormatter.parse("append-entry\tuser\t20161212\tsha-256:abc123\t123");
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_throwsExceptionWhenInvalidJson() throws Exception {
         rsfFormatter.parse("add-item\t{\"address\":\"9AQZJ3K\"");
     }
 
-    @Test(expected = SerializedRegisterParseException.class)
+    @Test(expected = RSFParseException.class)
     public void parse_throwsExceptionWhenItemNotCanonicalized() {
         rsfFormatter.parse("add-item\t{\"address\":\"9AQZJ3M\",\"street\":\"43070006\",\"name\":\"ST LAWRENCE CHURCH REMAINS OF\"}");
     }

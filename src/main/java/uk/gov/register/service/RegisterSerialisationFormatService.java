@@ -2,6 +2,7 @@ package uk.gov.register.service;
 
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.*;
 
 import javax.inject.Inject;
