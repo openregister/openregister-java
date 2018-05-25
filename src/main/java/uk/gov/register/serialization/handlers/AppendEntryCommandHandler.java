@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandHandler;
@@ -32,12 +33,12 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
                 hashValues = new ArrayList<>();
             }
             EntryType entryType = EntryType.valueOf(parts.get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
-            int newEntryNo =  register.getTotalEntries(entryType) + 1;
+            int newEntryNo = register.getTotalEntries(entryType) + 1;
             Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(RSFFormatter.RSF_TIMESTAMP_POSITION)), parts.get(RSFFormatter.RSF_KEY_POSITION), entryType);
             register.appendEntry(entry);
             return RegisterResult.createSuccessResult();
         } catch (Exception e) {
-            return RegisterResult.createFailResult("Exception when executing command: " + command, e);
+            throw new RSFParseException("Exception when executing command: " + command, e);
         }
     }
 

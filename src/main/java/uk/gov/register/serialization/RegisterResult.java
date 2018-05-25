@@ -43,9 +43,8 @@ public class RegisterResult {
 
     @JsonProperty("details")
     public String getDetails() {
-        return exception.map(Throwable::getMessage).orElse(null);
+        return exception.map(this::getCauseMessage).orElse(null);
     }
-
 
     @JsonIgnore
     public Optional<Exception> getException() {
@@ -80,5 +79,17 @@ public class RegisterResult {
                 ", message='" + message + '\'' +
                 ", exception=" + exception +
                 '}';
+    }
+
+    private String getCauseMessage(Throwable exception) {
+        Throwable cause = null;
+        Throwable result = exception;
+        String message = exception.getMessage();
+
+        while(null != (cause = result.getCause()) && (result != cause) ) {
+            result = cause;
+            message += ": " + cause.getMessage();
+        }
+        return message;
     }
 }

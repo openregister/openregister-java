@@ -11,6 +11,7 @@ import org.mockito.stubbing.Answer;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
@@ -19,9 +20,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.hamcrest.CoreMatchers.not;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
@@ -60,7 +60,7 @@ public class AddItemCommandHandlerTest {
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_catchesExceptionsAndReturnsFailRSFResult() {
         doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) throws IOException {
@@ -68,31 +68,28 @@ public class AddItemCommandHandlerTest {
             }
         }).when(register).addItem(any(Item.class));
 
-        RegisterResult registerResult = sutHandler.execute(addItemCommand, register);
-
-        assertThat(registerResult.isSuccessful(), equalTo(false));
-        assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
-        assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));
+        assertExceptionThrown(addItemCommand, "Exception when executing command: RegisterCommand");
     }
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_failsForCommandWithInvalidArguments() {
         RegisterCommand commandWithInvalidArguments = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value"));
-
-        RegisterResult registerResult = sutHandler.execute(commandWithInvalidArguments, register);
-
-        verify(register, never()).addItem(any());
-        assertThat(registerResult.isSuccessful(), equalTo(false));
-        assertThat(registerResult.getMessage(), startsWith("Exception when executing command: RegisterCommand"));
-        assertThat(registerResult.getDetails(), not(isEmptyOrNullString()));
+        assertExceptionThrown(commandWithInvalidArguments, "Exception when executing command: RegisterCommand");
     }
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_failsForIncorrectCommandType() {
-        RegisterResult registerResult = sutHandler.execute(new RegisterCommand("unknown-type", Arrays.asList("some", "data")), register);
+        RegisterCommand command = new RegisterCommand("unknown-type", Arrays.asList("some", "data"));
+        assertExceptionThrown(command, "Incompatible handler (add-item) and command type (unknown-type)");
+    }
 
-        verify(register, never()).appendEntry(any());
-        assertThat(registerResult.isSuccessful(), equalTo(false));
-        assertThat(registerResult.getMessage(), equalTo("Incompatible handler (add-item) and command type (unknown-type)"));
+    private void assertExceptionThrown(RegisterCommand command, String exceptionMessage) throws RSFParseException {
+        try {
+            sutHandler.execute(command, register);
+        } catch (RSFParseException exception) {
+            assertThat(exception.getMessage(), startsWith(exceptionMessage));
+            throw exception;
+        }
+        fail("RSFParseException did not throw");
     }
 }

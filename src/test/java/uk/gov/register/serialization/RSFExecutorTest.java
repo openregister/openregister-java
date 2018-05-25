@@ -11,12 +11,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.util.HashValue;
 
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -111,7 +113,7 @@ public class RSFExecutorTest {
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_failsForOrphanAppendEntry() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
@@ -121,12 +123,7 @@ public class RSFExecutorTest {
                 appendEntry1Command,
                 addItem1Command).iterator());
 
-        RegisterResult registerResult = sutExecutor.execute(rsf, register);
-
-        verify(register, times(1)).getItem(entry1hashValue);
-
-        assertThat(registerResult.isSuccessful(), equalTo(false));
-        assertThat(registerResult.getMessage(), startsWith("Orphan append entry (line:1): RegisterCommand"));
+        assertExceptionThrown(rsf, "Orphan append entry (line:1): RegisterCommand");
     }
 
     @Test
@@ -144,7 +141,7 @@ public class RSFExecutorTest {
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_failsForOrphanAddItem() {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
@@ -154,13 +151,10 @@ public class RSFExecutorTest {
                 addItem2Command,
                 appendEntry1Command).iterator());
 
-        RegisterResult registerResult = sutExecutor.execute(rsf, register);
-
-        assertThat(registerResult.isSuccessful(), equalTo(false));
-        assertThat(registerResult.getMessage(), equalTo("Orphan add item (line:2): sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a"));
+        assertExceptionThrown(rsf, "Orphan add item (line:2): sha-256:1c7a3bbe9df447813863aead4a5ab7e3c20ffa59459df2540461c7d3de9d227a");
     }
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_failsForItemWhichWasntReferencedInRSF() {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
@@ -170,25 +164,19 @@ public class RSFExecutorTest {
                 appendEntry1Command,
                 addItem1Command).iterator());
 
-        RegisterResult registerResult = sutExecutor.execute(rsf, register);
-
-        assertThat(registerResult.isSuccessful(), equalTo(false));
-        assertThat(registerResult.getMessage(), equalTo("Orphan add item (line:3): sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"));
+        assertExceptionThrown(rsf, "Orphan add item (line:3): sha-256:3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
     }
 
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_failsForUnknownCommand() {
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(
                 new RegisterCommand("unknown-command", asList("some", "data"))).iterator());
 
-        RegisterResult registerResult = sutExecutor.execute(rsf, register);
-
-        assertThat(registerResult.isSuccessful(), equalTo(false));
-        assertThat(registerResult.getMessage(), equalTo("Handler not registered for command: unknown-command"));
+        assertExceptionThrown(rsf, "Handler not registered for command: unknown-command");
     }
 
-    @Test
+    @Test (expected = RSFParseException.class)
     public void execute_executingTheSameInvalidRSFGivesSameResult() {
         when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
@@ -204,10 +192,17 @@ public class RSFExecutorTest {
                 appendEntry1Command,
                 addItem1Command).iterator());
 
-        RegisterResult registerResult1 = sutExecutor.execute(rsf, register);
-        RegisterResult registerResult2 = sutExecutor.execute(rsf2, register);
-
-        assertThat(registerResult1, equalTo(registerResult2));
+        try {
+            sutExecutor.execute(rsf, register);
+        } catch (RSFParseException exception1) {
+            try {
+                sutExecutor.execute(rsf2, register);
+            } catch (RSFParseException exception2) {
+                assertThat(exception1.getMessage(), equalTo(exception2.getMessage()));
+                throw exception2;
+            }
+        }
+        fail("RSFParseException did not throw");
     }
 
     @Test
@@ -233,4 +228,13 @@ public class RSFExecutorTest {
         assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
+    private void assertExceptionThrown(RegisterSerialisationFormat rsf, String exceptionMessage) throws RSFParseException {
+        try {
+            sutExecutor.execute(rsf, register);
+        } catch (RSFParseException exception) {
+            assertThat(exception.getMessage(), startsWith(exceptionMessage));
+            throw exception;
+        }
+        fail("RSFParseException did not throw");
+    }
 }

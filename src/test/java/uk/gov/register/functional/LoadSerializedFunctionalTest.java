@@ -127,7 +127,7 @@ public class LoadSerializedFunctionalTest {
         Response response = send(entry);
 
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"RSF parsing error\",\"details\":\"String is empty or is in incorrect format\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"String is empty or is in incorrect format\"}"));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class LoadSerializedFunctionalTest {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-orphan-rsf.tsv")));
         Response response = send(input);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Orphan add item (line:16): sha-256:d00d4b610e9b5af160a7e5e836eec9e12626cac61823eda1c3ec9a59a78eefaa\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Orphan add item (line:16): sha-256:d00d4b610e9b5af160a7e5e836eec9e12626cac61823eda1c3ec9a59a78eefaa\"}"));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"RSF parsing error\",\"details\":\"Non canonical JSON: { \\\"register\\\":\\\"ft_openregister_test\\\",   \\\"text\\\":\\\"SomeText\\\" }\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Non canonical JSON: { \\\"register\\\":\\\"ft_openregister_test\\\",   \\\"text\\\":\\\"SomeText\\\" }\"}"));
     }
     
     @Test
@@ -270,7 +270,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e]}\",\"details\":\"Field undefined: register - address\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e]}: Field undefined: register - address\"}"));
     }
     
     @Test
@@ -293,7 +293,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:e46ec43a2a9734d26834c2e75fab0c547aa4fccdec8da29c29f331d629ad0e71]}\",\"details\":\"Definition of register register does not match Register Register\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:e46ec43a2a9734d26834c2e75fab0c547aa4fccdec8da29c29f331d629ad0e71]}: Definition of register register does not match Register Register\"}"));
     }
 
     @Test
@@ -323,7 +323,7 @@ public class LoadSerializedFunctionalTest {
 						"add-item\t{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
 						"append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
 		assertThat(response.getStatus(), equalTo(400));
-		assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}\",\"details\":\"Definition of field postcode does not match Field Register\"}"));
+		assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Definition of field postcode does not match Field Register\"}"));
 	}
     
     @Test
@@ -334,7 +334,7 @@ public class LoadSerializedFunctionalTest {
             "add-item\t{\"fields\":[\"test-postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
             "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:test-postcode, 2017-06-09T12:59:51Z, sha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe]}\",\"details\":\"Field test-postcode does not exist in Field Register\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:test-postcode, 2017-06-09T12:59:51Z, sha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe]}: Field test-postcode does not exist in Field Register\"}"));
     }
 
     @Test
@@ -349,7 +349,7 @@ public class LoadSerializedFunctionalTest {
 
         Response response = register.loadRsf(TestRegister.postcode, rsf);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}\",\"details\":\"Definition of field postcode does not match Field Register\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Definition of field postcode does not match Field Register\"}"));
     }
 
     @After

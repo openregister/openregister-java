@@ -1,6 +1,7 @@
 package uk.gov.register.serialization;
 
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.RSFParseException;
 
 public abstract class RegisterCommandHandler {
     protected abstract RegisterResult executeCommand(RegisterCommand command, Register register);
@@ -11,7 +12,7 @@ public abstract class RegisterCommandHandler {
         if (command.getCommandName().equals(getCommandName())) {
             return executeCommand(command, register);
         } else {
-            return RegisterResult.createFailResult("Incompatible handler (" + getCommandName() + ") and command type (" + command.getCommandName() + ")");
+            throw new RSFParseException("Incompatible handler (" + getCommandName() + ") and command type (" + command.getCommandName() + ")");
         }
     }
 }

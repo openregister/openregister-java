@@ -82,9 +82,9 @@ public class RSFFormatter {
                 try {
                     canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
                 } catch (SerializationFormatValidationException e) {
-                    throw new RSFParseException("Non canonical JSON: " + e.getMessage(), e);
+                    throw new RSFParseException("Non canonical JSON", e);
                 } catch (Exception e) {
-                    throw new RSFParseException("Invalid JSON: " + e.getMessage(), e);
+                    throw new RSFParseException("Invalid JSON", e);
                 }
             } else {
                 throw new RSFParseException("Add item line must have " + ADD_ITEM_ARGUMENT_COUNT + " argument, was: " + argsToString(arguments));
