@@ -86,10 +86,6 @@ public class RSFExecutorTest {
 
     @Test
     public void execute_executesAllCommandsInCorrectOrder() {
-        when(assertRootHashHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 assertEmptyRootHashCommand,
                 addItem1Command,
@@ -99,7 +95,7 @@ public class RSFExecutorTest {
                 appendEntry2Command,
                 assertLastRootHashCommand).iterator());
 
-        RegisterResult registerResult = sutExecutor.execute(rsf, register);
+        sutExecutor.execute(rsf, register);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
         inOrder.verify(assertRootHashHandler, calls(1)).execute(assertEmptyRootHashCommand, register);
@@ -109,8 +105,6 @@ public class RSFExecutorTest {
         inOrder.verify(assertRootHashHandler, calls(1)).execute(assertMiddleRootHashCommand, register);
         inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry2Command, register);
         inOrder.verify(assertRootHashHandler, calls(1)).execute(assertLastRootHashCommand, register);
-
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test (expected = RSFParseException.class)
@@ -130,22 +124,16 @@ public class RSFExecutorTest {
     public void execute_succeedsWhenAppendEntryReferencesItemNotInRSFButInDB() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
         when(register.getItem(entry1hashValue)).thenReturn(Optional.of(item1));
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(appendEntry1Command).iterator());
-        RegisterResult registerResult = sutExecutor.execute(rsf, register);
+        sutExecutor.execute(rsf, register);
 
         verify(register, times(1)).getItem(entry1hashValue);
-
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test (expected = RSFParseException.class)
     public void execute_failsForOrphanAddItem() {
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 addItem1Command,
                 addItem2Command,
@@ -156,9 +144,6 @@ public class RSFExecutorTest {
 
     @Test (expected = RSFParseException.class)
     public void execute_failsForItemWhichWasntReferencedInRSF() {
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 addItem1Command,
                 appendEntry1Command,
@@ -178,9 +163,6 @@ public class RSFExecutorTest {
 
     @Test (expected = RSFParseException.class)
     public void execute_executingTheSameInvalidRSFGivesSameResult() {
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 addItem1Command,
                 appendEntry1Command,
@@ -214,18 +196,13 @@ public class RSFExecutorTest {
         RegisterCommand appendEntry = new RegisterCommand("append-entry",
                 asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", itemHash1 + ";" + itemHash2));
 
-        when(addItemHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-        when(appendEntryHandler.execute(any(), eq(register))).thenReturn(RegisterResult.createSuccessResult());
-
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(addItem1, addItem2, appendEntry).iterator());
-        RegisterResult registerResult = sutExecutor.execute(rsf, register);
+        sutExecutor.execute(rsf, register);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
         inOrder.verify(addItemHandler, calls(1)).execute(addItem1, register);
         inOrder.verify(addItemHandler, calls(1)).execute(addItem2, register);
         inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry, register);
-
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     private void assertExceptionThrown(RegisterSerialisationFormat rsf, String exceptionMessage) throws RSFParseException {

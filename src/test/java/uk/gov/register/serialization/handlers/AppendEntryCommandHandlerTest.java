@@ -56,12 +56,11 @@ public class AppendEntryCommandHandlerTest {
     public void execute_appendsEntryToRegister() {
         when(register.getTotalEntries(EntryType.user)).thenReturn(2);
 
-        RegisterResult registerResult = sutHandler.execute(appendEntryCommand, register);
+        sutHandler.execute(appendEntryCommand, register);
 
 
         Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test
@@ -70,12 +69,11 @@ public class AppendEntryCommandHandlerTest {
 
         RegisterCommand command = new RegisterCommand("append-entry",
                 Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb"));
-        RegisterResult registerResult = sutHandler.execute(command, register);
+        sutHandler.execute(command, register);
 
         Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
                 new HashValue(SHA256, "bbb")), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test
@@ -84,11 +82,10 @@ public class AppendEntryCommandHandlerTest {
 
         RegisterCommand command = new RegisterCommand("append-entry",
                 Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
-        RegisterResult registerResult = sutHandler.execute(command, register);
+        sutHandler.execute(command, register);
 
         Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
 

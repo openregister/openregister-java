@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
@@ -69,10 +70,10 @@ public class DataUpload {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/load-rsf")
     @Timed
-    public Response loadRsf(InputStream inputStream) {
+    public Response loadRsf(InputStream inputStream) throws RSFParseException {
         RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
-        RegisterResult loadResult = rsfService.process(rsf);
-        return Response.status(Response.Status.OK).entity(loadResult).build();
+        rsfService.process(rsf);
+        return Response.status(Response.Status.OK).entity(RegisterResult.createSuccessResult()).build();
     }
 
     private void mintItems(Iterable<JsonNode> objects) {

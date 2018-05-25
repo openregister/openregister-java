@@ -23,10 +23,6 @@ public class RegisterResult {
         return new RegisterResult(true, "success", Optional.empty());
     }
 
-    public static RegisterResult createFailResult(String message) {
-        return new RegisterResult(false, message, Optional.empty());
-    }
-
     public static RegisterResult createFailResult(String message, Exception exception) {
         return new RegisterResult(false, message, Optional.of(exception));
     }

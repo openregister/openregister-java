@@ -21,7 +21,7 @@ import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class AppendEntryCommandHandler extends RegisterCommandHandler {
     @Override
-    protected RegisterResult executeCommand(RegisterCommand command, Register register) {
+    protected void executeCommand(RegisterCommand command, Register register) {
         try {
             List<String> parts = command.getCommandArguments();
             String delimitedHashes = parts.get(RSFFormatter.RSF_HASH_POSITION);
@@ -36,7 +36,6 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
             int newEntryNo = register.getTotalEntries(entryType) + 1;
             Entry entry = new Entry(newEntryNo, hashValues, Instant.parse(parts.get(RSFFormatter.RSF_TIMESTAMP_POSITION)), parts.get(RSFFormatter.RSF_KEY_POSITION), entryType);
             register.appendEntry(entry);
-            return RegisterResult.createSuccessResult();
         } catch (Exception e) {
             throw new RSFParseException("Exception when executing command: " + command, e);
         }

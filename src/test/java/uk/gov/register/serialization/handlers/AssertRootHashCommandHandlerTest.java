@@ -50,10 +50,9 @@ public class AssertRootHashCommandHandlerTest {
         RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"), 123);
         when(register.getRegisterProof()).thenReturn(registerProof);
 
-        RegisterResult registerResult = sutHandler.execute(assertRootHashCommand, register);
+        sutHandler.execute(assertRootHashCommand, register);
 
         verify(register, times(1)).getRegisterProof();
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test (expected = RSFParseException.class)

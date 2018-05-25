@@ -4,13 +4,13 @@ import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
 
 public abstract class RegisterCommandHandler {
-    protected abstract RegisterResult executeCommand(RegisterCommand command, Register register);
+    protected abstract void executeCommand(RegisterCommand command, Register register);
 
     public abstract String getCommandName();
 
-    public RegisterResult execute(RegisterCommand command, Register register) {
+    public void execute(RegisterCommand command, Register register) {
         if (command.getCommandName().equals(getCommandName())) {
-            return executeCommand(command, register);
+            executeCommand(command, register);
         } else {
             throw new RSFParseException("Incompatible handler (" + getCommandName() + ") and command type (" + command.getCommandName() + ")");
         }

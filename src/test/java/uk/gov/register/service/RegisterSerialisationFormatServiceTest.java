@@ -57,11 +57,6 @@ public class RegisterSerialisationFormatServiceTest {
             }
         }).when(registerContext).transactionalRegisterOperation(any(Consumer.class));
 
-        when(registerContext.transactionalRegisterOperation(any(Function.class))).thenAnswer(answer -> {
-            Function<Register, Boolean> callback = (Function<Register, Boolean>) answer.getArguments()[0];
-            return callback.apply(register);
-        });
-
         sutService = new RegisterSerialisationFormatService(registerContext, rsfExecutor, rsfCreator);
         rsfFormatter = new RSFFormatter();
     }
@@ -74,12 +69,9 @@ public class RegisterSerialisationFormatServiceTest {
         RegisterCommand command4 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"));
         RegisterSerialisationFormat rsfInput = new RegisterSerialisationFormat(Iterators.forArray(command1, command2, command3, command4));
 
-        when(rsfExecutor.execute(eq(rsfInput), any())).thenReturn(RegisterResult.createSuccessResult());
-
-        RegisterResult registerResult = sutService.process(rsfInput);
+        sutService.process(rsfInput);
 
         verify(rsfExecutor, times(1)).execute(eq(rsfInput), any());
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test

@@ -50,14 +50,13 @@ public class AddItemCommandHandlerTest {
 
     @Test
     public void execute_addsItemToRegister() {
-        RegisterResult registerResult = sutHandler.execute(addItemCommand, register);
+        sutHandler.execute(addItemCommand, register);
 
         Item expectedItem = new Item(new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"), jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
 
         verify(register, times(1)).addItem(expectedItem);
-        assertThat(registerResult, equalTo(RegisterResult.createSuccessResult()));
     }
 
     @Test (expected = RSFParseException.class)

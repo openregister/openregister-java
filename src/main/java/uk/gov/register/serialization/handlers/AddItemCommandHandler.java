@@ -17,12 +17,11 @@ public class AddItemCommandHandler extends RegisterCommandHandler {
     }
 
     @Override
-    protected RegisterResult executeCommand(RegisterCommand command, Register register) {
+    protected void executeCommand(RegisterCommand command, Register register) {
         try {
             String jsonContent = command.getCommandArguments().get(RSFFormatter.RSF_ITEM_ARGUMENT_POSITION);
             Item item = new Item(objectReconstructor.reconstruct(jsonContent));
             register.addItem(item);
-            return RegisterResult.createSuccessResult();
         } catch (Exception e) {
             throw new RSFParseException("Exception when executing command: " + command, e);
         }

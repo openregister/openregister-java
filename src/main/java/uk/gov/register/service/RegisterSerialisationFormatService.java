@@ -41,9 +41,9 @@ public class RegisterSerialisationFormatService {
         writeTo(output, RSFFormatter, register -> rsfCreator.create(register, indexName, totalEntries1, totalEntries2));
     }
 
-    public RegisterResult process(RegisterSerialisationFormat rsf) {
-        return registerContext.transactionalRegisterOperation(register -> {
-            return rsfExecutor.execute(rsf, register);
+    public void process(RegisterSerialisationFormat rsf) throws RSFParseException {
+        registerContext.transactionalRegisterOperation(register -> {
+            rsfExecutor.execute(rsf, register);
         });
     }
 
