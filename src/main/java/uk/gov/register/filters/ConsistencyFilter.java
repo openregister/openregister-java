@@ -2,7 +2,7 @@ package uk.gov.register.filters;
 
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterId;
-import uk.gov.register.exceptions.InconsistencyException;
+import uk.gov.register.exceptions.EnvironmentInconsistencyException;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -36,7 +36,7 @@ public class ConsistencyFilter implements ContainerRequestFilter {
         }
 
         if (!registerContext.get().hasConsistentState()) {
-            throw new InconsistencyException(
+            throw new EnvironmentInconsistencyException(
                     String.format("Register %s doesn't match with specification.", registerPrimaryKey.get().value()));
         }
     }

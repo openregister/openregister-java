@@ -1,6 +1,6 @@
 package uk.gov.register.util;
 
-import uk.gov.register.exceptions.SerializationFormatValidationException;
+import uk.gov.register.exceptions.ItemNotCanonicalException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ public class CanonicalJsonValidator {
         byte[] canonicalizedBytes = canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(jsonItemBytes));
 
         if (!Arrays.equals(jsonItemBytes, canonicalizedBytes)) {
-            throw new SerializationFormatValidationException(jsonItem);
+            throw new ItemNotCanonicalException(jsonItem);
         }
     }
 }

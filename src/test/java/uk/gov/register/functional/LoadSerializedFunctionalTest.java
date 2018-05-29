@@ -168,7 +168,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
         
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Entry #4 with key Notts - Cannot contain identical items to previous entry"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #4 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry"));
     }
     
     @Test
@@ -182,7 +182,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Entry #2 with key Notts - Cannot contain identical items to previous entry"));
+        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #2 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry"));
     }
     
     @Test
@@ -199,7 +199,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
         
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Entry #2 with key EastMidlands - Cannot contain identical items to previous entry"));
+        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry"));
     }
     
     @Test
@@ -222,7 +222,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
         
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Entry #2 with key EastMidlands - Cannot contain identical items to previous entry"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry"));
     }
     
     @Test
@@ -239,7 +239,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\t");
         
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Entry #3 with key EastMidlands - Cannot tombstone a record which does not exist"));
+        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #3 with key 'EastMidlands' against index with name 'record': Cannot tombstone a record which does not exist"));
     }
     
     @Test
@@ -260,7 +260,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:25:05Z\t");
 
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Entry #3 with key EastMidlands - Cannot tombstone a record which does not exist"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #3 with key 'EastMidlands' against index with name 'record': Cannot tombstone a record which does not exist"));
     }
 
     @Test
@@ -270,7 +270,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e]}: Field undefined: register - address\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e]}: Failed to append entry with entry-number 8 and key 'register:address': Field undefined: register - address\"}"));
     }
     
     @Test
@@ -293,7 +293,7 @@ public class LoadSerializedFunctionalTest {
         Response r = send(input);
 
         assertThat(r.getStatus(), equalTo(400));
-        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:e46ec43a2a9734d26834c2e75fab0c547aa4fccdec8da29c29f331d629ad0e71]}: Definition of register register does not match Register Register\"}"));
+        assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:register, 2017-06-06T09:54:11Z, sha-256:e46ec43a2a9734d26834c2e75fab0c547aa4fccdec8da29c29f331d629ad0e71]}: Failed to append entry with entry-number 11 and key 'register:register': Definition of register register does not match Register Register\"}"));
     }
 
     @Test
@@ -323,7 +323,7 @@ public class LoadSerializedFunctionalTest {
 						"add-item\t{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
 						"append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
 		assertThat(response.getStatus(), equalTo(400));
-		assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Definition of field postcode does not match Field Register\"}"));
+		assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Failed to append entry with entry-number 1 and key 'field:postcode': Definition of field postcode does not match Field Register\"}"));
 	}
     
     @Test
@@ -334,7 +334,7 @@ public class LoadSerializedFunctionalTest {
             "add-item\t{\"fields\":[\"test-postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
             "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:323fb3d9167d55ea8173172d756ddbc653292f8debbb13f251f7057d5cb5e450\n");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:test-postcode, 2017-06-09T12:59:51Z, sha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe]}: Field test-postcode does not exist in Field Register\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:test-postcode, 2017-06-09T12:59:51Z, sha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe]}: Failed to append entry with entry-number 1 and key 'field:test-postcode': Field test-postcode does not exist in Field Register\"}"));
     }
 
     @Test
@@ -349,7 +349,7 @@ public class LoadSerializedFunctionalTest {
 
         Response response = register.loadRsf(TestRegister.postcode, rsf);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Definition of field postcode does not match Field Register\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Failed to append entry with entry-number 1 and key 'field:postcode': Definition of field postcode does not match Field Register\"}"));
     }
 
     @After

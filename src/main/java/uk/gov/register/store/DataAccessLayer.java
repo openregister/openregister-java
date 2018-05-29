@@ -5,6 +5,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
+import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
 import uk.gov.register.util.HashValue;
 
@@ -22,7 +23,7 @@ public interface DataAccessLayer {
     Iterator<Item> getItemIterator(int startEntryNumber, int endEntryNumber);
 
     // Entries
-    void appendEntry(Entry entry);
+    void appendEntry(Entry entry) throws IndexingException;
     Optional<Entry> getEntry(int entryNumber);
     Collection<Entry> getEntries(int start, int limit);
     Collection<Entry> getAllEntries();

@@ -10,13 +10,11 @@ import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.db.Index;
-import uk.gov.register.exceptions.FieldValidationException;
+import uk.gov.register.exceptions.FieldDefinitionException;
 import uk.gov.register.exceptions.NoSuchConfigException;
-import uk.gov.register.exceptions.RegisterResultException;
-import uk.gov.register.exceptions.RegisterValidationException;
+import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
-import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
@@ -28,7 +26,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
@@ -86,8 +83,8 @@ public class RegisterContext implements
 
     private Map<EntryType, Collection<IndexFunction>> getIndexFunctions() {
         Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = new HashMap<>();
-        indexFunctionsByEntryType.put(EntryType.user, new HashSet<>());
-        indexFunctionsByEntryType.put(EntryType.system, new HashSet<>());
+        indexFunctionsByEntryType.put(EntryType.user, new ArrayList<>());
+        indexFunctionsByEntryType.put(EntryType.system, new ArrayList<>());
 
         for (IndexFunctionConfiguration indexFunctionConfig : indexFunctionConfigs) {
             indexFunctionsByEntryType.get(indexFunctionConfig.getEntryType()).addAll(indexFunctionConfig.getIndexFunctions());
@@ -128,27 +125,6 @@ public class RegisterContext implements
         transactionalMemoizationStore.commitHashesToStore();
     }
 
-    public RegisterResult transactionalRegisterOperation(Function<Register, RegisterResult> registerOperationFunc) {
-        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
-        try {
-            return inTransaction(dbi, handle -> {
-                PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
-                Register register = buildTransactionalRegister(dataAccessLayer, transactionalMemoizationStore);
-                RegisterResult result = registerOperationFunc.apply(register);
-                if (result.isSuccessful()) {
-                    dataAccessLayer.checkpoint();
-                    transactionalMemoizationStore.commitHashesToStore();
-                } else {
-                    throw new RegisterResultException(result);
-                }
-                return result;
-            });
-
-        } catch (RegisterResultException e) {
-            return e.getRegisterResult();
-        }
-    }
-
     public void resetRegister() throws IOException, NoSuchConfigException {
         if (enableRegisterDataDelete) {
             flyway.clean();
@@ -163,14 +139,6 @@ public class RegisterContext implements
     public static void useTransaction(DBI dbi, Consumer<Handle> callback) {
         try {
             dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callback.accept(handle));
-        } catch (CallbackFailedException e) {
-            throw Throwables.propagate(e.getCause());
-        }
-    }
-
-    public static <T> T inTransaction(DBI dbi, Function<Handle, T> callbackFn) {
-        try {
-            return dbi.inTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callbackFn.apply(handle));
         } catch (CallbackFailedException e) {
             throw Throwables.propagate(e.getCause());
         }
@@ -211,7 +179,7 @@ public class RegisterContext implements
     public void validate() {
         try {
             environmentValidator.validateExistingMetadataAgainstEnvironment(this);
-        } catch (FieldValidationException | RegisterValidationException ex) {
+        } catch (FieldDefinitionException | RegisterDefinitionException ex) {
             hasConsistentState = false;
         }
     }

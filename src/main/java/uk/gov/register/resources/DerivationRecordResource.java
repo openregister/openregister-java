@@ -6,6 +6,7 @@ import uk.gov.register.configuration.IndexConfiguration;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -40,7 +41,7 @@ public class DerivationRecordResource {
     @GET
     @Path("/index/{index-name}/record/{record-key}")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
-    public RecordView getRecordByKey(@PathParam("index-name") String indexName, @PathParam("record-key") String key) {
+    public RecordView getRecordByKey(@PathParam("index-name") String indexName, @PathParam("record-key") String key) throws FieldConversionException {
         ensureIndexIsAccessible(indexName);
 
         return register.getRecord(key, indexName)
@@ -52,7 +53,7 @@ public class DerivationRecordResource {
     @Path("/index/{index-name}/record/{record-key}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key, @PathParam("index-name") String indexName) {
+    public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key, @PathParam("index-name") String indexName) throws FieldConversionException {
         ensureIndexIsAccessible(indexName);
 
         return viewFactory.getRecordView(getRecordByKey(indexName, key));
@@ -62,7 +63,7 @@ public class DerivationRecordResource {
     @Path("/index/{index-name}/records")
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
     @Timed
-    public RecordsView records(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+    public RecordsView records(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
         ensureIndexIsAccessible(indexName);
 
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize, indexName);
@@ -74,7 +75,7 @@ public class DerivationRecordResource {
     @Path("/index/{index-name}/records")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public PaginatedView<RecordsView> recordsHtml(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+    public PaginatedView<RecordsView> recordsHtml(@PathParam("index-name") String indexName, @QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
         ensureIndexIsAccessible(indexName);
 
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize, indexName);
@@ -108,7 +109,7 @@ public class DerivationRecordResource {
         );
     }
 
-    private RecordsView getRecordsView(int limit, int offset, String indexName) {
+    private RecordsView getRecordsView(int limit, int offset, String indexName) throws FieldConversionException {
         List<Record> records = register.getRecords(limit, offset, indexName);
         return viewFactory.getIndexRecordsMediaView(records);
     }

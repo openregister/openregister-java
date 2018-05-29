@@ -1,5 +1,7 @@
 package uk.gov.register.core;
 
+import uk.gov.register.exceptions.NoSuchFieldException;
+import uk.gov.register.exceptions.NoSuchRegisterException;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -25,7 +27,7 @@ public interface RegisterReadOnly {
     Collection<Entry> allEntriesOfRecord(String key);
     List<Record> getRecords(int limit, int offset);
 
-    List<Record> max100RecordsFacetedByKeyValue(String key, String value);
+    List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException;
 
     RegisterProof getRegisterProof();
     RegisterProof getRegisterProof(int entryNo);
@@ -46,7 +48,7 @@ public interface RegisterReadOnly {
     Optional<String> getRegisterName();
     Optional<String> getCustodianName();
 
-    RegisterMetadata getRegisterMetadata();
+    RegisterMetadata getRegisterMetadata() throws NoSuchRegisterException;
 
     Optional<Record> getRecord(String key, String derivationName);
 
@@ -54,6 +56,6 @@ public interface RegisterReadOnly {
 
     int getTotalRecords(String derivationName);
 
-    Map<String, Field> getFieldsByName();
+    Map<String, Field> getFieldsByName() throws NoSuchRegisterException, NoSuchFieldException;
 }
 

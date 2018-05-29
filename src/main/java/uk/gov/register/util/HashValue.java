@@ -29,7 +29,7 @@ public class HashValue {
         return value;
     }
 
-    public static HashValue decode(HashingAlgorithm hashingAlgorithm, String encodedHash) {
+    public static HashValue decode(HashingAlgorithm hashingAlgorithm, String encodedHash) throws HashDecodeException {
         if (!encodedHash.startsWith(hashingAlgorithm.toString())) {
             throw new HashDecodeException(String.format("Hash \"%s\" has not been encoded with hashing algorithm \"%s\"", encodedHash, hashingAlgorithm));
         }

@@ -2,6 +2,7 @@ package uk.gov.register.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.db.EntryMerkleLeafStore;
+import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
@@ -29,7 +30,7 @@ public class EntryLogImpl implements EntryLog {
     }
 
     @Override
-    public void appendEntry(Entry entry) {
+    public void appendEntry(Entry entry) throws IndexingException {
         dataAccessLayer.appendEntry(entry);
     }
 

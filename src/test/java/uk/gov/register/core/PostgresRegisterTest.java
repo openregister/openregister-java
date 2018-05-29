@@ -11,10 +11,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.Index;
 import uk.gov.register.db.InMemoryEntryDAO;
-import uk.gov.register.exceptions.FieldUndefinedException;
-import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.AppendEntryException;
 import uk.gov.register.exceptions.NoSuchFieldException;
-import uk.gov.register.exceptions.SerializationFormatValidationException;
+import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
@@ -87,7 +86,7 @@ public class PostgresRegisterTest {
         verify(index, times(1)).findMax100RecordsByKeyValue("postcode", "AB1 2CD");
     }
 
-    @Test(expected = SerializationFormatValidationException.class)
+    @Test(expected = AppendEntryException.class)
     public void shouldFailForUnreferencedItem() {
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.now(),
                 "key", EntryType.user);
@@ -95,7 +94,7 @@ public class PostgresRegisterTest {
         register.appendEntry(entry);
     }
 
-    @Test(expected = ItemValidationException.class)
+    @Test(expected = AppendEntryException.class)
     public void shouldFailForInvalidItem() throws IOException {
         JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
         doThrow(new ItemValidationException("error", content)).when(itemValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
@@ -108,7 +107,7 @@ public class PostgresRegisterTest {
         register.appendEntry(entry);
     }
 
-    @Test(expected = FieldUndefinedException.class)
+    @Test(expected = AppendEntryException.class)
     public void shouldFailForMissingField() throws IOException {
         JsonNode content = mapper.readTree( postcodeRegisterItem );
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");

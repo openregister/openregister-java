@@ -1,5 +1,6 @@
 package uk.gov.register.core;
 
+import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -13,7 +14,7 @@ import java.util.Optional;
  * An append-only log of Entries, together with proofs
  */
 public interface EntryLog {
-    void appendEntry(Entry entry);
+    void appendEntry(Entry entry) throws IndexingException;
 
     Optional<Entry> getEntry(int entryNumber);
     Collection<Entry> getEntries(int start, int limit);
