@@ -5,6 +5,7 @@ import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
+import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
@@ -96,7 +97,7 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerResolver, fieldValueMap);
     }
 
-    public AttributionView<ItemView> getItemView(final Item item) {
+    public AttributionView<ItemView> getItemView(final Item item) throws FieldConversionException {
         return getAttributionView("item.html", getItemMediaView(item));
     }
 
@@ -125,19 +126,19 @@ public class ViewFactory {
                 recordsView);
     }
 
-    public ItemView getItemMediaView(final Item item) {
+    public ItemView getItemMediaView(final Item item) throws FieldConversionException {
         return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
     }
 
-    public RecordView getRecordMediaView(final Record record) {
+    public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
         return new RecordView(record, register.get().getFieldsByName(), itemConverter);
     }
 
-    public RecordsView getRecordsMediaView(final List<Record> records) {
+    public RecordsView getRecordsMediaView(final List<Record> records) throws FieldConversionException {
         return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, false);
     }
 
-    public RecordsView getIndexRecordsMediaView(final List<Record> records) {
+    public RecordsView getIndexRecordsMediaView(final List<Record> records) throws FieldConversionException {
         return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
     }
 
@@ -161,7 +162,7 @@ public class ViewFactory {
                 key);
     }
 
-    public PreviewItemPageView previewItemPageView(final Item item, final String key, final String previewType) {
+    public PreviewItemPageView previewItemPageView(final Item item, final String key, final String previewType) throws FieldConversionException {
         return new PreviewItemPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(

@@ -43,6 +43,13 @@ public class HashValueTest {
         HashValue.decode(HashingAlgorithm.SHA256, encodedHash);
     }
 
+    @Test(expected = HashDecodeException.class)
+    public void decode_shouldThrowExceptionWhenEmptyString() {
+        String encodedHash = "";
+
+        HashValue.decode(HashingAlgorithm.SHA256, encodedHash);
+    }
+
     @Test
     public void equal_shouldReturnTrueWhenBothEqual() {
         HashValue hash1 = new HashValue(HashingAlgorithm.SHA256, "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");

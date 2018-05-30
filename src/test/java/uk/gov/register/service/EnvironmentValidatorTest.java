@@ -7,8 +7,8 @@ import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
-import uk.gov.register.exceptions.FieldValidationException;
-import uk.gov.register.exceptions.RegisterValidationException;
+import uk.gov.register.exceptions.FieldDefinitionException;
+import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.util.Arrays;
@@ -56,7 +56,7 @@ public class EnvironmentValidatorTest {
 		try {
 			environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
 			fail();
-		} catch (RegisterValidationException e) {
+		} catch (RegisterDefinitionException e) {
 			assertThat(e.getMessage(), equalTo("Definition of register postcode does not match Register Register"));
 		}
     }
@@ -80,7 +80,7 @@ public class EnvironmentValidatorTest {
 		try {
 			environmentValidator.validateFieldAgainstEnvironment(localField);
 			fail();
-		} catch (FieldValidationException e) {
+		} catch (FieldDefinitionException e) {
 			assertThat(e.getMessage().equalsIgnoreCase("Field test does not exist in Field Register"), is(true));
 		}
 	}
@@ -93,7 +93,7 @@ public class EnvironmentValidatorTest {
 		try {
 			environmentValidator.validateFieldAgainstEnvironment(localField);
 			fail();
-		} catch (FieldValidationException e) {
+		} catch (FieldDefinitionException e) {
 			assertThat(e.getMessage().equalsIgnoreCase("Definition of field postcode does not match Field Register"), equalTo(true));
 		}
 	}
@@ -124,7 +124,7 @@ public class EnvironmentValidatorTest {
 		try {
 			environmentValidator.validateExistingMetadataAgainstEnvironment(registerContext);
 			fail();
-		} catch (RegisterValidationException e) {
+		} catch (RegisterDefinitionException e) {
 			assertThat(e.getMessage().equalsIgnoreCase("Definition of register postcode does not match Register Register"), equalTo(true));
 		}
 	}
@@ -151,7 +151,7 @@ public class EnvironmentValidatorTest {
 		try {
 			environmentValidator.validateExistingMetadataAgainstEnvironment(registerContext);
 			fail();
-		} catch (FieldValidationException e) {
+		} catch (FieldDefinitionException e) {
 			assertThat(e.getMessage().equalsIgnoreCase("Definition of field postcode does not match Field Register"), equalTo(true));
 		}
 	}

@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
+import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -41,7 +42,7 @@ public class RecordsView implements CsvRepresentationView {
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
     public RecordsView(final List<Record> records, final Map<String, Field> fieldsByName, final ItemConverter itemConverter,
-                       final boolean resolveAllItemLinks, final boolean displayEntryKeyColumn) {
+                       final boolean resolveAllItemLinks, final boolean displayEntryKeyColumn) throws FieldConversionException {
         this.displayEntryKeyColumn = displayEntryKeyColumn;
         this.resolveAllItemLinks = resolveAllItemLinks;
         this.fieldsByName = fieldsByName;
@@ -131,7 +132,7 @@ public class RecordsView implements CsvRepresentationView {
         return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
     }
 
-    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) {
+    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) throws FieldConversionException {
         final Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
             map.put(record.getEntry(), record.getItems().stream().map(item ->

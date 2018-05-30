@@ -72,6 +72,22 @@ public class RecordResourceFunctionalTest {
     }
 
     @Test
+    public void getFacetedRecords() throws IOException {
+        Response response = register.getRequest(address, "/records/street/presley.json");
+
+        assertThat(response.getStatus(), equalTo(200));
+
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        assertThat(res.size(), equalTo(1));
+        JsonNode facetedRecord = res.get("6789");
+        assertThat(facetedRecord.get("entry-number").textValue(), equalTo("2"));
+        assertThat(facetedRecord.get("index-entry-number").textValue(), equalTo("2"));
+        assertTrue(facetedRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
+        assertThat(facetedRecord.get("item").size(), equalTo(1));
+    }
+
+    @Test
     public void recordResource_return404ResponseWhenRecordNotExist() {
         assertThat(register.getRequest(address, "/record/5001.json").getStatus(), equalTo(404));
     }
@@ -143,6 +159,22 @@ public class RecordResourceFunctionalTest {
     @Test
     public void historyResource_return404ResponseWhenRecordNotExist() {
         assertThat(register.getRequest(address, "/record/5001/entries.json").getStatus(), equalTo(404));
+    }
+
+    @Test
+    public void facetedRecordResource_return404ResponseWhenFieldNotExist() {
+        assertThat(register.getRequest(address, "/records/invalidfield/presley").getStatus(), equalTo(404));
+    }
+
+    @Test
+    public void facetedRecordResource_return200EmptyResponseWhenFieldValueNotExist() throws IOException {
+        Response response = register.getRequest(address, "/records/street/invalid.json");
+
+        assertThat(response.getStatus(), equalTo(200));
+
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+
+        assertThat(res.size(), equalTo(0));
     }
 
     private String addressRsf(){

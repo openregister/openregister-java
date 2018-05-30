@@ -5,6 +5,8 @@ import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.exceptions.FieldConversionException;
+import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -35,7 +37,7 @@ public class RecordResource {
     @Path("/records/{record-key}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) {
+    public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) throws FieldConversionException {
         return viewFactory.getRecordView(getRecordByKey(key));
     }
 
@@ -52,7 +54,7 @@ public class RecordResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public RecordView getRecordByKey(@PathParam("record-key") String key) {
+    public RecordView getRecordByKey(@PathParam("record-key") String key) throws FieldConversionException {
         httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
 
         return register.getRecord(key).map(viewFactory::getRecordMediaView)
@@ -99,7 +101,7 @@ public class RecordResource {
     @Path("/records/{key}/{value}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public PaginatedView<RecordsView> facetedRecordsHtml(@PathParam("key") String key, @PathParam("value") String value) {
+    public PaginatedView<RecordsView> facetedRecordsHtml(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException, NoSuchFieldException {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         Pagination pagination
                 = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
@@ -117,7 +119,7 @@ public class RecordResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) {
+    public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         return viewFactory.getRecordsMediaView(records);
     }
@@ -126,7 +128,7 @@ public class RecordResource {
     @Path("/records")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+    public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
         RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset());
         return viewFactory.getRecordsView(pagination, recordsView);
@@ -143,7 +145,7 @@ public class RecordResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
+    public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
 
         return getRecordsView(pagination.pageSize(), pagination.offset());
@@ -162,7 +164,7 @@ public class RecordResource {
         return pagination;
     }
 
-    private RecordsView getRecordsView(int limit, int offset) {
+    private RecordsView getRecordsView(int limit, int offset) throws FieldConversionException {
         List<Record> records = register.getRecords(limit, offset);
         return viewFactory.getRecordsMediaView(records);
     }

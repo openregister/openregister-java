@@ -2,6 +2,7 @@ package uk.gov.register.service;
 
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.*;
 
 import javax.inject.Inject;
@@ -40,9 +41,9 @@ public class RegisterSerialisationFormatService {
         writeTo(output, RSFFormatter, register -> rsfCreator.create(register, indexName, totalEntries1, totalEntries2));
     }
 
-    public RegisterResult process(RegisterSerialisationFormat rsf) {
-        return registerContext.transactionalRegisterOperation(register -> {
-            return rsfExecutor.execute(rsf, register);
+    public void process(RegisterSerialisationFormat rsf) throws RSFParseException {
+        registerContext.transactionalRegisterOperation(register -> {
+            rsfExecutor.execute(rsf, register);
         });
     }
 
