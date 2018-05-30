@@ -56,7 +56,6 @@ public class DataUpload {
     @Path("/load")
     @Timed
     public void load(String payload) {
-        // TODO remove this endpoint
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstructWithCanonicalization(payload.split("\n"));
             mintItems(objects);

@@ -7,6 +7,6 @@ import uk.gov.register.core.RegisterId;
  */
 public class NoSuchRegisterException extends RuntimeException {
     public NoSuchRegisterException(RegisterId registerId) {
-        super("Definition for " + registerId.value() + " register is missing");
+        super(String.format("Definition for %s register is missing", registerId.value()));
     }
 }
