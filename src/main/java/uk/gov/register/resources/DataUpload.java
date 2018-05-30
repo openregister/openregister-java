@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.LoadException;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterResult;
@@ -55,12 +56,13 @@ public class DataUpload {
     @Path("/load")
     @Timed
     public void load(String payload) {
+        // TODO remove this endpoint
         try {
             Iterable<JsonNode> objects = objectReconstructor.reconstructWithCanonicalization(payload.split("\n"));
             mintItems(objects);
         } catch (Throwable t) {
             logger.error(Throwables.getStackTraceAsString(t));
-            throw t;
+            throw new LoadException(t.getMessage(), t);
         }
     }
 

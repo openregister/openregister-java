@@ -208,18 +208,18 @@ public class DataUploadFunctionalTest {
     public void validation_FailsToLoadEntryWhenNonEmptyPrimaryKeyFieldIsNotExist() {
         Response response = register.mintLines(TestRegister.register, "{}");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field. Error entry: '{}'"));
+        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field"));
 
         response = register.mintLines(TestRegister.register, "{\"register\":\"  \"}");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Primary key field 'register' must have a valid value. Error entry: '{\"register\":\"  \"}'"));
+        assertThat(response.readEntity(String.class), equalTo("Failed to append entry with entry-number 1 and key '  '"));
     }
 
     @Test
     public void validation_FailsToLoadEntryWhenEntryContainsInvalidFields() {
         Response response = register.mintLines(TestRegister.register, "{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field. Error entry: '{\"foo\":\"bar\",\"foo1\":\"bar1\"}'"));
+        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field"));
     }
 
     @Test
@@ -227,7 +227,7 @@ public class DataUploadFunctionalTest {
         String entry = "{\"register\":\"someregister\",\"fields\":\"value\"}";
         Response response = register.mintLines(TestRegister.register, entry);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'. Error entry: '" + entry + "'"));
+        assertThat(response.readEntity(String.class), equalTo("Failed to append entry with entry-number 1 and key 'someregister'"));
     }
 
     @Test

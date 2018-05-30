@@ -7,7 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class RegisterUndefinedExceptionMapper implements ExceptionMapper<NoSuchRegisterException> {
+public class NoSuchRegisterExceptionMapper implements ExceptionMapper<NoSuchRegisterException> {
 
     @Override
     public Response toResponse(NoSuchRegisterException exception) {

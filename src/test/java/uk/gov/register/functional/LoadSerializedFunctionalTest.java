@@ -168,7 +168,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
         
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #4 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #4 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry\"}"));
     }
     
     @Test
@@ -182,7 +182,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #2 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry\"}"));
     }
     
     @Test
@@ -199,7 +199,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
         
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry\"}"));
     }
     
     @Test
@@ -222,7 +222,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
         
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry\"}"));
     }
     
     @Test
@@ -239,7 +239,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\t");
         
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #3 with key 'EastMidlands' against index with name 'record': Cannot tombstone a record which does not exist"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #3 with key 'EastMidlands' against index with name 'record': Cannot tombstone a record which does not exist\"}"));
     }
     
     @Test
@@ -260,7 +260,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:25:05Z\t");
 
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("Entry validation exception: Failed to index entry #3 with key 'EastMidlands' against index with name 'record': Cannot tombstone a record which does not exist"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #3 with key 'EastMidlands' against index with name 'record': Cannot tombstone a record which does not exist\"}"));
     }
 
     @Test

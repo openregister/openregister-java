@@ -12,7 +12,7 @@ public class CanonicalJsonValidator {
         this.canonicalJsonMapper = new CanonicalJsonMapper();
     }
 
-    public void validateItemStringIsCanonicalized(String jsonItem) {
+    public void validateItemStringIsCanonicalized(String jsonItem) throws ItemNotCanonicalException {
         byte[] jsonItemBytes = jsonItem.getBytes(StandardCharsets.UTF_8);
         byte[] canonicalizedBytes = canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(jsonItemBytes));
 

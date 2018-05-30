@@ -11,7 +11,9 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
 import uk.gov.register.db.Index;
 import uk.gov.register.exceptions.FieldDefinitionException;
+import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.exceptions.NoSuchConfigException;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
@@ -120,7 +122,13 @@ public class RegisterContext implements
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
             Register register = buildTransactionalRegister(dataAccessLayer, transactionalMemoizationStore);
             consumer.accept(register);
-            dataAccessLayer.checkpoint();
+
+            // TODO: this is a smell caused by the indexing logic living within the DataAccessLayer. This should be moved above this layer.
+            try {
+                dataAccessLayer.checkpoint();
+            } catch (IndexingException exception) {
+                throw new RSFParseException("Exception when indexing data", exception);
+            }
         });
         transactionalMemoizationStore.commitHashesToStore();
     }
