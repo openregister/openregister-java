@@ -1,7 +1,10 @@
 package uk.gov.register.core;
 
 import javax.ws.rs.core.UriBuilder;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class UriTemplateLinkResolver implements LinkResolver {
     private final RegisterResolver registerResolver;
@@ -23,6 +26,10 @@ public class UriTemplateLinkResolver implements LinkResolver {
     public URI resolve(RegisterId register, String linkKey) {
         URI baseUri = registerResolver.baseUriFor(register);
 
-        return UriBuilder.fromUri(baseUri).path("records").path(linkKey).build();
+        try {
+            return UriBuilder.fromUri(baseUri).path("records").path(URLEncoder.encode(linkKey, StandardCharsets.UTF_8.name())).build();
+        } catch (UnsupportedEncodingException e) {
+            return UriBuilder.fromUri(baseUri).path("records").path(linkKey).build();
+        }
     }
 }

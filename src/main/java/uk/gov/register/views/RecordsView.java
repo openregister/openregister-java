@@ -22,6 +22,8 @@ import uk.gov.register.views.representations.turtle.RecordsTurtleWriter;
 import javax.inject.Provider;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -100,6 +102,12 @@ public class RecordsView implements CsvRepresentationView {
     @SuppressWarnings("unused, used by template")
     public boolean displayEntryKeyColumn() {
         return displayEntryKeyColumn;
+    }
+
+    @SuppressWarnings("unused, used by template")
+    public static String urlEncodeKey(String key) throws UnsupportedEncodingException {
+        return URLEncoder.encode(
+                key, StandardCharsets.UTF_8.name());
     }
 
     @SuppressWarnings("unused, used by template")

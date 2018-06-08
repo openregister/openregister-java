@@ -39,6 +39,11 @@ public class UriTemplateLinkResolverTest {
 
     @Test
     public void separateRegisterAndValueReturnsCorrectLink() throws Exception {
-        assertThat(localResolver.resolve(new RegisterId("country"),"CZ"), is(URI.create("http://country.openregister.dev:8080/records/CZ")));
+        assertThat(localResolver.resolve(new RegisterId("country"), "CZ"), is(URI.create("http://country.openregister.dev:8080/records/CZ")));
+    }
+
+    @Test
+    public void keysAreURLEncoded() throws Exception {
+        assertThat(localResolver.resolve(new RegisterId("country"),"47.79/1"), is(URI.create("http://country.openregister.dev:8080/records/47.79%2F1")));
     }
 }

@@ -29,7 +29,7 @@
           th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})"
           class="table-wrapper"></div>
       <p>
-        <a th:href="${'/records/' + content.entryKey +'/entries'}">View all versions of this record</a>
+        <a th:href="@{'/records/' + ${content.urlEncodeKey(content.entryKey)} +'/entries'}">View all versions of this record</a>
       </p>
 
     </main>
