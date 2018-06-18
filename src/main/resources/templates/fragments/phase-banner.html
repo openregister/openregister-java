@@ -3,14 +3,17 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <body>
   <th:block th:fragment="phase">
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <div class="panel panel-border-wide phase">
-          <span class="phase-banner">In progress</span>
-          <p>This data is in progress and it's not ready for use.</p>
-          <th:block th:unless="${register.phase == 'discovery' || register.phase == 'test'}">
-            <p>You can <a th:href="@{'https://www.registers.service.gov.uk/registers/' + ${registerId}}" target="_blank">preview the data and give us feedback</a>.</p>
-          </th:block>
+    <div class="registers-intro">
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="heading-medium"><th:block th:utext="${friendlyRegisterId}">Register name</th:block> API</h1>
+          <div class="panel panel-border-wide phase">
+            <span class="phase-banner">In progress</span>
+            <p>This data is in progress and it's not ready for use.</p>
+            <th:block th:unless="${register.phase == 'discovery' || register.phase == 'test'}">
+              <p>You can <a th:href="@{'https://www.registers.service.gov.uk/registers/' + ${registerId}}" target="_blank">preview the data and give us feedback</a>.</p>
+            </th:block>
+          </div>
         </div>
       </div>
     </div>

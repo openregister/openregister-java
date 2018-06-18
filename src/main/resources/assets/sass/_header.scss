@@ -44,7 +44,7 @@ $active-nav-color: #1d8feb;
   @extend %contain-floats;
 
   @include screen {
-    background: $black;
+    background-color: $govuk-blue;
     color: $white;
     border-bottom: 10px solid $white;
   }
