@@ -27,7 +27,7 @@ public class AssetsBundleCustomErrorHandlerTest {
         assertThat(response.getMediaType().isCompatible(MediaType.TEXT_HTML_TYPE), equalTo(true));
 
         Document doc = Jsoup.parse(response.readEntity(String.class));
-        Elements notFoundHeader = doc.select("main h1");
+        Elements notFoundHeader = doc.select(".heading-large");
         Assert.assertThat(notFoundHeader.first().text(), equalTo("Page not found"));
     }
 }
