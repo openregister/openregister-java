@@ -12,6 +12,8 @@ applications:
     - register.gov.uk
   hosts:
     - allergen
+    - approved-open-standard
+    - approved-open-standard-guidance
     - country
     - government-domain
     - government-organisation
