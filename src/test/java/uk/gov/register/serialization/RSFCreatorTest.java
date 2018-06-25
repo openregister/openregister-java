@@ -33,6 +33,8 @@ public class RSFCreatorTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
     private static final String EMPTY_REGISTER_ROOT_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
+    private final HashValue emptyRegisterHash = new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH);
+
     private RSFCreator sutCreator;
 
     @Rule
@@ -41,14 +43,18 @@ public class RSFCreatorTest {
     @Mock
     private Register register;
 
+    private Entry systemEntry;
     private Entry entry1;
     private Entry entry2;
+    private Item systemItem;
     private Item item1;
     private Item item2;
 
     private RegisterCommand assertEmptyRootHashCommand;
+    private RegisterCommand addSystemItemCommand;
     private RegisterCommand addItem1Command;
     private RegisterCommand addItem2Command;
+    private RegisterCommand appendSystemEntryCommand;
     private RegisterCommand appendEntry1Command;
     private RegisterCommand appendEntry2Command;
 
@@ -59,6 +65,9 @@ public class RSFCreatorTest {
         sutCreator.register(new EntryToCommandMapper());
         sutCreator.register(new ItemToCommandMapper());
 
+        systemItem = new Item(new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), jsonFactory.objectNode()
+                .put("system-field-1", "system-field-1-value")
+                .put("system-field-2", "system-field-2-value"));
         item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "item1sha"), jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
@@ -66,23 +75,24 @@ public class RSFCreatorTest {
                 .put("field-1", "entry2-field-1-value")
                 .put("field-2", "entry2-field-2-value"));
 
+        systemEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), Instant.parse("2016-07-24T16:54:00Z"), "system-key", EntryType.system);
         entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
         entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "item2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
 
-        HashValue emptyRegisterHash = new HashValue(HashingAlgorithm.SHA256, EMPTY_REGISTER_ROOT_HASH);
-
         assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterHash.encode()));
 
+        addSystemItemCommand  = new RegisterCommand("add-item", Collections.singletonList("{\"system-field-1\":\"system-field-1-value\",\"system-field-2\":\"system-field-2-value\"}"));
         addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
+        appendSystemEntryCommand = new RegisterCommand("append-entry", Arrays.asList("system", "system-key", "2016-07-24T16:54:00Z", "sha-256:systemitemsha"));
         appendEntry1Command = new RegisterCommand("append-entry", Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha"));
         appendEntry2Command = new RegisterCommand("append-entry", Arrays.asList("user", "entry2-field-1-value","2016-07-24T16:56:00Z", "sha-256:item2sha" ));
     }
 
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
+        when(register.getItemIterator()).thenReturn(Arrays.asList(systemItem, item1, item2).iterator());
+        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 46464);
@@ -95,11 +105,13 @@ public class RSFCreatorTest {
         verify(register, times(1)).getEntryIterator();
         verify(register, times(1)).getRegisterProof();
 
-        assertThat(actualCommands.size(), equalTo(6));
+        assertThat(actualCommands.size(), equalTo(8));
         assertThat(actualCommands, contains(
                 assertEmptyRootHashCommand,
+                addSystemItemCommand,
                 addItem1Command,
                 addItem2Command,
+                appendSystemEntryCommand,
                 appendEntry1Command,
                 appendEntry2Command,
                 new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:1231234"))
@@ -141,6 +153,8 @@ public class RSFCreatorTest {
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, 1, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
+        verify(register, never()).getSystemItemIterator();
+        verify(register, never()).getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA);
         verify(register, times(1)).getItemIterator(1, 2);
         verify(register, times(1)).getEntryIterator(1, 2);
 
@@ -149,6 +163,33 @@ public class RSFCreatorTest {
                 new RegisterCommand("assert-root-hash", Collections.singletonList(oneEntryRegisterProof.getRootHash().encode())),
                 addItem1Command,
                 appendEntry1Command,
+                new RegisterCommand("assert-root-hash", Collections.singletonList(twoEntriesRegisterProof.getRootHash().encode()))
+        ));
+    }
+
+    @Test
+    public void createRegisterSerialisationFormat_whenStartIsZero_returnsSystemEntries() {
+        RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
+
+        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemItem).iterator());
+        when(register.getItemIterator(0, 2)).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
+        when(register.getEntryIterator(0, 2)).thenReturn(Arrays.asList(entry1, entry2).iterator());
+
+        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
+
+        RegisterSerialisationFormat actualRSF = sutCreator.create(register, 0, 2);
+        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
+
+        assertThat(actualCommands.size(), equalTo(8));
+        assertThat(actualCommands, contains(
+                assertEmptyRootHashCommand,
+                addItem1Command,
+                addItem2Command,
+                addSystemItemCommand,
+                appendSystemEntryCommand,
+                appendEntry1Command,
+                appendEntry2Command,
                 new RegisterCommand("assert-root-hash", Collections.singletonList(twoEntriesRegisterProof.getRootHash().encode()))
         ));
     }
@@ -168,5 +209,41 @@ public class RSFCreatorTest {
         RSFCreator creatorWithoutMappers = new RSFCreator();
         RegisterSerialisationFormat rsf = creatorWithoutMappers.create(register);
         IteratorUtils.toList(rsf.getCommands());
+    }
+
+    @Test
+    public void createRegisterSerialisationFormat_whenParametersEqual_returnsOnlyRootHash() {
+        RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
+
+        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
+
+        RegisterSerialisationFormat actualRSF = sutCreator.create(register, 2, 2);
+        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
+
+        assertThat(actualCommands.size(), equalTo(1));
+        assertThat(actualCommands, contains(
+                new RegisterCommand("assert-root-hash", Collections.singletonList(twoEntriesRegisterProof.getRootHash().encode()))
+        ));
+    }
+
+    @Test
+    public void createRegisterSerialisationFormat_whenParametersEqualAndZero_returnsSystemEntries() {
+        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemItem).iterator());
+        when(register.getItemIterator(0, 0)).thenReturn(Collections.emptyIterator());
+        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
+        when(register.getEntryIterator(0, 0)).thenReturn(Collections.emptyIterator());
+
+        when(register.getRegisterProof(0)).thenReturn(new RegisterProof(emptyRegisterHash, 0));
+
+        RegisterSerialisationFormat actualRSF = sutCreator.create(register, 0, 0);
+        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
+
+        assertThat(actualCommands.size(), equalTo(4));
+        assertThat(actualCommands, contains(
+                assertEmptyRootHashCommand,
+                addSystemItemCommand,
+                appendSystemEntryCommand,
+                assertEmptyRootHashCommand
+        ));
     }
 }

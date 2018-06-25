@@ -35,7 +35,7 @@ public class RSFCreator {
     public RegisterSerialisationFormat create(Register register, int totalEntries1, int totalEntries2) {
         Iterator<?> iterators;
 
-        if (totalEntries1 == totalEntries2) {
+        if (totalEntries1 > 0 && totalEntries1 == totalEntries2) {
             iterators = Iterators.singletonIterator(register.getRegisterProof(totalEntries1).getRootHash());
         } else {
 
