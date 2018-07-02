@@ -15,6 +15,14 @@ applications:
     - approved-open-standard
     - approved-open-standard-guidance
     - country
+    - ddat-profession-capability-framework
+    - ddat-profession-capability-framework-job-family
+    - ddat-profession-capability-framework-level
+    - ddat-profession-capability-framework-role
+    - ddat-profession-capability-framework-role-level
+    - ddat-profession-capability-framework-skill
+    - ddat-profession-capability-framework-skill-level
+    - ddat-profession-capability-framework-skill-type
     - government-domain
     - government-organisation
     - government-service
