@@ -10,16 +10,6 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
-    - approved-open-standard
-    - approved-open-standard-guidance
-    - ddat-profession-capability-framework
-    - ddat-profession-capability-framework-job-family
-    - ddat-profession-capability-framework-level
-    - ddat-profession-capability-framework-role
-    - ddat-profession-capability-framework-role-level
-    - ddat-profession-capability-framework-skill
-    - ddat-profession-capability-framework-skill-level
-    - ddat-profession-capability-framework-skill-type
     - occupation
     - public-body-account
     - public-body-account-classification
@@ -29,7 +19,6 @@ applications:
     - social-housing-provider-legal-entity-eng
     - social-housing-provider-eng
     - statistical-geography-council-area-sct
-    - fire-authority
   services:
     - alpha-db
     - logit-ssl-drain
