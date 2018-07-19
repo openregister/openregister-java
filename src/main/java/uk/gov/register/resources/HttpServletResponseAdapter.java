@@ -5,22 +5,37 @@ import org.glassfish.jersey.media.multipart.ContentDisposition;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-class HttpServletResponseAdapter {
+public class HttpServletResponseAdapter {
     private final HttpServletResponse httpServletResponse;
 
-    HttpServletResponseAdapter(HttpServletResponse httpServletResponse) {
+    public HttpServletResponseAdapter(HttpServletResponse httpServletResponse) {
         this.httpServletResponse = httpServletResponse;
     }
 
-    void addInlineContentDispositionHeader(String fileName) {
+    public void addInlineContentDispositionHeader(String fileName) {
         ContentDisposition contentDisposition = ContentDisposition.type("inline").fileName(fileName).build();
         httpServletResponse.addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
     }
 
-    void addLinkHeader(String rel, String value) {
+    public void addLinkHeader(String rel, String value) {
+        Map<String, String> extra = new HashMap<>();
+        extra.put("rel", rel);
+        addLinkHeader(extra, value);
+    }
+
+    public void addLinkHeader(Map<String, String> extra, String value) {
         String existingHeaderValue = httpServletResponse.getHeader("Link");
-        String newHeaderToAppend = String.format("<%s>; rel=\"%s\"", value, rel);
+
+        String extraString = extra.entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + "=\"" + entry.getValue() + "\"")
+                .collect(Collectors.joining("; "));
+
+        String newHeaderToAppend = String.format("<%s>; %s", value, extraString);
 
         String headerValue = StringUtils.isEmpty(existingHeaderValue) ? newHeaderToAppend : String.join(",", existingHeaderValue, newHeaderToAppend);
 

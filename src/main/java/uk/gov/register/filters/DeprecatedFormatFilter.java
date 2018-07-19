@@ -1,21 +1,30 @@
 package uk.gov.register.filters;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.google.common.net.HttpHeaders;
+import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 @Provider
 public class DeprecatedFormatFilter implements ContainerResponseFilter {
+
+    @Context
+    HttpServletResponse httpServletResponse;
+
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         final UriInfo uriInfo = requestContext.getUriInfo();
@@ -39,10 +48,13 @@ public class DeprecatedFormatFilter implements ContainerResponseFilter {
             return;
         }
 
-        headers.add(
-                HttpHeaders.LINK,
-                linkHeader(alternateType, alternateUri)
-        );
+        HttpServletResponseAdapter httpServletResponseAdapter = new HttpServletResponseAdapter(httpServletResponse);
+
+        Map<String, String> extra = new HashMap<>();
+        extra.put("rel", "alternate");
+        extra.put("type", alternateType);
+        httpServletResponseAdapter.addLinkHeader(extra, alternateUri);
+
         headers.add(
                 HttpHeaders.WARNING,
                 warningHeader(mediaType.getSubtype())
@@ -60,10 +72,6 @@ public class DeprecatedFormatFilter implements ContainerResponseFilter {
         builder.replacePath(newPath);
 
         return builder.toTemplate();
-    }
-
-    private String linkHeader(String alternateType, String alternateUri) {
-        return alternateUri + "; rel=\"alternate\"" + "; type=\"" + alternateType + "\"";
     }
 
     private String warningHeader(String deprecatedType) {

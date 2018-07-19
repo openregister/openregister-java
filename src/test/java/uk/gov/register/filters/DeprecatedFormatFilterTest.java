@@ -17,7 +17,9 @@ import static org.junit.Assert.assertThat;
 
 public class DeprecatedFormatFilterTest {
     @Rule
-    public ResourceTestRule rule = ResourceTestRule.builder().addResource(new DeprecatedFormatFilterTest.DummyResource()).addProvider(new DeprecatedFormatFilter()).build();
+    public ResourceTestRule rule = ResourceTestRule.builder().addResource(new DeprecatedFormatFilterTest.DummyResource())
+            .addProvider(new DeprecatedFormatFilter())
+            .build();
 
     @Test
     public void jsonResponseShouldNotWarn() {
