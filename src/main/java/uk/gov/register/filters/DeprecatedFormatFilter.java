@@ -21,9 +21,11 @@ import uk.gov.register.views.representations.ExtraMediaType;
 
 @Provider
 public class DeprecatedFormatFilter implements ContainerResponseFilter {
+    private HttpServletResponse httpServletResponse;
 
-    @Context
-    HttpServletResponse httpServletResponse;
+    public DeprecatedFormatFilter(@Context HttpServletResponse httpServletResponse) {
+        this.httpServletResponse = httpServletResponse;
+    }
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
@@ -55,7 +57,7 @@ public class DeprecatedFormatFilter implements ContainerResponseFilter {
         extra.put("type", alternateType);
         httpServletResponseAdapter.addLinkHeader(extra, alternateUri);
 
-        headers.add(
+        httpServletResponseAdapter.setHeader(
                 HttpHeaders.WARNING,
                 warningHeader(mediaType.getSubtype())
         );

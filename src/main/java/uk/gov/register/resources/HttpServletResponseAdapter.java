@@ -39,6 +39,10 @@ public class HttpServletResponseAdapter {
 
         String headerValue = StringUtils.isEmpty(existingHeaderValue) ? newHeaderToAppend : String.join(",", existingHeaderValue, newHeaderToAppend);
 
-        httpServletResponse.setHeader("Link", headerValue);
+        setHeader("Link", headerValue);
+    }
+
+    public void setHeader(String name, String value) {
+        httpServletResponse.setHeader(name, value);
     }
 }
