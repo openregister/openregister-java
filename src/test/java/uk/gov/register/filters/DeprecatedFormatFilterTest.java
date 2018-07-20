@@ -45,7 +45,7 @@ public class DeprecatedFormatFilterTest {
         rule.client().target("/yaml").request().get();
 
         verify(mock).setHeader("Link", "</yaml.json>; rel=\"alternate\"; type=\"application/json\"");
-        verify(mock).setHeader("Warning", "299 - \"Miscellaneous Persistent Warning\" \"yaml is deprecated and will be removed. See \"Link\" header for a format to use instead.\"");
+        verify(mock).setHeader("Warning", "299 - \"yaml is deprecated and will be removed. See 'Link' header for a format to use instead.\"");
     }
 
     @Test

@@ -77,7 +77,7 @@ public class DeprecatedFormatFilter implements ContainerResponseFilter {
     }
 
     private String warningHeader(String deprecatedType) {
-        return "299 - \"Miscellaneous Persistent Warning\" \"" + deprecatedType + " is deprecated and will be removed. See \"Link\" header for a format to use instead.\"";
+        return "299 - \"" + deprecatedType + " is deprecated and will be removed. See 'Link' header for a format to use instead.\"";
     }
 
     private boolean recommendJson(MediaType mediaType) {
