@@ -55,7 +55,7 @@ public class DeprecatedFormatFilter implements ContainerResponseFilter {
         Map<String, String> extra = new HashMap<>();
         extra.put("rel", "alternate");
         extra.put("type", alternateType);
-        httpServletResponseAdapter.addLinkHeader(extra, alternateUri);
+        httpServletResponseAdapter.setLinkHeader(extra, alternateUri);
 
         httpServletResponseAdapter.setHeader(
                 HttpHeaders.WARNING,

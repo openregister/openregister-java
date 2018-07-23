@@ -12,7 +12,6 @@ import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Collection;
@@ -55,7 +54,7 @@ public class RecordResource {
     })
     @Timed
     public RecordView getRecordByKey(@PathParam("record-key") String key) throws FieldConversionException {
-        httpServletResponseAdapter.addLinkHeader("version-history", String.format("/record/%s/entries", key));
+        httpServletResponseAdapter.setLinkHeader("version-history", String.format("/record/%s/entries", key));
 
         return register.getRecord(key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
@@ -155,11 +154,11 @@ public class RecordResource {
         IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
 
         if (pagination.hasNextPage()) {
-            httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
+            httpServletResponseAdapter.setLinkHeader("next", pagination.getNextPageLink());
         }
 
         if (pagination.hasPreviousPage()) {
-            httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
+            httpServletResponseAdapter.setLinkHeader("previous", pagination.getPreviousPageLink());
         }
         return pagination;
     }

@@ -16,18 +16,18 @@ public class HttpServletResponseAdapter {
         this.httpServletResponse = httpServletResponse;
     }
 
-    public void addInlineContentDispositionHeader(String fileName) {
+    public void setInlineContentDispositionHeader(String fileName) {
         ContentDisposition contentDisposition = ContentDisposition.type("inline").fileName(fileName).build();
-        httpServletResponse.addHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
     }
 
-    public void addLinkHeader(String rel, String value) {
+    public void setLinkHeader(String rel, String value) {
         Map<String, String> extra = new HashMap<>();
         extra.put("rel", rel);
-        addLinkHeader(extra, value);
+        setLinkHeader(extra, value);
     }
 
-    public void addLinkHeader(Map<String, String> extra, String value) {
+    public void setLinkHeader(Map<String, String> extra, String value) {
         String existingHeaderValue = httpServletResponse.getHeader("Link");
 
         String extraString = extra.entrySet()
