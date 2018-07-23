@@ -42,10 +42,10 @@ public class DeprecatedFormatFilter implements ContainerResponseFilter {
 
         if (recommendJson(mediaType)) {
             alternateUri = alternateLink(requestedUri, ".json");
-            alternateType = MediaType.APPLICATION_JSON;
+            alternateType = "application/json";
         } else if (recommendCsv(mediaType)) {
             alternateUri = alternateLink(requestedUri, ".csv");
-            alternateType = ExtraMediaType.TEXT_CSV;
+            alternateType = "text/csv";
         } else {
             return;
         }
