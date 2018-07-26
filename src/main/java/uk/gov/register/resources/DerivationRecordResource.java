@@ -94,18 +94,18 @@ public class DerivationRecordResource {
         IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords(indexName));
 
         if (pagination.hasNextPage()) {
-            httpServletResponseAdapter.addLinkHeader("next", pagination.getNextPageLink());
+            httpServletResponseAdapter.setLinkHeader("next", pagination.getNextPageLink());
         }
 
         if (pagination.hasPreviousPage()) {
-            httpServletResponseAdapter.addLinkHeader("previous", pagination.getPreviousPageLink());
+            httpServletResponseAdapter.setLinkHeader("previous", pagination.getPreviousPageLink());
         }
         return pagination;
     }
 
     private void setContentDisposition() {
         requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-records." + ext)
+                ext -> httpServletResponseAdapter.setInlineContentDispositionHeader(registerPrimaryKey + "-records." + ext)
         );
     }
 

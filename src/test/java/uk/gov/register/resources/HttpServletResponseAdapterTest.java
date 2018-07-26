@@ -20,16 +20,16 @@ public class HttpServletResponseAdapterTest {
     public void addContentDispositionHeader_setsTheContentDispositionHeader() {
         HttpServletResponseAdapter httpServletResponseAdapter = new HttpServletResponseAdapter(httpServletResponse);
 
-        httpServletResponseAdapter.addInlineContentDispositionHeader("foo");
+        httpServletResponseAdapter.setInlineContentDispositionHeader("foo");
 
-        verify(httpServletResponse).addHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"foo\"");
+        verify(httpServletResponse).setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"foo\"");
     }
 
     @Test
     public void addLinkHeaderHeader_setsTheLinkHeader_ifNoLinkHeaderExistsAlready() {
         HttpServletResponseAdapter httpServletResponseAdapter = new HttpServletResponseAdapter(httpServletResponse);
 
-        httpServletResponseAdapter.addLinkHeader("next", "bar");
+        httpServletResponseAdapter.setLinkHeader("next", "bar");
 
         verify(httpServletResponse).setHeader("Link", "<bar>; rel=\"next\"");
     }
@@ -40,7 +40,7 @@ public class HttpServletResponseAdapterTest {
 
         when(httpServletResponse.getHeader("Link")).thenReturn("<bar>; rel=\"next\"");
 
-        httpServletResponseAdapter.addLinkHeader("previous", "foo");
+        httpServletResponseAdapter.setLinkHeader("previous", "foo");
 
         verify(httpServletResponse).setHeader("Link", "<bar>; rel=\"next\",<foo>; rel=\"previous\"");
     }

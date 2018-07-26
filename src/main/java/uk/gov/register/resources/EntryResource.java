@@ -102,15 +102,15 @@ public class EntryResource {
 
     private void setHeaders(StartLimitPagination startLimitPagination) {
         requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
+                ext -> httpServletResponseAdapter.setInlineContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
         );
 
         if (startLimitPagination.hasNextPage()) {
-            httpServletResponseAdapter.addLinkHeader("next", startLimitPagination.getNextPageLink());
+            httpServletResponseAdapter.setLinkHeader("next", startLimitPagination.getNextPageLink());
         }
 
         if (startLimitPagination.hasPreviousPage()) {
-            httpServletResponseAdapter.addLinkHeader("previous", startLimitPagination.getPreviousPageLink());
+            httpServletResponseAdapter.setLinkHeader("previous", startLimitPagination.getPreviousPageLink());
         }
     }
 }
