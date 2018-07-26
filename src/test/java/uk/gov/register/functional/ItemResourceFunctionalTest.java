@@ -30,7 +30,7 @@ public class ItemResourceFunctionalTest {
     }
 
     @Test
-    public void jsonRepreHemelsentationOfAnItem() throws JSONException {
+    public void jsonRepresentationOfAnItem() throws JSONException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
         Response response = register.getRequest(address, String.format("/item/sha-256:%s.json", sha256Hex));
