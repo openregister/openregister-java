@@ -33,37 +33,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Path("/")
 public class DataUpload {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final ObjectReconstructor objectReconstructor;
     private final RegisterSerialisationFormatService rsfService;
-    private final RegisterContext registerContext;
     private final RSFFormatter rsfFormatter;
 
     @Inject
-    public DataUpload(ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService rsfService, RegisterContext registerContext) {
-        this.objectReconstructor = objectReconstructor;
+    public DataUpload(RegisterSerialisationFormatService rsfService) {
         this.rsfService = rsfService;
-        this.registerContext = registerContext;
         this.rsfFormatter = new RSFFormatter();
     }
 
     @Context
     HttpServletRequest httpServletRequest;
-
-    @POST
-    @PermitAll
-    @Path("/load")
-    @Timed
-    public void load(String payload) {
-        try {
-            Iterable<JsonNode> objects = objectReconstructor.reconstructWithCanonicalization(payload.split("\n"));
-            mintItems(objects);
-        } catch (Throwable t) {
-            logger.error(Throwables.getStackTraceAsString(t));
-            throw new LoadException(t.getMessage(), t);
-        }
-    }
 
     @POST
     @PermitAll
@@ -75,20 +55,5 @@ public class DataUpload {
         RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
         rsfService.process(rsf);
         return Response.status(Response.Status.OK).entity(RegisterResult.createSuccessResult()).build();
-    }
-
-    private void mintItems(Iterable<JsonNode> objects) {
-        registerContext.transactionalRegisterOperation(register -> {
-            AtomicInteger currentEntryNumber = new AtomicInteger(register.getTotalEntries());
-            Iterables.transform(objects, Item::new).forEach(item -> mintItem(register, currentEntryNumber, item));
-        });
-    }
-
-    private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
-        register.addItem(item);
-        String key = item.getValue(this.registerContext.getRegisterId().value())
-                .orElseThrow(() -> new ItemValidationException("Item did not contain key field", item.getContent()));
-
-        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), key, EntryType.user));
     }
 }
