@@ -76,12 +76,6 @@ public class RegisterRule implements TestRule {
                 .post(entity(rsf, APPLICATION_RSF_TYPE));
     }
 
-    public Response mintLines(TestRegister register, String... payload) {
-        return authenticatedTarget(register).path("/load")
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(String.join("\n", payload)));
-    }
-
     public Response getRequest(TestRegister register, String path) {
         return target(register).path(path).request().get();
     }

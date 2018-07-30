@@ -26,11 +26,17 @@ public class ItemResourceFunctionalTest {
     public void publishTestMessages() throws Throwable {
         register.wipe();
         register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
-        register.mintLines(address, item1, item2);
+
+        String rsf = "add-item\t{\"address\":\"6789\",\"street\":\"presley\"}\n" +
+                "add-item\t{\"address\":\"145678\",\"street\":\"ellis\"}\n" +
+                "append-entry\tuser\tregister1\t2018-07-26T15:43:12Z\tsha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934\n" +
+                "append-entry\tuser\tregister1\t2018-07-26T15:43:12Z\tsha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983\n";
+
+        register.loadRsf(address, rsf);
     }
 
     @Test
-    public void jsonRepreHemelsentationOfAnItem() throws JSONException {
+    public void jsonRepresentationOfAnItem() throws JSONException {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
         Response response = register.getRequest(address, String.format("/item/sha-256:%s.json", sha256Hex));

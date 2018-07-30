@@ -12,11 +12,17 @@ public class RegisterResult {
     private Boolean isSuccessful;
     private String message;
     private Optional<Exception> exception;
+    private String details;
+
+    public RegisterResult() {
+        exception = Optional.empty();
+    }
 
     private RegisterResult(Boolean isSuccessful, String message, Optional<Exception> exception) {
         this.isSuccessful = isSuccessful;
         this.message = message;
         this.exception = exception;
+        this.details = exception.map(this::getCauseMessage).orElse(null);
     }
 
     public static RegisterResult createSuccessResult() {
@@ -39,7 +45,7 @@ public class RegisterResult {
 
     @JsonProperty("details")
     public String getDetails() {
-        return exception.map(this::getCauseMessage).orElse(null);
+        return details;
     }
 
     @JsonIgnore
