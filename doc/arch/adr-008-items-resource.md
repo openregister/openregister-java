@@ -74,7 +74,7 @@ Link: <?cursor=3>; rel="next"
 
 ## Status
 
-Proposed.
+Accepted.
 
 ## Consequences
 
