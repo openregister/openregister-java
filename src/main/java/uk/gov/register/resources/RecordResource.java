@@ -54,7 +54,7 @@ public class RecordResource {
     })
     @Timed
     public RecordView getRecordByKey(@PathParam("record-key") String key) throws FieldConversionException {
-        httpServletResponseAdapter.setLinkHeader("version-history", String.format("/record/%s/entries", key));
+        httpServletResponseAdapter.setLinkHeader("version-history", String.format("/records/%s/entries", key));
 
         return register.getRecord(key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
