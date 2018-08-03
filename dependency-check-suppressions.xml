@@ -66,20 +66,6 @@
     </suppress>
     <suppress>
        <notes><![CDATA[
-   file name: tomcat-jdbc-8.5.9.jar
-   ]]></notes>
-       <sha1>3d34018a222959ca69e0e0da5bc9988741cbe7ba</sha1>
-       <cpe>cpe:/a:apache:tomcat</cpe>
-    </suppress>
-    <suppress>
-       <notes><![CDATA[
-   file name: tomcat-juli-8.5.9.jar
-   ]]></notes>
-       <sha1>f4ea80fb56636ad9afac5bb9d71f9dce092b9abe</sha1>
-       <cpe>cpe:/a:apache:tomcat</cpe>
-    </suppress>
-    <suppress>
-       <notes><![CDATA[
        file name: postgresql-42.1.4.jar
        ]]></notes>
        <gav regex="true">^org\.postgresql:postgresql:.*$</gav>
@@ -105,5 +91,12 @@
    ]]></notes>
         <gav regex="true">^xerces:xercesImpl:.*$</gav>
         <cve>CVE-2012-0881</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: stax-api-1.0.1.jar
+   ]]></notes>
+        <gav regex="true">^stax:stax-api:.*$</gav>
+        <cve>CVE-2017-16224</cve>
     </suppress>
 </suppressions>
