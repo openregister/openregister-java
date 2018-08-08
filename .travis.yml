@@ -23,7 +23,7 @@ before_script:
 - psql -c 'create database ft_openregister_java_multi;' -U postgres
 - psql -c 'create database conformance_openregister_java;' -U postgres
 script:
-- travis_wait ./gradlew check --debug
+- travis_wait ./gradlew check --info
 after_failure:
 - cat $TRAVIS_BUILD_DIR/stderr.txt
 - cat $TRAVIS_BUILD_DIR/stdout.txt
