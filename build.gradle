@@ -166,7 +166,7 @@ task createConformanceTestVenv(type: Exec) {
 
 task installConformanceTestDeps(type: Exec) {
     dependsOn << createConformanceTestVenv
-    commandLine '.venv/bin/pip', 'install', '-r', 'requirements.txt'
+    commandLine '.venv/bin/pip3.6', 'install', '-r', 'requirements.txt'
 }
 
 task runConformanceTests(type: Exec) {
