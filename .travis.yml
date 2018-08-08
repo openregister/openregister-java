@@ -19,7 +19,7 @@ cache:
   - $HOME/.m2
 before_script:
 # work around https://github.com/travis-ci/travis-ci/issues/8363
-- pyenv global system 3.5
+- pyenv global system 3.6
 - psql --version
 - psql -c 'create database ft_openregister_java_multi;' -U postgres
 - psql -c 'create database conformance_openregister_java;' -U postgres
