@@ -2,8 +2,8 @@ dist: trusty
 sudo: required
 language: java
 jdk:
-  - openjdk8
-services:
+- oraclejdk8
+services: 
   - postgresql
 addons:
   postgresql: '9.5'
