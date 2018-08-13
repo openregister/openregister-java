@@ -3,6 +3,8 @@ version: 0.2
 phases:
   install:
     commands:
+      - rm -rf /var/lib/apt/lists/*
+      - apt-get clean -y
       - apt-get update -y
       - apt-get install -y apt-transport-https
       - wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | apt-key add -
@@ -29,7 +31,7 @@ phases:
     commands:
       - 'sed -i "s/    AWS_ACCESS_KEY_ID: change-me/    AWS_ACCESS_KEY_ID: ${AWS_KEY}/" manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml'
       - 'sed -i "s/    AWS_SECRET_ACCESS_KEY: change-me/    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}/" manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml'
-      - cf zero-downtime-push "${ENVIRONMENT}-${REGISTER_GROUP}" -f "manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml"
+      - '[ "$ENVIRONMENT" = "discovery" ] && [ "$REGISTER_GROUP" = "multi" ] && cf push discovery-multi -f "manifests/discovery/multi.yml" || cf zero-downtime-push "${ENVIRONMENT}-${REGISTER_GROUP}" -f "manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml"'
   post_build:
     commands:
       - cf logout

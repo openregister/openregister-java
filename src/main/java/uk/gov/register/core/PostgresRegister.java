@@ -4,11 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
-import uk.gov.register.db.DerivationRecordIndex;
-import uk.gov.register.exceptions.FieldUndefinedException;
+import uk.gov.register.db.Index;
+import uk.gov.register.exceptions.AppendEntryException;
+import uk.gov.register.exceptions.FieldDefinitionException;
 import uk.gov.register.exceptions.NoSuchFieldException;
-import uk.gov.register.exceptions.RegisterUndefinedException;
-import uk.gov.register.exceptions.SerializationFormatValidationException;
+import uk.gov.register.exceptions.IndexingException;
+import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.NoSuchItemException;
+import uk.gov.register.exceptions.RegisterDefinitionException;
+import uk.gov.register.exceptions.NoSuchRegisterException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
@@ -24,9 +28,8 @@ import java.util.stream.Collectors;
 
 public class PostgresRegister implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
-    private final RecordIndex recordIndex;
-    private final DerivationRecordIndex derivationRecordIndex;
-    private final RegisterName registerName;
+    private final Index index;
+    private final RegisterId registerId;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
     private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
@@ -36,56 +39,86 @@ public class PostgresRegister implements Register {
     private RegisterMetadata registerMetadata;
     private Map<String, Field> fieldsByName;
 
-    public PostgresRegister(RegisterName registerName,
+    private final String defaultIndexForTypeUser = IndexNames.RECORD;
+    private final String defaultIndexForTypeSystem = IndexNames.METADATA;
+
+    public PostgresRegister(RegisterId registerId,
                             EntryLog entryLog,
                             ItemStore itemStore,
-                            RecordIndex recordIndex,
-                            DerivationRecordIndex derivationRecordIndex,
+                            Index index,
                             Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
                             ItemValidator itemValidator,
                             EnvironmentValidator environmentValidator) {
-        this.registerName = registerName;
+        this.registerId = registerId;
         this.entryLog = entryLog;
         this.itemStore = itemStore;
-        this.recordIndex = recordIndex;
-        this.derivationRecordIndex = derivationRecordIndex;
+        this.index = index;
         this.indexFunctionsByEntryType = indexFunctionsByEntryType;
         this.itemValidator = itemValidator;
         this.environmentValidator = environmentValidator;
     }
 
+    //region Items
+
     @Override
-    public void putItem(Item item) {
-        itemStore.putItem(item);
+    public void addItem(Item item) {
+        itemStore.addItem(item);
     }
 
     @Override
-    public void appendEntry(final Entry entry) {
-        List<Item> referencedItems = getReferencedItems(entry);
-
-        referencedItems.forEach(i -> {
-            if (entry.getEntryType() == EntryType.user) {
-                itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
-            } else if (entry.getKey().startsWith("field:")) {
-                Field field = extractObjectFromItem(i, Field.class);
-                environmentValidator.validateFieldAgainstEnvironment(field);
-            } else if (entry.getKey().startsWith("register:")) {
-                RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
-                // will throw exception if field not present
-                localRegisterMetadata.getFields().forEach(this::getField);
-                
-                environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
-            }
-        });
-
-        entryLog.appendEntry(entry);
+    public Optional<Item> getItem(HashValue hash) {
+        return itemStore.getItem(hash);
     }
 
-    private List<Item> getReferencedItems(Entry entry) {
-        return entry.getItemHashes().stream()
-                .map(h -> itemStore.getItemBySha256(h).orElseThrow(
-                        () -> new SerializationFormatValidationException("Failed to find item referenced by " + h.getValue())))
-                .collect(Collectors.toList());
+    @Override
+    public Collection<Item> getAllItems() {
+        return itemStore.getAllItems();
+    }
+
+    @Override
+    public Iterator<Item> getItemIterator() {
+        return itemStore.getUserItemIterator();
+    }
+
+    @Override
+    public Iterator<Item> getItemIterator(int start, int end) {
+        return itemStore.getUserItemIterator(start, end);
+    }
+
+    @Override
+    public Iterator<Item> getSystemItemIterator() {
+        return itemStore.getSystemItemIterator();
+    }
+
+    //endregion
+
+    //region Entries
+
+    @Override
+    public void appendEntry(final Entry entry) throws AppendEntryException {
+        try {
+            List<Item> referencedItems = getReferencedItems(entry);
+
+            referencedItems.forEach(i -> {
+                if (entry.getEntryType() == EntryType.user) {
+                    itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+                } else if (entry.getKey().startsWith("field:")) {
+                    Field field = extractObjectFromItem(i, Field.class);
+                    environmentValidator.validateFieldAgainstEnvironment(field);
+                } else if (entry.getKey().startsWith("register:")) {
+                    RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
+                    // will throw exception if field not present
+                    localRegisterMetadata.getFields().forEach(this::getField);
+
+                    environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
+                }
+            });
+
+            entryLog.appendEntry(entry);
+        } catch (IndexingException | ItemValidationException | FieldDefinitionException | RegisterDefinitionException |
+                NoSuchRegisterException | NoSuchFieldException | NoSuchItemException exception) {
+            throw new AppendEntryException(entry, exception);
+        }
     }
 
     @Override
@@ -94,8 +127,13 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Optional<Item> getItemBySha256(HashValue hash) {
-        return itemStore.getItemBySha256(hash);
+    public Collection<Entry> getEntries(int start, int limit) {
+        return entryLog.getEntries(start, limit);
+    }
+
+    @Override
+    public Collection<Entry> getAllEntries() {
+        return entryLog.getAllEntries();
     }
 
     @Override
@@ -109,38 +147,8 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Collection<Entry> getEntries(int start, int limit) {
-        return entryLog.getEntries(start, limit);
-    }
-
-    @Override
-    public Optional<Record> getRecord(String key) {
-        return derivationRecordIndex.getRecord(key, IndexNames.RECORD);
-    }
-
-    @Override
     public Collection<Entry> allEntriesOfRecord(String key) {
-        return recordIndex.findAllEntriesOfRecordBy(key);
-    }
-
-    @Override
-    public List<Record> getRecords(int limit, int offset) {
-        return recordIndex.getRecords(limit, offset);
-    }
-
-    @Override
-    public Collection<Entry> getAllEntries() {
-        return entryLog.getAllEntries();
-    }
-
-    @Override
-    public Collection<Item> getAllItems() {
-        return itemStore.getAllItems();
-    }
-
-    @Override
-    public int getTotalRecords() {
-        return getTotalDerivationRecords(IndexNames.RECORD);
+        return index.findAllEntriesOfRecordBy(key);
     }
 
     @Override
@@ -149,13 +157,71 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public List<Record> max100RecordsFacetedByKeyValue(String key, String value) {
+    public Iterator<Entry> getEntryIterator() {
+        return entryLog.getEntryIterator(defaultIndexForTypeUser);
+    }
+
+    @Override
+    public Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2) {
+        return entryLog.getEntryIterator(defaultIndexForTypeUser, totalEntries1, totalEntries2);
+    }
+
+    @Override
+    public Iterator<Entry> getEntryIterator(String indexName) {
+        return entryLog.getEntryIterator(indexName);
+    }
+
+    @Override
+    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+        return entryLog.getEntryIterator(indexName, totalEntries1, totalEntries2);
+    }
+
+    //endregion
+
+    //region Indexes
+
+    @Override
+    public Optional<Record> getRecord(String key) {
+        return index.getRecord(key, defaultIndexForTypeUser);
+    }
+
+    @Override
+    public List<Record> getRecords(int limit, int offset) {
+        return index.getRecords(limit, offset, defaultIndexForTypeUser);
+    }
+
+    @Override
+    public int getTotalRecords() {
+        return getTotalRecords(defaultIndexForTypeUser);
+    }
+
+    @Override
+    public List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException {
         if (!getRegisterMetadata().getFields().contains(key)) {
-            throw new NoSuchFieldException(registerName, key);
+            throw new NoSuchFieldException(registerId, key);
         }
 
-        return recordIndex.findMax100RecordsByKeyValue(key, value);
+        return index.findMax100RecordsByKeyValue(key, value);
     }
+
+    @Override
+    public Optional<Record> getRecord(String key, String indexName) {
+        return index.getRecord(key, indexName);
+    }
+
+    @Override
+    public List<Record> getRecords(int limit, int offset, String indexName) {
+        return index.getRecords(limit, offset, indexName);
+    }
+
+    @Override
+    public int getTotalRecords(String indexName) {
+        return index.getTotalRecords(indexName);
+    }
+
+    //endregion
+
+    //region Verifiable Log
 
     @Override
     public RegisterProof getRegisterProof() {
@@ -177,44 +243,18 @@ public class PostgresRegister implements Register {
         return entryLog.getConsistencyProof(totalEntries1, totalEntries2);
     }
 
+    //endregion
+
+    //region Metadata
+
     @Override
-    public Iterator<Entry> getEntryIterator() {
-        return entryLog.getIterator();
+    public RegisterId getRegisterId() {
+        return registerId;
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2) {
-        return entryLog.getIterator(totalEntries1, totalEntries2);
-    }
-
-    @Override
-    public Iterator<Item> getItemIterator() {
-        return itemStore.getIterator();
-    }
-
-    @Override
-    public Iterator<Item> getItemIterator(int start, int end) {
-        return itemStore.getIterator(start, end);
-    }
-
-    @Override
-    public Iterator<Item> getSystemItemIterator() {
-        return itemStore.getSystemItemIterator();
-    }
-
-    @Override
-    public Iterator<Entry> getDerivationEntryIterator(String indexName) {
-        return entryLog.getDerivationIterator(indexName);
-    }
-
-    @Override
-    public Iterator<Entry> getDerivationEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return entryLog.getDerivationIterator(indexName, totalEntries1, totalEntries2);
-    }
-
-    @Override
-    public RegisterName getRegisterName() {
-        return registerName;
+    public Optional<String> getRegisterName() {
+        return getMetadataField("register-name");
     }
 
     @Override
@@ -223,33 +263,18 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public RegisterMetadata getRegisterMetadata() {
+    public RegisterMetadata getRegisterMetadata() throws NoSuchRegisterException {
         if (registerMetadata == null) {
-            registerMetadata = getDerivationRecord("register:" + registerName.value(), IndexNames.METADATA)
+            registerMetadata = getRecord("register:" + registerId.value(), defaultIndexForTypeSystem)
                     .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
-                    .orElseThrow(() -> new RegisterUndefinedException(registerName));
+                    .orElseThrow(() -> new NoSuchRegisterException(registerId));
         }
 
         return registerMetadata;
     }
 
     @Override
-    public Optional<Record> getDerivationRecord(String key, String derivationName) {
-        return derivationRecordIndex.getRecord(key, derivationName);
-    }
-
-    @Override
-    public List<Record> getDerivationRecords(int limit, int offset, String derivationName) {
-        return derivationRecordIndex.getRecords(limit, offset, derivationName);
-    }
-
-    @Override
-    public int getTotalDerivationRecords(String derivationName) {
-        return derivationRecordIndex.getTotalRecords(derivationName);
-    }
-
-    @Override
-    public Map<String, Field> getFieldsByName() {
+    public Map<String, Field> getFieldsByName() throws NoSuchRegisterException, NoSuchFieldException {
         if (fieldsByName == null) {
             RegisterMetadata registerMetadata = getRegisterMetadata();
             List<String> fieldNames = registerMetadata.getFields();
@@ -259,10 +284,12 @@ public class PostgresRegister implements Register {
         return fieldsByName;
     }
 
-    private Field getField(String fieldName) {
-        return getDerivationRecord("field:" + fieldName, IndexNames.METADATA)
+    //endregion
+
+    private Field getField(String fieldName) throws NoSuchFieldException {
+        return getRecord("field:" + fieldName, defaultIndexForTypeSystem)
                 .map(record -> extractObjectFromRecord(record, Field.class))
-                .orElseThrow(() -> new FieldUndefinedException(registerName, fieldName));
+                .orElseThrow(() -> new NoSuchFieldException(registerId, fieldName));
     }
 
     private <T> T extractObjectFromRecord(Record record, Class<T> clazz) {
@@ -279,10 +306,17 @@ public class PostgresRegister implements Register {
     }
 
     private Optional<String> getMetadataField(String fieldName) {
-        return getDerivationRecord(fieldName, IndexNames.METADATA).map(r -> r.getItems().get(0).getValue(fieldName).get());
+        return getRecord(fieldName, defaultIndexForTypeSystem).map(r -> r.getItems().get(0).getValue(fieldName).get());
     }
 
     public Map<EntryType, Collection<IndexFunction>> getIndexFunctionsByEntryType() {
         return indexFunctionsByEntryType;
+    }
+
+    private List<Item> getReferencedItems(Entry entry) throws NoSuchItemException {
+        return entry.getItemHashes().stream()
+                .map(h -> itemStore.getItem(h).orElseThrow(
+                        () -> new NoSuchItemException(h)))
+                .collect(Collectors.toList());
     }
 }

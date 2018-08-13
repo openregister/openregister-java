@@ -8,7 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.ItemValidationException;
-import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.exceptions.LoadException;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterSerialisationFormat;
@@ -32,18 +33,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Path("/")
 public class DataUpload {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private final ObjectReconstructor objectReconstructor;
     private final RegisterSerialisationFormatService rsfService;
-    private final RegisterContext registerContext;
     private final RSFFormatter rsfFormatter;
 
     @Inject
-    public DataUpload(ObjectReconstructor objectReconstructor, RegisterSerialisationFormatService rsfService, RegisterContext registerContext) {
-        this.objectReconstructor = objectReconstructor;
+    public DataUpload(RegisterSerialisationFormatService rsfService) {
         this.rsfService = rsfService;
-        this.registerContext = registerContext;
         this.rsfFormatter = new RSFFormatter();
     }
 
@@ -52,53 +47,13 @@ public class DataUpload {
 
     @POST
     @PermitAll
-    @Path("/load")
-    @Timed
-    public void load(String payload) {
-        try {
-            Iterable<JsonNode> objects = objectReconstructor.reconstructWithCanonicalization(payload.split("\n"));
-            mintItems(objects);
-        } catch (Throwable t) {
-            logger.error(Throwables.getStackTraceAsString(t));
-            throw t;
-        }
-    }
-
-    @POST
-    @PermitAll
     @Consumes(ExtraMediaType.APPLICATION_RSF)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/load-rsf")
     @Timed
-    public Response loadRsf(InputStream inputStream) {
-        RegisterResult loadResult;
-        try {
-            RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
-            loadResult = rsfService.process(rsf);
-            // catching only RSF parsing exceptions and handling those
-        } catch (SerializedRegisterParseException e) {
-            loadResult = RegisterResult.createFailResult("RSF parsing error", e);
-        }
-
-        if (loadResult.isSuccessful()) {
-            return Response.status(Response.Status.OK).build();
-        } else {
-            return Response.status(400).entity(loadResult).build();
-        }
-    }
-
-    private void mintItems(Iterable<JsonNode> objects) {
-        registerContext.transactionalRegisterOperation(register -> {
-            AtomicInteger currentEntryNumber = new AtomicInteger(register.getTotalEntries());
-            Iterables.transform(objects, Item::new).forEach(item -> mintItem(register, currentEntryNumber, item));
-        });
-    }
-
-    private void mintItem(Register register, AtomicInteger currentEntryNumber, Item item) {
-        register.putItem(item);
-        String key = item.getValue(this.registerContext.getRegisterName().value())
-                .orElseThrow(() -> new ItemValidationException("Item did not contain key field", item.getContent()));
-
-        register.appendEntry(new Entry(currentEntryNumber.incrementAndGet(), item.getSha256hex(), Instant.now(), key, EntryType.user));
+    public Response loadRsf(InputStream inputStream) throws RSFParseException {
+        RegisterSerialisationFormat rsf = rsfService.readFrom(inputStream, rsfFormatter);
+        rsfService.process(rsf);
+        return Response.status(Response.Status.OK).entity(RegisterResult.createSuccessResult()).build();
     }
 }

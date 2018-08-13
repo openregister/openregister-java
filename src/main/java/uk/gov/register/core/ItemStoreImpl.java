@@ -15,13 +15,13 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
-    public void putItem(Item item) {
-        dataAccessLayer.putItem(item);
+    public void addItem(Item item) {
+        dataAccessLayer.addItem(item);
     }
 
     @Override
-    public Optional<Item> getItemBySha256(HashValue hash) {
-        return dataAccessLayer.getItemBySha256(hash);
+    public Optional<Item> getItem(HashValue hash) {
+        return dataAccessLayer.getItem(hash);
     }
     
     @Override
@@ -30,17 +30,17 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
-    public Iterator<Item> getIterator() {
-        return dataAccessLayer.getItemIterator();
+    public Iterator<Item> getUserItemIterator() {
+        return dataAccessLayer.getItemIterator(EntryType.user);
     }
 
     @Override
-    public Iterator<Item> getIterator(int start, int end) {
-        return dataAccessLayer.getItemIterator(start, end);
+    public Iterator<Item> getUserItemIterator(int startEntryNumber, int endEntryNumber) {
+        return dataAccessLayer.getItemIterator(startEntryNumber, endEntryNumber);
     }
 
     @Override
     public Iterator<Item> getSystemItemIterator() {
-        return dataAccessLayer.getSystemItemIterator();
+        return dataAccessLayer.getItemIterator(EntryType.system);
     }
 }

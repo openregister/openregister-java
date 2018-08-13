@@ -7,14 +7,14 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.resourceresolver.FileResourceResolver;
-import org.thymeleaf.templateresolver.TemplateResolver;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
 import uk.gov.register.core.AllTheRegisters;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.db.Factories;
-import uk.gov.register.thymeleaf.ThymeleafResourceResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -30,13 +30,13 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
     public AssetsBundleCustomErrorHandler(Environment environment) {
         this.environment = environment;
 
-        TemplateResolver templateResolver = new TemplateResolver();
+        AbstractConfigurableTemplateResolver templateResolver;
         String baseDirForTemplates = System.getProperty("baseDirForTemplates");
         if (baseDirForTemplates != null) {
-            templateResolver.setResourceResolver(new FileResourceResolver());
+            templateResolver = new FileTemplateResolver();
             templateResolver.setPrefix(baseDirForTemplates + "/templates/");
         } else {
-            templateResolver.setResourceResolver(new ThymeleafResourceResolver());
+            templateResolver = new ClassLoaderTemplateResolver();
             templateResolver.setPrefix("/templates/");
         }
         templateResolver.setTemplateMode("HTML5");
@@ -61,14 +61,14 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
         // so we have to manually new up the factory
         RegisterContext register = new Factories.RegisterContextProvider(allTheRegisters, () -> request).provide();
 
-        RegisterName registerName = register.getRegisterName();
+        RegisterId registerId = register.getRegisterId();
 
         RegisterMetadata rm = register.getRegisterMetadata();
 
         WebContext wc = new WebContext(request, response, sc,
                 request.getLocale());
         wc.setVariable("register", rm);
-        wc.setVariable("friendlyRegisterName", registerName.getFriendlyRegisterName() + " register");
+        wc.setVariable("friendlyRegisterName", registerId.getFriendlyRegisterName() + " register");
         wc.setVariable("renderedCopyrightText", Optional.ofNullable(rm.getCopyright()));
         wc.setVariable("heading", "Page not found");
         wc.setVariable("message", "If you entered a web address please check it was correct.");

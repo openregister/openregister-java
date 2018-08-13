@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
+import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
 import uk.gov.register.indexer.function.IndexFunction;
@@ -53,7 +54,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void appendEntry(Entry entry) {
+    public void appendEntry(Entry entry) throws IndexingException {
         stagedEntries.add(entry);
         stagedEntryKeys.add(entry.getKey());
 
@@ -116,7 +117,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void putItem(Item item) {
+    public void addItem(Item item) {
         stagedItems.put(item.getSha256hex(), item);
     }
 
@@ -160,16 +161,16 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public Optional<Item> getItemBySha256(HashValue hash) {
+    public Optional<Item> getItem(HashValue hash) {
         if (stagedItems.containsKey(hash)) {
             return Optional.of(stagedItems.get(hash));
         }
         
-        return super.getItemBySha256(hash);
+        return super.getItem(hash);
     }
 
     @Override
-    public void checkpoint() {
+    public void checkpoint() throws IndexingException {
         updateIndexes();
         
         writeStagedEntriesToDatabase();
@@ -179,7 +180,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         writeStagedEndIndexesToDatabase();
     }
     
-    private void updateIndexes() {
+    private void updateIndexes() throws IndexingException {
         if (stagedEntries.isEmpty()) {
             return;
         }
@@ -273,7 +274,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private Map<String, Record> getIndexRecordsForKeys(String indexName, List<String> entryKeys) {
         Map<String, Record> indexRecords = new HashMap<>();
         
-        if (getTotalIndexRecords(indexName) > 0) {
+        if (getTotalRecords(indexName) > 0) {
             List<List<String>> entryKeyBatches = Lists.partition(entryKeys, 1000);
             entryKeyBatches.stream().forEach(keyBatches -> {
                 indexRecords.putAll(getIndexRecords(keyBatches, indexName).stream().collect(Collectors.toMap(k -> k.getEntry().getKey(), v -> v)));

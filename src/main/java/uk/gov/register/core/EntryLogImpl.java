@@ -2,6 +2,7 @@ package uk.gov.register.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import uk.gov.register.db.EntryMerkleLeafStore;
+import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
@@ -29,7 +30,7 @@ public class EntryLogImpl implements EntryLog {
     }
 
     @Override
-    public void appendEntry(Entry entry) {
+    public void appendEntry(Entry entry) throws IndexingException {
         dataAccessLayer.appendEntry(entry);
     }
 
@@ -42,25 +43,15 @@ public class EntryLogImpl implements EntryLog {
     public Collection<Entry> getEntries(int start, int limit) {
         return dataAccessLayer.getEntries(start, limit);
     }
-    
+
     @Override
-    public Iterator<Entry> getIterator() {
-        return dataAccessLayer.getEntryIterator();
+    public Iterator<Entry> getEntryIterator(String indexName) {
+        return dataAccessLayer.getEntryIterator(indexName);
     }
 
     @Override
-    public Iterator<Entry> getDerivationIterator(String indexName) {
-        return dataAccessLayer.getIndexEntryIterator(indexName);
-    }
-
-    @Override
-    public Iterator<Entry> getDerivationIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return dataAccessLayer.getIndexEntryIterator(indexName, totalEntries1, totalEntries2);
-    }
-
-    @Override
-    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2) {
-        return dataAccessLayer.getEntryIterator(totalEntries1, totalEntries2);
+    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+        return dataAccessLayer.getEntryIterator(indexName, totalEntries1, totalEntries2);
     }
 
     @Override

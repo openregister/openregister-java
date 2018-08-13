@@ -23,7 +23,7 @@ public class RegisterMetadataTest {
 
     @Test
     public void getFields_returnsFieldsInConfiguredOrder() throws Exception {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("address"), ImmutableList.of("address", "street", "postcode", "area", "property"), "", "", "", "alpha");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("address"), ImmutableList.of("address", "street", "postcode", "area", "property"), "", "", "", "alpha");
 
         Iterable<String> fields = registerMetadata.getFields();
 
@@ -32,7 +32,7 @@ public class RegisterMetadataTest {
 
     @Test
     public void getPrimaryKeyField_returnsFieldWithSameNameAsRegister() {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("company"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
 
         Optional<String> primaryField = registerMetadata.getPrimaryKeyField();
 
@@ -42,7 +42,7 @@ public class RegisterMetadataTest {
 
     @Test
     public void getPrimaryKeyField_returnsEmptyIfNoFieldExistsWithSameNameAsRegister() {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company-index"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("company-index"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
 
         Optional<String> primaryField = registerMetadata.getPrimaryKeyField();
 
@@ -51,7 +51,7 @@ public class RegisterMetadataTest {
 
     @Test
     public void getNonPrimaryFields_returnsFieldsOtherThanPrimaryInConfiguredOrder() throws Exception {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("company"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
 
         Iterable<String> fields = registerMetadata.getNonPrimaryFields();
 
@@ -60,7 +60,7 @@ public class RegisterMetadataTest {
 
     @Test
     public void getNonPrimaryFields_returnsAllFieldsIfNoPrimaryKeyField() throws Exception {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("company-index"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("company-index"), ImmutableList.of("address", "company", "secretary", "company-status", "company-accounts-category"), "", "", "", "alpha");
 
         Iterable<String> fields = registerMetadata.getNonPrimaryFields();
 
@@ -80,7 +80,7 @@ public class RegisterMetadataTest {
 
     @Test
     public void shouldSerializeUndeclaredFields() throws Exception {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("test-register"), emptyList(), null, null, "a test register", "discovery");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("test-register"), emptyList(), null, null, "a test register", "discovery");
         registerMetadata.setOtherProperty("foo", new TextNode("bar"));
 
         String output = YAML_MAPPER.writeValueAsString(registerMetadata);
@@ -91,19 +91,19 @@ public class RegisterMetadataTest {
 
     @Test
     public void shouldRoundTripUndeclaredFields() throws Exception {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("test-register"), emptyList(), null, null, "a test register", "discovery");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("test-register"), emptyList(), null, null, "a test register", "discovery");
         registerMetadata.setOtherProperty("foo", new TextNode("bar"));
 
         String output = YAML_MAPPER.writeValueAsString(registerMetadata);
         RegisterMetadata roundTripped = YAML_MAPPER.readValue(output, RegisterMetadata.class);
 
-        assertThat(roundTripped.getRegisterName(), is(new RegisterName("test-register")));
+        assertThat(roundTripped.getRegisterId(), is(new RegisterId("test-register")));
         assertThat(roundTripped.getOtherProperties().get("foo"), is(new TextNode("bar")));
     }
 
     @Test
     public void shouldNotSerializeNullFields() throws Exception {
-        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterName("test-register"), emptyList(), null, null, "a test register", "discovery");
+        RegisterMetadata registerMetadata = new RegisterMetadata(new RegisterId("test-register"), emptyList(), null, null, "a test register", "discovery");
 
         String output = YAML_MAPPER.writeValueAsString(registerMetadata);
 

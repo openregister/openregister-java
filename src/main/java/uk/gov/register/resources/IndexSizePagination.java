@@ -91,9 +91,13 @@ public class IndexSizePagination implements Pagination {
     public String getPreviousPageLink() {
         return String.format("?" + INDEX_PARAM + "=%s&" + SIZE_PARAM + "=%s", getPreviousPageNumber(), pageSize());
     }
-
+    
     public int pageSize() {
         return pageSize;
+    }
+    
+    public String getFormattedPageQueryParams() {
+        return String.format("?%s=%s&%s=%s", INDEX_PARAM, pageIndex, SIZE_PARAM, pageSize);
     }
 
     @Override

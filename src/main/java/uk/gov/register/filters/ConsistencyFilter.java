@@ -1,8 +1,8 @@
 package uk.gov.register.filters;
 
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.core.RegisterName;
-import uk.gov.register.exceptions.InconsistencyException;
+import uk.gov.register.core.RegisterId;
+import uk.gov.register.exceptions.EnvironmentInconsistencyException;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -14,12 +14,12 @@ import java.io.IOException;
 @Provider
 public class ConsistencyFilter implements ContainerRequestFilter {
 
-    private final javax.inject.Provider<RegisterName> registerPrimaryKey;
+    private final javax.inject.Provider<RegisterId> registerPrimaryKey;
     private final UriInfo uriInfo;
     private final javax.inject.Provider<RegisterContext> registerContext;
 
     @Inject
-    public ConsistencyFilter(final javax.inject.Provider<RegisterName> registerPrimaryKey,
+    public ConsistencyFilter(final javax.inject.Provider<RegisterId> registerPrimaryKey,
                              final UriInfo uriInfo,
                              javax.inject.Provider<RegisterContext> registerContext) {
         this.registerPrimaryKey = registerPrimaryKey;
@@ -36,12 +36,12 @@ public class ConsistencyFilter implements ContainerRequestFilter {
         }
 
         if (!registerContext.get().hasConsistentState()) {
-            throw new InconsistencyException(
+            throw new EnvironmentInconsistencyException(
                     String.format("Register %s doesn't match with specification.", registerPrimaryKey.get().value()));
         }
     }
 
     private boolean skipFilter(final String path) {
-        return path.contains("delete-register-data");
+        return path.contains("delete-register-data") || path.contains("load-rsf");
     }
 }

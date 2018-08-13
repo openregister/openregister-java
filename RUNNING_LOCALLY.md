@@ -45,7 +45,7 @@ The `./run-application.sh` script is configured to spin up a clone of the [Count
 Registers available to be cloned can be seen in the Register register in the respective phase:
 * beta: https://register.register.gov.uk/records
 * alpha: https://register.alpha.openregister.org/records
-* discovery: https://register.discovery.openregister.org/records
+* discovery: https://register.cloudapps.digital/records
 
 For example, you might want to clone a register called `myregister` from the `myphase` phase.
 
@@ -55,7 +55,7 @@ Change `register: country` to `register: myregister`.
 
 Update the schema in the same way, to `schema: myregister`.
 
-Next, update fields and registers location for environments other than beta in the same way.
+Next, go to `config.docker.basic.yaml` and update the fields and registers location if you are cloning an environment other than beta.
 
 Fields locations per environment:
 
@@ -64,7 +64,7 @@ Variable: `fieldsYamlLocation`
 Possible values:
 * beta: `fieldsYamlLocation: https://field.register.gov.uk/records.yaml`
 * alpha: `fieldsYamlLocation: https://field.alpha.openregister.org/records.yaml`
-* discovery: `fieldsYamlLocation: https://field.discovery.openregister.org/records.yaml`
+* discovery: `fieldsYamlLocation: https://field.cloudapps.digital/records.yaml`
 
 Registers locations per environment:
 
@@ -73,9 +73,9 @@ Variable: `registersYamlLocation`
 Possible values:
 * beta: `registersYamlLocation: https://register.register.gov.uk/records.yaml`
 * alpha: `registersYamlLocation: https://register.alpha.openregister.org/records.yaml`
-* discovery: `registersYamlLocation: https://register.discovery.openregister.org/records.yaml`
+* discovery: `registersYamlLocation: https://register.cloudapps.digital/records.yaml`
 
-Now re-run the application using `ENVIRONMENT=myphase REGISTERS=myregister ./run-application.sh`. You should now see the School type register locally at `127.0.0.1:8080`.
+Now re-run the application using `ENVIRONMENT=myphase REGISTERS=myregister ./run-application.sh`. You should now see the `myregister` register locally at `127.0.0.1:8080`.
 
 ## Create a new register
 

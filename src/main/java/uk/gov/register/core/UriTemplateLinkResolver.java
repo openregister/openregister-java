@@ -1,7 +1,10 @@
 package uk.gov.register.core;
 
 import javax.ws.rs.core.UriBuilder;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class UriTemplateLinkResolver implements LinkResolver {
     private final RegisterResolver registerResolver;
@@ -10,21 +13,23 @@ public class UriTemplateLinkResolver implements LinkResolver {
         this.registerResolver = registerResolver;
     }
 
-    // OGNL (Thymeleaf's language) can't find default methods by reflection
     @Override
     public URI resolve(LinkValue linkValue) {
-        return LinkResolver.super.resolve(linkValue);
+        if (linkValue.isLinkToRegister()) {
+            RegisterLinkValue registerLinkValue = (RegisterLinkValue) linkValue;
+            return resolve(registerLinkValue.getTargetRegister(), registerLinkValue.getLinkKey());
+        } else {
+            return URI.create(linkValue.getValue());
+        }
     }
 
-    @Override
-    public URI resolve(RegisterName register, String linkKey) {
+    public URI resolve(RegisterId register, String linkKey) {
         URI baseUri = registerResolver.baseUriFor(register);
 
-        return UriBuilder.fromUri(baseUri).path("record").path(linkKey).build();
-    }
-
-    @Override
-    public URI resolve(UrlValue urlValue) {
-        return URI.create(urlValue.getValue());
+        try {
+            return UriBuilder.fromUri(baseUri).path("records").path(URLEncoder.encode(linkKey, StandardCharsets.UTF_8.name())).build();
+        } catch (UnsupportedEncodingException e) {
+            return UriBuilder.fromUri(baseUri).path("records").path(linkKey).build();
+        }
     }
 }

@@ -11,13 +11,11 @@ import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -94,6 +92,23 @@ public class RecordListResourceFunctionalTest {
         response = addressTarget.path("/records.json").queryParam("page-index",3).queryParam("page-size",1)
                 .request().get();
         assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\""));
+    }
+
+    @Test
+    public void deprecatedFormatsCanReturnMultiValuedLinkHeaders() {
+        String expectedAlternate  = addressTarget.getUri().toString() + "/records.json";
+
+        Response response = addressTarget.path("/records.yaml").queryParam("page-index",1).queryParam("page-size",1)
+                .request().get();
+        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\",<" + expectedAlternate + "?page-index=1&page-size=1>; rel=\"alternate\"; type=\"application/json\""));
+
+        response = addressTarget.path("/records.yaml").queryParam("page-index",2).queryParam("page-size",1)
+                .request().get();
+        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\",<" + expectedAlternate + "?page-index=2&page-size=1>; rel=\"alternate\"; type=\"application/json\""));
+
+        response = addressTarget.path("/records.yaml").queryParam("page-index",3).queryParam("page-size",1)
+                .request().get();
+        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\",<" + expectedAlternate + "?page-index=3&page-size=1>; rel=\"alternate\"; type=\"application/json\""));
     }
 
     @Test

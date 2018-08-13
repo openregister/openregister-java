@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
+import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -21,6 +22,8 @@ import uk.gov.register.views.representations.turtle.RecordsTurtleWriter;
 import javax.inject.Provider;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,7 +44,7 @@ public class RecordsView implements CsvRepresentationView {
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
     public RecordsView(final List<Record> records, final Map<String, Field> fieldsByName, final ItemConverter itemConverter,
-                       final boolean resolveAllItemLinks, final boolean displayEntryKeyColumn) {
+                       final boolean resolveAllItemLinks, final boolean displayEntryKeyColumn) throws FieldConversionException {
         this.displayEntryKeyColumn = displayEntryKeyColumn;
         this.resolveAllItemLinks = resolveAllItemLinks;
         this.fieldsByName = fieldsByName;
@@ -102,11 +105,17 @@ public class RecordsView implements CsvRepresentationView {
     }
 
     @SuppressWarnings("unused, used by template")
+    public static String urlEncodeKey(String key) throws UnsupportedEncodingException {
+        return URLEncoder.encode(
+                key, StandardCharsets.UTF_8.name());
+    }
+
+    @SuppressWarnings("unused, used by template")
     public boolean resolveAllItemLinks() {
         return resolveAllItemLinks;
     }
 
-    public String recordsTo(final String mediaType, final Provider<RegisterName> registerNameProvider, final RegisterResolver registerResolver) {
+    public String recordsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
         final ByteArrayOutputStream outputStream;
         final RecordsTurtleWriter recordsTurtleWriter;
         String registerInTextFormatted = StringUtils.EMPTY;
@@ -114,7 +123,7 @@ public class RecordsView implements CsvRepresentationView {
         try {
             if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
                 outputStream = new ByteArrayOutputStream();
-                recordsTurtleWriter = new RecordsTurtleWriter(registerNameProvider, registerResolver);
+                recordsTurtleWriter = new RecordsTurtleWriter(registerIdProvider, registerResolver);
 
                 recordsTurtleWriter.writeTo(this, RecordsView.class, RecordsView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
 
@@ -131,7 +140,7 @@ public class RecordsView implements CsvRepresentationView {
         return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
     }
 
-    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) {
+    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) throws FieldConversionException {
         final Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
             map.put(record.getEntry(), record.getItems().stream().map(item ->

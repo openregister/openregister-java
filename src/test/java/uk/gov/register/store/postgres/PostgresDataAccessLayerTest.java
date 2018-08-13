@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
+import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.indexer.IndexDriver;
@@ -133,51 +134,51 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void putItem_shouldNotCommitData() {
-        dataAccessLayer.putItem(item1);
-        dataAccessLayer.putItem(item2);
+        dataAccessLayer.addItem(item1);
+        dataAccessLayer.addItem(item2);
 
         assertThat(itemMap.entrySet(), is(empty()));
     }
 
     @Test
     public void getAllItems_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.putItem(item1);
-        dataAccessLayer.putItem(item2);
+        dataAccessLayer.addItem(item1);
+        dataAccessLayer.addItem(item2);
 
         assertThat(dataAccessLayer.getAllItems(), is(iterableWithSize(2)));
     }
 
     @Test
     public void getItemBySha256_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.putItem(item1);
-        dataAccessLayer.putItem(item2);
+        dataAccessLayer.addItem(item1);
+        dataAccessLayer.addItem(item2);
 
-        assertThat(dataAccessLayer.getItemBySha256(item1.getSha256hex()), is(Optional.of(item1)));
+        assertThat(dataAccessLayer.getItem(item1.getSha256hex()), is(Optional.of(item1)));
     }
 
     @Test
     public void getItemBySha256_shouldGetFromStagedDataWithoutWritingToDB() throws Exception {
-        dataAccessLayer.putItem(item1);
-        Optional<Item> item = dataAccessLayer.getItemBySha256(item1.getSha256hex());
+        dataAccessLayer.addItem(item1);
+        Optional<Item> item = dataAccessLayer.getItem(item1.getSha256hex());
         assertThat(item, is(Optional.of(item1)));
         assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd", "schema").isPresent());
     }
 
     @Test
     public void getIterator_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.putItem(item1);
-        dataAccessLayer.putItem(item2);
+        dataAccessLayer.addItem(item1);
+        dataAccessLayer.addItem(item2);
         entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
         entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
-        List<Item> items = newArrayList(dataAccessLayer.getItemIterator());
+        List<Item> items = newArrayList(dataAccessLayer.getItemIterator(EntryType.user));
         assertThat(items, is(asList(item1, item2)));
     }
 
     @Test
     public void getIteratorRange_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.putItem(item1);
-        dataAccessLayer.putItem(item2);
+        dataAccessLayer.addItem(item1);
+        dataAccessLayer.addItem(item2);
         entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
         entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
@@ -189,7 +190,7 @@ public class PostgresDataAccessLayerTest {
     public void getRecord_shouldCauseCheckpoint() {
         dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
-        Optional<Record> ignored = dataAccessLayer.getRecord("foo");
+        Optional<Record> ignored = dataAccessLayer.getRecord("foo", IndexNames.RECORD);
 
         // ignore the result, but check that we flushed out to currentKeys
         assertThat(dataAccessLayer.getTotalEntries(), is(1));
@@ -199,7 +200,7 @@ public class PostgresDataAccessLayerTest {
     public void getRecords_shouldCauseCheckpoint() {
         dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
-        List<Record> ignored = dataAccessLayer.getRecords(1,0);
+        List<Record> ignored = dataAccessLayer.getRecords(1,0, IndexNames.RECORD);
 
         // ignore the result, but check that we flushed out to currentKeys
         assertThat(dataAccessLayer.getTotalEntries(), is(1));

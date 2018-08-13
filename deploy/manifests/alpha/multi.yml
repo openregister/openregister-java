@@ -10,24 +10,15 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
-    - industrial-classification
-    - jobcentre
-    - jobcentre-district
-    - jobcentre-group
     - occupation
     - public-body-account
     - public-body-account-classification
-    - qualification-assessment-method
-    - qualification-level
-    - qualification-sector-subject-area
-    - qualification-type
     - school-eng
     - school-type-eng
     - social-housing-provider-designation-eng
     - social-housing-provider-legal-entity-eng
     - social-housing-provider-eng
     - statistical-geography-council-area-sct
-    - statistical-geography-local-government-district-nir
   services:
     - alpha-db
     - logit-ssl-drain

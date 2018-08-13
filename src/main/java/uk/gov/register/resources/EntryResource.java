@@ -3,7 +3,7 @@ package uk.gov.register.resources;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.AttributionView;
@@ -26,7 +26,7 @@ public class EntryResource {
     private final ViewFactory viewFactory;
     private final RequestContext requestContext;
     private final HttpServletResponseAdapter httpServletResponseAdapter;
-    private final RegisterName registerPrimaryKey;
+    private final RegisterId registerPrimaryKey;
 
     @Inject
     public EntryResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
@@ -34,32 +34,7 @@ public class EntryResource {
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
-        this.registerPrimaryKey = register.getRegisterName();
-    }
-
-    @GET
-    @Path("/entry/{entry-number}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
-    }
-
-    @GET
-    @Path("/entry/{entry-number}")
-    @Produces({
-            MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
-            ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
-    })
-    @Timed
-    public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
+        this.registerPrimaryKey = register.getRegisterId();
     }
 
     @GET
@@ -76,6 +51,32 @@ public class EntryResource {
 
         return viewFactory.getEntriesView(entries, startLimitPagination);
     }
+
+    @GET
+    @Path("/entries/{entry-number}")
+    @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
+    public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
+        Optional<Entry> entry = register.getEntry(entryNumber);
+        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
+    }
+
+    @GET
+    @Path("/entries/{entry-number}")
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
+    @Timed
+    public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
+        Optional<Entry> entry = register.getEntry(entryNumber);
+        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
+    }
+
 
     @GET
     @Path("/entries")
@@ -101,15 +102,15 @@ public class EntryResource {
 
     private void setHeaders(StartLimitPagination startLimitPagination) {
         requestContext.resourceExtension().ifPresent(
-                ext -> httpServletResponseAdapter.addInlineContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
+                ext -> httpServletResponseAdapter.setInlineContentDispositionHeader(registerPrimaryKey + "-entries." + ext)
         );
 
         if (startLimitPagination.hasNextPage()) {
-            httpServletResponseAdapter.addLinkHeader("next", startLimitPagination.getNextPageLink());
+            httpServletResponseAdapter.setLinkHeader("next", startLimitPagination.getNextPageLink());
         }
 
         if (startLimitPagination.hasPreviousPage()) {
-            httpServletResponseAdapter.addLinkHeader("previous", startLimitPagination.getPreviousPageLink());
+            httpServletResponseAdapter.setLinkHeader("previous", startLimitPagination.getPreviousPageLink());
         }
     }
 }

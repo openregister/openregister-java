@@ -20,6 +20,7 @@ import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.db.TestDBItem;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
+import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.ws.rs.core.Response;
@@ -29,11 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static uk.gov.register.views.representations.ExtraMediaType.APPLICATION_RSF_TYPE;
 
 public class DataUploadFunctionalTest {
     @ClassRule
@@ -61,10 +63,13 @@ public class DataUploadFunctionalTest {
     }
 
     @Test
-    public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
+    public void checkMessageIsConsumedAndStoredInDatabase() {
         JsonNode inputItem = canonicalJsonMapper.readFromBytes("{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}".getBytes());
-        Response r = register.mintLines(TestRegister.register, inputItem.toString());
-        assertThat(r.getStatus(), equalTo(204));
+        String rsf = "add-item\t{\"register\":\"ft_openregister_test\",\"text\":\"SomeText\"}\n" +
+                "append-entry\tuser\tft_openregister_test\t2018-07-26T15:05:16Z\tsha-256:3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254";
+
+        Response r = register.loadRsf(TestRegister.register, rsf);
+        assertThat(r.getStatus(), equalTo(200));
 
         TestDBItem storedItem = testItemDAO.getItems(schema).get(7);
         assertThat(storedItem.contents, equalTo(inputItem));
@@ -92,15 +97,17 @@ public class DataUploadFunctionalTest {
 
     @Test
     public void loadTwoDistinctItems_addsTwoRowsInEntryAndItemTable() {
-        String item1 = "{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}";
-        String item2 = "{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}";
+        String rsf = "add-item\t{\"phase\":\"alpha\",\"register\":\"register1\",\"text\":\"Register1 Text\"}\n" +
+                "add-item\t{\"phase\":\"alpha\",\"register\":\"register2\",\"text\":\"Register2 Text\"}\n" +
+                "append-entry\tuser\tregister1\t2018-07-26T15:30:06Z\tsha-256:98d89fd39d305a7ffb409b24714e921e56b3365565860598133e77cd46b48996\n" +
+                "append-entry\tuser\tregister2\t2018-07-26T15:30:06Z\tsha-256:fbc0134b8945ac09551ad7afded161a71c5ab01f2687bfc93b55bd27d985a2b1";
 
-        Response r = register.mintLines(TestRegister.register, item1, item2);
+        Response r = register.loadRsf(TestRegister.register, rsf);
 
-        assertThat(r.getStatus(), equalTo(204));
+        assertThat(r.getStatus(), equalTo(200));
 
-        JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
-        JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes(item2.getBytes());
+        JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes("{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}".getBytes());
+        JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes("{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}".getBytes());
 
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
         Instant timestamp = entries.get(0).getTimestamp();
@@ -205,37 +212,64 @@ public class DataUploadFunctionalTest {
     }
 
     @Test
-    public void validation_FailsToLoadEntryWhenNonEmptyPrimaryKeyFieldIsNotExist() {
-        Response response = register.mintLines(TestRegister.register, "{}");
-        assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field. Error entry: '{}'"));
+    public void validation_FailsToLoadEntryWhenMissingKeyField() {
+        String rsf = "add-item\t{}\n" +
+                "append-entry\tuser\tfoo\t2018-07-26T13:53:34Z\tsha-256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a";
 
-        response = register.mintLines(TestRegister.register, "{\"register\":\"  \"}");
+        Response response = register.loadRsf(TestRegister.register, rsf);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Primary key field 'register' must have a valid value. Error entry: '{\"register\":\"  \"}'"));
+
+        RegisterResult result = response.readEntity(RegisterResult.class);
+        assertThat(result.getMessage(), equalTo("Failed to load RSF"));
+        assertThat(result.getDetails(), containsString("Entry does not contain primary key field 'register'"));
+    }
+
+    @Test
+    public void validation_FailsToLoadEntryWhenBlankKeyField() {
+        String rsf = "add-item\t{\"register\":\"  \"}\n" +
+                "append-entry\tuser\t  \t2018-07-26T13:58:25Z\tsha-256:adeec959e9f6a1481f1bd77d541f19c8e430b668c174e96bfe8ad5a224e3e6ee";
+
+        Response response = register.loadRsf(TestRegister.register, rsf);
+        assertThat(response.getStatus(), equalTo(400));
+
+        RegisterResult result = response.readEntity(RegisterResult.class);
+
+        assertThat(result.getMessage(), equalTo("Failed to load RSF"));
+        assertThat(result.getDetails(), containsString("Primary key field 'register' must have a valid value"));
     }
 
     @Test
     public void validation_FailsToLoadEntryWhenEntryContainsInvalidFields() {
-        Response response = register.mintLines(TestRegister.register, "{\"foo\":\"bar\",\"foo1\":\"bar1\"}");
+        String rsf = "add-item\t{\"foo\":\"bar\",\"register\":\"invalid-items\"}\n" +
+                "append-entry\tuser\tinvalid-items\t2018-07-27T12:37:31Z\tsha-256:baeecd3c54f412d77089f25d6ba1637b1861b545a9b6b2eaceb757d328007e7c";
+
+        Response response = register.loadRsf(TestRegister.register, rsf);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Item did not contain key field. Error entry: '{\"foo\":\"bar\",\"foo1\":\"bar1\"}'"));
+
+        RegisterResult result = response.readEntity(RegisterResult.class);
+        assertThat(result.getMessage(), equalTo("Failed to load RSF"));
+        assertThat(result.getDetails(), containsString("Entry contains invalid fields: [foo]"));
     }
 
     @Test
     public void validation_FailsToLoadEntryWhenFieldWithCardinalityManyIsNotAJsonArray() {
-        String entry = "{\"register\":\"someregister\",\"fields\":\"value\"}";
-        Response response = register.mintLines(TestRegister.register, entry);
+        String rsf = "add-item\t{\"fields\":\"single-field\",\"register\":\"some-register\"}\n" +
+                "append-entry\tuser\tsome-register\t2018-07-27T12:39:04Z\tsha-256:8a4545d97667542075a7d245c4274f6cc73dac3083c55a6aee81fe1b911b7d91";
+
+        Response response = register.loadRsf(TestRegister.register, rsf);
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'. Error entry: '" + entry + "'"));
+
+        RegisterResult result = response.readEntity(RegisterResult.class);
+        assertThat(result.getMessage(), equalTo("Failed to load RSF"));
+        assertThat(result.getDetails(), containsString("Field 'fields' has cardinality 'n'"));
     }
 
     @Test
     public void requestWithoutCredentials_isRejectedAsUnauthorized() throws Exception {
         // register.target() is unauthenticated
-        Response response = register.target(TestRegister.register).path("/load")
+        Response response = register.target(TestRegister.register).path("/load-rsf")
                 .request()
-                .post(entity("{}", APPLICATION_JSON_TYPE));
+                .post(entity("add-item\t{}", APPLICATION_RSF_TYPE));
         assertThat(response.getStatus(), equalTo(401));
     }
 }

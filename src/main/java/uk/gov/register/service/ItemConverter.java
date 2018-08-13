@@ -14,17 +14,17 @@ import static uk.gov.register.core.Cardinality.ONE;
 @Service
 public class ItemConverter {
 
-    public Map<String, FieldValue> convertItem(final Item item, final Map<String, Field> fieldsByName) {
+    public Map<String, FieldValue> convertItem(final Item item, final Map<String, Field> fieldsByName) throws FieldConversionException {
         return item.getFieldsStream().collect(toMap(Map.Entry::getKey, e -> convert(e, fieldsByName)));
     }
 
-    FieldValue convert(final Map.Entry<String, JsonNode> fieldNameToJson, final Map<String, Field> fieldsByName) {
+    FieldValue convert(final Map.Entry<String, JsonNode> fieldNameToJson, final Map<String, Field> fieldsByName) throws FieldConversionException {
         final String fieldName = fieldNameToJson.getKey();
         final JsonNode value = fieldNameToJson.getValue();
         return convert(value, fieldsByName.get(fieldName));
     }
 
-    private FieldValue convert(final JsonNode propertyJson, final Field field) {
+    private FieldValue convert(final JsonNode propertyJson, final Field field) throws FieldConversionException {
         final Cardinality cardinality = field.getCardinality();
         if (cardinality == ONE) {
             return convertScalar(propertyJson, field);
@@ -33,20 +33,20 @@ public class ItemConverter {
         }
     }
 
-    private FieldValue convertScalar(final JsonNode value, final Field field) {
+    private FieldValue convertScalar(final JsonNode value, final Field field) throws FieldConversionException {
         try {
             if (field.getDatatype().getName().equals("curie")) {
                 if (value.textValue().contains(":")) {
-                    return new LinkValue.CurieValue(value.textValue());
+                    return new RegisterLinkValue.CurieValue(value.textValue());
                 }
 
-                return new LinkValue(field.getRegister().get(), value.textValue());
+                return new RegisterLinkValue(field.getRegister().get(), value.textValue());
             }
             else if (field.getDatatype().getName().equals("url")) {
                 return new UrlValue(value.textValue());
             }
             else if (field.getRegister().isPresent()) {
-                return new LinkValue(field.getRegister().get(), value.textValue());
+                return new RegisterLinkValue(field.getRegister().get(), value.textValue());
                 //Note: the equals check below must be replaced with the specified datatype, instead of doing string comparision
                 // We should replace this once the datatype register is available
             } else {

@@ -20,6 +20,6 @@ public class LoggingFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        MDC.put("register", registerContext.get().getRegisterName().value());
+        MDC.put("register", registerContext.get().getRegisterId().value());
     }
 }

@@ -1,53 +1,35 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="fragments/head.html::head"></head>
-<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-<header th:replace="fragments/global-header.html::global-header"></header>
+  <head th:include="fragments/head.html::head"></head>
+  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+    <header th:replace="fragments/global-header.html::global-header"></header>
 
-<div id="wrapper">
-  <main id="main" role="main">
-    <div class="breadcrumbs">
-      <ol data-click-events="" data-click-category="Header" data-click-action="Breadcrumb Clicked">
-        <li>
-          <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-        </li>
-        <li>Records</li>
-      </ol>
-    </div>
+    <main id="wrapper" role="main">
+      <th:block th:if="${register.phase == 'beta'}">
+        <div th:replace="fragments/register-intro.html::register-intro"></div>
+      </th:block>
+      <th:block th:unless="${register.phase == 'beta'}">
+        <div th:replace="fragments/phase-banner.html::phase"></div>
+      </th:block>
 
-    <th:block th:unless="${register.phase == 'beta'}">
-      <div th:replace="fragments/phase-banner.html::phase"></div>
-    </th:block>
-
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <h1 class="heading-large">
-          Records
-          <span class="heading-secondary"
-                th:include="fragments/pagination.html::pagination-top('records')"></span>
-        </h1>
-        <div th:include="fragments/download-and-preview.html::download-and-preview('records')"></div>
-        <details role="group">
-          <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-            <span class="summary">What are the table headers?</span>
-          </summary>
-          <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-            <div th:replace="fragments/field-list.html::field-list(${content.fields})"></div>
-          </div>
-        </details>
+      <div class="grid-row">
+        <div class="column-full">
+          <h1 class="heading-large">
+            Records
+            <span class="heading-secondary"
+                  th:include="fragments/pagination.html::pagination-top('records')"></span>
+          </h1>
+        </div>
       </div>
-      <div class="column-third" th:include="fragments/attribution.html::attribution"></div>
-    </div>
 
-    <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})"
-         class="table-wrapper"></div>
+      <div th:include="fragments/record-table.html :: record-table (view = ${content}, records = ${content.recordsSimple})"
+           class="table-wrapper"></div>
 
-    <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
-  </main>
-</div>
+      <nav th:replace="fragments/pagination.html::pagination-bottom"></nav>
+    </main>
 
-<footer th:replace="fragments/footer.html::footer"></footer>
+    <footer th:replace="fragments/footer.html::footer"></footer>
 
-</body>
+  </body>
 </html>

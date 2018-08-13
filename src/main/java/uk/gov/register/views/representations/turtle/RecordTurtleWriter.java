@@ -6,7 +6,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -24,8 +24,8 @@ import java.util.Map;
 public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Entry, List<ItemView>>> {
 
     @Inject
-    public RecordTurtleWriter(javax.inject.Provider<RegisterName> registerNameProvider, RegisterResolver registerResolver) {
-        super(registerNameProvider, registerResolver);
+    public RecordTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
+        super(registerIdProvider, registerResolver);
     }
 
     @Override
@@ -34,8 +34,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
         ItemView itemView = record.getValue().get(0);
 
         Model recordModel = ModelFactory.createDefaultModel();
-        Model entryModel = new EntryTurtleWriter(registerNameProvider, registerResolver).rdfModelFor(entry, false);
-        Model itemModel = new ItemTurtleWriter(registerNameProvider, registerResolver).rdfModelFor(itemView);
+        Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry, false);
+        Model itemModel = new ItemTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(itemView);
 
         Resource recordResource = recordModel.createResource(recordUri(entry.getKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));
@@ -58,6 +58,6 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
     }
 
     protected URI recordUri(String primaryKey) {
-        return UriBuilder.fromUri(ourBaseUri()).path("record").path(primaryKey).build();
+        return UriBuilder.fromUri(ourBaseUri()).path("records").path(primaryKey).build();
     }
 }

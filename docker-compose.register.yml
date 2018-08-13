@@ -12,8 +12,8 @@ services:
       - ./config.docker.register.yaml:/srv/openregister-java/config.yaml:ro
       - ./deploy/openregister-java.jar:/srv/openregister-java/openregister-java.jar:ro
     networks:
-      - openregisterjava_default
+      - registers_default
 
 networks:
-  openregisterjava_default:
+  registers_default:
     external: true

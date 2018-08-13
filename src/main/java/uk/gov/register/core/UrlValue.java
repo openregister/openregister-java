@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.validation.constraints.NotNull;
 
-public class UrlValue implements FieldValue {
+public class UrlValue extends LinkValue implements FieldValue {
     @NotNull
     public final String value;
 
@@ -18,11 +18,8 @@ public class UrlValue implements FieldValue {
         return value;
     }
 
-    public boolean isLink() {
-        return true;
-    }
-
-    public boolean isList() {
+    @Override
+    public boolean isLinkToRegister() {
         return false;
     }
 }

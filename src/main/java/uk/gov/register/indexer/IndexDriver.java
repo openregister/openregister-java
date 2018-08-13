@@ -3,7 +3,7 @@ package uk.gov.register.indexer;
 import org.apache.commons.collections4.CollectionUtils;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.exceptions.EntryValidationException;
+import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.store.DataAccessLayer;
 
@@ -18,7 +18,7 @@ public class IndexDriver {
     }
 
     public void indexEntry(DataAccessLayer dataAccessLayer, Entry entry, IndexFunction indexFunction,
-        Map<String, Entry> entries, final int initialIndexEntryNumber) {
+        Map<String, Entry> entries, final int initialIndexEntryNumber) throws IndexingException {
         if (!currentIndexEntryNumbers.containsKey(indexFunction.getName())) {
             currentIndexEntryNumbers.put(indexFunction.getName(), new AtomicInteger(initialIndexEntryNumber));
         }
@@ -29,10 +29,10 @@ public class IndexDriver {
 
         if (entry.getEntryType() == EntryType.user) {
             if (currentEntry.isPresent() && currentEntry.get().getItemHashes().isEmpty() && entry.getItemHashes().isEmpty()) {
-                throw new EntryValidationException(entry, "Cannot tombstone a record which does not exist");
+                throw new IndexingException(entry, indexFunction.getName(), "Cannot tombstone a record which does not exist");
             }
             else if (currentEntry.isPresent() && CollectionUtils.isEqualCollection(currentEntry.get().getItemHashes(), entry.getItemHashes())) {
-                throw new EntryValidationException(entry, "Cannot contain identical items to previous entry");
+                throw new IndexingException(entry, indexFunction.getName(), "Cannot contain identical items to previous entry");
             }
         }
 
@@ -41,10 +41,10 @@ public class IndexDriver {
 
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentEntry.isPresent()) {
-            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItemBySha256, currentEntry.get()));
+            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItem, currentEntry.get()));
         }
 
-        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getItemBySha256, entry);
+        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getItem, entry);
 
         List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs);
         pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs));

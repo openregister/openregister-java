@@ -2,6 +2,7 @@ package uk.gov.register.serialization.handlers;
 
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
@@ -16,14 +17,13 @@ public class AddItemCommandHandler extends RegisterCommandHandler {
     }
 
     @Override
-    protected RegisterResult executeCommand(RegisterCommand command, Register register) {
+    protected void executeCommand(RegisterCommand command, Register register) {
         try {
             String jsonContent = command.getCommandArguments().get(RSFFormatter.RSF_ITEM_ARGUMENT_POSITION);
             Item item = new Item(objectReconstructor.reconstruct(jsonContent));
-            register.putItem(item);
-            return RegisterResult.createSuccessResult();
+            register.addItem(item);
         } catch (Exception e) {
-            return RegisterResult.createFailResult("Exception when executing command: " + command, e);
+            throw new RSFParseException("Exception when executing command: " + command, e);
         }
     }
 

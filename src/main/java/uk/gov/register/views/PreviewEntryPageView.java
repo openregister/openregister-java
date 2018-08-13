@@ -1,7 +1,7 @@
 package uk.gov.register.views;
 
 import uk.gov.register.configuration.HomepageContent;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.resources.RequestContext;
@@ -19,16 +19,16 @@ public class PreviewEntryPageView extends PreviewPageView {
                                 final String previewType,
                                 final HomepageContent homepageContent,
                                 final EntryListView entriesView,
-                                final Provider<RegisterName> registerNameProvider,
+                                final Provider<RegisterId> registerIdProvider,
                                 final Integer key) {
         super(requestContext, registerResolver, register, String.valueOf(key), previewType,
-                ElementType.ENTRY, homepageContent, registerNameProvider);
+                ElementType.ENTRY, homepageContent, registerIdProvider);
         this.entriesView = entriesView;
     }
 
     @Override
     public String getRegisterValues() {
-        return entriesView.entriesTo(getPreviewType(), getRegisterNameProvider(), getRegisterResolver());
+        return entriesView.entriesTo(getPreviewType(), getRegisterIdProvider(), getRegisterResolver());
     }
 
     @Override

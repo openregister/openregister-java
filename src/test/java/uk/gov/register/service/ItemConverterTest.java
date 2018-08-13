@@ -4,18 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import uk.gov.register.configuration.ConfigManager;
-import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -70,12 +64,12 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("school");
         when(entry.getValue()).thenReturn(jsonNode);
-        Field schoolField = new Field("school", "string", new RegisterName("school"), Cardinality.ONE, "A school in the UK.");
+        Field schoolField = new Field("school", "string", new RegisterId("school"), Cardinality.ONE, "A school in the UK.");
         Map<String, Field> fieldsByName = ImmutableMap.of("school", schoolField);
 
         FieldValue result = itemConverter.convert(entry, fieldsByName);
 
-        assertThat(result, instanceOf(LinkValue.class));
+        assertThat(result, instanceOf(RegisterLinkValue.class));
         assertThat(result.getValue(), equalTo("A school in the UK."));
     }
 
@@ -86,15 +80,16 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("business");
         when(entry.getValue()).thenReturn(jsonNode);
-        Field businessField = new Field("business", "curie", new RegisterName("company"), Cardinality.ONE, "A Limited Company ...");
+        Field businessField = new Field("business", "curie", new RegisterId("company"), Cardinality.ONE, "A Limited Company ...");
         Map<String, Field> fieldsByName = ImmutableMap.of("business", businessField);
 
 
         FieldValue result = itemConverter.convert(entry, fieldsByName);
 
-        assertThat(result, instanceOf(LinkValue.CurieValue.class));
+        assertThat(result, instanceOf(RegisterLinkValue.CurieValue.class));
         assertThat(result.getValue(), equalTo("business:13245"));
     }
+
     @Test
     public void convert_shouldConvertEntryToUrlValue() {
         JsonNode jsonNode = mock(JsonNode.class);
@@ -102,7 +97,7 @@ public class ItemConverterTest {
         Map.Entry<String, JsonNode> entry = mock(Map.Entry.class);
         when(entry.getKey()).thenReturn("website");
         when(entry.getValue()).thenReturn(jsonNode);
-        Field websiteField = new Field("website", "url", new RegisterName("company"), Cardinality.ONE, "A Limited Company ...");
+        Field websiteField = new Field("website", "url", new RegisterId("company"), Cardinality.ONE, "A Limited Company ...");
         Map<String, Field> fieldsByName = ImmutableMap.of("website", websiteField);
 
 
@@ -111,6 +106,4 @@ public class ItemConverterTest {
         assertThat(result, instanceOf(UrlValue.class));
         assertThat(result.getValue(), equalTo("http://www.example.com"));
     }
-
-
 }

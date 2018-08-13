@@ -3,9 +3,9 @@ package uk.gov.register.serialization;
 import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.util.HashValue;
 
 import java.nio.charset.StandardCharsets;
@@ -19,7 +19,6 @@ public class RSFExecutor {
 
     private Map<String, RegisterCommandHandler> registeredHandlers;
 
-
     public RSFExecutor() {
         registeredHandlers = new HashMap<>();
     }
@@ -28,7 +27,7 @@ public class RSFExecutor {
         registeredHandlers.put(registerCommandHandler.getCommandName(), registerCommandHandler);
     }
 
-    public RegisterResult execute(RegisterSerialisationFormat rsf, Register register) {
+    public void execute(RegisterSerialisationFormat rsf, Register register) throws RSFParseException {
         // HashValue and RSF file line number
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
@@ -36,32 +35,25 @@ public class RSFExecutor {
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
 
-            RegisterResult validationResult = validate(command, register, rsfLine, hashRefLine);
-            if (!validationResult.isSuccessful()) {
-                return validationResult;
-            }
-
-            RegisterResult executionResult = execute(command, register);
-            if (!executionResult.isSuccessful()) {
-                return executionResult;
-            }
+            validate(command, register, rsfLine, hashRefLine);
+            execute(command, register);
 
             rsfLine++;
         }
         
-        return validateOrphanAddItems(hashRefLine);
+        validateOrphanAddItems(hashRefLine);
     }
 
-    private RegisterResult execute(RegisterCommand command, Register register) {
+    private void execute(RegisterCommand command, Register register) throws RSFParseException {
         if (registeredHandlers.containsKey(command.getCommandName())) {
             RegisterCommandHandler registerCommandHandler = registeredHandlers.get(command.getCommandName());
-            return registerCommandHandler.execute(command, register);
+            registerCommandHandler.execute(command, register);
         } else {
-            return RegisterResult.createFailResult("Handler not registered for command: " + command.getCommandName());
+            throw new RSFParseException("Handler not registered for command: " + command.getCommandName());
         }
     }
 
-    private RegisterResult validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) {
+    private void validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) throws RSFParseException {
         // this ugly method won't be needed when we have symlinks
         // and won't have to rely on hashes
 
@@ -69,15 +61,14 @@ public class RSFExecutor {
         if (commandName.equals("add-item")) {
             validateAddItem(command, rsfLine, hashRefLine);
         } else if (commandName.equals("append-entry")) {
-            return validateAppendEntry(command, rsfLine, register, hashRefLine);
+            validateAppendEntry(command, rsfLine, register, hashRefLine);
         }
-        return RegisterResult.createSuccessResult();
     }
 
-    private RegisterResult validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine) {
+    private void validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine) throws RSFParseException {
         String delimitedHashes = command.getCommandArguments().get(RSF_HASH_POSITION);
         if (StringUtils.isEmpty(delimitedHashes)) {
-            return RegisterResult.createSuccessResult();
+            return;
         }
         
         List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
@@ -87,15 +78,14 @@ public class RSFExecutor {
             if (hashRefLine.containsKey(hashValue)) {
                 hashRefLine.put(hashValue, 0);
             } else {
-                Optional<Item> item = register.getItemBySha256(hashValue);
+                Optional<Item> item = register.getItem(hashValue);
                 if (!item.isPresent()) {
-                    return RegisterResult.createFailResult("Orphan append entry (line:" + rsfLine + "): " + command.toString());
+                    throw new RSFParseException("Orphan append entry (line:" + rsfLine + "): " + command.toString());
                 } else {
                     hashRefLine.put(hashValue, 0);
                 }
             }
         }
-        return RegisterResult.createSuccessResult();
     }
 
     private void validateAddItem(RegisterCommand command, int rsfLine, Map<HashValue, Integer> hashRefLine) {
@@ -103,7 +93,7 @@ public class RSFExecutor {
         hashRefLine.put(new HashValue(SHA256, hash), rsfLine);
     }
 
-    private RegisterResult validateOrphanAddItems(Map<HashValue, Integer> hashRefLine) {
+    private void validateOrphanAddItems(Map<HashValue, Integer> hashRefLine) throws RSFParseException {
         List<String> orphanItems = new ArrayList<>();
         hashRefLine.forEach((hash, rsfLine) -> {
             if (rsfLine > 0) {
@@ -111,10 +101,8 @@ public class RSFExecutor {
             }
         });
 
-        if (orphanItems.isEmpty()) {
-            return RegisterResult.createSuccessResult();
-        } else {
-            return RegisterResult.createFailResult(String.join("; ", orphanItems));
+        if (!orphanItems.isEmpty()) {
+            throw new RSFParseException(String.join("; ", orphanItems));
         }
     }
 }

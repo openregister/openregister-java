@@ -10,7 +10,6 @@ import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.DatabaseManager;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.RegisterLinkService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -40,10 +39,6 @@ public class RegisterContextFactory {
     private Optional<String> custodianName = Optional.empty();
 
     @Valid
-    @JsonProperty
-    private List<String> similarRegisters = emptyList();
-
-    @Valid
     @NotNull
     @JsonProperty
     private RegisterAuthenticatorFactory credentials;
@@ -58,41 +53,37 @@ public class RegisterContextFactory {
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("schema") String schema,
             @JsonProperty("custodianName") Optional<String> custodianName,
-            @JsonProperty("similarRegisters") List<String> similarRegisters,
             @JsonProperty("indexes") List<String> indexes,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.schema = schema;
         this.custodianName = custodianName;
-        this.similarRegisters = similarRegisters != null ? similarRegisters : emptyList();
         this.indexes = indexes != null ? indexes : emptyList();
         this.credentials = credentials;
     }
 
-    private FlywayFactory getFlywayFactory(RegisterName registerName, Optional<String> custodianName, RegisterConfigConfiguration registerConfigConfiguration) {
+    private FlywayFactory getFlywayFactory(RegisterId registerId, Optional<String> custodianName, RegisterConfigConfiguration registerConfigConfiguration) {
         FlywayFactory flywayFactory = new FlywayFactory();
         flywayFactory.setLocations(Arrays.asList("/sql", "uk.gov.migration"));
-        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", registerName.value(), "custodianName", custodianName.orElse(""), "fieldsYamlUrl",registerConfigConfiguration.getFieldsYamlLocation(),
+        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", registerId.value(), "custodianName", custodianName.orElse(""), "fieldsYamlUrl",registerConfigConfiguration.getFieldsYamlLocation(),
                 "registersYamlUrl", registerConfigConfiguration.getRegistersYamlLocation()));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }
 
-    public RegisterContext build(RegisterName registerName, ConfigManager configManager, DatabaseManager databaseManager,
-                                 EnvironmentValidator environmentValidator, RegisterLinkService registerLinkService,
+    public RegisterContext build(RegisterId registerId, ConfigManager configManager, DatabaseManager databaseManager,
+                                 EnvironmentValidator environmentValidator,
                                  RegisterConfigConfiguration registerConfigConfiguration) {
         return new RegisterContext(
-                registerName,
+                registerId,
                 configManager,
                 environmentValidator,
-                registerLinkService,
                 databaseManager.getDbi(),
-                getFlywayFactory(registerName, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),
+                getFlywayFactory(registerId, custodianName, registerConfigConfiguration).build(databaseManager.getDataSource()),
                 schema,
                 enableRegisterDataDelete,
                 enableDownloadResource,
-                similarRegisters,
                 indexes,
                 credentials.buildAuthenticator());
     }

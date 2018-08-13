@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.resources.RequestContext;
 
@@ -26,12 +26,12 @@ public class ThymeleafViewTest {
 
     @Before
     public void setUp() throws Exception {
-        RegisterMetadata metadata = new RegisterMetadata(new RegisterName("company-limited-by-guarantee"), null, "Copyright text [with link](http://www.example.com/copyright)", null, null, null);
+        RegisterMetadata metadata = new RegisterMetadata(new RegisterId("company-limited-by-guarantee"), null, "Copyright text [with link](http://www.example.com/copyright)", null, null, null);
         RegisterReadOnly register = mock(RegisterReadOnly.class);
-        when(register.getRegisterName()).thenReturn(new RegisterName("company-limited-by-guarantee"));
+        when(register.getRegisterId()).thenReturn(new RegisterId("company-limited-by-guarantee"));
         when(register.getRegisterMetadata()).thenReturn(metadata);
 
-        thymeleafView = new ThymeleafView(requestContext, "don't care", registerName -> URI.create("http://" + registerName + ".test.register.gov.uk"), register);
+        thymeleafView = new ThymeleafView(requestContext, "don't care", registerId -> URI.create("http://" + registerId + ".test.register.gov.uk"), register);
     }
 
     @Test

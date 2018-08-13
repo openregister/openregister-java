@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.ItemView;
@@ -15,7 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
-@Path("/item")
+@Path("/items")
 public class ItemResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
@@ -30,7 +31,7 @@ public class ItemResource {
     @Path("/sha-256:{item-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) {
+    public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
         return getItem(itemHash).map(viewFactory::getItemView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
@@ -46,13 +47,13 @@ public class ItemResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) {
+    public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
         return getItem(itemHash).map(viewFactory::getItemMediaView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
 
     private Optional<Item> getItem(String itemHash) {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
-        return register.getItemBySha256(hash);
+        return register.getItem(hash);
     }
 }

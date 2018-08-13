@@ -50,9 +50,9 @@ legal-services-commission:
 civil-service-intelligence-analysis-profession:
   name: "Intelligence Analysis "
   public-body: "civil-service-intelligence-analysis-profession"
-department-for-culture-media-sport:
-  name: "Department for Culture, Media & Sport"
-  public-body: "department-for-culture-media-sport"
+department-for-digital-culture-media-sport:
+  name: "Department for Digital, Culture, Media & Sport"
+  public-body: "department-for-digital-culture-media-sport"
 bridgwater-education-action-zone:
   name: "Bridgwater Education Action Zone"
   public-body: "bridgwater-education-action-zone"
@@ -363,6 +363,9 @@ civil-service-government-science-engineering:
 department-for-communities-and-local-government:
   name: "Department for Communities and Local Government"
   public-body: "department-for-communities-and-local-government"
+ministry-of-housing-communities-and-local-government:
+  name: "Ministry of Housing, Communities & Local Government"
+  public-body: "ministry-of-housing-communities-and-local-government"
 working-ventures-uk:
   name: "Working Ventures UK"
   public-body: "working-ventures-uk"
@@ -2856,4 +2859,7 @@ the-electoral-commission:
   public-body: "the-electoral-commission"
 department-for-communities-northern-ireland:
   name: "Department for Communities (Northern Ireland)"
-  public-body: "department-for-communities-northern-ireland" 
+  public-body: "department-for-communities-northern-ireland"
+nhs-digital:
+  name: "NHS Digital"
+  public-body: "nhs-digital" 

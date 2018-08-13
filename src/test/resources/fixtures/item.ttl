@@ -1,6 +1,6 @@
-@prefix field:   <http://field.test.register.gov.uk/record/> .
+@prefix field:   <http://field.test.register.gov.uk/records/> .
 
-<http://register.test.register.gov.uk/item/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18>
+<http://register.test.register.gov.uk/items/sha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18>
       field:fields field:field1 ;
-      field:register <http://register.test.register.gov.uk/record/value1> ;
+      field:register <http://register.test.register.gov.uk/records/value1> ;
       field:text "The Entry 1" .

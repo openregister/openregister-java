@@ -1,73 +1,56 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head th:include="fragments/head.html::head"></head>
-<body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
-<header th:replace="fragments/global-header.html::global-header"></header>
+  <head th:include="fragments/head.html::head"></head>
+  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+    <header th:replace="fragments/global-header.html::global-header"></header>
 
-<div id="wrapper">
-  <main id="main" role="main">
-    <div class="breadcrumbs">
-      <ol data-click-events="" data-click-category="Header" data-click-action="Breadcrumb Clicked">
-        <li>
-          <a href="/" th:utext="${friendlyRegisterName}">Home</a>
-        </li>
-        <li>
-          <a href="/records">Records</a>
-        </li>
-        <li>
-          <th:block th:utext="${previewTypeTag}"></th:block>
-          view
-        </li>
-      </ol>
-    </div>
+    <main id="wrapper" role="main">
+      <th:block th:unless="${register.phase == 'beta'}">
+        <div th:replace="fragments/phase-banner.html::phase"></div>
+      </th:block>
 
-    <th:block th:unless="${register.phase == 'beta'}">
-      <div th:replace="fragments/phase-banner.html::phase"></div>
-    </th:block>
-
-    <div class="grid-row">
-      <div class="column-two-thirds">
-        <h1 class="heading-large">
-          <th:block th:utext="${previewTypeTag}"></th:block>
-          view
-        </h1>
-        <p th:if="${!isSingleKey}">
-          There are
-          <th:block th:utext="${totalElements}"></th:block>
-          items<th:block th:if="${totalObjects} gt 100">, this preview
-          only displays the first 100</th:block>.
-        </p>
-        <p th:if="${isSingleKey}">
-          There is one item.
-        </p>
-        <p>
-          To access <th:block th:text="${isSingleKey ? 'this item' : 'these items'}"></th:block>,
-          <a th:href="${homepageContent.techDocsUrl}" target="_blank">view the API documentation</a>
-          or
-          <th:block th:if="${!isSingleKey or #strings.isEmpty(key)}">
-            <a th:href="${urlMultipleElements + '?page-size=5000'}" rel="alternate" class="js-download" download="" th:utext="${'download a ' + previewTypeTag + ' file'}">download a JSON file</a>
-          </th:block>
-          <th:block th:if="${isSingleKey and !#strings.isEmpty(key)}">
-            <a th:href="${urlSingleElements}" rel="alternate" class="js-download" download="" th:utext="${'download a ' + previewTypeTag + ' file'}">download a JSON file</a>
-          </th:block>
-          <th:block th:text="${isSingleKey} ? 'with the item' : (${totalObjects} le 5000 ? 'with the items' : 'with the first 5,000 items')"></th:block>.
-        </p>
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="heading-large">
+            <th:block th:utext="${previewTypeTag}"></th:block>
+            view
+          </h1>
+          <p th:if="${!isSingleKey}">
+            There are
+            <th:block th:utext="${totalElements}"></th:block>
+            items<th:block th:if="${totalObjects} gt 100">, this preview
+            only displays the first 100</th:block>.
+          </p>
+          <p th:if="${isSingleKey}">
+            There is one item.
+          </p>
+          <p>
+            To access <th:block th:text="${isSingleKey ? 'this item' : 'these items'}"></th:block>,
+            <a th:href="${homepageContent.techDocsUrl}" target="_blank">view the API documentation</a>
+            or
+            <th:block th:if="${!isSingleKey or #strings.isEmpty(key)}">
+              <a th:href="${urlMultipleElements + '?page-size=5000'}" rel="alternate" class="js-download" download="" th:utext="${'download a ' + previewTypeTag + ' file'}">download a JSON file</a>
+            </th:block>
+            <th:block th:if="${isSingleKey and !#strings.isEmpty(key)}">
+              <a th:href="${urlSingleElements}" rel="alternate" class="js-download" download="" th:utext="${'download a ' + previewTypeTag + ' file'}">download a JSON file</a>
+            </th:block>
+            <th:block th:text="${isSingleKey} ? 'with the item' : (${totalObjects} le 5000 ? 'with the items' : 'with the first 5,000 items')"></th:block>.
+          </p>
+        </div>
       </div>
-    </div>
-    <div class="grid-row">
-      <div class="column-full">
-        <pre class="preview-box">
-          <code th:class="${#strings.equals(previewTypeTag, 'YAML')} ? language-yaml : (${#strings.equals(previewTypeTag, 'TTL')} ? language-stylus : language-json)">
-            <th:block th:utext="${registerValues}"></th:block>
-          </code>
-        </pre>
+      <div class="grid-row">
+        <div class="column-full">
+          <pre class="preview-box">
+            <code th:class="${#strings.equals(previewTypeTag, 'YAML')} ? language-yaml : (${#strings.equals(previewTypeTag, 'TTL')} ? language-stylus : language-json)">
+              <th:block th:utext="${registerValues}"></th:block>
+            </code>
+          </pre>
+        </div>
       </div>
-    </div>
-  </main>
-</div>
+    </main>
 
-<footer th:replace="fragments/footer.html::footer"></footer>
+    <footer th:replace="fragments/footer.html::footer"></footer>
 
-</body>
+  </body>
 </html>

@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.RegisterName;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -48,7 +48,7 @@ public class EntryListView implements CsvRepresentationView {
         this.recordKey = Optional.of(recordKey);
     }
 
-    public String entriesTo(final String mediaType, final Provider<RegisterName> registerNameProvider, final RegisterResolver registerResolver) {
+    public String entriesTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
         final ByteArrayOutputStream outputStream;
         final EntryListTurtleWriter entryTurtleWriter;
         String registerInTextFormatted = StringUtils.EMPTY;
@@ -56,7 +56,7 @@ public class EntryListView implements CsvRepresentationView {
         try {
             if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
                 outputStream = new ByteArrayOutputStream();
-                entryTurtleWriter = new EntryListTurtleWriter(registerNameProvider, registerResolver);
+                entryTurtleWriter = new EntryListTurtleWriter(registerIdProvider, registerResolver);
 
                 entryTurtleWriter.writeTo(this, EntryListView.class, EntryListView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
 
@@ -93,6 +93,12 @@ public class EntryListView implements CsvRepresentationView {
     @SuppressWarnings("unused, used from templates")
     public Optional<String> getRecordKey() {
         return recordKey;
+    }
+
+    @SuppressWarnings("unused, used from templates")
+    public String getDownloadLink() {
+        Optional<String> recordKey = getRecordKey();
+        return recordKey.isPresent() ? String.format("record/%s/entries", recordKey.get()) : "entries"; 
     }
 
     @Override

@@ -6,8 +6,8 @@ import uk.gov.register.core.Field;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.exceptions.FieldValidationException;
-import uk.gov.register.exceptions.RegisterValidationException;
+import uk.gov.register.exceptions.FieldDefinitionException;
+import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.util.FieldComparer;
 import uk.gov.register.util.RegisterComparer;
 
@@ -20,27 +20,27 @@ public class EnvironmentValidator {
     }
 
     public void validateRegisterAgainstEnvironment(RegisterMetadata registerMetadata) {
-        RegisterMetadata environmentRegisterMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerMetadata.getRegisterName());
+        RegisterMetadata environmentRegisterMetadata = configManager.getRegistersConfiguration().getRegisterMetadata(registerMetadata.getRegisterId());
 
         if (!RegisterComparer.equals(registerMetadata, environmentRegisterMetadata)) {
-            throw new RegisterValidationException(registerMetadata.getRegisterName());
+            throw new RegisterDefinitionException(registerMetadata.getRegisterId());
         }
     }
 
-    public void validateFieldAgainstEnvironment(Field localField) throws FieldValidationException {
+    public void validateFieldAgainstEnvironment(Field localField) throws FieldDefinitionException {
         Field environmentField = configManager.getFieldsConfiguration().getField(localField.fieldName)
-                .orElseThrow(() -> new FieldValidationException("Field " + localField.fieldName + " does not exist in Field Register"));
+                .orElseThrow(() -> new FieldDefinitionException("Field " + localField.fieldName + " does not exist in Field Register"));
 
         if (!FieldComparer.equals(localField, environmentField)) {
-            throw new FieldValidationException("Definition of field " + localField.fieldName + " does not match Field Register");
+            throw new FieldDefinitionException("Definition of field " + localField.fieldName + " does not match Field Register");
         }
     }
 
     public void validateExistingMetadataAgainstEnvironment(RegisterContext registerContext)
-            throws FieldValidationException, RegisterValidationException {
+            throws FieldDefinitionException, RegisterDefinitionException {
         Register register = registerContext.buildOnDemandRegister();
 
-        if (register.getTotalDerivationRecords(IndexNames.METADATA) == 0) {
+        if (register.getTotalRecords(IndexNames.METADATA) == 0) {
             return;
         }
 

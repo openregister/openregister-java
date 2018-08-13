@@ -6,6 +6,7 @@ import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.indexer.function.LocalAuthorityByTypeIndexFunction;
 import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -15,14 +16,14 @@ import static java.util.stream.Collectors.toSet;
 
 public enum IndexFunctionConfiguration {
 
+    RECORD(IndexNames.RECORD, EntryType.user, new LatestByKeyIndexFunction(IndexNames.RECORD)),
     CURRENT_COUNTRIES(IndexNames.CURRENT_COUNTRIES, EntryType.user, new CurrentCountriesIndexFunction(IndexNames.CURRENT_COUNTRIES)),
     LOCAL_AUTHORITY_BY_TYPE(IndexNames.LOCAL_AUTHORITY_BY_TYPE, EntryType.user, new LocalAuthorityByTypeIndexFunction(IndexNames.LOCAL_AUTHORITY_BY_TYPE)),
-    RECORD(IndexNames.RECORD, EntryType.user, new LatestByKeyIndexFunction(IndexNames.RECORD)),
     METADATA(IndexNames.METADATA, EntryType.system, new LatestByKeyIndexFunction(IndexNames.METADATA));
 
     public static List<IndexFunctionConfiguration> getConfigurations(List<String> indexNames) {
-        List<IndexFunctionConfiguration> configurations = indexNames.stream().map(n -> getValueLowerCase(n)).collect(Collectors.toList());
-        configurations.addAll(getDefaultConfigurations());
+        List<IndexFunctionConfiguration> configurations = getDefaultConfigurations();
+        configurations.addAll(indexNames.stream().map(n -> getValueLowerCase(n)).collect(Collectors.toList()));
         return configurations;
     }
 
@@ -35,7 +36,10 @@ public enum IndexFunctionConfiguration {
     }
 
     private static List<IndexFunctionConfiguration> getDefaultConfigurations() {
-        return Arrays.asList(RECORD, METADATA);
+        List<IndexFunctionConfiguration> defaults = new ArrayList<>();
+        defaults.add(RECORD);
+        defaults.add(METADATA);
+        return defaults;
     }
 
     private String name;

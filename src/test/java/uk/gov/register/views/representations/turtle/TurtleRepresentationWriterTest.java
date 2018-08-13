@@ -8,6 +8,7 @@ import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -22,10 +23,11 @@ public class TurtleRepresentationWriterTest {
     private final RegisterResolver registerResolver = register -> URI.create("http://" + register + ".test.register.gov.uk");
 
     private final Set<Field> fields = ImmutableSet.of(
-            new Field("address", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("location", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("link-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"),
-            new Field("string-values", "datatype", new RegisterName("register"), Cardinality.ONE, "text"));
+            new Field("address", "datatype", new RegisterId("register"), Cardinality.ONE, "text"),
+            new Field("location", "datatype", new RegisterId("register"), Cardinality.ONE, "text"),
+            new Field("link-values", "datatype", new RegisterId("register"), Cardinality.ONE, "text"),
+            new Field("string-values", "datatype", new RegisterId("register"), Cardinality.ONE, "text"),
+            new Field("website", "datatype", new RegisterId("register"), Cardinality.ONE, "text"));
 
     @Test
     public void rendersFieldPrefixFromConfiguration() throws Exception {
@@ -39,11 +41,11 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterName("address"), registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedTtl, containsString("@prefix field:   <http://field.test.register.gov.uk/record/> ."));
+        assertThat(generatedTtl, containsString("@prefix field:   <http://field.test.register.gov.uk/records/> ."));
     }
 
     @Test
@@ -52,19 +54,19 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        EntryTurtleWriter writer = new EntryTurtleWriter(() -> new RegisterName("address"), registerResolver);
+        EntryTurtleWriter writer = new EntryTurtleWriter(() -> new RegisterId("address"), registerResolver);
         writer.writeTo(entry, entry.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/entry/52>"));
+        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/entries/52>"));
     }
 
     @Test
     public void rendersLinksCorrectlyAsUrls() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "address", new LinkValue(new RegisterName("address"), "1111111"),
-                        "location", new LinkValue(new RegisterName("address"), "location-value"),
+                        "address", new RegisterLinkValue(new RegisterId("address"), "1111111"),
+                        "location", new RegisterLinkValue(new RegisterId("address"), "location-value"),
                         "name", new StringValue("foo")
                 );
 
@@ -72,21 +74,21 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterName("address"), registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
-        assertThat(generatedTtl, containsString("field:address <http://address.test.register.gov.uk/record/1111111>"));
-        assertThat(generatedTtl, containsString("field:location <http://address.test.register.gov.uk/record/location-value>"));
+        assertThat(generatedTtl, containsString("field:address <http://address.test.register.gov.uk/records/1111111>"));
+        assertThat(generatedTtl, containsString("field:location <http://address.test.register.gov.uk/records/location-value>"));
         assertThat(generatedTtl, containsString("field:name \"foo\""));
-        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/item/sha-256:itemhash>"));
+        assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/items/sha-256:itemhash>"));
     }
 
     @Test
     public void rendersLists() throws Exception {
         Map<String, FieldValue> map =
                 ImmutableMap.of(
-                        "link-values", new ListValue(asList(new LinkValue(new RegisterName("address"), "1111111"), new LinkValue(new RegisterName("address"), "2222222"))),
+                        "link-values", new ListValue(asList(new RegisterLinkValue(new RegisterId("address"), "1111111"), new RegisterLinkValue(new RegisterId("address"), "2222222"))),
                         "string-values", new ListValue(asList(new StringValue("value1"), new StringValue("value2"))),
                         "name", new StringValue("foo")
                 );
@@ -95,14 +97,34 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterName("address"), registerResolver);
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
         writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
 
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
 
-        assertThat(generatedTtl, containsString("field:link-values <http://address.test.register.gov.uk/record/1111111> , <http://address.test.register.gov.uk/record/2222222>"));
+        assertThat(generatedTtl, containsString("field:link-values <http://address.test.register.gov.uk/records/1111111> , <http://address.test.register.gov.uk/records/2222222>"));
         assertThat(generatedTtl, containsString("field:string-values \"value2\" , \"value1\""));
         assertThat(generatedTtl, containsString("field:name \"foo\""));
+    }
+
+    @Test
+    public void rendersUrlValuesAsResources() throws IOException {
+        Map<String, FieldValue> map =
+                ImmutableMap.of(
+                        "name", new StringValue("foo"),
+                        "website", new UrlValue("https://www.gov.uk")
+                );
+
+        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("government-organisation"), registerResolver);
+        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+
+        byte[] bytes = outputStream.toByteArray();
+        String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
+        assertThat(generatedTtl, containsString("field:website <https://www.gov.uk>"));
     }
 }

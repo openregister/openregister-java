@@ -8,7 +8,6 @@ applications:
   health-check-http-endpoint: /healthcheck
   path: ../../openregister-java.jar
   domains:
-    - discovery.openregister.org
     - cloudapps.digital
   hosts:
     - datatype

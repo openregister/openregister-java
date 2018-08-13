@@ -33,11 +33,11 @@ public class CurrentCountriesIndexFunctionTest {
     @Test
     public void executeWithKeyAndHash_shouldReturnEmptySet_whenItemDoesNotExist() {
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
-        when(dataAccessLayer.getItemBySha256(any())).thenReturn(Optional.empty());
+        when(dataAccessLayer.getItem(any())).thenReturn(Optional.empty());
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(h -> dataAccessLayer.getItemBySha256(h), EntryType.user, "CS", new HashValue(HashingAlgorithm.SHA256, "cs"), resultSet);
+        func.execute(h -> dataAccessLayer.getItem(h), EntryType.user, "CS", new HashValue(HashingAlgorithm.SHA256, "cs"), resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -47,11 +47,11 @@ public class CurrentCountriesIndexFunctionTest {
         HashValue itemHashVN = new HashValue(HashingAlgorithm.SHA256, "vn");
         Item countryVN = new Item(itemHashVN, objectMapper.readTree("{\"country\":\"VN\",\"name\":\"Vietnam\"}"));
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
-        when(dataAccessLayer.getItemBySha256(itemHashVN)).thenReturn(Optional.of(countryVN));
+        when(dataAccessLayer.getItem(itemHashVN)).thenReturn(Optional.of(countryVN));
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(h -> dataAccessLayer.getItemBySha256(h), EntryType.user, "VN", itemHashVN, resultSet);
+        func.execute(h -> dataAccessLayer.getItem(h), EntryType.user, "VN", itemHashVN, resultSet);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("VN", itemHashVN)));
@@ -62,11 +62,11 @@ public class CurrentCountriesIndexFunctionTest {
         HashValue itemHashCS = new HashValue(HashingAlgorithm.SHA256, "cs");
         Item countryCS = new Item(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
-        when(dataAccessLayer.getItemBySha256(itemHashCS)).thenReturn(Optional.of(countryCS));
+        when(dataAccessLayer.getItem(itemHashCS)).thenReturn(Optional.of(countryCS));
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
-        func.execute(h -> dataAccessLayer.getItemBySha256(h),EntryType.user,  "CS", itemHashCS, resultSet);
+        func.execute(h -> dataAccessLayer.getItem(h),EntryType.user,  "CS", itemHashCS, resultSet);
 
         assertThat(resultSet, is(empty()));
     }
@@ -79,11 +79,11 @@ public class CurrentCountriesIndexFunctionTest {
         Item countryCS = new Item(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
         Entry entry = new Entry(1, Arrays.asList(itemHashVN, itemHashCS), Instant.now(), "key", EntryType.user);
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
-        when(dataAccessLayer.getItemBySha256(itemHashVN)).thenReturn(Optional.of(countryVN));
-        when(dataAccessLayer.getItemBySha256(itemHashCS)).thenReturn(Optional.of(countryCS));
+        when(dataAccessLayer.getItem(itemHashVN)).thenReturn(Optional.of(countryVN));
+        when(dataAccessLayer.getItem(itemHashCS)).thenReturn(Optional.of(countryCS));
 
         CurrentCountriesIndexFunction func = new CurrentCountriesIndexFunction("current-countries");
-        Set<IndexKeyItemPair> resultSet = func.execute(h -> dataAccessLayer.getItemBySha256(h), entry);
+        Set<IndexKeyItemPair> resultSet = func.execute(h -> dataAccessLayer.getItem(h), entry);
 
         assertThat(resultSet.size(), is(1));
         assertThat(resultSet, contains(new IndexKeyItemPair("key", itemHashVN)));

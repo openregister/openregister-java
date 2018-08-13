@@ -31,10 +31,10 @@ public class RegisterRule implements TestRule {
     private final WipeDatabaseRule wipeRule;
     private DropwizardAppRule<RegisterConfiguration> appRule;
 
-    private TestRule wholeRule;
+    protected TestRule wholeRule;
 
-    private Client client;
-    private List<Handle> handles = new ArrayList<>();
+    protected Client client;
+    protected List<Handle> handles = new ArrayList<>();
 
     public RegisterRule() {
         this.appRule = new DropwizardAppRule<>(RegisterApplication.class,
@@ -76,12 +76,6 @@ public class RegisterRule implements TestRule {
                 .post(entity(rsf, APPLICATION_RSF_TYPE));
     }
 
-    public Response mintLines(TestRegister register, String... payload) {
-        return authenticatedTarget(register).path("/load")
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.json(String.join("\n", payload)));
-    }
-
     public Response getRequest(TestRegister register, String path) {
         return target(register).path(path).request().get();
     }
@@ -98,7 +92,7 @@ public class RegisterRule implements TestRule {
         wipeRule.before();
     }
 
-    private JerseyClientBuilder clientBuilder() {
+    protected JerseyClientBuilder clientBuilder() {
         InMemoryDnsResolver customDnsResolver = new InMemoryDnsResolver();
         for (TestRegister register : TestRegister.values()) {
             customDnsResolver.add(register.getHostname(), InetAddress.getLoopbackAddress());

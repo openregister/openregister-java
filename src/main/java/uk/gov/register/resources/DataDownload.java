@@ -1,7 +1,6 @@
 package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.views.View;
 import uk.gov.register.configuration.ResourceConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.serialization.RSFFormatter;
@@ -12,22 +11,19 @@ import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 import java.util.Collection;
+import io.dropwizard.jersey.caching.CacheControl;
 
 @Path("/")
 public class DataDownload {
 
     private final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
-    private final RegisterName registerPrimaryKey;
+    private final RegisterId registerPrimaryKey;
     private final ResourceConfiguration resourceConfiguration;
     private final RegisterSerialisationFormatService rsfService;
     private final RSFFormatter rsfFormatter;
-
 
     @Inject
     public DataDownload(RegisterReadOnly register,
@@ -36,7 +32,7 @@ public class DataDownload {
                         RegisterSerialisationFormatService rsfService) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.registerPrimaryKey = register.getRegisterName();
+        this.registerPrimaryKey = register.getRegisterId();
         this.resourceConfiguration = resourceConfiguration;
         this.rsfService = rsfService;
         this.rsfFormatter = new RSFFormatter();
@@ -44,6 +40,7 @@ public class DataDownload {
 
     @GET
     @Path("/download-register")
+    @CacheControl(maxAge = 60, isPrivate = true)
     @Produces({MediaType.APPLICATION_OCTET_STREAM, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     @Timed
@@ -67,6 +64,7 @@ public class DataDownload {
 
     @GET
     @Path("/download-rsf")
+    @CacheControl(maxAge = 60, isPrivate = true)
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     @Timed
@@ -79,6 +77,7 @@ public class DataDownload {
 
     @GET
     @Path("/index/{index-name}/download-rsf")
+    @CacheControl(maxAge = 60, isPrivate = true)
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     @Timed
@@ -91,6 +90,7 @@ public class DataDownload {
 
     @GET
     @Path("/index/{index-name}/download-rsf/{total-entries-1}/{total-entries-2}")
+    @CacheControl(maxAge = 60, isPrivate = true)
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     @Timed
@@ -103,6 +103,7 @@ public class DataDownload {
 
     @GET
     @Path("/download-rsf/{start-entry-number}")
+    @CacheControl(maxAge = 60, isPrivate = true)
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     @Timed
@@ -125,6 +126,7 @@ public class DataDownload {
 
     @GET
     @Path("/download-rsf/{total-entries-1}/{total-entries-2}")
+    @CacheControl(maxAge = 60, isPrivate = true)
     @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
     @DownloadNotAvailable
     @Timed
@@ -147,14 +149,6 @@ public class DataDownload {
         return Response
                 .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, totalEntries1, totalEntries2))
                 .header("Content-Disposition", rsfFileName).build();
-    }
-
-    @GET
-    @Path("/download")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public View download() {
-        return viewFactory.downloadPageView(resourceConfiguration.getEnableDownloadResource());
     }
 }
 

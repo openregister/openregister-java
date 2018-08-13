@@ -4,8 +4,8 @@ import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.exceptions.SerializationFormatValidationException;
-import uk.gov.register.exceptions.SerializedRegisterParseException;
+import uk.gov.register.exceptions.ItemNotCanonicalException;
+import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.util.CanonicalJsonValidator;
 
 import java.time.Instant;
@@ -55,12 +55,12 @@ public class RSFFormatter {
         return command.getCommandName() + TAB + String.join(TAB, command.getCommandArguments()) + NEW_LINE;
     }
 
-    public RegisterCommand parse(String str) throws SerializedRegisterParseException {
+    public RegisterCommand parse(String str) throws RSFParseException {
         // -1 -> if str ends with \t then final string in list will be ""
         List<String> parts = Arrays.asList(str.split(TAB, -1));
 
         if (parts.isEmpty() || parts.size() < 2) {
-            throw new SerializedRegisterParseException("String is empty or is in incorrect format");
+            throw new RSFParseException("String is empty or is in incorrect format");
         }
 
         String commandName = parts.get(0);
@@ -69,7 +69,7 @@ public class RSFFormatter {
         if (commandValidators.containsKey(commandName)) {
             commandValidators.get(commandName).accept(commandParameters);
         } else {
-            throw new SerializedRegisterParseException("Command " + commandName + " is not recognised");
+            throw new RSFParseException("Command " + commandName + " is not recognised");
         }
 
         return new RegisterCommand(commandName, commandParameters);
@@ -81,13 +81,13 @@ public class RSFFormatter {
                 String jsonContent = arguments.get(RSF_ITEM_ARGUMENT_POSITION);
                 try {
                     canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
-                } catch (SerializationFormatValidationException e) {
-                    throw new SerializedRegisterParseException("Non canonical JSON: " + e.getMessage(), e);
+                } catch (ItemNotCanonicalException e) {
+                    throw new RSFParseException("Non canonical JSON", e);
                 } catch (Exception e) {
-                    throw new SerializedRegisterParseException("Invalid JSON: " + e.getMessage(), e);
+                    throw new RSFParseException("Invalid JSON", e);
                 }
             } else {
-                throw new SerializedRegisterParseException("Add item line must have " + ADD_ITEM_ARGUMENT_COUNT + " argument, was: " + argsToString(arguments));
+                throw new RSFParseException("Add item line must have " + ADD_ITEM_ARGUMENT_COUNT + " argument, was: " + argsToString(arguments));
             }
         };
     }
@@ -95,15 +95,15 @@ public class RSFFormatter {
     private Consumer<List<String>> getAppendEntryValidator() {
         return (arguments) -> {
             if (arguments.size() != APPEND_ENTRY_ARGUMENT_COUNT) {
-                throw new SerializedRegisterParseException("Append entry line must have " + APPEND_ENTRY_ARGUMENT_COUNT + " arguments, was: " + argsToString(arguments));
+                throw new RSFParseException("Append entry line must have " + APPEND_ENTRY_ARGUMENT_COUNT + " arguments, was: " + argsToString(arguments));
             }
             try {
                 EntryType.valueOf(arguments.get(RSF_ENTRY_TYPE_POSITION));
                 Instant.parse(arguments.get(RSF_TIMESTAMP_POSITION));
             } catch (DateTimeParseException e) {
-                throw new SerializedRegisterParseException("Date is not in the correct format", e);
+                throw new RSFParseException("Date is not in the correct format", e);
             } catch (IllegalArgumentException iae) {
-                throw new SerializedRegisterParseException("Type must be 'user' or 'system'", iae);
+                throw new RSFParseException("Type must be 'user' or 'system'", iae);
             }
             validateHash(arguments.get(RSF_HASH_POSITION), "Append entry hash value was not hashed using " + SHA_256);
         };
@@ -114,7 +114,7 @@ public class RSFFormatter {
             if (arguments.size() == ASSERT_ROOT_HASH_ARGUMENT_COUNT) {
                 validateHash(arguments.get(RSF_ASSERT_ROOT_HASH_ARGUMENT_POSITION), "Root hash value was not hashed using " + SHA_256);
             } else {
-                throw new SerializedRegisterParseException("Assert root hash line must have " + ASSERT_ROOT_HASH_ARGUMENT_COUNT + " arguments, was: " + argsToString(arguments));
+                throw new RSFParseException("Assert root hash line must have " + ASSERT_ROOT_HASH_ARGUMENT_COUNT + " arguments, was: " + argsToString(arguments));
             }
         };
     }
@@ -122,11 +122,11 @@ public class RSFFormatter {
     private void validateHash(String hash, String errorMessage) {
         if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
             if (StringUtils.isNotEmpty(hash) && !allPartsHaveShaPrefix(hash)) {
-                throw new SerializedRegisterParseException(errorMessage);
+                throw new RSFParseException(errorMessage);
             }
         } else {
             if (!hash.startsWith(SHA_256) || hash.indexOf(';') != -1) {
-                throw new SerializedRegisterParseException(errorMessage);
+                throw new RSFParseException(errorMessage);
             }
         }
     }

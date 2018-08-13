@@ -5,8 +5,8 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
+import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.core.RegisterName;
 import uk.gov.register.core.datatype.CurieDatatype;
 import uk.gov.register.core.datatype.Datatype;
 import uk.gov.register.exceptions.ItemValidationException;
@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class ItemValidator {
-    private final RegisterName registerName;
+    private final RegisterId registerId;
 
-    public ItemValidator(RegisterName registerName) {
-        this.registerName = registerName;
+    public ItemValidator(RegisterId registerId) {
+        this.registerId = registerId;
     }
 
     public void validateItem(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws ItemValidationException {
@@ -30,9 +30,9 @@ public class ItemValidator {
     }
 
     private void validatePrimaryKeyExists(JsonNode inputEntry) throws ItemValidationException {
-        JsonNode primaryKeyNode = inputEntry.get(registerName.value());
-        throwEntryValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerName + "'");
-        validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerName + "' must have a valid value");
+        JsonNode primaryKeyNode = inputEntry.get(registerId.value());
+        throwItemValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerId + "'");
+        validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerId + "' must have a valid value");
     }
 
     private void validateFields(JsonNode inputEntry, RegisterMetadata registerMetadata) throws ItemValidationException {
@@ -40,7 +40,7 @@ public class ItemValidator {
         Set<String> expectedFieldNames = Sets.newHashSet(registerMetadata.getFields());
         Set<String> unknownFields = Sets.difference(inputFieldNames, expectedFieldNames);
 
-        throwEntryValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
+        throwItemValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
     }
 
     private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws ItemValidationException {
@@ -49,7 +49,7 @@ public class ItemValidator {
             JsonNode fieldValue = inputEntry.get(fieldName);
 
             if (field.getCardinality().equals(Cardinality.MANY)) {
-                throwEntryValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), inputEntry, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, field.getDatatype().getName()));
+                throwItemValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), inputEntry, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, field.getDatatype().getName()));
 
                 fieldValue.elements().forEachRemaining(element -> validateSingleValue(field, element, inputEntry));
             } else {
@@ -59,24 +59,24 @@ public class ItemValidator {
     }
 
     private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
-        throwEntryValidationExceptionIfConditionIsFalse(condition, inputJsonEntry, errorMessage);
+        throwItemValidationExceptionIfConditionIsFalse(condition, inputJsonEntry, errorMessage);
     }
 
     private void validateSingleValue(Field field, JsonNode value, JsonNode inputEntry) {
         Datatype datatype = field.getDatatype();
         String fieldName = field.fieldName;
 
-        throwEntryValidationExceptionIfConditionIsFalse(!datatype.isValid(value), inputEntry,
+        throwItemValidationExceptionIfConditionIsFalse(!datatype.isValid(value), inputEntry,
                 String.format("Field '%s' %s must be of type '%s'", fieldName, field.getCardinality().equals(Cardinality.MANY) ? "values" : "value", datatype.getName()));
 
         if ("curie".equals(datatype.getName()) && !value.textValue().contains(CurieDatatype.CURIE_SEPARATOR)) {
-            throwEntryValidationExceptionIfConditionIsFalse(
+            throwItemValidationExceptionIfConditionIsFalse(
                     !field.getRegister().isPresent(), inputEntry,
                     String.format("Field '%s' must contain a curie in a valid format or the '%s' field specified.", fieldName, "register"));
         }
     }
 
-    private void throwEntryValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
+    private void throwItemValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
         if (condition) {
             throw new ItemValidationException(errorMessage, inputJsonEntry);
         }

@@ -18,10 +18,10 @@ public class TsvWriterTest {
 
     private final TsvWriter writer = new TsvWriter();
     private final Iterable<Field> fields = ImmutableList.of(
-            new Field("key1", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
-            new Field("key2", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
-            new Field("key3", "datatype", new RegisterName("register"),Cardinality.ONE, "text"),
-            new Field("key4", "datatype", new RegisterName("register"),Cardinality.ONE, "text"));
+            new Field("key1", "datatype", new RegisterId("register"),Cardinality.ONE, "text"),
+            new Field("key2", "datatype", new RegisterId("register"),Cardinality.ONE, "text"),
+            new Field("key3", "datatype", new RegisterId("register"),Cardinality.ONE, "text"),
+            new Field("key4", "datatype", new RegisterId("register"),Cardinality.ONE, "text"));
 
     @Test
     public void tsv_entriesAreGenerated() throws IOException {

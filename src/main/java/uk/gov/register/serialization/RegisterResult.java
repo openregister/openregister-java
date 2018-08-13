@@ -12,19 +12,21 @@ public class RegisterResult {
     private Boolean isSuccessful;
     private String message;
     private Optional<Exception> exception;
+    private String details;
+
+    public RegisterResult() {
+        exception = Optional.empty();
+    }
 
     private RegisterResult(Boolean isSuccessful, String message, Optional<Exception> exception) {
         this.isSuccessful = isSuccessful;
         this.message = message;
         this.exception = exception;
+        this.details = exception.map(this::getCauseMessage).orElse(null);
     }
 
     public static RegisterResult createSuccessResult() {
         return new RegisterResult(true, "success", Optional.empty());
-    }
-
-    public static RegisterResult createFailResult(String message) {
-        return new RegisterResult(false, message, Optional.empty());
     }
 
     public static RegisterResult createFailResult(String message, Exception exception) {
@@ -43,9 +45,8 @@ public class RegisterResult {
 
     @JsonProperty("details")
     public String getDetails() {
-        return exception.map(Throwable::getMessage).orElse(null);
+        return details;
     }
-
 
     @JsonIgnore
     public Optional<Exception> getException() {
@@ -80,5 +81,17 @@ public class RegisterResult {
                 ", message='" + message + '\'' +
                 ", exception=" + exception +
                 '}';
+    }
+
+    private String getCauseMessage(Throwable exception) {
+        Throwable cause = null;
+        Throwable result = exception;
+        String message = exception.getMessage();
+
+        while(null != (cause = result.getCause()) && (result != cause) ) {
+            result = cause;
+            message += ": " + cause.getMessage();
+        }
+        return message;
     }
 }
