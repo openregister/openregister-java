@@ -22,10 +22,13 @@ public class MigrateDatabaseRule extends ExternalResource {
     @Override
     protected void before() {
         for (TestRegister register : registers) {
+            System.out.println("STARTING MIGRATION");
             FlywayFactory flywayFactory = getFlywayFactory(register.name());
             Flyway flyway = flywayFactory.build(getDataSource(register.getDatabaseConnectionString("MigrateDatabaseRule")));
             flyway.setSchemas(register.getSchema());
             flyway.migrate();
+            System.out.println("FINISHED MIGRATION");
+
         }
     }
 
