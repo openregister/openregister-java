@@ -75,7 +75,3 @@ public class DateFormatChecker {
         return false;
     }
 }
-
-
-
-
