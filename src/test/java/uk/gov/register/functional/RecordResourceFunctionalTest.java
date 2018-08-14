@@ -36,7 +36,7 @@ public class RecordResourceFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
 
-        assertThat(response.getHeaderString("Link"), equalTo("</record/6789/entries>; rel=\"version-history\""));
+        assertThat(response.getHeaderString("Link"), equalTo("</records/6789/entries>; rel=\"version-history\""));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class).get("6789");
         assertThat(res.get("entry-number").textValue(), equalTo("2"));
