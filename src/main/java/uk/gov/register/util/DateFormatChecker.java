@@ -16,11 +16,7 @@ import static uk.gov.register.util.DateFormat.ISO_8601.*;
 public class DateFormatChecker {
 
     public static boolean isDateTimeFormatValid(String dateToValidate) {
-        if (StringUtils.isEmpty(dateToValidate)) {
-            return false;
-        }
-
-       return isValidFormat(dateToValidate);
+        return !StringUtils.isEmpty(dateToValidate) && isValidFormat(dateToValidate);
     }
 
     public static boolean isDateTimeFormatsOrdered(String startString, String endString) {
