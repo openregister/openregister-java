@@ -10,6 +10,7 @@ applications:
   domains:
     - alpha.openregister.org
   hosts:
+    - clinical-commissioning-group
     - occupation
     - public-body-account
     - public-body-account-classification
