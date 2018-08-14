@@ -15,7 +15,7 @@ public class DateFormatCheckerTest {
     }
 
     @Test
-    public void validateFormat_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYYDDMM() throws IOException {
+    public void validateFormat_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYYMM() throws IOException {
         assertTrue("Format should be valid", DateFormatChecker.isDateTimeFormatValid("2012-01"));
     }
 
@@ -35,6 +35,11 @@ public class DateFormatCheckerTest {
     }
 
     @Test
+    public void validateFormat_shouldValidateSuccessfully_whenInputDateTimeIsOfFormatYYYYMMDDThhmmssZWithTwoDigitHour() throws IOException {
+        assertTrue("Format should be valid", DateFormatChecker.isDateTimeFormatValid("2012-01-01T11:01:01Z"));
+    }
+
+    @Test
     public void validateFormat_throwsValidationException_whenInputDateTimeIsNotValid() throws IOException {
         assertFalse("Format should not be valid", DateFormatChecker.isDateTimeFormatValid("2012/01/01"));
     }
@@ -42,6 +47,21 @@ public class DateFormatCheckerTest {
     @Test
     public void validateFormat_throwsValidationException_whenInputDateTimeIsEmpty() throws IOException {
         assertFalse("Format should not be valid", DateFormatChecker.isDateTimeFormatValid(""));
+    }
+
+    @Test
+    public void validateFormat_throwsValidationException_whenInputDateTimeIsFiveDigitNumber() throws IOException {
+        assertFalse("Format should not be valid", DateFormatChecker.isDateTimeFormatValid("41365"));
+    }
+
+    @Test
+    public void validateFormat_throwsValidationException_whenInputDateTimeUsesNonUtcTimeZone() throws IOException {
+        assertFalse("Format should not be valid", DateFormatChecker.isDateTimeFormatValid("2008-09-15T15:53:00+05:00"));
+    }
+
+    @Test
+    public void validateFormat_throwsValidationException_whenInputDateTimeIsUnPaddedMonth() throws IOException {
+        assertFalse("Format should not be valid", DateFormatChecker.isDateTimeFormatValid("2018-1"));
     }
 
     @Test
