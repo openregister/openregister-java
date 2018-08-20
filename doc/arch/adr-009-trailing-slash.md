@@ -20,6 +20,9 @@ This ADR proposes a canonical URL and a way to consolidate around it.
 The canonical path for a resource MUST NOT have a trailing slash. Aliases MUST
 redirect (301) to the canonical path.
 
+Also, the `Link` header for aliases should add the canonical URL using the
+`rel="canonical"` ([RFC6596](https://tools.ietf.org/html/rfc6596)).
+
 For example, the `GB` record has the canonical path:
 
 ```
