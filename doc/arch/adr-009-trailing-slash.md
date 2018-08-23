@@ -40,29 +40,13 @@ respective canonical resources.
 
 ### Paginated resources
 
-The first page for the records list has the canonical path:
+Paginated resources behave in a similar way, trailing slashes are aliases to
+the equivalent without trailing slashes.
 
-```
-/records?page-index=1&page-size=100
-```
-
-Possible aliases of the above are:
-
-* `/records`
-* `/records/`
-* `/records/?page-index=1&page-size=100`
-
-Similarly, the canonical JSON resource:
-
-```
-/records.json?page-index=1&page-size=100
-```
-
-Has these possible aliases:
-
-* `/records.json`
-* `/records.json/`
-* `/records.json/?page-index=1&page-size=100`
+Notice that this ADR postpones the decision of what is the canonical path for
+the first page. This means that `/records` is canonical with the alias
+`/records/` and `/records?page-index=1` is canonical with the alias
+`/records/?page-index=1`
 
 
 ## Status
