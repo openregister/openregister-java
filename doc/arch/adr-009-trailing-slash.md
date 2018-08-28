@@ -51,7 +51,7 @@ the first page. This means that `/records` is canonical with the alias
 
 ## Status
 
-Proposed.
+Approved.
 
 ## Consequences
 
