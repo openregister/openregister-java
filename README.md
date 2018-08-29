@@ -68,6 +68,10 @@ should respond with:
 
  `Register undefined`
 
+To load data into the register:
+
+ `cat school-data.rsf | curl 127.0.0.1:8080/load-rsf -u foo:bar --data-binary @- -H "Host: school" -H "Content-Type: application/uk-gov-rsf"`
+
 ### Working on the frontend
 
 [![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
