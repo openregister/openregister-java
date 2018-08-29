@@ -53,6 +53,7 @@ $is-print: false !default;
 @import "govuk-logo";
 @import "header";
 @import "phase-banner";
+@import "notice";
 
 body {
   @include media(tablet) {
