@@ -27,13 +27,11 @@ public class IndexDriver {
                 ? Optional.of(entries.get(entry.getKey()))
                 : Optional.empty();
 
-        if (entry.getEntryType() == EntryType.user) {
-            if (currentEntry.isPresent() && currentEntry.get().getItemHashes().isEmpty() && entry.getItemHashes().isEmpty()) {
-                throw new IndexingException(entry, indexFunction.getName(), "Cannot tombstone a record which does not exist");
-            }
-            else if (currentEntry.isPresent() && CollectionUtils.isEqualCollection(currentEntry.get().getItemHashes(), entry.getItemHashes())) {
-                throw new IndexingException(entry, indexFunction.getName(), "Cannot contain identical items to previous entry");
-            }
+        if (currentEntry.isPresent() && currentEntry.get().getItemHashes().isEmpty() && entry.getItemHashes().isEmpty()) {
+            throw new IndexingException(entry, indexFunction.getName(), "Cannot tombstone a record which does not exist");
+        }
+        else if (currentEntry.isPresent() && CollectionUtils.isEqualCollection(currentEntry.get().getItemHashes(), entry.getItemHashes())) {
+            throw new IndexingException(entry, indexFunction.getName(), "Cannot contain identical items to previous entry");
         }
 
         // Always update our cached entries to reflect the incoming entry

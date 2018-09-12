@@ -172,7 +172,7 @@ public class LoadSerializedFunctionalTest {
     }
     
     @Test
-    public void shouldReturnBadRequestWhenLoadingDuplicateItemForNewRecord() throws IOException {
+    public void shouldReturnBadRequestWhenLoadingDuplicateItemForNewUserRecord() throws IOException {
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
         register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
         
@@ -183,6 +183,20 @@ public class LoadSerializedFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry\"}"));
+    }
+
+    @Test
+    public void shouldReturnBadRequestWhenLoadingDuplicateItemForNewMetadataRecord() throws IOException {
+        String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
+        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+
+        Response response = register.loadRsf(TestRegister.local_authority_eng,
+                "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
+                        "append-entry\tsystem\tregister-name\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
+                        "append-entry\tsystem\tregister-name\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
+
+        assertThat(response.getStatus(), equalTo(400));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register-name, 2016-04-05T13:23:05Z, sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125]}: Failed to append entry with entry-number 9 and key 'register-name': Failed to index entry #9 with key 'register-name' against index with name 'metadata': Cannot contain identical items to previous entry\"}"));
     }
     
     @Test
