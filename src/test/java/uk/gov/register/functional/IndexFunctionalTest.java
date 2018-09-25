@@ -73,19 +73,4 @@ public class IndexFunctionalTest {
             rsfComparisonHelper.assertRsfEqual(expectedIndexRsf, actualIndexRsf);
         }
     }
-
-    @Test
-    public void shouldDisplyIndexRecordsAsJson() throws IOException {
-        for (String testDirectory : inputAndExpectedData.keySet()) {
-            String rsfInput = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/" + testDirectory, "input.rsf")));
-            register.loadRsf(TestRegister.local_authority_eng, rsfInput);
-            
-            String expectedJsonFile = inputAndExpectedData.get(testDirectory);
-            String expectedRecords = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/"+ testDirectory + "/records", expectedJsonFile)));
-            Response indexJsonResponse = register.getRequest(TestRegister.local_authority_eng, "/index/local-authority-by-type/records.json");
-            assertThat(indexJsonResponse.getStatus(), is(200));
-            String actualIndexJson1 = indexJsonResponse.readEntity(String.class);
-            assertJsonEqual(expectedRecords, actualIndexJson1);
-        }
-    }
 }
