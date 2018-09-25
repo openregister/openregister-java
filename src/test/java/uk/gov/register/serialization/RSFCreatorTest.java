@@ -119,28 +119,6 @@ public class RSFCreatorTest {
     }
 
     @Test
-    public void createRegisterSerialisationFormat_returnsRSFFromEntireIndex() {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getEntryIterator(IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
-        when(register.getEntryIterator("index")).thenReturn(Arrays.asList(entry1, entry2).iterator());
-
-        RegisterSerialisationFormat actualRSF = sutCreator.create(register, "index");
-        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
-
-        verify(register, times(1)).getItemIterator();
-        verify(register, times(1)).getEntryIterator("index");
-
-        assertThat(actualCommands.size(), equalTo(5));
-        assertThat(actualCommands, contains(
-                assertEmptyRootHashCommand,
-                addItem1Command,
-                addItem2Command,
-                appendEntry1Command,
-                appendEntry2Command
-        ));
-    }
-
-    @Test
     public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
         RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"), 1);
         RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);

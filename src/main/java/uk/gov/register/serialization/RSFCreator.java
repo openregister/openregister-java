@@ -56,32 +56,6 @@ public class RSFCreator {
         return new RegisterSerialisationFormat(commands);
     }
 
-    public RegisterSerialisationFormat create(Register register, String indexName) {
-        Iterator<?> iterators = Iterators.concat(
-                Iterators.singletonIterator(EMPTY_ROOT_HASH),
-                register.getItemIterator(),
-                register.getEntryIterator(IndexNames.METADATA),
-                !indexName.equals(IndexNames.METADATA) ? register.getEntryIterator(indexName) : Collections.emptyIterator());
-
-        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
-    }
-
-
-    public RegisterSerialisationFormat create(Register register, String indexName, int totalEntries1, int totalEntries2) {
-        Iterator<?> iterators;
-
-        if (totalEntries1 == totalEntries2) {
-            iterators = Collections.emptyIterator();
-        } else {
-            iterators = Iterators.concat(
-                    register.getItemIterator(totalEntries1, totalEntries2),
-                    register.getEntryIterator(indexName, totalEntries1, totalEntries2));
-        }
-        Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
-    }
-
     public void register(RegisterCommandMapper commandMapper) {
         registeredMappers.put(commandMapper.getMapClass(), commandMapper);
     }
