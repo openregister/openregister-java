@@ -53,7 +53,7 @@ configurations {
 dependencies {
     compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3
     compile jacksonCsv, jacksonDatabind, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
-    compile jdbi, jersey_client
+    compile jdbi
     compile dropwizardLogstash
     compile(postgresClient) {
         exclude group: 'org.slf4j'
@@ -95,6 +95,8 @@ tasks.withType(AbstractCompile) {
 tasks.withType(Test) {
     jvmArgs += ["--add-modules", "java.xml.bind"]
 }
+
+
 
 void startApp() {
     ProcessBuilder builder = new ProcessBuilder(
