@@ -2,11 +2,11 @@ package uk.gov.register.serialization;
 
 import com.google.common.collect.Iterators;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.util.*;
 
@@ -23,9 +23,9 @@ public class RSFCreator {
     public RegisterSerialisationFormat create(Register register) {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
-                register.getItemIterator(),
-                register.getEntryIterator(IndexNames.METADATA),
-                register.getEntryIterator(),
+                register.getItemIterator(EntryType.user),
+                register.getEntryIterator(EntryType.system),
+                register.getEntryIterator(EntryType.user),
                 Iterators.singletonIterator(register.getRegisterProof().getRootHash()));
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
@@ -41,8 +41,8 @@ public class RSFCreator {
 
             HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();
             HashValue nextRootHash = register.getRegisterProof(totalEntries2).getRootHash();
-            Iterator<Item> metadataItemIterator = totalEntries1 == 0 ? register.getSystemItemIterator() : Collections.emptyIterator();
-            Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getEntryIterator(IndexNames.METADATA) : Collections.emptyIterator();
+            Iterator<Item> metadataItemIterator = totalEntries1 == 0 ? register.getItemIterator(EntryType.system) : Collections.emptyIterator();
+            Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getEntryIterator(EntryType.system) : Collections.emptyIterator();
 
             iterators = Iterators.concat(
                     Iterators.singletonIterator(previousRootHash),

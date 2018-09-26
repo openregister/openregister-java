@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.indexer.IndexDriver;
@@ -190,7 +189,7 @@ public class PostgresDataAccessLayerTest {
     public void getRecord_shouldCauseCheckpoint() {
         dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
-        Optional<Record> ignored = dataAccessLayer.getRecord("foo", IndexNames.RECORD);
+        Optional<Record> ignored = dataAccessLayer.getRecord(EntryType.user, "foo");
 
         // ignore the result, but check that we flushed out to currentKeys
         assertThat(dataAccessLayer.getTotalEntries(), is(1));
@@ -200,7 +199,7 @@ public class PostgresDataAccessLayerTest {
     public void getRecords_shouldCauseCheckpoint() {
         dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
-        List<Record> ignored = dataAccessLayer.getRecords(1,0, IndexNames.RECORD);
+        List<Record> ignored = dataAccessLayer.getRecords(EntryType.user, 1, 0);
 
         // ignore the result, but check that we flushed out to currentKeys
         assertThat(dataAccessLayer.getTotalEntries(), is(1));

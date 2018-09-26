@@ -1,6 +1,7 @@
 package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -62,7 +63,7 @@ public class VerifiableLogResource {
     private void validateEntryProofParams(int entryNumber, int totalEntries) {
         if (entryNumber < 1 ||
                 entryNumber > totalEntries ||
-                totalEntries > register.getTotalEntries()) {
+                totalEntries > register.getTotalEntries(EntryType.user)) {
             throw new BadRequestException("Invalid parameters");
         }
     }
@@ -70,7 +71,7 @@ public class VerifiableLogResource {
     private void validateConsistencyProofParams(int totalEntries1, int totalEntries2) {
         if (totalEntries1 < 1 ||
                 totalEntries1 > totalEntries2 ||
-                totalEntries2 > register.getTotalEntries()) {
+                totalEntries2 > register.getTotalEntries(EntryType.user)) {
             throw new BadRequestException("Invalid parameters");
         }
     }

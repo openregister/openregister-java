@@ -1,6 +1,7 @@
 package uk.gov.register.db;
 
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
 import uk.gov.register.store.DataAccessLayer;
 
@@ -15,17 +16,17 @@ public class Index {
         this.dataAccessLayer = dataAccessLayer;
     }
 
-    public Optional<Record> getRecord(String key, String derivationName) {
-        Optional<Record> record = dataAccessLayer.getRecord(key, derivationName);
+    public Optional<Record> getRecord(EntryType entryType, String key) {
+        Optional<Record> record = dataAccessLayer.getRecord(entryType, key);
         return record.filter(r -> r.getItems().size() != 0);
     }
 
-    public List<Record> getRecords(int limit, int offset, String derivationName) {
-        return dataAccessLayer.getRecords(limit, offset, derivationName);
+    public List<Record> getRecords(EntryType entryType, int limit, int offset) {
+        return dataAccessLayer.getRecords(entryType, limit, offset);
     }
 
-    public int getTotalRecords(String derivationName) {
-        return dataAccessLayer.getTotalRecords(derivationName);
+    public int getTotalRecords(EntryType entryType) {
+        return dataAccessLayer.getTotalRecords(entryType);
     }
 
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {

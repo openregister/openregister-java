@@ -3,6 +3,7 @@ package uk.gov.register.resources;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
@@ -42,7 +43,7 @@ public class EntryResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public PaginatedView<EntryListView> entriesHtml(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
-        int totalEntries = register.getTotalEntries();
+        int totalEntries = register.getTotalEntries(EntryType.user);
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
         Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
@@ -90,7 +91,7 @@ public class EntryResource {
     })
     @Timed
     public EntryListView entries(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
-        int totalEntries = register.getTotalEntries();
+        int totalEntries = register.getTotalEntries(EntryType.user);
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
         Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);

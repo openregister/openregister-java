@@ -28,23 +28,25 @@ public interface DataAccessLayer {
     Collection<Entry> getEntries(int start, int limit);
     Collection<Entry> getAllEntries();
 
-    Iterator<Entry> getEntryIterator(String indexName);
-    Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
+    Iterator<Entry> getEntryIterator(EntryType entryType);
+    Iterator<Entry> getEntryIterator(EntryType entryType, int totalEntries1, int totalEntries2);
     <R> R withEntryIterator(Function<EntryIterator, R> callback);
     int getTotalEntries();
     int getTotalEntries(EntryType entryType);
 
     Optional<Instant> getLastUpdatedTime();
 
+    // Records
+    Optional<Record> getRecord(EntryType entryType, String key);
+    List<Record> getRecords(EntryType entryType, int limit, int offset);
+    List<Record> findMax100RecordsByKeyValue(String key, String value);
+    int getTotalRecords(EntryType entryType);
+
     // Indexes
     void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber);
     void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber, int entryNumberToEnd);
-    Optional<Record> getRecord(String key, String indexName);
-    List<Record> getRecords(int limit, int offset, String indexName);
-    int getTotalRecords(String indexName);
     int getCurrentIndexEntryNumber(String indexName);
 
-    List<Record> findMax100RecordsByKeyValue(String key, String value);
     Collection<Entry> getAllEntriesByKey(String key);
 
     IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex);

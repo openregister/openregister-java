@@ -13,9 +13,7 @@ public interface ItemStore {
     
     Collection<Item> getAllItems();
 
-    Iterator<Item> getUserItemIterator();
+    Iterator<Item> getItemIterator(EntryType entryType);
 
     Iterator<Item> getUserItemIterator(int start, int end);
-    
-    Iterator<Item> getSystemItemIterator();
 }

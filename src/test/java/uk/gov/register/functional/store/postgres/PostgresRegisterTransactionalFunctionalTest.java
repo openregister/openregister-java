@@ -161,11 +161,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         Record addressRegisterRecord = mock(Record.class);
         when(addressRegisterRecord.getItems()).thenReturn(Arrays.asList(addressRegister));
-        when(index.getRecord("register:address", IndexNames.METADATA)).thenReturn(Optional.of(addressRegisterRecord));
+        when(index.getRecord(EntryType.system, "register:address")).thenReturn(Optional.of(addressRegisterRecord));
 
         Record addressFieldRecord = mock(Record.class);
         when(addressFieldRecord.getItems()).thenReturn(Arrays.asList(addressField));
-        when(index.getRecord("field:address", IndexNames.METADATA)).thenReturn(Optional.of(addressFieldRecord));
+        when(index.getRecord(EntryType.system, "field:address")).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);

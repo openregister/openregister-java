@@ -1,6 +1,7 @@
 package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.RegisterDetailView;
 import uk.gov.register.views.ViewFactory;
@@ -29,8 +30,8 @@ public class RegisterResource {
     @Timed
     public RegisterDetailView getRegisterDetail() {
         return viewFactory.registerDetailView(
-                register.getTotalRecords(),
-                register.getTotalEntries(),
+                register.getTotalRecords(EntryType.user),
+                register.getTotalEntries(EntryType.user),
                 register.getLastUpdatedTime(),
                 register.getCustodianName()
         );

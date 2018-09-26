@@ -271,19 +271,6 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         return OptionalInt.of(stagedEntries.get(stagedEntries.size() - 1).getEntryNumber());
     }
     
-    private Map<String, Record> getIndexRecordsForKeys(String indexName, List<String> entryKeys) {
-        Map<String, Record> indexRecords = new HashMap<>();
-        
-        if (getTotalRecords(indexName) > 0) {
-            List<List<String>> entryKeyBatches = Lists.partition(entryKeys, 1000);
-            entryKeyBatches.stream().forEach(keyBatches -> {
-                indexRecords.putAll(getIndexRecords(keyBatches, indexName).stream().collect(Collectors.toMap(k -> k.getEntry().getKey(), v -> v)));
-            });
-        }
-        
-        return indexRecords;
-    }
-    
     private Map<String, Entry> getEntriesForKeys(String indexName, List<String> entryKeys) {
         int totalEntries = indexName.equals(IndexNames.METADATA) ? entryQueryDAO.getTotalSystemEntries(schema) : entryQueryDAO.getTotalEntries(schema);
         

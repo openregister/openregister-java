@@ -13,48 +13,33 @@ import java.util.*;
 public interface RegisterReadOnly {
     Optional<Item> getItem(HashValue hash);
     Collection<Item> getAllItems();
+    Iterator<Item> getItemIterator(EntryType entryType);
+    Iterator<Item> getItemIterator(int start, int end);
 
     Optional<Entry> getEntry(int entryNumber);
     Collection<Entry> getEntries(int start, int limit);
     Collection<Entry> getAllEntries();
-    int getTotalEntries();
+    Iterator<Entry> getEntryIterator(EntryType entryType);
+    Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2);
+    Collection<Entry> allEntriesOfRecord(String key);
     int getTotalEntries(EntryType entryType);
-
     Optional<Instant> getLastUpdatedTime();
 
-    Optional<Record> getRecord(String key);
-    int getTotalRecords();
-    Collection<Entry> allEntriesOfRecord(String key);
-    List<Record> getRecords(int limit, int offset);
-
+    Optional<Record> getRecord(EntryType entryType, String key);
+    List<Record> getRecords(EntryType entryType, int limit, int offset);
     List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException;
+    int getTotalRecords(EntryType entryType);
 
     RegisterProof getRegisterProof();
     RegisterProof getRegisterProof(int entryNo);
     EntryProof getEntryProof(int entryNumber, int totalEntries);
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
 
-    Iterator<Entry> getEntryIterator();
-    Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2);
-
-    Iterator<Item> getItemIterator();
-    Iterator<Item> getItemIterator(int start, int end);
-    Iterator<Item> getSystemItemIterator();
-    
-    Iterator<Entry> getEntryIterator(String indexName);
-    Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
-
     RegisterId getRegisterId();
     Optional<String> getRegisterName();
     Optional<String> getCustodianName();
 
     RegisterMetadata getRegisterMetadata() throws NoSuchRegisterException;
-
-    Optional<Record> getRecord(String key, String derivationName);
-
-    List<Record> getRecords(int limit, int offset, String derivationName);
-
-    int getTotalRecords(String derivationName);
 
     Map<String, Field> getFieldsByName() throws NoSuchRegisterException, NoSuchFieldException;
 }

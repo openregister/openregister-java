@@ -45,8 +45,8 @@ public class DataDownload {
         Collection<Item> items = register.getAllItems();
 
         RegisterDetail registerDetail = viewFactory.registerDetailView(
-                register.getTotalRecords(),
-                register.getTotalEntries(),
+                register.getTotalRecords(EntryType.user),
+                register.getTotalEntries(EntryType.user),
                 register.getLastUpdatedTime(),
                 register.getCustodianName()).getRegisterDetail();
 
@@ -109,7 +109,7 @@ public class DataDownload {
             throw new BadRequestException("total-entries-2 must be greater than or equal to total-entries-1");
         }
 
-        int totalEntriesInRegister = register.getTotalEntries();
+        int totalEntriesInRegister = register.getTotalEntries(EntryType.user);
 
         if (totalEntries2 > totalEntriesInRegister) {
             throw new BadRequestException("total-entries-2 must not exceed number of total entries in the register");

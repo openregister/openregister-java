@@ -3,7 +3,6 @@ package uk.gov.register.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.Index;
 import uk.gov.register.exceptions.AppendEntryException;
 import uk.gov.register.exceptions.FieldDefinitionException;
@@ -39,9 +38,6 @@ public class PostgresRegister implements Register {
     private RegisterMetadata registerMetadata;
     private Map<String, Field> fieldsByName;
 
-    private final String defaultIndexForTypeUser = IndexNames.RECORD;
-    private final String defaultIndexForTypeSystem = IndexNames.METADATA;
-
     public PostgresRegister(RegisterId registerId,
                             EntryLog entryLog,
                             ItemStore itemStore,
@@ -76,18 +72,13 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Iterator<Item> getItemIterator() {
-        return itemStore.getUserItemIterator();
+    public Iterator<Item> getItemIterator(EntryType entryType) {
+        return itemStore.getItemIterator(entryType);
     }
 
     @Override
     public Iterator<Item> getItemIterator(int start, int end) {
         return itemStore.getUserItemIterator(start, end);
-    }
-
-    @Override
-    public Iterator<Item> getSystemItemIterator() {
-        return itemStore.getSystemItemIterator();
     }
 
     //endregion
@@ -137,11 +128,6 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public int getTotalEntries() {
-        return entryLog.getTotalEntries();
-    }
-
-    @Override
     public int getTotalEntries(EntryType entryType) {
         return entryLog.getTotalEntries(entryType);
     }
@@ -157,43 +143,18 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator() {
-        return entryLog.getEntryIterator(defaultIndexForTypeUser);
-    }
-
-    @Override
     public Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2) {
-        return entryLog.getEntryIterator(defaultIndexForTypeUser, totalEntries1, totalEntries2);
+        return entryLog.getEntryIterator(EntryType.user, totalEntries1, totalEntries2);
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(String indexName) {
-        return entryLog.getEntryIterator(indexName);
-    }
-
-    @Override
-    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return entryLog.getEntryIterator(indexName, totalEntries1, totalEntries2);
+    public Iterator<Entry> getEntryIterator(EntryType entryType) {
+        return entryLog.getEntryIterator(entryType);
     }
 
     //endregion
 
-    //region Indexes
-
-    @Override
-    public Optional<Record> getRecord(String key) {
-        return index.getRecord(key, defaultIndexForTypeUser);
-    }
-
-    @Override
-    public List<Record> getRecords(int limit, int offset) {
-        return index.getRecords(limit, offset, defaultIndexForTypeUser);
-    }
-
-    @Override
-    public int getTotalRecords() {
-        return getTotalRecords(defaultIndexForTypeUser);
-    }
+    //region Records
 
     @Override
     public List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException {
@@ -205,18 +166,18 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Optional<Record> getRecord(String key, String indexName) {
-        return index.getRecord(key, indexName);
+    public Optional<Record> getRecord(EntryType entryType, String key) {
+        return index.getRecord(entryType, key);
     }
 
     @Override
-    public List<Record> getRecords(int limit, int offset, String indexName) {
-        return index.getRecords(limit, offset, indexName);
+    public List<Record> getRecords(EntryType entryType, int limit, int offset) {
+        return index.getRecords(entryType, limit, offset);
     }
 
     @Override
-    public int getTotalRecords(String indexName) {
-        return index.getTotalRecords(indexName);
+    public int getTotalRecords(EntryType entryType) {
+        return index.getTotalRecords(entryType);
     }
 
     //endregion
@@ -265,7 +226,7 @@ public class PostgresRegister implements Register {
     @Override
     public RegisterMetadata getRegisterMetadata() throws NoSuchRegisterException {
         if (registerMetadata == null) {
-            registerMetadata = getRecord("register:" + registerId.value(), defaultIndexForTypeSystem)
+            registerMetadata = getRecord(EntryType.system, "register:" + registerId.value())
                     .map(r -> extractObjectFromRecord(r, RegisterMetadata.class))
                     .orElseThrow(() -> new NoSuchRegisterException(registerId));
         }
@@ -287,7 +248,7 @@ public class PostgresRegister implements Register {
     //endregion
 
     private Field getField(String fieldName) throws NoSuchFieldException {
-        return getRecord("field:" + fieldName, defaultIndexForTypeSystem)
+        return getRecord(EntryType.system, "field:" + fieldName)
                 .map(record -> extractObjectFromRecord(record, Field.class))
                 .orElseThrow(() -> new NoSuchFieldException(registerId, fieldName));
     }
@@ -306,7 +267,7 @@ public class PostgresRegister implements Register {
     }
 
     private Optional<String> getMetadataField(String fieldName) {
-        return getRecord(fieldName, defaultIndexForTypeSystem).map(r -> r.getItems().get(0).getValue(fieldName).get());
+        return getRecord(EntryType.system, fieldName).map(r -> r.getItems().get(0).getValue(fieldName).get());
     }
 
     public Map<EntryType, Collection<IndexFunction>> getIndexFunctionsByEntryType() {

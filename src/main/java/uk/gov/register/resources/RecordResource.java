@@ -3,6 +3,7 @@ package uk.gov.register.resources;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
@@ -56,7 +57,7 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) throws FieldConversionException {
         httpServletResponseAdapter.setLinkHeader("version-history", String.format("/records/%s/entries", key));
 
-        return register.getRecord(key).map(viewFactory::getRecordMediaView)
+        return register.getRecord(EntryType.user, key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -151,7 +152,7 @@ public class RecordResource {
     }
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
-        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords());
+        IndexSizePagination pagination = new IndexSizePagination(pageIndex.map(IntParam::get), pageSize.map(IntParam::get), register.getTotalRecords(EntryType.user));
 
         if (pagination.hasNextPage()) {
             httpServletResponseAdapter.setLinkHeader("next", pagination.getNextPageLink());
@@ -164,7 +165,7 @@ public class RecordResource {
     }
 
     private RecordsView getRecordsView(int limit, int offset) throws FieldConversionException {
-        List<Record> records = register.getRecords(limit, offset);
+        List<Record> records = register.getRecords(EntryType.user, limit, offset);
         return viewFactory.getRecordsMediaView(records);
     }
 }

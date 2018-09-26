@@ -44,7 +44,7 @@ public class R__11_Migrate_current_keys_to_index extends BaseJdbcMigration imple
 		Map<String, Entry> entries = new HashMap<>();
 		int currentIndexEntryNumber = 0;
 
-		dataAccessLayer.getEntryIterator(IndexNames.RECORD).forEachRemaining(entry -> {
+		dataAccessLayer.getEntryIterator(EntryType.user).forEachRemaining(entry -> {
 			indexDriver.indexEntry(dataAccessLayer, entry, new LatestByKeyIndexFunction(IndexNames.RECORD), entries, currentIndexEntryNumber);
 		});
 		

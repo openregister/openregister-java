@@ -2,6 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
@@ -31,10 +32,10 @@ public class PreviewRecordsResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public View jsonPreview(@PathParam("media-type") final String mediaType) {
-        final int limit = register.getTotalRecords() > IndexSizePagination.ENTRY_LIMIT
+        final int limit = register.getTotalRecords(EntryType.user) > IndexSizePagination.ENTRY_LIMIT
                 ? IndexSizePagination.ENTRY_LIMIT
-                : register.getTotalRecords();
-        final List<Record> records = register.getRecords(limit, DEFAULT_OFFSET);
+                : register.getTotalRecords(EntryType.user);
+        final List<Record> records = register.getRecords(EntryType.user, limit, DEFAULT_OFFSET);
 
         return viewFactory.previewRecordsPageView(records, null, ExtraMediaType.transform(mediaType));
     }
@@ -44,7 +45,7 @@ public class PreviewRecordsResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public View jsonByKeyPreview(@PathParam("media-type") final String mediaType, @PathParam("record-key") final String key) {
-        final List<Record> records = Collections.singletonList(register.getRecord(key)
+        final List<Record> records = Collections.singletonList(register.getRecord(EntryType.user, key)
                 .orElseThrow(() -> new NotFoundException("No records found with key: " + key)));
 
         return viewFactory.previewRecordsPageView(records, key, ExtraMediaType.transform(mediaType));

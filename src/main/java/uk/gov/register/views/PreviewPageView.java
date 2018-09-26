@@ -2,6 +2,7 @@ package uk.gov.register.views;
 
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.configuration.HomepageContent;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
@@ -45,8 +46,8 @@ public abstract class PreviewPageView extends ThymeleafView {
         this.elementType = elementType;
         this.homepageContent = homepageContent;
         this.registerIdProvider = registerIdProvider;
-        totalRecords = register.getTotalRecords();
-        totalEntries = register.getTotalEntries();
+        totalRecords = register.getTotalRecords(EntryType.user);
+        totalEntries = register.getTotalEntries(EntryType.user);
     }
 
     public abstract String getRegisterValues();

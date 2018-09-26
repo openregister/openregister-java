@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.db.Index;
 import uk.gov.register.db.InMemoryEntryDAO;
 import uk.gov.register.exceptions.AppendEntryException;
@@ -71,8 +70,8 @@ public class PostgresRegisterTest {
 
         when(fieldRecord.getItems()).thenReturn(Arrays.asList(getItem("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"field description\"}")));
 
-        when(index.getRecord("register:postcode", IndexNames.METADATA)).thenReturn(Optional.of(registerRecord));
-        when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
+        when(index.getRecord(EntryType.system, "register:postcode")).thenReturn(Optional.of(registerRecord));
+        when(index.getRecord(EntryType.system, "field:postcode")).thenReturn(Optional.of(fieldRecord));
     }
 
     @Test(expected = NoSuchFieldException.class)
@@ -99,7 +98,7 @@ public class PostgresRegisterTest {
         JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
         doThrow(new ItemValidationException("error", content)).when(itemValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
-        when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
+        when(index.getRecord(EntryType.system, "field:postcode")).thenReturn(Optional.of(fieldRecord));
         Item item = new Item(hashValue, content);
         Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
@@ -113,7 +112,7 @@ public class PostgresRegisterTest {
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(hashValue, content);
         Entry entry = new Entry(1, hashValue, Instant.now(),"register:postcode", EntryType.system);
-        when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.empty());
+        when(index.getRecord(EntryType.system, "field:postcode")).thenReturn(Optional.empty());
 
         register.addItem(item);
         register.appendEntry(entry);
@@ -127,7 +126,7 @@ public class PostgresRegisterTest {
 
     @Test
     public void shouldGetFields() {
-        when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
+        when(index.getRecord(EntryType.system, "field:postcode")).thenReturn(Optional.of(fieldRecord));
         Map<String, Field> fieldsByName = register.getFieldsByName();
         assertThat(fieldsByName.size(), is(1));
         assertThat(fieldsByName.get("postcode").getText(), is("field description"));
