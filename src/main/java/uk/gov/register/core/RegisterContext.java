@@ -148,7 +148,7 @@ public class RegisterContext implements
         try {
             dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callback.accept(handle));
         } catch (CallbackFailedException e) {
-            throw Throwables.propagate(e.getCause());
+            throw new RuntimeException(e.getCause());
         }
     }
 

@@ -51,7 +51,7 @@ public class ArchiveCreator {
                 objectMapper.writeValue(zipOutputStream, value);
                 zipOutputStream.closeEntry();
             } catch (IOException e) {
-                Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
         }
 

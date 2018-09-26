@@ -66,9 +66,10 @@ public class GovukOrganisationClientTest {
             try {
                 Thread.sleep(millis);
                 return DEPARTMENT_FOR_EDUCATION_JSON;
-            } catch (InterruptedException e) {
-                throw Throwables.propagate(e);
+            } catch (InterruptedException ignored) {
+
             }
+            return null;
         };
     }
 
