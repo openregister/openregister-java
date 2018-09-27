@@ -1,6 +1,5 @@
 package uk.gov.register.store.postgres;
 
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
@@ -9,6 +8,7 @@ import uk.gov.register.db.EntryIterator;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
@@ -19,15 +19,17 @@ import java.util.function.Function;
 public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     protected final EntryQueryDAO entryQueryDAO;
     private final ItemQueryDAO itemQueryDAO;
+    private final RecordQueryDAO recordQueryDAO;
     protected final IndexQueryDAO indexQueryDAO;
     protected final String schema;
     
     public PostgresReadDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO,
-            ItemQueryDAO itemQueryDAO, String schema) {
+            ItemQueryDAO itemQueryDAO, RecordQueryDAO recordQueryDAO, String schema) {
         this.entryQueryDAO = entryQueryDAO;
         this.indexQueryDAO = indexQueryDAO;
         this.itemQueryDAO = itemQueryDAO;
+        this.recordQueryDAO = recordQueryDAO;
         this.schema = schema;
     }
 
@@ -53,24 +55,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getEntryIterator(EntryType entryType) {
-    // TODO: Remove if statement and use indexQueryDAO for RECORD index. This can only be done once the government-service
-    // register no longer contains duplicate consecutive entries. Else we should not make the assumption that duplicate
-    // consecutive entries do not exist.
-        if (entryType.equals(EntryType.user)) {
-            return entryQueryDAO.getIterator(schema);
-        }
-        return indexQueryDAO.getIterator(IndexNames.METADATA, schema, "entry_system");
+        return entryQueryDAO.getIterator(schema, getEntryTable(entryType), getEntryItemTable(entryType));
     }
 
     @Override
     public Iterator<Entry> getEntryIterator(EntryType entryType, int totalEntries1, int totalEntries2) {
-        // TODO: Remove if statement and use indexQueryDAO for RECORD index. This can only be done once the government-service
-        // register no longer contains duplicate consecutive entries. Else we should not make the assumption that duplicate
-        // consecutive entries do not exist.
-        if (entryType.equals(EntryType.user)) {
-            return entryQueryDAO.getIterator(totalEntries1, totalEntries2, schema);
-        }
-        return indexQueryDAO.getIterator(IndexNames.METADATA, totalEntries1, totalEntries2, schema, "entry_system");
+        return entryQueryDAO.getIterator(totalEntries1, totalEntries2, schema, getEntryTable(entryType), getEntryItemTable(entryType));
     }
 
     @Override
@@ -128,9 +118,9 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     // Record Index
 
     @Override
-    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
+    public List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value) {
         checkpoint();
-        return indexQueryDAO.findMax100RecordsByKeyValue(key, value, schema);
+        return new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema, getEntryTable(entryType), getEntryItemTable(entryType)));
     }
 
     @Override
@@ -142,25 +132,18 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     // Index
     @Override
     public Optional<Record> getRecord(EntryType entryType, String key) {
-        List<Record> records = getIndexRecords(Arrays.asList(key), entryType.equals(EntryType.system) ? IndexNames.METADATA : IndexNames.RECORD);
-        
-        return records.size() == 1 ? Optional.of(records.get(0)) : Optional.empty();
-    }
-    
-    protected List<Record> getIndexRecords(List<String> keys, String indexName) {
-        checkpoint();
-        return indexQueryDAO.findRecords(keys, indexName, schema, indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry");
+        return recordQueryDAO.getRecord(key, schema, getEntryTable(entryType), getEntryItemTable(entryType));
     }
 
     @Override
     public List<Record> getRecords(EntryType entryType, int limit, int offset) {
         checkpoint();
-        return indexQueryDAO.findRecords(limit, offset, entryType.equals(EntryType.system) ? IndexNames.METADATA : IndexNames.RECORD, schema, entryType.equals(EntryType.system) ? "entry_system" : "entry");
+        return new ArrayList<>(recordQueryDAO.getRecords(limit, offset, schema, getEntryTable(entryType), getEntryItemTable(entryType)));
     }
 
     @Override
     public int getTotalRecords(EntryType entryType) {
-        return indexQueryDAO.getTotalRecords(entryType.equals(EntryType.system) ? IndexNames.METADATA : IndexNames.RECORD, schema);
+        return recordQueryDAO.getTotalRecords(schema, getEntryTable(entryType));
     }
 
     @Override
@@ -169,4 +152,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     protected abstract void checkpoint();
+
+    private String getEntryTable(EntryType entryType) {
+        return entryType.equals(EntryType.user) ? "entry" : "entry_system";
+    }
+
+    private String getEntryItemTable(EntryType entryType) {
+        return entryType.equals(EntryType.user) ? "entry_item" : "entry_item_system";
+    }
 }

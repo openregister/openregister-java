@@ -33,9 +33,9 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
     public PostgresDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
-            EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO,
+            EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO, RecordQueryDAO recordQueryDAO,
             ItemDAO itemDAO, String schema, IndexDriver indexDriver, Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType) {
-        super(entryQueryDAO, indexQueryDAO, itemQueryDAO, schema);
+        super(entryQueryDAO, indexQueryDAO, itemQueryDAO, recordQueryDAO, schema);
         this.entryDAO = entryDAO;
         this.entryItemDAO = entryItemDAO;
         this.itemDAO = itemDAO;

@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EntryMapper implements ResultSetMapper<Entry> {
     private final LongTimestampToInstantMapper longTimestampToInstantMapper;
@@ -22,7 +21,7 @@ public class EntryMapper implements ResultSetMapper<Entry> {
 
     @Override
     public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-        List<HashValue> hashes = Arrays.asList((String[]) r.getArray("sha256hex").getArray()).stream().map(h -> new HashValue(HashingAlgorithm.SHA256, h)).collect(Collectors.toList());
+        List<HashValue> hashes = Arrays.asList(new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")));
 
         return new Entry(r.getInt("entry_number"), hashes, longTimestampToInstantMapper.map(index, r, ctx), r.getString("key"), EntryType.valueOf(r.getString("type")));
     }

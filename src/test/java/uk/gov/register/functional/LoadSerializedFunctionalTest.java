@@ -7,19 +7,17 @@ import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.IndexQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.db.*;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +33,7 @@ public class LoadSerializedFunctionalTest {
     public static final RegisterRule register = new RegisterRule();
     private static TestItemCommandDAO testItemDAO;
     private static TestEntryDAO testEntryDAO;
-    private static IndexQueryDAO testRecordDAO;
+    private static RecordQueryDAO testRecordDAO;
     private static String schema = testRegister.getSchema();
 
     @BeforeClass
@@ -43,7 +41,7 @@ public class LoadSerializedFunctionalTest {
         Handle handle = register.handleFor(testRegister);
         testItemDAO = handle.attach(TestItemCommandDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
-        testRecordDAO = handle.attach(IndexQueryDAO.class);
+        testRecordDAO = handle.attach(RecordQueryDAO.class);
     }
 
     @Before
@@ -113,10 +111,10 @@ public class LoadSerializedFunctionalTest {
         assertThat(userEntries.get(1).getEntryNumber(), is(2));
         assertThat(userEntries.get(1).getItemHashes().get(0).getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
-        Record record1 = testRecordDAO.findRecords(Arrays.asList("ft_openregister_test"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record1 = testRecordDAO.getRecord("ft_openregister_test", schema, "entry", "entry_item").get();
         assertThat(record1.getEntry().getEntryNumber(), equalTo(1));
         assertThat(record1.getEntry().getKey(), equalTo("ft_openregister_test"));
-        Record record2 = testRecordDAO.findRecords(Arrays.asList("ft_openregister_test2"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record2 = testRecordDAO.getRecord("ft_openregister_test2", schema, "entry", "entry_item").get();
         assertThat(record2.getEntry().getEntryNumber(), equalTo(2));
         assertThat(record2.getEntry().getKey(), equalTo("ft_openregister_test2"));
     }
@@ -147,12 +145,12 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(400));
         assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Non canonical JSON: { \\\"register\\\":\\\"ft_openregister_test\\\",   \\\"text\\\":\\\"SomeText\\\" }\"}"));
     }
-    
+
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemForExistingRecord() throws IOException {
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
         register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
-        
+
         Response initialResponse = register.loadRsf(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
@@ -160,22 +158,22 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
             "append-entry\tuser\tLondon\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6\n" +
             "append-entry\tuser\tLeics\t2016-04-05T13:23:05Z\tsha-256:a726c24e895a56f15699068ea48d61297eed4fb8cc73c019701fd3e8dd26c15e");
-        
+
         assertThat(initialResponse.getStatus(), equalTo(200));
 
         Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
-        
+
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
         assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #4 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry\"}"));
     }
-    
+
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemForNewUserRecord() throws IOException {
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
         register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
-        
+
         Response response = register.loadRsf(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
@@ -198,7 +196,7 @@ public class LoadSerializedFunctionalTest {
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register-name, 2016-04-05T13:23:05Z, sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125]}: Failed to append entry with entry-number 9 and key 'register-name': Failed to index entry #9 with key 'register-name' against index with name 'metadata': Cannot contain identical items to previous entry\"}"));
     }
-    
+
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemsForNewRecord() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
@@ -211,11 +209,11 @@ public class LoadSerializedFunctionalTest {
             "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125;sha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
-        
+
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry\"}"));
     }
-    
+
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemsForExistingRecord() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
@@ -234,11 +232,11 @@ public class LoadSerializedFunctionalTest {
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
-        
+
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
         assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry\"}"));
     }
-    
+
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateTombstoneForNewRecord() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
@@ -251,11 +249,11 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\t\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\t");
-        
+
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #3 with key 'EastMidlands' against index with name 'record': Cannot tombstone a record which does not exist\"}"));
     }
-    
+
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateTombstoneForExistingRecord() throws IOException {
         System.setProperty("multi-item-entries-enabled", "true");
@@ -267,7 +265,7 @@ public class LoadSerializedFunctionalTest {
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:24:05Z\t\n");
-        
+
         assertThat(response.getStatus(), equalTo(200));
 
         Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
@@ -286,13 +284,13 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(400));
         assertThat(r.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register:address, 2017-06-06T09:54:11Z, sha-256:b9f80885b11cbc9064970214387571ebfae6795f62bd79723163a3a91162537e]}: Failed to append entry with entry-number 8 and key 'register:address': Field undefined: register - address\"}"));
     }
-    
+
     @Test
     public void shouldAllowRegisterTextToBeUpdatedAfterUserEntry() throws IOException {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-valid-entry-ordering.rsf")));
-        
+
         Response r = send(input);
-        
+
         assertThat(r.getStatus(), equalTo(200));
         Response response = register.getRequest(testRegister, "/register.json");
         Map registerResourceMapFromRegisterRegister = response.readEntity(Map.class);
@@ -339,7 +337,7 @@ public class LoadSerializedFunctionalTest {
 		assertThat(response.getStatus(), equalTo(400));
 		assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Failed to append entry with entry-number 1 and key 'field:postcode': Definition of field postcode does not match Field Register\"}"));
 	}
-    
+
     @Test
     public void shouldReturnBadRequestWhenLocalFieldDoesNotExistInEnvironment() throws Exception {
         Response response = register.loadRsf(TestRegister.postcode,

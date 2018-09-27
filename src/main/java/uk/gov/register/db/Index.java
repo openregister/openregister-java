@@ -30,7 +30,7 @@ public class Index {
     }
 
     public List<Record> findMax100RecordsByKeyValue(String key, String value) {
-        return dataAccessLayer.findMax100RecordsByKeyValue(key, value);
+        return dataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, key, value);
     }
 
     public Collection<Entry> findAllEntriesOfRecordBy(String key) {

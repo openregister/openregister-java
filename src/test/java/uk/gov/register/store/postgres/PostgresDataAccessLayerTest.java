@@ -29,6 +29,7 @@ public class PostgresDataAccessLayerTest {
     InMemoryEntryItemDAO entryItemDAO;
     IndexQueryDAO indexQueryDAO;
     IndexDAO indexDAO;
+    RecordQueryDAO recordQueryDAO;
     InMemoryItemDAO itemDAO;
     IndexDriver indexDriver;
 
@@ -53,12 +54,13 @@ public class PostgresDataAccessLayerTest {
         entryItemDAO = new InMemoryEntryItemDAO();
         indexDAO = mock(IndexDAO.class);
         indexQueryDAO = mock(IndexQueryDAO.class);
+
         indexDAO = mock(IndexDAO.class);
         itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
         indexDriver = mock(IndexDriver.class);
-
+        recordQueryDAO = mock(RecordQueryDAO.class);
         dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
-                itemDAO, itemDAO, "schema", indexDriver, new HashMap<>());
+                itemDAO, recordQueryDAO, itemDAO, "schema", indexDriver, new HashMap<>());
 
         hash1 = new HashValue(SHA256, "abcd");
         hash2 = new HashValue(SHA256, "jkl1");
@@ -209,7 +211,7 @@ public class PostgresDataAccessLayerTest {
     public void findMax100RecordsByKeyValue_shouldCauseCheckpoint() {
         dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
-        List<Record> ignored = dataAccessLayer.findMax100RecordsByKeyValue("foo", "bar");
+        List<Record> ignored = dataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "foo", "bar");
 
         // ignore the result, but check that we flushed out to currentKeys
         assertThat(dataAccessLayer.getTotalEntries(), is(1));

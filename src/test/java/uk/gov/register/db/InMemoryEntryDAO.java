@@ -73,12 +73,12 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     }
 
     @Override
-    public Iterator<Entry> getIterator(String schema) {
+    public Iterator<Entry> getIterator(String schema, String entryTable, String entryItemTable) {
         return entries.iterator();
     }
 
     @Override
-    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2, String schema) {
+    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2, String schema, String entryTable, String entryItemTable) {
         return entries.subList(totalEntries1, totalEntries2).iterator();
     }
 

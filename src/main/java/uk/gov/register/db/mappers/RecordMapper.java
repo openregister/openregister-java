@@ -29,19 +29,13 @@ public class RecordMapper implements ResultSetMapper<Record> {
     public Record map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         List<Item> items = new ArrayList<>();
 
-        String[] itemHashes = (String[]) r.getArray("sha256hex").getArray();
-        String[] itemContent = (String[]) r.getArray("content").getArray();
+        String itemHash = r.getString("sha256hex");
+        String itemContent = r.getString("content");
 
-        if (itemHashes.length != itemContent.length) {
-            throw new RuntimeException("Number of item hashes not equal to number of item content");
-        }
-
-        for (int i = 0; i < itemHashes.length; i++) {
-            try {
-                items.add(new Item(new HashValue(HashingAlgorithm.SHA256, itemHashes[i]), objectMapper.readValue(itemContent[i], JsonNode.class)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            items.add(new Item(new HashValue(HashingAlgorithm.SHA256, itemHash), objectMapper.readValue(itemContent, JsonNode.class)));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return new Record(
