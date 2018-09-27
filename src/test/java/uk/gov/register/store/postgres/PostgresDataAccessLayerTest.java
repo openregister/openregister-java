@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
-import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
@@ -27,11 +26,8 @@ public class PostgresDataAccessLayerTest {
 
     InMemoryEntryDAO entryQueryDAO;
     InMemoryEntryItemDAO entryItemDAO;
-    IndexQueryDAO indexQueryDAO;
-    IndexDAO indexDAO;
     RecordQueryDAO recordQueryDAO;
     InMemoryItemDAO itemDAO;
-    IndexDriver indexDriver;
 
     private List<Entry> entries;
     private Map<HashValue, Item> itemMap;
@@ -52,15 +48,11 @@ public class PostgresDataAccessLayerTest {
 
         entryQueryDAO = new InMemoryEntryDAO(entries);
         entryItemDAO = new InMemoryEntryItemDAO();
-        indexDAO = mock(IndexDAO.class);
-        indexQueryDAO = mock(IndexQueryDAO.class);
 
-        indexDAO = mock(IndexDAO.class);
         itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
-        indexDriver = mock(IndexDriver.class);
         recordQueryDAO = mock(RecordQueryDAO.class);
-        dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,
-                itemDAO, recordQueryDAO, itemDAO, "schema", indexDriver, new HashMap<>());
+        dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, entryQueryDAO, entryItemDAO,
+                itemDAO, itemDAO, recordQueryDAO, "schema");
 
         hash1 = new HashValue(SHA256, "abcd");
         hash2 = new HashValue(SHA256, "jkl1");

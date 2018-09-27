@@ -9,10 +9,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class Index {
+public class RecordSet {
     private final DataAccessLayer dataAccessLayer;
 
-    public Index(DataAccessLayer dataAccessLayer) {
+    public RecordSet(DataAccessLayer dataAccessLayer) {
         this.dataAccessLayer = dataAccessLayer;
     }
 

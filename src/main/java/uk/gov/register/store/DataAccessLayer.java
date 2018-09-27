@@ -6,7 +6,6 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
 import uk.gov.register.exceptions.IndexingException;
-import uk.gov.register.indexer.IndexEntryNumberItemCountPair;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
@@ -27,7 +26,7 @@ public interface DataAccessLayer {
     Optional<Entry> getEntry(int entryNumber);
     Collection<Entry> getEntries(int start, int limit);
     Collection<Entry> getAllEntries();
-
+    Collection<Entry> getAllEntriesByKey(String key);
     Iterator<Entry> getEntryIterator(EntryType entryType);
     Iterator<Entry> getEntryIterator(EntryType entryType, int totalEntries1, int totalEntries2);
     <R> R withEntryIterator(Function<EntryIterator, R> callback);
@@ -41,13 +40,4 @@ public interface DataAccessLayer {
     List<Record> getRecords(EntryType entryType, int limit, int offset);
     List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value);
     int getTotalRecords(EntryType entryType);
-
-    // Indexes
-    void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber);
-    void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber, int entryNumberToEnd);
-    int getCurrentIndexEntryNumber(String indexName);
-
-    Collection<Entry> getAllEntriesByKey(String key);
-
-    IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex);
 }

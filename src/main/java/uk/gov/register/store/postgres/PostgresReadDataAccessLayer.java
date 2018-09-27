@@ -6,7 +6,6 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
 import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.store.DataAccessLayer;
@@ -20,14 +19,11 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     protected final EntryQueryDAO entryQueryDAO;
     private final ItemQueryDAO itemQueryDAO;
     private final RecordQueryDAO recordQueryDAO;
-    protected final IndexQueryDAO indexQueryDAO;
     protected final String schema;
     
     public PostgresReadDataAccessLayer(
-            EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO,
-            ItemQueryDAO itemQueryDAO, RecordQueryDAO recordQueryDAO, String schema) {
+            EntryQueryDAO entryQueryDAO, ItemQueryDAO itemQueryDAO, RecordQueryDAO recordQueryDAO, String schema) {
         this.entryQueryDAO = entryQueryDAO;
-        this.indexQueryDAO = indexQueryDAO;
         this.itemQueryDAO = itemQueryDAO;
         this.recordQueryDAO = recordQueryDAO;
         this.schema = schema;
@@ -51,6 +47,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     public Collection<Entry> getAllEntries() {
         checkpoint();
         return entryQueryDAO.getAllEntriesNoPagination(schema);
+    }
+
+    @Override
+    public Collection<Entry> getAllEntriesByKey(String key) {
+        checkpoint();
+        return entryQueryDAO.getAllEntriesByKey(key, schema);
     }
 
     @Override
@@ -115,23 +117,11 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
         return itemQueryDAO.getIterator(startEntryNumber, endEntryNumber, schema);
     }
 
-    // Record Index
+    // Records
 
-    @Override
-    public List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value) {
-        checkpoint();
-        return new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema, getEntryTable(entryType), getEntryItemTable(entryType)));
-    }
-
-    @Override
-    public Collection<Entry> getAllEntriesByKey(String key) {
-        checkpoint();
-        return entryQueryDAO.getAllEntriesByKey(key, schema);
-    }
-
-    // Index
     @Override
     public Optional<Record> getRecord(EntryType entryType, String key) {
+        checkpoint();
         return recordQueryDAO.getRecord(key, schema, getEntryTable(entryType), getEntryItemTable(entryType));
     }
 
@@ -147,8 +137,9 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public int getCurrentIndexEntryNumber(String indexName) {
-        return indexQueryDAO.getCurrentIndexEntryNumber(indexName, schema);
+    public List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value) {
+        checkpoint();
+        return new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema, getEntryTable(entryType), getEntryItemTable(entryType)));
     }
 
     protected abstract void checkpoint();

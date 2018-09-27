@@ -3,7 +3,7 @@ package uk.gov.register.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import uk.gov.register.db.Index;
+import uk.gov.register.db.RecordSet;
 import uk.gov.register.exceptions.AppendEntryException;
 import uk.gov.register.exceptions.FieldDefinitionException;
 import uk.gov.register.exceptions.NoSuchFieldException;
@@ -12,7 +12,6 @@ import uk.gov.register.exceptions.ItemValidationException;
 import uk.gov.register.exceptions.NoSuchItemException;
 import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.exceptions.NoSuchRegisterException;
-import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
@@ -27,11 +26,10 @@ import java.util.stream.Collectors;
 
 public class PostgresRegister implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
-    private final Index index;
+    private final RecordSet recordSet;
     private final RegisterId registerId;
     private final EntryLog entryLog;
     private final ItemStore itemStore;
-    private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
     private final ItemValidator itemValidator;
     private final EnvironmentValidator environmentValidator;
 
@@ -41,15 +39,13 @@ public class PostgresRegister implements Register {
     public PostgresRegister(RegisterId registerId,
                             EntryLog entryLog,
                             ItemStore itemStore,
-                            Index index,
-                            Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
+                            RecordSet recordSet,
                             ItemValidator itemValidator,
                             EnvironmentValidator environmentValidator) {
         this.registerId = registerId;
         this.entryLog = entryLog;
         this.itemStore = itemStore;
-        this.index = index;
-        this.indexFunctionsByEntryType = indexFunctionsByEntryType;
+        this.recordSet = recordSet;
         this.itemValidator = itemValidator;
         this.environmentValidator = environmentValidator;
     }
@@ -134,7 +130,7 @@ public class PostgresRegister implements Register {
 
     @Override
     public Collection<Entry> allEntriesOfRecord(String key) {
-        return index.findAllEntriesOfRecordBy(key);
+        return recordSet.findAllEntriesOfRecordBy(key);
     }
 
     @Override
@@ -162,22 +158,22 @@ public class PostgresRegister implements Register {
             throw new NoSuchFieldException(registerId, key);
         }
 
-        return index.findMax100RecordsByKeyValue(key, value);
+        return recordSet.findMax100RecordsByKeyValue(key, value);
     }
 
     @Override
     public Optional<Record> getRecord(EntryType entryType, String key) {
-        return index.getRecord(entryType, key);
+        return recordSet.getRecord(entryType, key);
     }
 
     @Override
     public List<Record> getRecords(EntryType entryType, int limit, int offset) {
-        return index.getRecords(entryType, limit, offset);
+        return recordSet.getRecords(entryType, limit, offset);
     }
 
     @Override
     public int getTotalRecords(EntryType entryType) {
-        return index.getTotalRecords(entryType);
+        return recordSet.getTotalRecords(entryType);
     }
 
     //endregion
@@ -268,10 +264,6 @@ public class PostgresRegister implements Register {
 
     private Optional<String> getMetadataField(String fieldName) {
         return getRecord(EntryType.system, fieldName).map(r -> r.getItems().get(0).getValue(fieldName).get());
-    }
-
-    public Map<EntryType, Collection<IndexFunction>> getIndexFunctionsByEntryType() {
-        return indexFunctionsByEntryType;
     }
 
     private List<Item> getReferencedItems(Entry entry) throws NoSuchItemException {

@@ -9,14 +9,10 @@ import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.auth.RegisterAuthenticator;
 import uk.gov.register.configuration.*;
 import uk.gov.register.db.*;
-import uk.gov.register.db.Index;
+import uk.gov.register.db.RecordSet;
 import uk.gov.register.exceptions.FieldDefinitionException;
-import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.exceptions.NoSuchConfigException;
-import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.exceptions.RegisterDefinitionException;
-import uk.gov.register.indexer.IndexDriver;
-import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
@@ -25,16 +21,12 @@ import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.io.IOException;
-import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static java.util.stream.Collectors.toList;
 
 public class RegisterContext implements
         DeleteRegisterDataConfiguration,
-        HomepageContentConfiguration,
-        IndexConfiguration,
         ResourceConfiguration {
     private RegisterId registerId;
     private ConfigManager configManager;
@@ -43,7 +35,6 @@ public class RegisterContext implements
     private DBI dbi;
     private Flyway flyway;
     private final String schema;
-    private final List<IndexFunctionConfiguration> indexFunctionConfigs;
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterAuthenticator authenticator;
@@ -51,16 +42,14 @@ public class RegisterContext implements
     private boolean hasConsistentState;
 
     public RegisterContext(RegisterId registerId, ConfigManager configManager, EnvironmentValidator environmentValidator,
-                           DBI dbi, Flyway flyway, String schema,
-                           boolean enableRegisterDataDelete, boolean enableDownloadResource,
-                           List<String> indexNames, RegisterAuthenticator authenticator) {
+                           DBI dbi, Flyway flyway, String schema, boolean enableRegisterDataDelete,
+                           boolean enableDownloadResource, RegisterAuthenticator authenticator) {
         this.registerId = registerId;
         this.configManager = configManager;
         this.environmentValidator = environmentValidator;
         this.dbi = dbi;
         this.flyway = flyway;
         this.schema = schema;
-        this.indexFunctionConfigs = mapIndexes(indexNames);
         this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
@@ -83,25 +72,13 @@ public class RegisterContext implements
         return flyway.migrate();
     }
 
-    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions() {
-        Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = new HashMap<>();
-        indexFunctionsByEntryType.put(EntryType.user, new ArrayList<>());
-        indexFunctionsByEntryType.put(EntryType.system, new ArrayList<>());
-
-        for (IndexFunctionConfiguration indexFunctionConfig : indexFunctionConfigs) {
-            indexFunctionsByEntryType.get(indexFunctionConfig.getEntryType()).addAll(indexFunctionConfig.getIndexFunctions());
-        }
-        return indexFunctionsByEntryType;
-    }
-
     public Register buildOnDemandRegister() {
         DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
 
         return new PostgresRegister(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
                 new ItemStoreImpl(dataAccessLayer),
-                new Index(dataAccessLayer),
-                getIndexFunctions(),
+                new RecordSet(dataAccessLayer),
                 itemValidator,
                 environmentValidator);
     }
@@ -110,8 +87,7 @@ public class RegisterContext implements
         return new PostgresRegister(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
                 new ItemStoreImpl(dataAccessLayer),
-                new Index(dataAccessLayer),
-                getIndexFunctions(),
+                new RecordSet(dataAccessLayer),
                 itemValidator,
                 environmentValidator);
     }
@@ -122,13 +98,7 @@ public class RegisterContext implements
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
             Register register = buildTransactionalRegister(dataAccessLayer, transactionalMemoizationStore);
             consumer.accept(register);
-
-            // TODO: this is a smell caused by the indexing logic living within the DataAccessLayer. This should be moved above this layer.
-            try {
-                dataAccessLayer.checkpoint();
-            } catch (IndexingException exception) {
-                throw new RSFParseException("Exception when indexing data", exception);
-            }
+            dataAccessLayer.checkpoint();
         });
         transactionalMemoizationStore.commitHashesToStore();
     }
@@ -152,38 +122,26 @@ public class RegisterContext implements
         }
     }
 
-    private List<IndexFunctionConfiguration> mapIndexes(List<String> indexNames) {
-        return IndexFunctionConfiguration.getConfigurations(indexNames);
-    }
-
     private DataAccessLayer getOnDemandDataAccessLayer() {
         return new PostgresDataAccessLayer(
                 dbi.onDemand(EntryQueryDAO.class),
-                dbi.onDemand(IndexDAO.class),
-                dbi.onDemand(IndexQueryDAO.class),
                 dbi.onDemand(EntryDAO.class),
                 dbi.onDemand(EntryItemDAO.class),
                 dbi.onDemand(ItemQueryDAO.class),
-                dbi.onDemand(RecordQueryDAO.class),
                 dbi.onDemand(ItemDAO.class),
-                schema,
-                new IndexDriver(),
-                getIndexFunctions());
+                dbi.onDemand(RecordQueryDAO.class),
+                schema);
     }
 
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
         return new PostgresDataAccessLayer(
                 handle.attach(EntryQueryDAO.class),
-                handle.attach(IndexDAO.class),
-                handle.attach(IndexQueryDAO.class),
                 handle.attach(EntryDAO.class),
                 handle.attach(EntryItemDAO.class),
                 handle.attach(ItemQueryDAO.class),
-                handle.attach(RecordQueryDAO.class),
                 handle.attach(ItemDAO.class),
-                schema,
-                new IndexDriver(),
-                getIndexFunctions());
+                handle.attach(RecordQueryDAO.class),
+                schema);
     }
 
     public void validate() {
@@ -206,11 +164,6 @@ public class RegisterContext implements
 
     public RegisterAuthenticator getAuthenticator() {
         return authenticator;
-    }
-
-    @Override
-    public List<String> getIndexes() {
-        return indexFunctionConfigs.stream().map(IndexFunctionConfiguration::getName).collect(toList());
     }
 
     public String getSchema() {

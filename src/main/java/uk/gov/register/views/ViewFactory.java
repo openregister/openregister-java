@@ -25,7 +25,6 @@ public class ViewFactory {
     private final RegisterDomainConfiguration registerDomainConfiguration;
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
-    private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
     private final ItemConverter itemConverter;
     private final Provider<RegisterId> registerIdProvider;
 
@@ -34,7 +33,6 @@ public class ViewFactory {
                        final PublicBodiesConfiguration publicBodiesConfiguration,
                        final GovukOrganisationClient organisationClient,
                        final RegisterDomainConfiguration registerDomainConfiguration,
-                       final Provider<HomepageContentConfiguration> homepageContentConfiguration,
                        final RegisterResolver registerResolver,
                        final Provider<RegisterReadOnly> register,
                        final ItemConverter itemConverter,
@@ -43,7 +41,6 @@ public class ViewFactory {
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
-        this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
         this.itemConverter = itemConverter;
@@ -81,8 +78,7 @@ public class ViewFactory {
                 requestContext,
                 totalRecords,
                 lastUpdated,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
+                new HomepageContent(),
                 registerResolver,
                 register.get()
         );
@@ -138,15 +134,10 @@ public class ViewFactory {
         return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, false);
     }
 
-    public RecordsView getIndexRecordsMediaView(final List<Record> records) throws FieldConversionException {
-        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
-    }
-
     public PreviewRecordPageView previewRecordsPageView(final List<Record> records, final String key, final String previewType) {
         return new PreviewRecordPageView(requestContext, register.get(), registerResolver,
                 previewType,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
+                new HomepageContent(),
                 getRecordsMediaView(records),
                 registerIdProvider,
                 key);
@@ -155,8 +146,7 @@ public class ViewFactory {
     public PreviewEntryPageView previewEntriesPageView(final Collection<Entry> entries, final Integer key, final String previewType) {
         return new PreviewEntryPageView(requestContext, register.get(), registerResolver,
                 previewType,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
+                new HomepageContent(),
                 getEntriesView(entries),
                 registerIdProvider,
                 key);
@@ -165,8 +155,7 @@ public class ViewFactory {
     public PreviewItemPageView previewItemPageView(final Item item, final String key, final String previewType) throws FieldConversionException {
         return new PreviewItemPageView(requestContext, register.get(), registerResolver,
                 previewType,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
+                new HomepageContent(),
                 getItemMediaView(item),
                 registerIdProvider,
                 key);

@@ -16,7 +16,6 @@ import javax.inject.Provider;
 import java.io.IOException;
 import java.net.URI;
 
-import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -35,7 +34,7 @@ public class PreviewItemPageViewTest {
     @Mock
     private RegisterReadOnly registerReadOnly;
 
-    private final HomepageContent homepageContent = new HomepageContent(emptyList());
+    private final HomepageContent homepageContent = new HomepageContent();
     private final Provider<RegisterId> provider = mock(Provider.class);
 
     @Test

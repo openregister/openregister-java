@@ -3,7 +3,6 @@ package uk.gov.register.functional.store.postgres;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
@@ -17,17 +16,13 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.FieldsConfiguration;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.db.*;
-import uk.gov.register.db.Index;
+import uk.gov.register.db.RecordSet;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
-import uk.gov.register.indexer.IndexDriver;
-import uk.gov.register.indexer.function.IndexFunction;
-import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
@@ -58,8 +53,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     private TestItemCommandDAO testItemDAO;
     private TestEntryDAO testEntryDAO;
-    private IndexDriver indexDriver = mock(IndexDriver.class);
-    private Index index;
+    private RecordSet recordSet;
 
     @Before
     public void setUp() throws Exception {
@@ -69,7 +63,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         handle = dbi.open();
         testItemDAO = handle.attach(TestItemCommandDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
-        index = mock(Index.class);
+        recordSet = mock(RecordSet.class);
     }
 
     @After
@@ -161,11 +155,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         Record addressRegisterRecord = mock(Record.class);
         when(addressRegisterRecord.getItems()).thenReturn(Arrays.asList(addressRegister));
-        when(index.getRecord(EntryType.system, "register:address")).thenReturn(Optional.of(addressRegisterRecord));
+        when(recordSet.getRecord(EntryType.system, "register:address")).thenReturn(Optional.of(addressRegisterRecord));
 
         Record addressFieldRecord = mock(Record.class);
         when(addressFieldRecord.getItems()).thenReturn(Arrays.asList(addressField));
-        when(index.getRecord(EntryType.system, "field:address")).thenReturn(Optional.of(addressFieldRecord));
+        when(recordSet.getRecord(EntryType.system, "field:address")).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
@@ -209,8 +203,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         return new PostgresRegister(registerData.getRegisterId(),
                 entryLog,
                 itemStore,
-                index,
-                getIndexFunctions(),
+                recordSet,
                 itemValidator,
                 environmentValidator);
     }
@@ -218,16 +211,12 @@ public class PostgresRegisterTransactionalFunctionalTest {
     private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
         return new PostgresDataAccessLayer(
                 handle.attach(EntryQueryDAO.class),
-                handle.attach(IndexDAO.class),
-                handle.attach(IndexQueryDAO.class),
                 handle.attach(EntryDAO.class),
                 handle.attach(EntryItemDAO.class),
                 handle.attach(ItemQueryDAO.class),
-                handle.attach(RecordQueryDAO.class),
                 handle.attach(ItemDAO.class),
-                "address",
-                indexDriver,
-                ImmutableMap.of(EntryType.user, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.RECORD)), EntryType.system, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.METADATA))));
+                handle.attach(RecordQueryDAO.class),
+                "address");
     }
 
     private DataSourceFactory getDataSourceFactory() {
@@ -238,9 +227,4 @@ public class PostgresRegisterTransactionalFunctionalTest {
         dataSourceFactory.setPassword("");
         return dataSourceFactory;
     }
-
-    private Map<EntryType, Collection<IndexFunction>> getIndexFunctions() {
-        return ImmutableMap.of(EntryType.user, Collections.emptyList(), EntryType.system, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.METADATA)));
-    }
 }
-
