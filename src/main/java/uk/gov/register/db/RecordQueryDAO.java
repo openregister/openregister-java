@@ -22,32 +22,27 @@ import java.util.Optional;
 public abstract class RecordQueryDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    @SqlQuery("select * from (select distinct on (e.key) e.entry_number, e.timestamp, e.key, e.type, i.sha256hex, i.content " +
-            "from \"<schema>\".<entry_table> e, \"<schema>\".<entry_item_table> ei, \"<schema>\".item i " +
-            "where e.entry_number = ei.entry_number and ei.sha256hex = i.sha256hex order by e.key, e.entry_number desc) " +
-            "as records order by entry_number desc limit :limit offset :offset")
+    @SqlQuery("select * from (select distinct on (e.key) e.*, i.content from \"<schema>\".<entry_table> e, \"<schema>\".item i " +
+            "where e.sha256hex = i.sha256hex order by e.key, e.entry_number desc) as records order by entry_number desc limit :limit offset :offset")
     @RegisterMapper(RecordMapper.class)
-    public abstract Collection<Record> getRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Define("schema") String schema, @Define("entry_table") String entryTable, @Define("entry_item_table") String entryItemTable);
+    public abstract Collection<Record> getRecords(@Bind("limit") int limit, @Bind("offset") int offset, @Define("schema") String schema, @Define("entry_table") String entryTable);
 
-    @SqlQuery("select distinct on (e.key) e.entry_number, e.timestamp, e.key, e.type, i.sha256hex, i.content " +
-            "from \"<schema>\".<entry_table> e, \"<schema>\".<entry_item_table> ei, \"<schema>\".item i " +
-            "where e.entry_number = ei.entry_number and ei.sha256hex = i.sha256hex and e.key = :key order by e.key, e.entry_number desc")
+    @SqlQuery("select distinct on (e.key) e.*, i.content from \"<schema>\".<entry_table> e, \"<schema>\".item i " +
+            "where e.sha256hex = i.sha256hex and e.key = :key order by e.key, e.entry_number desc")
     @RegisterMapper(RecordMapper.class)
     @SingleValueResult(Record.class)
-    public abstract Optional<Record> getRecord(@Bind("key") String key, @Define("schema") String schema, @Define("entry_table") String entryTable, @Define("entry_item_table") String entryItemTable);
+    public abstract Optional<Record> getRecord(@Bind("key") String key, @Define("schema") String schema, @Define("entry_table") String entryTable);
 
     @SqlQuery("select count(distinct key) from \"<schema>\".<entry_table>")
     public abstract int getTotalRecords(@Define("schema") String schema, @Define("entry_table") String entryTable);
 
-    @SqlQuery("select * from (select distinct on (e.key) e.entry_number, e.timestamp, e.key, e.type, i.sha256hex, i.content " +
-            "from \"<schema>\".<entry_table> e, \"<schema>\".<entry_item_table> ei, \"<schema>\".item i " +
-            "where e.entry_number = ei.entry_number and ei.sha256hex = i.sha256hex order by e.key, e.entry_number desc) " +
-            "as records where content @> :contentPGobject order by entry_number desc limit 100")
+    @SqlQuery("select * from (select distinct on (e.key) e.*, i.content from \"<schema>\".<entry_table> e, \"<schema>\".item i " +
+            "where e.sha256hex = i.sha256hex order by e.key, e.entry_number desc) as records where content @> :contentPGobject order by entry_number desc limit 100")
     @RegisterMapper(RecordMapper.class)
-    public abstract Collection<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content, @Bind("key") String key, @Define("schema") String schema, @Define("entry_table") String entryTable, @Define("entry_item_table") String entryItemTable);
+    public abstract Collection<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content, @Bind("key") String key, @Define("schema") String schema, @Define("entry_table") String entryTable);
 
-    public Collection<Record> findMax100RecordsByKeyValue(String key, String value, String schema, String entryTable, String entryItemTable) {
-        return __findMax100RecordsByKeyValue(writePGObject(key, value), key, schema, entryTable, entryItemTable);
+    public Collection<Record> findMax100RecordsByKeyValue(String key, String value, String schema, String entryTable) {
+        return __findMax100RecordsByKeyValue(writePGObject(key, value), key, schema, entryTable);
     }
 
     private PGobject writePGObject(String key, String value) {

@@ -25,7 +25,6 @@ public class PostgresDataAccessLayerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     InMemoryEntryDAO entryQueryDAO;
-    InMemoryEntryItemDAO entryItemDAO;
     RecordQueryDAO recordQueryDAO;
     InMemoryItemDAO itemDAO;
 
@@ -47,11 +46,10 @@ public class PostgresDataAccessLayerTest {
         itemMap = new HashMap<>();
 
         entryQueryDAO = new InMemoryEntryDAO(entries);
-        entryItemDAO = new InMemoryEntryItemDAO();
 
         itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
         recordQueryDAO = mock(RecordQueryDAO.class);
-        dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, entryQueryDAO, entryItemDAO,
+        dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, entryQueryDAO,
                 itemDAO, itemDAO, recordQueryDAO, "schema");
 
         hash1 = new HashValue(SHA256, "abcd");

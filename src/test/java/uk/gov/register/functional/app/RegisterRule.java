@@ -47,6 +47,7 @@ public class RegisterRule implements TestRule {
 
     @Override
     public Statement apply(Statement base, Description description) {
+        wipe();
         Statement me = new Statement() {
             @Override
             public void evaluate() throws Throwable {

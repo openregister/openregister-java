@@ -63,7 +63,7 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     }
 
     @Override
-    public Collection<Entry> getEntriesByKeys(List<String> entryKeys, String schema, String entryTable, String entryItemTable) {
+    public Collection<Entry> getEntriesByKeys(List<String> entryKeys, String schema, String entryTable) {
         return entries.stream().filter(e -> entryKeys.contains(e.getKey())).collect(Collectors.toList());
     }
 
@@ -73,12 +73,12 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
     }
 
     @Override
-    public Iterator<Entry> getIterator(String schema, String entryTable, String entryItemTable) {
+    public Iterator<Entry> getIterator(String schema, String entryTable) {
         return entries.iterator();
     }
 
     @Override
-    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2, String schema, String entryTable, String entryItemTable) {
+    public Iterator<Entry> getIterator(int totalEntries1, int totalEntries2, String schema, String entryTable) {
         return entries.subList(totalEntries1, totalEntries2).iterator();
     }
 
@@ -89,11 +89,6 @@ public class InMemoryEntryDAO implements EntryDAO, EntryQueryDAO {
                 this.entries.add(entry);
             }
         }
-    }
-
-    @Override
-    public int currentEntryNumber(String schema) {
-        return currentEntryNumber;
     }
 
     @Override

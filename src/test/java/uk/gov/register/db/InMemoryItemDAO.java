@@ -40,12 +40,12 @@ public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
 
     @Override
     public Iterator<Item> getIterator(String schema) {
-        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema, "entry", "entry_item"));
+        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema, "entry"));
     }
 
     @Override
     public Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo, String schema) {
-        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema, "entry", "entry_item"));
+        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema, "entry"));
     }
 
     @Override

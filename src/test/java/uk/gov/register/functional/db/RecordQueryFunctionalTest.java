@@ -16,11 +16,9 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryDAO;
-import uk.gov.register.db.EntryItemDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.functional.app.WipeDatabaseRule;
-import uk.gov.register.util.EntryItemPair;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -30,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
@@ -49,7 +46,6 @@ public class RecordQueryFunctionalTest {
 
     private RecordQueryDAO recordQueryDAO;
     private EntryDAO entryDAO;
-    private EntryItemDAO entryItemDAO;
     private ItemDAO itemDAO;
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -58,16 +54,12 @@ public class RecordQueryFunctionalTest {
     private List<Entry> entries;
     private List<Item> items;
 
-    @Parameter()
+    @Parameter
     public String entryTable;
-    @Parameter(1)
-    public String entryItemTable;
 
     @Parameters
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                {"entry", "entry_item"}, {"entry_system", "entry_item_system"}
-        });
+    public static Collection<String> data() {
+        return Arrays.asList("entry", "entry_system");
     }
 
     @Rule
@@ -82,7 +74,6 @@ public class RecordQueryFunctionalTest {
 
         recordQueryDAO = handle.attach(RecordQueryDAO.class);
         entryDAO = handle.attach(EntryDAO.class);
-        entryItemDAO = handle.attach(EntryItemDAO.class);
         itemDAO = handle.attach(ItemDAO.class);
 
         entries = Arrays.asList(
@@ -105,9 +96,9 @@ public class RecordQueryFunctionalTest {
 
     @Test
     public void shouldGetRecords() {
-        insertEntriesAndItems(entryTable, entryItemTable);
+        insertEntriesAndItems(entryTable);
 
-        List<Record> records = new ArrayList<>(recordQueryDAO.getRecords(100, 0, schema, entryTable, entryItemTable));
+        List<Record> records = new ArrayList<>(recordQueryDAO.getRecords(100, 0, schema, entryTable));
 
         assertThat(records.size(), is(3));
         assertThat(records.get(0).getEntry(), is(entries.get(3)));
@@ -120,30 +111,30 @@ public class RecordQueryFunctionalTest {
 
     @Test
     public void shouldGetRecord() {
-        insertEntriesAndItems(entryTable, entryItemTable);
+        insertEntriesAndItems(entryTable);
 
-        Optional<Record> record = recordQueryDAO.getRecord("key1", schema, entryTable, entryItemTable);
+        Optional<Record> record = recordQueryDAO.getRecord("key1", schema, entryTable);
         assertTrue(record.isPresent());
         assertThat(record.get().getEntry(), is(entries.get(2)));
         assertThat(record.get().getItems(), contains(items.get(2)));
 
-        record = recordQueryDAO.getRecord("key2", schema, entryTable, entryItemTable);
+        record = recordQueryDAO.getRecord("key2", schema, entryTable);
         assertTrue(record.isPresent());
         assertThat(record.get().getEntry(), is(entries.get(1)));
         assertThat(record.get().getItems(), contains(items.get(1)));
 
-        record = recordQueryDAO.getRecord("key3", schema, entryTable, entryItemTable);
+        record = recordQueryDAO.getRecord("key3", schema, entryTable);
         assertTrue(record.isPresent());
         assertThat(record.get().getEntry(), is(entries.get(3)));
         assertThat(record.get().getItems(), contains(items.get(3)));
 
-        record = recordQueryDAO.getRecord("key4", schema, entryTable, entryItemTable);
+        record = recordQueryDAO.getRecord("key4", schema, entryTable);
         assertFalse(record.isPresent());
     }
 
     @Test
     public void shouldGetTotalRecords() {
-        insertEntriesAndItems(entryTable, entryItemTable);
+        insertEntriesAndItems(entryTable);
         int totalRecords = recordQueryDAO.getTotalRecords(schema, entryTable);
 
         assertThat(totalRecords, is(3));
@@ -151,17 +142,17 @@ public class RecordQueryFunctionalTest {
 
     @Test
     public void shouldGetRecordFacets() {
-        insertEntriesAndItems(entryTable, entryItemTable);
+        insertEntriesAndItems(entryTable);
 
-        List<Record> records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueA", schema, entryTable, entryItemTable));
+        List<Record> records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueA", schema, entryTable));
         assertThat(records.size(), is(0));
 
-        records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueB", schema, entryTable, entryItemTable));
+        records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueB", schema, entryTable));
         assertThat(records.size(), is(1));
         assertThat(records.get(0).getEntry(), is(entries.get(1)));
         assertThat(records.get(0).getItems(), contains(items.get(1)));
 
-        records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueC", schema, entryTable, entryItemTable));
+        records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueC", schema, entryTable));
         assertThat(records.size(), is(2));
         assertThat(records.get(0).getEntry(), is(entries.get(3)));
         assertThat(records.get(0).getItems(), contains(items.get(3)));
@@ -169,12 +160,8 @@ public class RecordQueryFunctionalTest {
         assertThat(records.get(1).getItems(), contains(items.get(2)));
     }
 
-    private void insertEntriesAndItems(String entryTable, String entryItemTable) {
+    private void insertEntriesAndItems(String entryTable) {
         entryDAO.insertInBatch(entries, schema, entryTable);
-        entryItemDAO.insertInBatch(entries.stream()
-                .flatMap(entry -> entry.getItemHashes().stream()
-                        .map(item -> new EntryItemPair(entry.getEntryNumber(), item)))
-                .collect(Collectors.toList()), schema, entryItemTable);
         itemDAO.insertInBatch(items, schema);
     }
 }

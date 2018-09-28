@@ -18,6 +18,7 @@ public @interface BindEntry {
                 q.bind("timestampAsLong", arg.getTimestampAsLong());
                 q.bind("key", arg.getKey());
                 q.bind("entryType", arg.getEntryType());
+                q.bind("itemHash", arg.getItemHashes().get(0).getValue());
             };
         }
     }

@@ -57,12 +57,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Iterator<Entry> getEntryIterator(EntryType entryType) {
-        return entryQueryDAO.getIterator(schema, getEntryTable(entryType), getEntryItemTable(entryType));
+        return entryQueryDAO.getIterator(schema, getEntryTable(entryType));
     }
 
     @Override
     public Iterator<Entry> getEntryIterator(EntryType entryType, int totalEntries1, int totalEntries2) {
-        return entryQueryDAO.getIterator(totalEntries1, totalEntries2, schema, getEntryTable(entryType), getEntryItemTable(entryType));
+        return entryQueryDAO.getIterator(totalEntries1, totalEntries2, schema, getEntryTable(entryType));
     }
 
     @Override
@@ -122,13 +122,13 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public Optional<Record> getRecord(EntryType entryType, String key) {
         checkpoint();
-        return recordQueryDAO.getRecord(key, schema, getEntryTable(entryType), getEntryItemTable(entryType));
+        return recordQueryDAO.getRecord(key, schema, getEntryTable(entryType));
     }
 
     @Override
     public List<Record> getRecords(EntryType entryType, int limit, int offset) {
         checkpoint();
-        return new ArrayList<>(recordQueryDAO.getRecords(limit, offset, schema, getEntryTable(entryType), getEntryItemTable(entryType)));
+        return new ArrayList<>(recordQueryDAO.getRecords(limit, offset, schema, getEntryTable(entryType)));
     }
 
     @Override
@@ -139,16 +139,12 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     @Override
     public List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value) {
         checkpoint();
-        return new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema, getEntryTable(entryType), getEntryItemTable(entryType)));
+        return new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema, getEntryTable(entryType)));
     }
 
     protected abstract void checkpoint();
 
     private String getEntryTable(EntryType entryType) {
         return entryType.equals(EntryType.user) ? "entry" : "entry_system";
-    }
-
-    private String getEntryItemTable(EntryType entryType) {
-        return entryType.equals(EntryType.user) ? "entry_item" : "entry_item_system";
     }
 }

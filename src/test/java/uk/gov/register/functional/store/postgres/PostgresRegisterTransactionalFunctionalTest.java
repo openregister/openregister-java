@@ -212,7 +212,6 @@ public class PostgresRegisterTransactionalFunctionalTest {
         return new PostgresDataAccessLayer(
                 handle.attach(EntryQueryDAO.class),
                 handle.attach(EntryDAO.class),
-                handle.attach(EntryItemDAO.class),
                 handle.attach(ItemQueryDAO.class),
                 handle.attach(ItemDAO.class),
                 handle.attach(RecordQueryDAO.class),

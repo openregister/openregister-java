@@ -4,7 +4,6 @@ import uk.gov.register.core.*;
 import uk.gov.register.db.*;
 import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.store.DataAccessLayer;
-import uk.gov.register.util.EntryItemPair;
 import uk.gov.register.util.HashValue;
 
 import java.util.*;
@@ -15,15 +14,13 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private final Map<HashValue, Item> stagedItems;
 
     private final EntryDAO entryDAO;
-    private final EntryItemDAO entryItemDAO;
     private final ItemDAO itemDAO;
 
     public PostgresDataAccessLayer(
-            EntryQueryDAO entryQueryDAO, EntryDAO entryDAO, EntryItemDAO entryItemDAO,
-            ItemQueryDAO itemQueryDAO, ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, String schema) {
+            EntryQueryDAO entryQueryDAO, EntryDAO entryDAO, ItemQueryDAO itemQueryDAO,
+            ItemDAO itemDAO, RecordQueryDAO recordQueryDAO, String schema) {
         super(entryQueryDAO, itemQueryDAO, recordQueryDAO, schema);
         this.entryDAO = entryDAO;
-        this.entryItemDAO = entryItemDAO;
         this.itemDAO = itemDAO;
 
         stagedEntries = new ArrayList<>();
@@ -81,20 +78,16 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
             return;
         }
 
-        insertEntriesInBatch(EntryType.user, "entry", "entry_item");
-        insertEntriesInBatch(EntryType.system, "entry_system", "entry_item_system");
-        entryDAO.setEntryNumber(entryDAO.currentEntryNumber(schema) + stagedEntries.stream().filter(e -> e.getEntryType().equals(EntryType.user)).collect(Collectors.toList()).size(), schema);
+        insertEntriesInBatch(EntryType.user, "entry");
+        insertEntriesInBatch(EntryType.system, "entry_system");
+        entryDAO.setEntryNumber(entryQueryDAO.getTotalEntries(schema) + stagedEntries.stream().filter(e -> e.getEntryType().equals(EntryType.user)).collect(Collectors.toList()).size(), schema);
         stagedEntries.clear();
     }
 
-    private void insertEntriesInBatch(EntryType entryType, String entryTableName, String entryItemTableName) {
+    private void insertEntriesInBatch(EntryType entryType, String entryTableName) {
         List<Entry> entries = stagedEntries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList());
 
         entryDAO.insertInBatch(entries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList()), schema, entryTableName);
-        entryItemDAO.insertInBatch(entries.stream()
-                .filter(e -> e.getEntryType().equals(entryType))
-                .flatMap(e -> e.getItemHashes().stream().map(i -> new EntryItemPair(e.getEntryNumber(), i)))
-                .collect(Collectors.toList()), schema, entryItemTableName);
     }
 
     private void writeStagedItemsToDatabase() {

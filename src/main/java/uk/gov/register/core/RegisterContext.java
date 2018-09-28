@@ -126,7 +126,6 @@ public class RegisterContext implements
         return new PostgresDataAccessLayer(
                 dbi.onDemand(EntryQueryDAO.class),
                 dbi.onDemand(EntryDAO.class),
-                dbi.onDemand(EntryItemDAO.class),
                 dbi.onDemand(ItemQueryDAO.class),
                 dbi.onDemand(ItemDAO.class),
                 dbi.onDemand(RecordQueryDAO.class),
@@ -137,7 +136,6 @@ public class RegisterContext implements
         return new PostgresDataAccessLayer(
                 handle.attach(EntryQueryDAO.class),
                 handle.attach(EntryDAO.class),
-                handle.attach(EntryItemDAO.class),
                 handle.attach(ItemQueryDAO.class),
                 handle.attach(ItemDAO.class),
                 handle.attach(RecordQueryDAO.class),
