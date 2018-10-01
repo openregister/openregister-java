@@ -166,7 +166,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #4 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry\"}"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[user, Notts, 2016-04-05T13:23:05Z, sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125]}: Failed to append entry with entry-number 4 and key 'Notts': Failed to index entry #4 with key 'Notts': Cannot contain identical items to previous entry\"}"));
     }
 
     @Test
@@ -180,7 +180,7 @@ public class LoadSerializedFunctionalTest {
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'Notts' against index with name 'record': Cannot contain identical items to previous entry\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[user, Notts, 2016-04-05T13:23:05Z, sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125]}: Failed to append entry with entry-number 2 and key 'Notts': Failed to index entry #2 with key 'Notts': Cannot contain identical items to previous entry\"}"));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class LoadSerializedFunctionalTest {
                         "append-entry\tsystem\tregister-name\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(response.getStatus(), equalTo(400));
-        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register-name, 2016-04-05T13:23:05Z, sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125]}: Failed to append entry with entry-number 9 and key 'register-name': Failed to index entry #9 with key 'register-name' against index with name 'metadata': Cannot contain identical items to previous entry\"}"));
+        assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, register-name, 2016-04-05T13:23:05Z, sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125]}: Failed to append entry with entry-number 9 and key 'register-name': Failed to index entry #9 with key 'register-name': Cannot contain identical items to previous entry\"}"));
     }
 
     @Test
@@ -204,18 +204,16 @@ public class LoadSerializedFunctionalTest {
 
         Response initialResponse = register.loadRsf(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
-            "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(initialResponse.getStatus(), equalTo(200));
 
         Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
-            "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
-        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry\"}"));
+        assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[user, EastMidlands, 2016-04-05T13:23:05Z, sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125]}: Failed to append entry with entry-number 2 and key 'EastMidlands': Failed to index entry #2 with key 'EastMidlands': Cannot contain identical items to previous entry\"}"));
     }
 
     @Test
