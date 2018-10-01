@@ -1,8 +1,5 @@
 package uk.gov.register.functional.helpers;
 
-import uk.gov.register.serialization.RSFFormatter;
-import uk.gov.register.serialization.RegisterCommand;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,8 +9,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 public class RsfComparisonHelper {
-	private static RSFFormatter rsfFormatter = new RSFFormatter();
-
 	public static void assertRsfEqual(String rsf1, String rsf2) {
 		if (rsf1.equals(rsf2)) {
 			return;
@@ -43,12 +38,7 @@ public class RsfComparisonHelper {
 
 		// Check that entries are in the same order
 		for (int i = 0; i < numberOfEntries; i++) {
-			// Check that if an entry has multiple hashes, the hashes are equal (but not necessarily in the same order)
-			List<String> entry1Hashes = getItemHashesFromAppendEntryCommand(rsf1AppendEntryCommands.get(i));
-			List<String> entry2Hashes = getItemHashesFromAppendEntryCommand(rsf2AppendEntryCommands.get(i));
-			
-			assertThat("Number of item hashes in entry not equal", entry1Hashes.size(), equalTo(entry2Hashes.size()));
-			assertThat("Item hashes in entry not equal", entry1Hashes.containsAll(entry2Hashes), is(true));
+			assertThat(String.format("Entry %s is not equal", i + 1), rsf1AppendEntryCommands.get(i), equalTo(rsf2AppendEntryCommands.get(i)));
 		}
 	}
 	
@@ -61,10 +51,5 @@ public class RsfComparisonHelper {
 				appendEntryCommands.add(command);
 			}
 		});
-	}
-	
-	private static List<String> getItemHashesFromAppendEntryCommand(String rsf) {
-		RegisterCommand command = rsfFormatter.parse(rsf);
-		return Arrays.asList(command.getCommandArguments().get(RSFFormatter.RSF_HASH_POSITION).split(";"));
 	}
 }

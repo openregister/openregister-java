@@ -37,7 +37,7 @@ public class EntryTurtleWriter extends TurtleRepresentationWriter<Entry> {
         Resource resource = model.createResource(entryUri(entryNumber).toString())
                 .addProperty(entryNumberProperty, entryNumber)
                 .addProperty(entryTimestampProperty, entry.getTimestampAsISOFormat())
-                .addProperty(itemProperty, model.createResource(itemUri(entry.getItemHashes().get(0).encode()).toString()));
+                .addProperty(itemProperty, model.createResource(itemUri(entry.getItemHash().encode()).toString()));
 
         if (includeKey) {
             Property keyProperty = model.createProperty(SPEC_PREFIX + "key-field");

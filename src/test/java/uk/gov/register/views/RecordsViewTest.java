@@ -16,8 +16,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -35,8 +33,8 @@ public class RecordsViewTest {
         Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
-        Record record1 = new Record(entry1, Arrays.asList(item1));
-        Record record2 = new Record(entry2, Arrays.asList(item2));
+        Record record1 = new Record(entry1, item1);
+        Record record2 = new Record(entry2, item2);
 
         ItemConverter itemConverter = mock(ItemConverter.class);
         Map<String, Field> fieldsByName = mock(Map.class);

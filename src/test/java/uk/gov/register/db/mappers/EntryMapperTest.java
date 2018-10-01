@@ -43,7 +43,7 @@ public class EntryMapperTest {
 
         Entry entry = allEntriesNoPagination.iterator().next();
 
-        assertThat(entry.getItemHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
+        assertThat(entry.getItemHash(), is(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
         assertThat(entry.getEntryNumber(), is(5));
         assertThat(entry.getIndexEntryNumber(), is(5));
         assertThat(allEntriesNoPagination.iterator().next().getTimestamp(), equalTo(expectedInstant));
@@ -62,6 +62,6 @@ public class EntryMapperTest {
         Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(entry.getItemHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
+        assertThat(entry.getItemHash(), is(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
     }
 }

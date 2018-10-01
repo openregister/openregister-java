@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -139,8 +138,8 @@ public class PreviewRecordPageViewTest {
         final Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
         final Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
         final Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
-        final Record record1 = new Record(entry1, Collections.singletonList(item1));
-        final Record record2 = new Record(entry2, Collections.singletonList(item2));
+        final Record record1 = new Record(entry1, item1);
+        final Record record2 = new Record(entry2, item2);
         final ItemConverter itemConverter = mock(ItemConverter.class);
         final Map<String, Field> fieldsByName = mock(Map.class);
 

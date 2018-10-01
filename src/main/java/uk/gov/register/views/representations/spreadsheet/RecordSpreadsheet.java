@@ -14,7 +14,7 @@ import java.util.Map;
 
 public interface RecordSpreadsheet {
 
-    default void process(final Iterable<Field> fields, final Map<Entry, List<ItemView>> records, final String sheetLabel,
+    default void process(final Iterable<Field> fields, final Map<Entry, ItemView> records, final String sheetLabel,
                          final OutputStream entityStream) throws IOException {
         final List<String> fieldNames = new ArrayList<>();
         final List<Map<String, String>> elements = new ArrayList<>();
@@ -27,8 +27,7 @@ public interface RecordSpreadsheet {
 
         fields.forEach(field -> fieldNames.add(field.fieldName));
 
-        records.forEach((key, items) ->
-            items.forEach(item -> {
+        records.forEach((key, item) -> {
                 final Map<String, String> element = new HashMap<>();
 
                 element.put("index-entry-number", key.getIndexEntryNumber().toString());
@@ -39,8 +38,7 @@ public interface RecordSpreadsheet {
                 item.getContent().forEach((contentKey, contentValue) -> element.put(contentKey, contentValue.getValue()));
 
                 elements.add(element);
-            })
-        );
+        });
 
         workbook = WorkbookGenerator.toSpreadSheet(sheetLabel, fieldNames, elements);
         workbook.write(entityStream);

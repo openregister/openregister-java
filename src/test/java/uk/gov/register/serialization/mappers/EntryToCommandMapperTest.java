@@ -32,17 +32,4 @@ public class EntryToCommandMapperTest {
         assertThat(mapResult.getCommandName(), equalTo("append-entry"));
         assertThat(mapResult.getCommandArguments(), equalTo(Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item-sha")));
     }
-
-    @Test
-    public void apply_returnsAppendEntryCommandForEntryWithMultipleItems() {
-        Entry entryToMap = new Entry(1, Arrays.asList(
-                new HashValue(HashingAlgorithm.SHA256, "item-sha"),
-                new HashValue(HashingAlgorithm.SHA256, "item-sha2")),
-                Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
-
-        RegisterCommand mapResult = sutMapper.apply(entryToMap);
-
-        assertThat(mapResult.getCommandName(), equalTo("append-entry"));
-        assertThat(mapResult.getCommandArguments(), equalTo(Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item-sha;sha-256:item-sha2")));
-    }
 }

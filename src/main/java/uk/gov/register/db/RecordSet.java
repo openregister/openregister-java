@@ -17,8 +17,7 @@ public class RecordSet {
     }
 
     public Optional<Record> getRecord(EntryType entryType, String key) {
-        Optional<Record> record = dataAccessLayer.getRecord(entryType, key);
-        return record.filter(r -> r.getItems().size() != 0);
+        return dataAccessLayer.getRecord(entryType, key);
     }
 
     public List<Record> getRecords(EntryType entryType, int limit, int offset) {

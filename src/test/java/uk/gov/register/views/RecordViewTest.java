@@ -30,13 +30,11 @@ public class RecordViewTest {
     public void setup() throws IOException {
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b", EntryType.user);
         Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"a\":\"d\"}"));
-        Record record = new Record(entry, Arrays.asList(item, item2));
+        Record record = new Record(entry, item);
 
         ItemConverter itemConverter = mock(ItemConverter.class);
         Map<String, Field> fieldsByName = mock(Map.class);
         when(itemConverter.convertItem(item, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
-        when(itemConverter.convertItem(item2, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
 
         recordView = new RecordView(record, fieldsByName, itemConverter);
     }
@@ -51,7 +49,7 @@ public class RecordViewTest {
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
-                "\"item\":[{\"a\":\"b\"},{\"a\":\"d\"}]" +
+                "\"item\":[{\"a\":\"b\"}]" +
                 "}}"));
     }
 
@@ -64,12 +62,6 @@ public class RecordViewTest {
                 "\"entry-number\":\"1\"," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
-                "\"a\":\"b\"}," +
-                "{\"index-entry-number\":\"1\"," +
-                "\"entry-number\":\"1\"," +
-                "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
-                "\"key\":\"b\"," +
-                "\"a\":\"d\"" +
-                "}]"));
+                "\"a\":\"b\"}]"));
     }
 }

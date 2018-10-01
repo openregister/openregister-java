@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -102,11 +101,11 @@ public class RecordQueryFunctionalTest {
 
         assertThat(records.size(), is(3));
         assertThat(records.get(0).getEntry(), is(entries.get(3)));
-        assertThat(records.get(0).getItems(), contains(items.get(3)));
+        assertThat(records.get(0).getItem(), is(items.get(3)));
         assertThat(records.get(1).getEntry(), is(entries.get(2)));
-        assertThat(records.get(1).getItems(), contains(items.get(2)));
+        assertThat(records.get(1).getItem(), is(items.get(2)));
         assertThat(records.get(2).getEntry(), is(entries.get(1)));
-        assertThat(records.get(2).getItems(), contains(items.get(1)));
+        assertThat(records.get(2).getItem(), is(items.get(1)));
     }
 
     @Test
@@ -116,17 +115,17 @@ public class RecordQueryFunctionalTest {
         Optional<Record> record = recordQueryDAO.getRecord("key1", schema, entryTable);
         assertTrue(record.isPresent());
         assertThat(record.get().getEntry(), is(entries.get(2)));
-        assertThat(record.get().getItems(), contains(items.get(2)));
+        assertThat(record.get().getItem(), is(items.get(2)));
 
         record = recordQueryDAO.getRecord("key2", schema, entryTable);
         assertTrue(record.isPresent());
         assertThat(record.get().getEntry(), is(entries.get(1)));
-        assertThat(record.get().getItems(), contains(items.get(1)));
+        assertThat(record.get().getItem(), is(items.get(1)));
 
         record = recordQueryDAO.getRecord("key3", schema, entryTable);
         assertTrue(record.isPresent());
         assertThat(record.get().getEntry(), is(entries.get(3)));
-        assertThat(record.get().getItems(), contains(items.get(3)));
+        assertThat(record.get().getItem(), is(items.get(3)));
 
         record = recordQueryDAO.getRecord("key4", schema, entryTable);
         assertFalse(record.isPresent());
@@ -150,14 +149,14 @@ public class RecordQueryFunctionalTest {
         records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueB", schema, entryTable));
         assertThat(records.size(), is(1));
         assertThat(records.get(0).getEntry(), is(entries.get(1)));
-        assertThat(records.get(0).getItems(), contains(items.get(1)));
+        assertThat(records.get(0).getItem(), is(items.get(1)));
 
         records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueC", schema, entryTable));
         assertThat(records.size(), is(2));
         assertThat(records.get(0).getEntry(), is(entries.get(3)));
-        assertThat(records.get(0).getItems(), contains(items.get(3)));
+        assertThat(records.get(0).getItem(), is(items.get(3)));
         assertThat(records.get(1).getEntry(), is(entries.get(2)));
-        assertThat(records.get(1).getItems(), contains(items.get(2)));
+        assertThat(records.get(1).getItem(), is(items.get(2)));
     }
 
     private void insertEntriesAndItems(String entryTable) {

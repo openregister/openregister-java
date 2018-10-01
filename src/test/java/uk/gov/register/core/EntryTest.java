@@ -1,17 +1,12 @@
 package uk.gov.register.core;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class EntryTest {
@@ -27,13 +22,13 @@ public class EntryTest {
     @Test
     public void getSha256hex_returnsTheSha256HexOfItem() {
         Entry entry = new Entry(123, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.ofEpochSecond(1470403440), "sample-key", EntryType.user);
-        assertThat(entry.getItemHashes().get(0).getValue(), equalTo("abc"));
+        assertThat(entry.getItemHash().getValue(), equalTo("abc"));
     }
 
     @Test
     public void getItemHash_returnsSha256AsItemHash() {
         Entry entry = new Entry(123, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.ofEpochSecond(1470403440), "sample-key", EntryType.user);
-        assertThat(entry.getItemHashes().get(0).toString(), equalTo("sha-256:abc"));
+        assertThat(entry.getItemHash().toString(), equalTo("sha-256:abc"));
     }
 
     @Test
@@ -67,44 +62,19 @@ public class EntryTest {
     }
 
     @Test
-    public void equals_shouldReturnTrue_whenListsAreNotInSameOrder() {
-        List<HashValue> list1 = new ArrayList<>(Arrays.asList(hash1, hash2, hash1));
-        List<HashValue> list2 = new ArrayList<>(Arrays.asList(hash2, hash1, hash1));
+    public void equals_shouldReturnFalse_whenItemHashIsNotEqual() {
+        Entry entry1 = new Entry(1, hash1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
+        Entry entry2 = new Entry(1, hash2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
 
-        assertThat(CollectionUtils.isEqualCollection(list1, list2), is(true));
+        assertThat(entry1, not(entry2));
     }
 
     @Test
-    public void equals_shouldReturnTrue_whenItemHashesAreEqualButInDifferentOrder() {
-        List<HashValue> list1 = new ArrayList<>(Arrays.asList(hash1, hash2));
-        List<HashValue> list2 = new ArrayList<>(Arrays.asList(hash2, hash1));
+    public void equals_shouldReturnFalse_whenTypeIsNotEqual() {
+        Entry entry1 = new Entry(1, hash1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
+        Entry entry2 = new Entry(1, hash1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.system);
 
-        Entry entryWithList1 = new Entry(1, list1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-        Entry entryWithList2 = new Entry(1, list2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-
-        assertThat(entryWithList1.equals(entryWithList2), is(true));
-    }
-
-    @Test
-    public void equals_shouldReturnTrue_whenCardinalityItemHashesIsEqual() {
-        List<HashValue> list1 = new ArrayList<>(Arrays.asList(hash1, hash2, hash1));
-        List<HashValue> list2 = new ArrayList<>(Arrays.asList(hash2, hash1, hash1));
-
-        Entry entryWithList1 = new Entry(1, list1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-        Entry entryWithList2 = new Entry(1, list2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-
-        assertThat(entryWithList1.equals(entryWithList2), is(true));
-    }
-
-    @Test
-    public void equals_shouldReturnFalse_whenCardinalityItemHashesIsNotEqual() {
-        List<HashValue> list1 = new ArrayList<>(Arrays.asList(hash1, hash2, hash1));
-        List<HashValue> list2 = new ArrayList<>(Arrays.asList(hash2, hash1, hash1, hash2));
-
-        Entry entryWithList1 = new Entry(1, list1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-        Entry entryWithList2 = new Entry(1, list2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-
-        assertThat(entryWithList1.equals(entryWithList2), is(false));
+        assertThat(entry1, not(entry2));
     }
 
     @Test
@@ -132,35 +102,18 @@ public class EntryTest {
     }
 
     @Test
-    public void hashcode_shouldReturnSameHashcode_whenItemHashesAreInEqualButInDifferentOrder() {
-        List<HashValue> list1 = new ArrayList<>(Arrays.asList(hash1, hash2));
-        List<HashValue> list2 = new ArrayList<>(Arrays.asList(hash2, hash1));
+    public void hashcode_shouldReturnDifferentHashCode_whenItemHashIsNotEqual() {
+        Entry entry1 = new Entry(1, hash1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
+        Entry entry2 = new Entry(1, hash2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
 
-        Entry entryWithList1 = new Entry(1, list1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-        Entry entryWithList2 = new Entry(1, list2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-
-        assertThat(entryWithList1.hashCode(), equalTo(entryWithList2.hashCode()));
+        assertThat(entry1.hashCode(), not(entry2.hashCode()));
     }
 
     @Test
-    public void hashcode_shouldReturnSameHashcode_whenCardinalityItemHashesIsEqual() {
-        List<HashValue> list1 = new ArrayList<>(Arrays.asList(hash1, hash2, hash1));
-        List<HashValue> list2 = new ArrayList<>(Arrays.asList(hash2, hash1, hash1));
+    public void hashcode_shouldReturnDifferentHashCode_whenTypeIsNotEqual() {
+        Entry entry1 = new Entry(1, hash1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
+        Entry entry2 = new Entry(1, hash1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.system);
 
-        Entry entryWithList1 = new Entry(1, list1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-        Entry entryWithList2 = new Entry(1, list2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-
-        assertThat(entryWithList1.hashCode(), equalTo(entryWithList2.hashCode()));
-    }
-
-    @Test
-    public void hashcode_shouldReturnDifferentHashCode_whenCardinalityItemHashesIsNotEqual() {
-        List<HashValue> list1 = new ArrayList<>(Arrays.asList(hash1, hash2, hash1));
-        List<HashValue> list2 = new ArrayList<>(Arrays.asList(hash2, hash1, hash1, hash2));
-
-        Entry entryWithList1 = new Entry(1, list1, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-        Entry entryWithList2 = new Entry(1, list2, Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user);
-
-        assertThat(entryWithList1.hashCode(), not(entryWithList2.hashCode()));
+        assertThat(entry1.hashCode(), not(entry2.hashCode()));
     }
 }

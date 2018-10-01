@@ -154,11 +154,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Entry entry3 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.parse("2017-03-10T00:00:00Z"), "ccc", EntryType.user);
 
         Record addressRegisterRecord = mock(Record.class);
-        when(addressRegisterRecord.getItems()).thenReturn(Arrays.asList(addressRegister));
+        when(addressRegisterRecord.getItem()).thenReturn(addressRegister);
         when(recordSet.getRecord(EntryType.system, "register:address")).thenReturn(Optional.of(addressRegisterRecord));
 
         Record addressFieldRecord = mock(Record.class);
-        when(addressFieldRecord.getItems()).thenReturn(Arrays.asList(addressField));
+        when(addressFieldRecord.getItem()).thenReturn(addressField);
         when(recordSet.getRecord(EntryType.system, "field:address")).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {

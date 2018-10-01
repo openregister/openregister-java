@@ -56,7 +56,7 @@ public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
     private Iterator<Item> getItemIteratorFromEntryIterator(Iterator<Entry> entryIterator) {
         List<Item> itemsResult = new ArrayList<>();
         entryIterator.forEachRemaining(entry -> {
-            List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getItemHashes().contains(hashValue)).collect(Collectors.toList());
+            List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getItemHash().equals(hashValue)).collect(Collectors.toList());
             hashValues.forEach(hashValue -> itemsResult.add(items.remove(hashValue)));
         });
         return itemsResult.iterator();

@@ -49,13 +49,7 @@ public class EntriesSpreadSheetWriter extends RepresentationWriter<EntryListView
             element.put("entry-number", entry.getEntryNumber().toString());
             element.put("entry-timestamp", entry.getTimestampAsISOFormat());
             element.put("key", entry.getKey());
-
-            if (!entry.getItemHashes().isEmpty()) {
-                itemHashValues = entry.getItemHashes()
-                        .stream().map(HashValue::toString).collect(Collectors.joining(";"));
-            }
-
-            element.put("item-hash", itemHashValues);
+            element.put("item-hash", entry.getItemHash().toString());
 
             elements.add(element);
         });

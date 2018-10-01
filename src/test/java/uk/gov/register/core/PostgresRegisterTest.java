@@ -54,9 +54,9 @@ public class PostgresRegisterTest {
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO),
                 recordSet, itemValidator, environmentValidator);
 
-        when(registerRecord.getItems()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
+        when(registerRecord.getItem()).thenReturn(getItem(postcodeRegisterItem));
 
-        when(fieldRecord.getItems()).thenReturn(Arrays.asList(getItem("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"field description\"}")));
+        when(fieldRecord.getItem()).thenReturn(getItem("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"register\":\"postcode\",\"text\":\"field description\"}"));
 
         when(recordSet.getRecord(EntryType.system, "register:postcode")).thenReturn(Optional.of(registerRecord));
         when(recordSet.getRecord(EntryType.system, "field:postcode")).thenReturn(Optional.of(fieldRecord));

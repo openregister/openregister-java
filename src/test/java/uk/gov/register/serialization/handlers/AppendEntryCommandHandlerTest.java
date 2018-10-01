@@ -12,12 +12,10 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RegisterCommand;
-import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static junit.framework.TestCase.fail;
@@ -62,32 +60,6 @@ public class AppendEntryCommandHandlerTest {
         Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
     }
-
-    @Test
-    public void execute_appendsMultiItemEntryToRegister() {
-        when(register.getTotalEntries(EntryType.user)).thenReturn(2);
-
-        RegisterCommand command = new RegisterCommand("append-entry",
-                Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb"));
-        sutHandler.execute(command, register);
-
-        Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
-                new HashValue(SHA256, "bbb")), july24, "entry1-field-1-value", EntryType.user);
-        verify(register, times(1)).appendEntry(expectedEntry);
-    }
-
-    @Test
-    public void execute_appendsZeroItemEntryToRegister() {
-        when(register.getTotalEntries(EntryType.user)).thenReturn(2);
-
-        RegisterCommand command = new RegisterCommand("append-entry",
-                Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
-        sutHandler.execute(command, register);
-
-        Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value", EntryType.user);
-        verify(register, times(1)).appendEntry(expectedEntry);
-    }
-
 
     @Test (expected = RSFParseException.class)
     public void execute_catchesExceptionsAndReturnsFailRSFResult() {

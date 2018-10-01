@@ -22,7 +22,6 @@ import uk.gov.register.views.RegisterProof;
 import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PostgresRegister implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -84,22 +83,19 @@ public class PostgresRegister implements Register {
     @Override
     public void appendEntry(final Entry entry) throws AppendEntryException {
         try {
-            List<Item> referencedItems = getReferencedItems(entry);
+            Item item = getReferencedItem(entry);
 
-            referencedItems.forEach(i -> {
-                if (entry.getEntryType() == EntryType.user) {
-                    itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
-                } else if (entry.getKey().startsWith("field:")) {
-                    Field field = extractObjectFromItem(i, Field.class);
-                    environmentValidator.validateFieldAgainstEnvironment(field);
-                } else if (entry.getKey().startsWith("register:")) {
-                    RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
-                    // will throw exception if field not present
-                    localRegisterMetadata.getFields().forEach(this::getField);
-
-                    environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
-                }
-            });
+            if (entry.getEntryType() == EntryType.user) {
+                itemValidator.validateItem(item.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+            } else if (entry.getKey().startsWith("field:")) {
+                Field field = extractObjectFromItem(item, Field.class);
+                environmentValidator.validateFieldAgainstEnvironment(field);
+            } else if (entry.getKey().startsWith("register:")) {
+                RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(item, RegisterMetadata.class);
+                // will throw exception if field not present
+                localRegisterMetadata.getFields().forEach(this::getField);
+                environmentValidator.validateRegisterAgainstEnvironment(localRegisterMetadata);
+            }
 
             entryLog.appendEntry(entry);
         } catch (IndexingException | ItemValidationException | FieldDefinitionException | RegisterDefinitionException |
@@ -250,7 +246,7 @@ public class PostgresRegister implements Register {
     }
 
     private <T> T extractObjectFromRecord(Record record, Class<T> clazz) {
-        return extractObjectFromItem(record.getItems().get(0), clazz);
+        return extractObjectFromItem(record.getItem(), clazz);
     }
 
     private <T> T extractObjectFromItem(Item item, Class<T> clazz) {
@@ -263,13 +259,10 @@ public class PostgresRegister implements Register {
     }
 
     private Optional<String> getMetadataField(String fieldName) {
-        return getRecord(EntryType.system, fieldName).map(r -> r.getItems().get(0).getValue(fieldName).get());
+        return getRecord(EntryType.system, fieldName).map(r -> r.getItem().getValue(fieldName).get());
     }
 
-    private List<Item> getReferencedItems(Entry entry) throws NoSuchItemException {
-        return entry.getItemHashes().stream()
-                .map(h -> itemStore.getItem(h).orElseThrow(
-                        () -> new NoSuchItemException(h)))
-                .collect(Collectors.toList());
+    private Item getReferencedItem(Entry entry) throws NoSuchItemException {
+        return itemStore.getItem(entry.getItemHash()).orElseThrow(() -> new NoSuchItemException(entry.getItemHash()));
     }
 }

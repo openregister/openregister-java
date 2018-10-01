@@ -90,26 +90,26 @@ public class LoadSerializedFunctionalTest {
 
         List<Entry> systemEntries = testEntryDAO.getAllSystemEntries(schema);
         assertThat(systemEntries.get(0).getEntryNumber(), is(1));
-        assertThat(systemEntries.get(0).getItemHashes().get(0).getValue(), is("955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"));
+        assertThat(systemEntries.get(0).getItemHash().getValue(), is("955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"));
         assertThat(systemEntries.get(1).getEntryNumber(), is(2));
-        assertThat(systemEntries.get(1).getItemHashes().get(0).getValue(), is("ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f"));
+        assertThat(systemEntries.get(1).getItemHash().getValue(), is("ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f"));
         assertThat(systemEntries.get(2).getEntryNumber(), is(3));
-        assertThat(systemEntries.get(2).getItemHashes().get(0).getValue(), is("4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"));
+        assertThat(systemEntries.get(2).getItemHash().getValue(), is("4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"));
         assertThat(systemEntries.get(3).getEntryNumber(), is(4));
-        assertThat(systemEntries.get(3).getItemHashes().get(0).getValue(), is("1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"));
+        assertThat(systemEntries.get(3).getItemHash().getValue(), is("1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"));
         assertThat(systemEntries.get(4).getEntryNumber(), is(5));
-        assertThat(systemEntries.get(4).getItemHashes().get(0).getValue(), is("c7e5a90c020f7686d9a275cb0cc164636745b10ae168a72538772692cc90d633"));
+        assertThat(systemEntries.get(4).getItemHash().getValue(), is("c7e5a90c020f7686d9a275cb0cc164636745b10ae168a72538772692cc90d633"));
         assertThat(systemEntries.get(5).getEntryNumber(), is(6));
-        assertThat(systemEntries.get(5).getItemHashes().get(0).getValue(), is("61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"));
+        assertThat(systemEntries.get(5).getItemHash().getValue(), is("61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"));
         assertThat(systemEntries.get(6).getEntryNumber(), is(7));
-        assertThat(systemEntries.get(6).getItemHashes().get(0).getValue(), is("f404b4739b51afeb39bba26f3bbf1aa8c6f7d25f0d54444992fc00f24587ef77"));
+        assertThat(systemEntries.get(6).getItemHash().getValue(), is("f404b4739b51afeb39bba26f3bbf1aa8c6f7d25f0d54444992fc00f24587ef77"));
 
         List<Entry> userEntries = testEntryDAO.getAllEntries(schema);
 
         assertThat(userEntries.get(0).getEntryNumber(), is(1));
-        assertThat(userEntries.get(0).getItemHashes().get(0).getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
+        assertThat(userEntries.get(0).getItemHash().getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));
         assertThat(userEntries.get(1).getEntryNumber(), is(2));
-        assertThat(userEntries.get(1).getItemHashes().get(0).getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
+        assertThat(userEntries.get(1).getItemHash().getValue(), is("b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"));
 
         Record record1 = testRecordDAO.getRecord("ft_openregister_test", schema, "entry").get();
         assertThat(record1.getEntry().getEntryNumber(), equalTo(1));
@@ -199,22 +199,20 @@ public class LoadSerializedFunctionalTest {
 
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemsForExistingRecord() throws IOException {
-        System.setProperty("multi-item-entries-enabled", "true");
-
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
         register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
 
         Response initialResponse = register.loadRsf(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
-            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125;sha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6");
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(initialResponse.getStatus(), equalTo(200));
 
         Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
-            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:7c9cadb17dbdf51ac8d5da5b6f5b55d3ea5332e8eb064c5c7ef7404f08fe74f6;sha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
+            "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(duplicateItemResponse.getStatus(), equalTo(400));
         assertThat(duplicateItemResponse.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when indexing data: Failed to index entry #2 with key 'EastMidlands' against index with name 'record': Cannot contain identical items to previous entry\"}"));
@@ -232,7 +230,7 @@ public class LoadSerializedFunctionalTest {
 
     @Test
     public void shouldAllowRegisterTextToBeUpdatedAfterUserEntry() throws IOException {
-        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-valid-entry-ordering.rsf")));
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-valid-entry-ordering.rsf")));
 
         Response r = send(input);
 
@@ -245,7 +243,7 @@ public class LoadSerializedFunctionalTest {
 
     @Test
     public void shouldNotAllowRegisterNonTextValuesToBeUpdatedAfterUserEntry() throws IOException {
-        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry-invalid-entry-ordering.rsf")));
+        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-invalid-entry-ordering.rsf")));
 
         Response r = send(input);
 
@@ -262,14 +260,6 @@ public class LoadSerializedFunctionalTest {
         assertThat(r.getStatus(), equalTo(400));
         assertThat(testItemDAO.getItems(schema), empty());
         assertThat(testEntryDAO.getAllEntries(schema), empty());
-    }
-
-    @Test
-    public void shouldUploadMultiItemEntries() throws IOException {
-        System.setProperty("multi-item-entries-enabled", "true");
-        String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-by-registry.rsf")));
-        Response r = send(input);
-        assertThat(r.getStatus(), equalTo(200));
     }
 
 	@Test
@@ -307,11 +297,6 @@ public class LoadSerializedFunctionalTest {
         Response response = register.loadRsf(TestRegister.postcode, rsf);
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Failed to append entry with entry-number 1 and key 'field:postcode': Definition of field postcode does not match Field Register\"}"));
-    }
-
-    @After
-    public void clearMultiItemsEnabled() {
-        System.clearProperty("multi-item-entries-enabled");
     }
 
     private Response send(String payload) {

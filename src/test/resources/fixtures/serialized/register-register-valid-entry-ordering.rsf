@@ -3,8 +3,8 @@ add-item	{"fields":["register","text","registry","phase","copyright","fields"],"
 add-item	{"register":"food-authority","registry":"government-digital-service","text":"Food Authority"}
 add-item	{"cardinality":"1","datatype":"text","field":"copyright","phase":"alpha","text":"My awesome new description"}
 add-item	{"fields":["register","text","registry","phase","copyright","fields"],"phase":"alpha","register":"register","registry":"cabinet-office","text":"Register of registers X"}
-append-entry	user	government-digital-service	2016-11-02T14:45:54Z	sha-256:4bdfee6268fd1365ad9ef378799c1ce567d237c1c0d38d0cf64e64c51aaec559
+append-entry	user	address	2016-11-02T14:45:54Z	sha-256:4bdfee6268fd1365ad9ef378799c1ce567d237c1c0d38d0cf64e64c51aaec559
 append-entry	system	register:register	2017-06-06T09:54:11Z	sha-256:18eb78492d4052d5cce984beddd71b729d6c570b794e8cbfba18128dab449f29
-append-entry	user	cabinet-office	2016-11-02T14:45:54Z	sha-256:6344e3925465464b317795010fc400ffa8c10380429a3d0260b71ccd9ffc08c7
+append-entry	user	food-authority	2016-11-02T14:45:54Z	sha-256:6344e3925465464b317795010fc400ffa8c10380429a3d0260b71ccd9ffc08c7
 append-entry	system	field:copyright	2016-11-02T14:45:54Z	sha-256:be5b564acae45eadb0d2f7ae8aed9620376f55285fb2374ef963a2d4887e77a5
 append-entry	system	register:register	2017-11-02T14:45:54Z	sha-256:30879a883f9f988ade0d50bebfa0b6d2a251dd4fddc03942b12b703585e16d54
