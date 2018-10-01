@@ -51,7 +51,7 @@ configurations {
 }
 
 dependencies {
-    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3
+    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3, jaxb
     compile jacksonCsv, jacksonDatabind, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
     compile jdbi
     compile dropwizardLogstash
@@ -60,7 +60,7 @@ dependencies {
     }
     compile jetty
 
-    testCompile junit, mockito, dropwizardTest, wiremock
+    testCompile junit, mockito, dropwizardTest, wiremock, jaxb
     testCompile dropwizardTest, jsoup, jsonAssert
 }
 
@@ -87,16 +87,6 @@ assemble {
 task startAppForConformance << {
     startApp()
 }
-
-tasks.withType(AbstractCompile) {
-    options.compilerArgs += ["--add-modules", "java.xml.bind"]
-}
-
-tasks.withType(Test) {
-    jvmArgs += ["--add-modules", "java.xml.bind"]
-}
-
-
 
 void startApp() {
     ProcessBuilder builder = new ProcessBuilder(
