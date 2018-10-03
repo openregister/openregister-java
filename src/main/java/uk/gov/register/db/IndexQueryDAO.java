@@ -70,7 +70,7 @@ public abstract class IndexQueryDAO {
             json.setValue(objectMapper.writeValueAsString(ImmutableMap.of(key, value)));
             return json;
         } catch (SQLException | JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 

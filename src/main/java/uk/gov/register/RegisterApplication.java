@@ -57,7 +57,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         try {
             new RegisterApplication().run(args);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            Throwables.propagate(e);
         }
     }
 

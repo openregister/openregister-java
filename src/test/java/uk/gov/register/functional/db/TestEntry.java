@@ -28,7 +28,7 @@ public class TestEntry {
             this.sha256hex = DigestUtils.sha256Hex(this.itemJson);
             this.key = key;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
