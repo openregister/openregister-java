@@ -3,9 +3,7 @@ package uk.gov.register.util;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.util.HtmlViewSupport;
-
+import org.mockito.junit.MockitoJUnitRunner;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.util.Collections;

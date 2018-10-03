@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.google.common.base.Throwables.throwIfUnchecked;
+
 @UseStringTemplate3StatementLocator
 public abstract class IndexQueryDAO {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -70,7 +72,8 @@ public abstract class IndexQueryDAO {
             json.setValue(objectMapper.writeValueAsString(ImmutableMap.of(key, value)));
             return json;
         } catch (SQLException | JsonProcessingException e) {
-            throw Throwables.propagate(e);
+            throwIfUnchecked(e);
+            throw new RuntimeException(e.getCause());
         }
     }
 

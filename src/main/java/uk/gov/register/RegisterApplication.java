@@ -52,12 +52,15 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static com.google.common.base.Throwables.throwIfUnchecked;
+
 public class RegisterApplication extends Application<RegisterConfiguration> {
     public static void main(String[] args) {
         try {
             new RegisterApplication().run(args);
         } catch (Exception e) {
-            Throwables.propagate(e);
+            throwIfUnchecked(e);
+            throw new RuntimeException(e.getCause());
         }
     }
 
