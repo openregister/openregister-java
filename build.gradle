@@ -8,20 +8,36 @@ group 'openregister'
 buildscript {
     repositories {
         jcenter()
-        maven { url "https://dl.bintray.com/robfletcher/gradle-plugins" }
+        maven { url "https://dl.bintray.com/gidsg/gradle-plugins" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
+    
     dependencies {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.13.0"
         classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
         classpath 'org.owasp:dependency-check-gradle:3.1.2'
+        classpath "com.github.gidsg:compass-gradle-plugin:2.0.7"
     }
 }
 
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "com.github.robfletcher.compass"
 apply plugin: 'org.owasp.dependencycheck'
 
 def assetsDir = new File(projectDir, "src/main/resources/assets")
+
+compass {
+    importPath = files(
+            new File(assetsDir, "govuk_frontend_toolkit/stylesheets"),
+            new File(assetsDir, "govuk_template/source/assets/stylesheets")
+    )
+    sassDir = new File(assetsDir, "sass")
+    cssDir = file("build/resources/main/assets/css")
+    outputStyle = "expanded"
+    force = true
+    sourcemap = true
+}
 
 dependencyCheck {
     failBuildOnCVSS = 0
