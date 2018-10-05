@@ -2,9 +2,12 @@ package uk.gov.register.store.postgres;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import io.dropwizard.jdbi.OptionalContainerFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
@@ -15,8 +18,8 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
-import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.TestRegister;
+import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -37,12 +40,16 @@ public class PostgresDataAccessLayerTest {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Rule
-    public RegisterRule registerRule = new RegisterRule();
+    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(TestRegister.address);
+    private DBI dbi;
+    private Handle handle;
 
     @Before
     public void setup() {
         TestRegister register = TestRegister.address;
-        Handle handle = registerRule.handleFor(register);
+        dbi = new DBI(register.getDatabaseConnectionString("BatchedPostgresDataAccessLayerTest"));
+        dbi.registerContainerFactory(new OptionalContainerFactory());
+        handle = dbi.open();
 
         postgresDataAccessLayer = new PostgresDataAccessLayer(
                 handle.attach(EntryDAO.class),
@@ -51,8 +58,11 @@ public class PostgresDataAccessLayerTest {
                 handle.attach(ItemQueryDAO.class),
                 handle.attach(RecordQueryDAO.class),
                 register.getSchema());
+    }
 
-        registerRule.wipe();
+    @After
+    public void tearDown() {
+        dbi.close(handle);
     }
 
     @Test
