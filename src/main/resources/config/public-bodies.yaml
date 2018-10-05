@@ -2862,4 +2862,7 @@ department-for-communities-northern-ireland:
   public-body: "department-for-communities-northern-ireland"
 nhs-digital:
   name: "NHS Digital"
-  public-body: "nhs-digital" 
+  public-body: "nhs-digital"
+department-for-international-trade:
+  name: "Department for International Trade"
+  public-body: "department-for-international-trade"
