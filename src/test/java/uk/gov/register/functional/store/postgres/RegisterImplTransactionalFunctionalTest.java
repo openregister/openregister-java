@@ -42,7 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.register.functional.app.TestRegister.address;
 
-public class PostgresRegisterTransactionalFunctionalTest {
+public class RegisterImplTransactionalFunctionalTest {
 
     private static ObjectMapper MAPPER = new ObjectMapper();
 
@@ -80,20 +80,20 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         RegisterContext.useTransaction(dbi, handle -> {
-            PostgresRegister postgresRegister = getPostgresRegister(getTransactionalDataAccessLayer(handle));
-            postgresRegister.addItem(item1);
+            RegisterImpl registerImpl = getPostgresRegister(getTransactionalDataAccessLayer(handle));
+            registerImpl.addItem(item1);
 
-            assertThat(postgresRegister.getAllItems().size(), is(1));
+            assertThat(registerImpl.getAllItems().size(), is(1));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.addItem(item2);
+            registerImpl.addItem(item2);
 
-            assertThat(postgresRegister.getAllItems().size(), is(2));
+            assertThat(registerImpl.getAllItems().size(), is(2));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.addItem(item3);
+            registerImpl.addItem(item3);
 
-            assertThat(postgresRegister.getAllItems().size(), is(3));
+            assertThat(registerImpl.getAllItems().size(), is(3));
             assertThat(testItemDAO.getItems(schema), is(empty()));
         });
 
@@ -109,23 +109,23 @@ public class PostgresRegisterTransactionalFunctionalTest {
         try {
             RegisterContext.useTransaction(dbi, handle -> {
                 BatchedPostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
-                PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
-                postgresRegister.addItem(item1);
+                RegisterImpl registerImpl = getPostgresRegister(dataAccessLayer);
+                registerImpl.addItem(item1);
                 dataAccessLayer.writeBatchesToDatabase();
 
-                assertThat(postgresRegister.getAllItems().size(), is(1));
+                assertThat(registerImpl.getAllItems().size(), is(1));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.addItem(item2);
+                registerImpl.addItem(item2);
                 dataAccessLayer.writeBatchesToDatabase();
 
-                assertThat(postgresRegister.getAllItems().size(), is(2));
+                assertThat(registerImpl.getAllItems().size(), is(2));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.addItem(item3);
+                registerImpl.addItem(item3);
                 dataAccessLayer.writeBatchesToDatabase();
 
-                assertThat(postgresRegister.getAllItems().size(), is(3));
+                assertThat(registerImpl.getAllItems().size(), is(3));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
                 throw new RuntimeException();
@@ -164,17 +164,17 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         RegisterContext.useTransaction(dbi, handle -> {
             BatchedPostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
-            PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
-            postgresRegister.addItem(addressField);
-            postgresRegister.addItem(addressRegister);
-            postgresRegister.addItem(item1);
-            postgresRegister.addItem(item2);
-            postgresRegister.addItem(item3);
-            postgresRegister.appendEntry(addressFieldEntry);
-            postgresRegister.appendEntry(addressRegisterEntry);
-            postgresRegister.appendEntry(entry1);
-            postgresRegister.appendEntry(entry2);
-            postgresRegister.appendEntry(entry3);
+            RegisterImpl registerImpl = getPostgresRegister(dataAccessLayer);
+            registerImpl.addItem(addressField);
+            registerImpl.addItem(addressRegister);
+            registerImpl.addItem(item1);
+            registerImpl.addItem(item2);
+            registerImpl.addItem(item3);
+            registerImpl.appendEntry(addressFieldEntry);
+            registerImpl.appendEntry(addressRegisterEntry);
+            registerImpl.appendEntry(entry1);
+            registerImpl.appendEntry(entry2);
+            registerImpl.appendEntry(entry3);
             dataAccessLayer.writeBatchesToDatabase();
         });
 
@@ -183,7 +183,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         assertThat(testEntryDAO.getAllEntries(schema), contains(entry1, entry2, entry3));
     }
 
-    private PostgresRegister getPostgresRegister(DataAccessLayer dataAccessLayer) {
+    private RegisterImpl getPostgresRegister(DataAccessLayer dataAccessLayer) {
         EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
         ItemValidator itemValidator = mock(ItemValidator.class);
         ItemStore itemStore = new ItemStoreImpl(dataAccessLayer);
@@ -201,7 +201,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         EnvironmentValidator environmentValidator = mock(EnvironmentValidator.class);
 
-        return new PostgresRegister(registerData.getRegisterId(),
+        return new RegisterImpl(registerData.getRegisterId(),
                 entryLog,
                 itemStore,
                 recordSet,

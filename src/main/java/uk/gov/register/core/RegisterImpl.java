@@ -23,7 +23,7 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.*;
 
-public class PostgresRegister implements Register {
+public class RegisterImpl implements Register {
     private static ObjectMapper mapper = new ObjectMapper();
     private final RecordSet recordSet;
     private final RegisterId registerId;
@@ -35,12 +35,12 @@ public class PostgresRegister implements Register {
     private RegisterMetadata registerMetadata;
     private Map<String, Field> fieldsByName;
 
-    public PostgresRegister(RegisterId registerId,
-                            EntryLog entryLog,
-                            ItemStore itemStore,
-                            RecordSet recordSet,
-                            ItemValidator itemValidator,
-                            EnvironmentValidator environmentValidator) {
+    public RegisterImpl(RegisterId registerId,
+                        EntryLog entryLog,
+                        ItemStore itemStore,
+                        RecordSet recordSet,
+                        ItemValidator itemValidator,
+                        EnvironmentValidator environmentValidator) {
         this.registerId = registerId;
         this.entryLog = entryLog;
         this.itemStore = itemStore;

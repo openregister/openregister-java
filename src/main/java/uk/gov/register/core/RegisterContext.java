@@ -76,7 +76,7 @@ public class RegisterContext implements
     public Register buildOnDemandRegister() {
         DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
 
-        return new PostgresRegister(registerId,
+        return new RegisterImpl(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordSet(dataAccessLayer),
@@ -85,7 +85,7 @@ public class RegisterContext implements
     }
 
     private Register buildTransactionalRegister(DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
-        return new PostgresRegister(registerId,
+        return new RegisterImpl(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordSet(dataAccessLayer),

@@ -27,7 +27,7 @@ import static uk.gov.register.db.InMemoryStubs.inMemoryEntryLog;
 import static uk.gov.register.db.InMemoryStubs.inMemoryItemStore;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PostgresRegisterTest {
+public class RegisterImplTest {
     private static ObjectMapper mapper = new ObjectMapper();
 
     private final InMemoryEntryDAO entryDAO = new InMemoryEntryDAO(new ArrayList<>());
@@ -44,13 +44,13 @@ public class PostgresRegisterTest {
     private EnvironmentValidator environmentValidator;
 
 
-    private PostgresRegister register;
+    private RegisterImpl register;
 
     private String postcodeRegisterItem = "{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"r\",\"registry\":\"r\",\"text\":\"t\"}";
 
     @Before
     public void setup() throws IOException {
-        register = new PostgresRegister(new RegisterId("postcode"),
+        register = new RegisterImpl(new RegisterId("postcode"),
                 inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO),
                 recordSet, itemValidator, environmentValidator);
 
