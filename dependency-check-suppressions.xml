@@ -99,4 +99,95 @@
         <gav regex="true">^stax:stax-api:.*$</gav>
         <cve>CVE-2017-16224</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: jruby.exe
+   ]]></notes>
+        <gav regex="true">^org.jruby:jruby-complete:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: jruby.exe
+   ]]></notes>
+        <sha1>ee9d25363bdd1e6212ccd3b300daecfc65c62169</sha1>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: jopenssl.jar
+   ]]></notes>
+        <gav regex="true">^rubygems:jruby-openssl:.*$</gav>
+        <cpe>cpe:/a:openssl:openssl</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: jopenssl.jar
+   ]]></notes>
+        <gav regex="true">^rubygems:jruby-openssl:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: jopenssl.jar
+   ]]></notes>
+        <gav regex="true">^rubygems:jruby-openssl:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: jopenssl.jar
+   ]]></notes>
+        <gav regex="true">^rubygems:jruby-openssl:.*$</gav>
+        <cpe>cpe:/a:openssl_project:openssl</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: jruby.dll
+   ]]></notes>
+        <sha1>f7bc8e0d88bb808575687f90daa2a335e5dcf3fe</sha1>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: readline.jar
+   ]]></notes>
+        <gav regex="true">^rubygems:jruby-readline:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar: cparse-jruby.jar
+   ]]></notes>
+        <sha1>37572f403a1bd512e76e40e4dc4d6f36528fd2bf</sha1>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar/META-INF/maven/org.jruby.extras/bytelist/pom.xml
+   ]]></notes>
+        <gav regex="true">^org\.jruby\.extras:bytelist:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar/META-INF/maven/org.jruby/dirgra/pom.xml
+   ]]></notes>
+        <gav regex="true">^org\.jruby:dirgra:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar/META-INF/maven/org.jruby/jruby-core/pom.xml
+   ]]></notes>
+        <gav regex="true">^org\.jruby:jruby-core:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: jruby-complete-9.1.14.0.jar/META-INF/maven/org.jruby/jruby-stdlib/pom.xml
+   ]]></notes>
+        <gav regex="true">^org\.jruby:jruby-stdlib:.*$</gav>
+        <cpe>cpe:/a:jruby:jruby</cpe>
+    </suppress>
 </suppressions>
