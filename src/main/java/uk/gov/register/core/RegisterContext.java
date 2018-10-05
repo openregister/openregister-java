@@ -16,6 +16,7 @@ import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
+import uk.gov.register.store.postgres.BatchedPostgresDataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
@@ -95,10 +96,10 @@ public class RegisterContext implements
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
         TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
         useTransaction(dbi, handle -> {
-            PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
+            BatchedPostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
             Register register = buildTransactionalRegister(dataAccessLayer, transactionalMemoizationStore);
             consumer.accept(register);
-            dataAccessLayer.checkpoint();
+            dataAccessLayer.writeBatchesToDatabase();
         });
         transactionalMemoizationStore.commitHashesToStore();
     }
@@ -124,22 +125,23 @@ public class RegisterContext implements
 
     private DataAccessLayer getOnDemandDataAccessLayer() {
         return new PostgresDataAccessLayer(
-                dbi.onDemand(EntryQueryDAO.class),
                 dbi.onDemand(EntryDAO.class),
-                dbi.onDemand(ItemQueryDAO.class),
+                dbi.onDemand(EntryQueryDAO.class),
                 dbi.onDemand(ItemDAO.class),
+                dbi.onDemand(ItemQueryDAO.class),
                 dbi.onDemand(RecordQueryDAO.class),
                 schema);
     }
 
-    private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
-        return new PostgresDataAccessLayer(
-                handle.attach(EntryQueryDAO.class),
-                handle.attach(EntryDAO.class),
-                handle.attach(ItemQueryDAO.class),
-                handle.attach(ItemDAO.class),
-                handle.attach(RecordQueryDAO.class),
-                schema);
+    private BatchedPostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
+        return new BatchedPostgresDataAccessLayer(
+                new PostgresDataAccessLayer(
+                        handle.attach(EntryDAO.class),
+                        handle.attach(EntryQueryDAO.class),
+                        handle.attach(ItemDAO.class),
+                        handle.attach(ItemQueryDAO.class),
+                        handle.attach(RecordQueryDAO.class),
+                        schema));
     }
 
     public void validate() {

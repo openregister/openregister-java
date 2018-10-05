@@ -23,6 +23,7 @@ public class RSFCreator {
     public RegisterSerialisationFormat create(Register register) {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
+                register.getItemIterator(EntryType.system),
                 register.getItemIterator(EntryType.user),
                 register.getEntryIterator(EntryType.system),
                 register.getEntryIterator(EntryType.user),

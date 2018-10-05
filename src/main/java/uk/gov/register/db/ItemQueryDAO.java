@@ -26,18 +26,13 @@ public interface ItemQueryDAO {
     @RegisterMapper(ItemMapper.class)
     Collection<Item> getAllItemsNoPagination( @Define("schema") String schema );
 
-    @SqlQuery("select i.sha256hex, i.content from \"<schema>\".item i")
-    @RegisterMapper(ItemMapper.class)
-    @FetchSize(10000)
-    Iterator<Item> getIterator(@Define("schema") String schema);
-
     @SqlQuery("select i.sha256hex, i.content from \"<schema>\".item i where exists(select 1 from \"<schema>\".entry e where i.sha256hex = e.sha256hex and e.entry_number > :startEntryNo and e.entry_number \\<= :endEntryNo)")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(10000)
     Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo, @Define("schema") String schema);
 
-    @SqlQuery("select i.sha256hex, i.content from \"<schema>\".item i where exists(select 1 from \"<schema>\".entry_system e where i.sha256hex = e.sha256hex)")
+    @SqlQuery("select i.sha256hex, i.content from \"<schema>\".item i where exists(select 1 from \"<schema>\".<entry_table> e where i.sha256hex = e.sha256hex)")
     @RegisterMapper(ItemMapper.class)
     @FetchSize(10000)
-    Iterator<Item> getSystemItemIterator(@Define("schema") String schema);
+    Iterator<Item> getIterator(@Define("schema") String schema, @Define("entry_table") String entryTable);
 }

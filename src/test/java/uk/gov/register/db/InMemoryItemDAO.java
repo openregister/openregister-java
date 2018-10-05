@@ -1,6 +1,5 @@
 package uk.gov.register.db;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
@@ -39,18 +38,13 @@ public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
     }
 
     @Override
-    public Iterator<Item> getIterator(String schema) {
-        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema, "entry"));
+    public Iterator<Item> getIterator(String schema, String entryTable) {
+        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema, entryTable));
     }
 
     @Override
     public Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo, String schema) {
         return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema, "entry"));
-    }
-
-    @Override
-    public Iterator<Item> getSystemItemIterator(String schema) {
-        throw new NotImplementedException("Not yet implemented");
     }
 
     private Iterator<Item> getItemIteratorFromEntryIterator(Iterator<Entry> entryIterator) {

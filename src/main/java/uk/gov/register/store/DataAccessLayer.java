@@ -30,7 +30,6 @@ public interface DataAccessLayer {
     Iterator<Entry> getEntryIterator(EntryType entryType);
     Iterator<Entry> getEntryIterator(EntryType entryType, int totalEntries1, int totalEntries2);
     <R> R withEntryIterator(Function<EntryIterator, R> callback);
-    int getTotalEntries();
     int getTotalEntries(EntryType entryType);
 
     Optional<Instant> getLastUpdatedTime();

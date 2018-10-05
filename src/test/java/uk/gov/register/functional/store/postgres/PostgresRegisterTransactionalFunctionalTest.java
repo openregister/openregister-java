@@ -26,6 +26,7 @@ import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
+import uk.gov.register.store.postgres.BatchedPostgresDataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
@@ -107,22 +108,22 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         try {
             RegisterContext.useTransaction(dbi, handle -> {
-                PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
+                BatchedPostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
                 PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
                 postgresRegister.addItem(item1);
-                dataAccessLayer.checkpoint();
+                dataAccessLayer.writeBatchesToDatabase();
 
                 assertThat(postgresRegister.getAllItems().size(), is(1));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
                 postgresRegister.addItem(item2);
-                dataAccessLayer.checkpoint();
+                dataAccessLayer.writeBatchesToDatabase();
 
                 assertThat(postgresRegister.getAllItems().size(), is(2));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
                 postgresRegister.addItem(item3);
-                dataAccessLayer.checkpoint();
+                dataAccessLayer.writeBatchesToDatabase();
 
                 assertThat(postgresRegister.getAllItems().size(), is(3));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
@@ -149,9 +150,9 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
         Entry addressFieldEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), Instant.parse("2017-03-10T00:00:00Z"), "field:address", EntryType.system);
         Entry addressRegisterEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), Instant.parse("2017-03-10T00:00:00Z"), "register:address", EntryType.system);
-        Entry entry1 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.parse("2017-03-10T00:00:00Z"), "aaa", EntryType.user);
-        Entry entry2 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.parse("2017-03-10T00:00:00Z"), "bbb", EntryType.user);
-        Entry entry3 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.parse("2017-03-10T00:00:00Z"), "ccc", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.parse("2017-03-10T00:00:00Z"), "aaa", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.parse("2017-03-10T00:00:00Z"), "bbb", EntryType.user);
+        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.parse("2017-03-10T00:00:00Z"), "ccc", EntryType.user);
 
         Record addressRegisterRecord = mock(Record.class);
         when(addressRegisterRecord.getItem()).thenReturn(addressRegister);
@@ -162,7 +163,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         when(recordSet.getRecord(EntryType.system, "field:address")).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {
-            PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
+            BatchedPostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
             PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
             postgresRegister.addItem(addressField);
             postgresRegister.addItem(addressRegister);
@@ -174,7 +175,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
             postgresRegister.appendEntry(entry1);
             postgresRegister.appendEntry(entry2);
             postgresRegister.appendEntry(entry3);
-            dataAccessLayer.checkpoint();
+            dataAccessLayer.writeBatchesToDatabase();
         });
 
         List<HashValue> items = testItemDAO.getItems(schema).stream().map(item -> item.hashValue).collect(Collectors.toList());
@@ -208,14 +209,15 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 environmentValidator);
     }
 
-    private PostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
-        return new PostgresDataAccessLayer(
-                handle.attach(EntryQueryDAO.class),
-                handle.attach(EntryDAO.class),
-                handle.attach(ItemQueryDAO.class),
-                handle.attach(ItemDAO.class),
-                handle.attach(RecordQueryDAO.class),
-                "address");
+    private BatchedPostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
+        return new BatchedPostgresDataAccessLayer(
+                new PostgresDataAccessLayer(
+                        handle.attach(EntryDAO.class),
+                        handle.attach(EntryQueryDAO.class),
+                        handle.attach(ItemDAO.class),
+                        handle.attach(ItemQueryDAO.class),
+                        handle.attach(RecordQueryDAO.class),
+                "address"));
     }
 
     private DataSourceFactory getDataSourceFactory() {

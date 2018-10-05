@@ -1,209 +1,462 @@
 package uk.gov.register.store.postgres;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import uk.gov.register.core.*;
-import uk.gov.register.db.*;
+import org.skife.jdbi.v2.Handle;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.Record;
+import uk.gov.register.db.EntryDAO;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.ItemDAO;
+import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.util.HashValue;
 
+import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Optional;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static uk.gov.register.core.HashingAlgorithm.SHA256;
+import static uk.gov.register.core.HashingAlgorithm.*;
 
 public class PostgresDataAccessLayerTest {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private PostgresDataAccessLayer postgresDataAccessLayer;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    InMemoryEntryDAO entryQueryDAO;
-    RecordQueryDAO recordQueryDAO;
-    InMemoryItemDAO itemDAO;
-
-    private List<Entry> entries;
-    private Map<HashValue, Item> itemMap;
-
-    private PostgresDataAccessLayer dataAccessLayer;
-
-    private final Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
-    private final Entry entry2 = new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user);
-    private Item item1;
-    private Item item2;
-    private HashValue hash1 ;
-    private HashValue hash2 ;
+    @Rule
+    public RegisterRule registerRule = new RegisterRule();
 
     @Before
-    public void setUp() throws Exception {
-        entries = new ArrayList<>();
-        itemMap = new HashMap<>();
+    public void setup() {
+        TestRegister register = TestRegister.address;
+        Handle handle = registerRule.handleFor(register);
 
-        entryQueryDAO = new InMemoryEntryDAO(entries);
+        postgresDataAccessLayer = new PostgresDataAccessLayer(
+                handle.attach(EntryDAO.class),
+                handle.attach(EntryQueryDAO.class),
+                handle.attach(ItemDAO.class),
+                handle.attach(ItemQueryDAO.class),
+                handle.attach(RecordQueryDAO.class),
+                register.getSchema());
 
-        itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
-        recordQueryDAO = mock(RecordQueryDAO.class);
-        dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, entryQueryDAO,
-                itemDAO, itemDAO, recordQueryDAO, "schema");
-
-        hash1 = new HashValue(SHA256, "abcd");
-        hash2 = new HashValue(SHA256, "jkl1");
-
-        item1 = new Item(hash1, objectMapper.readTree("{}"));
-        item2 = new Item(hash2, objectMapper.readTree("{}"));
+        registerRule.wipe();
     }
 
     @Test
-    public void appendEntry_shouldNotCommitData() {
-        dataAccessLayer.appendEntry(new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user));
-        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
+    public void canAppendAndGetEntry() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
 
-        assertThat(entries, is(empty()));
+        postgresDataAccessLayer.appendEntry(entry1);
+        postgresDataAccessLayer.appendEntry(entry2);
+        assertThat(postgresDataAccessLayer.getEntry(1), is(Optional.of(entry1)));
+        assertThat(postgresDataAccessLayer.getEntry(2), is(Optional.of(entry2)));
+        assertThat(postgresDataAccessLayer.getEntry(3), is(Optional.empty()));
     }
 
     @Test
-    public void getEntry_shouldGetFromStagedDataIfNeeded() throws Exception {
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
-        dataAccessLayer.appendEntry(entry1);
-        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
+    public void canAppendEntriesInBatch() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
 
-        assertThat(dataAccessLayer.getEntry(1), equalTo(Optional.of(entry1)));
+        postgresDataAccessLayer.appendEntries(Arrays.asList(entry1, entry2));
+        assertThat(postgresDataAccessLayer.getEntry(1), is(Optional.of(entry1)));
+        assertThat(postgresDataAccessLayer.getEntry(2), is(Optional.of(entry2)));
+        assertThat(postgresDataAccessLayer.getEntry(3), is(Optional.empty()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void appendUserEntriesThatSkipEntryNumberThrowsException() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(3, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+
+        postgresDataAccessLayer.appendEntry(entry1);
+        postgresDataAccessLayer.appendEntry(entry2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void appendUserEntriesWithDuplicateEntryNumberThrowsException() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(1, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+
+        postgresDataAccessLayer.appendEntry(entry1);
+        postgresDataAccessLayer.appendEntry(entry2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void appendSystemEntriesThatSkipEntryNumberThrowsException() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
+        Entry entry2 = new Entry(3, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
+
+        postgresDataAccessLayer.appendEntry(entry1);
+        postgresDataAccessLayer.appendEntry(entry2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void appendSystemEntriesWithDuplicateEntryNumberThrowsException() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
+        Entry entry2 = new Entry(1, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
+
+        postgresDataAccessLayer.appendEntry(entry1);
+        postgresDataAccessLayer.appendEntry(entry2);
     }
 
     @Test
-    public void getEntries_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.appendEntry(entry1);
-        dataAccessLayer.appendEntry(entry2);
+    public void canGetMultipleEntries() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry entry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
+        Entry entry4 = new Entry(4, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
 
-        assertThat(dataAccessLayer.getEntries(1, 2), equalTo(ImmutableList.of(entry1, entry2)));
+        postgresDataAccessLayer.appendEntry(entry1);
+        postgresDataAccessLayer.appendEntry(entry2);
+        postgresDataAccessLayer.appendEntry(entry3);
+        postgresDataAccessLayer.appendEntry(entry4);
+
+        assertThat(postgresDataAccessLayer.getAllEntries().size(), is(4));
+        assertThat(postgresDataAccessLayer.getAllEntries(), contains(entry4, entry3, entry2, entry1));
+        assertThat(postgresDataAccessLayer.getEntries(1, 10).size(), is(4));
+        assertThat(postgresDataAccessLayer.getEntries(1, 10), contains(entry1, entry2, entry3, entry4));
+        assertThat(postgresDataAccessLayer.getEntries(2, 2).size(), is(2));
+        assertThat(postgresDataAccessLayer.getEntries(2, 2), contains(entry2, entry3));
     }
 
     @Test
-    public void getAllEntries_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.appendEntry(entry1);
-        dataAccessLayer.appendEntry(entry2);
+    public void canGetEntryIterator() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.user);
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.system);
+        Entry systemEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.system);
 
-        assertThat(dataAccessLayer.getAllEntries(), equalTo(ImmutableList.of(entry1, entry2)));
+        postgresDataAccessLayer.appendEntry(userEntry1);
+        postgresDataAccessLayer.appendEntry(userEntry2);
+        postgresDataAccessLayer.appendEntry(userEntry3);
+        postgresDataAccessLayer.appendEntry(userEntry4);
+        postgresDataAccessLayer.appendEntry(systemEntry1);
+        postgresDataAccessLayer.appendEntry(systemEntry2);
+        postgresDataAccessLayer.appendEntry(systemEntry3);
+        postgresDataAccessLayer.appendEntry(systemEntry4);
+
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.user)).size(), is(4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.user)), contains(userEntry1, userEntry2, userEntry3, userEntry4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.user, 0, 10)).size(), is(4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.user, 0, 10)), contains(userEntry1, userEntry2, userEntry3, userEntry4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.user, 1, 3)).size(), is(2));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.user, 1, 3)), contains(userEntry2, userEntry3));
+
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.system)).size(), is(4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.system)), contains(systemEntry1, systemEntry2, systemEntry3, systemEntry4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.system, 0, 10)).size(), is(4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.system, 0, 10)), contains(systemEntry1, systemEntry2, systemEntry3, systemEntry4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.system, 1, 3)).size(), is(2));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getEntryIterator(EntryType.system, 1, 3)), contains(systemEntry2, systemEntry3));
     }
 
     @Test
-    public void getAllEntriesByKey_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+    public void canGetEntriesByKey() {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry entry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
+        Entry entry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key3", EntryType.user);
 
-        Collection<Entry> ignored = dataAccessLayer.getAllEntriesByKey("bar");
+        postgresDataAccessLayer.appendEntry(entry1);
+        postgresDataAccessLayer.appendEntry(entry2);
+        postgresDataAccessLayer.appendEntry(entry3);
+        postgresDataAccessLayer.appendEntry(entry4);
 
-        // ignore the result, but check that committed to DB
-        assertThat(dataAccessLayer.getTotalEntries(), is(1));
+        assertThat(postgresDataAccessLayer.getAllEntriesByKey("key1").size(), is(1));
+        assertThat(postgresDataAccessLayer.getAllEntriesByKey("key1"), contains(entry1));
+        assertThat(postgresDataAccessLayer.getAllEntriesByKey("key2").size(), is(1));
+        assertThat(postgresDataAccessLayer.getAllEntriesByKey("key2"), contains(entry2));
+        assertThat(postgresDataAccessLayer.getAllEntriesByKey("key3").size(), is(2));
+        assertThat(postgresDataAccessLayer.getAllEntriesByKey("key3"), contains(entry3, entry4));
     }
 
     @Test
-    public void getTotalEntries_shouldCountStagedDataWithoutCommitting() throws Exception {
-        // existing entry in backing store
-        entries.add(entry1);
-        // entry in staging area
-        dataAccessLayer.appendEntry(entry2);
+    public void canGetTotalEntries() {
+        assertThat(postgresDataAccessLayer.getTotalEntries(EntryType.user), is(0));
+        assertThat(postgresDataAccessLayer.getTotalEntries(EntryType.system), is(0));
 
-        int totalEntries = dataAccessLayer.getTotalEntries();
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.user);
 
-        assertThat(totalEntries, equalTo(2)); // we counted the staged entry
-        assertThat(entries, equalTo(singletonList(entry1))); // but we didn't commit it to backing store
+        postgresDataAccessLayer.appendEntry(userEntry1);
+        postgresDataAccessLayer.appendEntry(userEntry2);
+        postgresDataAccessLayer.appendEntry(userEntry3);
+        postgresDataAccessLayer.appendEntry(userEntry4);
+
+        assertThat(postgresDataAccessLayer.getTotalEntries(EntryType.user), is(4));
+
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
+
+        postgresDataAccessLayer.appendEntry(systemEntry1);
+        postgresDataAccessLayer.appendEntry(systemEntry2);
+
+        assertThat(postgresDataAccessLayer.getTotalEntries(EntryType.system), is(2));
     }
 
     @Test
-    public void getLastTimeUpdated_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.appendEntry(entry1);
-        dataAccessLayer.appendEntry(entry2);
+    public void canGetLastUpdatedTime() {
+        assertThat(postgresDataAccessLayer.getLastUpdatedTime(), is(Optional.empty()));
 
-        assertThat(dataAccessLayer.getLastUpdatedTime(), equalTo(Optional.of(entry2.getTimestamp())));
+        Instant timestamp1 = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Instant timestamp2 = timestamp1.plus(Duration.ofDays(1));
+        Instant timestamp3 = timestamp2.plus(Duration.ofDays(1));
+
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp1, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp2, "key2", EntryType.user);
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp3, "key1", EntryType.system);
+
+        postgresDataAccessLayer.appendEntry(userEntry1);
+        postgresDataAccessLayer.appendEntry(userEntry2);
+        postgresDataAccessLayer.appendEntry(systemEntry1);
+
+        assertThat(postgresDataAccessLayer.getLastUpdatedTime(), is(Optional.of(timestamp2)));
     }
 
     @Test
-    public void putItem_shouldNotCommitData() {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
+    public void canAddAndGetItem() throws IOException {
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
-        assertThat(itemMap.entrySet(), is(empty()));
+        postgresDataAccessLayer.addItem(item1);
+        postgresDataAccessLayer.addItem(item2);
+
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test
-    public void getAllItems_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
+    public void canAddItemsInBatch() throws IOException {
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
-        assertThat(dataAccessLayer.getAllItems(), is(iterableWithSize(2)));
+        postgresDataAccessLayer.addItems(Arrays.asList(item1, item2));
+
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test
-    public void getItemBySha256_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
+    public void doesNotDuplicateItems() throws IOException {
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
-        assertThat(dataAccessLayer.getItem(item1.getSha256hex()), is(Optional.of(item1)));
+        postgresDataAccessLayer.addItem(item1);
+        postgresDataAccessLayer.addItem(item2);
+        postgresDataAccessLayer.addItem(item1);
+
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test
-    public void getItemBySha256_shouldGetFromStagedDataWithoutWritingToDB() throws Exception {
-        dataAccessLayer.addItem(item1);
-        Optional<Item> item = dataAccessLayer.getItem(item1.getSha256hex());
-        assertThat(item, is(Optional.of(item1)));
-        assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd", "schema").isPresent());
+    public void canGetMultipleItems() throws IOException {
+        assertThat(postgresDataAccessLayer.getAllItems().size(), is(0));
+
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+
+        postgresDataAccessLayer.addItem(item1);
+        postgresDataAccessLayer.addItem(item2);
+
+        assertThat(postgresDataAccessLayer.getAllItems().size(), is(2));
+        assertThat(postgresDataAccessLayer.getAllItems(), contains(item1, item2));
     }
 
     @Test
-    public void getIterator_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
-        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
-        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
+    public void canGetItemIterator() throws IOException {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.user);
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
 
-        List<Item> items = newArrayList(dataAccessLayer.getItemIterator(EntryType.user));
-        assertThat(items, is(asList(item1, item2)));
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), timestamp, "key5", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), timestamp, "key6", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), timestamp, "key7", EntryType.system);
+        Entry systemEntry4 = new Entry(4, new HashValue(SHA256, "itemhash8"), timestamp, "key8", EntryType.system);
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
+        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), objectMapper.readTree("{\"field\":\"value7\"}"));
+        Item item8 = new Item(new HashValue(SHA256, "itemhash8"), objectMapper.readTree("{\"field\":\"value8\"}"));
+
+        postgresDataAccessLayer.appendEntry(userEntry1);
+        postgresDataAccessLayer.appendEntry(userEntry2);
+        postgresDataAccessLayer.appendEntry(userEntry3);
+        postgresDataAccessLayer.appendEntry(userEntry4);
+        postgresDataAccessLayer.addItem(item1);
+        postgresDataAccessLayer.addItem(item2);
+        postgresDataAccessLayer.addItem(item3);
+        postgresDataAccessLayer.addItem(item4);
+
+        postgresDataAccessLayer.appendEntry(systemEntry1);
+        postgresDataAccessLayer.appendEntry(systemEntry2);
+        postgresDataAccessLayer.appendEntry(systemEntry3);
+        postgresDataAccessLayer.appendEntry(systemEntry4);
+        postgresDataAccessLayer.addItem(item5);
+        postgresDataAccessLayer.addItem(item6);
+        postgresDataAccessLayer.addItem(item7);
+        postgresDataAccessLayer.addItem(item8);
+
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(EntryType.user)).size(), is(4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(EntryType.user)), containsInAnyOrder(item1, item2, item3, item4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(0, 10)).size(), is(4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(0, 10)), containsInAnyOrder(item1, item2, item3, item4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(1, 3)).size(), is(2));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(1, 3)), containsInAnyOrder(item2, item3));
+
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(EntryType.system)).size(), is(4));
+        assertThat(Lists.newArrayList(postgresDataAccessLayer.getItemIterator(EntryType.system)), containsInAnyOrder(item5, item6, item7, item8));
     }
 
     @Test
-    public void getIteratorRange_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
-        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
-        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
+    public void canGetRecordsAndTotalRecords() throws IOException {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
 
-        List<Item> items = newArrayList(dataAccessLayer.getItemIterator(1,2));
-        assertThat(items, is(singletonList(item2)));
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash4"), timestamp, "key5", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash5"), timestamp, "key6", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash6"), timestamp, "key5", EntryType.system);
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
+
+        postgresDataAccessLayer.appendEntry(userEntry1);
+        postgresDataAccessLayer.appendEntry(userEntry2);
+        postgresDataAccessLayer.appendEntry(userEntry3);
+        postgresDataAccessLayer.addItem(item1);
+        postgresDataAccessLayer.addItem(item2);
+        postgresDataAccessLayer.addItem(item3);
+
+        postgresDataAccessLayer.appendEntry(systemEntry1);
+        postgresDataAccessLayer.appendEntry(systemEntry2);
+        postgresDataAccessLayer.appendEntry(systemEntry3);
+        postgresDataAccessLayer.addItem(item4);
+        postgresDataAccessLayer.addItem(item5);
+        postgresDataAccessLayer.addItem(item6);
+
+        Record userRecord1 = new Record(userEntry1, item1);
+        Record userRecord2 = new Record(userEntry3, item3);
+        Record systemRecord1 = new Record(systemEntry2, item5);
+        Record systemRecord2 = new Record(systemEntry3, item6);
+
+        assertThat(postgresDataAccessLayer.getRecord(EntryType.user, "key1"), is(Optional.of(userRecord1)));
+        assertThat(postgresDataAccessLayer.getRecord(EntryType.user, "key2"), is(Optional.of(userRecord2)));
+        assertThat(postgresDataAccessLayer.getRecord(EntryType.user, "key3"), is(Optional.empty()));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.user, 10, 0).size(), is(2));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.user, 10, 0), contains(userRecord2, userRecord1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.user, 10, 1).size(), is(1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.user, 10, 1), contains(userRecord1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.user, 1, 0).size(), is(1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.user, 1, 0), contains(userRecord2));
+        assertThat(postgresDataAccessLayer.getTotalRecords(EntryType.user), is(2));
+
+        assertThat(postgresDataAccessLayer.getRecord(EntryType.system, "key1"), is(Optional.empty()));
+        assertThat(postgresDataAccessLayer.getRecord(EntryType.system, "key5"), is(Optional.of(systemRecord2)));
+        assertThat(postgresDataAccessLayer.getRecord(EntryType.system, "key6"), is(Optional.of(systemRecord1)));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.system, 10, 0).size(), is(2));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.system, 10, 0), contains(systemRecord2, systemRecord1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.system, 10, 1).size(), is(1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.system, 10, 1), contains(systemRecord1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.system, 1, 0).size(), is(1));
+        assertThat(postgresDataAccessLayer.getRecords(EntryType.system, 1, 0), contains(systemRecord2));
+        assertThat(postgresDataAccessLayer.getTotalRecords(EntryType.system), is(2));
     }
-    
-    @Test
-    public void getRecord_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
-
-        Optional<Record> ignored = dataAccessLayer.getRecord(EntryType.user, "foo");
-
-        // ignore the result, but check that we flushed out to currentKeys
-        assertThat(dataAccessLayer.getTotalEntries(), is(1));
-    }
 
     @Test
-    public void getRecords_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+    public void canGetRecordsByKeyValue() throws IOException {
+        Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key3", EntryType.user);
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value2\"}"));
 
-        List<Record> ignored = dataAccessLayer.getRecords(EntryType.user, 1, 0);
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), timestamp, "key5", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), timestamp, "key6", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), timestamp, "key5", EntryType.system);
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), objectMapper.readTree("{\"field\":\"value4\"}"));
 
-        // ignore the result, but check that we flushed out to currentKeys
-        assertThat(dataAccessLayer.getTotalEntries(), is(1));
-    }
+        postgresDataAccessLayer.appendEntry(userEntry1);
+        postgresDataAccessLayer.appendEntry(userEntry2);
+        postgresDataAccessLayer.appendEntry(userEntry3);
+        postgresDataAccessLayer.appendEntry(userEntry4);
+        postgresDataAccessLayer.addItem(item1);
+        postgresDataAccessLayer.addItem(item2);
+        postgresDataAccessLayer.addItem(item3);
+        postgresDataAccessLayer.addItem(item4);
 
-    @Test
-    public void findMax100RecordsByKeyValue_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+        postgresDataAccessLayer.appendEntry(systemEntry1);
+        postgresDataAccessLayer.appendEntry(systemEntry2);
+        postgresDataAccessLayer.appendEntry(systemEntry3);
+        postgresDataAccessLayer.addItem(item5);
+        postgresDataAccessLayer.addItem(item6);
+        postgresDataAccessLayer.addItem(item7);
 
-        List<Record> ignored = dataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "foo", "bar");
+        Record userRecord1 = new Record(userEntry1, item1);
+        Record userRecord2 = new Record(userEntry3, item3);
+        Record userRecord3 = new Record(userEntry4, item4);
+        Record systemRecord1 = new Record(systemEntry2, item6);
+        Record systemRecord2 = new Record(systemEntry3, item7);
 
-        // ignore the result, but check that we flushed out to currentKeys
-        assertThat(dataAccessLayer.getTotalEntries(), is(1));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value1").size(), is(1));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value1"), contains(userRecord1));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value2").size(), is(2));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value2"), contains(userRecord3, userRecord2));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value3").size(), is(0));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "invalid-field", "value").size(), is(0));
+
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "field", "value3").size(), is(0));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "field", "value4").size(), is(2));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "field", "value4"), contains(systemRecord2, systemRecord1));
+        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "invalid-field", "value").size(), is(0));
     }
 }

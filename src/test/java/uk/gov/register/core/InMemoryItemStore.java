@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import uk.gov.register.db.*;
+import uk.gov.register.store.postgres.BatchedPostgresDataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 
 import static java.util.Collections.singletonList;
@@ -10,8 +11,8 @@ public class InMemoryItemStore extends ItemStoreImpl {
     private final ItemDAO itemDAO;
 
     public InMemoryItemStore(ItemQueryDAO itemQueryDAO, ItemDAO itemDAO) {
-        super(new PostgresDataAccessLayer(mock(EntryQueryDAO.class), mock(EntryDAO.class),
-                itemQueryDAO, itemDAO, mock(RecordQueryDAO.class), "schema"));
+        super(new BatchedPostgresDataAccessLayer(new PostgresDataAccessLayer(mock(EntryDAO.class), mock(EntryQueryDAO.class),
+                itemDAO, itemQueryDAO, mock(RecordQueryDAO.class),"schema")));
         this.itemDAO = itemDAO;
     }
 
