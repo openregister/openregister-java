@@ -15,4 +15,3 @@ fields:
 - "start-date"
 - "end-date"
 register: "local-authority-eng"
-
