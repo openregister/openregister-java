@@ -2,7 +2,7 @@ package uk.gov.register.resources;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.Produces;

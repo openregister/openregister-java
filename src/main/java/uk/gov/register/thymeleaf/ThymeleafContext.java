@@ -29,7 +29,7 @@ public class ThymeleafContext extends AbstractContext implements IWebContext {
         try {
             initVariableFromViewProperties(thymeleafView);
         } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 

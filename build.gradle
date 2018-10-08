@@ -8,13 +8,15 @@ group 'openregister'
 buildscript {
     repositories {
         jcenter()
-        maven { url "https://dl.bintray.com/robfletcher/gradle-plugins" }
+        maven { url "https://dl.bintray.com/gidsg/gradle-plugins" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
+    
     dependencies {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.13.0"
         classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
-        classpath "com.github.robfletcher:compass-gradle-plugin:2.0.6"
         classpath 'org.owasp:dependency-check-gradle:3.1.2'
+        classpath "com.github.gidsg:compass-gradle-plugin:2.0.7"
     }
 }
 
@@ -43,12 +45,9 @@ dependencyCheck {
     suppressionFile = 'dependency-check-suppressions.xml'
 }
 
-// because we build into src/main/resources, we need compassCompile to run before processResources
-processResources.dependsOn 'compassCompile'
-
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.6'
+    gradleVersion = '4.10.2'
 }
 
 repositories {
@@ -68,9 +67,9 @@ configurations {
 }
 
 dependencies {
-    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3
+    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3, jaxb, javaxActivation
     compile jacksonCsv, jacksonDatabind, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
-    compile jdbi, jersey_client
+    compile jdbi
     compile dropwizardLogstash
     compile(postgresClient) {
         exclude group: 'org.slf4j'
