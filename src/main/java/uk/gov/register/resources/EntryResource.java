@@ -39,47 +39,6 @@ public class EntryResource {
 
     @GET
     @Path("/entries")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<EntryListView> entriesHtml(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
-        int totalEntries = register.getTotalEntries();
-        StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
-
-        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
-
-        setHeaders(startLimitPagination);
-
-        return viewFactory.getEntriesView(entries, startLimitPagination);
-    }
-
-    @GET
-    @Path("/entries/{entry-number}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
-    }
-
-    @GET
-    @Path("/entries/{entry-number}")
-    @Produces({
-            MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
-            ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
-    })
-    @Timed
-    public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
-    }
-
-
-    @GET
-    @Path("/entries")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -99,6 +58,49 @@ public class EntryResource {
 
         return new EntryListView(entries);
     }
+
+    @GET
+    @Path("/entries")
+    @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
+    public PaginatedView<EntryListView> entriesHtml(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
+        int totalEntries = register.getTotalEntries();
+        StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
+
+        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
+
+        setHeaders(startLimitPagination);
+
+        return viewFactory.getEntriesView(entries, startLimitPagination);
+    }
+
+    @GET
+    @Path("/entries/{entry-number}")
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
+    @Timed
+    public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
+        Optional<Entry> entry = register.getEntry(entryNumber);
+        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
+    }
+
+    @GET
+    @Path("/entries/{entry-number}")
+    @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
+    public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
+        Optional<Entry> entry = register.getEntry(entryNumber);
+        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
+    }
+
+
+
 
     private void setHeaders(StartLimitPagination startLimitPagination) {
         requestContext.resourceExtension().ifPresent(
