@@ -50,7 +50,7 @@ public class ItemResourceFunctionalTest {
     public void itemReturnsJsonWhenNoMediaTypeSpecified() {
         String sha256Hex = DigestUtils.sha256Hex(item1);
 
-        Response response = register.getRequest(address, String.format("/item/sha-256:%s", sha256Hex), MediaType.WILDCARD);
+        Response response = register.getRequest(address, String.format("/item/sha-256:%s", sha256Hex), "" );
 
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));

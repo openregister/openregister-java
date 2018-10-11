@@ -80,7 +80,7 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void getRecords_returnsJsonWhenNoMediaTypeSpecified() {
-        Response response = register.getRequest(address, "/records", MediaType.WILDCARD);
+        Response response = register.getRequest(address, "/records", "");
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
     }
@@ -103,7 +103,7 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void getFacetedRecords_returnsJsonWhenNoMediaTypeSpecified() {
-        Response response = register.getRequest(address, "/records/street/presley", MediaType.WILDCARD);
+        Response response = register.getRequest(address, "/records/street/presley", "" );
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
     }
@@ -184,7 +184,7 @@ public class RecordResourceFunctionalTest {
 
     @Test
     public void historyResource_returnsJsonWhenNoMediaTypeSpecified() {
-        Response response = register.getRequest(address, "record/6789/entries", MediaType.WILDCARD);
+        Response response = register.getRequest(address, "record/6789/entries", "" );
         assertThat(response.getStatus(), equalTo(200));
         assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
     }
