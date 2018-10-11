@@ -108,6 +108,14 @@ public class EntryResourceFunctionalTest {
     }
 
     @Test
+    public void entryView_returnsJsonWhenNoMediaTypeSpecified() {
+        Response response = register.getRequest(address, "/entries/1", MediaType.WILDCARD);
+
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
+    }
+
+    @Test
     public void return200ResponseForTextHtmlMediaTypeWhenItemExists() {
         assertThat(register.getRequest(address, "/entry/1", MediaType.TEXT_HTML).getStatus(), equalTo(200));
     }

@@ -49,6 +49,13 @@ public class RecordResourceFunctionalTest {
         assertThat(itemMap.get("street").asText(), is("presley"));
         assertThat(itemMap.get("address").asText(), is("6789"));
     }
+
+    @Test
+    public void getRecordByKey_returnsJsonWhenNoMediaTypeSpecified() {
+        Response response = register.getRequest(address, "/record/6789");
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
+    }
     
     @Test
     public void getRecords() throws IOException {
@@ -72,6 +79,13 @@ public class RecordResourceFunctionalTest {
     }
 
     @Test
+    public void getRecords_returnsJsonWhenNoMediaTypeSpecified() {
+        Response response = register.getRequest(address, "/records", MediaType.WILDCARD);
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
+    }
+
+    @Test
     public void getFacetedRecords() throws IOException {
         Response response = register.getRequest(address, "/records/street/presley.json");
 
@@ -85,6 +99,13 @@ public class RecordResourceFunctionalTest {
         assertThat(facetedRecord.get("index-entry-number").textValue(), equalTo("2"));
         assertTrue(facetedRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
         assertThat(facetedRecord.get("item").size(), equalTo(1));
+    }
+
+    @Test
+    public void getFacetedRecords_returnsJsonWhenNoMediaTypeSpecified() {
+        Response response = register.getRequest(address, "/records/street/presley", MediaType.WILDCARD);
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
     }
 
     @Test
@@ -160,6 +181,15 @@ public class RecordResourceFunctionalTest {
     public void historyResource_return404ResponseWhenRecordNotExist() {
         assertThat(register.getRequest(address, "/record/5001/entries.json").getStatus(), equalTo(404));
     }
+
+    @Test
+    public void historyResource_returnsJsonWhenNoMediaTypeSpecified() {
+        Response response = register.getRequest(address, "record/6789/entries", MediaType.WILDCARD);
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getHeaderString("Content-Type"), equalTo("application/json"));
+    }
+
+
 
     @Test
     public void facetedRecordResource_return404ResponseWhenFieldNotExist() {

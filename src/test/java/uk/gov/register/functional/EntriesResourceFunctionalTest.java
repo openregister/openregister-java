@@ -15,6 +15,7 @@ import uk.gov.register.functional.app.RsfRegisterDefinition;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.format.DateTimeFormatter;
 
@@ -82,7 +83,7 @@ public class EntriesResourceFunctionalTest {
         assertThat(entry1.get("entry-number").textValue(), equalTo("1"));
         assertThat(entry1.get("item-hash").getNodeType(), is(JsonNodeType.ARRAY));
         String hash1 = entry1.get("item-hash").get(0).asText();
-        assertThat( hash1, is("sha-256:" + DigestUtils.sha256Hex(item1)));
+        assertThat(hash1, is("sha-256:" + DigestUtils.sha256Hex(item1)));
         verifyStringIsADateSpecifiedInSpecification(entry1.get("entry-timestamp").textValue());
         assertThat(entry1.get("key").textValue(), equalTo("1234"));
 
@@ -90,7 +91,7 @@ public class EntriesResourceFunctionalTest {
         assertThat(Iterators.size(entry2.fields()), equalTo(5));
         assertThat(entry2.get("entry-number").textValue(), equalTo("2"));
         String hash2 = entry2.get("item-hash").get(0).asText();
-        assertThat( hash2, is("sha-256:" + DigestUtils.sha256Hex(item2)));
+        assertThat(hash2, is("sha-256:" + DigestUtils.sha256Hex(item2)));
         verifyStringIsADateSpecifiedInSpecification(entry2.get("entry-timestamp").textValue());
         assertThat(entry2.get("key").textValue(), equalTo("6789"));
 
@@ -98,7 +99,7 @@ public class EntriesResourceFunctionalTest {
 
     // TODO what does start = -1 mean?
     @Ignore
-    public void paginationSupport(){
+    public void paginationSupport() {
         String item1 = "{\"address\":\"1234\",\"street\":\"elvis\"}";
         String item2 = "{\"address\":\"6789\",\"street\":\"presley\"}";
         String item3 = "{\"address\":\"567\",\"street\":\"john\"}";
@@ -111,7 +112,7 @@ public class EntriesResourceFunctionalTest {
 
         register.loadRsf(address, rsf);
 
-        Response response = addressTarget.path("/entries.json").queryParam("start",1).queryParam("limit",2)
+        Response response = addressTarget.path("/entries.json").queryParam("start", 1).queryParam("limit", 2)
                 .request().get();
         ArrayNode jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(2));
@@ -119,7 +120,7 @@ public class EntriesResourceFunctionalTest {
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("2"));
         assertThat(response.getHeaderString("Link"), equalTo("<?start=3&limit=2>; rel=\"next\""));
 
-        response = addressTarget.path("/entries.json").queryParam("start",2).queryParam("limit",3)
+        response = addressTarget.path("/entries.json").queryParam("start", 2).queryParam("limit", 3)
                 .request().get();
         jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(3));
@@ -127,7 +128,7 @@ public class EntriesResourceFunctionalTest {
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("3"));
         assertThat(response.getHeaderString("Link"), equalTo("<?start=0&limit=3>; rel=\"previous\""));
 
-        response = addressTarget.path("/entries.json").queryParam("start",2).queryParam("limit",3)
+        response = addressTarget.path("/entries.json").queryParam("start", 2).queryParam("limit", 3)
                 .request().get();
         jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(2));
@@ -135,7 +136,7 @@ public class EntriesResourceFunctionalTest {
         assertThat(jsonNodes.get(1).get("entry-number").textValue(), equalTo("3"));
         assertThat(response.getHeaderString("Link"), equalTo("<?start=-1&limit=3>; rel=\"previous\""));
 
-        response = addressTarget.path("/entries.json").queryParam("start",2).queryParam("limit",1)
+        response = addressTarget.path("/entries.json").queryParam("start", 2).queryParam("limit", 1)
                 .request().get();
         jsonNodes = response.readEntity(ArrayNode.class);
         assertThat(jsonNodes.size(), equalTo(1));

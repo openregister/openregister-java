@@ -29,15 +29,6 @@ public class ItemResource {
 
     @GET
     @Path("/sha-256:{item-hash}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
-        return getItem(itemHash).map(viewFactory::getItemView)
-                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
-    }
-
-    @GET
-    @Path("/sha-256:{item-hash}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -56,4 +47,14 @@ public class ItemResource {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
         return register.getItem(hash);
     }
+
+    @GET
+    @Path("/sha-256:{item-hash}")
+    @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
+    public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
+        return getItem(itemHash).map(viewFactory::getItemView)
+                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
+    }
+
 }
