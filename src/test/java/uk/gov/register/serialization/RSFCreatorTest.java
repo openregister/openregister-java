@@ -89,7 +89,8 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() {
-        when(register.getItemIterator(EntryType.user)).thenReturn(Arrays.asList(systemItem, item1, item2).iterator());
+        when(register.getItemIterator(EntryType.user)).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getItemIterator(EntryType.system)).thenReturn(Arrays.asList(systemItem).iterator());
         when(register.getEntryIterator(EntryType.system)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator(EntryType.user)).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
