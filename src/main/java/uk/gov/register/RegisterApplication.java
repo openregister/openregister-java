@@ -26,6 +26,7 @@ import uk.gov.register.core.*;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.filters.HttpToHttpsRedirectFilter;
+import uk.gov.register.filters.StripTrailingSlashRedirectFilter;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.serialization.RSFCreator;
@@ -125,6 +126,10 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         environment.servlets()
                 .addFilter("HttpToHttpsRedirectFilter", new HttpToHttpsRedirectFilter())
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+
+        environment.servlets()
+                .addFilter("StripTrailingSlashRedirectFilter", new StripTrailingSlashRedirectFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
         jersey.register(new AbstractBinder() {
