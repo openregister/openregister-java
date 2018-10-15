@@ -16,6 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
+@Deprecated
 @Path("/items")
 public class ItemResource {
     private final RegisterReadOnly register;
