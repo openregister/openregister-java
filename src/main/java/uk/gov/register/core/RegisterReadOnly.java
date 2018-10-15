@@ -11,8 +11,8 @@ import java.time.Instant;
 import java.util.*;
 
 public interface RegisterReadOnly {
-    Optional<Item> getItem(HashValue hash);
-    Collection<Item> getAllItems();
+    Optional<Blob> getBlob(HashValue hash);
+    Collection<Blob> getAllItems();
 
     Optional<Entry> getEntry(int entryNumber);
     Collection<Entry> getEntries(int start, int limit);
@@ -37,9 +37,9 @@ public interface RegisterReadOnly {
     Iterator<Entry> getEntryIterator();
     Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2);
 
-    Iterator<Item> getItemIterator();
-    Iterator<Item> getItemIterator(int start, int end);
-    Iterator<Item> getSystemItemIterator();
+    Iterator<Blob> getItemIterator();
+    Iterator<Blob> getItemIterator(int start, int end);
+    Iterator<Blob> getSystemItemIterator();
     
     Iterator<Entry> getEntryIterator(String indexName);
     Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);

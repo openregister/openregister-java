@@ -8,11 +8,10 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
-import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
 
@@ -27,7 +26,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddItemCommandHandlerTest {
+public class AddBlobCommandHandlerTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
     private AddItemCommandHandler sutHandler;
@@ -52,11 +51,11 @@ public class AddItemCommandHandlerTest {
     public void execute_addsItemToRegister() {
         sutHandler.execute(addItemCommand, register);
 
-        Item expectedItem = new Item(new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"), jsonFactory.objectNode()
+        Blob expectedBlob = new Blob(new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"), jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
 
-        verify(register, times(1)).addItem(expectedItem);
+        verify(register, times(1)).addItem(expectedBlob);
     }
 
     @Test (expected = RSFParseException.class)
@@ -65,7 +64,7 @@ public class AddItemCommandHandlerTest {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).addItem(any(Item.class));
+        }).when(register).addItem(any(Blob.class));
 
         assertExceptionThrown(addItemCommand, "Exception when executing command: RegisterCommand");
     }

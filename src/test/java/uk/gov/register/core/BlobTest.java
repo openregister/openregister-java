@@ -9,12 +9,12 @@ import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-public class ItemTest {
+public class BlobTest {
     @Test
     public void twoItemsAreSameIfHashIsSame() throws IOException {
         JsonNode json = new ObjectMapper().readTree("{\"key\":\"value\"}");
-        Item item1 = new Item(json);
-        Item item2 = new Item(json);
-        Assert.assertThat(item1, equalTo(item2));
+        Blob blob1 = new Blob(json);
+        Blob blob2 = new Blob(json);
+        Assert.assertThat(blob1, equalTo(blob2));
     }
 }

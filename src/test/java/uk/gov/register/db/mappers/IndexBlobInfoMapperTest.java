@@ -15,8 +15,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static uk.gov.register.functional.app.TestRegister.local_authority_eng;
 
-public class IndexItemInfoMapperTest {
-	private final DBI dbi = new DBI(local_authority_eng.getDatabaseConnectionString("IndexItemInfoMapperTest"));
+public class IndexBlobInfoMapperTest {
+	private final DBI dbi = new DBI(local_authority_eng.getDatabaseConnectionString("IndexBlobInfoMapperTest"));
 	private final String schema = local_authority_eng.getSchema();
 
 	@ClassRule

@@ -2,7 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.util.HashValue;
@@ -32,7 +32,7 @@ public class BlobResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<ItemView> getItemWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
-        return getBlob(blobHash).map(viewFactory::getItemView)
+        return getBlob(blobHash).map(viewFactory::getBlobView)
                 .orElseThrow(() -> new NotFoundException("No item found with hash: " + blobHash));
     }
 
@@ -48,12 +48,12 @@ public class BlobResource {
     })
     @Timed
     public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
-        return getBlob(blobHash).map(viewFactory::getItemMediaView)
+        return getBlob(blobHash).map(viewFactory::getBlobMediaView)
                 .orElseThrow(() -> new NotFoundException("No blob found with hash: " + blobHash));
     }
 
-    private Optional<Item> getBlob(String blobHash) {
+    private Optional<Blob> getBlob(String blobHash) {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, blobHash);
-        return register.getItem(hash);
+        return register.getBlob(hash);
     }
 }

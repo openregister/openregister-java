@@ -46,9 +46,9 @@ public class RSFCreatorTest {
     private Entry systemEntry;
     private Entry entry1;
     private Entry entry2;
-    private Item systemItem;
-    private Item item1;
-    private Item item2;
+    private Blob systemBlob;
+    private Blob blob1;
+    private Blob blob2;
 
     private RegisterCommand assertEmptyRootHashCommand;
     private RegisterCommand addSystemItemCommand;
@@ -65,13 +65,13 @@ public class RSFCreatorTest {
         sutCreator.register(new EntryToCommandMapper());
         sutCreator.register(new ItemToCommandMapper());
 
-        systemItem = new Item(new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), jsonFactory.objectNode()
+        systemBlob = new Blob(new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), jsonFactory.objectNode()
                 .put("system-field-1", "system-field-1-value")
                 .put("system-field-2", "system-field-2-value"));
-        item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "item1sha"), jsonFactory.objectNode()
+        blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "item1sha"), jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
-        item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "item2sha"), jsonFactory.objectNode()
+        blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "item2sha"), jsonFactory.objectNode()
                 .put("field-1", "entry2-field-1-value")
                 .put("field-2", "entry2-field-2-value"));
 
@@ -91,7 +91,7 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(systemItem, item1, item2).iterator());
+        when(register.getItemIterator()).thenReturn(Arrays.asList(systemBlob, blob1, blob2).iterator());
         when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
@@ -120,7 +120,7 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireIndex() {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getItemIterator()).thenReturn(Arrays.asList(blob1, blob2).iterator());
         when(register.getEntryIterator(IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
         when(register.getEntryIterator("index")).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
@@ -145,7 +145,7 @@ public class RSFCreatorTest {
         RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"), 1);
         RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
 
-        when(register.getItemIterator(1, 2)).thenReturn(Collections.singletonList(item1).iterator());
+        when(register.getItemIterator(1, 2)).thenReturn(Collections.singletonList(blob1).iterator());
         when(register.getEntryIterator(1, 2)).thenReturn(Collections.singletonList(entry1).iterator());
         when(register.getRegisterProof(1)).thenReturn(oneEntryRegisterProof);
         when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
@@ -171,8 +171,8 @@ public class RSFCreatorTest {
     public void createRegisterSerialisationFormat_whenStartIsZero_returnsSystemEntries() {
         RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
 
-        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemItem).iterator());
-        when(register.getItemIterator(0, 2)).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemBlob).iterator());
+        when(register.getItemIterator(0, 2)).thenReturn(Arrays.asList(blob1, blob2).iterator());
         when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator(0, 2)).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
@@ -196,7 +196,7 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_throwsAnExceptionForUnknownMapperType() throws Exception {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getItemIterator()).thenReturn(Arrays.asList(blob1, blob2).iterator());
         when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
         when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
@@ -228,7 +228,7 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_whenParametersEqualAndZero_returnsSystemEntries() {
-        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemItem).iterator());
+        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemBlob).iterator());
         when(register.getItemIterator(0, 0)).thenReturn(Collections.emptyIterator());
         when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator(0, 0)).thenReturn(Collections.emptyIterator());

@@ -1,7 +1,7 @@
 package uk.gov.register.functional.db;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.util.HashValue;
 
 public class TestDBItem {
@@ -14,7 +14,7 @@ public class TestDBItem {
     }
 
     public TestDBItem(JsonNode contents) {
-        this.hashValue = Item.itemHash(contents);
+        this.hashValue = Blob.itemHash(contents);
         this.contents = contents;
     }
 

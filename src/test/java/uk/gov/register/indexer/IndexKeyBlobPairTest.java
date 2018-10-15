@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class IndexKeyItemPairTest {
+public class IndexKeyBlobPairTest {
     @Test
     public void getValue_returnsValue() {
         IndexKeyItemPair pair = new IndexKeyItemPair("key", new HashValue(HashingAlgorithm.SHA256, "hash"));

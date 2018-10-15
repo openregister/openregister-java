@@ -7,15 +7,15 @@ import java.util.Iterator;
 import java.util.Optional;
 
 public interface ItemStore {
-    void addItem(Item item);
+    void addItem(Blob blob);
 
-    Optional<Item> getItem(HashValue hash);
+    Optional<Blob> getItem(HashValue hash);
     
-    Collection<Item> getAllItems();
+    Collection<Blob> getAllItems();
 
-    Iterator<Item> getUserItemIterator();
+    Iterator<Blob> getUserItemIterator();
 
-    Iterator<Item> getUserItemIterator(int start, int end);
+    Iterator<Blob> getUserItemIterator(int start, int end);
     
-    Iterator<Item> getSystemItemIterator();
+    Iterator<Blob> getSystemItemIterator();
 }

@@ -16,7 +16,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.register.functional.app.TestRegister.address;
 
-public class ItemResourceFunctionalTest {
+public class BlobResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
     private static String item1 = "{\"address\":\"6789\",\"street\":\"presley\"}";

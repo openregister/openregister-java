@@ -30,11 +30,11 @@ public class ArchiveCreatorTest {
     private final Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "entry1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
     private final Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "entry2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
 
-    private final Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "entry1sha"), jsonFactory.objectNode()
+    private final Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "entry1sha"), jsonFactory.objectNode()
         .put("field-1", "entry1-field-1-value")
         .put("field-2", "entry1-field-2-value"));
 
-    private final Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "entry2sha"), jsonFactory.objectNode()
+    private final Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "entry2sha"), jsonFactory.objectNode()
         .put("field-1", "entry2-field-1-value")
         .put("field-2", "entry2-field-2-value"));
 
@@ -58,7 +58,7 @@ public class ArchiveCreatorTest {
         StreamingOutput streamingOutput = sutArchiveCreator.create(
             registerDetail,
             Arrays.asList(entry1, entry2),
-            Arrays.asList(item1, item2));
+            Arrays.asList(blob1, blob2));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         streamingOutput.write(baos);

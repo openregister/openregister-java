@@ -2,7 +2,7 @@ package uk.gov.register.indexer.function;
 
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
@@ -20,7 +20,7 @@ public abstract class BaseIndexFunction implements IndexFunction {
     }
 
     @Override
-    public Set<IndexKeyItemPair> execute(Function<HashValue, Optional<Item>> itemFunc, Entry entry) {
+    public Set<IndexKeyItemPair> execute(Function<HashValue, Optional<Blob>> itemFunc, Entry entry) {
         Set<IndexKeyItemPair> result = new HashSet<>();
 
         entry.getItemHashes().forEach(itemHash -> {
@@ -30,7 +30,7 @@ public abstract class BaseIndexFunction implements IndexFunction {
         return result;
     }
 
-    protected abstract void execute(Function<HashValue, Optional<Item>> itemFunc, EntryType type, String key, HashValue itemHash, Set<IndexKeyItemPair> result);
+    protected abstract void execute(Function<HashValue, Optional<Blob>> itemFunc, EntryType type, String key, HashValue itemHash, Set<IndexKeyItemPair> result);
 
     @Override
     public String getName() {

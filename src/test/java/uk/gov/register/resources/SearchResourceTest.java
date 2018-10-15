@@ -64,7 +64,7 @@ public class SearchResourceTest {
         assertThat(r.getStatus(), equalTo(301));
     }
 
-    private Item getItem(String json) throws IOException {
-        return new Item(new ObjectMapper().readTree(json));
+    private Blob getItem(String json) throws IOException {
+        return new Blob(new ObjectMapper().readTree(json));
     }
 }

@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-public class ItemValidatorTest {
+public class BlobValidatorTest {
 
     @Mock
     private RegisterMetadata registerMetadata;

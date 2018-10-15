@@ -16,8 +16,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -33,16 +31,16 @@ public class RecordsViewTest {
 
         Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
         Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
-        Record record1 = new Record(entry1, Arrays.asList(item1));
-        Record record2 = new Record(entry2, Arrays.asList(item2));
+        Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
+        Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
+        Record record1 = new Record(entry1, Arrays.asList(blob1));
+        Record record2 = new Record(entry2, Arrays.asList(blob2));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
         Map<String, Field> fieldsByName = mock(Map.class);
-        when(itemConverter.convertItem(item1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(itemConverter.convertItem(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(item2, fieldsByName )).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(blob2, fieldsByName )).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
 
         RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fieldsByName, itemConverter, false, false);

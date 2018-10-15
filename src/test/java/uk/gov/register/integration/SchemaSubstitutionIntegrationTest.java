@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.functional.app.MigrateDatabaseRule;
 
@@ -26,8 +26,8 @@ public class SchemaSubstitutionIntegrationTest {
 
     @Test
     public void shouldSuccessfullyQueryWhenSchemaContainsHyphens(){
-        Collection<Item> items = dbi.withHandle(handle -> handle.attach(ItemQueryDAO.class).getAllItemsNoPagination("local-authority-eng"));
-        Assert.assertThat(items.size(), is(0));
+        Collection<Blob> blobs = dbi.withHandle(handle -> handle.attach(ItemQueryDAO.class).getAllItemsNoPagination("local-authority-eng"));
+        Assert.assertThat(blobs.size(), is(0));
     }
 
 }

@@ -48,7 +48,7 @@ public class RsfComparisonHelper {
 			List<String> entry2Hashes = getItemHashesFromAppendEntryCommand(rsf2AppendEntryCommands.get(i));
 			
 			assertThat("Number of item hashes in entry not equal", entry1Hashes.size(), equalTo(entry2Hashes.size()));
-			assertThat("Item hashes in entry not equal", entry1Hashes.containsAll(entry2Hashes), is(true));
+			assertThat("Blob hashes in entry not equal", entry1Hashes.containsAll(entry2Hashes), is(true));
 		}
 	}
 	

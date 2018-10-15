@@ -143,7 +143,7 @@ public class RecordsView implements CsvRepresentationView {
     private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) throws FieldConversionException {
         final Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
-            map.put(record.getEntry(), record.getItems().stream().map(item ->
+            map.put(record.getEntry(), record.getBlobs().stream().map(item ->
                     new ItemView(item.getSha256hex(), itemConverter.convertItem(item, fieldsByName), getFields()))
                     .collect(Collectors.toList()));
         });

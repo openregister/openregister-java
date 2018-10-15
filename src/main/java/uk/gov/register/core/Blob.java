@@ -13,17 +13,17 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Item {
+public class Blob {
     private static final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
     private final JsonNode content;
     private final HashValue hashValue;
 
-    public Item(JsonNode content) {
+    public Blob(JsonNode content) {
         this(itemHash(content), content);
     }
 
-    public Item(HashValue hashValue, JsonNode content) {
+    public Blob(HashValue hashValue, JsonNode content) {
         this.hashValue = hashValue;
         this.content = content;
     }
@@ -72,10 +72,10 @@ public class Item {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Item item = (Item) o;
+        Blob blob = (Blob) o;
 
-        if (hashValue != null ? !hashValue.equals(item.hashValue) : item.hashValue != null) return false;
-        return content != null ? content.equals(item.content) : item.content == null;
+        if (hashValue != null ? !hashValue.equals(blob.hashValue) : blob.hashValue != null) return false;
+        return content != null ? content.equals(blob.content) : blob.content == null;
 
     }
 
@@ -88,7 +88,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item{" +
+        return "Blob{" +
                 "content=" + content +
                 ", hashValue=" + hashValue +
                 '}';

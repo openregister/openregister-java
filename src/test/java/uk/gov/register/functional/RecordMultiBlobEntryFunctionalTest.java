@@ -24,7 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static uk.gov.register.functional.app.TestRegister.address;
 
-public class RecordMultiItemEntryFunctionalTest {
+public class RecordMultiBlobEntryFunctionalTest {
 
     private static final TestRegister testRegister = TestRegister.register;
 

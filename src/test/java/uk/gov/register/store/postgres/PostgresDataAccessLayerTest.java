@@ -34,14 +34,14 @@ public class PostgresDataAccessLayerTest {
     IndexDriver indexDriver;
 
     private List<Entry> entries;
-    private Map<HashValue, Item> itemMap;
+    private Map<HashValue, Blob> itemMap;
 
     private PostgresDataAccessLayer dataAccessLayer;
 
     private final Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
     private final Entry entry2 = new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user);
-    private Item item1;
-    private Item item2;
+    private Blob blob1;
+    private Blob blob2;
     private HashValue hash1 ;
     private HashValue hash2 ;
 
@@ -64,8 +64,8 @@ public class PostgresDataAccessLayerTest {
         hash1 = new HashValue(SHA256, "abcd");
         hash2 = new HashValue(SHA256, "jkl1");
 
-        item1 = new Item(hash1, objectMapper.readTree("{}"));
-        item2 = new Item(hash2, objectMapper.readTree("{}"));
+        blob1 = new Blob(hash1, objectMapper.readTree("{}"));
+        blob2 = new Blob(hash2, objectMapper.readTree("{}"));
     }
 
     @Test
@@ -134,56 +134,56 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void putItem_shouldNotCommitData() {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
+        dataAccessLayer.addItem(blob1);
+        dataAccessLayer.addItem(blob2);
 
         assertThat(itemMap.entrySet(), is(empty()));
     }
 
     @Test
     public void getAllItems_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
+        dataAccessLayer.addItem(blob1);
+        dataAccessLayer.addItem(blob2);
 
         assertThat(dataAccessLayer.getAllItems(), is(iterableWithSize(2)));
     }
 
     @Test
     public void getItemBySha256_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
+        dataAccessLayer.addItem(blob1);
+        dataAccessLayer.addItem(blob2);
 
-        assertThat(dataAccessLayer.getItem(item1.getSha256hex()), is(Optional.of(item1)));
+        assertThat(dataAccessLayer.getItem(blob1.getSha256hex()), is(Optional.of(blob1)));
     }
 
     @Test
     public void getItemBySha256_shouldGetFromStagedDataWithoutWritingToDB() throws Exception {
-        dataAccessLayer.addItem(item1);
-        Optional<Item> item = dataAccessLayer.getItem(item1.getSha256hex());
-        assertThat(item, is(Optional.of(item1)));
+        dataAccessLayer.addItem(blob1);
+        Optional<Blob> item = dataAccessLayer.getItem(blob1.getSha256hex());
+        assertThat(item, is(Optional.of(blob1)));
         assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd", "schema").isPresent());
     }
 
     @Test
     public void getIterator_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
-        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
-        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
+        dataAccessLayer.addItem(blob1);
+        dataAccessLayer.addItem(blob2);
+        entries.add(new Entry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
+        entries.add(new Entry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
-        List<Item> items = newArrayList(dataAccessLayer.getItemIterator(EntryType.user));
-        assertThat(items, is(asList(item1, item2)));
+        List<Blob> blobs = newArrayList(dataAccessLayer.getItemIterator(EntryType.user));
+        assertThat(blobs, is(asList(blob1, blob2)));
     }
 
     @Test
     public void getIteratorRange_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(item1);
-        dataAccessLayer.addItem(item2);
-        entries.add(new Entry(1, item1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
-        entries.add(new Entry(2, item2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
+        dataAccessLayer.addItem(blob1);
+        dataAccessLayer.addItem(blob2);
+        entries.add(new Entry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
+        entries.add(new Entry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
-        List<Item> items = newArrayList(dataAccessLayer.getItemIterator(1,2));
-        assertThat(items, is(singletonList(item2)));
+        List<Blob> blobs = newArrayList(dataAccessLayer.getItemIterator(1,2));
+        assertThat(blobs, is(singletonList(blob2)));
     }
     
     @Test

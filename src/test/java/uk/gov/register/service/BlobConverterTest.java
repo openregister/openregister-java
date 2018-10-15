@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ItemConverterTest {
+public class BlobConverterTest {
 
     private ItemConverter itemConverter;
 

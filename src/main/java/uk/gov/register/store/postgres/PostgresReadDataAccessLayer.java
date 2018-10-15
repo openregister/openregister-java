@@ -1,9 +1,9 @@
 package uk.gov.register.store.postgres;
 
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
 import uk.gov.register.db.EntryQueryDAO;
@@ -95,21 +95,21 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
         return entryQueryDAO.getLastUpdatedTime(schema);
     }
 
-    // Item Store
+    // Blob Store
 
     @Override
-    public Optional<Item> getItem(HashValue hash) {
+    public Optional<Blob> getItem(HashValue hash) {
         return itemQueryDAO.getItemBySHA256(hash.getValue(), schema);
     }
 
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Blob> getAllItems() {
         checkpoint();
         return itemQueryDAO.getAllItemsNoPagination(schema);
     }
 
     @Override
-    public Iterator<Item> getItemIterator(EntryType entryType) {
+    public Iterator<Blob> getItemIterator(EntryType entryType) {
         checkpoint();
 
         switch (entryType) {
@@ -120,7 +120,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Iterator<Item> getItemIterator(int startEntryNumber, int endEntryNumber) {
+    public Iterator<Blob> getItemIterator(int startEntryNumber, int endEntryNumber) {
         checkpoint();
         return itemQueryDAO.getIterator(startEntryNumber, endEntryNumber, schema);
     }

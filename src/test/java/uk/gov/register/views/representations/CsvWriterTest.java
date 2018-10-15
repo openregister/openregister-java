@@ -118,9 +118,9 @@ public class CsvWriterTest {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "key1", EntryType.user);
-        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"key1\":\"item1\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"key1\":\"item2\"}"));
-        Record record = new Record(entry, Arrays.asList(item, item2));
+        Blob blob = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"key1\":\"item1\"}"));
+        Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"key1\":\"blob2\"}"));
+        Record record = new Record(entry, Arrays.asList(blob, blob2));
 
         ImmutableMap<String, Field> fields = ImmutableMap.of(
                 "key1", new Field("key1", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
@@ -129,8 +129,8 @@ public class CsvWriterTest {
                 "key4", new Field("key4", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
-        when(itemConverter.convertItem(item, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
-        when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item2")));
+        when(itemConverter.convertItem(blob, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
+        when(itemConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("blob2")));
 
         RecordView recordView = new RecordView(record, fields, itemConverter);
 
@@ -143,7 +143,7 @@ public class CsvWriterTest {
 
         String expected = "index-entry-number,entry-number,entry-timestamp,key,key1,key2,key3,key4\r\n" +
                 "1,1,2016-08-05T13:24:00Z,key1,item1,,,\r\n" +
-                "1,1,2016-08-05T13:24:00Z,key1,item2,,,\r\n";
+                "1,1,2016-08-05T13:24:00Z,key1,blob2,,,\r\n";
 
         assertThat(generatedCsv, is(expected));
     }
@@ -157,11 +157,11 @@ public class CsvWriterTest {
 
         Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
         Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "ef"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"baz\"}"));
-        Record record1 = new Record(entry1, Arrays.asList(item1));
-        Record record2 = new Record(entry2, Arrays.asList(item2, item3));
+        Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
+        Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
+        Blob blob3 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ef"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"baz\"}"));
+        Record record1 = new Record(entry1, Arrays.asList(blob1));
+        Record record2 = new Record(entry2, Arrays.asList(blob2, blob3));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
 
@@ -169,11 +169,11 @@ public class CsvWriterTest {
                 "address",new Field("address", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
                 "street", new Field("street", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
-        when(itemConverter.convertItem(item1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(itemConverter.convertItem(blob1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
-        when(itemConverter.convertItem(item3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(blob3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("baz")));
 
 

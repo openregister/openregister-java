@@ -3,7 +3,7 @@ package uk.gov.register.resources;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.util.HashValue;
@@ -31,9 +31,9 @@ public class PreviewItemsResource {
     @Timed
     public View jsonByKeyPreview(@PathParam("media-type") final String mediaType, @PathParam("item-hash") final String itemHash) throws FieldConversionException {
         final HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
-        final Item item = register.getItem(hash)
-                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
+        final Blob blob = register.getBlob(hash)
+                .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + itemHash));
 
-        return viewFactory.previewItemPageView(item, itemHash, ExtraMediaType.transform(mediaType));
+        return viewFactory.previewItemPageView(blob, itemHash, ExtraMediaType.transform(mediaType));
     }
 }

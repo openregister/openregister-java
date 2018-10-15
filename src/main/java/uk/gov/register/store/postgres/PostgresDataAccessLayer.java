@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer implements DataAccessLayer {
     private final List<Entry> stagedEntries;
-    private final Map<HashValue, Item> stagedItems;
+    private final Map<HashValue, Blob> stagedItems;
     private final HashSet<String> stagedEntryKeys;
     private final Map<String, Map<String, List<StartIndex>>> existingStartIndexes;
     private final Map<String, Map<String, List<StartIndex>>> stagedStartIndexes;
@@ -117,8 +117,8 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void addItem(Item item) {
-        stagedItems.put(item.getSha256hex(), item);
+    public void addItem(Blob blob) {
+        stagedItems.put(blob.getSha256hex(), blob);
     }
 
     @Override
@@ -161,7 +161,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public Optional<Item> getItem(HashValue hash) {
+    public Optional<Blob> getItem(HashValue hash) {
         if (stagedItems.containsKey(hash)) {
             return Optional.of(stagedItems.get(hash));
         }

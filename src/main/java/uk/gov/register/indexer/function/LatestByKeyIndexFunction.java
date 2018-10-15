@@ -1,7 +1,7 @@
 package uk.gov.register.indexer.function;
 
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
 import uk.gov.register.indexer.IndexKeyItemPair;
 import uk.gov.register.util.HashValue;
 
@@ -15,7 +15,7 @@ public class LatestByKeyIndexFunction extends BaseIndexFunction {
     }
 
     @Override
-    protected void execute(Function<HashValue, Optional<Item>> itemFunc, EntryType type, String key, HashValue itemHash, Set<IndexKeyItemPair> result) {
+    protected void execute(Function<HashValue, Optional<Blob>> itemFunc, EntryType type, String key, HashValue itemHash, Set<IndexKeyItemPair> result) {
 		result.add(new IndexKeyItemPair(key, itemHash));
     }
 }

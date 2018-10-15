@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.util.HashValue;
 
@@ -27,7 +27,7 @@ public class RecordMapper implements ResultSetMapper<Record> {
 
     @Override
     public Record map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-        List<Item> items = new ArrayList<>();
+        List<Blob> blobs = new ArrayList<>();
 
         String[] itemHashes = (String[]) r.getArray("sha256hex").getArray();
         String[] itemContent = (String[]) r.getArray("content").getArray();
@@ -38,7 +38,7 @@ public class RecordMapper implements ResultSetMapper<Record> {
 
         for (int i = 0; i < itemHashes.length; i++) {
             try {
-                items.add(new Item(new HashValue(HashingAlgorithm.SHA256, itemHashes[i]), objectMapper.readValue(itemContent[i], JsonNode.class)));
+                blobs.add(new Blob(new HashValue(HashingAlgorithm.SHA256, itemHashes[i]), objectMapper.readValue(itemContent[i], JsonNode.class)));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -46,7 +46,7 @@ public class RecordMapper implements ResultSetMapper<Record> {
 
         return new Record(
                 entryMapper.map(index, r, ctx),
-                items
+                blobs
         );
     }
 }

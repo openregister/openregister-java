@@ -45,7 +45,7 @@ public class CurrentCountriesIndexFunctionTest {
     @Test
     public void executeWithKeyAndHash_shouldReturnIndexItemValuePairByCountry_whenCountryIsCurrent() throws IOException {
         HashValue itemHashVN = new HashValue(HashingAlgorithm.SHA256, "vn");
-        Item countryVN = new Item(itemHashVN, objectMapper.readTree("{\"country\":\"VN\",\"name\":\"Vietnam\"}"));
+        Blob countryVN = new Blob(itemHashVN, objectMapper.readTree("{\"country\":\"VN\",\"name\":\"Vietnam\"}"));
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
         when(dataAccessLayer.getItem(itemHashVN)).thenReturn(Optional.of(countryVN));
 
@@ -60,7 +60,7 @@ public class CurrentCountriesIndexFunctionTest {
     @Test
     public void executeWithKeyAndHash_shouldReturnEmptySet_whenCountryHasEnded() throws IOException {
         HashValue itemHashCS = new HashValue(HashingAlgorithm.SHA256, "cs");
-        Item countryCS = new Item(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
+        Blob countryCS = new Blob(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
         when(dataAccessLayer.getItem(itemHashCS)).thenReturn(Optional.of(countryCS));
 
@@ -75,8 +75,8 @@ public class CurrentCountriesIndexFunctionTest {
     public void executeWithEntry_shouldReturnCurrentCountriesByCountry_whenEntryContainsMultipleItems() throws IOException {
         HashValue itemHashVN = new HashValue(HashingAlgorithm.SHA256, "vn");
         HashValue itemHashCS = new HashValue(HashingAlgorithm.SHA256, "cs");
-        Item countryVN = new Item(itemHashVN, objectMapper.readTree("{\"country\":\"VN\",\"name\":\"Vietnam\"}"));
-        Item countryCS = new Item(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
+        Blob countryVN = new Blob(itemHashVN, objectMapper.readTree("{\"country\":\"VN\",\"name\":\"Vietnam\"}"));
+        Blob countryCS = new Blob(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
         Entry entry = new Entry(1, Arrays.asList(itemHashVN, itemHashCS), Instant.now(), "key", EntryType.user);
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
         when(dataAccessLayer.getItem(itemHashVN)).thenReturn(Optional.of(countryVN));

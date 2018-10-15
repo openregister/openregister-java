@@ -80,23 +80,23 @@ public class PostgresRegisterTransactionalFunctionalTest {
     @Test
     public void useTransactionShouldApplyChangesAtomicallyToDatabase() {
 
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
+        Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
+        Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
+        Blob blob3 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresRegister postgresRegister = getPostgresRegister(getTransactionalDataAccessLayer(handle));
-            postgresRegister.addItem(item1);
+            postgresRegister.addItem(blob1);
 
             assertThat(postgresRegister.getAllItems().size(), is(1));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.addItem(item2);
+            postgresRegister.addItem(blob2);
 
             assertThat(postgresRegister.getAllItems().size(), is(2));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.addItem(item3);
+            postgresRegister.addItem(blob3);
 
             assertThat(postgresRegister.getAllItems().size(), is(3));
             assertThat(testItemDAO.getItems(schema), is(empty()));
@@ -107,27 +107,27 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     @Test
     public void useTransactionShouldRollbackIfExceptionThrown() {
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
+        Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
+        Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
+        Blob blob3 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
 
         try {
             RegisterContext.useTransaction(dbi, handle -> {
                 PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
                 PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
-                postgresRegister.addItem(item1);
+                postgresRegister.addItem(blob1);
                 dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(1));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.addItem(item2);
+                postgresRegister.addItem(blob2);
                 dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(2));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.addItem(item3);
+                postgresRegister.addItem(blob3);
                 dataAccessLayer.checkpoint();
 
                 assertThat(postgresRegister.getAllItems().size(), is(3));
@@ -148,11 +148,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
         JsonNode addressRegisterJson = MAPPER.readTree("{\"fields\":[\"address\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}");
         JsonNode addressFieldJson = MAPPER.readTree("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"address\",\"phase\":\"alpha\",\"register\":\"address\",\"text\":\"A place in the UK with a postal address.\"}");
 
-        Item addressField = new Item(new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), addressFieldJson);
-        Item addressRegister = new Item(new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), addressRegisterJson);
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
+        Blob addressField = new Blob(new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), addressFieldJson);
+        Blob addressRegister = new Blob(new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), addressRegisterJson);
+        Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
+        Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
+        Blob blob3 = new Blob(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
         Entry addressFieldEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), Instant.parse("2017-03-10T00:00:00Z"), "field:address", EntryType.system);
         Entry addressRegisterEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), Instant.parse("2017-03-10T00:00:00Z"), "register:address", EntryType.system);
         Entry entry1 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.parse("2017-03-10T00:00:00Z"), "aaa", EntryType.user);
@@ -160,11 +160,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Entry entry3 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.parse("2017-03-10T00:00:00Z"), "ccc", EntryType.user);
 
         Record addressRegisterRecord = mock(Record.class);
-        when(addressRegisterRecord.getItems()).thenReturn(Arrays.asList(addressRegister));
+        when(addressRegisterRecord.getBlobs()).thenReturn(Arrays.asList(addressRegister));
         when(index.getRecord("register:address", IndexNames.METADATA)).thenReturn(Optional.of(addressRegisterRecord));
 
         Record addressFieldRecord = mock(Record.class);
-        when(addressFieldRecord.getItems()).thenReturn(Arrays.asList(addressField));
+        when(addressFieldRecord.getBlobs()).thenReturn(Arrays.asList(addressField));
         when(index.getRecord("field:address", IndexNames.METADATA)).thenReturn(Optional.of(addressFieldRecord));
 
         RegisterContext.useTransaction(dbi, handle -> {
@@ -172,9 +172,9 @@ public class PostgresRegisterTransactionalFunctionalTest {
             PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
             postgresRegister.addItem(addressField);
             postgresRegister.addItem(addressRegister);
-            postgresRegister.addItem(item1);
-            postgresRegister.addItem(item2);
-            postgresRegister.addItem(item3);
+            postgresRegister.addItem(blob1);
+            postgresRegister.addItem(blob2);
+            postgresRegister.addItem(blob3);
             postgresRegister.appendEntry(addressFieldEntry);
             postgresRegister.appendEntry(addressRegisterEntry);
             postgresRegister.appendEntry(entry1);
@@ -184,7 +184,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         });
 
         List<HashValue> items = testItemDAO.getItems(schema).stream().map(item -> item.hashValue).collect(Collectors.toList());
-        assertThat(items, containsInAnyOrder(addressField.getSha256hex(), addressRegister.getSha256hex(), item1.getSha256hex(), item2.getSha256hex(), item3.getSha256hex()));
+        assertThat(items, containsInAnyOrder(addressField.getSha256hex(), addressRegister.getSha256hex(), blob1.getSha256hex(), blob2.getSha256hex(), blob3.getSha256hex()));
         assertThat(testEntryDAO.getAllEntries(schema), contains(entry1, entry2, entry3));
     }
 

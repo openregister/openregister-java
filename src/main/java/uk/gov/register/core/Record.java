@@ -6,31 +6,31 @@ import java.util.*;
 
 public class Record {
     private final Entry entry;
-    private final List<Item> items = new ArrayList<>();
+    private final List<Blob> blobs = new ArrayList<>();
 
-    public Record(Entry entry, Item item) {
+    public Record(Entry entry, Blob blob) {
         this.entry = entry;
-        this.items.add(item);
+        this.blobs.add(blob);
     }
 
-    public Record(Entry entry, Iterable<Item> items) {
+    public Record(Entry entry, Iterable<Blob> items) {
         this.entry = entry;
-        items.forEach(i -> this.items.add(i));
+        items.forEach(i -> this.blobs.add(i));
     }
 
     public Entry getEntry() {
         return entry;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public List<Blob> getBlobs() {
+        return blobs;
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
         CsvSchema entrySchema = Entry.csvSchemaWithOmittedFields(Arrays.asList("item-hash"));
         CsvSchema.Builder schemaBuilder = entrySchema.rebuild();
 
-        for (Iterator<CsvSchema.Column> iterator = Item.csvSchema(fields).rebuild().getColumns(); iterator.hasNext();) {
+        for (Iterator<CsvSchema.Column> iterator = Blob.csvSchema(fields).rebuild().getColumns(); iterator.hasNext();) {
             schemaBuilder.addColumn(iterator.next().getName(), CsvSchema.ColumnType.STRING);
         }
         return schemaBuilder.build();

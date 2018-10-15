@@ -97,8 +97,12 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerResolver, fieldValueMap);
     }
 
-    public AttributionView<ItemView> getItemView(final Item item) throws FieldConversionException {
-        return getAttributionView("item.html", getItemMediaView(item));
+    public AttributionView<ItemView> getItemView(final Blob blob) throws FieldConversionException {
+        return getAttributionView("item.html", getBlobMediaView(blob));
+    }
+
+    public AttributionView<ItemView> getBlobView(final Blob blob) throws FieldConversionException {
+        return getAttributionView("blob.html", getBlobMediaView(blob));
     }
 
     public AttributionView<Entry> getEntryView(final Entry entry) {
@@ -126,8 +130,8 @@ public class ViewFactory {
                 recordsView);
     }
 
-    public ItemView getItemMediaView(final Item item) throws FieldConversionException {
-        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
+    public ItemView getBlobMediaView(final Blob blob) throws FieldConversionException {
+        return new ItemView(blob.getSha256hex(), itemConverter.convertItem(blob, register.get().getFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
@@ -162,12 +166,12 @@ public class ViewFactory {
                 key);
     }
 
-    public PreviewItemPageView previewItemPageView(final Item item, final String key, final String previewType) throws FieldConversionException {
+    public PreviewItemPageView previewItemPageView(final Blob blob, final String key, final String previewType) throws FieldConversionException {
         return new PreviewItemPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),
-                getItemMediaView(item),
+                getBlobMediaView(blob),
                 registerIdProvider,
                 key);
     }

@@ -46,7 +46,7 @@ public class DataDownload {
     @Timed
     public Response downloadRegister() {
         Collection<Entry> entries = register.getAllEntries();
-        Collection<Item> items = register.getAllItems();
+        Collection<Blob> blobs = register.getAllItems();
 
         RegisterDetail registerDetail = viewFactory.registerDetailView(
                 register.getTotalRecords(),
@@ -55,7 +55,7 @@ public class DataDownload {
                 register.getCustodianName()).getRegisterDetail();
 
         return Response
-                .ok(new ArchiveCreator().create(registerDetail, entries, items))
+                .ok(new ArchiveCreator().create(registerDetail, entries, blobs))
                 .header("Content-Disposition", String.format("attachment; filename=%s-%d.zip", registerPrimaryKey, System.currentTimeMillis()))
                 .header("Content-Transfer-Encoding", "binary")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM)

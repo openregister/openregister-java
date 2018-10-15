@@ -1,8 +1,8 @@
 package uk.gov.register.store;
 
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
 import uk.gov.register.exceptions.IndexingException;
@@ -16,11 +16,11 @@ import java.util.function.Function;
 public interface DataAccessLayer {
 
     // Items
-    void addItem(Item item);
-    Optional<Item> getItem(HashValue hash);
-    Collection<Item> getAllItems();
-    Iterator<Item> getItemIterator(EntryType entryType);
-    Iterator<Item> getItemIterator(int startEntryNumber, int endEntryNumber);
+    void addItem(Blob blob);
+    Optional<Blob> getItem(HashValue hash);
+    Collection<Blob> getAllItems();
+    Iterator<Blob> getItemIterator(EntryType entryType);
+    Iterator<Blob> getItemIterator(int startEntryNumber, int endEntryNumber);
 
     // Entries
     void appendEntry(Entry entry) throws IndexingException;

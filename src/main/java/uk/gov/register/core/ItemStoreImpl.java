@@ -15,32 +15,32 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
-    public void addItem(Item item) {
-        dataAccessLayer.addItem(item);
+    public void addItem(Blob blob) {
+        dataAccessLayer.addItem(blob);
     }
 
     @Override
-    public Optional<Item> getItem(HashValue hash) {
+    public Optional<Blob> getItem(HashValue hash) {
         return dataAccessLayer.getItem(hash);
     }
     
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Blob> getAllItems() {
         return dataAccessLayer.getAllItems();
     }
 
     @Override
-    public Iterator<Item> getUserItemIterator() {
+    public Iterator<Blob> getUserItemIterator() {
         return dataAccessLayer.getItemIterator(EntryType.user);
     }
 
     @Override
-    public Iterator<Item> getUserItemIterator(int startEntryNumber, int endEntryNumber) {
+    public Iterator<Blob> getUserItemIterator(int startEntryNumber, int endEntryNumber) {
         return dataAccessLayer.getItemIterator(startEntryNumber, endEntryNumber);
     }
 
     @Override
-    public Iterator<Item> getSystemItemIterator() {
+    public Iterator<Blob> getSystemItemIterator() {
         return dataAccessLayer.getItemIterator(EntryType.system);
     }
 }

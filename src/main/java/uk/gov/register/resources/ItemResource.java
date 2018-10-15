@@ -2,7 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.util.HashValue;
@@ -49,12 +49,12 @@ public class ItemResource {
     })
     @Timed
     public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
-        return getItem(itemHash).map(viewFactory::getItemMediaView)
+        return getItem(itemHash).map(viewFactory::getBlobMediaView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
 
-    private Optional<Item> getItem(String itemHash) {
+    private Optional<Blob> getItem(String itemHash) {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
-        return register.getItem(hash);
+        return register.getBlob(hash);
     }
 }

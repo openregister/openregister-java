@@ -18,7 +18,7 @@ public class R__10_Insert_register_metadataTest {
         R__10_Insert_register_metadata migration = new R__10_Insert_register_metadata();
         InputStream inputStream = Files.newInputStream(Paths.get("src/test/resources/config", "external-registers.yaml"));
         List<Record> records = migration.parseYamlToRecords(Arrays.asList("country"), inputStream, "register");
-        assertThat(records.get(0).getItems().get(0).getValue("register").get(), is("country"));
+        assertThat(records.get(0).getBlobs().get(0).getValue("register").get(), is("country"));
     }
 
     @Test

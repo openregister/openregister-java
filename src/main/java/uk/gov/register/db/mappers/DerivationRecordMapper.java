@@ -7,7 +7,7 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.Record;
 import uk.gov.register.util.HashValue;
 
@@ -49,18 +49,18 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
         }
 
         List<HashValue> hashValues = new ArrayList<>();
-        List<Item> items = new ArrayList<>();
+        List<Blob> blobs = new ArrayList<>();
 
         for (int i = 0; i < hashes.length; i++) {
             HashValue hashValue = new HashValue(SHA256, hashes[i]);
             hashValues.add(hashValue);
-            Item item = new Item(hashValue, jsonNode(content[i]));
-            items.add(item);
+            Blob blob = new Blob(hashValue, jsonNode(content[i]));
+            blobs.add(blob);
         }
 
         Entry entry = new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.user);
 
-        return new Record(entry, items);
+        return new Record(entry, blobs);
     }
 
     private JsonNode jsonNode(String s) {

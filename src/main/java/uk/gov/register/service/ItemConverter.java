@@ -14,8 +14,8 @@ import static uk.gov.register.core.Cardinality.ONE;
 @Service
 public class ItemConverter {
 
-    public Map<String, FieldValue> convertItem(final Item item, final Map<String, Field> fieldsByName) throws FieldConversionException {
-        return item.getFieldsStream().collect(toMap(Map.Entry::getKey, e -> convert(e, fieldsByName)));
+    public Map<String, FieldValue> convertItem(final Blob blob, final Map<String, Field> fieldsByName) throws FieldConversionException {
+        return blob.getFieldsStream().collect(toMap(Map.Entry::getKey, e -> convert(e, fieldsByName)));
     }
 
     FieldValue convert(final Map.Entry<String, JsonNode> fieldNameToJson, final Map<String, Field> fieldsByName) throws FieldConversionException {

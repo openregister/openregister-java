@@ -138,16 +138,16 @@ public class PreviewRecordPageViewTest {
         final Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
         final Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
         final Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
-        final Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
-        final Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
-        final Record record1 = new Record(entry1, Collections.singletonList(item1));
-        final Record record2 = new Record(entry2, Collections.singletonList(item2));
+        final Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
+        final Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
+        final Record record1 = new Record(entry1, Collections.singletonList(blob1));
+        final Record record2 = new Record(entry2, Collections.singletonList(blob2));
         final ItemConverter itemConverter = mock(ItemConverter.class);
         final Map<String, Field> fieldsByName = mock(Map.class);
 
-        when(itemConverter.convertItem(item1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(itemConverter.convertItem(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(item2, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(itemConverter.convertItem(blob2, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
 
         return new RecordsView(Arrays.asList(record1, record2), fieldsByName, itemConverter, false, false);

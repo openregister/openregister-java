@@ -6,9 +6,9 @@ import org.assertj.core.util.Lists;
 import org.junit.*;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.functional.app.WipeDatabaseRule;
@@ -102,19 +102,19 @@ public class IndexQueryDaoIntegrationTest {
 
         assertThat(recordList.size(), equalTo(1));
         Record record = recordList.get(0);
-        assertThat(record.getItems().size(), is(2));
+        assertThat(record.getBlobs().size(), is(2));
         assertThat(record.getEntry().getEntryNumber(), is(96));
         assertThat(record.getEntry().getIndexEntryNumber(), is(96));
 
         HashValue hash01c = decode(SHA256, "sha-256:xxx01c");
-        assertTrue(record.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash01c)));
-        Item item = record.getItems().stream().filter(i -> i.getSha256hex().equals(hash01c)).findFirst().get();
-        assertThat(item.getValue("name").get(), is("Bedford"));
+        assertTrue(record.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash01c)));
+        Blob blob = record.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash01c)).findFirst().get();
+        assertThat(blob.getValue("name").get(), is("Bedford"));
 
         HashValue hash126 = decode(SHA256, "sha-256:xxx126");
-        assertTrue(record.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash126)));
-        Item item2 = record.getItems().stream().filter(i -> i.getSha256hex().equals(hash126)).findFirst().get();
-        assertThat(item2.getValue("name").get(), is("New Bath"));
+        assertTrue(record.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash126)));
+        Blob blob2 = record.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash126)).findFirst().get();
+        assertThat(blob2.getValue("name").get(), is("New Bath"));
     }
 
     @Test
@@ -125,19 +125,19 @@ public class IndexQueryDaoIntegrationTest {
 
         assertThat(recordList.size(), equalTo(1));
         Record record = recordList.get(0);
-        assertThat(record.getItems().size(), is(2));
+        assertThat(record.getBlobs().size(), is(2));
         assertThat(record.getEntry().getEntryNumber(), is(96));
         assertThat(record.getEntry().getIndexEntryNumber(), is(97));
 
         HashValue hash1 = decode(SHA256, "sha-256:xxxbdc");
-        assertTrue("record should contain key sha-256:xxxbdc", record.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash1)));
-        Item item = record.getItems().stream().filter(i -> i.getSha256hex().equals(hash1)).findFirst().get();
-        assertThat(item.getValue("name").get(), is("Birmingham"));
+        assertTrue("record should contain key sha-256:xxxbdc", record.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash1)));
+        Blob blob = record.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash1)).findFirst().get();
+        assertThat(blob.getValue("name").get(), is("Birmingham"));
 
         HashValue hash2 = decode(SHA256, "sha-256:xxx509");
-        assertTrue("record should contain key sha-256:xxx509", record.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash2)));
-        Item item2 = record.getItems().stream().filter(i -> i.getSha256hex().equals(hash2)).findFirst().get();
-        assertThat(item2.getValue("name").get(), is("Blackburn with Darwen"));
+        assertTrue("record should contain key sha-256:xxx509", record.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash2)));
+        Blob blob2 = record.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash2)).findFirst().get();
+        assertThat(blob2.getValue("name").get(), is("Blackburn with Darwen"));
     }
 
     @Test
@@ -164,33 +164,33 @@ public class IndexQueryDaoIntegrationTest {
 
         Record record0 = records.get(0);
 
-        assertThat(record0.getItems().size(), is(2));
+        assertThat(record0.getBlobs().size(), is(2));
         assertThat(record0.getEntry().getEntryNumber(), is(96));
         assertThat(record0.getEntry().getIndexEntryNumber(), is(97));
 
         HashValue hash1 = decode(SHA256, "sha-256:xxxbdc");
-        assertTrue(record0.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash1)));
-        Item item1 = record0.getItems().stream().filter(i -> i.getSha256hex().equals(hash1)).findFirst().get();
-        assertThat(item1.getValue("name").get(), is("Birmingham"));
+        assertTrue(record0.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash1)));
+        Blob blob1 = record0.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash1)).findFirst().get();
+        assertThat(blob1.getValue("name").get(), is("Birmingham"));
 
         HashValue hash2 = decode(SHA256, "sha-256:xxx509");
-        assertTrue(record0.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash2)));
-        Item item2 = record0.getItems().stream().filter(i -> i.getSha256hex().equals(hash2)).findFirst().get();
-        assertThat(item2.getValue("name").get(), is("Blackburn with Darwen"));
+        assertTrue(record0.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash2)));
+        Blob blob2 = record0.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash2)).findFirst().get();
+        assertThat(blob2.getValue("name").get(), is("Blackburn with Darwen"));
 
         Record record1 = records.get(1);
         assertThat(record1.getEntry().getEntryNumber(), is(96));
         assertThat(record1.getEntry().getIndexEntryNumber(), is(96));
 
         HashValue hash01c = decode(SHA256, "sha-256:xxx01c");
-        assertTrue(record1.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash01c)));
-        Item item3 = record1.getItems().stream().filter(i -> i.getSha256hex().equals(hash01c)).findFirst().get();
-        assertThat(item3.getValue("name").get(), is("Bedford"));
+        assertTrue(record1.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash01c)));
+        Blob blob3 = record1.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash01c)).findFirst().get();
+        assertThat(blob3.getValue("name").get(), is("Bedford"));
 
         HashValue hash126 = decode(SHA256, "sha-256:xxx126");
-        assertTrue(record1.getItems().stream().anyMatch(i -> i.getSha256hex().equals(hash126)));
-        Item item4 = record1.getItems().stream().filter(i -> i.getSha256hex().equals(hash126)).findFirst().get();
-        assertThat(item4.getValue("name").get(), is("New Bath"));
+        assertTrue(record1.getBlobs().stream().anyMatch(i -> i.getSha256hex().equals(hash126)));
+        Blob blob4 = record1.getBlobs().stream().filter(i -> i.getSha256hex().equals(hash126)).findFirst().get();
+        assertThat(blob4.getValue("name").get(), is("New Bath"));
 
     }
 
@@ -280,7 +280,7 @@ public class IndexQueryDaoIntegrationTest {
         assertThat(recordList.size(), equalTo(1));
         Record record = recordList.get(0);
 
-        assertThat(record.getItems().size(), is(0));
+        assertThat(record.getBlobs().size(), is(0));
         assertThat(record.getEntry().getEntryNumber(), is(92));
         assertThat(record.getEntry().getIndexEntryNumber(), is(92));
     }

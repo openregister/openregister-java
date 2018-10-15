@@ -15,8 +15,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -29,14 +27,14 @@ public class RecordViewTest {
     @Before
     public void setup() throws IOException {
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b", EntryType.user);
-        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"a\":\"d\"}"));
-        Record record = new Record(entry, Arrays.asList(item, item2));
+        Blob blob = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}"));
+        Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"a\":\"d\"}"));
+        Record record = new Record(entry, Arrays.asList(blob, blob2));
 
         ItemConverter itemConverter = mock(ItemConverter.class);
         Map<String, Field> fieldsByName = mock(Map.class);
-        when(itemConverter.convertItem(item, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
-        when(itemConverter.convertItem(item2, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
+        when(itemConverter.convertItem(blob, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
+        when(itemConverter.convertItem(blob2, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
 
         recordView = new RecordView(record, fieldsByName, itemConverter);
     }

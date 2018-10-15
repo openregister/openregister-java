@@ -52,7 +52,7 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
                 .map(f -> f.fieldName)
                 .collect(Collectors.toList());
 
-        return new CsvRepresentation<>(Item.csvSchema(fieldNames), fieldValueMap);
+        return new CsvRepresentation<>(Blob.csvSchema(fieldNames), fieldValueMap);
     }
 
     public String itemsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {

@@ -19,7 +19,7 @@ public class InMemoryItemStore extends ItemStoreImpl {
     }
 
     @Override
-    public void addItem(Item item) {
-        itemDAO.insertInBatch(singletonList(item), "schema");
+    public void addItem(Blob blob) {
+        itemDAO.insertInBatch(singletonList(blob), "schema");
     }
 }

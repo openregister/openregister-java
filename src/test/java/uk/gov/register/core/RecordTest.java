@@ -17,18 +17,18 @@ public class RecordTest {
     private final HashValue hash2 = new HashValue(HashingAlgorithm.SHA256, "hash2");
     private final HashValue hash3 = new HashValue(HashingAlgorithm.SHA256, "hash3");
 
-    private final Item item1 = getItem("{\"key1\":\"value1\"}");
-    private final Item item2 = getItem("{\"key2\":\"value2\"}");
-    private final Item item3 = getItem("{\"key3\":\"value3\"}");
+    private final Blob blob1 = getItem("{\"key1\":\"value1\"}");
+    private final Blob blob2 = getItem("{\"key2\":\"value2\"}");
+    private final Blob blob3 = getItem("{\"key3\":\"value3\"}");
 
     @Test
     public void recordsShouldBeEqualWithSameEntryAndItems() throws IOException {
         Record record1 = new Record(
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item1, item2));
+                Arrays.asList(blob1, blob2));
         Record record2 = new Record(
                 new Entry(1, Arrays.asList(hash2, hash1), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item2, item1));
+                Arrays.asList(blob2, blob1));
 
         assertThat(record1.equals(record2), is(true));
     }
@@ -37,10 +37,10 @@ public class RecordTest {
     public void recordsShouldHaveSameHashCodeWithSameEntryAndItems() throws IOException {
         Record record1 = new Record(
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item1, item2));
+                Arrays.asList(blob1, blob2));
         Record record2 = new Record(
                 new Entry(1, Arrays.asList(hash2, hash1), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item2, item1));
+                Arrays.asList(blob2, blob1));
 
         assertThat(record1.hashCode(), is(record2.hashCode()));
     }
@@ -49,10 +49,10 @@ public class RecordTest {
     public void recordsShouldNotBeEqualWithDifferentEntry() throws IOException {
         Record record1 = new Record(
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item1, item2));
+                Arrays.asList(blob1, blob2));
         Record record2 = new Record(
                 new Entry(2, Arrays.asList(hash2, hash1), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item2, item1));
+                Arrays.asList(blob2, blob1));
 
         assertThat(record1.equals(record2), is(false));
     }
@@ -61,10 +61,10 @@ public class RecordTest {
     public void recordsShouldHaveDifferentHashCodesWithDifferentEntry() throws IOException {
         Record record1 = new Record(
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item1, item2));
+                Arrays.asList(blob1, blob2));
         Record record2 = new Record(
                 new Entry(2, Arrays.asList(hash2, hash1), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item2, item1));
+                Arrays.asList(blob2, blob1));
 
         assertThat(record1.hashCode(), not(record2.hashCode()));
     }
@@ -73,10 +73,10 @@ public class RecordTest {
     public void recordsShouldNotBeEqualWithDifferentItems() throws IOException {
         Record record1 = new Record(
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item1, item2));
+                Arrays.asList(blob1, blob2));
         Record record2 = new Record(
                 new Entry(1, Arrays.asList(hash2, hash1, hash3), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item2, item1, item3));
+                Arrays.asList(blob2, blob1, blob3));
 
         assertThat(record1.equals(record2), is(false));
     }
@@ -85,17 +85,17 @@ public class RecordTest {
     public void recordsShouldHaveDifferentHashCodeWithDifferentItems() throws IOException {
         Record record1 = new Record(
                 new Entry(1, Arrays.asList(hash1, hash2), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item1, item2));
+                Arrays.asList(blob1, blob2));
         Record record2 = new Record(
                 new Entry(1, Arrays.asList(hash2, hash1, hash3), Instant.parse("2017-03-10T00:00:00Z"), "key", EntryType.user),
-                Arrays.asList(item2, item1, item3));
+                Arrays.asList(blob2, blob1, blob3));
 
         assertThat(record1.hashCode(), not(record2.hashCode()));
     }
 
-    private Item getItem(String json) {
+    private Blob getItem(String json) {
         try {
-            return new Item(new ObjectMapper().readTree(json));
+            return new Blob(new ObjectMapper().readTree(json));
         } catch (IOException e) {
             return null;
         }

@@ -15,7 +15,7 @@ import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
 import uk.gov.register.util.EntryItemPair;
@@ -69,7 +69,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 				registersRecordsInputStream = getInputStream(flywayConfiguration.getPlaceholders().get("registersYamlUrl"));
 
 				Record registerRecord = parseYamlToRecords(Arrays.asList(registerName), registersRecordsInputStream, "register").get(0);
-				Item registerItem = registerRecord.getItems().get(0);
+				Blob registerItem = registerRecord.getBlobs().get(0);
 				List<String> fieldNames = getFieldNames(registerItem);
 
 				fieldsRecordsInputStream = getInputStream(flywayConfiguration.getPlaceholders().get("fieldsYamlUrl"));
@@ -96,7 +96,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 
 	private Record singleRecord(String name, String value, int entryNumber) {
 		Map<String, String> registerNameMap = ImmutableMap.of(name, value);
-		Item nameItem = new Item(JSON_MAPPER.convertValue(registerNameMap, JsonNode.class));
+		Blob nameItem = new Blob(JSON_MAPPER.convertValue(registerNameMap, JsonNode.class));
 		Entry nameEntry = new Entry(entryNumber, nameItem.getSha256hex(), Instant.now(), name, EntryType.system);
 		return new Record(nameEntry, nameItem);
 
@@ -116,7 +116,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 		for (String key : keys) {
 			JsonNode entryNode = jsonNode.get(key);
 			ArrayNode itemNodes = (ArrayNode) entryNode.get("item");
-			Item item = new Item(itemNodes.get(0));
+			Blob item = new Blob(itemNodes.get(0));
 			Entry entry = JSON_MAPPER.treeToValue(entryNode, Entry.class);
 			Entry entryNewKey = partialCopy(entry, prefix + ":" + entry.getKey(), item.getSha256hex());
 			records.add(new Record(entryNewKey, item));
@@ -124,7 +124,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 		return records;
 	}
 
-	private List<String> getFieldNames(Item registerItem) {
+	private List<String> getFieldNames(Blob registerItem) {
 		ArrayNode fieldNamesArray = (ArrayNode) registerItem.getContent().get("fields");
 		List<String> fieldNames = new ArrayList<>();
 		for (JsonNode jsonNode : fieldNamesArray) {
@@ -140,11 +140,11 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 	private Record copyWithEntryNumber(Record record, int entryNumber) {
 		Entry entry = record.getEntry();
 		Entry newEntry = new Entry(entryNumber, entryNumber, entry.getItemHashes(), entry.getTimestamp(), entry.getKey(), entry.getEntryType());
-		return new Record(newEntry, record.getItems());
+		return new Record(newEntry, record.getBlobs());
 	}
 
 	private void writeRecords(Connection connection, Handle handle, Iterable<Record> records) throws SQLException {
-		List<Item> items = Streams.stream(records).map(r -> r.getItems().get(0)).collect(toList());
+		List<Blob> items = Streams.stream(records).map(r -> r.getBlobs().get(0)).collect(toList());
 		List<Entry> entries = Streams.stream(records).map(r -> r.getEntry()).collect(toList());
 		List<EntryItemPair> entryItems = entries.stream()
 				.map(e -> new EntryItemPair(e.getEntryNumber(), e.getItemHashes().get(0))).collect(toList());

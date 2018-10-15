@@ -3,7 +3,7 @@ package uk.gov.register.serialization;
 import com.google.common.collect.Iterators;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.core.Item;
+import uk.gov.register.core.Blob;
 import uk.gov.register.core.Register;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
@@ -41,7 +41,7 @@ public class RSFCreator {
 
             HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();
             HashValue nextRootHash = register.getRegisterProof(totalEntries2).getRootHash();
-            Iterator<Item> metadataItemIterator = totalEntries1 == 0 ? register.getSystemItemIterator() : Collections.emptyIterator();
+            Iterator<Blob> metadataItemIterator = totalEntries1 == 0 ? register.getSystemItemIterator() : Collections.emptyIterator();
             Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getEntryIterator(IndexNames.METADATA) : Collections.emptyIterator();
 
             iterators = Iterators.concat(

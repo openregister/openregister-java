@@ -17,7 +17,7 @@ public class Index {
 
     public Optional<Record> getRecord(String key, String derivationName) {
         Optional<Record> record = dataAccessLayer.getRecord(key, derivationName);
-        return record.filter(r -> r.getItems().size() != 0);
+        return record.filter(r -> r.getBlobs().size() != 0);
     }
 
     public List<Record> getRecords(int limit, int offset, String derivationName) {

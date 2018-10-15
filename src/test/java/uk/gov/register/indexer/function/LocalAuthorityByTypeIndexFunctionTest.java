@@ -46,8 +46,8 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     @Test
     public void executeWithKeyAndHash_shouldReturnEmptySet_whenLocalAuthorityTypeIsNotSpecifiedInItem() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
-        Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"name\":\"City of London\"}"));
-        when(dataAccessLayer.getItem(itemHash)).thenReturn(Optional.of(item));
+        Blob blob = new Blob(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"name\":\"City of London\"}"));
+        when(dataAccessLayer.getItem(itemHash)).thenReturn(Optional.of(blob));
 
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute(h -> dataAccessLayer.getItem(h), EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
@@ -58,8 +58,8 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     @Test
     public void executeWithKeyAndHash_shouldReturnIndexValueItemPairByLocalAuthType_whenItemExists() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
-        Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
-        when(dataAccessLayer.getItem(itemHash)).thenReturn(Optional.of(item));
+        Blob blob = new Blob(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
+        when(dataAccessLayer.getItem(itemHash)).thenReturn(Optional.of(blob));
 
         Set<IndexKeyItemPair> resultSet = new HashSet<>();
         func.execute(h -> dataAccessLayer.getItem(h), EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
@@ -71,9 +71,9 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     @Test
     public void executeWithEntry_shouldReturnIndexValueItemPairByLocalAuthType_whenItemExists() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
-        Item item = new Item(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
+        Blob blob = new Blob(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
         Entry entry = new Entry(1, itemHash, Instant.now(), "LND", EntryType.user);
-        when(dataAccessLayer.getItem(itemHash)).thenReturn(Optional.of(item));
+        when(dataAccessLayer.getItem(itemHash)).thenReturn(Optional.of(blob));
 
         Set<IndexKeyItemPair> resultSet = func.execute(h -> dataAccessLayer.getItem(h), entry);
 
@@ -85,11 +85,11 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     public void executeWithEntry_shouldReturnIndexValueItemPairsByLocalAuthType_whenEntryContainsMultipleItems() throws IOException {
         HashValue itemHash1 = new HashValue(HashingAlgorithm.SHA256, "abc");
         HashValue itemHash2 = new HashValue(HashingAlgorithm.SHA256, "def");
-        Item item1 = new Item(itemHash1, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
-        Item item2 = new Item(itemHash2, objectMapper.readTree("{\"local-authority-eng\":\"WOT\",\"local-authority-type\":\"NMD\",\"name\":\"Worthing\"}"));
+        Blob blob1 = new Blob(itemHash1, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
+        Blob blob2 = new Blob(itemHash2, objectMapper.readTree("{\"local-authority-eng\":\"WOT\",\"local-authority-type\":\"NMD\",\"name\":\"Worthing\"}"));
         Entry entry = new Entry(1, Arrays.asList(itemHash1, itemHash2), Instant.now(), "key", EntryType.user);
-        when(dataAccessLayer.getItem(itemHash1)).thenReturn(Optional.of(item1));
-        when(dataAccessLayer.getItem(itemHash2)).thenReturn(Optional.of(item2));
+        when(dataAccessLayer.getItem(itemHash1)).thenReturn(Optional.of(blob1));
+        when(dataAccessLayer.getItem(itemHash2)).thenReturn(Optional.of(blob2));
 
         Set<IndexKeyItemPair> resultSet = func.execute(h -> dataAccessLayer.getItem(h), entry);
 
