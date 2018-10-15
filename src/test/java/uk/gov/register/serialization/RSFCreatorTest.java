@@ -176,6 +176,7 @@ public class RSFCreatorTest {
         when(register.getItemIterator(EntryType.user)).thenReturn(Arrays.asList(item1, item2).iterator());
         when(register.getEntryIterator(EntryType.system)).thenReturn(Collections.emptyIterator());
         when(register.getEntryIterator(EntryType.user)).thenReturn(Arrays.asList(entry1, entry2).iterator());
+        when(register.getItemIterator(EntryType.system)).thenReturn(Arrays.asList(systemItem).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 28828);
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
