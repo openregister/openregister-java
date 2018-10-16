@@ -19,11 +19,11 @@ import static org.mockito.Mockito.when;
 
 public class BlobConverterTest {
 
-    private ItemConverter itemConverter;
+    private BlobConverter blobConverter;
 
     @Before
     public void setup() throws IOException, NoSuchConfigException {
-        itemConverter = new ItemConverter();
+        blobConverter = new BlobConverter();
     }
 
     @Test
@@ -36,7 +36,7 @@ public class BlobConverterTest {
         Field citizenNameField = new Field("citizen-names", "string", null, Cardinality.ONE, "Name of the citizens of a country");
         Map<String, Field> fieldsByName = ImmutableMap.of("citizen-names", citizenNameField);
 
-        FieldValue result = itemConverter.convert(entry, fieldsByName);
+        FieldValue result = blobConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(StringValue.class));
         assertThat(result.getValue(), equalTo("Name for the citzens of a country."));
@@ -52,7 +52,7 @@ public class BlobConverterTest {
         Field parentBodiesField = new Field("parent-bodies", "string", null, Cardinality.MANY, "Parent Bodies");
         Map<String, Field> fieldsByName = ImmutableMap.of("parent-bodies", parentBodiesField);
 
-        FieldValue result = itemConverter.convert(entry, fieldsByName);
+        FieldValue result = blobConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(ListValue.class));
     }
@@ -67,7 +67,7 @@ public class BlobConverterTest {
         Field schoolField = new Field("school", "string", new RegisterId("school"), Cardinality.ONE, "A school in the UK.");
         Map<String, Field> fieldsByName = ImmutableMap.of("school", schoolField);
 
-        FieldValue result = itemConverter.convert(entry, fieldsByName);
+        FieldValue result = blobConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(RegisterLinkValue.class));
         assertThat(result.getValue(), equalTo("A school in the UK."));
@@ -84,7 +84,7 @@ public class BlobConverterTest {
         Map<String, Field> fieldsByName = ImmutableMap.of("business", businessField);
 
 
-        FieldValue result = itemConverter.convert(entry, fieldsByName);
+        FieldValue result = blobConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(RegisterLinkValue.CurieValue.class));
         assertThat(result.getValue(), equalTo("business:13245"));
@@ -101,7 +101,7 @@ public class BlobConverterTest {
         Map<String, Field> fieldsByName = ImmutableMap.of("website", websiteField);
 
 
-        FieldValue result = itemConverter.convert(entry, fieldsByName);
+        FieldValue result = blobConverter.convert(entry, fieldsByName);
 
         assertThat(result, instanceOf(UrlValue.class));
         assertThat(result.getValue(), equalTo("http://www.example.com"));

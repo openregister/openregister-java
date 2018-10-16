@@ -8,7 +8,7 @@ import uk.gov.register.core.*;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -26,7 +26,7 @@ public class ViewFactory {
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
-    private final ItemConverter itemConverter;
+    private final BlobConverter blobConverter;
     private final Provider<RegisterId> registerIdProvider;
 
     @Inject
@@ -37,7 +37,7 @@ public class ViewFactory {
                        final Provider<HomepageContentConfiguration> homepageContentConfiguration,
                        final RegisterResolver registerResolver,
                        final Provider<RegisterReadOnly> register,
-                       final ItemConverter itemConverter,
+                       final BlobConverter blobConverter,
                        final Provider<RegisterId> registerIdProvider) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
@@ -46,7 +46,7 @@ public class ViewFactory {
         this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
-        this.itemConverter = itemConverter;
+        this.blobConverter = blobConverter;
         this.registerIdProvider = registerIdProvider;
     }
 
@@ -131,19 +131,19 @@ public class ViewFactory {
     }
 
     public ItemView getBlobMediaView(final Blob blob) throws FieldConversionException {
-        return new ItemView(blob.getSha256hex(), itemConverter.convertItem(blob, register.get().getFieldsByName()), getFields());
+        return new ItemView(blob.getSha256hex(), blobConverter.convertItem(blob, register.get().getFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
-        return new RecordView(record, register.get().getFieldsByName(), itemConverter);
+        return new RecordView(record, register.get().getFieldsByName(), blobConverter);
     }
 
     public RecordsView getRecordsMediaView(final List<Record> records) throws FieldConversionException {
-        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, false);
+        return new RecordsView(records, register.get().getFieldsByName(), blobConverter, false, false);
     }
 
     public RecordsView getIndexRecordsMediaView(final List<Record> records) throws FieldConversionException {
-        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
+        return new RecordsView(records, register.get().getFieldsByName(), blobConverter, false, true);
     }
 
     public PreviewRecordPageView previewRecordsPageView(final List<Record> records, final String key, final String previewType) {

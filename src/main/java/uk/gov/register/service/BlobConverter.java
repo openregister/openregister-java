@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toMap;
 import static uk.gov.register.core.Cardinality.ONE;
 
 @Service
-public class ItemConverter {
+public class BlobConverter {
 
     public Map<String, FieldValue> convertItem(final Blob blob, final Map<String, Field> fieldsByName) throws FieldConversionException {
         return blob.getFieldsStream().collect(toMap(Map.Entry::getKey, e -> convert(e, fieldsByName)));

@@ -5,14 +5,14 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
 import uk.gov.register.exceptions.FieldConversionException;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 
 import java.util.Map;
 
 public class RecordView extends RecordsView {
 
-    public RecordView(Record record, Map<String,Field> fields, ItemConverter itemConverter) throws FieldConversionException {
-        super(ImmutableList.of(record), fields, itemConverter, true, false);
+    public RecordView(Record record, Map<String,Field> fields, BlobConverter blobConverter) throws FieldConversionException {
+        super(ImmutableList.of(record), fields, blobConverter, true, false);
     }
 
     @SuppressWarnings("unused, used by template")

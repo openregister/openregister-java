@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.FieldConversionException;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.representations.turtle.RecordsTurtleWriter;
@@ -43,12 +43,12 @@ public class RecordsView implements CsvRepresentationView {
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
-    public RecordsView(final List<Record> records, final Map<String, Field> fieldsByName, final ItemConverter itemConverter,
+    public RecordsView(final List<Record> records, final Map<String, Field> fieldsByName, final BlobConverter blobConverter,
                        final boolean resolveAllItemLinks, final boolean displayEntryKeyColumn) throws FieldConversionException {
         this.displayEntryKeyColumn = displayEntryKeyColumn;
         this.resolveAllItemLinks = resolveAllItemLinks;
         this.fieldsByName = fieldsByName;
-        recordMap = getItemViews(records, itemConverter);
+        recordMap = getItemViews(records, blobConverter);
     }
 
     public Map<Entry, List<ItemView>> getRecords() {
@@ -140,11 +140,11 @@ public class RecordsView implements CsvRepresentationView {
         return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
     }
 
-    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) throws FieldConversionException {
+    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final BlobConverter blobConverter) throws FieldConversionException {
         final Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
             map.put(record.getEntry(), record.getBlobs().stream().map(item ->
-                    new ItemView(item.getSha256hex(), itemConverter.convertItem(item, fieldsByName), getFields()))
+                    new ItemView(item.getSha256hex(), blobConverter.convertItem(item, fieldsByName), getFields()))
                     .collect(Collectors.toList()));
         });
         return map;

@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
 import uk.gov.register.core.*;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.ItemView;
@@ -128,11 +128,11 @@ public class CsvWriterTest {
                 "key3", new Field("key3", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
                 "key4", new Field("key4", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
-        ItemConverter itemConverter = mock(ItemConverter.class);
-        when(itemConverter.convertItem(blob, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
-        when(itemConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("blob2")));
+        BlobConverter blobConverter = mock(BlobConverter.class);
+        when(blobConverter.convertItem(blob, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
+        when(blobConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("blob2")));
 
-        RecordView recordView = new RecordView(record, fields, itemConverter);
+        RecordView recordView = new RecordView(record, fields, blobConverter);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -163,21 +163,21 @@ public class CsvWriterTest {
         Record record1 = new Record(entry1, Arrays.asList(blob1));
         Record record2 = new Record(entry2, Arrays.asList(blob2, blob3));
 
-        ItemConverter itemConverter = mock(ItemConverter.class);
+        BlobConverter blobConverter = mock(BlobConverter.class);
 
         ImmutableMap<String,Field> fields = ImmutableMap.of(
                 "address",new Field("address", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
                 "street", new Field("street", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
-        when(itemConverter.convertItem(blob1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(blobConverter.convertItem(blob1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(blobConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
-        when(itemConverter.convertItem(blob3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(blobConverter.convertItem(blob3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("baz")));
 
 
-        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fields, itemConverter, false, false);
+        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fields, blobConverter, false, false);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

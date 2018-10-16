@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import uk.gov.register.core.*;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -36,14 +36,14 @@ public class RecordsViewTest {
         Record record1 = new Record(entry1, Arrays.asList(blob1));
         Record record2 = new Record(entry2, Arrays.asList(blob2));
 
-        ItemConverter itemConverter = mock(ItemConverter.class);
+        BlobConverter blobConverter = mock(BlobConverter.class);
         Map<String, Field> fieldsByName = mock(Map.class);
-        when(itemConverter.convertItem(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(blobConverter.convertItem(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(blob2, fieldsByName )).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(blobConverter.convertItem(blob2, fieldsByName )).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
 
-        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fieldsByName, itemConverter, false, false);
+        RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fieldsByName, blobConverter, false, false);
 
         Map<String, JsonNode> result = recordsView.getNestedRecordJson();
         assertThat(result.size(), equalTo(2));

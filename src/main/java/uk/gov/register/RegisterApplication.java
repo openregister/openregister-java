@@ -37,7 +37,7 @@ import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 import uk.gov.register.service.RegisterSerialisationFormatService;
 import uk.gov.register.thymeleaf.ThymeleafViewRenderer;
 import uk.gov.register.util.CanonicalJsonMapper;
@@ -151,7 +151,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(RequestContext.class).to(RequestContext.class).to(SchemeContext.class);
                 bindFactory(Factories.RegisterIdProvider.class).to(RegisterId.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
-                bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
+                bind(BlobConverter.class).to(BlobConverter.class).in(Singleton.class);
                 bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
 
                 bindFactory(Factories.PostgresRegisterFactory.class).to(Register.class).to(RegisterReadOnly.class);

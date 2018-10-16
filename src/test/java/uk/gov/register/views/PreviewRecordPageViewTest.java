@@ -11,7 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.register.configuration.HomepageContent;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 import uk.gov.register.util.HashValue;
 
 import javax.inject.Provider;
@@ -142,14 +142,14 @@ public class PreviewRecordPageViewTest {
         final Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
         final Record record1 = new Record(entry1, Collections.singletonList(blob1));
         final Record record2 = new Record(entry2, Collections.singletonList(blob2));
-        final ItemConverter itemConverter = mock(ItemConverter.class);
+        final BlobConverter blobConverter = mock(BlobConverter.class);
         final Map<String, Field> fieldsByName = mock(Map.class);
 
-        when(itemConverter.convertItem(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(blobConverter.convertItem(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(itemConverter.convertItem(blob2, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(blobConverter.convertItem(blob2, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
 
-        return new RecordsView(Arrays.asList(record1, record2), fieldsByName, itemConverter, false, false);
+        return new RecordsView(Arrays.asList(record1, record2), fieldsByName, blobConverter, false, false);
     }
 }

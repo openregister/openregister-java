@@ -7,7 +7,7 @@ import io.dropwizard.jackson.Jackson;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.*;
-import uk.gov.register.service.ItemConverter;
+import uk.gov.register.service.BlobConverter;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -31,12 +31,12 @@ public class RecordViewTest {
         Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"a\":\"d\"}"));
         Record record = new Record(entry, Arrays.asList(blob, blob2));
 
-        ItemConverter itemConverter = mock(ItemConverter.class);
+        BlobConverter blobConverter = mock(BlobConverter.class);
         Map<String, Field> fieldsByName = mock(Map.class);
-        when(itemConverter.convertItem(blob, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
-        when(itemConverter.convertItem(blob2, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
+        when(blobConverter.convertItem(blob, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("b")));
+        when(blobConverter.convertItem(blob2, fieldsByName)).thenReturn(ImmutableMap.of("a", new StringValue("d")));
 
-        recordView = new RecordView(record, fieldsByName, itemConverter);
+        recordView = new RecordView(record, fieldsByName, blobConverter);
     }
 
     @Test
