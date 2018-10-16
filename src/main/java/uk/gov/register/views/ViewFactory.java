@@ -97,10 +97,6 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerResolver, fieldValueMap);
     }
 
-    public AttributionView<BlobView> getItemView(final Blob blob) throws FieldConversionException {
-        return getAttributionView("item.html", getBlobMediaView(blob));
-    }
-
     public AttributionView<BlobView> getBlobView(final Blob blob) throws FieldConversionException {
         return getAttributionView("blob.html", getBlobMediaView(blob));
     }

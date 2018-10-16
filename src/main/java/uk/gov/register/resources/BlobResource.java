@@ -31,7 +31,7 @@ public class BlobResource {
     @Path("/sha-256:{blob-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<BlobView> getItemWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
+    public AttributionView<BlobView> getBlobWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
         return getBlob(blobHash).map(viewFactory::getBlobView)
                 .orElseThrow(() -> new NotFoundException("No item found with hash: " + blobHash));
     }
