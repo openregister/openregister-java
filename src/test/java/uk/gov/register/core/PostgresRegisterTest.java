@@ -17,7 +17,7 @@ import uk.gov.register.exceptions.BlobValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.ItemValidator;
+import uk.gov.register.service.BlobValidator;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class PostgresRegisterTest {
     @Mock
     private Index index;
     @Mock
-    private ItemValidator itemValidator;
+    private BlobValidator blobValidator;
     @Mock
     private IndexDriver indexDriver;
     @Mock
@@ -64,8 +64,8 @@ public class PostgresRegisterTest {
         Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType = ImmutableMap.of(EntryType.system, Arrays.asList(systemIndexFunction), EntryType.user, Arrays.asList(indexFunction));
 
         register = new PostgresRegister(new RegisterId("postcode"),
-                inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO),
-                index, indexFunctionsByEntryType, itemValidator, environmentValidator);
+                inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(blobValidator, entryDAO),
+                index, indexFunctionsByEntryType, blobValidator, environmentValidator);
 
         when(registerRecord.getBlobs()).thenReturn(Arrays.asList(getItem(postcodeRegisterItem)));
 
@@ -97,7 +97,7 @@ public class PostgresRegisterTest {
     @Test(expected = AppendEntryException.class)
     public void shouldFailForInvalidItem() throws IOException {
         JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
-        doThrow(new BlobValidationException("error", content)).when(itemValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
+        doThrow(new BlobValidationException("error", content)).when(blobValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
         Blob blob = new Blob(hashValue, content);

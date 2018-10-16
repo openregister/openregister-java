@@ -18,7 +18,7 @@ import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.ItemValidator;
+import uk.gov.register.service.BlobValidator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
@@ -47,7 +47,7 @@ public class RegisterContext implements
     private final boolean enableRegisterDataDelete;
     private final boolean enableDownloadResource;
     private RegisterAuthenticator authenticator;
-    private final ItemValidator itemValidator;
+    private final BlobValidator blobValidator;
     private boolean hasConsistentState;
 
     public RegisterContext(RegisterId registerId, ConfigManager configManager, EnvironmentValidator environmentValidator,
@@ -65,7 +65,7 @@ public class RegisterContext implements
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
-        this.itemValidator = new ItemValidator(registerId);
+        this.blobValidator = new BlobValidator(registerId);
         this.hasConsistentState = true;
     }
 
@@ -102,7 +102,7 @@ public class RegisterContext implements
                 new BlobStoreImpl(dataAccessLayer),
                 new Index(dataAccessLayer),
                 getIndexFunctions(),
-                itemValidator,
+                blobValidator,
                 environmentValidator);
     }
 
@@ -112,7 +112,7 @@ public class RegisterContext implements
                 new BlobStoreImpl(dataAccessLayer),
                 new Index(dataAccessLayer),
                 getIndexFunctions(),
-                itemValidator,
+                blobValidator,
                 environmentValidator);
     }
 

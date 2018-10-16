@@ -29,7 +29,7 @@ import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.ItemValidator;
+import uk.gov.register.service.BlobValidator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.register.util.HashValue;
@@ -190,7 +190,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
     private PostgresRegister getPostgresRegister(DataAccessLayer dataAccessLayer) {
         EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
-        ItemValidator itemValidator = mock(ItemValidator.class);
+        BlobValidator blobValidator = mock(BlobValidator.class);
         BlobStore blobStore = new BlobStoreImpl(dataAccessLayer);
         RegisterId registerId = new RegisterId("address");
         RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
@@ -211,7 +211,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 blobStore,
                 index,
                 getIndexFunctions(),
-                itemValidator,
+                blobValidator,
                 environmentValidator);
     }
 

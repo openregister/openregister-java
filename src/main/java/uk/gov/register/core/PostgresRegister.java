@@ -15,7 +15,7 @@ import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.exceptions.NoSuchRegisterException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
-import uk.gov.register.service.ItemValidator;
+import uk.gov.register.service.BlobValidator;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
@@ -33,7 +33,7 @@ public class PostgresRegister implements Register {
     private final EntryLog entryLog;
     private final BlobStore blobStore;
     private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
-    private final ItemValidator itemValidator;
+    private final BlobValidator blobValidator;
     private final EnvironmentValidator environmentValidator;
 
     private RegisterMetadata registerMetadata;
@@ -47,14 +47,14 @@ public class PostgresRegister implements Register {
                             BlobStore blobStore,
                             Index index,
                             Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
-                            ItemValidator itemValidator,
+                            BlobValidator blobValidator,
                             EnvironmentValidator environmentValidator) {
         this.registerId = registerId;
         this.entryLog = entryLog;
         this.blobStore = blobStore;
         this.index = index;
         this.indexFunctionsByEntryType = indexFunctionsByEntryType;
-        this.itemValidator = itemValidator;
+        this.blobValidator = blobValidator;
         this.environmentValidator = environmentValidator;
     }
 
@@ -101,7 +101,7 @@ public class PostgresRegister implements Register {
 
             referencedBlobs.forEach(i -> {
                 if (entry.getEntryType() == EntryType.user) {
-                    itemValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+                    blobValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
                 } else if (entry.getKey().startsWith("field:")) {
                     Field field = extractObjectFromItem(i, Field.class);
                     environmentValidator.validateFieldAgainstEnvironment(field);

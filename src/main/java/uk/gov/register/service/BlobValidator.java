@@ -14,10 +14,10 @@ import uk.gov.register.exceptions.BlobValidationException;
 import java.util.Map;
 import java.util.Set;
 
-public class ItemValidator {
+public class BlobValidator {
     private final RegisterId registerId;
 
-    public ItemValidator(RegisterId registerId) {
+    public BlobValidator(RegisterId registerId) {
         this.registerId = registerId;
     }
 
