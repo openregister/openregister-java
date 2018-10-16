@@ -73,7 +73,7 @@ public class DataUploadFunctionalTest {
 
         TestDBBlob storedItem = testItemDAO.getItems(schema).get(7);
         assertThat(storedItem.contents, equalTo(inputItem));
-        assertThat(storedItem.hashValue, equalTo(Blob.itemHash(inputItem)));
+        assertThat(storedItem.hashValue, equalTo(Blob.blobHash(inputItem)));
 
         Entry entry = testEntryDAO.getAllEntries(schema).get(0);
         assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
@@ -113,8 +113,8 @@ public class DataUploadFunctionalTest {
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new Entry(1, Blob.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new Entry(2, Blob.itemHash(canonicalItem2), timestamp, "register2", EntryType.user)
+                        new Entry(1, Blob.blobHash(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(2, Blob.blobHash(canonicalItem2), timestamp, "register2", EntryType.user)
                 )
         );
 
@@ -152,8 +152,8 @@ public class DataUploadFunctionalTest {
 
         assertThat(entries,
                 contains(
-                        new Entry(1, Blob.itemHash(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
-                        new Entry(2, Blob.itemHash(canonicalItem), entries.get(1).getTimestamp(), "register2", EntryType.user)
+                        new Entry(1, Blob.blobHash(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
+                        new Entry(2, Blob.blobHash(canonicalItem), entries.get(1).getTimestamp(), "register2", EntryType.user)
                 )
         );
 
@@ -191,8 +191,8 @@ public class DataUploadFunctionalTest {
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new Entry(1, Blob.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new Entry(2, Blob.itemHash(canonicalItem1), timestamp, "register2", EntryType.user)
+                        new Entry(1, Blob.blobHash(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(2, Blob.blobHash(canonicalItem1), timestamp, "register2", EntryType.user)
                 )
         );
 

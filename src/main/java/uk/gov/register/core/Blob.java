@@ -20,7 +20,7 @@ public class Blob {
     private final HashValue hashValue;
 
     public Blob(JsonNode content) {
-        this(itemHash(content), content);
+        this(blobHash(content), content);
     }
 
     public Blob(HashValue hashValue, JsonNode content) {
@@ -28,7 +28,7 @@ public class Blob {
         this.content = content;
     }
 
-    public static HashValue itemHash(JsonNode content) {
+    public static HashValue blobHash(JsonNode content) {
         String hash = DigestUtils.sha256Hex(canonicalJsonMapper.writeToBytes(content));
 
         return new HashValue(HashingAlgorithm.SHA256, hash);

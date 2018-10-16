@@ -14,7 +14,7 @@ public class TestDBBlob {
     }
 
     public TestDBBlob(JsonNode contents) {
-        this.hashValue = Blob.itemHash(contents);
+        this.hashValue = Blob.blobHash(contents);
         this.contents = contents;
     }
 
