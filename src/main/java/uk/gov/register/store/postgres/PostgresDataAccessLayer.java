@@ -25,7 +25,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
     private final EntryDAO entryDAO;
     private final EntryBlobDAO entryBlobDAO;
-    private final ItemDAO itemDAO;
+    private final BlobDAO blobDAO;
     private final IndexDAO indexDAO;
     private final IndexQueryDAO indexQueryDAO;
     private final IndexDriver indexDriver;
@@ -34,11 +34,11 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     public PostgresDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
             EntryBlobDAO entryBlobDAO, ItemQueryDAO itemQueryDAO,
-            ItemDAO itemDAO, String schema, IndexDriver indexDriver, Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType) {
+            BlobDAO blobDAO, String schema, IndexDriver indexDriver, Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType) {
         super(entryQueryDAO, indexQueryDAO, itemQueryDAO, schema);
         this.entryDAO = entryDAO;
         this.entryBlobDAO = entryBlobDAO;
-        this.itemDAO = itemDAO;
+        this.blobDAO = blobDAO;
         this.indexQueryDAO = indexQueryDAO;
         this.indexDAO = indexDAO;
         
@@ -233,7 +233,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         if (stagedItems.isEmpty()) {
             return;
         }
-        itemDAO.insertInBatch(stagedItems.values(), schema);
+        blobDAO.insertInBatch(stagedItems.values(), schema);
         stagedItems.clear();
     }
 

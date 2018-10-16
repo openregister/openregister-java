@@ -30,7 +30,7 @@ public class PostgresDataAccessLayerTest {
     InMemoryEntryBlobDAO entryItemDAO;
     IndexQueryDAO indexQueryDAO;
     IndexDAO indexDAO;
-    InMemoryItemDAO itemDAO;
+    InMemoryBlobDAO itemDAO;
     IndexDriver indexDriver;
 
     private List<Entry> entries;
@@ -55,7 +55,7 @@ public class PostgresDataAccessLayerTest {
         indexDAO = mock(IndexDAO.class);
         indexQueryDAO = mock(IndexQueryDAO.class);
         indexDAO = mock(IndexDAO.class);
-        itemDAO = new InMemoryItemDAO(itemMap, new InMemoryEntryDAO(entries));
+        itemDAO = new InMemoryBlobDAO(itemMap, new InMemoryEntryDAO(entries));
         indexDriver = mock(IndexDriver.class);
 
         dataAccessLayer = new PostgresDataAccessLayer(entryQueryDAO, indexDAO, indexQueryDAO, entryQueryDAO, entryItemDAO,

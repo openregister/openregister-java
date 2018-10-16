@@ -164,7 +164,7 @@ public class RegisterContext implements
                 dbi.onDemand(EntryDAO.class),
                 dbi.onDemand(EntryBlobDAO.class),
                 dbi.onDemand(ItemQueryDAO.class),
-                dbi.onDemand(ItemDAO.class),
+                dbi.onDemand(BlobDAO.class),
                 schema,
                 new IndexDriver(),
                 getIndexFunctions());
@@ -178,7 +178,7 @@ public class RegisterContext implements
                 handle.attach(EntryDAO.class),
                 handle.attach(EntryBlobDAO.class),
                 handle.attach(ItemQueryDAO.class),
-                handle.attach(ItemDAO.class),
+                handle.attach(BlobDAO.class),
                 schema,
                 new IndexDriver(),
                 getIndexFunctions());

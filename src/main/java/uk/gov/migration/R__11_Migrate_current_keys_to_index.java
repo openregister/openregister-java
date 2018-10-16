@@ -34,7 +34,7 @@ public class R__11_Migrate_current_keys_to_index extends BaseJdbcMigration imple
 				handle.attach(EntryDAO.class),
 				handle.attach(EntryBlobDAO.class),
 				handle.attach(ItemQueryDAO.class),
-				handle.attach(ItemDAO.class),
+				handle.attach(BlobDAO.class),
 				connection.getSchema(),
 				new IndexDriver(),
 				ImmutableMap.of(EntryType.user, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.RECORD))));

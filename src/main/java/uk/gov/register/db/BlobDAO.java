@@ -8,7 +8,7 @@ import uk.gov.register.core.Blob;
 import uk.gov.register.store.postgres.BindItem;
 
 @UseStringTemplate3StatementLocator
-public interface ItemDAO {
+public interface BlobDAO {
     @SqlBatch("insert into \"<schema>\".item(sha256hex, content) values(:sha256hex, :content) on conflict do nothing")
     @BatchChunkSize(1000)
     void insertInBatch(@BindItem Iterable<Blob> items, @Define("schema") String schema );

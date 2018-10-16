@@ -223,7 +223,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 handle.attach(EntryDAO.class),
                 handle.attach(EntryBlobDAO.class),
                 handle.attach(ItemQueryDAO.class),
-                handle.attach(ItemDAO.class),
+                handle.attach(BlobDAO.class),
                 "address",
                 indexDriver,
                 ImmutableMap.of(EntryType.user, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.RECORD)), EntryType.system, Arrays.asList(new LatestByKeyIndexFunction(IndexNames.METADATA))));

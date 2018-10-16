@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
-public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
+public class InMemoryBlobDAO implements BlobDAO, ItemQueryDAO {
     private final Map<HashValue, Blob> items;
     private EntryQueryDAO entryQueryDao;
 
-    public InMemoryItemDAO(Map<HashValue, Blob> items, EntryQueryDAO entryQueryDao) {
+    public InMemoryBlobDAO(Map<HashValue, Blob> items, EntryQueryDAO entryQueryDao) {
         this.items = items;
         this.entryQueryDao = entryQueryDao;
     }

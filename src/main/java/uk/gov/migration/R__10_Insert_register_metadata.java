@@ -150,12 +150,12 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 				.map(e -> new EntryItemPair(e.getEntryNumber(), e.getItemHashes().get(0))).collect(toList());
 
 
-		ItemDAO itemDAO = handle.attach(ItemDAO.class);
+		BlobDAO blobDAO = handle.attach(BlobDAO.class);
 		EntryDAO entryDAO = handle.attach(EntryDAO.class);
 		EntryBlobDAO entryBlobDAO = handle.attach(EntryBlobDAO.class);
 		IndexDAO indexDAO = handle.attach(IndexDAO.class);
 
-		itemDAO.insertInBatch(items, connection.getSchema());
+		blobDAO.insertInBatch(items, connection.getSchema());
 		entryDAO.insertInBatch(entries, connection.getSchema(), "entry_system");
 		entryBlobDAO.insertInBatch(entryItems, connection.getSchema(), "entry_item_system");
 

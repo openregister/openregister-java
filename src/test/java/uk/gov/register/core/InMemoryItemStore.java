@@ -10,16 +10,16 @@ import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.mock;
 
 public class InMemoryItemStore extends ItemStoreImpl {
-    private final ItemDAO itemDAO;
+    private final BlobDAO blobDAO;
 
-    public InMemoryItemStore(ItemQueryDAO itemQueryDAO, ItemDAO itemDAO) {
+    public InMemoryItemStore(ItemQueryDAO itemQueryDAO, BlobDAO blobDAO) {
         super(new PostgresDataAccessLayer(mock(EntryQueryDAO.class), mock(IndexDAO.class), mock(IndexQueryDAO.class), mock(EntryDAO.class),
-                mock(EntryBlobDAO.class), itemQueryDAO, itemDAO, "schema", mock(IndexDriver.class), new HashMap<>()));
-        this.itemDAO = itemDAO;
+                mock(EntryBlobDAO.class), itemQueryDAO, blobDAO, "schema", mock(IndexDriver.class), new HashMap<>()));
+        this.blobDAO = blobDAO;
     }
 
     @Override
     public void addItem(Blob blob) {
-        itemDAO.insertInBatch(singletonList(blob), "schema");
+        blobDAO.insertInBatch(singletonList(blob), "schema");
     }
 }
