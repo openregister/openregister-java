@@ -7,7 +7,7 @@ import uk.gov.register.util.CanonicalJsonMapper;
 
 import java.util.Collections;
 
-public class ItemToCommandMapper extends RegisterCommandMapper<Blob,RegisterCommand> {
+public class BlobToCommandMapper extends RegisterCommandMapper<Blob,RegisterCommand> {
     private final CanonicalJsonMapper canonicalJsonMapper  = new CanonicalJsonMapper();
 
     @Override

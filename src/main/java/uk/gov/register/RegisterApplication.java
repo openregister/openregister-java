@@ -34,7 +34,7 @@ import uk.gov.register.serialization.handlers.AddItemCommandHandler;
 import uk.gov.register.serialization.handlers.AppendEntryCommandHandler;
 import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
-import uk.gov.register.serialization.mappers.ItemToCommandMapper;
+import uk.gov.register.serialization.mappers.BlobToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.BlobConverter;
@@ -119,7 +119,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         rsfExecutor.register(new AssertRootHashCommandHandler());
 
         RSFCreator rsfCreator = new RSFCreator();
-        rsfCreator.register(new ItemToCommandMapper());
+        rsfCreator.register(new BlobToCommandMapper());
         rsfCreator.register(new EntryToCommandMapper());
         rsfCreator.register(new RootHashCommandMapper());
 

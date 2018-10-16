@@ -12,7 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.register.configuration.IndexFunctionConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
-import uk.gov.register.serialization.mappers.ItemToCommandMapper;
+import uk.gov.register.serialization.mappers.BlobToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
@@ -63,7 +63,7 @@ public class RSFCreatorTest {
         sutCreator = new RSFCreator();
         sutCreator.register(new RootHashCommandMapper());
         sutCreator.register(new EntryToCommandMapper());
-        sutCreator.register(new ItemToCommandMapper());
+        sutCreator.register(new BlobToCommandMapper());
 
         systemBlob = new Blob(new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), jsonFactory.objectNode()
                 .put("system-field-1", "system-field-1-value")

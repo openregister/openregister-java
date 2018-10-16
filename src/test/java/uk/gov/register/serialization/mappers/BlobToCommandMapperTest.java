@@ -15,11 +15,11 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class BlobToCommandMapperTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
-    private ItemToCommandMapper sutMapper;
+    private BlobToCommandMapper sutMapper;
 
     @Before
     public void setUp() throws Exception {
-        sutMapper = new ItemToCommandMapper();
+        sutMapper = new BlobToCommandMapper();
     }
 
     @Test
