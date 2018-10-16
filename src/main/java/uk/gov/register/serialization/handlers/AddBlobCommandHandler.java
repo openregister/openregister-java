@@ -8,10 +8,10 @@ import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandHandler;
 import uk.gov.register.util.ObjectReconstructor;
 
-public class AddItemCommandHandler extends RegisterCommandHandler {
+public class AddBlobCommandHandler extends RegisterCommandHandler {
     private final ObjectReconstructor objectReconstructor;
 
-    public AddItemCommandHandler() {
+    public AddBlobCommandHandler() {
         objectReconstructor = new ObjectReconstructor();
     }
 

@@ -30,7 +30,7 @@ import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.serialization.RSFCreator;
 import uk.gov.register.serialization.RSFExecutor;
-import uk.gov.register.serialization.handlers.AddItemCommandHandler;
+import uk.gov.register.serialization.handlers.AddBlobCommandHandler;
 import uk.gov.register.serialization.handlers.AppendEntryCommandHandler;
 import uk.gov.register.serialization.handlers.AssertRootHashCommandHandler;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
@@ -114,7 +114,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         });
 
         RSFExecutor rsfExecutor = new RSFExecutor();
-        rsfExecutor.register(new AddItemCommandHandler());
+        rsfExecutor.register(new AddBlobCommandHandler());
         rsfExecutor.register(new AppendEntryCommandHandler());
         rsfExecutor.register(new AssertRootHashCommandHandler());
 

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class AddBlobCommandHandlerTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
-    private AddItemCommandHandler sutHandler;
+    private AddBlobCommandHandler sutHandler;
 
     @Mock
     private Register register;
@@ -38,7 +38,7 @@ public class AddBlobCommandHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        sutHandler = new AddItemCommandHandler();
+        sutHandler = new AddBlobCommandHandler();
         addItemCommand = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
     }
 
