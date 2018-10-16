@@ -7,10 +7,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 
-public class ItemStoreImpl implements ItemStore {
+public class BlobStoreImpl implements BlobStore {
     private final DataAccessLayer dataAccessLayer;
 
-    public ItemStoreImpl(DataAccessLayer dataAccessLayer) {
+    public BlobStoreImpl(DataAccessLayer dataAccessLayer) {
         this.dataAccessLayer = dataAccessLayer;
     }
 

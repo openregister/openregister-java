@@ -99,7 +99,7 @@ public class RegisterContext implements
 
         return new PostgresRegister(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
-                new ItemStoreImpl(dataAccessLayer),
+                new BlobStoreImpl(dataAccessLayer),
                 new Index(dataAccessLayer),
                 getIndexFunctions(),
                 itemValidator,
@@ -109,7 +109,7 @@ public class RegisterContext implements
     private Register buildTransactionalRegister(DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
         return new PostgresRegister(registerId,
                 new EntryLogImpl(dataAccessLayer, memoizationStore),
-                new ItemStoreImpl(dataAccessLayer),
+                new BlobStoreImpl(dataAccessLayer),
                 new Index(dataAccessLayer),
                 getIndexFunctions(),
                 itemValidator,

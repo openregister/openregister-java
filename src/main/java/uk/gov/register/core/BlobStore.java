@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 
-public interface ItemStore {
+public interface BlobStore {
     void addItem(Blob blob);
 
     Optional<Blob> getItem(HashValue hash);

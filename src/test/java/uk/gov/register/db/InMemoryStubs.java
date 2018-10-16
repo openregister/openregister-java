@@ -2,8 +2,8 @@ package uk.gov.register.db;
 
 import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.InMemoryEntryLog;
-import uk.gov.register.core.InMemoryItemStore;
-import uk.gov.register.core.ItemStore;
+import uk.gov.register.core.InMemoryBlobStore;
+import uk.gov.register.core.BlobStore;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
@@ -14,8 +14,8 @@ public abstract class InMemoryStubs {
         return new InMemoryEntryLog(new DoNothing(), entryQueryDAO, entryDAO);
     }
 
-    public static ItemStore inMemoryItemStore(ItemValidator itemValidator, InMemoryEntryDAO entryDAO) {
+    public static BlobStore inMemoryItemStore(ItemValidator itemValidator, InMemoryEntryDAO entryDAO) {
         InMemoryBlobDAO itemDAO = new InMemoryBlobDAO(new HashMap<>(), entryDAO);
-        return new InMemoryItemStore(itemDAO, itemDAO);
+        return new InMemoryBlobStore(itemDAO, itemDAO);
     }
 }

@@ -31,7 +31,7 @@ public class PostgresRegister implements Register {
     private final Index index;
     private final RegisterId registerId;
     private final EntryLog entryLog;
-    private final ItemStore itemStore;
+    private final BlobStore blobStore;
     private final Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType;
     private final ItemValidator itemValidator;
     private final EnvironmentValidator environmentValidator;
@@ -44,14 +44,14 @@ public class PostgresRegister implements Register {
 
     public PostgresRegister(RegisterId registerId,
                             EntryLog entryLog,
-                            ItemStore itemStore,
+                            BlobStore blobStore,
                             Index index,
                             Map<EntryType,Collection<IndexFunction>> indexFunctionsByEntryType,
                             ItemValidator itemValidator,
                             EnvironmentValidator environmentValidator) {
         this.registerId = registerId;
         this.entryLog = entryLog;
-        this.itemStore = itemStore;
+        this.blobStore = blobStore;
         this.index = index;
         this.indexFunctionsByEntryType = indexFunctionsByEntryType;
         this.itemValidator = itemValidator;
@@ -62,32 +62,32 @@ public class PostgresRegister implements Register {
 
     @Override
     public void addItem(Blob blob) {
-        itemStore.addItem(blob);
+        blobStore.addItem(blob);
     }
 
     @Override
     public Optional<Blob> getBlob(HashValue hash) {
-        return itemStore.getItem(hash);
+        return blobStore.getItem(hash);
     }
 
     @Override
     public Collection<Blob> getAllItems() {
-        return itemStore.getAllItems();
+        return blobStore.getAllItems();
     }
 
     @Override
     public Iterator<Blob> getItemIterator() {
-        return itemStore.getUserItemIterator();
+        return blobStore.getUserItemIterator();
     }
 
     @Override
     public Iterator<Blob> getItemIterator(int start, int end) {
-        return itemStore.getUserItemIterator(start, end);
+        return blobStore.getUserItemIterator(start, end);
     }
 
     @Override
     public Iterator<Blob> getSystemItemIterator() {
-        return itemStore.getSystemItemIterator();
+        return blobStore.getSystemItemIterator();
     }
 
     //endregion
@@ -315,7 +315,7 @@ public class PostgresRegister implements Register {
 
     private List<Blob> getReferencedItems(Entry entry) throws NoSuchItemException {
         return entry.getItemHashes().stream()
-                .map(h -> itemStore.getItem(h).orElseThrow(
+                .map(h -> blobStore.getItem(h).orElseThrow(
                         () -> new NoSuchItemException(h)))
                 .collect(Collectors.toList());
     }

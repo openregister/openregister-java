@@ -191,7 +191,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
     private PostgresRegister getPostgresRegister(DataAccessLayer dataAccessLayer) {
         EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
         ItemValidator itemValidator = mock(ItemValidator.class);
-        ItemStore itemStore = new ItemStoreImpl(dataAccessLayer);
+        BlobStore blobStore = new BlobStoreImpl(dataAccessLayer);
         RegisterId registerId = new RegisterId("address");
         RegistersConfiguration registersConfiguration = mock(RegistersConfiguration.class);
         when(registersConfiguration.getRegisterMetadata(registerId)).thenReturn(new RegisterMetadata(registerId, Arrays.asList("address"), "copyright", "registry", "text", "phase"));
@@ -208,7 +208,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         return new PostgresRegister(registerData.getRegisterId(),
                 entryLog,
-                itemStore,
+                blobStore,
                 index,
                 getIndexFunctions(),
                 itemValidator,
