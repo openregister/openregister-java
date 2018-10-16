@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
-public class InMemoryBlobDAO implements BlobDAO, ItemQueryDAO {
+public class InMemoryBlobDAO implements BlobDAO, BlobQueryDAO {
     private final Map<HashValue, Blob> items;
     private EntryQueryDAO entryQueryDao;
 

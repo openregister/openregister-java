@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 @UseStringTemplate3StatementLocator
-public interface ItemQueryDAO {
+public interface BlobQueryDAO {
     @SqlQuery("select sha256hex, content from \"<schema>\".item where sha256hex=:sha256hex order by sha256hex")
     @SingleValueResult(Blob.class)
     @RegisterMapper(ItemMapper.class)

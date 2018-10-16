@@ -12,9 +12,9 @@ import static org.mockito.Mockito.mock;
 public class InMemoryItemStore extends ItemStoreImpl {
     private final BlobDAO blobDAO;
 
-    public InMemoryItemStore(ItemQueryDAO itemQueryDAO, BlobDAO blobDAO) {
+    public InMemoryItemStore(BlobQueryDAO blobQueryDAO, BlobDAO blobDAO) {
         super(new PostgresDataAccessLayer(mock(EntryQueryDAO.class), mock(IndexDAO.class), mock(IndexQueryDAO.class), mock(EntryDAO.class),
-                mock(EntryBlobDAO.class), itemQueryDAO, blobDAO, "schema", mock(IndexDriver.class), new HashMap<>()));
+                mock(EntryBlobDAO.class), blobQueryDAO, blobDAO, "schema", mock(IndexDriver.class), new HashMap<>()));
         this.blobDAO = blobDAO;
     }
 

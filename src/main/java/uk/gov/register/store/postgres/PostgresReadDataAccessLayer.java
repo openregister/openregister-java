@@ -8,7 +8,7 @@ import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.IndexQueryDAO;
-import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.BlobQueryDAO;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 
@@ -18,16 +18,16 @@ import java.util.function.Function;
 
 public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     protected final EntryQueryDAO entryQueryDAO;
-    private final ItemQueryDAO itemQueryDAO;
+    private final BlobQueryDAO blobQueryDAO;
     protected final IndexQueryDAO indexQueryDAO;
     protected final String schema;
     
     public PostgresReadDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexQueryDAO indexQueryDAO,
-            ItemQueryDAO itemQueryDAO, String schema) {
+            BlobQueryDAO blobQueryDAO, String schema) {
         this.entryQueryDAO = entryQueryDAO;
         this.indexQueryDAO = indexQueryDAO;
-        this.itemQueryDAO = itemQueryDAO;
+        this.blobQueryDAO = blobQueryDAO;
         this.schema = schema;
     }
 
@@ -99,13 +99,13 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
 
     @Override
     public Optional<Blob> getItem(HashValue hash) {
-        return itemQueryDAO.getItemBySHA256(hash.getValue(), schema);
+        return blobQueryDAO.getItemBySHA256(hash.getValue(), schema);
     }
 
     @Override
     public Collection<Blob> getAllItems() {
         checkpoint();
-        return itemQueryDAO.getAllItemsNoPagination(schema);
+        return blobQueryDAO.getAllItemsNoPagination(schema);
     }
 
     @Override
@@ -113,16 +113,16 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
         checkpoint();
 
         switch (entryType) {
-            case user: return itemQueryDAO.getIterator(schema);
-            case system: return itemQueryDAO.getSystemItemIterator(schema);
+            case user: return blobQueryDAO.getIterator(schema);
+            case system: return blobQueryDAO.getSystemItemIterator(schema);
         }
-        return itemQueryDAO.getIterator(schema);
+        return blobQueryDAO.getIterator(schema);
     }
 
     @Override
     public Iterator<Blob> getItemIterator(int startEntryNumber, int endEntryNumber) {
         checkpoint();
-        return itemQueryDAO.getIterator(startEntryNumber, endEntryNumber, schema);
+        return blobQueryDAO.getIterator(startEntryNumber, endEntryNumber, schema);
     }
 
     // Record Index

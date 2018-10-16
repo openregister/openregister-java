@@ -15,7 +15,7 @@ public class InMemoryEntryLog extends EntryLogImpl {
 
     public InMemoryEntryLog(MemoizationStore memoizationStore, EntryQueryDAO entryQueryDAO, EntryDAO entryDAO) {
         super(new PostgresDataAccessLayer(entryQueryDAO, mock(IndexDAO.class), mock(IndexQueryDAO.class), mock(EntryDAO.class),
-                mock(EntryBlobDAO.class), mock(ItemQueryDAO.class), mock(BlobDAO.class), "schema", mock(IndexDriver.class), new HashMap<>()), memoizationStore);
+                mock(EntryBlobDAO.class), mock(BlobQueryDAO.class), mock(BlobDAO.class), "schema", mock(IndexDriver.class), new HashMap<>()), memoizationStore);
         this.entryDAO = entryDAO;
     }
 

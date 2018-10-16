@@ -222,7 +222,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
                 handle.attach(IndexQueryDAO.class),
                 handle.attach(EntryDAO.class),
                 handle.attach(EntryBlobDAO.class),
-                handle.attach(ItemQueryDAO.class),
+                handle.attach(BlobQueryDAO.class),
                 handle.attach(BlobDAO.class),
                 "address",
                 indexDriver,
