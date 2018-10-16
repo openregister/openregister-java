@@ -13,10 +13,10 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ItemMapper implements ResultSetMapper<Blob> {
+public class BlobMapper implements ResultSetMapper<Blob> {
     private final ObjectMapper objectMapper;
 
-    public ItemMapper() {
+    public BlobMapper() {
         objectMapper = Jackson.newObjectMapper();
     }
 
