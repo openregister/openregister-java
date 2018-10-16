@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.ItemView;
+import uk.gov.register.views.BlobView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,12 +37,12 @@ public class TurtleRepresentationWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
+        BlobView blobView = new BlobView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
-        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedTtl, containsString("@prefix field:   <http://field.test.register.gov.uk/records/> ."));
@@ -70,12 +70,12 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "itemhash"), map, fields);
+        BlobView blobView = new BlobView(new HashValue(HashingAlgorithm.SHA256, "itemhash"), map, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
-        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedTtl, containsString("field:address <http://address.test.register.gov.uk/records/1111111>"));
@@ -93,12 +93,12 @@ public class TurtleRepresentationWriterTest {
                         "name", new StringValue("foo")
                 );
 
-        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
+        BlobView blobView = new BlobView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
-        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
 
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -116,12 +116,12 @@ public class TurtleRepresentationWriterTest {
                         "website", new UrlValue("https://www.gov.uk")
                 );
 
-        ItemView itemView = new ItemView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
+        BlobView blobView = new BlobView(new HashValue(HashingAlgorithm.SHA256, "hash"), map, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("government-organisation"), registerResolver);
-        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
 
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);

@@ -7,7 +7,7 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
-import uk.gov.register.views.ItemView;
+import uk.gov.register.views.BlobView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -32,7 +32,7 @@ public class ItemResource {
     @Path("/sha-256:{item-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
+    public AttributionView<BlobView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
         return getItem(itemHash).map(viewFactory::getItemView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }
@@ -48,7 +48,7 @@ public class ItemResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
+    public BlobView getItemDataByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
         return getItem(itemHash).map(viewFactory::getBlobMediaView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
     }

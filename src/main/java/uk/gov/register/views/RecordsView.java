@@ -38,7 +38,7 @@ public class RecordsView implements CsvRepresentationView {
     private final boolean resolveAllItemLinks;
 
     private final Map<String, Field> fieldsByName;
-    private final Map<Entry, List<ItemView>> recordMap;
+    private final Map<Entry, List<BlobView>> recordMap;
 
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
@@ -51,15 +51,15 @@ public class RecordsView implements CsvRepresentationView {
         recordMap = getItemViews(records, blobConverter);
     }
 
-    public Map<Entry, List<ItemView>> getRecords() {
+    public Map<Entry, List<BlobView>> getRecords() {
         return recordMap;
     }
 
     @SuppressWarnings("unused, used by the template")
-    public List<ItemView> getRecordsSimple() {
+    public List<BlobView> getRecordsSimple() {
         return recordMap.entrySet()
                 .stream()
-                .map(e -> new ItemSimpleView(e.getKey().getKey(), e.getValue().iterator().next()))
+                .map(e -> new BlobSimpleView(e.getKey().getKey(), e.getValue().iterator().next()))
                 .collect(Collectors.toList());
 
     }
@@ -140,11 +140,11 @@ public class RecordsView implements CsvRepresentationView {
         return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
     }
 
-    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final BlobConverter blobConverter) throws FieldConversionException {
-        final Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
+    private Map<Entry, List<BlobView>> getItemViews(final Collection<Record> records, final BlobConverter blobConverter) throws FieldConversionException {
+        final Map<Entry, List<BlobView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
             map.put(record.getEntry(), record.getBlobs().stream().map(item ->
-                    new ItemView(item.getSha256hex(), blobConverter.convertItem(item, fieldsByName), getFields()))
+                    new BlobView(item.getSha256hex(), blobConverter.convertItem(item, fieldsByName), getFields()))
                     .collect(Collectors.toList()));
         });
         return map;
@@ -156,7 +156,7 @@ public class RecordsView implements CsvRepresentationView {
         return jsonNode;
     }
 
-    private ObjectNode getItemJson(final ItemView itemView) {
-        return jsonObjectMapper.convertValue(itemView, ObjectNode.class);
+    private ObjectNode getItemJson(final BlobView blobView) {
+        return jsonObjectMapper.convertValue(blobView, ObjectNode.class);
     }
 }

@@ -9,26 +9,26 @@ import uk.gov.register.util.ElementType;
 
 import javax.inject.Provider;
 
-public class PreviewItemPageView extends PreviewPageView {
+public class PreviewBlobPageView extends PreviewPageView {
 
-    private final ItemView itemView;
+    private final BlobView blobView;
 
-    public PreviewItemPageView(final RequestContext requestContext,
+    public PreviewBlobPageView(final RequestContext requestContext,
                                final RegisterReadOnly register,
                                final RegisterResolver registerResolver,
                                final String previewType,
                                final HomepageContent homepageContent,
-                               final ItemView itemView,
+                               final BlobView blobView,
                                final Provider<RegisterId> registerIdProvider,
                                final String key) {
         super(requestContext, registerResolver, register, key, previewType,
                 ElementType.ITEM, homepageContent, registerIdProvider);
-        this.itemView = itemView;
+        this.blobView = blobView;
     }
 
     @Override
     public String getRegisterValues() {
-        return itemView.itemsTo(getPreviewType(), getRegisterIdProvider(), getRegisterResolver());
+        return blobView.itemsTo(getPreviewType(), getRegisterIdProvider(), getRegisterResolver());
     }
 
     @Override

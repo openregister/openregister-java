@@ -97,11 +97,11 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerResolver, fieldValueMap);
     }
 
-    public AttributionView<ItemView> getItemView(final Blob blob) throws FieldConversionException {
+    public AttributionView<BlobView> getItemView(final Blob blob) throws FieldConversionException {
         return getAttributionView("item.html", getBlobMediaView(blob));
     }
 
-    public AttributionView<ItemView> getBlobView(final Blob blob) throws FieldConversionException {
+    public AttributionView<BlobView> getBlobView(final Blob blob) throws FieldConversionException {
         return getAttributionView("blob.html", getBlobMediaView(blob));
     }
 
@@ -130,8 +130,8 @@ public class ViewFactory {
                 recordsView);
     }
 
-    public ItemView getBlobMediaView(final Blob blob) throws FieldConversionException {
-        return new ItemView(blob.getSha256hex(), blobConverter.convertItem(blob, register.get().getFieldsByName()), getFields());
+    public BlobView getBlobMediaView(final Blob blob) throws FieldConversionException {
+        return new BlobView(blob.getSha256hex(), blobConverter.convertItem(blob, register.get().getFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
@@ -166,8 +166,8 @@ public class ViewFactory {
                 key);
     }
 
-    public PreviewItemPageView previewItemPageView(final Blob blob, final String key, final String previewType) throws FieldConversionException {
-        return new PreviewItemPageView(requestContext, register.get(), registerResolver,
+    public PreviewBlobPageView previewItemPageView(final Blob blob, final String key, final String previewType) throws FieldConversionException {
+        return new PreviewBlobPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(
                         homepageContentConfiguration.get().getIndexes()),

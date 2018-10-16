@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> {
+public class BlobView implements CsvRepresentationView<Map<String, FieldValue>> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemView.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlobView.class);
 
     private static final String END_OF_LINE = "\n";
 
@@ -35,7 +35,7 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
-    public ItemView(final HashValue sha256hex, final Map<String, FieldValue> fieldValueMap, final Iterable<Field> fields) {
+    public BlobView(final HashValue sha256hex, final Map<String, FieldValue> fieldValueMap, final Iterable<Field> fields) {
         this.fields = fields;
         this.fieldValueMap = fieldValueMap;
         this.sha256hex = sha256hex;

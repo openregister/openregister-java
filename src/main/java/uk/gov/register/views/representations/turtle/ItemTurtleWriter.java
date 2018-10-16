@@ -9,7 +9,7 @@ import uk.gov.register.core.LinkValue;
 import uk.gov.register.core.ListValue;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.views.ItemView;
+import uk.gov.register.views.BlobView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
+public class ItemTurtleWriter extends TurtleRepresentationWriter<BlobView> {
 
     @Inject
     public ItemTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
@@ -29,7 +29,7 @@ public class ItemTurtleWriter extends TurtleRepresentationWriter<ItemView> {
     }
 
     @Override
-    protected Model rdfModelFor(ItemView view) {
+    protected Model rdfModelFor(BlobView view) {
         Model model = ModelFactory.createDefaultModel();
         Resource resource = model.createResource(itemUri(view.getItemHash().encode()).toString());
 

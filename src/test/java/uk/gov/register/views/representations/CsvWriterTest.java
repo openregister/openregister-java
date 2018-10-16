@@ -9,7 +9,7 @@ import uk.gov.register.core.*;
 import uk.gov.register.service.BlobConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.EntryListView;
-import uk.gov.register.views.ItemView;
+import uk.gov.register.views.BlobView;
 import uk.gov.register.views.RecordView;
 import uk.gov.register.views.RecordsView;
 
@@ -59,11 +59,11 @@ public class CsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("val\nue4")
         );
-        ItemView itemView = new ItemView(null, fieldValueMap, fields);
+        BlobView blobView = new BlobView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        csvWriter.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        csvWriter.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1,key2,key3,key4\r\n\"valu\te1\",\"val,ue2\",\"val\"\"ue3\",\"val\nue4\"\r\n"));
@@ -84,11 +84,11 @@ public class CsvWriterTest {
                         new StringValue("value6"))
                 ));
 
-        ItemView itemView = new ItemView(null, fieldValueMap, fields);
+        BlobView blobView = new BlobView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        csvWriter.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        csvWriter.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1;value2;value3,value4;value5;value6,,\r\n"));
@@ -103,11 +103,11 @@ public class CsvWriterTest {
                 "key3", new StringValue(""),
                 "key4", new StringValue("")
         );
-        ItemView itemView = new ItemView(null, fieldValueMap, fields);
+        BlobView blobView = new BlobView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        csvWriter.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        csvWriter.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1,key2,key3,key4\r\nvalue1,,,\r\n"));

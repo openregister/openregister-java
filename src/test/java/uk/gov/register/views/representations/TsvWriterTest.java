@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import uk.gov.register.core.*;
-import uk.gov.register.views.ItemView;
+import uk.gov.register.views.BlobView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,11 +31,11 @@ public class TsvWriterTest {
                 "key3", new StringValue("val\"ue3"),
                 "key4", new StringValue("value4")
         );
-        ItemView itemView = new ItemView(null, fieldValueMap, fields);
+        BlobView blobView = new BlobView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1\tkey2\tkey3\tkey4\nvalue1\tvalue2\tval\"ue3\tvalue4\n"));
@@ -55,11 +55,11 @@ public class TsvWriterTest {
                         new StringValue("value5"),
                         new StringValue("value6"))
                 ));
-        ItemView itemView = new ItemView(null, fieldValueMap, fields);
+        BlobView blobView = new BlobView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1\tkey2\tkey3\tkey4\nvalue1;value2;value3\tvalue4;value5;value6\t\t\n"));
@@ -70,11 +70,11 @@ public class TsvWriterTest {
         ImmutableMap<String, FieldValue> fieldValueMap = ImmutableMap.of(
                 "key1", new StringValue("value1")
         );
-        ItemView itemView = new ItemView(null, fieldValueMap, fields);
+        BlobView blobView = new BlobView(null, fieldValueMap, fields);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        writer.writeTo(itemView, itemView.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedCsv, is("key1\tkey2\tkey3\tkey4\nvalue1\t\t\t\n"));

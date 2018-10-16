@@ -8,7 +8,7 @@ import org.apache.jena.rdf.model.StmtIterator;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
-import uk.gov.register.views.ItemView;
+import uk.gov.register.views.BlobView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Entry, List<ItemView>>> {
+public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Entry, List<BlobView>>> {
 
     @Inject
     public RecordTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
@@ -29,17 +29,17 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
     }
 
     @Override
-    protected Model rdfModelFor(Map.Entry<Entry, List<ItemView>> record) {
+    protected Model rdfModelFor(Map.Entry<Entry, List<BlobView>> record) {
         Entry entry = record.getKey();
-        ItemView itemView = record.getValue().get(0);
+        BlobView blobView = record.getValue().get(0);
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry, false);
-        Model itemModel = new ItemTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(itemView);
+        Model itemModel = new ItemTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(blobView);
 
         Resource recordResource = recordModel.createResource(recordUri(entry.getKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));
-        addPropertiesToResource(recordResource, itemModel.getResource(itemUri(itemView.getItemHash().encode()).toString()));
+        addPropertiesToResource(recordResource, itemModel.getResource(itemUri(blobView.getItemHash().encode()).toString()));
 
         Map<String, String> prefixes = entryModel.getNsPrefixMap();
         prefixes.putAll(itemModel.getNsPrefixMap());

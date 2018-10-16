@@ -40,7 +40,7 @@ public class PreviewBlobPageViewTest {
 
     @Test
     public void getPreviewType_JSON() throws IOException, JSONException {
-        final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
+        final PreviewBlobPageView previewBlobPageView = new PreviewBlobPageView(
                 requestContext,
                 registerReadOnly,
                 registerResolver,
@@ -50,12 +50,12 @@ public class PreviewBlobPageViewTest {
                 provider,
                 null);
 
-        assertThat(previewItemPageView.getPreviewTypeTag(), containsString("JSON"));
+        assertThat(previewBlobPageView.getPreviewTypeTag(), containsString("JSON"));
     }
 
     @Test
     public void getPreviewType_YAML() throws IOException, JSONException {
-        final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
+        final PreviewBlobPageView previewBlobPageView = new PreviewBlobPageView(
                 requestContext,
                 registerReadOnly,
                 registerResolver,
@@ -65,12 +65,12 @@ public class PreviewBlobPageViewTest {
                 provider,
                 null);
 
-        assertThat(previewItemPageView.getPreviewTypeTag(), containsString("YAML"));
+        assertThat(previewBlobPageView.getPreviewTypeTag(), containsString("YAML"));
     }
 
     @Test
     public void getPreviewType_TTL() throws IOException, JSONException {
-        final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
+        final PreviewBlobPageView previewBlobPageView = new PreviewBlobPageView(
                 requestContext,
                 registerReadOnly,
                 registerResolver,
@@ -80,12 +80,12 @@ public class PreviewBlobPageViewTest {
                 provider,
                 null);
 
-        assertThat(previewItemPageView.getPreviewTypeTag(), containsString("TTL"));
+        assertThat(previewBlobPageView.getPreviewTypeTag(), containsString("TTL"));
     }
 
     @Test
     public void getRegisterValues_JSON() throws IOException, JSONException {
-        final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
+        final PreviewBlobPageView previewBlobPageView = new PreviewBlobPageView(
                 requestContext,
                 registerReadOnly,
                 registerResolver,
@@ -95,12 +95,12 @@ public class PreviewBlobPageViewTest {
                 provider,
                 null);
 
-        assertThat(previewItemPageView.getRegisterValues(), containsString("value1"));
+        assertThat(previewBlobPageView.getRegisterValues(), containsString("value1"));
     }
 
     @Test
     public void getRegisterValues_YAML() throws IOException, JSONException {
-        final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
+        final PreviewBlobPageView previewBlobPageView = new PreviewBlobPageView(
                 requestContext,
                 registerReadOnly,
                 registerResolver,
@@ -110,12 +110,12 @@ public class PreviewBlobPageViewTest {
                 provider,
                 null);
 
-        assertThat(previewItemPageView.getRegisterValues(), containsString("value1"));
+        assertThat(previewBlobPageView.getRegisterValues(), containsString("value1"));
     }
 
     @Test
     public void getRegisterValues_TTL() throws IOException, JSONException {
-        final PreviewItemPageView previewItemPageView = new PreviewItemPageView(
+        final PreviewBlobPageView previewBlobPageView = new PreviewBlobPageView(
                 requestContext,
                 registerReadOnly,
                 registerResolver,
@@ -125,14 +125,14 @@ public class PreviewBlobPageViewTest {
                 provider,
                 null);
 
-        assertThat(previewItemPageView.getRegisterValues(), containsString("value1"));
+        assertThat(previewBlobPageView.getRegisterValues(), containsString("value1"));
     }
 
-    private ItemView getItemView() throws IOException, JSONException {
+    private BlobView getItemView() throws IOException, JSONException {
         final ImmutableMap<String, FieldValue> fieldValueMap = ImmutableMap.of(
                 "key1", new StringValue("value1")
         );
 
-        return new ItemView(new HashValue(HashingAlgorithm.SHA256, "asdfghhjkl"), fieldValueMap, fields);
+        return new BlobView(new HashValue(HashingAlgorithm.SHA256, "asdfghhjkl"), fieldValueMap, fields);
     }
 }
