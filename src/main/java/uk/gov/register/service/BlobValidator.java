@@ -21,7 +21,7 @@ public class BlobValidator {
         this.registerId = registerId;
     }
 
-    public void validateItem(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws BlobValidationException {
+    public void validateBlob(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws BlobValidationException {
         validateFields(inputEntry, registerMetadata);
 
         validatePrimaryKeyExists(inputEntry);

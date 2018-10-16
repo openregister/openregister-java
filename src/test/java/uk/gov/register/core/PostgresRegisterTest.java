@@ -97,13 +97,13 @@ public class PostgresRegisterTest {
     @Test(expected = AppendEntryException.class)
     public void shouldFailForInvalidItem() throws IOException {
         JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
-        doThrow(new BlobValidationException("error", content)).when(blobValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
+        doThrow(new BlobValidationException("error", content)).when(blobValidator).validateBlob(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
         Blob blob = new Blob(hashValue, content);
         Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
-        register.addItem(blob);
+        register.addBlob(blob);
         register.appendEntry(entry);
     }
 
@@ -115,7 +115,7 @@ public class PostgresRegisterTest {
         Entry entry = new Entry(1, hashValue, Instant.now(),"register:postcode", EntryType.system);
         when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.empty());
 
-        register.addItem(blob);
+        register.addBlob(blob);
         register.appendEntry(entry);
     }
 

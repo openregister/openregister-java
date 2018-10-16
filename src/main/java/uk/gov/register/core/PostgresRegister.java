@@ -58,10 +58,10 @@ public class PostgresRegister implements Register {
         this.environmentValidator = environmentValidator;
     }
 
-    //region Items
+    //region Blobs
 
     @Override
-    public void addItem(Blob blob) {
+    public void addBlob(Blob blob) {
         blobStore.addBlob(blob);
     }
 
@@ -71,22 +71,22 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Collection<Blob> getAllItems() {
+    public Collection<Blob> getAllBlobs() {
         return blobStore.getAllBlobs();
     }
 
     @Override
-    public Iterator<Blob> getItemIterator() {
+    public Iterator<Blob> getBlobIterator() {
         return blobStore.getUserBlobIterator();
     }
 
     @Override
-    public Iterator<Blob> getItemIterator(int start, int end) {
+    public Iterator<Blob> getBlobIterator(int start, int end) {
         return blobStore.getUserBlobIterator(start, end);
     }
 
     @Override
-    public Iterator<Blob> getSystemItemIterator() {
+    public Iterator<Blob> getSystemBlobIterator() {
         return blobStore.getSystemBlobIterator();
     }
 
@@ -97,16 +97,16 @@ public class PostgresRegister implements Register {
     @Override
     public void appendEntry(final Entry entry) throws AppendEntryException {
         try {
-            List<Blob> referencedBlobs = getReferencedItems(entry);
+            List<Blob> referencedBlobs = getReferencedBlobs(entry);
 
             referencedBlobs.forEach(i -> {
                 if (entry.getEntryType() == EntryType.user) {
-                    blobValidator.validateItem(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
+                    blobValidator.validateBlob(i.getContent(), this.getFieldsByName(), this.getRegisterMetadata());
                 } else if (entry.getKey().startsWith("field:")) {
-                    Field field = extractObjectFromItem(i, Field.class);
+                    Field field = extractObjectFromBlob(i, Field.class);
                     environmentValidator.validateFieldAgainstEnvironment(field);
                 } else if (entry.getKey().startsWith("register:")) {
-                    RegisterMetadata localRegisterMetadata = this.extractObjectFromItem(i, RegisterMetadata.class);
+                    RegisterMetadata localRegisterMetadata = this.extractObjectFromBlob(i, RegisterMetadata.class);
                     // will throw exception if field not present
                     localRegisterMetadata.getFields().forEach(this::getField);
 
@@ -293,10 +293,10 @@ public class PostgresRegister implements Register {
     }
 
     private <T> T extractObjectFromRecord(Record record, Class<T> clazz) {
-        return extractObjectFromItem(record.getBlobs().get(0), clazz);
+        return extractObjectFromBlob(record.getBlobs().get(0), clazz);
     }
 
-    private <T> T extractObjectFromItem(Blob blob, Class<T> clazz) {
+    private <T> T extractObjectFromBlob(Blob blob, Class<T> clazz) {
         try {
             JsonNode content = blob.getContent();
             return mapper.treeToValue(content, clazz);
@@ -313,8 +313,8 @@ public class PostgresRegister implements Register {
         return indexFunctionsByEntryType;
     }
 
-    private List<Blob> getReferencedItems(Entry entry) throws NoSuchBlobException {
-        return entry.getItemHashes().stream()
+    private List<Blob> getReferencedBlobs(Entry entry) throws NoSuchBlobException {
+        return entry.getBlobHashes().stream()
                 .map(h -> blobStore.getBlob(h).orElseThrow(
                         () -> new NoSuchBlobException(h)))
                 .collect(Collectors.toList());

@@ -50,8 +50,8 @@ public class EntriesSpreadSheetWriter extends RepresentationWriter<EntryListView
             element.put("entry-timestamp", entry.getTimestampAsISOFormat());
             element.put("key", entry.getKey());
 
-            if (!entry.getItemHashes().isEmpty()) {
-                itemHashValues = entry.getItemHashes()
+            if (!entry.getBlobHashes().isEmpty()) {
+                itemHashValues = entry.getBlobHashes()
                         .stream().map(HashValue::toString).collect(Collectors.joining(";"));
             }
 

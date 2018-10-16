@@ -139,7 +139,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 
 	private Record copyWithEntryNumber(Record record, int entryNumber) {
 		Entry entry = record.getEntry();
-		Entry newEntry = new Entry(entryNumber, entryNumber, entry.getItemHashes(), entry.getTimestamp(), entry.getKey(), entry.getEntryType());
+		Entry newEntry = new Entry(entryNumber, entryNumber, entry.getBlobHashes(), entry.getTimestamp(), entry.getKey(), entry.getEntryType());
 		return new Record(newEntry, record.getBlobs());
 	}
 
@@ -147,7 +147,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 		List<Blob> items = Streams.stream(records).map(r -> r.getBlobs().get(0)).collect(toList());
 		List<Entry> entries = Streams.stream(records).map(r -> r.getEntry()).collect(toList());
 		List<EntryBlobPair> entryItems = entries.stream()
-				.map(e -> new EntryBlobPair(e.getEntryNumber(), e.getItemHashes().get(0))).collect(toList());
+				.map(e -> new EntryBlobPair(e.getEntryNumber(), e.getBlobHashes().get(0))).collect(toList());
 
 
 		BlobDAO blobDAO = handle.attach(BlobDAO.class);
@@ -162,7 +162,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 		records.forEach(r -> {
 			try {
 				Entry entry = r.getEntry();
-				indexDAO.start(IndexNames.METADATA, entry.getKey(), entry.getItemHashes().get(0).getValue(),
+				indexDAO.start(IndexNames.METADATA, entry.getKey(), entry.getBlobHashes().get(0).getValue(),
 						entry.getEntryNumber(), entry.getIndexEntryNumber(), connection.getSchema());
 			} catch (SQLException e) {
 				e.printStackTrace();

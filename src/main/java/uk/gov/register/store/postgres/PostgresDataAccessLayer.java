@@ -225,7 +225,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         entryDAO.insertInBatch(entries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList()), schema, entryTableName);
         entryBlobDAO.insertInBatch(entries.stream()
                 .filter(e -> e.getEntryType().equals(entryType))
-                .flatMap(e -> e.getItemHashes().stream().map(i -> new EntryBlobPair(e.getEntryNumber(), i)))
+                .flatMap(e -> e.getBlobHashes().stream().map(i -> new EntryBlobPair(e.getEntryNumber(), i)))
                 .collect(Collectors.toList()), schema, entryItemTableName);
     }
 

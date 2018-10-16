@@ -12,7 +12,7 @@ import java.util.*;
 
 public interface RegisterReadOnly {
     Optional<Blob> getBlob(HashValue hash);
-    Collection<Blob> getAllItems();
+    Collection<Blob> getAllBlobs();
 
     Optional<Entry> getEntry(int entryNumber);
     Collection<Entry> getEntries(int start, int limit);
@@ -37,9 +37,9 @@ public interface RegisterReadOnly {
     Iterator<Entry> getEntryIterator();
     Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2);
 
-    Iterator<Blob> getItemIterator();
-    Iterator<Blob> getItemIterator(int start, int end);
-    Iterator<Blob> getSystemItemIterator();
+    Iterator<Blob> getBlobIterator();
+    Iterator<Blob> getBlobIterator(int start, int end);
+    Iterator<Blob> getSystemBlobIterator();
     
     Iterator<Entry> getEntryIterator(String indexName);
     Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);

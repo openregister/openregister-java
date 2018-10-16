@@ -70,7 +70,7 @@ public class Entry implements CsvRepresentationView<Entry> {
     }
 
     @JsonProperty("item-hash")
-    public List<HashValue> getItemHashes() {
+    public List<HashValue> getBlobHashes() {
         return hashValues;
     }
 

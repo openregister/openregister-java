@@ -23,7 +23,7 @@ public class RSFCreator {
     public RegisterSerialisationFormat create(Register register) {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
-                register.getItemIterator(),
+                register.getBlobIterator(),
                 register.getEntryIterator(IndexNames.METADATA),
                 register.getEntryIterator(),
                 Iterators.singletonIterator(register.getRegisterProof().getRootHash()));
@@ -41,12 +41,12 @@ public class RSFCreator {
 
             HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();
             HashValue nextRootHash = register.getRegisterProof(totalEntries2).getRootHash();
-            Iterator<Blob> metadataItemIterator = totalEntries1 == 0 ? register.getSystemItemIterator() : Collections.emptyIterator();
+            Iterator<Blob> metadataItemIterator = totalEntries1 == 0 ? register.getSystemBlobIterator() : Collections.emptyIterator();
             Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getEntryIterator(IndexNames.METADATA) : Collections.emptyIterator();
 
             iterators = Iterators.concat(
                     Iterators.singletonIterator(previousRootHash),
-                    register.getItemIterator(totalEntries1, totalEntries2),
+                    register.getBlobIterator(totalEntries1, totalEntries2),
                     metadataItemIterator,
                     metadataEntryIterator,
                     register.getEntryIterator(totalEntries1, totalEntries2),
@@ -59,7 +59,7 @@ public class RSFCreator {
     public RegisterSerialisationFormat create(Register register, String indexName) {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
-                register.getItemIterator(),
+                register.getBlobIterator(),
                 register.getEntryIterator(IndexNames.METADATA),
                 !indexName.equals(IndexNames.METADATA) ? register.getEntryIterator(indexName) : Collections.emptyIterator());
 
@@ -75,7 +75,7 @@ public class RSFCreator {
             iterators = Collections.emptyIterator();
         } else {
             iterators = Iterators.concat(
-                    register.getItemIterator(totalEntries1, totalEntries2),
+                    register.getBlobIterator(totalEntries1, totalEntries2),
                     register.getEntryIterator(indexName, totalEntries1, totalEntries2));
         }
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));

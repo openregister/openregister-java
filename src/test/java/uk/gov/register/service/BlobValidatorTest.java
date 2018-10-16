@@ -76,7 +76,7 @@ public class BlobValidatorTest {
         final JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -88,7 +88,7 @@ public class BlobValidatorTest {
         final JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -100,7 +100,7 @@ public class BlobValidatorTest {
         final JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info2' must contain a curie in a valid format or the 'register' field specified."));
@@ -113,7 +113,7 @@ public class BlobValidatorTest {
         final JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info' value must be of type 'curie'"));
@@ -126,7 +126,7 @@ public class BlobValidatorTest {
         final JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info' value must be of type 'curie'"));
@@ -139,7 +139,7 @@ public class BlobValidatorTest {
         final JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info' value must be of type 'curie'"));
@@ -152,7 +152,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -164,7 +164,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-cardinality-n' values must be of type 'curie'"));
@@ -176,7 +176,7 @@ public class BlobValidatorTest {
         String jsonString = "{\"text\":\"bar\"}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
-            blobValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
+            blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Entry does not contain primary key field 'register'"));
@@ -189,7 +189,7 @@ public class BlobValidatorTest {
         String jsonString = "{\"register\":\"  \",\"text\":\"bar\"}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
-            blobValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
+            blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Primary key field 'register' must have a valid value"));
@@ -203,7 +203,7 @@ public class BlobValidatorTest {
         String jsonString = "{\"register\":\"aregister\",\"text\":5}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
-            blobValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
+            blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'text' value must be of type 'text'"));
@@ -216,7 +216,7 @@ public class BlobValidatorTest {
         String jsonString = "{\"register\":\"aregister\",\"text\":5,\"key1\":\"value\",\"key2\":\"value\"}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
-            blobValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
+            blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Entry contains invalid fields: [key1, key2]"));
@@ -229,7 +229,7 @@ public class BlobValidatorTest {
         String jsonString = "{\"register\":\"aregister\",\"fields\":\"nonAcceptableNonArrayFieldValue\"}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
-            blobValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
+            blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'"));
@@ -242,7 +242,7 @@ public class BlobValidatorTest {
         String jsonString = "{\"register\":\"aregister\",\"fields\":[\"foo\",5]}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
-            blobValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
+            blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'fields' values must be of type 'string'"));
@@ -253,7 +253,7 @@ public class BlobValidatorTest {
     @Test
     public void noErrorWhenEntryIsValid() throws IOException, BlobValidationException {
         String jsonString = "{\"register\":\"aregister\",\"text\":\"some text\"}";
-        blobValidator.validateItem(nodeOf(jsonString), fieldsByName, registerMetadata);
+        blobValidator.validateBlob(nodeOf(jsonString), fieldsByName, registerMetadata);
     }
 
     private JsonNode nodeOf(String jsonString) throws IOException {
@@ -265,7 +265,7 @@ public class BlobValidatorTest {
         String jsonString = "{\"register\":\"aregister\",\"fields\":[\"foo\",\"\"]}";
         JsonNode jsonNode = nodeOf(jsonString);
         try {
-            blobValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
+            blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'fields' values must be of type 'string'"));
@@ -279,7 +279,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -291,7 +291,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -303,7 +303,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -315,7 +315,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -327,7 +327,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
         } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
@@ -339,7 +339,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'start-date' value must be of type 'datetime'"));
@@ -352,7 +352,7 @@ public class BlobValidatorTest {
         JsonNode jsonNode = nodeOf(jsonString);
 
         try {
-            countryBlobValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
+            countryBlobValidator.validateBlob(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'start-date' value must be of type 'datetime'"));

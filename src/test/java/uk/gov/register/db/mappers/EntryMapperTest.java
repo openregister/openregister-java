@@ -44,7 +44,7 @@ public class EntryMapperTest {
 
         Entry entry = allEntriesNoPagination.iterator().next();
 
-        assertThat(entry.getItemHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
+        assertThat(entry.getBlobHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
         assertThat(entry.getEntryNumber(), is(5));
         assertThat(entry.getIndexEntryNumber(), is(5));
         assertThat(allEntriesNoPagination.iterator().next().getTimestamp(), equalTo(expectedInstant));
@@ -64,7 +64,7 @@ public class EntryMapperTest {
         Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(entry.getItemHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
+        assertThat(entry.getBlobHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class EntryMapperTest {
         Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(entry.getItemHashes(), containsInAnyOrder(new HashValue(HashingAlgorithm.SHA256, "abcdef"), new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
+        assertThat(entry.getBlobHashes(), containsInAnyOrder(new HashValue(HashingAlgorithm.SHA256, "abcdef"), new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
     }
 
     @Test
@@ -94,6 +94,6 @@ public class EntryMapperTest {
         Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(entry.getItemHashes().size(), equalTo(0));
+        assertThat(entry.getBlobHashes().size(), equalTo(0));
     }
 }

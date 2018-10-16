@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class EntryToCommandMapper extends RegisterCommandMapper<Entry, RegisterCommand> {
     @Override
     public RegisterCommand apply(Entry entry) {
-        return new RegisterCommand("append-entry", Arrays.asList(entry.getEntryType().name(), entry.getKey(), entry.getTimestampAsISOFormat(), toDelimited(entry.getItemHashes())));
+        return new RegisterCommand("append-entry", Arrays.asList(entry.getEntryType().name(), entry.getKey(), entry.getTimestampAsISOFormat(), toDelimited(entry.getBlobHashes())));
     }
 
     private String toDelimited(Collection<HashValue> hashValues) {

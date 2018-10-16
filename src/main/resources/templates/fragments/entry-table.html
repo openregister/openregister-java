@@ -22,7 +22,7 @@
       <tr>
         <td th:text="item-hash"></td>
         <td>
-          <span th:each="sha : ${entry.itemHashes}"><a th:href="${'/items/' + sha}" th:text="${sha}"></a> </span>
+          <span th:each="sha : ${entry.blobHashes}"><a th:href="${'/items/' + sha}" th:text="${sha}"></a> </span>
         </td>
       </tr>
       <tr>

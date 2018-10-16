@@ -44,7 +44,7 @@
                 <a th:href="${'/entries/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
               </td>
               <td>
-                <p th:each="sha : ${entry.itemHashes}"><a th:href="${'/items/' + sha}" th:text="${sha}"></a></p>
+                <p th:each="sha : ${entry.blobHashes}"><a th:href="${'/items/' + sha}" th:text="${sha}"></a></p>
               </td>
               <td th:text="${entry.timestamp}"></td>
               <td th:text="${entry.key}"></td>

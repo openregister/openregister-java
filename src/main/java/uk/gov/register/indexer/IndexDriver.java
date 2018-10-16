@@ -26,10 +26,10 @@ public class IndexDriver {
                 ? Optional.of(entries.get(entry.getKey()))
                 : Optional.empty();
 
-        if (currentEntry.isPresent() && currentEntry.get().getItemHashes().isEmpty() && entry.getItemHashes().isEmpty()) {
+        if (currentEntry.isPresent() && currentEntry.get().getBlobHashes().isEmpty() && entry.getBlobHashes().isEmpty()) {
             throw new IndexingException(entry, indexFunction.getName(), "Cannot tombstone a record which does not exist");
         }
-        else if (currentEntry.isPresent() && CollectionUtils.isEqualCollection(currentEntry.get().getItemHashes(), entry.getItemHashes())) {
+        else if (currentEntry.isPresent() && CollectionUtils.isEqualCollection(currentEntry.get().getBlobHashes(), entry.getBlobHashes())) {
             throw new IndexingException(entry, indexFunction.getName(), "Cannot contain identical items to previous entry");
         }
 

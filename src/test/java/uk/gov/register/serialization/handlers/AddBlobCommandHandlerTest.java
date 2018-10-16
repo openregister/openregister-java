@@ -55,7 +55,7 @@ public class AddBlobCommandHandlerTest {
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
 
-        verify(register, times(1)).addItem(expectedBlob);
+        verify(register, times(1)).addBlob(expectedBlob);
     }
 
     @Test (expected = RSFParseException.class)
@@ -64,7 +64,7 @@ public class AddBlobCommandHandlerTest {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).addItem(any(Blob.class));
+        }).when(register).addBlob(any(Blob.class));
 
         assertExceptionThrown(addItemCommand, "Exception when executing command: RegisterCommand");
     }

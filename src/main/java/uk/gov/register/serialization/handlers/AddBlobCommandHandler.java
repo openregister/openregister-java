@@ -20,7 +20,7 @@ public class AddBlobCommandHandler extends RegisterCommandHandler {
         try {
             String jsonContent = command.getCommandArguments().get(RSFFormatter.RSF_ITEM_ARGUMENT_POSITION);
             Blob blob = new Blob(objectReconstructor.reconstruct(jsonContent));
-            register.addItem(blob);
+            register.addBlob(blob);
         } catch (Exception e) {
             throw new RSFParseException("Exception when executing command: " + command, e);
         }

@@ -23,7 +23,7 @@ public abstract class BaseIndexFunction implements IndexFunction {
     public Set<IndexKeyItemPair> execute(Function<HashValue, Optional<Blob>> itemFunc, Entry entry) {
         Set<IndexKeyItemPair> result = new HashSet<>();
 
-        entry.getItemHashes().forEach(itemHash -> {
+        entry.getBlobHashes().forEach(itemHash -> {
             execute(itemFunc, entry.getEntryType(), entry.getKey(), itemHash, result);
         });
 

@@ -86,19 +86,19 @@ public class PostgresRegisterTransactionalFunctionalTest {
 
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresRegister postgresRegister = getPostgresRegister(getTransactionalDataAccessLayer(handle));
-            postgresRegister.addItem(blob1);
+            postgresRegister.addBlob(blob1);
 
-            assertThat(postgresRegister.getAllItems().size(), is(1));
+            assertThat(postgresRegister.getAllBlobs().size(), is(1));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.addItem(blob2);
+            postgresRegister.addBlob(blob2);
 
-            assertThat(postgresRegister.getAllItems().size(), is(2));
+            assertThat(postgresRegister.getAllBlobs().size(), is(2));
             assertThat(testItemDAO.getItems(schema), is(empty()));
 
-            postgresRegister.addItem(blob3);
+            postgresRegister.addBlob(blob3);
 
-            assertThat(postgresRegister.getAllItems().size(), is(3));
+            assertThat(postgresRegister.getAllBlobs().size(), is(3));
             assertThat(testItemDAO.getItems(schema), is(empty()));
         });
 
@@ -115,22 +115,22 @@ public class PostgresRegisterTransactionalFunctionalTest {
             RegisterContext.useTransaction(dbi, handle -> {
                 PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
                 PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
-                postgresRegister.addItem(blob1);
+                postgresRegister.addBlob(blob1);
                 dataAccessLayer.checkpoint();
 
-                assertThat(postgresRegister.getAllItems().size(), is(1));
+                assertThat(postgresRegister.getAllBlobs().size(), is(1));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.addItem(blob2);
+                postgresRegister.addBlob(blob2);
                 dataAccessLayer.checkpoint();
 
-                assertThat(postgresRegister.getAllItems().size(), is(2));
+                assertThat(postgresRegister.getAllBlobs().size(), is(2));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
-                postgresRegister.addItem(blob3);
+                postgresRegister.addBlob(blob3);
                 dataAccessLayer.checkpoint();
 
-                assertThat(postgresRegister.getAllItems().size(), is(3));
+                assertThat(postgresRegister.getAllBlobs().size(), is(3));
                 assertThat(testItemDAO.getItems(schema), is(empty()));
 
                 throw new RuntimeException();
@@ -170,11 +170,11 @@ public class PostgresRegisterTransactionalFunctionalTest {
         RegisterContext.useTransaction(dbi, handle -> {
             PostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
             PostgresRegister postgresRegister = getPostgresRegister(dataAccessLayer);
-            postgresRegister.addItem(addressField);
-            postgresRegister.addItem(addressRegister);
-            postgresRegister.addItem(blob1);
-            postgresRegister.addItem(blob2);
-            postgresRegister.addItem(blob3);
+            postgresRegister.addBlob(addressField);
+            postgresRegister.addBlob(addressRegister);
+            postgresRegister.addBlob(blob1);
+            postgresRegister.addBlob(blob2);
+            postgresRegister.addBlob(blob3);
             postgresRegister.appendEntry(addressFieldEntry);
             postgresRegister.appendEntry(addressRegisterEntry);
             postgresRegister.appendEntry(entry1);

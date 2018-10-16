@@ -56,7 +56,7 @@ public class InMemoryBlobDAO implements BlobDAO, BlobQueryDAO {
     private Iterator<Blob> getItemIteratorFromEntryIterator(Iterator<Entry> entryIterator) {
         List<Blob> itemsResult = new ArrayList<>();
         entryIterator.forEachRemaining(entry -> {
-            List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getItemHashes().contains(hashValue)).collect(Collectors.toList());
+            List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getBlobHashes().contains(hashValue)).collect(Collectors.toList());
             hashValues.forEach(hashValue -> itemsResult.add(items.remove(hashValue)));
         });
         return itemsResult.iterator();
