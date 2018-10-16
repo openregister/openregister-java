@@ -35,7 +35,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry, false);
-        Model itemModel = new ItemTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(blobView);
+        Model itemModel = new BlobTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(blobView);
 
         Resource recordResource = recordModel.createResource(recordUri(entry.getKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));

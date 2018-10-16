@@ -12,7 +12,7 @@ import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.views.representations.ExtraMediaType;
-import uk.gov.register.views.representations.turtle.ItemTurtleWriter;
+import uk.gov.register.views.representations.turtle.BlobTurtleWriter;
 
 import javax.inject.Provider;
 import java.io.ByteArrayOutputStream;
@@ -57,13 +57,13 @@ public class BlobView implements CsvRepresentationView<Map<String, FieldValue>> 
 
     public String itemsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
         final ByteArrayOutputStream outputStream;
-        final ItemTurtleWriter entryTurtleWriter;
+        final BlobTurtleWriter entryTurtleWriter;
         String registerInTextFormatted = StringUtils.EMPTY;
 
         try {
             if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
                 outputStream = new ByteArrayOutputStream();
-                entryTurtleWriter = new ItemTurtleWriter(registerIdProvider, registerResolver);
+                entryTurtleWriter = new BlobTurtleWriter(registerIdProvider, registerResolver);
 
                 entryTurtleWriter.writeTo(this, EntryListView.class, EntryListView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
 

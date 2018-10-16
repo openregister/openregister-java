@@ -21,10 +21,10 @@ import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class ItemTurtleWriter extends TurtleRepresentationWriter<BlobView> {
+public class BlobTurtleWriter extends TurtleRepresentationWriter<BlobView> {
 
     @Inject
-    public ItemTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
+    public BlobTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
         super(registerIdProvider, registerResolver);
     }
 

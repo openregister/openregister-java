@@ -18,7 +18,7 @@ import java.util.*;
 
 @Provider
 @Produces(ExtraMediaType.APPLICATION_SPREADSHEET)
-public class ItemSpreadSheetWriter extends RepresentationWriter<BlobView> {
+public class BlobSpreadSheetWriter extends RepresentationWriter<BlobView> {
 
     @Override
     public void writeTo(final BlobView blobView, final Class<?> type, final Type genericType, final Annotation[] annotations,

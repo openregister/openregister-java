@@ -41,7 +41,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
+        BlobTurtleWriter writer = new BlobTurtleWriter(() -> new RegisterId("address"), registerResolver);
         writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -74,7 +74,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
+        BlobTurtleWriter writer = new BlobTurtleWriter(() -> new RegisterId("address"), registerResolver);
         writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
@@ -97,7 +97,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("address"), registerResolver);
+        BlobTurtleWriter writer = new BlobTurtleWriter(() -> new RegisterId("address"), registerResolver);
         writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
 
         byte[] bytes = outputStream.toByteArray();
@@ -120,7 +120,7 @@ public class TurtleRepresentationWriterTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        ItemTurtleWriter writer = new ItemTurtleWriter(() -> new RegisterId("government-organisation"), registerResolver);
+        BlobTurtleWriter writer = new BlobTurtleWriter(() -> new RegisterId("government-organisation"), registerResolver);
         writer.writeTo(blobView, blobView.getClass(), null, null, null, null, outputStream);
 
         byte[] bytes = outputStream.toByteArray();
