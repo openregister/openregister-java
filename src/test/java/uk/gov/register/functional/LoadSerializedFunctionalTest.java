@@ -33,7 +33,7 @@ public class LoadSerializedFunctionalTest {
 
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
-    private static TestItemCommandDAO testItemDAO;
+    private static TestBlobCommandDAO testItemDAO;
     private static TestEntryDAO testEntryDAO;
     private static IndexQueryDAO testRecordDAO;
     private static String schema = testRegister.getSchema();
@@ -41,7 +41,7 @@ public class LoadSerializedFunctionalTest {
     @BeforeClass
     public static void setUp() throws Exception {
         Handle handle = register.handleFor(testRegister);
-        testItemDAO = handle.attach(TestItemCommandDAO.class);
+        testItemDAO = handle.attach(TestBlobCommandDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
         testRecordDAO = handle.attach(IndexQueryDAO.class);
     }
@@ -58,36 +58,36 @@ public class LoadSerializedFunctionalTest {
         System.out.println(r.readEntity(String.class));
         assertThat(r.getStatus(), equalTo(200));
 
-        TestDBItem expectedItem1 = new TestDBItem(
+        TestDBBlob expectedItem1 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"register\",\"phase\":\"alpha\",\"register\":\"register\",\"text\":\"A register name.\"}"));
-        TestDBItem expectedItem2 = new TestDBItem(
+        TestDBBlob expectedItem2 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "ceae38992b310fba3ae77fd84e21cdb6838c90b36bcb558de02acd2f6589bd3f"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"text\",\"field\":\"text\",\"phase\":\"alpha\",\"text\":\"Description of register entry.\"}"));
-        TestDBItem expectedItem3 = new TestDBItem(
+        TestDBBlob expectedItem3 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "4624c413d90e125141a92f28c9ea4300a568d9b5d9c1c7ad13623433c4a370f2"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"registry\",\"phase\":\"alpha\",\"text\":\"Body responsible for maintaining one or more registers\"}"));
-        TestDBItem expectedItem4 = new TestDBItem(
+        TestDBBlob expectedItem4 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "1c5a799079c97f1dcea1b244d9962b0de248ba1282145c2e815839815db1d0a4"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"phase\",\"phase\":\"alpha\",\"text\":\"Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual).\"}"));
-        TestDBItem expectedItem5 = new TestDBItem(
+        TestDBBlob expectedItem5 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "c7e5a90c020f7686d9a275cb0cc164636745b10ae168a72538772692cc90d633"),
                 nodeOf("{\"cardinality\":\"1\",\"datatype\":\"text\",\"field\":\"copyright\",\"phase\":\"alpha\",\"text\":\"Copyright for the data in the register.\"}"));
-        TestDBItem expectedItem6 = new TestDBItem(
+        TestDBBlob expectedItem6 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "61138002a7ae8a53f3ad16bb91ee41fe73cc7ab7c8b24a8afd2569eb0e6a1c26"),
                 nodeOf("{\"cardinality\":\"n\",\"datatype\":\"string\",\"field\":\"fields\",\"phase\":\"alpha\",\"register\":\"field\",\"text\":\"Set of field names.\"}"));
-        TestDBItem expectedItem7 = new TestDBItem(
+        TestDBBlob expectedItem7 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "f404b4739b51afeb39bba26f3bbf1aa8c6f7d25f0d54444992fc00f24587ef77"),
                 nodeOf("{\"fields\":[\"register\",\"text\",\"registry\",\"phase\",\"copyright\",\"fields\"],\"phase\":\"alpha\",\"register\":\"register\",\"registry\":\"cabinet-office\",\"text\":\"Register of registers\"}"));
-        TestDBItem expectedItem8 = new TestDBItem(
+        TestDBBlob expectedItem8 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"),
                 nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test\"}"));
-        TestDBItem expectedItem9 = new TestDBItem(
+        TestDBBlob expectedItem9 = new TestDBBlob(
                 new HashValue(HashingAlgorithm.SHA256, "b8b56d0329b4a82ce55217cfbb3803c322bf43711f82649757e9c2df5f5b8371"),
                 nodeOf("{\"text\":\"SomeText\",\"register\":\"ft_openregister_test2\"}"));
 
 
-        List<TestDBItem> storedItems = testItemDAO.getItems(schema);
+        List<TestDBBlob> storedItems = testItemDAO.getItems(schema);
         assertThat(storedItems, containsInAnyOrder(expectedItem1, expectedItem2, expectedItem3, expectedItem4, expectedItem5, expectedItem6, expectedItem7, expectedItem8, expectedItem9));
 
         List<Entry> systemEntries = testEntryDAO.getAllSystemEntries(schema);

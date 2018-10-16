@@ -17,22 +17,22 @@ import java.sql.SQLException;
 import java.util.List;
 
 @UseStringTemplate3StatementLocator
-public interface TestItemCommandDAO {
+public interface TestBlobCommandDAO {
     @SqlUpdate("delete from \"<schema>\".item")
     void wipeData(@Define("schema") String schema);
 
-    @RegisterMapper(ItemMapper.class)
+    @RegisterMapper(BlobMapper.class)
     @SqlQuery("select * from \"<schema>\".item")
-    List<TestDBItem> getItems(@Define("schema") String schema);
+    List<TestDBBlob> getItems(@Define("schema") String schema);
 
-    class ItemMapper implements ResultSetMapper<TestDBItem> {
+    class BlobMapper implements ResultSetMapper<TestDBBlob> {
 
         private final ObjectMapper objectMapper = new ObjectMapper();
 
         @Override
-        public TestDBItem map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+        public TestDBBlob map(int index, ResultSet r, StatementContext ctx) throws SQLException {
             try {
-                return new TestDBItem(new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")), objectMapper.readTree(r.getString("content")));
+                return new TestDBBlob(new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")), objectMapper.readTree(r.getString("content")));
             } catch (IOException e) {
                 throw new SQLException(e);
             }

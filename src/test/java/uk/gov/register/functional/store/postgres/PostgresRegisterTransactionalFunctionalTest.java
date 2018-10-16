@@ -24,7 +24,7 @@ import uk.gov.register.db.*;
 import uk.gov.register.db.Index;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
-import uk.gov.register.functional.db.TestItemCommandDAO;
+import uk.gov.register.functional.db.TestBlobCommandDAO;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.indexer.function.LatestByKeyIndexFunction;
@@ -56,7 +56,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
     private Handle handle;
     private String schema = address.getSchema();
 
-    private TestItemCommandDAO testItemDAO;
+    private TestBlobCommandDAO testItemDAO;
     private TestEntryDAO testEntryDAO;
     private IndexDriver indexDriver = mock(IndexDriver.class);
     private Index index;
@@ -67,7 +67,7 @@ public class PostgresRegisterTransactionalFunctionalTest {
         Environment env = new Environment("test-env", Jackson.newObjectMapper(), null, new MetricRegistry(), null);
         dbi = factory.build(env, getDataSourceFactory(), "database");
         handle = dbi.open();
-        testItemDAO = handle.attach(TestItemCommandDAO.class);
+        testItemDAO = handle.attach(TestBlobCommandDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
         index = mock(Index.class);
     }

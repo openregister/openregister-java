@@ -4,16 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import uk.gov.register.core.Blob;
 import uk.gov.register.util.HashValue;
 
-public class TestDBItem {
+public class TestDBBlob {
     public final HashValue hashValue;
     public final JsonNode contents;
 
-    public TestDBItem(HashValue hashValue, JsonNode contents) {
+    public TestDBBlob(HashValue hashValue, JsonNode contents) {
         this.hashValue = hashValue;
         this.contents = contents;
     }
 
-    public TestDBItem(JsonNode contents) {
+    public TestDBBlob(JsonNode contents) {
         this.hashValue = Blob.itemHash(contents);
         this.contents = contents;
     }
@@ -23,7 +23,7 @@ public class TestDBItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TestDBItem that = (TestDBItem) o;
+        TestDBBlob that = (TestDBBlob) o;
 
         if (hashValue != null ? !hashValue.equals(that.hashValue) : that.hashValue != null) return false;
         return contents.equals(that.contents);
@@ -39,7 +39,7 @@ public class TestDBItem {
 
     @Override
     public String toString() {
-        return "TestDBItem{" +
+        return "TestDBBlob{" +
                 "hashValue='" + hashValue.toString() + '\'' +
                 ", contents=" + contents.toString() +
                 '}';

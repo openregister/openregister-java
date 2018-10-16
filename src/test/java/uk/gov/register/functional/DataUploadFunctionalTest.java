@@ -17,9 +17,9 @@ import uk.gov.register.db.IndexQueryDAO;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
-import uk.gov.register.functional.db.TestDBItem;
+import uk.gov.register.functional.db.TestDBBlob;
 import uk.gov.register.functional.db.TestEntryDAO;
-import uk.gov.register.functional.db.TestItemCommandDAO;
+import uk.gov.register.functional.db.TestBlobCommandDAO;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.util.CanonicalJsonMapper;
 
@@ -45,14 +45,14 @@ public class DataUploadFunctionalTest {
     private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
     private static IndexQueryDAO testRecordDAO;
     private static TestEntryDAO testEntryDAO;
-    private static TestItemCommandDAO testItemDAO;
+    private static TestBlobCommandDAO testItemDAO;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Handle handle = register.handleFor(TestRegister.register);
         testRecordDAO = handle.attach(IndexQueryDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
-        testItemDAO = handle.attach(TestItemCommandDAO.class);
+        testItemDAO = handle.attach(TestBlobCommandDAO.class);
         schema = TestRegister.register.getSchema();
     }
 
@@ -71,7 +71,7 @@ public class DataUploadFunctionalTest {
         Response r = register.loadRsf(TestRegister.register, rsf);
         assertThat(r.getStatus(), equalTo(200));
 
-        TestDBItem storedItem = testItemDAO.getItems(schema).get(7);
+        TestDBBlob storedItem = testItemDAO.getItems(schema).get(7);
         assertThat(storedItem.contents, equalTo(inputItem));
         assertThat(storedItem.hashValue, equalTo(Blob.itemHash(inputItem)));
 
@@ -118,11 +118,11 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        List<TestDBItem> items = testItemDAO.getItems(schema);
+        List<TestDBBlob> items = testItemDAO.getItems(schema);
         assertThat(items,
                 IsCollectionContaining.hasItems(
-                        new TestDBItem(canonicalItem1),
-                        new TestDBItem(canonicalItem2)
+                        new TestDBBlob(canonicalItem1),
+                        new TestDBBlob(canonicalItem2)
                 )
         );
 
@@ -157,10 +157,10 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        List<TestDBItem> items = testItemDAO.getItems(schema);
+        List<TestDBBlob> items = testItemDAO.getItems(schema);
         assertThat(items,
                 IsCollectionContaining.hasItem(
-                        new TestDBItem(canonicalItem)
+                        new TestDBBlob(canonicalItem)
                 )
         );
 
@@ -196,10 +196,10 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        List<TestDBItem> items = testItemDAO.getItems(schema);
+        List<TestDBBlob> items = testItemDAO.getItems(schema);
         assertThat(items,
                 IsCollectionContaining.hasItem(
-                        new TestDBItem(canonicalItem1)
+                        new TestDBBlob(canonicalItem1)
                 )
         );
 
