@@ -55,31 +55,6 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
         return new CsvRepresentation<>(Item.csvSchema(fieldNames), fieldValueMap);
     }
 
-    public String itemsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
-        final ByteArrayOutputStream outputStream;
-        final ItemTurtleWriter entryTurtleWriter;
-        String registerInTextFormatted = StringUtils.EMPTY;
-
-        try {
-            if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
-                outputStream = new ByteArrayOutputStream();
-                entryTurtleWriter = new ItemTurtleWriter(registerIdProvider, registerResolver);
-
-                entryTurtleWriter.writeTo(this, EntryListView.class, EntryListView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
-
-                registerInTextFormatted = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
-            } else if (ExtraMediaType.TEXT_YAML_TYPE.getSubtype().equals(mediaType)) {
-                registerInTextFormatted = yamlObjectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(getContent());
-            } else {
-                registerInTextFormatted = jsonObjectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(getContent());
-            }
-        } catch (final IOException ex) {
-            LOGGER.error("Error processing preview request. Impossible process the register items");
-        }
-
-        return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
-    }
-
     public HashValue getItemHash() {
         return sha256hex;
     }
