@@ -16,11 +16,11 @@ import java.util.function.Function;
 public interface DataAccessLayer {
 
     // Items
-    void addItem(Blob blob);
-    Optional<Blob> getItem(HashValue hash);
-    Collection<Blob> getAllItems();
-    Iterator<Blob> getItemIterator(EntryType entryType);
-    Iterator<Blob> getItemIterator(int startEntryNumber, int endEntryNumber);
+    void addBlob(Blob blob);
+    Optional<Blob> getBlob(HashValue hash);
+    Collection<Blob> getAllBlobs();
+    Iterator<Blob> getBlobIterator(EntryType entryType);
+    Iterator<Blob> getBlobIterator(int startEntryNumber, int endEntryNumber);
 
     // Entries
     void appendEntry(Entry entry) throws IndexingException;
@@ -37,8 +37,8 @@ public interface DataAccessLayer {
     Optional<Instant> getLastUpdatedTime();
 
     // Indexes
-    void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber);
-    void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber, int entryNumberToEnd);
+    void start(String indexName, String key, String blobHash, int startEntryNumber, int startIndexEntryNumber);
+    void end(String indexName, String entryKey, String indexKey, String blobHash, int endEntryNumber, int endIndexEntryNumber, int entryNumberToEnd);
     Optional<Record> getRecord(String key, String indexName);
     List<Record> getRecords(int limit, int offset, String indexName);
     int getTotalRecords(String indexName);
@@ -47,5 +47,5 @@ public interface DataAccessLayer {
     List<Record> findMax100RecordsByKeyValue(String key, String value);
     Collection<Entry> getAllEntriesByKey(String key);
 
-    IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex);
+    IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingBlobCount(String indexName, String key, String sha256hex);
 }

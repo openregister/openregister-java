@@ -33,7 +33,7 @@ public class LatestByKeyIndexFunctionTest {
 		HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
 
 		Set<IndexKeyItemPair> resultSet = new HashSet<>();
-		func.execute(h -> dataAccessLayer.getItem(h), EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
+		func.execute(h -> dataAccessLayer.getBlob(h), EntryType.user, "LND", new HashValue(HashingAlgorithm.SHA256, "abc"), resultSet);
 
 		assertThat(resultSet.size(), is(1));
 		assertThat(resultSet, contains(new IndexKeyItemPair("LND", itemHash)));

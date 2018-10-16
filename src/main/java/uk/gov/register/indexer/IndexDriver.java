@@ -2,7 +2,6 @@ package uk.gov.register.indexer;
 
 import org.apache.commons.collections4.CollectionUtils;
 import uk.gov.register.core.Entry;
-import uk.gov.register.core.EntryType;
 import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.store.DataAccessLayer;
@@ -39,10 +38,10 @@ public class IndexDriver {
 
         Set<IndexKeyItemPair> currentIndexKeyItemPairs = new HashSet<>();
         if (currentEntry.isPresent()) {
-            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getItem, currentEntry.get()));
+            currentIndexKeyItemPairs.addAll(indexFunction.execute(dataAccessLayer::getBlob, currentEntry.get()));
         }
 
-        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getItem, entry);
+        Set<IndexKeyItemPair> newIndexKeyItemPairs = indexFunction.execute(dataAccessLayer::getBlob, entry);
 
         List<IndexKeyItemPairEvent> pairEvents = getEndIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs);
         pairEvents.addAll(getStartIndices(currentIndexKeyItemPairs, newIndexKeyItemPairs));
@@ -54,7 +53,7 @@ public class IndexDriver {
             int newIndexEntryNumber = currentIndexEntryNumber.get() + 1;
 
             for (IndexKeyItemPairEvent p : keyValuePair.getValue()) {
-                IndexEntryNumberItemCountPair startIndexEntryNumberItemCountPair = dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
+                IndexEntryNumberItemCountPair startIndexEntryNumberItemCountPair = dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount(indexFunction.getName(), p.getIndexKey(), p.getItemHash().getValue());
 
                 if (p.isStart()) {
                     addIndexKeyToItemHash(indexFunction, dataAccessLayer, currentIndexEntryNumber, entry.getEntryNumber(), newIndexEntryNumber, p, startIndexEntryNumberItemCountPair);

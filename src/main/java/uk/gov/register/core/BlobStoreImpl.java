@@ -16,31 +16,31 @@ public class BlobStoreImpl implements BlobStore {
 
     @Override
     public void addBlob(Blob blob) {
-        dataAccessLayer.addItem(blob);
+        dataAccessLayer.addBlob(blob);
     }
 
     @Override
     public Optional<Blob> getBlob(HashValue hash) {
-        return dataAccessLayer.getItem(hash);
+        return dataAccessLayer.getBlob(hash);
     }
     
     @Override
     public Collection<Blob> getAllBlobs() {
-        return dataAccessLayer.getAllItems();
+        return dataAccessLayer.getAllBlobs();
     }
 
     @Override
     public Iterator<Blob> getUserBlobIterator() {
-        return dataAccessLayer.getItemIterator(EntryType.user);
+        return dataAccessLayer.getBlobIterator(EntryType.user);
     }
 
     @Override
     public Iterator<Blob> getUserBlobIterator(int startEntryNumber, int endEntryNumber) {
-        return dataAccessLayer.getItemIterator(startEntryNumber, endEntryNumber);
+        return dataAccessLayer.getBlobIterator(startEntryNumber, endEntryNumber);
     }
 
     @Override
     public Iterator<Blob> getSystemBlobIterator() {
-        return dataAccessLayer.getItemIterator(EntryType.system);
+        return dataAccessLayer.getBlobIterator(EntryType.system);
     }
 }

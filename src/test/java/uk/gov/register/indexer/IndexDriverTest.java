@@ -107,9 +107,9 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -137,8 +137,8 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -166,9 +166,9 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -197,7 +197,7 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -206,8 +206,8 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")))));
 
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         Map<String, Entry> currentEntries = new HashMap<>();
         currentEntries.put("A", previousEntry);
@@ -229,9 +229,9 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -260,10 +260,10 @@ public class IndexDriverTest {
         Entry newEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -295,14 +295,14 @@ public class IndexDriverTest {
         Entry newEntry4 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "C", EntryType.user);
         Entry newEntry5 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "ccc"))).thenReturn(Optional.of(blobR));
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "ddd"))).thenReturn(Optional.of(blobS));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0), new IndexEntryNumberItemCountPair(Optional.of(2), 1));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "S", "ddd")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0), new IndexEntryNumberItemCountPair(Optional.of(3), 1));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "R", "ccc")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "ccc"))).thenReturn(Optional.of(blobR));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "ddd"))).thenReturn(Optional.of(blobS));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0), new IndexEntryNumberItemCountPair(Optional.of(2), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "S", "ddd")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0), new IndexEntryNumberItemCountPair(Optional.of(3), 1));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "R", "ccc")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
@@ -345,8 +345,8 @@ public class IndexDriverTest {
         Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
         Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
         
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blob));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blob));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
@@ -370,10 +370,10 @@ public class IndexDriverTest {
         Entry previousEntry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "D", EntryType.user);
         Entry newEntry = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
 
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
-        when(dataAccessLayer.getItem(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 3));
-        when(dataAccessLayer.getStartIndexEntryNumberAndExistingItemCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
+        when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 3));
+        when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
         IndexFunction indexFunction = mock(IndexFunction.class);
         when(indexFunction.getName()).thenReturn("by-x");
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(previousEntry1)))

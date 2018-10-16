@@ -64,7 +64,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingItemCount(String indexName, String key, String sha256hex){
+    public IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingBlobCount(String indexName, String key, String sha256hex){
         if (!existingStartIndexes.containsKey(indexName)) {
             existingStartIndexes.put(indexName, new HashMap<>());
         }
@@ -117,12 +117,12 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void addItem(Blob blob) {
+    public void addBlob(Blob blob) {
         stagedItems.put(blob.getSha256hex(), blob);
     }
 
     @Override
-    public void start(String indexName, String key, String itemHash, int startEntryNumber, int startIndexEntryNumber) {
+    public void start(String indexName, String key, String blobHash, int startEntryNumber, int startIndexEntryNumber) {
         if (!stagedStartIndexes.containsKey(indexName)) {
             stagedStartIndexes.put(indexName, new HashMap<>());
         }
@@ -131,19 +131,19 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
             stagedStartIndexes.get(indexName).put(key, new ArrayList<>());
         }
 
-        stagedStartIndexes.get(indexName).get(key).add(new StartIndex(indexName, key, itemHash, startEntryNumber, startIndexEntryNumber));
+        stagedStartIndexes.get(indexName).get(key).add(new StartIndex(indexName, key, blobHash, startEntryNumber, startIndexEntryNumber));
     }
 
     @Override
-    public void end(String indexName, String entryKey, String indexKey, String itemHash, int endEntryNumber, int endIndexEntryNumber, int entryNumberToEnd) {
+    public void end(String indexName, String entryKey, String indexKey, String blobHash, int endEntryNumber, int endIndexEntryNumber, int entryNumberToEnd) {
         if (!stagedEndIndexes.containsKey(indexName)) {
             stagedEndIndexes.put(indexName, new ArrayList<>());
         }
         
-        stagedEndIndexes.get(indexName).add(new EndIndex(indexName, entryKey, indexKey, itemHash, endEntryNumber, endIndexEntryNumber, entryNumberToEnd));
+        stagedEndIndexes.get(indexName).add(new EndIndex(indexName, entryKey, indexKey, blobHash, endEntryNumber, endIndexEntryNumber, entryNumberToEnd));
         
-        Optional<StartIndex> currentIndexToEnd = existingStartIndexes.containsKey(indexName) && existingStartIndexes.get(indexName).containsKey(indexKey + itemHash)
-                ? existingStartIndexes.get(indexName).get(indexKey + itemHash).stream().filter(i -> i.getItemHash().equals(itemHash) && !i.isEnded()).findFirst()
+        Optional<StartIndex> currentIndexToEnd = existingStartIndexes.containsKey(indexName) && existingStartIndexes.get(indexName).containsKey(indexKey + blobHash)
+                ? existingStartIndexes.get(indexName).get(indexKey + blobHash).stream().filter(i -> i.getItemHash().equals(blobHash) && !i.isEnded()).findFirst()
                 : Optional.empty();
         
         if (currentIndexToEnd.isPresent()) {
@@ -152,7 +152,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         }
 
         Optional<StartIndex> stagedIndexToEnd = stagedStartIndexes.containsKey(indexName) && stagedStartIndexes.get(indexName).containsKey(indexKey)
-                ? stagedStartIndexes.get(indexName).get(indexKey).stream().filter(i -> i.getItemHash().equals(itemHash) && !i.isEnded()).findFirst()
+                ? stagedStartIndexes.get(indexName).get(indexKey).stream().filter(i -> i.getItemHash().equals(blobHash) && !i.isEnded()).findFirst()
                 : Optional.empty();
         
         if (stagedIndexToEnd.isPresent()) {
@@ -161,12 +161,12 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public Optional<Blob> getItem(HashValue hash) {
+    public Optional<Blob> getBlob(HashValue hash) {
         if (stagedItems.containsKey(hash)) {
             return Optional.of(stagedItems.get(hash));
         }
         
-        return super.getItem(hash);
+        return super.getBlob(hash);
     }
 
     @Override

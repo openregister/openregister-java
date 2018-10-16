@@ -134,55 +134,55 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void putItem_shouldNotCommitData() {
-        dataAccessLayer.addItem(blob1);
-        dataAccessLayer.addItem(blob2);
+        dataAccessLayer.addBlob(blob1);
+        dataAccessLayer.addBlob(blob2);
 
         assertThat(itemMap.entrySet(), is(empty()));
     }
 
     @Test
     public void getAllItems_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(blob1);
-        dataAccessLayer.addItem(blob2);
+        dataAccessLayer.addBlob(blob1);
+        dataAccessLayer.addBlob(blob2);
 
-        assertThat(dataAccessLayer.getAllItems(), is(iterableWithSize(2)));
+        assertThat(dataAccessLayer.getAllBlobs(), is(iterableWithSize(2)));
     }
 
     @Test
     public void getItemBySha256_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(blob1);
-        dataAccessLayer.addItem(blob2);
+        dataAccessLayer.addBlob(blob1);
+        dataAccessLayer.addBlob(blob2);
 
-        assertThat(dataAccessLayer.getItem(blob1.getSha256hex()), is(Optional.of(blob1)));
+        assertThat(dataAccessLayer.getBlob(blob1.getSha256hex()), is(Optional.of(blob1)));
     }
 
     @Test
     public void getItemBySha256_shouldGetFromStagedDataWithoutWritingToDB() throws Exception {
-        dataAccessLayer.addItem(blob1);
-        Optional<Blob> item = dataAccessLayer.getItem(blob1.getSha256hex());
+        dataAccessLayer.addBlob(blob1);
+        Optional<Blob> item = dataAccessLayer.getBlob(blob1.getSha256hex());
         assertThat(item, is(Optional.of(blob1)));
         assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd", "schema").isPresent());
     }
 
     @Test
     public void getIterator_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(blob1);
-        dataAccessLayer.addItem(blob2);
+        dataAccessLayer.addBlob(blob1);
+        dataAccessLayer.addBlob(blob2);
         entries.add(new Entry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
         entries.add(new Entry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
-        List<Blob> blobs = newArrayList(dataAccessLayer.getItemIterator(EntryType.user));
+        List<Blob> blobs = newArrayList(dataAccessLayer.getBlobIterator(EntryType.user));
         assertThat(blobs, is(asList(blob1, blob2)));
     }
 
     @Test
     public void getIteratorRange_shouldGetFromStagedDataIfNeeded() throws Exception {
-        dataAccessLayer.addItem(blob1);
-        dataAccessLayer.addItem(blob2);
+        dataAccessLayer.addBlob(blob1);
+        dataAccessLayer.addBlob(blob2);
         entries.add(new Entry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
         entries.add(new Entry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
-        List<Blob> blobs = newArrayList(dataAccessLayer.getItemIterator(1,2));
+        List<Blob> blobs = newArrayList(dataAccessLayer.getBlobIterator(1,2));
         assertThat(blobs, is(singletonList(blob2)));
     }
     

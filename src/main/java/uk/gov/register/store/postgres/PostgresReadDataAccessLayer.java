@@ -98,18 +98,18 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     // Blob Store
 
     @Override
-    public Optional<Blob> getItem(HashValue hash) {
+    public Optional<Blob> getBlob(HashValue hash) {
         return blobQueryDAO.getItemBySHA256(hash.getValue(), schema);
     }
 
     @Override
-    public Collection<Blob> getAllItems() {
+    public Collection<Blob> getAllBlobs() {
         checkpoint();
         return blobQueryDAO.getAllItemsNoPagination(schema);
     }
 
     @Override
-    public Iterator<Blob> getItemIterator(EntryType entryType) {
+    public Iterator<Blob> getBlobIterator(EntryType entryType) {
         checkpoint();
 
         switch (entryType) {
@@ -120,7 +120,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Iterator<Blob> getItemIterator(int startEntryNumber, int endEntryNumber) {
+    public Iterator<Blob> getBlobIterator(int startEntryNumber, int endEntryNumber) {
         checkpoint();
         return blobQueryDAO.getIterator(startEntryNumber, endEntryNumber, schema);
     }
