@@ -4,7 +4,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.core.Blob;
 import uk.gov.register.core.Entry;
-import uk.gov.register.store.postgres.BindItem;
+import uk.gov.register.store.postgres.BindBlob;
 import uk.gov.register.util.HashValue;
 
 import java.util.*;
@@ -22,7 +22,7 @@ public class InMemoryBlobDAO implements BlobDAO, BlobQueryDAO {
     }
 
     @Override
-    public void insertInBatch(@BindItem Iterable<Blob> items, String schema) {
+    public void insertInBatch(@BindBlob Iterable<Blob> items, String schema) {
         for (Blob blob : items) {
             this.items.put(blob.getSha256hex(), blob);
         }

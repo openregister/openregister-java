@@ -8,13 +8,13 @@ import uk.gov.register.core.Blob;
 import java.lang.annotation.*;
 import java.sql.SQLException;
 
-@BindingAnnotation(BindItem.ItemBinderFactory.class)
+@BindingAnnotation(BindBlob.BlobBinderFactory.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-public @interface BindItem {
-    class ItemBinderFactory implements BinderFactory {
+public @interface BindBlob {
+    class BlobBinderFactory implements BinderFactory {
         public Binder build(Annotation annotation) {
-            return (Binder<BindItem, Blob>) (q, bind, arg) -> {
+            return (Binder<BindBlob, Blob>) (q, bind, arg) -> {
                 q.bind("sha256hex", arg.getSha256hex().getValue());
                 try {
                     q.bind("content", arg.getContentAsJsonb());
