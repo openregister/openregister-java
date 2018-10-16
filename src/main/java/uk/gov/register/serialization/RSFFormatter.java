@@ -4,7 +4,7 @@ import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
-import uk.gov.register.exceptions.ItemNotCanonicalException;
+import uk.gov.register.exceptions.BlobNotCanonicalException;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.util.CanonicalJsonValidator;
 
@@ -81,7 +81,7 @@ public class RSFFormatter {
                 String jsonContent = arguments.get(RSF_ITEM_ARGUMENT_POSITION);
                 try {
                     canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
-                } catch (ItemNotCanonicalException e) {
+                } catch (BlobNotCanonicalException e) {
                     throw new RSFParseException("Non canonical JSON", e);
                 } catch (Exception e) {
                     throw new RSFParseException("Invalid JSON", e);

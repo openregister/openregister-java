@@ -2,7 +2,7 @@ package uk.gov.register.util;
 
 import org.junit.Before;
 import org.junit.Test;
-import uk.gov.register.exceptions.ItemNotCanonicalException;
+import uk.gov.register.exceptions.BlobNotCanonicalException;
 
 import java.io.IOException;
 
@@ -16,14 +16,14 @@ public class CanonicalJsonValidatorTest {
         canonicalJsonValidator = new CanonicalJsonValidator();
     }
 
-    @Test(expected = ItemNotCanonicalException.class)
+    @Test(expected = BlobNotCanonicalException.class)
     public void validateItemIsCanonicalized_throwsValidationException_whenItemIsNotCanonicalizedByFieldOrder() {
         String jsonString = "{\"text\":\"some text\",\"register\":\"aregister\"}";
 
         canonicalJsonValidator.validateItemStringIsCanonicalized(jsonString);
     }
 
-    @Test(expected = ItemNotCanonicalException.class)
+    @Test(expected = BlobNotCanonicalException.class)
     public void validateItemIsCanonicalized_throwsValidationException_whenItemIsNotCanonicalizedByWhitespace() {
         String jsonString = "{ \"register\":\"aregister\", \"text\":\"some text\"  }";
 
@@ -36,7 +36,7 @@ public class CanonicalJsonValidatorTest {
 
         try {
             canonicalJsonValidator.validateItemStringIsCanonicalized(jsonString);
-        } catch (ItemNotCanonicalException e) {
+        } catch (BlobNotCanonicalException e) {
             fail("Entry is canonicalized but exception was thrown");
         }
     }
