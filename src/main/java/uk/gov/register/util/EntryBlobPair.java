@@ -1,10 +1,10 @@
 package uk.gov.register.util;
 
-public class EntryItemPair {
+public class EntryBlobPair {
     private final int entryNumber;
     private final HashValue sha256hex;
 
-    public EntryItemPair(int entryNumber, HashValue sha256hex) {
+    public EntryBlobPair(int entryNumber, HashValue sha256hex) {
         this.entryNumber = entryNumber;
         this.sha256hex = sha256hex;
     }

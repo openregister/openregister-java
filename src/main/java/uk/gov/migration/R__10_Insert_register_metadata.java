@@ -18,7 +18,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Blob;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
-import uk.gov.register.util.EntryItemPair;
+import uk.gov.register.util.EntryBlobPair;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -146,8 +146,8 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 	private void writeRecords(Connection connection, Handle handle, Iterable<Record> records) throws SQLException {
 		List<Blob> items = Streams.stream(records).map(r -> r.getBlobs().get(0)).collect(toList());
 		List<Entry> entries = Streams.stream(records).map(r -> r.getEntry()).collect(toList());
-		List<EntryItemPair> entryItems = entries.stream()
-				.map(e -> new EntryItemPair(e.getEntryNumber(), e.getItemHashes().get(0))).collect(toList());
+		List<EntryBlobPair> entryItems = entries.stream()
+				.map(e -> new EntryBlobPair(e.getEntryNumber(), e.getItemHashes().get(0))).collect(toList());
 
 
 		BlobDAO blobDAO = handle.attach(BlobDAO.class);
