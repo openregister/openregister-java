@@ -19,12 +19,12 @@ public interface BlobQueryDAO {
     @SqlQuery("select sha256hex, content from \"<schema>\".item where sha256hex=:sha256hex order by sha256hex")
     @SingleValueResult(Blob.class)
     @RegisterMapper(BlobMapper.class)
-    Optional<Blob> getItemBySHA256(@Bind("sha256hex") String sha256Hash, @Define("schema") String schema );
+    Optional<Blob> getBlobBySHA256(@Bind("sha256hex") String sha256Hash, @Define("schema") String schema );
 
     //Note: This is fine for small data registers like country
     @SqlQuery("select sha256hex, content from \"<schema>\".item order by sha256hex")
     @RegisterMapper(BlobMapper.class)
-    Collection<Blob> getAllItemsNoPagination(@Define("schema") String schema );
+    Collection<Blob> getAllBlobsNoPagination(@Define("schema") String schema );
 
     @SqlQuery("select i.sha256hex, i.content from \"<schema>\".item i")
     @RegisterMapper(BlobMapper.class)
@@ -39,5 +39,5 @@ public interface BlobQueryDAO {
     @SqlQuery("select i.sha256hex, i.content from \"<schema>\".item i where exists(select 1 from \"<schema>\".entry_item_system esi where i.sha256hex = esi.sha256hex)")
     @RegisterMapper(BlobMapper.class)
     @FetchSize(10000)
-    Iterator<Blob> getSystemItemIterator(@Define("schema") String schema);
+    Iterator<Blob> getSystemBlobIterator(@Define("schema") String schema);
 }

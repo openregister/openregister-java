@@ -13,9 +13,9 @@ public class Record {
         this.blobs.add(blob);
     }
 
-    public Record(Entry entry, Iterable<Blob> items) {
+    public Record(Entry entry, Iterable<Blob> blobs) {
         this.entry = entry;
-        items.forEach(i -> this.blobs.add(i));
+        blobs.forEach(i -> this.blobs.add(i));
     }
 
     public Entry getEntry() {

@@ -22,19 +22,19 @@ public class InMemoryBlobDAO implements BlobDAO, BlobQueryDAO {
     }
 
     @Override
-    public void insertInBatch(@BindBlob Iterable<Blob> items, String schema) {
-        for (Blob blob : items) {
+    public void insertInBatch(@BindBlob Iterable<Blob> blobs, String schema) {
+        for (Blob blob : blobs) {
             this.items.put(blob.getSha256hex(), blob);
         }
     }
 
     @Override
-    public Optional<Blob> getItemBySHA256(@Bind("sha256hex") String sha256Hash, String schema) {
+    public Optional<Blob> getBlobBySHA256(@Bind("sha256hex") String sha256Hash, String schema) {
         return Optional.ofNullable(items.get(new HashValue(SHA256, sha256Hash)));
     }
 
     @Override
-    public Collection<Blob> getAllItemsNoPagination(String schema) {
+    public Collection<Blob> getAllBlobsNoPagination(String schema) {
         return items.values();
     }
 
@@ -49,7 +49,7 @@ public class InMemoryBlobDAO implements BlobDAO, BlobQueryDAO {
     }
 
     @Override
-    public Iterator<Blob> getSystemItemIterator(String schema) {
+    public Iterator<Blob> getSystemBlobIterator(String schema) {
         throw new NotImplementedException("Not yet implemented");
     }
 

@@ -17,21 +17,21 @@ import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
 @Path("/")
-public class PreviewItemsResource {
+public class PreviewBlobsResource {
 
     protected final ViewFactory viewFactory;
     private final RegisterReadOnly register;
 
     @Inject
-    public PreviewItemsResource(final ViewFactory viewFactory, final RegisterReadOnly register) {
+    public PreviewBlobsResource(final ViewFactory viewFactory, final RegisterReadOnly register) {
         this.viewFactory = viewFactory;
         this.register = register;
     }
 
     @GET
-    @Path("/preview-items/{media-type}/sha-256:{item-hash}")
-    public Response previewItems(@PathParam("media-type") final String mediaType, @PathParam("item-hash") final String itemHash) {
-        URI location = UriBuilder.fromMethod(getClass(), "jsonByKeyPreview").build(mediaType, itemHash);
+    @Path("/preview-items/{media-type}/sha-256:{blob-hash}")
+    public Response previewItems(@PathParam("media-type") final String mediaType, @PathParam("blob-hash") final String blobHash) {
+        URI location = UriBuilder.fromMethod(getClass(), "jsonByKeyPreview").build(mediaType, blobHash);
         return Response.status(Response.Status.MOVED_PERMANENTLY).location(location).build();
     }
 

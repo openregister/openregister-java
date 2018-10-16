@@ -11,5 +11,5 @@ import uk.gov.register.store.postgres.BindBlob;
 public interface BlobDAO {
     @SqlBatch("insert into \"<schema>\".item(sha256hex, content) values(:sha256hex, :content) on conflict do nothing")
     @BatchChunkSize(1000)
-    void insertInBatch(@BindBlob Iterable<Blob> items, @Define("schema") String schema );
+    void insertInBatch(@BindBlob Iterable<Blob> blobs, @Define("schema") String schema );
 }

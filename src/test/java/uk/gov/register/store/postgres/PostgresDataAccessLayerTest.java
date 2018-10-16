@@ -161,7 +161,7 @@ public class PostgresDataAccessLayerTest {
         dataAccessLayer.addBlob(blob1);
         Optional<Blob> item = dataAccessLayer.getBlob(blob1.getSha256hex());
         assertThat(item, is(Optional.of(blob1)));
-        assertFalse("itemDAO should not find item", itemDAO.getItemBySHA256("abcd", "schema").isPresent());
+        assertFalse("itemDAO should not find item", itemDAO.getBlobBySHA256("abcd", "schema").isPresent());
     }
 
     @Test

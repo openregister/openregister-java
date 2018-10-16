@@ -1,7 +1,7 @@
 package uk.gov.register.exceptions;
 
 /**
- * Used if an item is not canonical JSON format
+ * Used if a blob is not canonical JSON format
  */
 public class BlobNotCanonicalException extends RuntimeException {
     public BlobNotCanonicalException(String jsonString) {

@@ -3,7 +3,7 @@ package uk.gov.register.exceptions;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Used when an item fails validation against a register's schema, for example
+ * Used when a blob fails validation against a register's schema, for example
  */
 public class BlobValidationException extends RuntimeException {
     private JsonNode entry;

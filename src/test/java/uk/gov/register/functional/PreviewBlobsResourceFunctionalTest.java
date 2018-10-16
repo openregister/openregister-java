@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.register.functional.app.TestRegister.address;
 
-public class PreviewItemsResourceFunctionalTest {
+public class PreviewBlobsResourceFunctionalTest {
 
     @ClassRule
     public static RegisterRule register = new RegisterRule();

@@ -26,7 +26,7 @@ public class SchemaSubstitutionIntegrationTest {
 
     @Test
     public void shouldSuccessfullyQueryWhenSchemaContainsHyphens(){
-        Collection<Blob> blobs = dbi.withHandle(handle -> handle.attach(BlobQueryDAO.class).getAllItemsNoPagination("local-authority-eng"));
+        Collection<Blob> blobs = dbi.withHandle(handle -> handle.attach(BlobQueryDAO.class).getAllBlobsNoPagination("local-authority-eng"));
         Assert.assertThat(blobs.size(), is(0));
     }
 
