@@ -24,7 +24,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     private final Map<String, List<EndIndex>> stagedEndIndexes;
 
     private final EntryDAO entryDAO;
-    private final EntryItemDAO entryItemDAO;
+    private final EntryBlobDAO entryBlobDAO;
     private final ItemDAO itemDAO;
     private final IndexDAO indexDAO;
     private final IndexQueryDAO indexQueryDAO;
@@ -33,11 +33,11 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
     public PostgresDataAccessLayer(
             EntryQueryDAO entryQueryDAO, IndexDAO indexDAO, IndexQueryDAO indexQueryDAO, EntryDAO entryDAO,
-            EntryItemDAO entryItemDAO, ItemQueryDAO itemQueryDAO,
+            EntryBlobDAO entryBlobDAO, ItemQueryDAO itemQueryDAO,
             ItemDAO itemDAO, String schema, IndexDriver indexDriver, Map<EntryType, Collection<IndexFunction>> indexFunctionsByEntryType) {
         super(entryQueryDAO, indexQueryDAO, itemQueryDAO, schema);
         this.entryDAO = entryDAO;
-        this.entryItemDAO = entryItemDAO;
+        this.entryBlobDAO = entryBlobDAO;
         this.itemDAO = itemDAO;
         this.indexQueryDAO = indexQueryDAO;
         this.indexDAO = indexDAO;
@@ -223,7 +223,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         List<Entry> entries = stagedEntries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList());
 
         entryDAO.insertInBatch(entries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList()), schema, entryTableName);
-        entryItemDAO.insertInBatch(entries.stream()
+        entryBlobDAO.insertInBatch(entries.stream()
                 .filter(e -> e.getEntryType().equals(entryType))
                 .flatMap(e -> e.getItemHashes().stream().map(i -> new EntryItemPair(e.getEntryNumber(), i)))
                 .collect(Collectors.toList()), schema, entryItemTableName);

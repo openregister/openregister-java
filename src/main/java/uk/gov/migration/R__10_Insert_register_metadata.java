@@ -152,12 +152,12 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 
 		ItemDAO itemDAO = handle.attach(ItemDAO.class);
 		EntryDAO entryDAO = handle.attach(EntryDAO.class);
-		EntryItemDAO entryItemDAO = handle.attach(EntryItemDAO.class);
+		EntryBlobDAO entryBlobDAO = handle.attach(EntryBlobDAO.class);
 		IndexDAO indexDAO = handle.attach(IndexDAO.class);
 
 		itemDAO.insertInBatch(items, connection.getSchema());
 		entryDAO.insertInBatch(entries, connection.getSchema(), "entry_system");
-		entryItemDAO.insertInBatch(entryItems, connection.getSchema(), "entry_item_system");
+		entryBlobDAO.insertInBatch(entryItems, connection.getSchema(), "entry_item_system");
 
 		records.forEach(r -> {
 			try {

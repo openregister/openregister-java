@@ -8,7 +8,7 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 import uk.gov.register.util.EntryItemPair;
 
 @UseStringTemplate3StatementLocator
-public interface EntryItemDAO {
+public interface EntryBlobDAO {
     @SqlBatch("insert into \"<schema>\".<entry_item_table>(entry_number, sha256hex) values (:entryNumber, :sha256hex)")
     @BatchChunkSize(1000)
     void insertInBatch(@BindBean Iterable<EntryItemPair> entries, @Define("schema") String schema, @Define("entry_item_table") String entryItemTable);
