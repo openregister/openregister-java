@@ -9,8 +9,8 @@ import uk.gov.register.exceptions.AppendEntryException;
 import uk.gov.register.exceptions.FieldDefinitionException;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.IndexingException;
-import uk.gov.register.exceptions.ItemValidationException;
-import uk.gov.register.exceptions.NoSuchItemException;
+import uk.gov.register.exceptions.BlobValidationException;
+import uk.gov.register.exceptions.NoSuchBlobException;
 import uk.gov.register.exceptions.RegisterDefinitionException;
 import uk.gov.register.exceptions.NoSuchRegisterException;
 import uk.gov.register.indexer.function.IndexFunction;
@@ -115,8 +115,8 @@ public class PostgresRegister implements Register {
             });
 
             entryLog.appendEntry(entry);
-        } catch (IndexingException | ItemValidationException | FieldDefinitionException | RegisterDefinitionException |
-                NoSuchRegisterException | NoSuchFieldException | NoSuchItemException exception) {
+        } catch (IndexingException | BlobValidationException | FieldDefinitionException | RegisterDefinitionException |
+                NoSuchRegisterException | NoSuchFieldException | NoSuchBlobException exception) {
             throw new AppendEntryException(entry, exception);
         }
     }
@@ -313,10 +313,10 @@ public class PostgresRegister implements Register {
         return indexFunctionsByEntryType;
     }
 
-    private List<Blob> getReferencedItems(Entry entry) throws NoSuchItemException {
+    private List<Blob> getReferencedItems(Entry entry) throws NoSuchBlobException {
         return entry.getItemHashes().stream()
                 .map(h -> blobStore.getItem(h).orElseThrow(
-                        () -> new NoSuchItemException(h)))
+                        () -> new NoSuchBlobException(h)))
                 .collect(Collectors.toList());
     }
 }

@@ -13,7 +13,7 @@ import uk.gov.register.db.Index;
 import uk.gov.register.db.InMemoryEntryDAO;
 import uk.gov.register.exceptions.AppendEntryException;
 import uk.gov.register.exceptions.NoSuchFieldException;
-import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.BlobValidationException;
 import uk.gov.register.indexer.IndexDriver;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.service.EnvironmentValidator;
@@ -97,7 +97,7 @@ public class PostgresRegisterTest {
     @Test(expected = AppendEntryException.class)
     public void shouldFailForInvalidItem() throws IOException {
         JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
-        doThrow(new ItemValidationException("error", content)).when(itemValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
+        doThrow(new BlobValidationException("error", content)).when(itemValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
         Blob blob = new Blob(hashValue, content);

@@ -9,7 +9,7 @@ import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterMetadata;
 import uk.gov.register.core.datatype.CurieDatatype;
 import uk.gov.register.core.datatype.Datatype;
-import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.BlobValidationException;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +21,7 @@ public class ItemValidator {
         this.registerId = registerId;
     }
 
-    public void validateItem(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws ItemValidationException {
+    public void validateItem(JsonNode inputEntry, Map<String, Field> fields, RegisterMetadata registerMetadata) throws BlobValidationException {
         validateFields(inputEntry, registerMetadata);
 
         validatePrimaryKeyExists(inputEntry);
@@ -29,13 +29,13 @@ public class ItemValidator {
         validateFieldsValue(inputEntry, fields);
     }
 
-    private void validatePrimaryKeyExists(JsonNode inputEntry) throws ItemValidationException {
+    private void validatePrimaryKeyExists(JsonNode inputEntry) throws BlobValidationException {
         JsonNode primaryKeyNode = inputEntry.get(registerId.value());
         throwItemValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerId + "'");
         validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerId + "' must have a valid value");
     }
 
-    private void validateFields(JsonNode inputEntry, RegisterMetadata registerMetadata) throws ItemValidationException {
+    private void validateFields(JsonNode inputEntry, RegisterMetadata registerMetadata) throws BlobValidationException {
         Set<String> inputFieldNames = Sets.newHashSet(inputEntry.fieldNames());
         Set<String> expectedFieldNames = Sets.newHashSet(registerMetadata.getFields());
         Set<String> unknownFields = Sets.difference(inputFieldNames, expectedFieldNames);
@@ -43,7 +43,7 @@ public class ItemValidator {
         throwItemValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
     }
 
-    private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws ItemValidationException {
+    private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws BlobValidationException {
         inputEntry.fieldNames().forEachRemaining(fieldName -> {
             Field field = fields.get(fieldName);
             JsonNode fieldValue = inputEntry.get(fieldName);
@@ -78,7 +78,7 @@ public class ItemValidator {
 
     private void throwItemValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
         if (condition) {
-            throw new ItemValidationException(errorMessage, inputJsonEntry);
+            throw new BlobValidationException(errorMessage, inputJsonEntry);
         }
     }
 }

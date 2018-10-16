@@ -5,17 +5,17 @@ import uk.gov.register.util.HashValue;
 /**
  * Used when an item with a particular item hash does not exist in the register
  */
-public class NoSuchItemException extends RuntimeException{
+public class NoSuchBlobException extends RuntimeException{
 
-    public NoSuchItemException(HashValue hashValue) {
+    public NoSuchBlobException(HashValue hashValue) {
         this(String.format("No item %s found", hashValue.toString()));
     }
 
-    public NoSuchItemException(String message) {
+    public NoSuchBlobException(String message) {
         super(message);
     }
 
-    public NoSuchItemException(String message, Throwable cause) {
+    public NoSuchBlobException(String message, Throwable cause) {
         super(message, cause);
     }
 }

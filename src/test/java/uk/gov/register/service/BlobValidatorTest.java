@@ -11,7 +11,7 @@ import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterMetadata;
-import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.BlobValidationException;
 import uk.gov.register.exceptions.NoSuchConfigException;
 
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -89,7 +89,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -102,7 +102,7 @@ public class BlobValidatorTest {
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info2' must contain a curie in a valid format or the 'register' field specified."));
         }
     }
@@ -115,7 +115,7 @@ public class BlobValidatorTest {
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info' value must be of type 'curie'"));
         }
     }
@@ -128,7 +128,7 @@ public class BlobValidatorTest {
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info' value must be of type 'curie'"));
         }
     }
@@ -141,7 +141,7 @@ public class BlobValidatorTest {
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-info' value must be of type 'curie'"));
         }
     }
@@ -153,7 +153,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -166,7 +166,7 @@ public class BlobValidatorTest {
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'curie-cardinality-n' values must be of type 'curie'"));
         }
     }
@@ -178,7 +178,7 @@ public class BlobValidatorTest {
         try {
             itemValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Entry does not contain primary key field 'register'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -191,7 +191,7 @@ public class BlobValidatorTest {
         try {
             itemValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Primary key field 'register' must have a valid value"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -205,7 +205,7 @@ public class BlobValidatorTest {
         try {
             itemValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'text' value must be of type 'text'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -218,7 +218,7 @@ public class BlobValidatorTest {
         try {
             itemValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Entry contains invalid fields: [key1, key2]"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -231,7 +231,7 @@ public class BlobValidatorTest {
         try {
             itemValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'fields' has cardinality 'n' so the value must be an array of 'string'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -244,14 +244,14 @@ public class BlobValidatorTest {
         try {
             itemValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'fields' values must be of type 'string'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
     }
 
     @Test
-    public void noErrorWhenEntryIsValid() throws IOException, ItemValidationException {
+    public void noErrorWhenEntryIsValid() throws IOException, BlobValidationException {
         String jsonString = "{\"register\":\"aregister\",\"text\":\"some text\"}";
         itemValidator.validateItem(nodeOf(jsonString), fieldsByName, registerMetadata);
     }
@@ -267,7 +267,7 @@ public class BlobValidatorTest {
         try {
             itemValidator.validateItem(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'fields' values must be of type 'string'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
@@ -280,7 +280,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -292,7 +292,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -304,7 +304,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -316,7 +316,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -328,7 +328,7 @@ public class BlobValidatorTest {
 
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             fail("Must not execute this statement");
         }
     }
@@ -341,7 +341,7 @@ public class BlobValidatorTest {
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'start-date' value must be of type 'datetime'"));
         }
     }
@@ -354,7 +354,7 @@ public class BlobValidatorTest {
         try {
             countryItemValidator.validateItem(jsonNode, countryFieldsByName, countryRegisterMetadata);
             fail("Must not execute this statement");
-        } catch (ItemValidationException e) {
+        } catch (BlobValidationException e) {
             assertThat(e.getMessage(), equalTo("Field 'start-date' value must be of type 'datetime'"));
         }
     }
