@@ -19,14 +19,14 @@
           <p th:if="${!isSingleKey}">
             There are
             <th:block th:utext="${totalElements}"></th:block>
-            items<th:block th:if="${totalObjects} gt 100">, this preview
+            blobs<th:block th:if="${totalObjects} gt 100">, this preview
             only displays the first 100</th:block>.
           </p>
           <p th:if="${isSingleKey}">
-            There is one item.
+            There is one blob.
           </p>
           <p>
-            To access <th:block th:text="${isSingleKey ? 'this item' : 'these items'}"></th:block>,
+            To access <th:block th:text="${isSingleKey ? 'this blob' : 'these blobs'}"></th:block>,
             <a th:href="${homepageContent.techDocsUrl}" target="_blank">view the API documentation</a>
             or
             <th:block th:if="${!isSingleKey or #strings.isEmpty(key)}">
@@ -35,7 +35,7 @@
             <th:block th:if="${isSingleKey and !#strings.isEmpty(key)}">
               <a th:href="${urlSingleElements}" rel="alternate" class="js-download" download="" th:utext="${'download a ' + previewTypeTag + ' file'}">download a JSON file</a>
             </th:block>
-            <th:block th:text="${isSingleKey} ? 'with the item' : (${totalObjects} le 5000 ? 'with the items' : 'with the first 5,000 items')"></th:block>.
+            <th:block th:text="${isSingleKey} ? 'with the blob' : (${totalObjects} le 5000 ? 'with the blobs' : 'with the first 5,000 blobs')"></th:block>.
           </p>
         </div>
       </div>
