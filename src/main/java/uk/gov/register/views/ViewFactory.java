@@ -127,7 +127,7 @@ public class ViewFactory {
     }
 
     public BlobView getBlobMediaView(final Blob blob) throws FieldConversionException {
-        return new BlobView(blob.getSha256hex(), blobConverter.convertItem(blob, register.get().getFieldsByName()), getFields());
+        return new BlobView(blob.getSha256hex(), blobConverter.convertBlob(blob, register.get().getFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
@@ -162,7 +162,7 @@ public class ViewFactory {
                 key);
     }
 
-    public PreviewBlobPageView previewItemPageView(final Blob blob, final String key, final String previewType) throws FieldConversionException {
+    public PreviewBlobPageView previewBlobPageView(final Blob blob, final String key, final String previewType) throws FieldConversionException {
         return new PreviewBlobPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(

@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public interface DataAccessLayer {
 
-    // Items
+    // Blobs
     void addBlob(Blob blob);
     Optional<Blob> getBlob(HashValue hash);
     Collection<Blob> getAllBlobs();

@@ -31,7 +31,7 @@ public class BlobTurtleWriter extends TurtleRepresentationWriter<BlobView> {
     @Override
     protected Model rdfModelFor(BlobView view) {
         Model model = ModelFactory.createDefaultModel();
-        Resource resource = model.createResource(itemUri(view.getItemHash().encode()).toString());
+        Resource resource = model.createResource(blobUri(view.getBlobHash().encode()).toString());
 
         for (Map.Entry<String, FieldValue> field : view.getContent().entrySet()) {
             FieldRenderer fieldRenderer = new FieldRenderer(model.createProperty(fieldUri(field.getKey())));

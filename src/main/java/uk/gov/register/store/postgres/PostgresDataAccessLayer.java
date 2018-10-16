@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer implements DataAccessLayer {
     private final List<Entry> stagedEntries;
-    private final Map<HashValue, Blob> stagedItems;
+    private final Map<HashValue, Blob> stagedBlobs;
     private final HashSet<String> stagedEntryKeys;
     private final Map<String, Map<String, List<StartIndex>>> existingStartIndexes;
     private final Map<String, Map<String, List<StartIndex>>> stagedStartIndexes;
@@ -46,7 +46,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         this.indexFunctionsByEntryType = indexFunctionsByEntryType;
 
         stagedEntries = new ArrayList<>();
-        stagedItems = new HashMap<>();
+        stagedBlobs = new HashMap<>();
         stagedEntryKeys = new HashSet<>();
         stagedStartIndexes = new HashMap<>();
         existingStartIndexes = new HashMap<>();
@@ -118,7 +118,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
     @Override
     public void addBlob(Blob blob) {
-        stagedItems.put(blob.getSha256hex(), blob);
+        stagedBlobs.put(blob.getSha256hex(), blob);
     }
 
     @Override
@@ -162,8 +162,8 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
     @Override
     public Optional<Blob> getBlob(HashValue hash) {
-        if (stagedItems.containsKey(hash)) {
-            return Optional.of(stagedItems.get(hash));
+        if (stagedBlobs.containsKey(hash)) {
+            return Optional.of(stagedBlobs.get(hash));
         }
         
         return super.getBlob(hash);
@@ -230,11 +230,11 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     private void writeStagedItemsToDatabase() {
-        if (stagedItems.isEmpty()) {
+        if (stagedBlobs.isEmpty()) {
             return;
         }
-        blobDAO.insertInBatch(stagedItems.values(), schema);
-        stagedItems.clear();
+        blobDAO.insertInBatch(stagedBlobs.values(), schema);
+        stagedBlobs.clear();
     }
 
     private void writeStagedStartIndexesToDatabase() {

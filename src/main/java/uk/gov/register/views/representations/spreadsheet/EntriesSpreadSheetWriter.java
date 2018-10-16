@@ -43,7 +43,7 @@ public class EntriesSpreadSheetWriter extends RepresentationWriter<EntryListView
 
         entryListView.getEntries().forEach(entry -> {
             final Map<String, String> element = new HashMap<>();
-            String itemHashValues = StringUtils.EMPTY;
+            String blobHashValues = StringUtils.EMPTY;
 
             element.put("index-entry-number", entry.getIndexEntryNumber().toString());
             element.put("entry-number", entry.getEntryNumber().toString());
@@ -51,11 +51,11 @@ public class EntriesSpreadSheetWriter extends RepresentationWriter<EntryListView
             element.put("key", entry.getKey());
 
             if (!entry.getBlobHashes().isEmpty()) {
-                itemHashValues = entry.getBlobHashes()
+                blobHashValues = entry.getBlobHashes()
                         .stream().map(HashValue::toString).collect(Collectors.joining(";"));
             }
 
-            element.put("item-hash", itemHashValues);
+            element.put("item-hash", blobHashValues);
 
             elements.add(element);
         });

@@ -27,8 +27,8 @@ public interface RecordSpreadsheet {
 
         fields.forEach(field -> fieldNames.add(field.fieldName));
 
-        records.forEach((key, items) ->
-            items.forEach(item -> {
+        records.forEach((key, blobs) ->
+            blobs.forEach(blob -> {
                 final Map<String, String> element = new HashMap<>();
 
                 element.put("index-entry-number", key.getIndexEntryNumber().toString());
@@ -36,7 +36,7 @@ public interface RecordSpreadsheet {
                 element.put("entry-timestamp", key.getTimestampAsISOFormat());
                 element.put("key", key.getKey());
 
-                item.getContent().forEach((contentKey, contentValue) -> element.put(contentKey, contentValue.getValue()));
+                blob.getContent().forEach((contentKey, contentValue) -> element.put(contentKey, contentValue.getValue()));
 
                 elements.add(element);
             })

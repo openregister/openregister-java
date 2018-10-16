@@ -31,7 +31,7 @@ public class BlobValidator {
 
     private void validatePrimaryKeyExists(JsonNode inputEntry) throws BlobValidationException {
         JsonNode primaryKeyNode = inputEntry.get(registerId.value());
-        throwItemValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerId + "'");
+        throwBlobValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerId + "'");
         validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerId + "' must have a valid value");
     }
 
@@ -40,7 +40,7 @@ public class BlobValidator {
         Set<String> expectedFieldNames = Sets.newHashSet(registerMetadata.getFields());
         Set<String> unknownFields = Sets.difference(inputFieldNames, expectedFieldNames);
 
-        throwItemValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
+        throwBlobValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
     }
 
     private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws BlobValidationException {
@@ -49,7 +49,7 @@ public class BlobValidator {
             JsonNode fieldValue = inputEntry.get(fieldName);
 
             if (field.getCardinality().equals(Cardinality.MANY)) {
-                throwItemValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), inputEntry, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, field.getDatatype().getName()));
+                throwBlobValidationExceptionIfConditionIsFalse(!fieldValue.isArray(), inputEntry, String.format("Field '%s' has cardinality 'n' so the value must be an array of '%s'", fieldName, field.getDatatype().getName()));
 
                 fieldValue.elements().forEachRemaining(element -> validateSingleValue(field, element, inputEntry));
             } else {
@@ -59,24 +59,24 @@ public class BlobValidator {
     }
 
     private void validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
-        throwItemValidationExceptionIfConditionIsFalse(condition, inputJsonEntry, errorMessage);
+        throwBlobValidationExceptionIfConditionIsFalse(condition, inputJsonEntry, errorMessage);
     }
 
     private void validateSingleValue(Field field, JsonNode value, JsonNode inputEntry) {
         Datatype datatype = field.getDatatype();
         String fieldName = field.fieldName;
 
-        throwItemValidationExceptionIfConditionIsFalse(!datatype.isValid(value), inputEntry,
+        throwBlobValidationExceptionIfConditionIsFalse(!datatype.isValid(value), inputEntry,
                 String.format("Field '%s' %s must be of type '%s'", fieldName, field.getCardinality().equals(Cardinality.MANY) ? "values" : "value", datatype.getName()));
 
         if ("curie".equals(datatype.getName()) && !value.textValue().contains(CurieDatatype.CURIE_SEPARATOR)) {
-            throwItemValidationExceptionIfConditionIsFalse(
+            throwBlobValidationExceptionIfConditionIsFalse(
                     !field.getRegister().isPresent(), inputEntry,
                     String.format("Field '%s' must contain a curie in a valid format or the '%s' field specified.", fieldName, "register"));
         }
     }
 
-    private void throwItemValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
+    private void throwBlobValidationExceptionIfConditionIsFalse(boolean condition, JsonNode inputJsonEntry, String errorMessage) {
         if (condition) {
             throw new BlobValidationException(errorMessage, inputJsonEntry);
         }

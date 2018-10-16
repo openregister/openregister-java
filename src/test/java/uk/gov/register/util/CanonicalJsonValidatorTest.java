@@ -20,14 +20,14 @@ public class CanonicalJsonValidatorTest {
     public void validateItemIsCanonicalized_throwsValidationException_whenItemIsNotCanonicalizedByFieldOrder() {
         String jsonString = "{\"text\":\"some text\",\"register\":\"aregister\"}";
 
-        canonicalJsonValidator.validateItemStringIsCanonicalized(jsonString);
+        canonicalJsonValidator.validateBlobStringIsCanonicalized(jsonString);
     }
 
     @Test(expected = BlobNotCanonicalException.class)
     public void validateItemIsCanonicalized_throwsValidationException_whenItemIsNotCanonicalizedByWhitespace() {
         String jsonString = "{ \"register\":\"aregister\", \"text\":\"some text\"  }";
 
-        canonicalJsonValidator.validateItemStringIsCanonicalized(jsonString);
+        canonicalJsonValidator.validateBlobStringIsCanonicalized(jsonString);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class CanonicalJsonValidatorTest {
         String jsonString = "{\"register\":\"aregister\",\"text\":\"some text\"}";
 
         try {
-            canonicalJsonValidator.validateItemStringIsCanonicalized(jsonString);
+            canonicalJsonValidator.validateBlobStringIsCanonicalized(jsonString);
         } catch (BlobNotCanonicalException e) {
             fail("Entry is canonicalized but exception was thrown");
         }

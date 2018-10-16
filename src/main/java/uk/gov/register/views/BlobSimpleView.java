@@ -5,7 +5,7 @@ public class BlobSimpleView extends BlobView {
     private final String key;
 
     public BlobSimpleView(final String key, final BlobView blobView) {
-        super(blobView.getItemHash(), blobView.getContent(), blobView.getFields());
+        super(blobView.getBlobHash(), blobView.getContent(), blobView.getFields());
         this.key = key;
     }
 

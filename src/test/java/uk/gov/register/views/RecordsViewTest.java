@@ -38,9 +38,9 @@ public class RecordsViewTest {
 
         BlobConverter blobConverter = mock(BlobConverter.class);
         Map<String, Field> fieldsByName = mock(Map.class);
-        when(blobConverter.convertItem(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(blobConverter.convertBlob(blob1, fieldsByName)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(blobConverter.convertItem(blob2, fieldsByName )).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(blobConverter.convertBlob(blob2, fieldsByName )).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
 
         RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fieldsByName, blobConverter, false, false);

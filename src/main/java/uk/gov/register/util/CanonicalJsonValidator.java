@@ -12,12 +12,12 @@ public class CanonicalJsonValidator {
         this.canonicalJsonMapper = new CanonicalJsonMapper();
     }
 
-    public void validateItemStringIsCanonicalized(String jsonItem) throws BlobNotCanonicalException {
-        byte[] jsonItemBytes = jsonItem.getBytes(StandardCharsets.UTF_8);
-        byte[] canonicalizedBytes = canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(jsonItemBytes));
+    public void validateBlobStringIsCanonicalized(String jsonBlob) throws BlobNotCanonicalException {
+        byte[] jsonBlobBytes = jsonBlob.getBytes(StandardCharsets.UTF_8);
+        byte[] canonicalizedBytes = canonicalJsonMapper.writeToBytes(canonicalJsonMapper.readFromBytes(jsonBlobBytes));
 
-        if (!Arrays.equals(jsonItemBytes, canonicalizedBytes)) {
-            throw new BlobNotCanonicalException(jsonItem);
+        if (!Arrays.equals(jsonBlobBytes, canonicalizedBytes)) {
+            throw new BlobNotCanonicalException(jsonBlob);
         }
     }
 }

@@ -55,7 +55,7 @@ public class BlobView implements CsvRepresentationView<Map<String, FieldValue>> 
         return new CsvRepresentation<>(Blob.csvSchema(fieldNames), fieldValueMap);
     }
 
-    public String itemsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
+    public String getHTMLPreview(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
         final ByteArrayOutputStream outputStream;
         final BlobTurtleWriter entryTurtleWriter;
         String registerInTextFormatted = StringUtils.EMPTY;
@@ -74,13 +74,13 @@ public class BlobView implements CsvRepresentationView<Map<String, FieldValue>> 
                 registerInTextFormatted = jsonObjectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(getContent());
             }
         } catch (final IOException ex) {
-            LOGGER.error("Error processing preview request. Impossible process the register items");
+            LOGGER.error("Error processing preview request. Impossible process the register blobs");
         }
 
         return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
     }
 
-    public HashValue getItemHash() {
+    public HashValue getBlobHash() {
         return sha256hex;
     }
 

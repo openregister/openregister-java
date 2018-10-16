@@ -80,7 +80,7 @@ public class RSFFormatter {
             if (arguments.size() == ADD_ITEM_ARGUMENT_COUNT) {
                 String jsonContent = arguments.get(RSF_ITEM_ARGUMENT_POSITION);
                 try {
-                    canonicalJsonValidator.validateItemStringIsCanonicalized(jsonContent);
+                    canonicalJsonValidator.validateBlobStringIsCanonicalized(jsonContent);
                 } catch (BlobNotCanonicalException e) {
                     throw new RSFParseException("Non canonical JSON", e);
                 } catch (Exception e) {

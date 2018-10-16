@@ -39,7 +39,7 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
 
         Resource recordResource = recordModel.createResource(recordUri(entry.getKey()).toString());
         addPropertiesToResource(recordResource, entryModel.getResource(entryUri(Integer.toString(entry.getEntryNumber())).toString()));
-        addPropertiesToResource(recordResource, itemModel.getResource(itemUri(blobView.getItemHash().encode()).toString()));
+        addPropertiesToResource(recordResource, itemModel.getResource(blobUri(blobView.getBlobHash().encode()).toString()));
 
         Map<String, String> prefixes = entryModel.getNsPrefixMap();
         prefixes.putAll(itemModel.getNsPrefixMap());

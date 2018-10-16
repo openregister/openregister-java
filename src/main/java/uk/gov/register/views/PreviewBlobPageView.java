@@ -28,7 +28,7 @@ public class PreviewBlobPageView extends PreviewPageView {
 
     @Override
     public String getRegisterValues() {
-        return blobView.itemsTo(getPreviewType(), getRegisterIdProvider(), getRegisterResolver());
+        return blobView.getHTMLPreview(getPreviewType(), getRegisterIdProvider(), getRegisterResolver());
     }
 
     @Override

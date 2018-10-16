@@ -129,8 +129,8 @@ public class CsvWriterTest {
                 "key4", new Field("key4", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
         BlobConverter blobConverter = mock(BlobConverter.class);
-        when(blobConverter.convertItem(blob, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
-        when(blobConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("blob2")));
+        when(blobConverter.convertBlob(blob, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
+        when(blobConverter.convertBlob(blob2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("blob2")));
 
         RecordView recordView = new RecordView(record, fields, blobConverter);
 
@@ -169,11 +169,11 @@ public class CsvWriterTest {
                 "address",new Field("address", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
                 "street", new Field("street", "datatype", new RegisterId("address"), Cardinality.ONE, "text"));
 
-        when(blobConverter.convertItem(blob1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
+        when(blobConverter.convertBlob(blob1, fields)).thenReturn(ImmutableMap.of("address", new StringValue("123"),
                 "street", new StringValue("foo")));
-        when(blobConverter.convertItem(blob2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(blobConverter.convertBlob(blob2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
-        when(blobConverter.convertItem(blob3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
+        when(blobConverter.convertBlob(blob3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("baz")));
 
 

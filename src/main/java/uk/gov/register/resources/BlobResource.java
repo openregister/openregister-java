@@ -33,7 +33,7 @@ public class BlobResource {
     @Timed
     public AttributionView<BlobView> getBlobWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
         return getBlob(blobHash).map(viewFactory::getBlobView)
-                .orElseThrow(() -> new NotFoundException("No item found with hash: " + blobHash));
+                .orElseThrow(() -> new NotFoundException("No blob found with hash: " + blobHash));
     }
 
     @GET

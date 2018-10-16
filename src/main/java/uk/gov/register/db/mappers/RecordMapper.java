@@ -33,7 +33,7 @@ public class RecordMapper implements ResultSetMapper<Record> {
         String[] blobContent = (String[]) r.getArray("content").getArray();
 
         if (blobHashes.length != blobContent.length) {
-            throw new RuntimeException("Number of item hashes not equal to number of item content");
+            throw new RuntimeException("Number of blob hashes not equal to number of blob content");
         }
 
         for (int i = 0; i < blobHashes.length; i++) {

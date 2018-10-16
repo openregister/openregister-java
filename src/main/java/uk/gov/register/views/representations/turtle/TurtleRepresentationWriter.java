@@ -41,7 +41,7 @@ public abstract class TurtleRepresentationWriter<T> extends RepresentationWriter
         return registerResolver.baseUriFor(registerIdProvider.get());
     }
 
-    protected URI itemUri(String itemHash) {
+    protected URI blobUri(String itemHash) {
         return UriBuilder.fromUri(ourBaseUri()).path("items").path(itemHash).build();
     }
 

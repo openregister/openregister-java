@@ -31,7 +31,7 @@ public class PreviewBlobsResource {
     @GET
     @Path("/preview-items/{media-type}/sha-256:{blob-hash}")
     public Response previewItems(@PathParam("media-type") final String mediaType, @PathParam("blob-hash") final String blobHash) {
-        URI location = UriBuilder.fromMethod(getClass(), "jsonByKeyPreview").build(mediaType, blobHash);
+        URI location = UriBuilder.fromMethod(getClass(), "previewBlobs").build(mediaType, blobHash);
         return Response.status(Response.Status.MOVED_PERMANENTLY).location(location).build();
     }
 
@@ -39,11 +39,11 @@ public class PreviewBlobsResource {
     @Path("/preview-blobs/{media-type}/sha-256:{blob-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public View jsonByKeyPreview(@PathParam("media-type") final String mediaType, @PathParam("blob-hash") final String blobHash) throws FieldConversionException {
+    public View previewBlobs(@PathParam("media-type") final String mediaType, @PathParam("blob-hash") final String blobHash) throws FieldConversionException {
         final HashValue hash = new HashValue(HashingAlgorithm.SHA256, blobHash);
         final Blob blob = register.getBlob(hash)
                 .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + blobHash));
 
-        return viewFactory.previewItemPageView(blob, blobHash, ExtraMediaType.transform(mediaType));
+        return viewFactory.previewBlobPageView(blob, blobHash, ExtraMediaType.transform(mediaType));
     }
 }
