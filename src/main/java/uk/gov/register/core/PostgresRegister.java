@@ -62,32 +62,32 @@ public class PostgresRegister implements Register {
 
     @Override
     public void addItem(Blob blob) {
-        blobStore.addItem(blob);
+        blobStore.addBlob(blob);
     }
 
     @Override
     public Optional<Blob> getBlob(HashValue hash) {
-        return blobStore.getItem(hash);
+        return blobStore.getBlob(hash);
     }
 
     @Override
     public Collection<Blob> getAllItems() {
-        return blobStore.getAllItems();
+        return blobStore.getAllBlobs();
     }
 
     @Override
     public Iterator<Blob> getItemIterator() {
-        return blobStore.getUserItemIterator();
+        return blobStore.getUserBlobIterator();
     }
 
     @Override
     public Iterator<Blob> getItemIterator(int start, int end) {
-        return blobStore.getUserItemIterator(start, end);
+        return blobStore.getUserBlobIterator(start, end);
     }
 
     @Override
     public Iterator<Blob> getSystemItemIterator() {
-        return blobStore.getSystemItemIterator();
+        return blobStore.getSystemBlobIterator();
     }
 
     //endregion
@@ -315,7 +315,7 @@ public class PostgresRegister implements Register {
 
     private List<Blob> getReferencedItems(Entry entry) throws NoSuchBlobException {
         return entry.getItemHashes().stream()
-                .map(h -> blobStore.getItem(h).orElseThrow(
+                .map(h -> blobStore.getBlob(h).orElseThrow(
                         () -> new NoSuchBlobException(h)))
                 .collect(Collectors.toList());
     }

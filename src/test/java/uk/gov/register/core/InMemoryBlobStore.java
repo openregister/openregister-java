@@ -19,7 +19,7 @@ public class InMemoryBlobStore extends BlobStoreImpl {
     }
 
     @Override
-    public void addItem(Blob blob) {
+    public void addBlob(Blob blob) {
         blobDAO.insertInBatch(singletonList(blob), "schema");
     }
 }
