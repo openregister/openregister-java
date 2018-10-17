@@ -115,31 +115,6 @@ public class RecordsView implements CsvRepresentationView {
         return resolveAllItemLinks;
     }
 
-    public String recordsTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
-        final ByteArrayOutputStream outputStream;
-        final RecordsTurtleWriter recordsTurtleWriter;
-        String registerInTextFormatted = StringUtils.EMPTY;
-
-        try {
-            if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
-                outputStream = new ByteArrayOutputStream();
-                recordsTurtleWriter = new RecordsTurtleWriter(registerIdProvider, registerResolver);
-
-                recordsTurtleWriter.writeTo(this, RecordsView.class, RecordsView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
-
-                registerInTextFormatted = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
-            } else if (ExtraMediaType.TEXT_YAML_TYPE.getSubtype().equals(mediaType)) {
-                registerInTextFormatted = yamlObjectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(getNestedRecordJson());
-            } else {
-                registerInTextFormatted = jsonObjectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(getNestedRecordJson());
-            }
-        } catch (final IOException ex) {
-            LOGGER.error("Error processing preview request. Impossible process the register items");
-        }
-
-        return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
-    }
-
     private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) throws FieldConversionException {
         final Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
         records.forEach(record -> {

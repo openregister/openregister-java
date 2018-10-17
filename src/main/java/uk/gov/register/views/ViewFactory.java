@@ -142,36 +142,6 @@ public class ViewFactory {
         return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
     }
 
-    public PreviewRecordPageView previewRecordsPageView(final List<Record> records, final String key, final String previewType) {
-        return new PreviewRecordPageView(requestContext, register.get(), registerResolver,
-                previewType,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
-                getRecordsMediaView(records),
-                registerIdProvider,
-                key);
-    }
-
-    public PreviewEntryPageView previewEntriesPageView(final Collection<Entry> entries, final Integer key, final String previewType) {
-        return new PreviewEntryPageView(requestContext, register.get(), registerResolver,
-                previewType,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
-                getEntriesView(entries),
-                registerIdProvider,
-                key);
-    }
-
-    public PreviewItemPageView previewItemPageView(final Item item, final String key, final String previewType) throws FieldConversionException {
-        return new PreviewItemPageView(requestContext, register.get(), registerResolver,
-                previewType,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
-                getItemMediaView(item),
-                registerIdProvider,
-                key);
-    }
-
     private PublicBody getRegistry() {
         return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
     }
