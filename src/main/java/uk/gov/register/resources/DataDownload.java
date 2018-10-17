@@ -45,7 +45,7 @@ public class DataDownload {
     @DownloadNotAvailable
     @Timed
     public Response downloadRegister() {
-        Collection<Entry> entries = register.getAllEntries();
+        Collection<BaseEntry> entries = register.getAllEntries();
         Collection<Blob> blobs = register.getAllBlobs();
 
         RegisterDetail registerDetail = viewFactory.registerDetailView(

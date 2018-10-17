@@ -179,7 +179,7 @@ public class BlobValidatorTest {
             blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
-            assertThat(e.getMessage(), equalTo("Entry does not contain primary key field 'register'"));
+            assertThat(e.getMessage(), equalTo("BaseEntry does not contain primary key field 'register'"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
     }
@@ -219,7 +219,7 @@ public class BlobValidatorTest {
             blobValidator.validateBlob(jsonNode, fieldsByName, registerMetadata);
             fail("Must not execute this statement");
         } catch (BlobValidationException e) {
-            assertThat(e.getMessage(), equalTo("Entry contains invalid fields: [key1, key2]"));
+            assertThat(e.getMessage(), equalTo("BaseEntry contains invalid fields: [key1, key2]"));
             assertThat(e.getEntry().toString(), equalTo(jsonString));
         }
     }

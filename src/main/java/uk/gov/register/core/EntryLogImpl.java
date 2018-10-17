@@ -30,32 +30,32 @@ public class EntryLogImpl implements EntryLog {
     }
 
     @Override
-    public void appendEntry(Entry entry) throws IndexingException {
+    public void appendEntry(BaseEntry entry) throws IndexingException {
         dataAccessLayer.appendEntry(entry);
     }
 
     @Override
-    public Optional<Entry> getEntry(int entryNumber) {
+    public Optional<BaseEntry> getEntry(int entryNumber) {
         return dataAccessLayer.getEntry(entryNumber);
     }
 
     @Override
-    public Collection<Entry> getEntries(int start, int limit) {
+    public Collection<BaseEntry> getEntries(int start, int limit) {
         return dataAccessLayer.getEntries(start, limit);
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(String indexName) {
+    public Iterator<BaseEntry> getEntryIterator(String indexName) {
         return dataAccessLayer.getEntryIterator(indexName);
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+    public Iterator<BaseEntry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
         return dataAccessLayer.getEntryIterator(indexName, totalEntries1, totalEntries2);
     }
 
     @Override
-    public Collection<Entry> getAllEntries() {
+    public Collection<BaseEntry> getAllEntries() {
         return dataAccessLayer.getAllEntries();
     }
 

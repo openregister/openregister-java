@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer implements DataAccessLayer {
-    private final List<Entry> stagedEntries;
+    private final List<BaseEntry> stagedEntries;
     private final Map<HashValue, Blob> stagedBlobs;
     private final HashSet<String> stagedEntryKeys;
     private final Map<String, Map<String, List<StartIndex>>> existingStartIndexes;
@@ -54,7 +54,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     @Override
-    public void appendEntry(Entry entry) throws IndexingException {
+    public void appendEntry(BaseEntry entry) throws IndexingException {
         stagedEntries.add(entry);
         stagedEntryKeys.add(entry.getKey());
 
@@ -189,7 +189,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
 
         for (EntryType entryType : indexFunctionsByEntryType.keySet()) {
             String indexName = entryType == EntryType.user ? IndexNames.RECORD : IndexNames.METADATA;
-            Map<String, Entry> entries = getEntriesForKeys(indexName, keysForStagedEntries);
+            Map<String, BaseEntry> entries = getEntriesForKeys(indexName, keysForStagedEntries);
 
             for (IndexFunction indexFunction : indexFunctionsByEntryType.get(entryType)) {
                 int currentIndexEntryNumber = getCurrentIndexEntryNumber(indexFunction.getName());
@@ -198,7 +198,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
                 // correct for this register as of the time we started updating all indexes. This ensures that index
                 // functions can be run in any order, as updating the user or system entries the register first would
                 // otherwise alter the outcome of any remaining index function runs.
-                Map<String, Entry> tempEntries = new HashMap<>(entries);
+                Map<String, BaseEntry> tempEntries = new HashMap<>(entries);
 
                 stagedEntries.stream().filter(entry -> entry.getEntryType().equals(entryType)).forEach(entry -> {
                     indexDriver.indexEntry(this, entry, indexFunction, tempEntries, currentIndexEntryNumber);
@@ -220,7 +220,7 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
     }
 
     private void insertEntriesInBatch(EntryType entryType, String entryTableName, String entryItemTableName) {
-        List<Entry> entries = stagedEntries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList());
+        List<BaseEntry> entries = stagedEntries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList());
 
         entryDAO.insertInBatch(entries.stream().filter(e -> e.getEntryType().equals(entryType)).collect(Collectors.toList()), schema, entryTableName);
         entryBlobDAO.insertInBatch(entries.stream()
@@ -284,14 +284,14 @@ public class PostgresDataAccessLayer extends PostgresReadDataAccessLayer impleme
         return indexRecords;
     }
     
-    private Map<String, Entry> getEntriesForKeys(String indexName, List<String> entryKeys) {
+    private Map<String, BaseEntry> getEntriesForKeys(String indexName, List<String> entryKeys) {
         int totalEntries = indexName.equals(IndexNames.METADATA) ? entryQueryDAO.getTotalSystemEntries(schema) : entryQueryDAO.getTotalEntries(schema);
         
         if (totalEntries == 0) {
             return new HashMap<>();
         }
         
-        List<Entry> entries = new ArrayList<>();
+        List<BaseEntry> entries = new ArrayList<>();
             
         String entryTable = indexName.equals(IndexNames.METADATA) ? "entry_system" : "entry";
         String entryItemTable = indexName.equals(IndexNames.METADATA) ? "entry_item_system" : "entry_item";

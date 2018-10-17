@@ -1,6 +1,6 @@
 package uk.gov.register.db;
 
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.Record;
 import uk.gov.register.store.DataAccessLayer;
 
@@ -32,7 +32,7 @@ public class Index {
         return dataAccessLayer.findMax100RecordsByKeyValue(key, value);
     }
 
-    public Collection<Entry> findAllEntriesOfRecordBy(String key) {
+    public Collection<BaseEntry> findAllEntriesOfRecordBy(String key) {
         return dataAccessLayer.getAllEntriesByKey(key);
     }
 }

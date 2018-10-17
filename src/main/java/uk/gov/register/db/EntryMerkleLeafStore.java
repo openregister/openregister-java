@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.verifiablelog.store.MerkleLeafStore;
 
 public class EntryMerkleLeafStore implements MerkleLeafStore {
@@ -25,7 +25,7 @@ public class EntryMerkleLeafStore implements MerkleLeafStore {
         return entryIterator.getTotalEntries();
     }
 
-    private byte[] bytesFromEntry(Entry entry) {
+    private byte[] bytesFromEntry(BaseEntry entry) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);

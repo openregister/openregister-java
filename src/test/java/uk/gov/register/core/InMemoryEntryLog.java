@@ -20,7 +20,7 @@ public class InMemoryEntryLog extends EntryLogImpl {
     }
 
     @Override
-    public void appendEntry(Entry entry) {
+    public void appendEntry(BaseEntry entry) {
         entryDAO.insertInBatch(singletonList(entry), "zzz", "entry");
     }
 }

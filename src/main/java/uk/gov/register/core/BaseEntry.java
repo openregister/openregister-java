@@ -22,15 +22,15 @@ import org.apache.commons.collections4.CollectionUtils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({"index-entry-number", "entry-number", "entry-timestamp", "key", "item-hash"})
-public class Entry implements CsvRepresentationView<Entry> {
+public class BaseEntry implements CsvRepresentationView<BaseEntry> {
     private final int indexEntryNumber;
     private final int entryNumber;
-    private final List<HashValue> hashValues;
+    protected final List<HashValue> hashValues;
     private final Instant timestamp;
     private final EntryType entryType;
     private String key;
 
-    public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key, EntryType entryType) {
+    public BaseEntry(int entryNumber, HashValue hashValue, Instant timestamp, String key, EntryType entryType) {
         this.entryNumber = entryNumber;
         this.indexEntryNumber = entryNumber;
         this.hashValues = new ArrayList<>(Arrays.asList(hashValue));
@@ -39,11 +39,11 @@ public class Entry implements CsvRepresentationView<Entry> {
         this.entryType = entryType;
     }
 
-    public Entry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
+    public BaseEntry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
         this(entryNumber, entryNumber, hashValues, timestamp, key, entryType);
     }
 
-    public Entry(int indexEntryNumber, int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
+    public BaseEntry(int indexEntryNumber, int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
         this.indexEntryNumber = indexEntryNumber;
         this.entryNumber = entryNumber;
         this.hashValues = hashValues;
@@ -53,9 +53,9 @@ public class Entry implements CsvRepresentationView<Entry> {
     }
 
     @JsonCreator
-    public Entry(@JsonProperty("index-entry-number") int indexEntryNumber, @JsonProperty("entry-number") int entryNumber,
-                 @JsonProperty("item-hash") List<HashValue> hashValues, @JsonProperty("entry-timestamp") Instant timestamp,
-                 @JsonProperty("key") String key) {
+    public BaseEntry(@JsonProperty("index-entry-number") int indexEntryNumber, @JsonProperty("entry-number") int entryNumber,
+                     @JsonProperty("item-hash") List<HashValue> hashValues, @JsonProperty("entry-timestamp") Instant timestamp,
+                     @JsonProperty("key") String key) {
         this.indexEntryNumber = indexEntryNumber;
         this.entryNumber = entryNumber;
         this.hashValues = hashValues;
@@ -110,7 +110,7 @@ public class Entry implements CsvRepresentationView<Entry> {
     public static CsvSchema csvSchema() {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
-        return csvMapper.schemaFor(Entry.class);
+        return csvMapper.schemaFor(BaseEntry.class);
     }
 
     public static CsvSchema csvSchemaWithOmittedFields(List<String> fieldsToRemove) {
@@ -124,7 +124,7 @@ public class Entry implements CsvRepresentationView<Entry> {
     }
 
     @Override
-    public CsvRepresentation<Entry> csvRepresentation() {
+    public CsvRepresentation<BaseEntry> csvRepresentation() {
         return new CsvRepresentation<>(csvSchema(), this);
     }
 
@@ -133,7 +133,7 @@ public class Entry implements CsvRepresentationView<Entry> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Entry entry = (Entry) o;
+        BaseEntry entry = (BaseEntry) o;
 
         if (indexEntryNumber != entry.indexEntryNumber) return false;
         if (entryNumber != entry.entryNumber) return false;

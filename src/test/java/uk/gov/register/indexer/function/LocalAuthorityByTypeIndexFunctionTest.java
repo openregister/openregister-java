@@ -72,7 +72,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
     public void executeWithEntry_shouldReturnIndexValueItemPairByLocalAuthType_whenItemExists() throws IOException {
         HashValue itemHash = new HashValue(HashingAlgorithm.SHA256, "abc");
         Blob blob = new Blob(itemHash, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
-        Entry entry = new Entry(1, itemHash, Instant.now(), "LND", EntryType.user);
+        BaseEntry entry = new BaseEntry(1, itemHash, Instant.now(), "LND", EntryType.user);
         when(dataAccessLayer.getBlob(itemHash)).thenReturn(Optional.of(blob));
 
         Set<IndexKeyItemPair> resultSet = func.execute(h -> dataAccessLayer.getBlob(h), entry);
@@ -87,7 +87,7 @@ public class LocalAuthorityByTypeIndexFunctionTest {
         HashValue itemHash2 = new HashValue(HashingAlgorithm.SHA256, "def");
         Blob blob1 = new Blob(itemHash1, objectMapper.readTree("{\"local-authority-eng\":\"LND\",\"local-authority-type\":\"CC\",\"name\":\"City of London\"}"));
         Blob blob2 = new Blob(itemHash2, objectMapper.readTree("{\"local-authority-eng\":\"WOT\",\"local-authority-type\":\"NMD\",\"name\":\"Worthing\"}"));
-        Entry entry = new Entry(1, Arrays.asList(itemHash1, itemHash2), Instant.now(), "key", EntryType.user);
+        BaseEntry entry = new BaseEntry(1, Arrays.asList(itemHash1, itemHash2), Instant.now(), "key", EntryType.user);
         when(dataAccessLayer.getBlob(itemHash1)).thenReturn(Optional.of(blob1));
         when(dataAccessLayer.getBlob(itemHash2)).thenReturn(Optional.of(blob2));
 

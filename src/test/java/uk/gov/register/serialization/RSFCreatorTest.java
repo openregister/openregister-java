@@ -43,9 +43,9 @@ public class RSFCreatorTest {
     @Mock
     private Register register;
 
-    private Entry systemEntry;
-    private Entry entry1;
-    private Entry entry2;
+    private BaseEntry systemEntry;
+    private BaseEntry entry1;
+    private BaseEntry entry2;
     private Blob systemBlob;
     private Blob blob1;
     private Blob blob2;
@@ -75,9 +75,9 @@ public class RSFCreatorTest {
                 .put("field-1", "entry2-field-1-value")
                 .put("field-2", "entry2-field-2-value"));
 
-        systemEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), Instant.parse("2016-07-24T16:54:00Z"), "system-key", EntryType.system);
-        entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
-        entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "item2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
+        systemEntry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), Instant.parse("2016-07-24T16:54:00Z"), "system-key", EntryType.system);
+        entry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "item1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
+        entry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "item2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
 
         assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterHash.encode()));
 

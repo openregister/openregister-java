@@ -31,7 +31,7 @@ public class BlobValidator {
 
     private void validatePrimaryKeyExists(JsonNode inputEntry) throws BlobValidationException {
         JsonNode primaryKeyNode = inputEntry.get(registerId.value());
-        throwBlobValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "Entry does not contain primary key field '" + registerId + "'");
+        throwBlobValidationExceptionIfConditionIsFalse(primaryKeyNode == null, inputEntry, "BaseEntry does not contain primary key field '" + registerId + "'");
         validatePrimaryKeyIsNotBlankAssumingItWillAlwaysBeAStringNode(StringUtils.isBlank(primaryKeyNode.textValue()), inputEntry, "Primary key field '" + registerId + "' must have a valid value");
     }
 
@@ -40,7 +40,7 @@ public class BlobValidator {
         Set<String> expectedFieldNames = Sets.newHashSet(registerMetadata.getFields());
         Set<String> unknownFields = Sets.difference(inputFieldNames, expectedFieldNames);
 
-        throwBlobValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "Entry contains invalid fields: " + unknownFields.toString());
+        throwBlobValidationExceptionIfConditionIsFalse(!unknownFields.isEmpty(), inputEntry, "BaseEntry contains invalid fields: " + unknownFields.toString());
     }
 
     private void validateFieldsValue(JsonNode inputEntry, Map<String, Field> fields) throws BlobValidationException {

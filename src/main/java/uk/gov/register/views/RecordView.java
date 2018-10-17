@@ -1,7 +1,7 @@
 package uk.gov.register.views;
 
 import com.google.common.collect.ImmutableList;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
 import uk.gov.register.exceptions.FieldConversionException;
@@ -20,7 +20,7 @@ public class RecordView extends RecordsView {
         return getEntry().getKey();
     }
 
-    private Entry getEntry() {
+    private BaseEntry getEntry() {
         return getRecords().keySet().stream().findFirst().get();
     }
 }

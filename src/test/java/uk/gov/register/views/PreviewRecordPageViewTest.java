@@ -136,8 +136,8 @@ public class PreviewRecordPageViewTest {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         final Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         final Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
-        final Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
-        final Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
+        final BaseEntry entry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
+        final BaseEntry entry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
         final Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
         final Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
         final Record record1 = new Record(entry1, Collections.singletonList(blob1));

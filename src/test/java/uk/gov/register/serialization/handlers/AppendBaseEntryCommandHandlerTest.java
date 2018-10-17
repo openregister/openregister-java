@@ -7,12 +7,11 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RegisterCommand;
-import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AppendEntryCommandHandlerTest {
+public class AppendBaseEntryCommandHandlerTest {
     private AppendEntryCommandHandler sutHandler;
 
     @Mock
@@ -59,7 +58,7 @@ public class AppendEntryCommandHandlerTest {
         sutHandler.execute(appendEntryCommand, register);
 
 
-        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
+        BaseEntry expectedEntry = new BaseEntry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
     }
 
@@ -71,7 +70,7 @@ public class AppendEntryCommandHandlerTest {
                 Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:aaa;sha-256:bbb"));
         sutHandler.execute(command, register);
 
-        Entry expectedEntry = new Entry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
+        BaseEntry expectedEntry = new BaseEntry(3, Arrays.asList(new HashValue(SHA256, "aaa"),
                 new HashValue(SHA256, "bbb")), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
     }
@@ -84,7 +83,7 @@ public class AppendEntryCommandHandlerTest {
                 Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", ""));
         sutHandler.execute(command, register);
 
-        Entry expectedEntry = new Entry(3, new ArrayList<>(), july24, "entry1-field-1-value", EntryType.user);
+        BaseEntry expectedEntry = new BaseEntry(3, new ArrayList<>(), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
     }
 
@@ -95,7 +94,7 @@ public class AppendEntryCommandHandlerTest {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).appendEntry(any(Entry.class));
+        }).when(register).appendEntry(any(BaseEntry.class));
 
         assertExceptionThrown(appendEntryCommand, "Exception when executing command: RegisterCommand");
     }

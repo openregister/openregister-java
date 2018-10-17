@@ -2,7 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -34,7 +34,7 @@ public class PreviewEntriesResource {
         final int limit = register.getTotalEntries() > IndexSizePagination.ENTRY_LIMIT
                 ? IndexSizePagination.ENTRY_LIMIT
                 : register.getTotalEntries();
-        final Collection<Entry> entries = register.getEntries(START, limit);
+        final Collection<BaseEntry> entries = register.getEntries(START, limit);
 
         return viewFactory.previewEntriesPageView(entries, null, ExtraMediaType.transform(mediaType));
     }
@@ -44,7 +44,7 @@ public class PreviewEntriesResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public View jsonByKeyPreview(@PathParam("media-type") final String mediaType, @PathParam("entry-key") final int key) {
-        final Collection<Entry> entries = Collections.singletonList(register.getEntry(key).orElseThrow(NotFoundException::new));
+        final Collection<BaseEntry> entries = Collections.singletonList(register.getEntry(key).orElseThrow(NotFoundException::new));
 
         return viewFactory.previewEntriesPageView(entries, key, ExtraMediaType.transform(mediaType));
     }

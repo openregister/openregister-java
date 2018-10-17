@@ -38,7 +38,7 @@ public class RecordsView implements CsvRepresentationView {
     private final boolean resolveAllBlobLinks;
 
     private final Map<String, Field> fieldsByName;
-    private final Map<Entry, List<BlobView>> recordMap;
+    private final Map<BaseEntry, List<BlobView>> recordMap;
 
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
@@ -51,7 +51,7 @@ public class RecordsView implements CsvRepresentationView {
         recordMap = getBlobViews(records, blobConverter);
     }
 
-    public Map<Entry, List<BlobView>> getRecords() {
+    public Map<BaseEntry, List<BlobView>> getRecords() {
         return recordMap;
     }
 
@@ -140,8 +140,8 @@ public class RecordsView implements CsvRepresentationView {
         return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
     }
 
-    private Map<Entry, List<BlobView>> getBlobViews(final Collection<Record> records, final BlobConverter blobConverter) throws FieldConversionException {
-        final Map<Entry, List<BlobView>> map = new LinkedHashMap<>();
+    private Map<BaseEntry, List<BlobView>> getBlobViews(final Collection<Record> records, final BlobConverter blobConverter) throws FieldConversionException {
+        final Map<BaseEntry, List<BlobView>> map = new LinkedHashMap<>();
         records.forEach(record -> {
             map.put(record.getEntry(), record.getBlobs().stream().map(blob ->
                     new BlobView(blob.getSha256hex(), blobConverter.convertBlob(blob, fieldsByName), getFields()))
@@ -150,7 +150,7 @@ public class RecordsView implements CsvRepresentationView {
         return map;
     }
 
-    private ObjectNode getEntryJson(final Entry entry) {
+    private ObjectNode getEntryJson(final BaseEntry entry) {
         final ObjectNode jsonNode = jsonObjectMapper.convertValue(entry, ObjectNode.class);
         jsonNode.remove("item-hash");
         return jsonNode;

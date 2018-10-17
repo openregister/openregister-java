@@ -11,7 +11,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import org.skife.jdbi.v2.unstable.BindIn;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.StartIndex;
 import uk.gov.register.db.mappers.*;
@@ -42,11 +42,11 @@ public abstract class IndexQueryDAO {
 
     @SqlQuery(entriesQuery)
     @RegisterMapper(DerivationEntryMapper.class)
-    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Define("schema") String schema, @Define("entry_table") String entryTable);
+    public abstract Iterator<BaseEntry> getIterator(@Bind("name") String indexName, @Define("schema") String schema, @Define("entry_table") String entryTable);
 
     @SqlQuery(entriesQueryBetweenEntries)
     @RegisterMapper(DerivationEntryMapper.class)
-    public abstract Iterator<Entry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Define("schema") String schema, @Define("entry_table") String entryTable);
+    public abstract Iterator<BaseEntry> getIterator(@Bind("name") String indexName, @Bind("total_entries_1") int totalEntries1, @Bind("total_entries_2") int totalEntries2, @Define("schema") String schema, @Define("entry_table") String entryTable);
 
     @RegisterMapper(IndexItemInfoMapper.class)
     @SqlQuery("select min(i.start_index_entry_number) start_index_entry_number, count(*) existing_item_count from \"<schema>\".index i where i.name = :name and i.key = :key and i.sha256hex = :sha256hex and i.end_entry_number is null")

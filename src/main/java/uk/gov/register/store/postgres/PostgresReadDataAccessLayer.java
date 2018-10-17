@@ -1,8 +1,8 @@
 package uk.gov.register.store.postgres;
 
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.Blob;
-import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryIterator;
@@ -31,28 +31,28 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
         this.schema = schema;
     }
 
-    // Entry Log
+    // BaseEntry Log
 
     @Override
-    public Optional<Entry> getEntry(int entryNumber) {
+    public Optional<BaseEntry> getEntry(int entryNumber) {
         checkpoint();
         return entryQueryDAO.findByEntryNumber(entryNumber, schema);
     }
 
     @Override
-    public Collection<Entry> getEntries(int start, int limit) {
+    public Collection<BaseEntry> getEntries(int start, int limit) {
         checkpoint();
         return entryQueryDAO.getEntries(start, limit, schema);
     }
 
     @Override
-    public Collection<Entry> getAllEntries() {
+    public Collection<BaseEntry> getAllEntries() {
         checkpoint();
         return entryQueryDAO.getAllEntriesNoPagination(schema);
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(String indexName) {
+    public Iterator<BaseEntry> getEntryIterator(String indexName) {
     // TODO: Remove if statement and use indexQueryDAO for RECORD index. This can only be done once the government-service
     // register no longer contains duplicate consecutive entries. Else we should not make the assumption that duplicate
     // consecutive entries do not exist.
@@ -63,7 +63,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+    public Iterator<BaseEntry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
         // TODO: Remove if statement and use indexQueryDAO for RECORD index. This can only be done once the government-service
         // register no longer contains duplicate consecutive entries. Else we should not make the assumption that duplicate
         // consecutive entries do not exist.
@@ -134,7 +134,7 @@ public abstract class PostgresReadDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Collection<Entry> getAllEntriesByKey(String key) {
+    public Collection<BaseEntry> getAllEntriesByKey(String key) {
         checkpoint();
         return entryQueryDAO.getAllEntriesByKey(key, schema);
     }

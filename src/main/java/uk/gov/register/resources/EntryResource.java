@@ -2,7 +2,8 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.EntryV2;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
@@ -45,7 +46,7 @@ public class EntryResource {
         int totalEntries = register.getTotalEntries();
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
-        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
+        Collection<BaseEntry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
 
         setHeaders(startLimitPagination);
 
@@ -56,8 +57,8 @@ public class EntryResource {
     @Path("/entries/{entry-number}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
+    public AttributionView<BaseEntry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
+        Optional<BaseEntry> entry = register.getEntry(entryNumber);
         return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
     }
 
@@ -73,10 +74,25 @@ public class EntryResource {
     })
     @Timed
     public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
+        Optional<BaseEntry> entry = register.getEntry(entryNumber);
         return entry.map(function -> new EntryListView(Collections.singletonList(function)));
     }
 
+    @GET
+    @Path("/v2/entries/{entry-number}")
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_YAML,
+            ExtraMediaType.TEXT_CSV,
+            ExtraMediaType.TEXT_TSV,
+            ExtraMediaType.TEXT_TTL,
+            ExtraMediaType.APPLICATION_SPREADSHEET
+    })
+    @Timed
+    public Optional<EntryListView> findByEntryNumberV2(@PathParam("entry-number") int entryNumber) {
+        Optional<BaseEntry> entry = register.getEntry(entryNumber, "v2");
+        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
+    }
 
     @GET
     @Path("/entries")
@@ -93,7 +109,7 @@ public class EntryResource {
         int totalEntries = register.getTotalEntries();
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
-        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
+        Collection<BaseEntry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
 
         setHeaders(startLimitPagination);
 

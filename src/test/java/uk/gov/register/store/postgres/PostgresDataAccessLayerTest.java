@@ -33,13 +33,13 @@ public class PostgresDataAccessLayerTest {
     InMemoryBlobDAO itemDAO;
     IndexDriver indexDriver;
 
-    private List<Entry> entries;
+    private List<BaseEntry> entries;
     private Map<HashValue, Blob> itemMap;
 
     private PostgresDataAccessLayer dataAccessLayer;
 
-    private final Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
-    private final Entry entry2 = new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user);
+    private final BaseEntry entry1 = new BaseEntry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
+    private final BaseEntry entry2 = new BaseEntry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user);
     private Blob blob1;
     private Blob blob2;
     private HashValue hash1 ;
@@ -70,17 +70,17 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void appendEntry_shouldNotCommitData() {
-        dataAccessLayer.appendEntry(new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user));
-        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
+        dataAccessLayer.appendEntry(new BaseEntry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user));
+        dataAccessLayer.appendEntry(new BaseEntry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
 
         assertThat(entries, is(empty()));
     }
 
     @Test
     public void getEntry_shouldGetFromStagedDataIfNeeded() throws Exception {
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
+        BaseEntry entry1 = new BaseEntry(1, new HashValue(SHA256, "abc"), Instant.ofEpochMilli(123), "key1", EntryType.user);
         dataAccessLayer.appendEntry(entry1);
-        dataAccessLayer.appendEntry(new Entry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
+        dataAccessLayer.appendEntry(new BaseEntry(2, new HashValue(SHA256, "def"), Instant.ofEpochMilli(124), "key2", EntryType.user));
 
         assertThat(dataAccessLayer.getEntry(1), equalTo(Optional.of(entry1)));
     }
@@ -103,9 +103,9 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void getAllEntriesByKey_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+        dataAccessLayer.appendEntry(new BaseEntry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
-        Collection<Entry> ignored = dataAccessLayer.getAllEntriesByKey("bar");
+        Collection<BaseEntry> ignored = dataAccessLayer.getAllEntriesByKey("bar");
 
         // ignore the result, but check that committed to DB
         assertThat(dataAccessLayer.getTotalEntries(), is(1));
@@ -168,8 +168,8 @@ public class PostgresDataAccessLayerTest {
     public void getIterator_shouldGetFromStagedDataIfNeeded() throws Exception {
         dataAccessLayer.addBlob(blob1);
         dataAccessLayer.addBlob(blob2);
-        entries.add(new Entry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
-        entries.add(new Entry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
+        entries.add(new BaseEntry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
+        entries.add(new BaseEntry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
         List<Blob> blobs = newArrayList(dataAccessLayer.getBlobIterator(EntryType.user));
         assertThat(blobs, is(asList(blob1, blob2)));
@@ -179,8 +179,8 @@ public class PostgresDataAccessLayerTest {
     public void getIteratorRange_shouldGetFromStagedDataIfNeeded() throws Exception {
         dataAccessLayer.addBlob(blob1);
         dataAccessLayer.addBlob(blob2);
-        entries.add(new Entry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
-        entries.add(new Entry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
+        entries.add(new BaseEntry(1, blob1.getSha256hex(), Instant.ofEpochSecond(12345), "12345", EntryType.user));
+        entries.add(new BaseEntry(2, blob2.getSha256hex(), Instant.ofEpochSecond(54321), "54321", EntryType.user));
 
         List<Blob> blobs = newArrayList(dataAccessLayer.getBlobIterator(1,2));
         assertThat(blobs, is(singletonList(blob2)));
@@ -188,7 +188,7 @@ public class PostgresDataAccessLayerTest {
     
     @Test
     public void getRecord_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+        dataAccessLayer.appendEntry(new BaseEntry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         Optional<Record> ignored = dataAccessLayer.getRecord("foo", IndexNames.RECORD);
 
@@ -198,7 +198,7 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void getRecords_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+        dataAccessLayer.appendEntry(new BaseEntry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         List<Record> ignored = dataAccessLayer.getRecords(1,0, IndexNames.RECORD);
 
@@ -208,7 +208,7 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void findMax100RecordsByKeyValue_shouldCauseCheckpoint() {
-        dataAccessLayer.appendEntry(new Entry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
+        dataAccessLayer.appendEntry(new BaseEntry(5, new HashValue(HashingAlgorithm.SHA256, "foo"), Instant.now(), "foo", EntryType.user));
 
         List<Record> ignored = dataAccessLayer.findMax100RecordsByKeyValue("foo", "bar");
 

@@ -50,7 +50,7 @@ public class TurtleRepresentationWriterTest {
 
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
-        Entry entry = new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key", EntryType.user);
+        BaseEntry entry = new BaseEntry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key", EntryType.user);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

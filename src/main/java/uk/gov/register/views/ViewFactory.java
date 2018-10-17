@@ -101,19 +101,19 @@ public class ViewFactory {
         return getAttributionView("blob.html", getBlobMediaView(blob));
     }
 
-    public AttributionView<Entry> getEntryView(final Entry entry) {
+    public AttributionView<BaseEntry> getEntryView(final BaseEntry entry) {
         return getAttributionView("entry.html", entry);
     }
 
-    public PaginatedView<EntryListView> getEntriesView(final Collection<Entry> entries, final Pagination pagination) {
+    public PaginatedView<EntryListView> getEntriesView(final Collection<BaseEntry> entries, final Pagination pagination) {
         return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), register.get(), registerResolver, pagination, new EntryListView(entries));
     }
 
-    public EntryListView getEntriesView(final Collection<Entry> entries) {
+    public EntryListView getEntriesView(final Collection<BaseEntry> entries) {
         return new EntryListView(entries);
     }
 
-    public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<Entry> entries, final Pagination pagination) {
+    public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<BaseEntry> entries, final Pagination pagination) {
         return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), register.get(), registerResolver, pagination, new EntryListView(entries, recordKey));
     }
 
@@ -152,7 +152,7 @@ public class ViewFactory {
                 key);
     }
 
-    public PreviewEntryPageView previewEntriesPageView(final Collection<Entry> entries, final Integer key, final String previewType) {
+    public PreviewEntryPageView previewEntriesPageView(final Collection<BaseEntry> entries, final Integer key, final String previewType) {
         return new PreviewEntryPageView(requestContext, register.get(), registerResolver,
                 previewType,
                 new HomepageContent(

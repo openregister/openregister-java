@@ -104,8 +104,8 @@ public class IndexDriverTest {
         Blob blobP = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
         Blob blobQ = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
 
-        Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
-        Entry newEntry = new Entry(2, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
+        BaseEntry previousEntry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry = new BaseEntry(2, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
@@ -118,7 +118,7 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "aaa")), new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         
-        Map<String, Entry> currentEntries = new HashMap<>();
+        Map<String, BaseEntry> currentEntries = new HashMap<>();
         currentEntries.put("A", previousEntry);
 
         IndexDriver indexDriver = new IndexDriver();
@@ -134,8 +134,8 @@ public class IndexDriverTest {
         Blob blobP = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
         Blob blobQ = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
 
-        Entry previousEntry = new Entry(1, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
-        Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
+        BaseEntry previousEntry = new BaseEntry(1, Arrays.asList(new HashValue(HashingAlgorithm.SHA256, "aaa"), new HashValue(HashingAlgorithm.SHA256, "bbb")), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
@@ -147,7 +147,7 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         
-        Map<String, Entry> currentEntries = new HashMap<>();
+        Map<String, BaseEntry> currentEntries = new HashMap<>();
         currentEntries.put("A", previousEntry);
 
         IndexDriver indexDriver = new IndexDriver();
@@ -163,8 +163,8 @@ public class IndexDriverTest {
         Blob blobP = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
         Blob blobQ = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
 
-        Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
-        Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
+        BaseEntry previousEntry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
@@ -177,7 +177,7 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
-        Map<String, Entry> currentEntries = new HashMap<>();
+        Map<String, BaseEntry> currentEntries = new HashMap<>();
         currentEntries.put("A", previousEntry);
         
         IndexDriver indexDriver = new IndexDriver();
@@ -194,8 +194,8 @@ public class IndexDriverTest {
         Blob blobQ = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
         Blob blobP = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
 
-        Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
-        Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
+        BaseEntry previousEntry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
 
@@ -209,7 +209,7 @@ public class IndexDriverTest {
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "Q", "bbb")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.empty(), 0));
 
-        Map<String, Entry> currentEntries = new HashMap<>();
+        Map<String, BaseEntry> currentEntries = new HashMap<>();
         currentEntries.put("A", previousEntry);
         
         IndexDriver indexDriver = new IndexDriver();
@@ -226,8 +226,8 @@ public class IndexDriverTest {
         Blob blobP = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\",\"y\":\"S\"}"));
         Blob blobQ = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"P\",\"y\":\"T\"}"));
 
-        Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
-        Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
+        BaseEntry previousEntry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "A", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
@@ -240,7 +240,7 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("P", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
         
-        Map<String, Entry> currentEntries = new HashMap<>();
+        Map<String, BaseEntry> currentEntries = new HashMap<>();
         currentEntries.put("A", previousEntry);
         
         IndexDriver indexDriver = new IndexDriver();
@@ -257,8 +257,8 @@ public class IndexDriverTest {
         Blob blobP = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
         Blob blobQ = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
 
-        Entry newEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
-        Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
+        BaseEntry newEntry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
@@ -289,11 +289,11 @@ public class IndexDriverTest {
         Blob blobR = new Blob(new HashValue(HashingAlgorithm.SHA256, "ccc"), objectMapper.readTree("{\"x\":\"R\"}"));
         Blob blobS = new Blob(new HashValue(HashingAlgorithm.SHA256, "ddd"), objectMapper.readTree("{\"x\":\"S\"}"));
 
-        Entry newEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
-        Entry newEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
-        Entry newEntry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "ddd"), Instant.now(), "C", EntryType.user);
-        Entry newEntry4 = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "C", EntryType.user);
-        Entry newEntry5 = new Entry(5, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D", EntryType.user);
+        BaseEntry newEntry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
+        BaseEntry newEntry3 = new BaseEntry(3, new HashValue(HashingAlgorithm.SHA256, "ddd"), Instant.now(), "C", EntryType.user);
+        BaseEntry newEntry4 = new BaseEntry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "C", EntryType.user);
+        BaseEntry newEntry5 = new BaseEntry(5, new HashValue(HashingAlgorithm.SHA256, "ccc"), Instant.now(), "D", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
@@ -317,7 +317,7 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry5)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("R", new HashValue(HashingAlgorithm.SHA256, "ccc")))));
         
-        Map<String, Entry> currentEntriesAtEntry4 = new HashMap<>();
+        Map<String, BaseEntry> currentEntriesAtEntry4 = new HashMap<>();
         currentEntriesAtEntry4.put("C", newEntry3);
         
         IndexDriver indexDriver = new IndexDriver();
@@ -342,8 +342,8 @@ public class IndexDriverTest {
     public void indexEntry_shouldStartIndexSpecifyingStartIndexEntryNumber_whenItemExistsUnderAnotherIndex() throws IOException {
         Blob blob = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
 
-        Entry previousEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
-        Entry newEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
+        BaseEntry previousEntry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "A", EntryType.user);
+        BaseEntry newEntry = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
         
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blob));
         when(dataAccessLayer.getStartIndexEntryNumberAndExistingBlobCount("by-x", "P", "aaa")).thenReturn(new IndexEntryNumberItemCountPair(Optional.of(1), 1));
@@ -365,10 +365,10 @@ public class IndexDriverTest {
         Blob blobP = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"x\":\"P\"}"));
         Blob blobQ = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"x\":\"Q\"}"));
 
-        Entry previousEntry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
-        Entry previousEntry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "C", EntryType.user);
-        Entry previousEntry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "D", EntryType.user);
-        Entry newEntry = new Entry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
+        BaseEntry previousEntry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "B", EntryType.user);
+        BaseEntry previousEntry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "C", EntryType.user);
+        BaseEntry previousEntry3 = new BaseEntry(3, new HashValue(HashingAlgorithm.SHA256, "aaa"), Instant.now(), "D", EntryType.user);
+        BaseEntry newEntry = new BaseEntry(4, new HashValue(HashingAlgorithm.SHA256, "bbb"), Instant.now(), "B", EntryType.user);
 
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "aaa"))).thenReturn(Optional.of(blobP));
         when(dataAccessLayer.getBlob(new HashValue(HashingAlgorithm.SHA256, "bbb"))).thenReturn(Optional.of(blobQ));
@@ -381,7 +381,7 @@ public class IndexDriverTest {
         when(indexFunction.execute(ArgumentMatchers.any(), ArgumentMatchers.eq(newEntry)))
                 .thenReturn(new HashSet<>(Arrays.asList(new IndexKeyItemPair("Q", new HashValue(HashingAlgorithm.SHA256, "bbb")))));
 
-        Map<String, Entry> currentEntries = new HashMap<>();
+        Map<String, BaseEntry> currentEntries = new HashMap<>();
         currentEntries.put("B", previousEntry1);
 
         IndexDriver indexDriver = new IndexDriver();

@@ -1,6 +1,6 @@
 package uk.gov.register.indexer.function;
 
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Blob;
 import uk.gov.register.indexer.IndexKeyItemPair;
@@ -20,7 +20,7 @@ public abstract class BaseIndexFunction implements IndexFunction {
     }
 
     @Override
-    public Set<IndexKeyItemPair> execute(Function<HashValue, Optional<Blob>> itemFunc, Entry entry) {
+    public Set<IndexKeyItemPair> execute(Function<HashValue, Optional<Blob>> itemFunc, BaseEntry entry) {
         Set<IndexKeyItemPair> result = new HashSet<>();
 
         entry.getBlobHashes().forEach(itemHash -> {

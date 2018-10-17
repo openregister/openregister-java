@@ -1,7 +1,7 @@
 package uk.gov.register.views.representations.spreadsheet;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.Field;
 import uk.gov.register.views.BlobView;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public interface RecordSpreadsheet {
 
-    default void process(final Iterable<Field> fields, final Map<Entry, List<BlobView>> records, final String sheetLabel,
+    default void process(final Iterable<Field> fields, final Map<BaseEntry, List<BlobView>> records, final String sheetLabel,
                          final OutputStream entityStream) throws IOException {
         final List<String> fieldNames = new ArrayList<>();
         final List<Map<String, String>> elements = new ArrayList<>();

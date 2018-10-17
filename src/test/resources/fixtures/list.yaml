@@ -5,7 +5,7 @@ value2:
   entry-timestamp: "2016-03-02T02:03:04Z"
   key: "value2"
   item:
-  - text: "The Entry 2"
+  - text: "The BaseEntry 2"
     fields:
     - "field1"
     - "field2"
@@ -16,7 +16,7 @@ value1:
   entry-timestamp: "2016-03-01T01:02:03Z"
   key: "value1"
   item:
-  - text: "The Entry 1"
+  - text: "The BaseEntry 1"
     fields:
     - "field1"
     register: "value1"

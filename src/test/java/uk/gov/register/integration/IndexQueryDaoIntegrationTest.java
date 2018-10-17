@@ -6,8 +6,8 @@ import org.assertj.core.util.Lists;
 import org.junit.*;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.Blob;
-import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
@@ -198,17 +198,17 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReadEntries() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("by-type", schema, "entry");
-        List<Entry> entries = Lists.newArrayList(entryIterator);
+        Iterator<BaseEntry> entryIterator = dao.getIterator("by-type", schema, "entry");
+        List<BaseEntry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(7));
-        Entry entry0 = entries.get(0);
-        Entry expectedEntry0 = new Entry(91, 91,
+        BaseEntry entry0 = entries.get(0);
+        BaseEntry expectedEntry0 = new BaseEntry(91, 91,
                 Arrays.asList(decode(SHA256, "sha-256:xxx6c4")), timestamp, "UA", EntryType.user);
         assertThat(entry0, equalTo(expectedEntry0));
 
-        Entry entryLast = entries.get(6);
-        Entry expectedEntryLast = new Entry(97, 96,
+        BaseEntry entryLast = entries.get(6);
+        BaseEntry expectedEntryLast = new BaseEntry(97, 96,
                 Arrays.asList(decode(SHA256, "sha-256:xxxbdc"),
                         decode(SHA256, "sha-256:xxx509")), timestamp, "MD", EntryType.user);
         assertThat(entryLast, equalTo(expectedEntryLast));
@@ -218,20 +218,20 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReadEntriesBetweenEntryNumbers() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("by-type", 92, 94, schema, "entry");
-        List<Entry> entries = Lists.newArrayList(entryIterator);
+        Iterator<BaseEntry> entryIterator = dao.getIterator("by-type", 92, 94, schema, "entry");
+        List<BaseEntry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(2));
 
-        Entry entry0 = entries.get(0);
-        Entry expectedEntry0 = new Entry(93, 93,
+        BaseEntry entry0 = entries.get(0);
+        BaseEntry expectedEntry0 = new BaseEntry(93, 93,
                 Arrays.asList(decode(SHA256, "sha-256:xxx6c4"),
                         decode(SHA256, "sha-256:xxx37d"),
                         decode(SHA256, "sha-256:xxx01c")), timestamp, "UA", EntryType.user);
         assertThat(entry0, equalTo(expectedEntry0));
 
-        Entry entryLast = entries.get(1);
-        Entry expectedEntryLast = new Entry(94, 94,
+        BaseEntry entryLast = entries.get(1);
+        BaseEntry expectedEntryLast = new BaseEntry(94, 94,
                 Arrays.asList(decode(SHA256, "sha-256:xxxbdc")), timestamp, "MD", EntryType.user);
         assertThat(entryLast, equalTo(expectedEntryLast));
     }
@@ -240,8 +240,8 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldReturnEmptyListForInvalidEntryNumberRange() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("by-type", 94, 92, schema, "entry");
-        List<Entry> entries = Lists.newArrayList(entryIterator);
+        Iterator<BaseEntry> entryIterator = dao.getIterator("by-type", 94, 92, schema, "entry");
+        List<BaseEntry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(0));
     }
@@ -250,8 +250,8 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldNotReturnResultsForUnknownName() {
         nameChangeAndGroupChangeScenario();
 
-        Iterator<Entry> entryIterator = dao.getIterator("sam", schema, "entry");
-        List<Entry> entries = Lists.newArrayList(entryIterator);
+        Iterator<BaseEntry> entryIterator = dao.getIterator("sam", schema, "entry");
+        List<BaseEntry> entries = Lists.newArrayList(entryIterator);
 
         assertThat(entries.size(), is(0));
     }
@@ -289,12 +289,12 @@ public class IndexQueryDaoIntegrationTest {
     public void shouldFindZeroEntriesForUA() {
         zeroItemsEntryScenario();
 
-        List<Entry> entries = Lists.newArrayList(dao.getIterator("by-type", schema, "entry"));
+        List<BaseEntry> entries = Lists.newArrayList(dao.getIterator("by-type", schema, "entry"));
 
         assertThat(entries.size(), is(3));
 
-        Entry entry1 = entries.get(1);
-        Entry expectedEntry1 = new Entry(92, 92, Collections.emptyList(), timestamp, "UA", EntryType.user);
+        BaseEntry entry1 = entries.get(1);
+        BaseEntry expectedEntry1 = new BaseEntry(92, 92, Collections.emptyList(), timestamp, "UA", EntryType.user);
         assertThat(entry1, equalTo(expectedEntry1));
 
     }

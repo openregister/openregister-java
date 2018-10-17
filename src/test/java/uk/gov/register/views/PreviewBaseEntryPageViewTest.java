@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PreviewEntryPageViewTest {
+public class PreviewBaseEntryPageViewTest {
 
     private final RegisterResolver registerResolver = registerId -> URI.create("http://" + registerId + ".test.register.gov.uk");
 
@@ -126,7 +126,7 @@ public class PreviewEntryPageViewTest {
     }
 
     private EntryListView getEntriesView() throws IOException, JSONException {
-        final Entry entry = new Entry(1,
+        final BaseEntry entry = new BaseEntry(1,
                 new HashValue(HashingAlgorithm.SHA256, "asdfghhjkl"),
                 Instant.now(),
                 "KEY",

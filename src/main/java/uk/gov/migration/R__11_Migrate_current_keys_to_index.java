@@ -7,7 +7,7 @@ import org.flywaydb.core.api.migration.jdbc.BaseJdbcMigration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.db.*;
 import uk.gov.register.indexer.IndexDriver;
@@ -41,7 +41,7 @@ public class R__11_Migrate_current_keys_to_index extends BaseJdbcMigration imple
 
 		IndexDriver indexDriver = new IndexDriver();
 
-		Map<String, Entry> entries = new HashMap<>();
+		Map<String, BaseEntry> entries = new HashMap<>();
 		int currentIndexEntryNumber = 0;
 
 		dataAccessLayer.getEntryIterator(IndexNames.RECORD).forEachRemaining(entry -> {

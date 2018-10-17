@@ -2,7 +2,7 @@ package uk.gov.register.views.representations.turtle;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import uk.gov.register.core.Entry;
+import uk.gov.register.core.BaseEntry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.EntryListView;
@@ -24,7 +24,7 @@ public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListV
     @Override
     protected Model rdfModelFor(EntryListView view) {
         Model model = ModelFactory.createDefaultModel();
-        for (Entry entry : view.getEntries()) {
+        for (BaseEntry entry : view.getEntries()) {
             model.add(new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry));
         }
         return model;
