@@ -7,6 +7,7 @@ import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Blob;
 import uk.gov.register.core.RegisterDetail;
+import uk.gov.register.views.v1.V1EntryView;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.Closeable;
@@ -28,7 +29,7 @@ public class ArchiveCreator {
                         zipEntryWriter.writeEntry(String.format("item/%s.json", blob.getSha256hex().getValue()), blob.getContent())
                 );
                 entries.forEach(entry ->
-                        zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.getEntryNumber()), entry)
+                        zipEntryWriter.writeEntry(String.format("entry/%s.json", entry.getEntryNumber()), new V1EntryView(entry))
                 );
             }
         };
