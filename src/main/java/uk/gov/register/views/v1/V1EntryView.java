@@ -12,6 +12,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.collect.Lists;
 import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
 import uk.gov.register.views.CsvRepresentationView;
@@ -98,6 +99,11 @@ public class V1EntryView implements CsvRepresentationView<V1EntryView> {
         updatedColumns.removeIf(c -> fieldsToRemove.contains(c.getName()));
 
         return CsvSchema.builder().addColumns(updatedColumns).build();
+    }
+
+    @Deprecated
+    public Entry toSystemEntry() {
+        return new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.system);
     }
 
     @Override

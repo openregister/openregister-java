@@ -20,6 +20,7 @@ import uk.gov.register.core.Record;
 import uk.gov.register.db.*;
 import uk.gov.register.util.EntryBlobPair;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.views.v1.V1EntryView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -117,7 +118,8 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 			JsonNode entryNode = jsonNode.get(key);
 			ArrayNode itemNodes = (ArrayNode) entryNode.get("item");
 			Blob item = new Blob(itemNodes.get(0));
-			Entry entry = JSON_MAPPER.treeToValue(entryNode, Entry.class);
+			V1EntryView entryView = JSON_MAPPER.treeToValue(entryNode, V1EntryView.class);
+			Entry entry = entryView.toSystemEntry();
 			Entry entryNewKey = partialCopy(entry, prefix + ":" + entry.getKey(), item.getSha256hex());
 			records.add(new Record(entryNewKey, item));
 		}
