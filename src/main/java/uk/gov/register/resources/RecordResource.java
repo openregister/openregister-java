@@ -2,7 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
@@ -67,7 +67,7 @@ public class RecordResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public PaginatedView<EntryListView> getAllEntriesOfARecordHtml(@PathParam("record-key") String key) {
-        Collection<BaseEntry> allEntries = register.allEntriesOfRecord(key);
+        Collection<Entry> allEntries = register.allEntriesOfRecord(key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
@@ -89,7 +89,7 @@ public class RecordResource {
     })
     @Timed
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
-        Collection<BaseEntry> allEntries = register.allEntriesOfRecord(key);
+        Collection<Entry> allEntries = register.allEntriesOfRecord(key);
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }

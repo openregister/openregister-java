@@ -3,7 +3,7 @@ package uk.gov.register.db;
 import org.apache.commons.lang3.NotImplementedException;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.core.Blob;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.store.postgres.BindBlob;
 import uk.gov.register.util.HashValue;
 
@@ -53,7 +53,7 @@ public class InMemoryBlobDAO implements BlobDAO, BlobQueryDAO {
         throw new NotImplementedException("Not yet implemented");
     }
 
-    private Iterator<Blob> getItemIteratorFromEntryIterator(Iterator<BaseEntry> entryIterator) {
+    private Iterator<Blob> getItemIteratorFromEntryIterator(Iterator<Entry> entryIterator) {
         List<Blob> itemsResult = new ArrayList<>();
         entryIterator.forEachRemaining(entry -> {
             List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getBlobHashes().contains(hashValue)).collect(Collectors.toList());

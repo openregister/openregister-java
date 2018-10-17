@@ -4,7 +4,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.db.EntryQueryDAO;
@@ -19,8 +19,8 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static uk.gov.register.functional.app.TestRegister.address;
 
-public class BaseEntryMapperTest {
-    private final DBI dbi = new DBI(address.getDatabaseConnectionString("BaseEntryMapperTest"));
+public class EntryMapperTest {
+    private final DBI dbi = new DBI(address.getDatabaseConnectionString("EntryMapperTest"));
     private final String schema = address.getSchema();
 
     @ClassRule
@@ -33,7 +33,7 @@ public class BaseEntryMapperTest {
         String expected = "2016-07-15T10:00:00Z";
         Instant expectedInstant = Instant.parse(expected);
 
-        Collection<BaseEntry> allEntriesNoPagination = dbi.withHandle(h -> {
+        Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
             h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
             h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", expectedInstant.getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
@@ -42,7 +42,7 @@ public class BaseEntryMapperTest {
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
 
-        BaseEntry entry = allEntriesNoPagination.iterator().next();
+        Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(entry.getBlobHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
         assertThat(entry.getEntryNumber(), is(5));
@@ -54,14 +54,14 @@ public class BaseEntryMapperTest {
 
     @Test
     public void map_returnsSingleItemHashForEntry() {
-        Collection<BaseEntry> allEntriesNoPagination = dbi.withHandle(h -> {
+        Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
             h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
             h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
             h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
-        BaseEntry entry = allEntriesNoPagination.iterator().next();
+        Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
         assertThat(entry.getBlobHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
@@ -69,7 +69,7 @@ public class BaseEntryMapperTest {
 
     @Test
     public void map_returnsMultipleItemHashesForEntry() {
-        Collection<BaseEntry> allEntriesNoPagination = dbi.withHandle(h -> {
+        Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
             h.execute("insert into address.item (sha256hex, content) values ('abcdef', '{\"address\":\"K\"}')");
             h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
             h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
@@ -78,7 +78,7 @@ public class BaseEntryMapperTest {
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
-        BaseEntry entry = allEntriesNoPagination.iterator().next();
+        Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
         assertThat(entry.getBlobHashes(), containsInAnyOrder(new HashValue(HashingAlgorithm.SHA256, "abcdef"), new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
@@ -86,12 +86,12 @@ public class BaseEntryMapperTest {
 
     @Test
     public void map_returnsNoItemHashesForEntry() {
-        Collection<BaseEntry> allEntriesNoPagination = dbi.withHandle(h -> {
+        Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
             h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
-        BaseEntry entry = allEntriesNoPagination.iterator().next();
+        Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
         assertThat(entry.getBlobHashes().size(), equalTo(0));

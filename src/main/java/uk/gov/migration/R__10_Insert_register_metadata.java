@@ -13,7 +13,7 @@ import org.flywaydb.core.api.migration.jdbc.BaseJdbcMigration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Blob;
 import uk.gov.register.core.Record;
@@ -97,7 +97,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 	private Record singleRecord(String name, String value, int entryNumber) {
 		Map<String, String> registerNameMap = ImmutableMap.of(name, value);
 		Blob nameItem = new Blob(JSON_MAPPER.convertValue(registerNameMap, JsonNode.class));
-		BaseEntry nameEntry = new BaseEntry(entryNumber, nameItem.getSha256hex(), Instant.now(), name, EntryType.system);
+		Entry nameEntry = new Entry(entryNumber, nameItem.getSha256hex(), Instant.now(), name, EntryType.system);
 		return new Record(nameEntry, nameItem);
 
 	}
@@ -117,8 +117,8 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 			JsonNode entryNode = jsonNode.get(key);
 			ArrayNode itemNodes = (ArrayNode) entryNode.get("item");
 			Blob item = new Blob(itemNodes.get(0));
-			BaseEntry entry = JSON_MAPPER.treeToValue(entryNode, BaseEntry.class);
-			BaseEntry entryNewKey = partialCopy(entry, prefix + ":" + entry.getKey(), item.getSha256hex());
+			Entry entry = JSON_MAPPER.treeToValue(entryNode, Entry.class);
+			Entry entryNewKey = partialCopy(entry, prefix + ":" + entry.getKey(), item.getSha256hex());
 			records.add(new Record(entryNewKey, item));
 		}
 		return records;
@@ -133,19 +133,19 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 		return fieldNames;
 	}
 
-	private BaseEntry partialCopy(BaseEntry entry, String key, HashValue hashValue) {
-		return new BaseEntry(entry.getIndexEntryNumber(), entry.getEntryNumber(), Arrays.asList(hashValue), entry.getTimestamp(), key);
+	private Entry partialCopy(Entry entry, String key, HashValue hashValue) {
+		return new Entry(entry.getIndexEntryNumber(), entry.getEntryNumber(), Arrays.asList(hashValue), entry.getTimestamp(), key);
 	}
 
 	private Record copyWithEntryNumber(Record record, int entryNumber) {
-		BaseEntry entry = record.getEntry();
-		BaseEntry newEntry = new BaseEntry(entryNumber, entryNumber, entry.getBlobHashes(), entry.getTimestamp(), entry.getKey(), entry.getEntryType());
+		Entry entry = record.getEntry();
+		Entry newEntry = new Entry(entryNumber, entryNumber, entry.getBlobHashes(), entry.getTimestamp(), entry.getKey(), entry.getEntryType());
 		return new Record(newEntry, record.getBlobs());
 	}
 
 	private void writeRecords(Connection connection, Handle handle, Iterable<Record> records) throws SQLException {
 		List<Blob> items = Streams.stream(records).map(r -> r.getBlobs().get(0)).collect(toList());
-		List<BaseEntry> entries = Streams.stream(records).map(r -> r.getEntry()).collect(toList());
+		List<Entry> entries = Streams.stream(records).map(r -> r.getEntry()).collect(toList());
 		List<EntryBlobPair> entryItems = entries.stream()
 				.map(e -> new EntryBlobPair(e.getEntryNumber(), e.getBlobHashes().get(0))).collect(toList());
 
@@ -161,7 +161,7 @@ public class R__10_Insert_register_metadata extends BaseJdbcMigration implements
 
 		records.forEach(r -> {
 			try {
-				BaseEntry entry = r.getEntry();
+				Entry entry = r.getEntry();
 				indexDAO.start(IndexNames.METADATA, entry.getKey(), entry.getBlobHashes().get(0).getValue(),
 						entry.getEntryNumber(), entry.getIndexEntryNumber(), connection.getSchema());
 			} catch (SQLException e) {

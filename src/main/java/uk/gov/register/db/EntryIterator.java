@@ -1,7 +1,7 @@
 package uk.gov.register.db;
 
 import org.skife.jdbi.v2.ResultIterator;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 
 import java.util.function.Function;
 
@@ -10,7 +10,7 @@ public class EntryIterator implements AutoCloseable {
     private final EntryQueryDAO entryDAO;
     private final String schema;
     private int nextValidEntryNumber;
-    private ResultIterator<BaseEntry> iterator;
+    private ResultIterator<Entry> iterator;
 
     private EntryIterator(EntryQueryDAO entryDAO, String schema) {
         this.entryDAO = entryDAO;
@@ -19,7 +19,7 @@ public class EntryIterator implements AutoCloseable {
 
     }
 
-    public BaseEntry findByEntryNumber(int entryNumber) {
+    public Entry findByEntryNumber(int entryNumber) {
         if (iterator == null || !iterator.hasNext() || entryNumber != nextValidEntryNumber) {
             if (iterator != null) {
                 iterator.close();

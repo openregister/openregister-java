@@ -88,7 +88,7 @@ public class PostgresRegisterTest {
 
     @Test(expected = AppendEntryException.class)
     public void shouldFailForUnreferencedItem() {
-        BaseEntry entry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.now(),
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.now(),
                 "key", EntryType.user);
 
         register.appendEntry(entry);
@@ -101,7 +101,7 @@ public class PostgresRegisterTest {
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.of(fieldRecord));
         Blob blob = new Blob(hashValue, content);
-        BaseEntry entry = new BaseEntry(1, hashValue, Instant.now(),"key", EntryType.user);
+        Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
         register.addBlob(blob);
         register.appendEntry(entry);
@@ -112,7 +112,7 @@ public class PostgresRegisterTest {
         JsonNode content = mapper.readTree( postcodeRegisterItem );
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         Blob blob = new Blob(hashValue, content);
-        BaseEntry entry = new BaseEntry(1, hashValue, Instant.now(),"register:postcode", EntryType.system);
+        Entry entry = new Entry(1, hashValue, Instant.now(),"register:postcode", EntryType.system);
         when(index.getRecord("field:postcode", IndexNames.METADATA)).thenReturn(Optional.empty());
 
         register.addBlob(blob);

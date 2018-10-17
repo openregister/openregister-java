@@ -26,7 +26,7 @@ public class RecordViewTest {
 
     @Before
     public void setup() throws IOException {
-        BaseEntry entry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b", EntryType.user);
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b", EntryType.user);
         Blob blob = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}"));
         Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"a\":\"d\"}"));
         Record record = new Record(entry, Arrays.asList(blob, blob2));

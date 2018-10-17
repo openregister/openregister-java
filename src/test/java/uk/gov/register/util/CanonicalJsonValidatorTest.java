@@ -37,7 +37,7 @@ public class CanonicalJsonValidatorTest {
         try {
             canonicalJsonValidator.validateBlobStringIsCanonicalized(jsonString);
         } catch (BlobNotCanonicalException e) {
-            fail("BaseEntry is canonicalized but exception was thrown");
+            fail("Entry is canonicalized but exception was thrown");
         }
     }
 }

@@ -9,7 +9,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import org.skife.jdbi.v2.unstable.BindIn;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.db.mappers.EntryMapper;
 import uk.gov.register.db.mappers.LongTimestampToInstantMapper;
 
@@ -22,9 +22,9 @@ import java.util.Optional;
 @UseStringTemplate3StatementLocator
 public interface EntryQueryDAO {
     @RegisterMapper(EntryMapper.class)
-    @SingleValueResult(BaseEntry.class)
+    @SingleValueResult(Entry.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number = :entryNumber group by e.entry_number")
-    Optional<BaseEntry> findByEntryNumber(@Bind("entryNumber") int entryNumber, @Define("schema") String schema );
+    Optional<Entry> findByEntryNumber(@Bind("entryNumber") int entryNumber, @Define("schema") String schema );
 
     @RegisterMapper(LongTimestampToInstantMapper.class)
     @SingleValueResult(Instant.class)
@@ -40,33 +40,33 @@ public interface EntryQueryDAO {
     //Note: This is fine for small data registers like country
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number desc")
-    Collection<BaseEntry> getAllEntriesNoPagination(@Define("schema") String schema );
+    Collection<Entry> getAllEntriesNoPagination(@Define("schema") String schema );
 
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :start and e.entry_number \\< :start + :limit group by e.entry_number order by e.entry_number asc")
-    Collection<BaseEntry> getEntries(@Bind("start") int start, @Bind("limit") int limit, @Define("schema") String schema );
+    Collection<Entry> getEntries(@Bind("start") int start, @Bind("limit") int limit, @Define("schema") String schema );
 
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.key = :key group by e.entry_number order by e.entry_number asc")
     @RegisterMapper(EntryMapper.class)
-    Collection<BaseEntry> getAllEntriesByKey(@Bind("key") String key, @Define("schema") String schema);
+    Collection<Entry> getAllEntriesByKey(@Bind("key") String key, @Define("schema") String schema);
 
     @RegisterMapper(EntryMapper.class)
-    @SingleValueResult(BaseEntry.class)
+    @SingleValueResult(Entry.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".<entry_table> e left join \"<schema>\".<entry_item_table> ei on ei.entry_number = e.entry_number where e.key in (<keys>) group by e.entry_number order by e.entry_number asc")
-    Collection<BaseEntry> getEntriesByKeys(@BindIn("keys") List<String> entryKeys, @Define("schema") String schema, @Define("entry_table") String entryTable, @Define("entry_item_table") String entryItemTable);
+    Collection<Entry> getEntriesByKeys(@BindIn("keys") List<String> entryKeys, @Define("schema") String schema, @Define("entry_table") String entryTable, @Define("entry_item_table") String entryItemTable);
 
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :entryNumber group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144) // Has to be non-zero to enable cursor mode https://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor
-    ResultIterator<BaseEntry> entriesIteratorFrom(@Bind("entryNumber") int entryNumber, @Define("schema") String schema );
+    ResultIterator<Entry> entriesIteratorFrom(@Bind("entryNumber") int entryNumber, @Define("schema") String schema );
 
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(10000)
-    Iterator<BaseEntry> getIterator(@Define("schema") String schema);
+    Iterator<Entry> getIterator(@Define("schema") String schema);
 
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key, e.type from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number > :totalEntries1 and e.entry_number \\<= :totalEntries2 group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(10000)
-    Iterator<BaseEntry> getIterator(@Bind("totalEntries1") int totalEntries1, @Bind("totalEntries2") int totalEntries2, @Define("schema") String schema);
+    Iterator<Entry> getIterator(@Bind("totalEntries1") int totalEntries1, @Bind("totalEntries2") int totalEntries2, @Define("schema") String schema);
 }

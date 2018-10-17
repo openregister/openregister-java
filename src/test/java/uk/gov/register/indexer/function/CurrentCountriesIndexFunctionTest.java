@@ -77,7 +77,7 @@ public class CurrentCountriesIndexFunctionTest {
         HashValue itemHashCS = new HashValue(HashingAlgorithm.SHA256, "cs");
         Blob countryVN = new Blob(itemHashVN, objectMapper.readTree("{\"country\":\"VN\",\"name\":\"Vietnam\"}"));
         Blob countryCS = new Blob(itemHashCS, objectMapper.readTree("{\"country\":\"CS\",\"name\":\"Czechoslovakia\",\"end-date\":\"1991-12-25\"}"));
-        BaseEntry entry = new BaseEntry(1, Arrays.asList(itemHashVN, itemHashCS), Instant.now(), "key", EntryType.user);
+        Entry entry = new Entry(1, Arrays.asList(itemHashVN, itemHashCS), Instant.now(), "key", EntryType.user);
         DataAccessLayer dataAccessLayer = mock(DataAccessLayer.class);
         when(dataAccessLayer.getBlob(itemHashVN)).thenReturn(Optional.of(countryVN));
         when(dataAccessLayer.getBlob(itemHashCS)).thenReturn(Optional.of(countryCS));

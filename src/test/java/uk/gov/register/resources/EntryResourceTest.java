@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BaseEntryResourceTest {
+public class EntryResourceTest {
 
     @Test
     public void findByEntryNumberHtmlSupportsHtml() throws Exception {

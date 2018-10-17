@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Blob;
 import uk.gov.register.core.RegisterDetail;
 
@@ -18,7 +18,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ArchiveCreator {
 
-    public StreamingOutput create(RegisterDetail registerDetail, Collection<BaseEntry> entries, Collection<Blob> blobs) {
+    public StreamingOutput create(RegisterDetail registerDetail, Collection<Entry> entries, Collection<Blob> blobs) {
         return output -> {
             try (ZipEntryWriter zipEntryWriter = new ZipEntryWriter(output)) {
 

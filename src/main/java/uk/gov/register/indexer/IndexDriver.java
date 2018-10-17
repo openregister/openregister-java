@@ -1,7 +1,7 @@
 package uk.gov.register.indexer;
 
 import org.apache.commons.collections4.CollectionUtils;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.indexer.function.IndexFunction;
 import uk.gov.register.store.DataAccessLayer;
@@ -16,13 +16,13 @@ public class IndexDriver {
         this.currentIndexEntryNumbers = new HashMap<>();
     }
 
-    public void indexEntry(DataAccessLayer dataAccessLayer, BaseEntry entry, IndexFunction indexFunction,
-                           Map<String, BaseEntry> entries, final int initialIndexEntryNumber) throws IndexingException {
+    public void indexEntry(DataAccessLayer dataAccessLayer, Entry entry, IndexFunction indexFunction,
+                           Map<String, Entry> entries, final int initialIndexEntryNumber) throws IndexingException {
         if (!currentIndexEntryNumbers.containsKey(indexFunction.getName())) {
             currentIndexEntryNumbers.put(indexFunction.getName(), new AtomicInteger(initialIndexEntryNumber));
         }
 
-        Optional<BaseEntry> currentEntry = entries.containsKey(entry.getKey())
+        Optional<Entry> currentEntry = entries.containsKey(entry.getKey())
                 ? Optional.of(entries.get(entry.getKey()))
                 : Optional.empty();
 
@@ -110,7 +110,7 @@ public class IndexDriver {
         return sortedEvents;
     }
 
-    private void removeIndexKeyFromItemHash(BaseEntry entry, IndexFunction indexFunction, DataAccessLayer dataAccessLayer, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IndexEntryNumberItemCountPair startIndexEntryNumberItemCountPair, int entryNumberToEnd) {
+    private void removeIndexKeyFromItemHash(Entry entry, IndexFunction indexFunction, DataAccessLayer dataAccessLayer, AtomicInteger currentIndexEntryNumber, int newIndexEntryNumber, IndexKeyItemPairEvent p, IndexEntryNumberItemCountPair startIndexEntryNumberItemCountPair, int entryNumberToEnd) {
         if (startIndexEntryNumberItemCountPair.getExistingItemCount() > 1) {
             dataAccessLayer.end(indexFunction.getName(), entry.getKey(), p.getIndexKey(), p.getItemHash().getValue(), entry.getEntryNumber(), startIndexEntryNumberItemCountPair.getStartIndexEntryNumber().get(), entryNumberToEnd);
         } else {

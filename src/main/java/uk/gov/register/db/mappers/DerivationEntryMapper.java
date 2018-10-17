@@ -2,7 +2,7 @@ package uk.gov.register.db.mappers;
 
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.util.HashValue;
@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DerivationEntryMapper implements ResultSetMapper<BaseEntry> {
+public class DerivationEntryMapper implements ResultSetMapper<Entry> {
     private final LongTimestampToInstantMapper longTimestampToInstantMapper;
 
     public DerivationEntryMapper() {
@@ -21,7 +21,7 @@ public class DerivationEntryMapper implements ResultSetMapper<BaseEntry> {
     }
 
     @Override
-    public BaseEntry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+    public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         String key = r.getString("key");
         int indexEntryNumber = r.getInt("index_entry_number");
         int entryNumber = r.getInt("entry_number");
@@ -36,7 +36,7 @@ public class DerivationEntryMapper implements ResultSetMapper<BaseEntry> {
                 hashValues.add(hashValue);
         }
 
-        return new BaseEntry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.valueOf(entryType));
+        return new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.valueOf(entryType));
     }
 
 }

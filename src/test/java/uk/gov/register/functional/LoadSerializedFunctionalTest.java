@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.*;
 import org.skife.jdbi.v2.Handle;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
@@ -90,7 +90,7 @@ public class LoadSerializedFunctionalTest {
         List<TestDBBlob> storedItems = testItemDAO.getItems(schema);
         assertThat(storedItems, containsInAnyOrder(expectedItem1, expectedItem2, expectedItem3, expectedItem4, expectedItem5, expectedItem6, expectedItem7, expectedItem8, expectedItem9));
 
-        List<BaseEntry> systemEntries = testEntryDAO.getAllSystemEntries(schema);
+        List<Entry> systemEntries = testEntryDAO.getAllSystemEntries(schema);
         assertThat(systemEntries.get(0).getEntryNumber(), is(1));
         assertThat(systemEntries.get(0).getBlobHashes().get(0).getValue(), is("955a84bcec7dad1a4d9b05e28ebfa21b17ac9552cc0aabbc459c73d63ab530b0"));
         assertThat(systemEntries.get(1).getEntryNumber(), is(2));
@@ -106,7 +106,7 @@ public class LoadSerializedFunctionalTest {
         assertThat(systemEntries.get(6).getEntryNumber(), is(7));
         assertThat(systemEntries.get(6).getBlobHashes().get(0).getValue(), is("f404b4739b51afeb39bba26f3bbf1aa8c6f7d25f0d54444992fc00f24587ef77"));
 
-        List<BaseEntry> userEntries = testEntryDAO.getAllEntries(schema);
+        List<Entry> userEntries = testEntryDAO.getAllEntries(schema);
 
         assertThat(userEntries.get(0).getEntryNumber(), is(1));
         assertThat(userEntries.get(0).getBlobHashes().get(0).getValue(), is("3cee6dfc567f2157208edc4a0ef9c1b417302bad69ee06b3e96f80988b37f254"));

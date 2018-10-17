@@ -14,9 +14,9 @@ public interface RegisterReadOnly {
     Optional<Blob> getBlob(HashValue hash);
     Collection<Blob> getAllBlobs();
 
-    Optional<BaseEntry> getEntry(int entryNumber);
-    Collection<BaseEntry> getEntries(int start, int limit);
-    Collection<BaseEntry> getAllEntries();
+    Optional<Entry> getEntry(int entryNumber);
+    Collection<Entry> getEntries(int start, int limit);
+    Collection<Entry> getAllEntries();
     int getTotalEntries();
     int getTotalEntries(EntryType entryType);
 
@@ -24,7 +24,7 @@ public interface RegisterReadOnly {
 
     Optional<Record> getRecord(String key);
     int getTotalRecords();
-    Collection<BaseEntry> allEntriesOfRecord(String key);
+    Collection<Entry> allEntriesOfRecord(String key);
     List<Record> getRecords(int limit, int offset);
 
     List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException;
@@ -34,15 +34,15 @@ public interface RegisterReadOnly {
     EntryProof getEntryProof(int entryNumber, int totalEntries);
     ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
 
-    Iterator<BaseEntry> getEntryIterator();
-    Iterator<BaseEntry> getEntryIterator(int totalEntries1, int totalEntries2);
+    Iterator<Entry> getEntryIterator();
+    Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2);
 
     Iterator<Blob> getBlobIterator();
     Iterator<Blob> getBlobIterator(int start, int end);
     Iterator<Blob> getSystemBlobIterator();
     
-    Iterator<BaseEntry> getEntryIterator(String indexName);
-    Iterator<BaseEntry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
+    Iterator<Entry> getEntryIterator(String indexName);
+    Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
 
     RegisterId getRegisterId();
     Optional<String> getRegisterName();

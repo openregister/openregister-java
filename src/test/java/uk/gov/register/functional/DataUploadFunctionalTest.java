@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Blob;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.IndexQueryDAO;
@@ -75,8 +75,8 @@ public class DataUploadFunctionalTest {
         assertThat(storedItem.contents, equalTo(inputItem));
         assertThat(storedItem.hashValue, equalTo(Blob.blobHash(inputItem)));
 
-        BaseEntry entry = testEntryDAO.getAllEntries(schema).get(0);
-        assertThat(entry, equalTo(new BaseEntry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
+        Entry entry = testEntryDAO.getAllEntries(schema).get(0);
+        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
 
         Record record = testRecordDAO.findRecords(Arrays.asList("ft_openregister_test"), IndexNames.RECORD, schema, "entry").get(0);
         assertThat(record.getEntry().getEntryNumber(), equalTo(1));
@@ -109,12 +109,12 @@ public class DataUploadFunctionalTest {
         JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes("{\"register\":\"register1\",\"text\":\"Register1 Text\", \"phase\":\"alpha\"}".getBytes());
         JsonNode canonicalItem2 = canonicalJsonMapper.readFromBytes("{\"register\":\"register2\",\"text\":\"Register2 Text\", \"phase\":\"alpha\"}".getBytes());
 
-        List<BaseEntry> entries = testEntryDAO.getAllEntries(schema);
+        List<Entry> entries = testEntryDAO.getAllEntries(schema);
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new BaseEntry(1, Blob.blobHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new BaseEntry(2, Blob.blobHash(canonicalItem2), timestamp, "register2", EntryType.user)
+                        new Entry(1, Blob.blobHash(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(2, Blob.blobHash(canonicalItem2), timestamp, "register2", EntryType.user)
                 )
         );
 
@@ -148,12 +148,12 @@ public class DataUploadFunctionalTest {
 
         JsonNode canonicalItem = canonicalJsonMapper.readFromBytes(item1.getBytes());
 
-        List<BaseEntry> entries = testEntryDAO.getAllEntries(schema);
+        List<Entry> entries = testEntryDAO.getAllEntries(schema);
 
         assertThat(entries,
                 contains(
-                        new BaseEntry(1, Blob.blobHash(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
-                        new BaseEntry(2, Blob.blobHash(canonicalItem), entries.get(1).getTimestamp(), "register2", EntryType.user)
+                        new Entry(1, Blob.blobHash(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
+                        new Entry(2, Blob.blobHash(canonicalItem), entries.get(1).getTimestamp(), "register2", EntryType.user)
                 )
         );
 
@@ -187,12 +187,12 @@ public class DataUploadFunctionalTest {
 
         JsonNode canonicalItem1 = canonicalJsonMapper.readFromBytes(item1.getBytes());
 
-        List<BaseEntry> entries = testEntryDAO.getAllEntries(schema);
+        List<Entry> entries = testEntryDAO.getAllEntries(schema);
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new BaseEntry(1, Blob.blobHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new BaseEntry(2, Blob.blobHash(canonicalItem1), timestamp, "register2", EntryType.user)
+                        new Entry(1, Blob.blobHash(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(2, Blob.blobHash(canonicalItem1), timestamp, "register2", EntryType.user)
                 )
         );
 
@@ -221,7 +221,7 @@ public class DataUploadFunctionalTest {
 
         RegisterResult result = response.readEntity(RegisterResult.class);
         assertThat(result.getMessage(), equalTo("Failed to load RSF"));
-        assertThat(result.getDetails(), containsString("BaseEntry does not contain primary key field 'register'"));
+        assertThat(result.getDetails(), containsString("Entry does not contain primary key field 'register'"));
     }
 
     @Test
@@ -248,7 +248,7 @@ public class DataUploadFunctionalTest {
 
         RegisterResult result = response.readEntity(RegisterResult.class);
         assertThat(result.getMessage(), equalTo("Failed to load RSF"));
-        assertThat(result.getDetails(), containsString("BaseEntry contains invalid fields: [foo]"));
+        assertThat(result.getDetails(), containsString("Entry contains invalid fields: [foo]"));
     }
 
     @Test

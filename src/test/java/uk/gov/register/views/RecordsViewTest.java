@@ -29,8 +29,8 @@ public class RecordsViewTest {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
 
-        BaseEntry entry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
-        BaseEntry entry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
         Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
         Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
         Record record1 = new Record(entry1, Arrays.asList(blob1));

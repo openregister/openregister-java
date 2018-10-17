@@ -2,8 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.core.BaseEntry;
-import uk.gov.register.core.EntryV2;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
@@ -12,6 +11,7 @@ import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.PaginatedView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
+import uk.gov.register.views.v1.V1EntryView;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -46,7 +46,7 @@ public class EntryResource {
         int totalEntries = register.getTotalEntries();
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
-        Collection<BaseEntry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
+        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
 
         setHeaders(startLimitPagination);
 
@@ -57,8 +57,8 @@ public class EntryResource {
     @Path("/entries/{entry-number}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<BaseEntry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<BaseEntry> entry = register.getEntry(entryNumber);
+    public AttributionView<V1EntryView> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
+        Optional<Entry> entry = register.getEntry(entryNumber);
         return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
     }
 
@@ -74,7 +74,7 @@ public class EntryResource {
     })
     @Timed
     public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
-        Optional<BaseEntry> entry = register.getEntry(entryNumber);
+        Optional<Entry> entry = register.getEntry(entryNumber);
         return entry.map(function -> new EntryListView(Collections.singletonList(function)));
     }
 
@@ -90,8 +90,8 @@ public class EntryResource {
     })
     @Timed
     public Optional<EntryListView> findByEntryNumberV2(@PathParam("entry-number") int entryNumber) {
-        Optional<BaseEntry> entry = register.getEntry(entryNumber, "v2");
-        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
+        Optional<Entry> maybeEntry = register.getEntry(entryNumber);
+        return maybeEntry.map(entry -> new EntryListView(Collections.singletonList(entry)));
     }
 
     @GET
@@ -109,7 +109,7 @@ public class EntryResource {
         int totalEntries = register.getTotalEntries();
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
-        Collection<BaseEntry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
+        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
 
         setHeaders(startLimitPagination);
 

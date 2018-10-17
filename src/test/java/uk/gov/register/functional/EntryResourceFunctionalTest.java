@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 import static uk.gov.register.functional.app.TestRegister.address;
 import static uk.gov.register.views.representations.ExtraMediaType.TEXT_HTML;
 
-public class BaseEntryResourceFunctionalTest {
+public class EntryResourceFunctionalTest {
     @ClassRule
     public static RegisterRule register = new RegisterRule();
 

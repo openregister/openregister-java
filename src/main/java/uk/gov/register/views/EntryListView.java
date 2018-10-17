@@ -10,12 +10,13 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.representations.turtle.EntryListTurtleWriter;
+import uk.gov.register.views.v1.V1EntryView;
 
 import javax.inject.Provider;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EntryListView implements CsvRepresentationView {
 
@@ -32,18 +34,18 @@ public class EntryListView implements CsvRepresentationView {
 
     private static final String END_OF_LINE = "\n";
 
-    private final Collection<BaseEntry> entries;
+    private final Collection<Entry> entries;
     private final Optional<String> recordKey;
 
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
-    public EntryListView(final Collection<BaseEntry> entries) {
+    public EntryListView(final Collection<Entry> entries) {
         this.entries = entries;
         recordKey = Optional.empty();
     }
 
-    public EntryListView(final Collection<BaseEntry> entries, final String recordKey) {
+    public EntryListView(final Collection<Entry> entries, final String recordKey) {
         this.entries = entries;
         this.recordKey = Optional.of(recordKey);
     }
@@ -86,8 +88,8 @@ public class EntryListView implements CsvRepresentationView {
     }
 
     @JsonValue
-    public Collection<BaseEntry> getEntries() {
-        return entries;
+    public Collection<V1EntryView> getEntries() {
+        return entries.stream().map(entry -> new V1EntryView(entry)).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unused, used from templates")
@@ -102,11 +104,11 @@ public class EntryListView implements CsvRepresentationView {
     }
 
     @Override
-    public CsvRepresentation<Collection<BaseEntry>> csvRepresentation() {
-        return new CsvRepresentation<>(BaseEntry.csvSchema(), getEntries());
+    public CsvRepresentation<Collection<V1EntryView>> csvRepresentation() {
+        return new CsvRepresentation<>(V1EntryView.csvSchema(), getEntries());
     }
 
-    private ObjectNode getEntryJson(final BaseEntry entry) {
+    private ObjectNode getEntryJson(final Entry entry) {
         return jsonObjectMapper.convertValue(entry, ObjectNode.class);
     }
 }

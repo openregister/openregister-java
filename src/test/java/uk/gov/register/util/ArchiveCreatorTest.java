@@ -27,8 +27,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class ArchiveCreatorTest {
     private static final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
 
-    private final BaseEntry entry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "entry1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
-    private final BaseEntry entry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "entry2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
+    private final Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "entry1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
+    private final Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "entry2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
 
     private final Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "entry1sha"), jsonFactory.objectNode()
         .put("field-1", "entry1-field-1-value")

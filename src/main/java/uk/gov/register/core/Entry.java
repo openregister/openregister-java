@@ -1,10 +1,12 @@
 package uk.gov.register.core;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
-import uk.gov.register.views.CsvRepresentationView;
-import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -12,25 +14,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections4.CollectionUtils;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({"index-entry-number", "entry-number", "entry-timestamp", "key", "item-hash"})
-public class BaseEntry implements CsvRepresentationView<BaseEntry> {
+public class Entry {
     private final int indexEntryNumber;
     private final int entryNumber;
-    protected final List<HashValue> hashValues;
+    private final List<HashValue> hashValues;
     private final Instant timestamp;
     private final EntryType entryType;
     private String key;
 
-    public BaseEntry(int entryNumber, HashValue hashValue, Instant timestamp, String key, EntryType entryType) {
+    public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key, EntryType entryType) {
         this.entryNumber = entryNumber;
         this.indexEntryNumber = entryNumber;
         this.hashValues = new ArrayList<>(Arrays.asList(hashValue));
@@ -39,11 +31,11 @@ public class BaseEntry implements CsvRepresentationView<BaseEntry> {
         this.entryType = entryType;
     }
 
-    public BaseEntry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
+    public Entry(int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
         this(entryNumber, entryNumber, hashValues, timestamp, key, entryType);
     }
 
-    public BaseEntry(int indexEntryNumber, int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
+    public Entry(int indexEntryNumber, int entryNumber, List<HashValue> hashValues, Instant timestamp, String key, EntryType entryType) {
         this.indexEntryNumber = indexEntryNumber;
         this.entryNumber = entryNumber;
         this.hashValues = hashValues;
@@ -52,10 +44,9 @@ public class BaseEntry implements CsvRepresentationView<BaseEntry> {
         this.entryType = entryType;
     }
 
-    @JsonCreator
-    public BaseEntry(@JsonProperty("index-entry-number") int indexEntryNumber, @JsonProperty("entry-number") int entryNumber,
-                     @JsonProperty("item-hash") List<HashValue> hashValues, @JsonProperty("entry-timestamp") Instant timestamp,
-                     @JsonProperty("key") String key) {
+    public Entry(int indexEntryNumber, int entryNumber,
+                       List<HashValue> hashValues, Instant timestamp,
+                       String key) {
         this.indexEntryNumber = indexEntryNumber;
         this.entryNumber = entryNumber;
         this.hashValues = hashValues;
@@ -64,53 +55,42 @@ public class BaseEntry implements CsvRepresentationView<BaseEntry> {
         this.entryType = EntryType.system;
     }
 
-    @JsonIgnore
     public Instant getTimestamp() {
         return timestamp;
     }
 
-    @JsonProperty("item-hash")
     public List<HashValue> getBlobHashes() {
         return hashValues;
     }
 
-    @JsonIgnore
     public long getTimestampAsLong() {
         return timestamp.getEpochSecond();
     }
 
-    @JsonProperty("entry-number")
-    @JsonSerialize(using = ToStringSerializer.class)
     public Integer getEntryNumber() {
         return entryNumber;
     }
 
-    @JsonProperty("index-entry-number")
-    @JsonSerialize(using = ToStringSerializer.class)
     public Integer getIndexEntryNumber() {
         return indexEntryNumber;
     }
 
-    @JsonProperty("entry-timestamp")
     public String getTimestampAsISOFormat() {
         return ISODateFormatter.format(timestamp);
     }
 
-    @JsonProperty("key")
     public String getKey() {
         return key;
     }
 
-    @JsonIgnore
     public EntryType getEntryType() {
         return entryType;
     }
 
-
     public static CsvSchema csvSchema() {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
-        return csvMapper.schemaFor(BaseEntry.class);
+        return csvMapper.schemaFor(Entry.class);
     }
 
     public static CsvSchema csvSchemaWithOmittedFields(List<String> fieldsToRemove) {
@@ -124,16 +104,11 @@ public class BaseEntry implements CsvRepresentationView<BaseEntry> {
     }
 
     @Override
-    public CsvRepresentation<BaseEntry> csvRepresentation() {
-        return new CsvRepresentation<>(csvSchema(), this);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BaseEntry entry = (BaseEntry) o;
+        Entry entry = (Entry) o;
 
         if (indexEntryNumber != entry.indexEntryNumber) return false;
         if (entryNumber != entry.entryNumber) return false;

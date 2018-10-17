@@ -6,5 +6,5 @@ import uk.gov.register.exceptions.AppendEntryException;
 @Contract
 public interface Register extends RegisterReadOnly {
     void addBlob(Blob blob);
-    void appendEntry(BaseEntry entry) throws AppendEntryException;
+    void appendEntry(Entry entry) throws AppendEntryException;
 }

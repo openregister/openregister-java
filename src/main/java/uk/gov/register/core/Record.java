@@ -1,24 +1,25 @@
 package uk.gov.register.core;
 
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import uk.gov.register.views.v1.V1EntryView;
 
 import java.util.*;
 
 public class Record {
-    private final BaseEntry entry;
+    private final Entry entry;
     private final List<Blob> blobs = new ArrayList<>();
 
-    public Record(BaseEntry entry, Blob blob) {
+    public Record(Entry entry, Blob blob) {
         this.entry = entry;
         this.blobs.add(blob);
     }
 
-    public Record(BaseEntry entry, Iterable<Blob> blobs) {
+    public Record(Entry entry, Iterable<Blob> blobs) {
         this.entry = entry;
         blobs.forEach(i -> this.blobs.add(i));
     }
 
-    public BaseEntry getEntry() {
+    public Entry getEntry() {
         return entry;
     }
 
@@ -27,7 +28,7 @@ public class Record {
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
-        CsvSchema entrySchema = BaseEntry.csvSchemaWithOmittedFields(Arrays.asList("item-hash"));
+        CsvSchema entrySchema = V1EntryView.csvSchemaWithOmittedFields(Arrays.asList("item-hash"));
         CsvSchema.Builder schemaBuilder = entrySchema.rebuild();
 
         for (Iterator<CsvSchema.Column> iterator = Blob.csvSchema(fields).rebuild().getColumns(); iterator.hasNext();) {

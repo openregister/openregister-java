@@ -5,11 +5,12 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.BlobView;
 import uk.gov.register.views.representations.ExtraMediaType;
+import uk.gov.register.views.v1.V1EntryView;
 
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<BaseEntry, List<BlobView>>> {
+public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Entry, List<BlobView>>> {
 
     @Inject
     public RecordTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
@@ -29,12 +30,13 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Bas
     }
 
     @Override
-    protected Model rdfModelFor(Map.Entry<BaseEntry, List<BlobView>> record) {
-        BaseEntry entry = record.getKey();
+    protected Model rdfModelFor(Map.Entry<Entry, List<BlobView>> record) {
+        Entry entry = record.getKey();
+        V1EntryView entryView = new V1EntryView(entry);
         BlobView blobView = record.getValue().get(0);
 
         Model recordModel = ModelFactory.createDefaultModel();
-        Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry, false);
+        Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entryView, false);
         Model itemModel = new BlobTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(blobView);
 
         Resource recordResource = recordModel.createResource(recordUri(entry.getKey()).toString());

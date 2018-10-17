@@ -38,7 +38,7 @@ public class CsvWriterTest {
     public void writes_EntryListView_to_output_stream() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         csvWriter.writeTo(new EntryListView(
-                        ImmutableList.of(new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "1234abcd"), Instant.ofEpochSecond(1400000000L), "abc", EntryType.user))),
+                        ImmutableList.of(new Entry(1, new HashValue(HashingAlgorithm.SHA256, "1234abcd"), Instant.ofEpochSecond(1400000000L), "abc", EntryType.user))),
                 EntryListView.class,
                 null,
                 null,
@@ -117,7 +117,7 @@ public class CsvWriterTest {
     public void writeEntriesTo_writeRecordView() throws Exception {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
 
-        BaseEntry entry = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "key1", EntryType.user);
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "key1", EntryType.user);
         Blob blob = new Blob(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"key1\":\"item1\"}"));
         Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"key1\":\"blob2\"}"));
         Record record = new Record(entry, Arrays.asList(blob, blob2));
@@ -155,8 +155,8 @@ public class CsvWriterTest {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
 
-        BaseEntry entry1 = new BaseEntry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
-        BaseEntry entry2 = new BaseEntry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
         Blob blob1 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
         Blob blob2 = new Blob(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
         Blob blob3 = new Blob(new HashValue(HashingAlgorithm.SHA256, "ef"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"baz\"}"));

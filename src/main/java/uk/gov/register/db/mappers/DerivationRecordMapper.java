@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Blob;
 import uk.gov.register.core.Record;
@@ -58,7 +58,7 @@ public class DerivationRecordMapper implements ResultSetMapper<Record> {
             blobs.add(blob);
         }
 
-        BaseEntry entry = new BaseEntry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.user);
+        Entry entry = new Entry(indexEntryNumber, entryNumber, hashValues, timestamp, key, EntryType.user);
 
         return new Record(entry, blobs);
     }

@@ -1,6 +1,6 @@
 package uk.gov.register.store;
 
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.Blob;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Record;
@@ -23,13 +23,13 @@ public interface DataAccessLayer {
     Iterator<Blob> getBlobIterator(int startEntryNumber, int endEntryNumber);
 
     // Entries
-    void appendEntry(BaseEntry entry) throws IndexingException;
-    Optional<BaseEntry> getEntry(int entryNumber);
-    Collection<BaseEntry> getEntries(int start, int limit);
-    Collection<BaseEntry> getAllEntries();
+    void appendEntry(Entry entry) throws IndexingException;
+    Optional<Entry> getEntry(int entryNumber);
+    Collection<Entry> getEntries(int start, int limit);
+    Collection<Entry> getAllEntries();
 
-    Iterator<BaseEntry> getEntryIterator(String indexName);
-    Iterator<BaseEntry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
+    Iterator<Entry> getEntryIterator(String indexName);
+    Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
     <R> R withEntryIterator(Function<EntryIterator, R> callback);
     int getTotalEntries();
     int getTotalEntries(EntryType entryType);
@@ -45,7 +45,7 @@ public interface DataAccessLayer {
     int getCurrentIndexEntryNumber(String indexName);
 
     List<Record> findMax100RecordsByKeyValue(String key, String value);
-    Collection<BaseEntry> getAllEntriesByKey(String key);
+    Collection<Entry> getAllEntriesByKey(String key);
 
     IndexEntryNumberItemCountPair getStartIndexEntryNumberAndExistingBlobCount(String indexName, String key, String sha256hex);
 }

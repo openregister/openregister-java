@@ -14,14 +14,14 @@ import java.util.Optional;
  * An append-only log of Entries, together with proofs
  */
 public interface EntryLog {
-    void appendEntry(BaseEntry entry) throws IndexingException;
+    void appendEntry(Entry entry) throws IndexingException;
 
-    Optional<BaseEntry> getEntry(int entryNumber);
-    Collection<BaseEntry> getEntries(int start, int limit);
-    Collection<BaseEntry> getAllEntries();
+    Optional<Entry> getEntry(int entryNumber);
+    Collection<Entry> getEntries(int start, int limit);
+    Collection<Entry> getAllEntries();
 
-    Iterator<BaseEntry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
-    Iterator<BaseEntry> getEntryIterator(String indexName);
+    Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
+    Iterator<Entry> getEntryIterator(String indexName);
 
     int getTotalEntries();
     int getTotalEntries(EntryType entryType);

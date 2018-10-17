@@ -10,7 +10,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.FetchSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
-import uk.gov.register.core.BaseEntry;
+import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.util.HashValue;
@@ -34,23 +34,23 @@ public interface TestEntryDAO {
 
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number")
-    List<BaseEntry> getAllEntries(@Define("schema") String schema);
+    List<Entry> getAllEntries(@Define("schema") String schema);
 
     @RegisterMapper(EntryMapper.class)
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from \"<schema>\".entry_system e left join \"<schema>\".entry_item_system ei on ei.entry_number = e.entry_number group by e.entry_number order by e.entry_number")
-    List<BaseEntry> getAllSystemEntries(@Define("schema") String schema);
+    List<Entry> getAllSystemEntries(@Define("schema") String schema);
 
     @SqlQuery("select e.entry_number, array_remove(array_agg(ei.sha256hex), null) as sha256hex, e.timestamp, e.key from \"<schema>\".entry e left join \"<schema>\".entry_item ei on ei.entry_number = e.entry_number where e.entry_number >= :entryNumber group by e.entry_number order by e.entry_number")
     @RegisterMapper(EntryMapper.class)
     @FetchSize(262144) // Has to be non-zero to enable cursor mode https://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor
-    ResultIterator<BaseEntry> entriesIteratorFrom(@Bind("entryNumber") int entryNumber, @Define("schema") String schema);
+    ResultIterator<Entry> entriesIteratorFrom(@Bind("entryNumber") int entryNumber, @Define("schema") String schema);
 
-    class EntryMapper implements ResultSetMapper<BaseEntry> {
+    class EntryMapper implements ResultSetMapper<Entry> {
         @Override
-        public BaseEntry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+        public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
             List<HashValue> hashes = Arrays.asList((String[]) r.getArray("sha256hex").getArray()).stream().map(h -> new HashValue(HashingAlgorithm.SHA256, h)).collect(Collectors.toList());
 
-            return new BaseEntry(r.getInt("entry_number"), hashes, Instant.ofEpochSecond(r.getLong("timestamp")), r.getString("key"), EntryType.user);
+            return new Entry(r.getInt("entry_number"), hashes, Instant.ofEpochSecond(r.getLong("timestamp")), r.getString("key"), EntryType.user);
         }
     }
 }

@@ -95,7 +95,7 @@ public class PostgresRegister implements Register {
     //region Entries
 
     @Override
-    public void appendEntry(final BaseEntry entry) throws AppendEntryException {
+    public void appendEntry(final Entry entry) throws AppendEntryException {
         try {
             List<Blob> referencedBlobs = getReferencedBlobs(entry);
 
@@ -122,26 +122,18 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Optional<BaseEntry> getEntry(int entryNumber, String version) {
-        if (version == "v2") {
-            // something
-        }
-        return entryLog.getEntry(entryNumber);
-    }
-
-    @Override
-    public Optional<BaseEntry> getEntry(int entryNumber) {
+    public Optional<Entry> getEntry(int entryNumber) {
         return entryLog.getEntry(entryNumber);
     }
 
 
     @Override
-    public Collection<BaseEntry> getEntries(int start, int limit) {
+    public Collection<Entry> getEntries(int start, int limit) {
         return entryLog.getEntries(start, limit);
     }
 
     @Override
-    public Collection<BaseEntry> getAllEntries() {
+    public Collection<Entry> getAllEntries() {
         return entryLog.getAllEntries();
     }
 
@@ -156,7 +148,7 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Collection<BaseEntry> allEntriesOfRecord(String key) {
+    public Collection<Entry> allEntriesOfRecord(String key) {
         return index.findAllEntriesOfRecordBy(key);
     }
 
@@ -166,22 +158,22 @@ public class PostgresRegister implements Register {
     }
 
     @Override
-    public Iterator<BaseEntry> getEntryIterator() {
+    public Iterator<Entry> getEntryIterator() {
         return entryLog.getEntryIterator(defaultIndexForTypeUser);
     }
 
     @Override
-    public Iterator<BaseEntry> getEntryIterator(int totalEntries1, int totalEntries2) {
+    public Iterator<Entry> getEntryIterator(int totalEntries1, int totalEntries2) {
         return entryLog.getEntryIterator(defaultIndexForTypeUser, totalEntries1, totalEntries2);
     }
 
     @Override
-    public Iterator<BaseEntry> getEntryIterator(String indexName) {
+    public Iterator<Entry> getEntryIterator(String indexName) {
         return entryLog.getEntryIterator(indexName);
     }
 
     @Override
-    public Iterator<BaseEntry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
+    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
         return entryLog.getEntryIterator(indexName, totalEntries1, totalEntries2);
     }
 
@@ -322,7 +314,7 @@ public class PostgresRegister implements Register {
         return indexFunctionsByEntryType;
     }
 
-    private List<Blob> getReferencedBlobs(BaseEntry entry) throws NoSuchBlobException {
+    private List<Blob> getReferencedBlobs(Entry entry) throws NoSuchBlobException {
         return entry.getBlobHashes().stream()
                 .map(h -> blobStore.getBlob(h).orElseThrow(
                         () -> new NoSuchBlobException(h)))
