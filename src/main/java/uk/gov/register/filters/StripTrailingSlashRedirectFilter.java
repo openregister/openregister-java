@@ -1,6 +1,7 @@
 package uk.gov.register.filters;
 
 import com.google.common.net.HttpHeaders;
+import org.apache.http.client.utils.URIBuilder;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -26,19 +27,16 @@ public class StripTrailingSlashRedirectFilter implements javax.servlet.Filter {
         String path = httpRequest.getRequestURI();
         if (path.endsWith("/") && path.length() > 1) {
         int serverPort = httpRequest.getServerPort();
-            StringBuilder location = new StringBuilder();
-            location.append(request.getScheme())
-                    .append("://")
-                    .append(httpRequest.getServerName());
+            URIBuilder location = new URIBuilder()
+            .setScheme(request.getScheme())
+            .setHost(httpRequest.getServerName())
+            .setPath(removeLastChar(httpRequest.getRequestURI()));
             if (!(serverPort == 80 || serverPort == 443)) {
-                location.append(":").append(httpRequest.getServerPort());
+                location.setPort(serverPort);
             }
-            location.append(removeLastChar(httpRequest.getRequestURI()));
-
             String queryString = httpRequest.getQueryString();
             if (queryString != null) {
-                location.append('?');
-                location.append(queryString);
+                location.setCustomQuery(queryString);
             }
 
             HttpServletResponse httpResponse = (HttpServletResponse)response;
