@@ -25,7 +25,6 @@ import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
-import uk.gov.register.filters.HttpToHttpsRedirectFilter;
 import uk.gov.register.filters.StripTrailingSlashRedirectFilter;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
@@ -123,10 +122,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         rsfCreator.register(new ItemToCommandMapper());
         rsfCreator.register(new EntryToCommandMapper());
         rsfCreator.register(new RootHashCommandMapper());
-
-        environment.servlets()
-                .addFilter("HttpToHttpsRedirectFilter", new HttpToHttpsRedirectFilter())
-                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
         environment.servlets()
                 .addFilter("StripTrailingSlashRedirectFilter", new StripTrailingSlashRedirectFilter())
