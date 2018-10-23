@@ -31,24 +31,19 @@ import static org.mockito.Mockito.when;
 public class HomePageViewTest {
     private final RegisterResolver registerResolver = registerId -> URI.create("http://" + registerId + ".test.register.gov.uk");
 
-    @Mock
-    RequestContext mockRequestContext;
-    @Mock
-    private Field field;
-
     HomepageContent homepageContent = new HomepageContent(emptyList());
 
     @Test
     public void getIndexes_shouldGetIndexesIfAvailable() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
         HomepageContent homepageContent = new HomepageContent(emptyList());
-        HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, Optional.empty(), homepageContent, registerResolver, register);
+        HomePageView homePageView = new HomePageView(null, null,  1, Optional.empty(), homepageContent, registerResolver, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), is(emptyList()));
 
         final List<String> indexes = Arrays.asList("current-countries", "local-authority-by-type");
         homepageContent = new HomepageContent(indexes);
-        homePageView = new HomePageView(null, null, mockRequestContext, 1, Optional.empty(), homepageContent, registerResolver, register);
+        homePageView = new HomePageView(null, null, 1, Optional.empty(), homepageContent, registerResolver, register);
 
         assertThat(homePageView.getHomepageContent().getIndexes(), IsIterableContainingInOrder.contains("current-countries", "local-authority-by-type"));
     }
@@ -57,7 +52,7 @@ public class HomePageViewTest {
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         final Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, Optional.of(instant), homepageContent, registerResolver, register);
+        final HomePageView homePageView = new HomePageView(null, null,  1, Optional.of(instant), homepageContent, registerResolver, register);
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
@@ -65,7 +60,7 @@ public class HomePageViewTest {
     @Test
     public void getLastUpdatedTime_returnsEmptyStringIfLastUpdatedTimeNotPresent() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, Optional.empty(), homepageContent, registerResolver, register);
+        final HomePageView homePageView = new HomePageView(null, null,  1, Optional.empty(), homepageContent, registerResolver, register);
 
         assertThat(homePageView.getLastUpdatedTime(), isEmptyString());
     }

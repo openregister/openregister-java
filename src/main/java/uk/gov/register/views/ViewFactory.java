@@ -1,8 +1,6 @@
 package uk.gov.register.views;
 
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.organisation.client.GovukOrganisation;
-import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.FieldConversionException;
@@ -21,33 +19,27 @@ import java.util.Optional;
 public class ViewFactory {
     private final RequestContext requestContext;
     private final PublicBodiesConfiguration publicBodiesConfiguration;
-    private final GovukOrganisationClient organisationClient;
     private final RegisterDomainConfiguration registerDomainConfiguration;
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
     private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
     private final ItemConverter itemConverter;
-    private final Provider<RegisterId> registerIdProvider;
 
     @Inject
     public ViewFactory(final RequestContext requestContext,
                        final PublicBodiesConfiguration publicBodiesConfiguration,
-                       final GovukOrganisationClient organisationClient,
                        final RegisterDomainConfiguration registerDomainConfiguration,
                        final Provider<HomepageContentConfiguration> homepageContentConfiguration,
                        final RegisterResolver registerResolver,
                        final Provider<RegisterReadOnly> register,
-                       final ItemConverter itemConverter,
-                       final Provider<RegisterId> registerIdProvider) {
+                       final ItemConverter itemConverter) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
-        this.organisationClient = organisationClient;
         this.registerDomainConfiguration = registerDomainConfiguration;
         this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
         this.itemConverter = itemConverter;
-        this.registerIdProvider = registerIdProvider;
     }
 
     public ExceptionView exceptionBadRequestView(final String message) {
@@ -77,7 +69,6 @@ public class ViewFactory {
     public HomePageView homePageView(final int totalRecords, final Optional<Instant> lastUpdated) {
         return new HomePageView(
                 getRegistry(),
-                getBranding(),
                 requestContext,
                 totalRecords,
                 lastUpdated,
@@ -94,7 +85,7 @@ public class ViewFactory {
     }
 
     public <T> AttributionView<T> getAttributionView(final String templateName, final T fieldValueMap) {
-        return new AttributionView<>(templateName, requestContext, getRegistry(), getBranding(), register.get(), registerResolver, fieldValueMap);
+        return new AttributionView<>(templateName, requestContext, getRegistry(), register.get(), registerResolver, fieldValueMap);
     }
 
     public AttributionView<ItemView> getItemView(final Item item) throws FieldConversionException {
@@ -106,7 +97,7 @@ public class ViewFactory {
     }
 
     public PaginatedView<EntryListView> getEntriesView(final Collection<Entry> entries, final Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), register.get(), registerResolver, pagination, new EntryListView(entries));
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries));
     }
 
     public EntryListView getEntriesView(final Collection<Entry> entries) {
@@ -114,7 +105,7 @@ public class ViewFactory {
     }
 
     public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<Entry> entries, final Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), getBranding(), register.get(), registerResolver, pagination, new EntryListView(entries, recordKey));
+        return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries, recordKey));
     }
 
     public AttributionView<RecordView> getRecordView(final RecordView record) {
@@ -122,7 +113,7 @@ public class ViewFactory {
     }
 
     public PaginatedView<RecordsView> getRecordsView(final Pagination pagination, final RecordsView recordsView) {
-        return new PaginatedView<>("records.html", requestContext, getRegistry(), getBranding(), register.get(), registerResolver, pagination,
+        return new PaginatedView<>("records.html", requestContext, getRegistry(), register.get(), registerResolver, pagination,
                 recordsView);
     }
 
@@ -146,10 +137,6 @@ public class ViewFactory {
         return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
     }
 
-    private Optional<GovukOrganisation.Details> getBranding() {
-        final Optional<GovukOrganisation> organisation = organisationClient.getOrganisation(register.get().getRegisterMetadata().getRegistry());
-        return organisation.map(GovukOrganisation::getDetails);
-    }
 
     private Collection<Field> getFields() {
         return register.get().getFieldsByName().values();
