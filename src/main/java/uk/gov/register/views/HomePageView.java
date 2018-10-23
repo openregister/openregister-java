@@ -1,6 +1,5 @@
 package uk.gov.register.views;
 
-import uk.gov.organisation.client.GovukOrganisation;
 import uk.gov.register.configuration.HomepageContent;
 import uk.gov.register.core.*;
 import uk.gov.register.resources.RequestContext;
@@ -22,14 +21,13 @@ public class HomePageView extends AttributionView<Object> {
 
     public HomePageView(
             final PublicBody registry,
-            final Optional<GovukOrganisation.Details> registryBranding,
             final RequestContext requestContext,
             final int totalRecords,
             final Optional<Instant> lastUpdated,
             final HomepageContent homepageContent,
             final RegisterResolver registerResolver,
             final RegisterReadOnly register) {
-        super("home.html", requestContext, registry, registryBranding, register, registerResolver, null);
+        super("home.html", requestContext, registry, register, registerResolver, null);
         this.totalRecords = totalRecords;
         this.lastUpdated = lastUpdated;
         this.homepageContent = homepageContent;

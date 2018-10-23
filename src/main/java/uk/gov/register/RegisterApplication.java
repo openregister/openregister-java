@@ -18,7 +18,6 @@ import io.dropwizard.views.ViewBundle;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.CommonProperties;
 import uk.gov.ida.dropwizard.logstash.LogstashBundle;
-import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.BasicAuthFilter;
 import uk.gov.register.auth.RegisterAuthDynamicFeature;
 import uk.gov.register.configuration.*;
@@ -152,8 +151,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bindFactory(Factories.RegisterIdProvider.class).to(RegisterId.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
-                bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
-
                 bindFactory(Factories.PostgresRegisterFactory.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
