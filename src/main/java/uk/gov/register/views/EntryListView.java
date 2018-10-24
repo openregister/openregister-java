@@ -48,42 +48,6 @@ public class EntryListView implements CsvRepresentationView {
         this.recordKey = Optional.of(recordKey);
     }
 
-    public String entriesTo(final String mediaType, final Provider<RegisterId> registerIdProvider, final RegisterResolver registerResolver) {
-        final ByteArrayOutputStream outputStream;
-        final EntryListTurtleWriter entryTurtleWriter;
-        String registerInTextFormatted = StringUtils.EMPTY;
-
-        try {
-            if (ExtraMediaType.TEXT_TTL_TYPE.getSubtype().equals(mediaType)) {
-                outputStream = new ByteArrayOutputStream();
-                entryTurtleWriter = new EntryListTurtleWriter(registerIdProvider, registerResolver);
-
-                entryTurtleWriter.writeTo(this, EntryListView.class, EntryListView.class, null, ExtraMediaType.TEXT_TTL_TYPE, null, outputStream);
-
-                registerInTextFormatted = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
-            } else if (ExtraMediaType.TEXT_YAML_TYPE.getSubtype().equals(mediaType)) {
-                registerInTextFormatted = yamlObjectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(getNestedEntryJson());
-            } else {
-                registerInTextFormatted = jsonObjectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(getNestedEntryJson());
-            }
-        } catch (final IOException ex) {
-            LOGGER.error("Error processing preview request. Impossible process the register items");
-        }
-
-        return StringEscapeUtils.escapeHtml(registerInTextFormatted.isEmpty() ? registerInTextFormatted : END_OF_LINE + registerInTextFormatted);
-    }
-
-    @SuppressWarnings("unused, used by JSON renderer")
-    public Map<String, JsonNode> getNestedEntryJson() {
-        final Map<String, JsonNode> entryMap = new HashMap<>();
-
-        entries.forEach(entry -> {
-            final ObjectNode jsonNode = getEntryJson(entry);
-            entryMap.put(entry.getKey(), jsonNode);
-        });
-
-        return entryMap;
-    }
 
     @JsonValue
     public Collection<Entry> getEntries() {

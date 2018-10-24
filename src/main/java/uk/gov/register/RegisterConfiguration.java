@@ -6,7 +6,6 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayFactory;
-import uk.gov.organisation.client.GovukClientConfiguration;
 import uk.gov.register.auth.RegisterAuthenticatorFactory;
 import uk.gov.register.configuration.DatabaseConfiguration;
 import uk.gov.register.configuration.RegisterConfigConfiguration;
@@ -17,7 +16,6 @@ import uk.gov.register.core.RegisterId;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,8 +23,7 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterConfiguration extends Configuration implements RegisterDomainConfiguration,
         RegisterConfigConfiguration,
-        DatabaseConfiguration,
-        GovukClientConfiguration {
+        DatabaseConfiguration {
     @SuppressWarnings("unused")
     @Valid
     @NotNull
@@ -123,11 +120,6 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
 
     public JerseyClientConfiguration getJerseyClientConfiguration() {
         return jerseyClient;
-    }
-
-    @Override
-    public URI getGovukEndpoint() {
-        return URI.create("https://www.gov.uk");
     }
 
     @Override

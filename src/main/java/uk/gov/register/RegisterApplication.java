@@ -18,14 +18,13 @@ import io.dropwizard.views.ViewBundle;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.CommonProperties;
 import uk.gov.ida.dropwizard.logstash.LogstashBundle;
-import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.BasicAuthFilter;
 import uk.gov.register.auth.RegisterAuthDynamicFeature;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
-import uk.gov.register.filters.HttpToHttpsRedirectFilter;
+import uk.gov.register.filters.StripTrailingSlashRedirectFilter;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.serialization.RSFCreator;
@@ -124,7 +123,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         rsfCreator.register(new RootHashCommandMapper());
 
         environment.servlets()
-                .addFilter("HttpToHttpsRedirectFilter", new HttpToHttpsRedirectFilter())
+                .addFilter("StripTrailingSlashRedirectFilter", new StripTrailingSlashRedirectFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
         jersey.register(new AbstractBinder() {
@@ -151,8 +150,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bindFactory(Factories.RegisterIdProvider.class).to(RegisterId.class);
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
-                bind(GovukOrganisationClient.class).to(GovukOrganisationClient.class).in(Singleton.class);
-
                 bindFactory(Factories.PostgresRegisterFactory.class).to(Register.class).to(RegisterReadOnly.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);

@@ -25,14 +25,14 @@ public class HomePageViewTest {
 
     @Mock
     RequestContext mockRequestContext;
-
     HomepageContent homepageContent = new HomepageContent();
+
 
     @Test
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {
         final Instant instant = LocalDateTime.of(2015, 9, 11, 13, 17, 59, 543).toInstant(ZoneOffset.UTC);
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, Optional.of(instant), homepageContent, registerResolver, register);
+        final HomePageView homePageView = new HomePageView(null,  mockRequestContext, 1, Optional.of(instant), homepageContent, registerResolver, register);
 
         assertThat(homePageView.getLastUpdatedTime(), equalTo("11 September 2015"));
     }
@@ -40,7 +40,7 @@ public class HomePageViewTest {
     @Test
     public void getLastUpdatedTime_returnsEmptyStringIfLastUpdatedTimeNotPresent() {
         final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        final HomePageView homePageView = new HomePageView(null, null, mockRequestContext, 1, Optional.empty(), homepageContent, registerResolver, register);
+        final HomePageView homePageView = new HomePageView(null,  mockRequestContext, 1, Optional.empty(), homepageContent, registerResolver, register);
 
         assertThat(homePageView.getLastUpdatedTime(), isEmptyString());
     }
