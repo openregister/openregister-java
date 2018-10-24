@@ -9,14 +9,12 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.register.configuration.IndexFunctionConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -91,9 +89,10 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_returnsRSFFromEntireRegister() {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(systemItem, item1, item2).iterator());
-        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
-        when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
+        when(register.getItemIterator(EntryType.user)).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getItemIterator(EntryType.system)).thenReturn(Arrays.asList(systemItem).iterator());
+        when(register.getEntryIterator(EntryType.system)).thenReturn(Arrays.asList(systemEntry).iterator());
+        when(register.getEntryIterator(EntryType.user)).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 46464);
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
@@ -101,8 +100,8 @@ public class RSFCreatorTest {
         RegisterSerialisationFormat actualRSF = sutCreator.create(register);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
-        verify(register, times(1)).getItemIterator();
-        verify(register, times(1)).getEntryIterator();
+        verify(register, times(1)).getItemIterator(EntryType.user);
+        verify(register, times(1)).getEntryIterator(EntryType.user);
         verify(register, times(1)).getRegisterProof();
 
         assertThat(actualCommands.size(), equalTo(8));
@@ -119,28 +118,6 @@ public class RSFCreatorTest {
     }
 
     @Test
-    public void createRegisterSerialisationFormat_returnsRSFFromEntireIndex() {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getEntryIterator(IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
-        when(register.getEntryIterator("index")).thenReturn(Arrays.asList(entry1, entry2).iterator());
-
-        RegisterSerialisationFormat actualRSF = sutCreator.create(register, "index");
-        List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
-
-        verify(register, times(1)).getItemIterator();
-        verify(register, times(1)).getEntryIterator("index");
-
-        assertThat(actualCommands.size(), equalTo(5));
-        assertThat(actualCommands, contains(
-                assertEmptyRootHashCommand,
-                addItem1Command,
-                addItem2Command,
-                appendEntry1Command,
-                appendEntry2Command
-        ));
-    }
-
-    @Test
     public void createRegisterSerialisationFormat_whenCalledWithBoundary_returnsPartialRSFRegister() {
         RegisterProof oneEntryRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "oneEntryInRegisterHash"), 1);
         RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
@@ -153,8 +130,8 @@ public class RSFCreatorTest {
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, 1, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
-        verify(register, never()).getSystemItemIterator();
-        verify(register, never()).getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA);
+        verify(register, never()).getItemIterator(EntryType.system);
+        verify(register, never()).getEntryIterator(EntryType.system);
         verify(register, times(1)).getItemIterator(1, 2);
         verify(register, times(1)).getEntryIterator(1, 2);
 
@@ -171,9 +148,9 @@ public class RSFCreatorTest {
     public void createRegisterSerialisationFormat_whenStartIsZero_returnsSystemEntries() {
         RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
 
-        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemItem).iterator());
+        when(register.getItemIterator(EntryType.system)).thenReturn(Arrays.asList(systemItem).iterator());
         when(register.getItemIterator(0, 2)).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
+        when(register.getEntryIterator(EntryType.system)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator(0, 2)).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
@@ -196,9 +173,10 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_throwsAnExceptionForUnknownMapperType() throws Exception {
-        when(register.getItemIterator()).thenReturn(Arrays.asList(item1, item2).iterator());
-        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Collections.emptyIterator());
-        when(register.getEntryIterator()).thenReturn(Arrays.asList(entry1, entry2).iterator());
+        when(register.getItemIterator(EntryType.user)).thenReturn(Arrays.asList(item1, item2).iterator());
+        when(register.getEntryIterator(EntryType.system)).thenReturn(Collections.emptyIterator());
+        when(register.getEntryIterator(EntryType.user)).thenReturn(Arrays.asList(entry1, entry2).iterator());
+        when(register.getItemIterator(EntryType.system)).thenReturn(Arrays.asList(systemItem).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 28828);
         when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
@@ -228,9 +206,9 @@ public class RSFCreatorTest {
 
     @Test
     public void createRegisterSerialisationFormat_whenParametersEqualAndZero_returnsSystemEntries() {
-        when(register.getSystemItemIterator()).thenReturn(Arrays.asList(systemItem).iterator());
+        when(register.getItemIterator(EntryType.system)).thenReturn(Arrays.asList(systemItem).iterator());
         when(register.getItemIterator(0, 0)).thenReturn(Collections.emptyIterator());
-        when(register.getEntryIterator(IndexFunctionConfiguration.IndexNames.METADATA)).thenReturn(Arrays.asList(systemEntry).iterator());
+        when(register.getEntryIterator(EntryType.system)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator(0, 0)).thenReturn(Collections.emptyIterator());
 
         when(register.getRegisterProof(0)).thenReturn(new RegisterProof(emptyRegisterHash, 0));

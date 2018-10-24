@@ -1,7 +1,5 @@
 package uk.gov.register.serialization;
 
-import com.google.common.base.Splitter;
-import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.exceptions.ItemNotCanonicalException;
@@ -120,19 +118,9 @@ public class RSFFormatter {
     }
 
     private void validateHash(String hash, String errorMessage) {
-        if ("true".equals(System.getProperty("multi-item-entries-enabled"))) {
-            if (StringUtils.isNotEmpty(hash) && !allPartsHaveShaPrefix(hash)) {
-                throw new RSFParseException(errorMessage);
-            }
-        } else {
-            if (!hash.startsWith(SHA_256) || hash.indexOf(';') != -1) {
-                throw new RSFParseException(errorMessage);
-            }
+        if (!hash.startsWith(SHA_256)) {
+            throw new RSFParseException(errorMessage);
         }
-    }
-
-    private boolean allPartsHaveShaPrefix(String hash) {
-        return Splitter.on(";").splitToList(hash).stream().allMatch(s -> s.startsWith(SHA_256));
     }
 
     private String argsToString(List<String> arguments) {

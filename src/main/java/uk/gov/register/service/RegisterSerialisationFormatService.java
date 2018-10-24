@@ -33,14 +33,6 @@ public class RegisterSerialisationFormatService {
         writeTo(output, RSFFormatter, register -> rsfCreator.create(register, totalEntries1, totalEntries2));
     }
 
-    public void writeTo(OutputStream output, RSFFormatter RSFFormatter, String indexName) {
-        writeTo(output, RSFFormatter, register -> rsfCreator.create(register, indexName));
-    }
-
-    public void writeTo(OutputStream output, RSFFormatter RSFFormatter, String indexName, int totalEntries1, int totalEntries2) {
-        writeTo(output, RSFFormatter, register -> rsfCreator.create(register, indexName, totalEntries1, totalEntries2));
-    }
-
     public void process(RegisterSerialisationFormat rsf) throws RSFParseException {
         registerContext.transactionalRegisterOperation(register -> {
             rsfExecutor.execute(rsf, register);

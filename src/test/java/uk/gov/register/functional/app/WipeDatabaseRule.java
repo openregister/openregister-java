@@ -3,7 +3,6 @@ package uk.gov.register.functional.app;
 import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
 import uk.gov.register.functional.db.TestEntryDAO;
-import uk.gov.register.functional.db.TestIndexDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 
 import java.util.List;
@@ -24,7 +23,6 @@ public class WipeDatabaseRule extends ExternalResource {
             dbi.useHandle(handle -> {
                 handle.attach(TestEntryDAO.class).wipeData(register.getSchema());
                 handle.attach(TestItemCommandDAO.class).wipeData(register.getSchema());
-                handle.attach(TestIndexDAO.class).wipeData(register.getSchema());
             });
         }
     }

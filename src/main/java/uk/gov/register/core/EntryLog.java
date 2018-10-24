@@ -20,10 +20,9 @@ public interface EntryLog {
     Collection<Entry> getEntries(int start, int limit);
     Collection<Entry> getAllEntries();
 
-    Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2);
-    Iterator<Entry> getEntryIterator(String indexName);
+    Iterator<Entry> getEntryIterator(EntryType entryType, int totalEntries1, int totalEntries2);
+    Iterator<Entry> getEntryIterator(EntryType entryType);
 
-    int getTotalEntries();
     int getTotalEntries(EntryType entryType);
 
     Optional<Instant> getLastUpdatedTime();

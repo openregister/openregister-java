@@ -6,24 +6,19 @@ import java.util.*;
 
 public class Record {
     private final Entry entry;
-    private final List<Item> items = new ArrayList<>();
+    private final Item item;
 
     public Record(Entry entry, Item item) {
         this.entry = entry;
-        this.items.add(item);
-    }
-
-    public Record(Entry entry, Iterable<Item> items) {
-        this.entry = entry;
-        items.forEach(i -> this.items.add(i));
+        this.item = item;
     }
 
     public Entry getEntry() {
         return entry;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public Item getItem() {
+        return item;
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {

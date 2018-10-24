@@ -16,12 +16,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.Provider;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Entry, List<ItemView>>> {
+public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Entry, ItemView>> {
 
     @Inject
     public RecordTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
@@ -29,9 +28,9 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
     }
 
     @Override
-    protected Model rdfModelFor(Map.Entry<Entry, List<ItemView>> record) {
+    protected Model rdfModelFor(Map.Entry<Entry, ItemView> record) {
         Entry entry = record.getKey();
-        ItemView itemView = record.getValue().get(0);
+        ItemView itemView = record.getValue();
 
         Model recordModel = ModelFactory.createDefaultModel();
         Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry, false);

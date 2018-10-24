@@ -2,6 +2,7 @@ package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -29,7 +30,7 @@ public class HomePageResource {
     @Timed
     public View home() {
         return viewFactory.homePageView(
-                register.getTotalRecords(),
+                register.getTotalRecords(EntryType.user),
                 register.getLastUpdatedTime()
         );
     }

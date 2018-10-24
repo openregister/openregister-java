@@ -1,6 +1,5 @@
 package uk.gov.register.db;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
@@ -39,24 +38,19 @@ public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
     }
 
     @Override
-    public Iterator<Item> getIterator(String schema) {
-        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema));
+    public Iterator<Item> getIterator(String schema, String entryTable) {
+        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema, entryTable));
     }
 
     @Override
     public Iterator<Item> getIterator(@Bind("startEntryNo") int startEntryNo, @Bind("endEntryNo") int endEntryNo, String schema) {
-        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema));
-    }
-
-    @Override
-    public Iterator<Item> getSystemItemIterator(String schema) {
-        throw new NotImplementedException("Not yet implemented");
+        return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(startEntryNo, endEntryNo, schema, "entry"));
     }
 
     private Iterator<Item> getItemIteratorFromEntryIterator(Iterator<Entry> entryIterator) {
         List<Item> itemsResult = new ArrayList<>();
         entryIterator.forEachRemaining(entry -> {
-            List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getItemHashes().contains(hashValue)).collect(Collectors.toList());
+            List<HashValue> hashValues = items.keySet().stream().filter(hashValue -> entry.getItemHash().equals(hashValue)).collect(Collectors.toList());
             hashValues.forEach(hashValue -> itemsResult.add(items.remove(hashValue)));
         });
         return itemsResult.iterator();

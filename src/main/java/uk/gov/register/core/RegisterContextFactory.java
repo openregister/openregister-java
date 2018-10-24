@@ -14,10 +14,7 @@ import uk.gov.register.service.EnvironmentValidator;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-
-import static java.util.Collections.emptyList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterContextFactory {
@@ -43,23 +40,17 @@ public class RegisterContextFactory {
     @JsonProperty
     private RegisterAuthenticatorFactory credentials;
 
-    @Valid
-    @JsonProperty
-    private List<String> indexes = emptyList();
-
     @JsonCreator
     public RegisterContextFactory(
             @JsonProperty("enableRegisterDataDelete") boolean enableRegisterDataDelete,
             @JsonProperty("enableDownloadResource") boolean enableDownloadResource,
             @JsonProperty("schema") String schema,
             @JsonProperty("custodianName") Optional<String> custodianName,
-            @JsonProperty("indexes") List<String> indexes,
             @JsonProperty("credentials") RegisterAuthenticatorFactory credentials) {
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.schema = schema;
         this.custodianName = custodianName;
-        this.indexes = indexes != null ? indexes : emptyList();
         this.credentials = credentials;
     }
 
@@ -84,7 +75,6 @@ public class RegisterContextFactory {
                 schema,
                 enableRegisterDataDelete,
                 enableDownloadResource,
-                indexes,
                 credentials.buildAuthenticator());
     }
 }

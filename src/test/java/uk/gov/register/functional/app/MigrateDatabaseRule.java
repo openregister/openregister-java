@@ -7,6 +7,7 @@ import org.flywaydb.core.Flyway;
 import org.junit.rules.ExternalResource;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class MigrateDatabaseRule extends ExternalResource {
 
     private FlywayFactory getFlywayFactory(String registerId) {
         FlywayFactory flywayFactory = new FlywayFactory();
-        flywayFactory.setLocations(Collections.singletonList("/sql"));
+        flywayFactory.setLocations(Arrays.asList("/sql", "uk.gov.migration"));
         flywayFactory.setPlaceholders(Collections.singletonMap("registerName", registerId));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;

@@ -38,7 +38,7 @@ public class RecordsView implements CsvRepresentationView {
     private final boolean resolveAllItemLinks;
 
     private final Map<String, Field> fieldsByName;
-    private final Map<Entry, List<ItemView>> recordMap;
+    private final Map<Entry, ItemView> recordMap;
 
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
@@ -51,7 +51,7 @@ public class RecordsView implements CsvRepresentationView {
         recordMap = getItemViews(records, itemConverter);
     }
 
-    public Map<Entry, List<ItemView>> getRecords() {
+    public Map<Entry, ItemView> getRecords() {
         return recordMap;
     }
 
@@ -59,7 +59,7 @@ public class RecordsView implements CsvRepresentationView {
     public List<ItemView> getRecordsSimple() {
         return recordMap.entrySet()
                 .stream()
-                .map(e -> new ItemSimpleView(e.getKey().getKey(), e.getValue().iterator().next()))
+                .map(e -> new ItemSimpleView(e.getKey().getKey(), e.getValue()))
                 .collect(Collectors.toList());
 
     }
@@ -75,7 +75,7 @@ public class RecordsView implements CsvRepresentationView {
         recordMap.forEach((key, value) -> {
             final ObjectNode jsonNode = getEntryJson(key);
             final ArrayNode items = jsonNode.putArray("item");
-            value.forEach(item -> items.add(getItemJson(item)));
+            items.add(getItemJson(value));
             records.put(key.getKey(), jsonNode);
         });
 
@@ -90,11 +90,11 @@ public class RecordsView implements CsvRepresentationView {
 
     protected ArrayNode getFlatRecordsJson() {
         final ArrayNode flatRecords = jsonObjectMapper.createArrayNode();
-        recordMap.forEach((key, value) -> value.forEach(item -> {
+        recordMap.forEach((key, value) -> {
             final ObjectNode jsonNodes = getEntryJson(key);
-            jsonNodes.setAll(getItemJson(item));
+            jsonNodes.setAll(getItemJson(value));
             flatRecords.add(jsonNodes);
-        }));
+        });
 
         return flatRecords;
     }
@@ -115,12 +115,12 @@ public class RecordsView implements CsvRepresentationView {
         return resolveAllItemLinks;
     }
 
-    private Map<Entry, List<ItemView>> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) throws FieldConversionException {
-        final Map<Entry, List<ItemView>> map = new LinkedHashMap<>();
+
+    private Map<Entry, ItemView> getItemViews(final Collection<Record> records, final ItemConverter itemConverter) throws FieldConversionException {
+        final Map<Entry, ItemView> map = new LinkedHashMap<>();
+
         records.forEach(record -> {
-            map.put(record.getEntry(), record.getItems().stream().map(item ->
-                    new ItemView(item.getSha256hex(), itemConverter.convertItem(item, fieldsByName), getFields()))
-                    .collect(Collectors.toList()));
+            map.put(record.getEntry(), new ItemView(record.getItem().getSha256hex(), itemConverter.convertItem(record.getItem(), fieldsByName), getFields()));
         });
         return map;
     }

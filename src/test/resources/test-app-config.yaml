@@ -50,8 +50,6 @@ registers:
     credentials:
       user: bar
       password: baz
-    indexes:
-      - local-authority-by-type
     enableDownloadResource: true
 
 enableDownloadResource: true

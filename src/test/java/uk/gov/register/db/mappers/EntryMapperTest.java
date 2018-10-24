@@ -35,8 +35,7 @@ public class EntryMapperTest {
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
             h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
-            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", expectedInstant.getEpochSecond());
-            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
+            h.execute("insert into address.entry(entry_number, timestamp, key, type, sha256hex) values(5, :timestamp, 'K', 'user', 'ghijkl')", expectedInstant.getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
@@ -44,7 +43,7 @@ public class EntryMapperTest {
 
         Entry entry = allEntriesNoPagination.iterator().next();
 
-        assertThat(entry.getItemHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
+        assertThat(entry.getItemHash(), is(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
         assertThat(entry.getEntryNumber(), is(5));
         assertThat(entry.getIndexEntryNumber(), is(5));
         assertThat(allEntriesNoPagination.iterator().next().getTimestamp(), equalTo(expectedInstant));
@@ -56,44 +55,13 @@ public class EntryMapperTest {
     public void map_returnsSingleItemHashForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
             h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
-            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
-            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
+            h.execute("insert into address.entry(entry_number, timestamp, key, type, sha256hex) values(5, :timestamp, 'K', 'user', 'ghijkl')", Instant.now().getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
         Entry entry = allEntriesNoPagination.iterator().next();
 
         assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(entry.getItemHashes(), contains(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
-    }
-
-    @Test
-    public void map_returnsMultipleItemHashesForEntry() {
-        Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.item (sha256hex, content) values ('abcdef', '{\"address\":\"K\"}')");
-            h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
-            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
-            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'abcdef')");
-            h.execute("insert into address.entry_item(entry_number, sha256hex) values(5, 'ghijkl')");
-            return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
-        });
-
-        Entry entry = allEntriesNoPagination.iterator().next();
-
-        assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(entry.getItemHashes(), containsInAnyOrder(new HashValue(HashingAlgorithm.SHA256, "abcdef"), new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
-    }
-
-    @Test
-    public void map_returnsNoItemHashesForEntry() {
-        Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.entry(entry_number, timestamp, key, type) values(5, :timestamp, 'K', 'user')", Instant.now().getEpochSecond());
-            return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
-        });
-
-        Entry entry = allEntriesNoPagination.iterator().next();
-
-        assertThat(allEntriesNoPagination.size(), equalTo(1));
-        assertThat(entry.getItemHashes().size(), equalTo(0));
+        assertThat(entry.getItemHash(), is(new HashValue(HashingAlgorithm.SHA256, "ghijkl")));
     }
 }

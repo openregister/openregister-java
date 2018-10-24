@@ -31,6 +31,12 @@ public class EntryLogImpl implements EntryLog {
 
     @Override
     public void appendEntry(Entry entry) throws IndexingException {
+        Optional<Record> record = dataAccessLayer.getRecord(entry.getEntryType(), entry.getKey());
+
+        if (record.isPresent() && record.get().getEntry().getItemHash().equals(entry.getItemHash())) {
+            throw new IndexingException(entry, "Cannot contain identical items to previous entry");
+        }
+
         dataAccessLayer.appendEntry(entry);
     }
 
@@ -45,23 +51,18 @@ public class EntryLogImpl implements EntryLog {
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(String indexName) {
-        return dataAccessLayer.getEntryIterator(indexName);
+    public Iterator<Entry> getEntryIterator(EntryType entryType) {
+        return dataAccessLayer.getEntryIterator(entryType);
     }
 
     @Override
-    public Iterator<Entry> getEntryIterator(String indexName, int totalEntries1, int totalEntries2) {
-        return dataAccessLayer.getEntryIterator(indexName, totalEntries1, totalEntries2);
+    public Iterator<Entry> getEntryIterator(EntryType entryType, int totalEntries1, int totalEntries2) {
+        return dataAccessLayer.getEntryIterator(entryType, totalEntries1, totalEntries2);
     }
 
     @Override
     public Collection<Entry> getAllEntries() {
         return dataAccessLayer.getAllEntries();
-    }
-
-    @Override
-    public int getTotalEntries() {
-        return dataAccessLayer.getTotalEntries();
     }
 
     @Override
@@ -78,7 +79,7 @@ public class EntryLogImpl implements EntryLog {
     public RegisterProof getRegisterProof() {
         String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getCurrentRootHash()));
 
-        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), getTotalEntries());
+        return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), getTotalEntries(EntryType.user));
     }
 
     @Override

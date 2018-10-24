@@ -30,17 +30,12 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
-    public Iterator<Item> getUserItemIterator() {
-        return dataAccessLayer.getItemIterator(EntryType.user);
+    public Iterator<Item> getItemIterator(EntryType entryType) {
+        return dataAccessLayer.getItemIterator(entryType);
     }
 
     @Override
     public Iterator<Item> getUserItemIterator(int startEntryNumber, int endEntryNumber) {
         return dataAccessLayer.getItemIterator(startEntryNumber, endEntryNumber);
-    }
-
-    @Override
-    public Iterator<Item> getSystemItemIterator() {
-        return dataAccessLayer.getItemIterator(EntryType.system);
     }
 }

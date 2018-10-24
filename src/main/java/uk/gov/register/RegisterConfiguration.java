@@ -17,11 +17,8 @@ import uk.gov.register.core.RegisterId;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static java.util.Collections.emptyList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RegisterConfiguration extends Configuration implements RegisterDomainConfiguration,
@@ -51,10 +48,6 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     @Valid
     @JsonProperty
     private Optional<String> custodianName = Optional.empty();
-
-    @Valid
-    @JsonProperty
-    private List<String> indexes = emptyList();
 
     @Valid
     @NotNull
@@ -106,7 +99,7 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     private String registersYamlLocation;
 
     public RegisterContextFactory getDefaultRegister() {
-        return new RegisterContextFactory(enableRegisterDataDelete, enableDownloadResource, schema, custodianName, indexes, credentials);
+        return new RegisterContextFactory(enableRegisterDataDelete, enableDownloadResource, schema, custodianName, credentials);
     }
 
     public AllTheRegistersFactory getAllTheRegisters() {

@@ -22,21 +22,18 @@ public class ViewFactory {
     private final RegisterDomainConfiguration registerDomainConfiguration;
     private final RegisterResolver registerResolver;
     private final Provider<RegisterReadOnly> register;
-    private final Provider<HomepageContentConfiguration> homepageContentConfiguration;
     private final ItemConverter itemConverter;
 
     @Inject
     public ViewFactory(final RequestContext requestContext,
                        final PublicBodiesConfiguration publicBodiesConfiguration,
                        final RegisterDomainConfiguration registerDomainConfiguration,
-                       final Provider<HomepageContentConfiguration> homepageContentConfiguration,
                        final RegisterResolver registerResolver,
                        final Provider<RegisterReadOnly> register,
                        final ItemConverter itemConverter) {
         this.requestContext = requestContext;
         this.publicBodiesConfiguration = publicBodiesConfiguration;
         this.registerDomainConfiguration = registerDomainConfiguration;
-        this.homepageContentConfiguration = homepageContentConfiguration;
         this.registerResolver = registerResolver;
         this.register = register;
         this.itemConverter = itemConverter;
@@ -72,8 +69,7 @@ public class ViewFactory {
                 requestContext,
                 totalRecords,
                 lastUpdated,
-                new HomepageContent(
-                        homepageContentConfiguration.get().getIndexes()),
+                new HomepageContent(),
                 registerResolver,
                 register.get()
         );
@@ -98,10 +94,6 @@ public class ViewFactory {
 
     public PaginatedView<EntryListView> getEntriesView(final Collection<Entry> entries, final Pagination pagination) {
         return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries));
-    }
-
-    public EntryListView getEntriesView(final Collection<Entry> entries) {
-        return new EntryListView(entries);
     }
 
     public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<Entry> entries, final Pagination pagination) {
@@ -129,14 +121,9 @@ public class ViewFactory {
         return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, false);
     }
 
-    public RecordsView getIndexRecordsMediaView(final List<Record> records) throws FieldConversionException {
-        return new RecordsView(records, register.get().getFieldsByName(), itemConverter, false, true);
-    }
-
     private PublicBody getRegistry() {
         return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
     }
-
 
     private Collection<Field> getFields() {
         return register.get().getFieldsByName().values();

@@ -8,12 +8,11 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.skife.jdbi.v2.Handle;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.IndexQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
@@ -25,7 +24,6 @@ import uk.gov.register.util.CanonicalJsonMapper;
 
 import javax.ws.rs.core.Response;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,14 +41,14 @@ public class DataUploadFunctionalTest {
     private static String schema;
 
     private final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
-    private static IndexQueryDAO testRecordDAO;
+    private static RecordQueryDAO testRecordDAO;
     private static TestEntryDAO testEntryDAO;
     private static TestItemCommandDAO testItemDAO;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Handle handle = register.handleFor(TestRegister.register);
-        testRecordDAO = handle.attach(IndexQueryDAO.class);
+        testRecordDAO = handle.attach(RecordQueryDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
         testItemDAO = handle.attach(TestItemCommandDAO.class);
         schema = TestRegister.register.getSchema();
@@ -78,7 +76,7 @@ public class DataUploadFunctionalTest {
         Entry entry = testEntryDAO.getAllEntries(schema).get(0);
         assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
 
-        Record record = testRecordDAO.findRecords(Arrays.asList("ft_openregister_test"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record = testRecordDAO.getRecord("ft_openregister_test", schema, "entry").get();
         assertThat(record.getEntry().getEntryNumber(), equalTo(1));
         assertThat(record.getEntry().getKey(), equalTo("ft_openregister_test"));
 
@@ -126,10 +124,10 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        Record record1 = testRecordDAO.findRecords(Arrays.asList("register1"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record1 = testRecordDAO.getRecord("register1", schema, "entry").get();
         assertThat(record1.getEntry().getEntryNumber(), equalTo(1));
         assertThat(record1.getEntry().getKey(), equalTo("register1"));
-        Record record2 = testRecordDAO.findRecords(Arrays.asList("register2"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record2 = testRecordDAO.getRecord("register2", schema, "entry").get();
         assertThat(record2.getEntry().getEntryNumber(), equalTo(2));
         assertThat(record2.getEntry().getKey(), equalTo("register2"));
     }
@@ -164,7 +162,7 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        Record record = testRecordDAO.findRecords(Arrays.asList("register1"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record = testRecordDAO.getRecord("register1", schema, "entry").get();
         assertThat(record.getEntry().getEntryNumber(), equalTo(1));
         assertThat(record.getEntry().getKey(), equalTo("register1"));
     }
@@ -203,10 +201,10 @@ public class DataUploadFunctionalTest {
                 )
         );
 
-        Record record1 = testRecordDAO.findRecords(Arrays.asList("register1"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record1 = testRecordDAO.getRecord("register1", schema, "entry").get();
         assertThat(record1.getEntry().getEntryNumber(), equalTo(1));
         assertThat(record1.getEntry().getKey(), equalTo("register1"));
-        Record record2 = testRecordDAO.findRecords(Arrays.asList("register2"), IndexNames.RECORD, schema, "entry").get(0);
+        Record record2 = testRecordDAO.getRecord("register2", schema, "entry").get();
         assertThat(record2.getEntry().getEntryNumber(), equalTo(2));
         assertThat(record2.getEntry().getKey(), equalTo("register2"));
     }

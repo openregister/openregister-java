@@ -119,8 +119,7 @@ public class CsvWriterTest {
 
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "key1", EntryType.user);
         Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "aaa"), objectMapper.readTree("{\"key1\":\"item1\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "bbb"), objectMapper.readTree("{\"key1\":\"item2\"}"));
-        Record record = new Record(entry, Arrays.asList(item, item2));
+        Record record = new Record(entry, item);
 
         ImmutableMap<String, Field> fields = ImmutableMap.of(
                 "key1", new Field("key1", "datatype", new RegisterId("address"), Cardinality.ONE, "text"),
@@ -130,7 +129,6 @@ public class CsvWriterTest {
 
         ItemConverter itemConverter = mock(ItemConverter.class);
         when(itemConverter.convertItem(item, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item1")));
-        when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("key1", new StringValue("item2")));
 
         RecordView recordView = new RecordView(record, fields, itemConverter);
 
@@ -142,8 +140,7 @@ public class CsvWriterTest {
         String generatedCsv = new String(bytes, StandardCharsets.UTF_8);
 
         String expected = "index-entry-number,entry-number,entry-timestamp,key,key1,key2,key3,key4\r\n" +
-                "1,1,2016-08-05T13:24:00Z,key1,item1,,,\r\n" +
-                "1,1,2016-08-05T13:24:00Z,key1,item2,,,\r\n";
+                "1,1,2016-08-05T13:24:00Z,key1,item1,,,\r\n";
 
         assertThat(generatedCsv, is(expected));
     }
@@ -159,9 +156,8 @@ public class CsvWriterTest {
         Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}"));
         Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}"));
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "ef"), objectMapper.readTree("{\"address\":\"456\",\"street\":\"baz\"}"));
-        Record record1 = new Record(entry1, Arrays.asList(item1));
-        Record record2 = new Record(entry2, Arrays.asList(item2, item3));
+        Record record1 = new Record(entry1, item1);
+        Record record2 = new Record(entry2, item2);
 
         ItemConverter itemConverter = mock(ItemConverter.class);
 
@@ -173,9 +169,6 @@ public class CsvWriterTest {
                 "street", new StringValue("foo")));
         when(itemConverter.convertItem(item2, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
                 "street", new StringValue("bar")));
-        when(itemConverter.convertItem(item3, fields)).thenReturn(ImmutableMap.of("address", new StringValue("456"),
-                "street", new StringValue("baz")));
-
 
         RecordsView recordsView = new RecordsView(Arrays.asList(record1, record2), fields, itemConverter, false, false);
 
@@ -188,8 +181,7 @@ public class CsvWriterTest {
 
         String expected = "index-entry-number,entry-number,entry-timestamp,key,address,street\r\n" +
                 "1,1,2016-03-29T08:59:25Z,123,123,foo\r\n" +
-                "2,2,2016-03-28T09:49:26Z,456,456,bar\r\n" +
-                "2,2,2016-03-28T09:49:26Z,456,456,baz\r\n";
+                "2,2,2016-03-28T09:49:26Z,456,456,bar\r\n";
 
         assertThat(generatedCsv, is(expected));
     }

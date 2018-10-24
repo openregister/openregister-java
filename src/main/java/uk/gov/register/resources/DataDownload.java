@@ -17,23 +17,19 @@ import io.dropwizard.jersey.caching.CacheControl;
 
 @Path("/")
 public class DataDownload {
-
     private final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
     private final RegisterId registerPrimaryKey;
-    private final ResourceConfiguration resourceConfiguration;
     private final RegisterSerialisationFormatService rsfService;
     private final RSFFormatter rsfFormatter;
 
     @Inject
     public DataDownload(RegisterReadOnly register,
                         ViewFactory viewFactory,
-                        ResourceConfiguration resourceConfiguration,
                         RegisterSerialisationFormatService rsfService) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.registerPrimaryKey = register.getRegisterId();
-        this.resourceConfiguration = resourceConfiguration;
         this.rsfService = rsfService;
         this.rsfFormatter = new RSFFormatter();
     }
@@ -49,8 +45,8 @@ public class DataDownload {
         Collection<Item> items = register.getAllItems();
 
         RegisterDetail registerDetail = viewFactory.registerDetailView(
-                register.getTotalRecords(),
-                register.getTotalEntries(),
+                register.getTotalRecords(EntryType.user),
+                register.getTotalEntries(EntryType.user),
                 register.getLastUpdatedTime(),
                 register.getCustodianName()).getRegisterDetail();
 
@@ -72,32 +68,6 @@ public class DataDownload {
         String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
         return Response
                 .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter))
-                .header("Content-Disposition", rsfFileName).build();
-    }
-
-    @GET
-    @Path("/index/{index-name}/download-rsf")
-    @CacheControl(maxAge = 60, isPrivate = true)
-    @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
-    @DownloadNotAvailable
-    @Timed
-    public Response downloadIndexRSF(@PathParam("index-name") String indexName) {
-        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
-        return Response
-                .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, indexName))
-                .header("Content-Disposition", rsfFileName).build();
-    }
-
-    @GET
-    @Path("/index/{index-name}/download-rsf/{total-entries-1}/{total-entries-2}")
-    @CacheControl(maxAge = 60, isPrivate = true)
-    @Produces({ExtraMediaType.APPLICATION_RSF, ExtraMediaType.TEXT_HTML})
-    @DownloadNotAvailable
-    @Timed
-    public Response downloadIndexRSF(@PathParam("index-name") String indexName, @PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
-        String rsfFileName = String.format("attachment; filename=rsf-%d.%s", System.currentTimeMillis(), rsfFormatter.getFileExtension());
-        return Response
-                .ok((StreamingOutput) output -> rsfService.writeTo(output, rsfFormatter, indexName, totalEntries1, totalEntries2))
                 .header("Content-Disposition", rsfFileName).build();
     }
 
@@ -139,7 +109,7 @@ public class DataDownload {
             throw new BadRequestException("total-entries-2 must be greater than or equal to total-entries-1");
         }
 
-        int totalEntriesInRegister = register.getTotalEntries();
+        int totalEntriesInRegister = register.getTotalEntries(EntryType.user);
 
         if (totalEntries2 > totalEntriesInRegister) {
             throw new BadRequestException("total-entries-2 must not exceed number of total entries in the register");

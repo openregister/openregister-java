@@ -1,7 +1,7 @@
 package uk.gov.register.service;
 
 import uk.gov.register.configuration.ConfigManager;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
@@ -40,7 +40,7 @@ public class EnvironmentValidator {
             throws FieldDefinitionException, RegisterDefinitionException {
         Register register = registerContext.buildOnDemandRegister();
 
-        if (register.getTotalRecords(IndexNames.METADATA) == 0) {
+        if (register.getTotalRecords(EntryType.system) == 0) {
             return;
         }
 

@@ -1,6 +1,5 @@
 package uk.gov.register.views;
 
-import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -13,19 +12,12 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.text.IsEmptyString.isEmptyString;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HomePageViewTest {
@@ -33,24 +25,8 @@ public class HomePageViewTest {
 
     @Mock
     RequestContext mockRequestContext;
-    @Mock
+    HomepageContent homepageContent = new HomepageContent();
 
-    HomepageContent homepageContent = new HomepageContent(emptyList());
-
-    @Test
-    public void getIndexes_shouldGetIndexesIfAvailable() {
-        final RegisterReadOnly register = mock(RegisterReadOnly.class);
-        HomepageContent homepageContent = new HomepageContent(emptyList());
-        HomePageView homePageView = new HomePageView(null,  mockRequestContext, 1, Optional.empty(), homepageContent, registerResolver, register);
-
-        assertThat(homePageView.getHomepageContent().getIndexes(), is(emptyList()));
-
-        final List<String> indexes = Arrays.asList("current-countries", "local-authority-by-type");
-        homepageContent = new HomepageContent(indexes);
-        homePageView = new HomePageView(null,  mockRequestContext, 1, Optional.empty(), homepageContent, registerResolver, register);
-
-        assertThat(homePageView.getHomepageContent().getIndexes(), IsIterableContainingInOrder.contains("current-countries", "local-authority-by-type"));
-    }
 
     @Test
     public void getLastUpdatedTime_formatsTheLocalDateTimeToUKDateTimeFormat() {

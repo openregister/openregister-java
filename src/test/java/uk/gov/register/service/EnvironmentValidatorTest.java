@@ -9,7 +9,6 @@ import uk.gov.register.configuration.RegistersConfiguration;
 import uk.gov.register.core.*;
 import uk.gov.register.exceptions.FieldDefinitionException;
 import uk.gov.register.exceptions.RegisterDefinitionException;
-import uk.gov.register.configuration.IndexFunctionConfiguration.IndexNames;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -113,7 +112,7 @@ public class EnvironmentValidatorTest {
 		when(localRegisterMetadata.getRegisterId()).thenReturn(new RegisterId("postcode"));
 		
 		Register register = mock(Register.class);
-		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(3);
+		when(register.getTotalRecords(EntryType.system)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
 		
 		RegisterContext registerContext = mock(RegisterContext.class);
@@ -139,7 +138,7 @@ public class EnvironmentValidatorTest {
 		Field pointField = new Field("point", "point", null, Cardinality.ONE, "A geographical location");
 		
 		Register register = mock(Register.class);
-		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(3);
+		when(register.getTotalRecords(EntryType.system)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
 		when(register.getFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
 
@@ -169,7 +168,7 @@ public class EnvironmentValidatorTest {
 		Field pointField = new Field("point", "point", null, Cardinality.ONE, "A geographical location");
 
 		Register register = mock(Register.class);
-		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(3);
+		when(register.getTotalRecords(EntryType.system)).thenReturn(3);
 		when(register.getRegisterMetadata()).thenReturn(localRegisterMetadata);
 		when(register.getFieldsByName()).thenReturn(ImmutableMap.of("postcode", postcodeField, "point", pointField));
 
@@ -185,7 +184,7 @@ public class EnvironmentValidatorTest {
 	@Test
 	public void validateExistingMetadataAgainstEnvironment_shouldValidateSuccessfully_whenExistingRegisterIsEmpty() {
 		Register register = mock(Register.class);
-		when(register.getTotalRecords(IndexNames.METADATA)).thenReturn(0);
+		when(register.getTotalRecords(EntryType.system)).thenReturn(0);
 
 		RegisterContext registerContext = mock(RegisterContext.class);
 		when(registerContext.buildOnDemandRegister()).thenReturn(register);

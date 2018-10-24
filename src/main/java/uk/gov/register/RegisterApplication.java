@@ -132,8 +132,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(environment.healthChecks()).to(HealthCheckRegistry.class);
                 bind(allTheRegisters);
                 bindFactory(Factories.RegisterContextProvider.class).to(RegisterContext.class)
-                        .to(DeleteRegisterDataConfiguration.class).to(ResourceConfiguration.class)
-                        .to(HomepageContentConfiguration.class).to(IndexConfiguration.class);
+                        .to(DeleteRegisterDataConfiguration.class).to(ResourceConfiguration.class);
                 bindAsContract(RegisterFieldsConfiguration.class);
 
                 bind(configManager).to(ConfigManager.class);

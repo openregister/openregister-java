@@ -2,6 +2,7 @@ package uk.gov.register.resources;
 
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.util.HashValue;
@@ -45,7 +46,7 @@ public class VerifiableLogResourceTest {
 
         EntryProof expectedProof = new EntryProof("3", expectedAuditPath);
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         when(registerMock.getEntryProof(entryNumber, totalEntries)).thenReturn(expectedProof);
 
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
@@ -67,7 +68,7 @@ public class VerifiableLogResourceTest {
 
         ConsistencyProof expectedProof = new ConsistencyProof(expectedConsistencyNodes);
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         when(registerMock.getConsistencyProof(totalEntries1, totalEntries2)).thenReturn(expectedProof);
 
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
@@ -82,7 +83,7 @@ public class VerifiableLogResourceTest {
     @Test(expected = BadRequestException.class)
     public void entryProofShouldThrowBadRequestExceptionIfEntryNumberTooSmall() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
 
         vlResource.entryProof(0, 5);
@@ -91,7 +92,7 @@ public class VerifiableLogResourceTest {
     @Test(expected = BadRequestException.class)
     public void entryProofShouldThrowBadRequestExceptionIfEntryNumberGreaterThanTotalEntries() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
 
         vlResource.entryProof(5, 3);
@@ -100,7 +101,7 @@ public class VerifiableLogResourceTest {
     @Test(expected = BadRequestException.class)
     public void entryProofShouldThrowBadRequestExceptionIfTotalEntriesGreaterThanSizeOfRegister() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
 
         vlResource.entryProof(5, 10);
@@ -109,7 +110,7 @@ public class VerifiableLogResourceTest {
     @Test(expected = BadRequestException.class)
     public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries1TooSmall() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
 
         vlResource.consistencyProof(0, 5);
@@ -118,7 +119,7 @@ public class VerifiableLogResourceTest {
     @Test(expected = BadRequestException.class)
     public void consistencyProofshouldThrowBadRequestExceptionIfTotalEntries2SmallerThanTotalEntries1() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
 
         vlResource.consistencyProof(5, 3);
@@ -127,7 +128,7 @@ public class VerifiableLogResourceTest {
     @Test(expected = BadRequestException.class)
     public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries2GreaterThanSizeOfRegister() {
         RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries()).thenReturn(8);
+        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
         VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
 
         vlResource.consistencyProof(5, 10);
