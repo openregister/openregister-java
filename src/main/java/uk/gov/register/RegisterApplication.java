@@ -21,6 +21,7 @@ import uk.gov.ida.dropwizard.logstash.LogstashBundle;
 import uk.gov.organisation.client.GovukOrganisationClient;
 import uk.gov.register.auth.BasicAuthFilter;
 import uk.gov.register.auth.RegisterAuthDynamicFeature;
+import uk.gov.register.commands.MigrateCommand;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
 import uk.gov.register.db.Factories;
@@ -85,6 +86,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         bootstrap.addBundle(new AssetsBundle("/assets"));
         bootstrap.addBundle(new CorsBundle());
         bootstrap.addBundle(new LogstashBundle());
+
+        bootstrap.addCommand(new MigrateCommand(this));
 
         System.setProperty("java.protocol.handler.pkgs", "uk.gov.register.protocols");
     }
