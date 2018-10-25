@@ -110,7 +110,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
         AllTheRegisters allTheRegisters = configuration.getAllTheRegisters().build(configManager, databaseManager, environmentValidator, configuration);
         allTheRegisters.stream().forEach(registerContext -> {
-            registerContext.migrate();
+            //registerContext.migrate();
             registerContext.validate();
             
             CompletableFuture.runAsync(() -> registerContext.buildOnDemandRegister().getRegisterProof());
