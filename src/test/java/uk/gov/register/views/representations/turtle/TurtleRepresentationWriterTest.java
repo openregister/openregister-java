@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import uk.gov.register.core.*;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.views.EntryView;
 import uk.gov.register.views.ItemView;
 
 import java.io.ByteArrayOutputStream;
@@ -51,11 +52,12 @@ public class TurtleRepresentationWriterTest {
     @Test
     public void rendersEntryIdentifierFromRequestContext() throws Exception {
         Entry entry = new Entry(52, new HashValue(HashingAlgorithm.SHA256, "hash"), Instant.now(), "key", EntryType.user);
+        EntryView entryView = new EntryView(entry);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         EntryTurtleWriter writer = new EntryTurtleWriter(() -> new RegisterId("address"), registerResolver);
-        writer.writeTo(entry, entry.getClass(), null, null, null, null, outputStream);
+        writer.writeTo(entryView, entryView.getClass(), null, null, null, null, outputStream);
         byte[] bytes = outputStream.toByteArray();
         String generatedTtl = new String(bytes, StandardCharsets.UTF_8);
         assertThat(generatedTtl, containsString("<http://address.test.register.gov.uk/entries/52>"));

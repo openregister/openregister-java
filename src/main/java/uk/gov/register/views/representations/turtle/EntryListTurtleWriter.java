@@ -6,6 +6,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.views.EntryListView;
+import uk.gov.register.views.EntryView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -24,8 +25,8 @@ public class EntryListTurtleWriter extends TurtleRepresentationWriter<EntryListV
     @Override
     protected Model rdfModelFor(EntryListView view) {
         Model model = ModelFactory.createDefaultModel();
-        for (Entry entry : view.getEntries()) {
-            model.add(new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry));
+        for (EntryView entryView : view.getEntries()) {
+            model.add(new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entryView));
         }
         return model;
     }

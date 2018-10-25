@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EntryListView implements CsvRepresentationView {
 
@@ -50,8 +51,8 @@ public class EntryListView implements CsvRepresentationView {
 
 
     @JsonValue
-    public Collection<Entry> getEntries() {
-        return entries;
+    public Collection<EntryView> getEntries() {
+        return entries.stream().map(entry -> new EntryView(entry)).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unused, used from templates")
@@ -66,8 +67,8 @@ public class EntryListView implements CsvRepresentationView {
     }
 
     @Override
-    public CsvRepresentation<Collection<Entry>> csvRepresentation() {
-        return new CsvRepresentation<>(Entry.csvSchema(), getEntries());
+    public CsvRepresentation<Collection<EntryView>> csvRepresentation() {
+        return new CsvRepresentation<>(EntryView.csvSchema(), getEntries());
     }
 
     private ObjectNode getEntryJson(final Entry entry) {
