@@ -70,7 +70,7 @@ public class EntryView implements CsvRepresentationView<EntryView> {
     public static CsvSchema csvSchema() {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
-        return csvMapper.schemaFor(uk.gov.register.core.Entry.class);
+        return csvMapper.schemaFor(EntryView.class);
     }
 
     public static CsvSchema csvSchemaWithOmittedFields(List<String> fieldsToRemove) {

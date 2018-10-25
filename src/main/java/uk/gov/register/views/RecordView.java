@@ -20,7 +20,8 @@ public class RecordView extends RecordsView {
         return getEntry().getKey();
     }
 
-    private Entry getEntry() {
-        return getRecords().keySet().stream().findFirst().get();
+    private EntryView getEntry() {
+        Entry entry = getRecords().keySet().stream().findFirst().get();
+        return new EntryView(entry);
     }
 }
