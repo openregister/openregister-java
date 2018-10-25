@@ -88,8 +88,8 @@ public class ViewFactory {
         return getAttributionView("item.html", getItemMediaView(item));
     }
 
-    public AttributionView<Entry> getEntryView(final Entry entry) {
-        return getAttributionView("entry.html", entry);
+    public AttributionView<EntryView> getEntryView(final Entry entry) {
+        return getAttributionView("entry.html", new EntryView(entry));
     }
 
     public PaginatedView<EntryListView> getEntriesView(final Collection<Entry> entries, final Pagination pagination) {
