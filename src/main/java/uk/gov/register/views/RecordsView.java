@@ -126,7 +126,8 @@ public class RecordsView implements CsvRepresentationView {
     }
 
     private ObjectNode getEntryJson(final Entry entry) {
-        final ObjectNode jsonNode = jsonObjectMapper.convertValue(entry, ObjectNode.class);
+        final EntryView entryView = new EntryView(entry);
+        final ObjectNode jsonNode = jsonObjectMapper.convertValue(entryView, ObjectNode.class);
         jsonNode.remove("item-hash");
         return jsonNode;
     }

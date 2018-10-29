@@ -9,6 +9,7 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.EntryListView;
+import uk.gov.register.views.EntryView;
 import uk.gov.register.views.PaginatedView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -57,7 +58,7 @@ public class EntryResource {
     @Path("/entries/{entry-number}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<Entry> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
+    public AttributionView<EntryView> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = register.getEntry(entryNumber);
         return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
     }

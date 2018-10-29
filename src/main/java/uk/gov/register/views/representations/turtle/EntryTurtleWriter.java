@@ -7,6 +7,7 @@ import org.apache.jena.rdf.model.Resource;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
+import uk.gov.register.views.EntryView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -15,7 +16,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 @Produces(ExtraMediaType.TEXT_TTL)
-public class EntryTurtleWriter extends TurtleRepresentationWriter<Entry> {
+public class EntryTurtleWriter extends TurtleRepresentationWriter<EntryView> {
 
     @Inject
     public EntryTurtleWriter(javax.inject.Provider<RegisterId> registerIdProvider, RegisterResolver registerResolver) {
@@ -23,11 +24,11 @@ public class EntryTurtleWriter extends TurtleRepresentationWriter<Entry> {
     }
 
     @Override
-    protected Model rdfModelFor(Entry entry) {
-        return rdfModelFor(entry, true);
+    protected Model rdfModelFor(EntryView entryView) {
+        return rdfModelFor(entryView, true);
     }
 
-    protected Model rdfModelFor(Entry entry, boolean includeKey) {
+    protected Model rdfModelFor(EntryView entry, boolean includeKey) {
         Model model = ModelFactory.createDefaultModel();
         Property entryNumberProperty = model.createProperty(SPEC_PREFIX + "entry-number-field");
         Property entryTimestampProperty = model.createProperty(SPEC_PREFIX + "entry-timestamp-field");

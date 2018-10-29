@@ -8,6 +8,7 @@ import org.apache.jena.rdf.model.StmtIterator;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterResolver;
+import uk.gov.register.views.EntryView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -33,7 +34,8 @@ public class RecordTurtleWriter extends TurtleRepresentationWriter<Map.Entry<Ent
         ItemView itemView = record.getValue();
 
         Model recordModel = ModelFactory.createDefaultModel();
-        Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entry, false);
+        EntryView entryView = new EntryView(entry);
+        Model entryModel = new EntryTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(entryView, false);
         Model itemModel = new ItemTurtleWriter(registerIdProvider, registerResolver).rdfModelFor(itemView);
 
         Resource recordResource = recordModel.createResource(recordUri(entry.getKey()).toString());
