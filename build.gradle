@@ -76,6 +76,7 @@ dependencies {
         exclude group: 'org.slf4j'
     }
     compile jetty
+    compile cfEnv
 
     testCompile junit, mockito, dropwizardTest, wiremock
     testCompile dropwizardTest, jsoup, jsonAssert

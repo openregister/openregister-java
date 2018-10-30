@@ -3,6 +3,7 @@ package uk.gov.register.resources.v2;
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.resources.FutureAPI;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+@FutureAPI
 @Path("/v2/")
 public class SearchResource {
 

@@ -9,6 +9,7 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.providers.params.IntegerParam;
+import uk.gov.register.resources.FutureAPI;
 import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.resources.IndexSizePagination;
 import uk.gov.register.resources.Pagination;
@@ -23,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-
+@FutureAPI
 @Path("/v2/")
 public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;

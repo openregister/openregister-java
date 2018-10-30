@@ -7,6 +7,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
+import uk.gov.register.resources.FutureAPI;
 import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.StartLimitPagination;
@@ -23,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
+@FutureAPI
 @Path("/v2/")
 public class EntryResource {
 

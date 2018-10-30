@@ -3,6 +3,7 @@ package uk.gov.register.resources.v2;
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.resources.FutureAPI;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import static uk.gov.register.resources.RedirectResource.redirectByPath;
 
+@FutureAPI
 @Path("/v2/proof")
 public class VerifiableLogResource {
     private final RegisterReadOnly register;

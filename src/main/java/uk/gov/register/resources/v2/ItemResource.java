@@ -5,6 +5,7 @@ import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
+import uk.gov.register.resources.FutureAPI;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.ItemView;
@@ -16,6 +17,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
+@FutureAPI
 @Path("/v2/items")
 public class ItemResource {
     private final RegisterReadOnly register;

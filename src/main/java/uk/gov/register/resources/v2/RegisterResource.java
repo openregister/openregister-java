@@ -3,6 +3,7 @@ package uk.gov.register.resources.v2;
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.resources.FutureAPI;
 import uk.gov.register.views.RegisterDetailView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -13,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+@FutureAPI
 @Path("/v2/")
 public class RegisterResource {
     private final RegisterReadOnly register;
