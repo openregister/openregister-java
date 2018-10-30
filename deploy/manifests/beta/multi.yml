@@ -26,6 +26,9 @@ applications:
     - government-domain
     - government-organisation
     - government-service
+    - information-sharing-agreement-0001
+    - information-sharing-agreement-powers-and-objectives-0001
+    - information-sharing-agreement-specified-person-0001
     - internal-drainage-board
     - jobcentre
     - jobcentre-district
