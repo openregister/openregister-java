@@ -18,20 +18,11 @@ import java.util.NoSuchElementException;
 @Provider
 @FutureAPI
 public class FutureAPIFilter implements ContainerRequestFilter {
-
-    private final ViewFactory viewFactory;
-
-    @Inject
-    public FutureAPIFilter(ViewFactory viewFactory) {
-        this.viewFactory = viewFactory;
-    }
-
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         if (isBetaEnvironment()) {
             Response response = Response
                     .status(Response.Status.NOT_IMPLEMENTED)
-                    .entity(viewFactory.exceptionNotFoundView())
                     .build();
 
             requestContext.abortWith(response);
