@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
@@ -9,6 +9,10 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.providers.params.IntegerParam;
+import uk.gov.register.resources.HttpServletResponseAdapter;
+import uk.gov.register.resources.IndexSizePagination;
+import uk.gov.register.resources.Pagination;
+import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -30,7 +34,7 @@ public class RecordResource {
     public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
-        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
+        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.getHttpServletResponse());
     }
 
     @GET

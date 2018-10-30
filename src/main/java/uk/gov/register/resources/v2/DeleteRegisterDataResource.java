@@ -1,8 +1,9 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.exceptions.NoSuchConfigException;
+import uk.gov.register.resources.DataDeleteNotAllowed;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;

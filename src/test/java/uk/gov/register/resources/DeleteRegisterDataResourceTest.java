@@ -2,6 +2,7 @@ package uk.gov.register.resources;
 
 import org.junit.Test;
 import uk.gov.register.core.RegisterContext;
+import uk.gov.register.resources.v2.DeleteRegisterDataResource;
 
 import javax.ws.rs.core.Response;
 
