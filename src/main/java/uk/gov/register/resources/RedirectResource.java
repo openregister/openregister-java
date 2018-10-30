@@ -1,4 +1,4 @@
-package uk.gov.register.resources.v2;
+package uk.gov.register.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;

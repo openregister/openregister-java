@@ -14,7 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static uk.gov.register.resources.v2.RedirectResource.redirectByPath;
+import static uk.gov.register.resources.RedirectResource.redirectByPath;
 
 @Path("/proof")
 public class VerifiableLogResource {

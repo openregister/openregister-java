@@ -1,4 +1,4 @@
-package uk.gov.register.resources.v2;
+package uk.gov.register.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.RegisterContext;
