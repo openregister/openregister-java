@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.EntryType;
@@ -14,7 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static uk.gov.register.resources.RedirectResource.redirectByPath;
+import static uk.gov.register.resources.v2.RedirectResource.redirectByPath;
 
 @Path("/proof")
 public class VerifiableLogResource {
