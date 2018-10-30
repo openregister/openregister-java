@@ -1,10 +1,11 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.*;
+import uk.gov.register.resources.v2.SearchResource;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.NotFoundException;

@@ -1,8 +1,9 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v1;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.register.resources.v2.EntryResource;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.Produces;

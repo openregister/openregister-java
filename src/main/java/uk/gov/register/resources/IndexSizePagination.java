@@ -14,7 +14,7 @@ public class IndexSizePagination implements Pagination {
     private final int totalEntries;
     private final int pageSize;
 
-    IndexSizePagination(Optional<Integer> optionalPageIndex, Optional<Integer> optionalPageSize, int totalEntries) {
+    public IndexSizePagination(Optional<Integer> optionalPageIndex, Optional<Integer> optionalPageSize, int totalEntries) {
         this.totalEntries = totalEntries;
 
         this.pageIndex = optionalPageIndex.orElse(1);
@@ -37,7 +37,7 @@ public class IndexSizePagination implements Pagination {
         }
     }
 
-    int offset() {
+    public int offset() {
         return (pageIndex - 1) * pageSize;
     }
 
