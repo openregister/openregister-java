@@ -17,6 +17,7 @@ import uk.gov.register.resources.RequestContext;
 import uk.gov.register.views.*;
 import uk.gov.register.views.representations.ExtraMediaType;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 
 @FutureAPI
+
+@PermitAll
 @Path("/v2/")
 public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
