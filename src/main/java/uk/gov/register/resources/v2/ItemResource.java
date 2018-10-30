@@ -16,7 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
-@Path("/items")
+@Path("/v2/items")
 public class ItemResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;

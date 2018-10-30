@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Path("/")
+@Path("/v2/")
 public class RecordResource {
     private final HttpServletResponseAdapter httpServletResponseAdapter;
     private final RegisterReadOnly register;

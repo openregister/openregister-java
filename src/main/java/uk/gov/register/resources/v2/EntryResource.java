@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-@Path("/")
+@Path("/v2/")
 public class EntryResource {
 
     private final RegisterReadOnly register;
