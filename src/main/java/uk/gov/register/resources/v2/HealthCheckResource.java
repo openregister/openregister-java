@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;

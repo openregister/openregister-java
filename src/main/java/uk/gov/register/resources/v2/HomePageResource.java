@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.views.View;

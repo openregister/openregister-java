@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
@@ -7,6 +7,9 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.providers.params.IntegerParam;
+import uk.gov.register.resources.HttpServletResponseAdapter;
+import uk.gov.register.resources.RequestContext;
+import uk.gov.register.resources.StartLimitPagination;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.EntryListView;
 import uk.gov.register.views.PaginatedView;
@@ -34,7 +37,7 @@ public class EntryResource {
         this.register = register;
         this.viewFactory = viewFactory;
         this.requestContext = requestContext;
-        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.httpServletResponse);
+        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.getHttpServletResponse());
         this.registerPrimaryKey = register.getRegisterId();
     }
 
