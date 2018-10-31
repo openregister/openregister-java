@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.HashingAlgorithm;
@@ -16,7 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
-@Path("/items")
+@Path("/dev/items")
 public class ItemResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;

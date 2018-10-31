@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.RegisterId;
@@ -14,7 +14,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@Path("/")
+@Path("/dev/")
 public class SearchResource {
 
     private final RegisterId registerPrimaryKey;

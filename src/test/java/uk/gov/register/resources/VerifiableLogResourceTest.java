@@ -5,6 +5,7 @@ import org.junit.Test;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.resources.v2.VerifiableLogResource;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
