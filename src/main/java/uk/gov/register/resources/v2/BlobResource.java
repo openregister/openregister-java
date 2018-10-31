@@ -16,28 +16,28 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
-@Path("/dev/items")
-public class ItemResource {
+@Path("/dev/blobs")
+public class BlobResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
 
     @Inject
-    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory) {
+    public BlobResource(RegisterReadOnly register, ViewFactory viewFactory) {
         this.register = register;
         this.viewFactory = viewFactory;
     }
 
     @GET
-    @Path("/sha-256:{item-hash}")
+    @Path("/sha-256:{blob-hash}")
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
-    public AttributionView<ItemView> getItemWebViewByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
-        return getItem(itemHash).map(viewFactory::getItemView)
-                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
+    public AttributionView<ItemView> getBlobWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
+        return getBlob(blobHash).map(viewFactory::getItemView)
+                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + blobHash));
     }
 
     @GET
-    @Path("/sha-256:{item-hash}")
+    @Path("/sha-256:{blob-hash}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -47,13 +47,13 @@ public class ItemResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public ItemView getItemDataByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
-        return getItem(itemHash).map(viewFactory::getItemMediaView)
-                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
+    public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
+        return getBlob(blobHash).map(viewFactory::getItemMediaView)
+                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + blobHash));
     }
 
-    private Optional<Item> getItem(String itemHash) {
-        HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
+    private Optional<Item> getBlob(String blobHash) {
+        HashValue hash = new HashValue(HashingAlgorithm.SHA256, blobHash);
         return register.getItem(hash);
     }
 }
