@@ -187,6 +187,11 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
+    public Collection<Item> getAllItems(EntryType entryType) {
+        return postgresDataAccessLayer.getAllItems(entryType);
+    }
+
+    @Override
     public Iterator<Item> getItemIterator(EntryType entryType) {
         // It's possible for an entry to be loaded where the item already exists in the database and is therefore not batched (as per RSF rules).
         // Therefore this statement only entered if entire register is batched.

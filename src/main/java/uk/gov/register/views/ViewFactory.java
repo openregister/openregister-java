@@ -113,6 +113,10 @@ public class ViewFactory {
         return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
     }
 
+    public ItemListView getItemsMediaView(final Collection<Item> items) {
+        return new ItemListView(items, register.get().getFieldsByName());
+    }
+
     public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
         return new RecordView(record, register.get().getFieldsByName(), itemConverter);
     }

@@ -1,20 +1,31 @@
 package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.jersey.params.IntParam;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
+import uk.gov.register.providers.params.IntegerParam;
+import uk.gov.register.resources.RequestContext;
+import uk.gov.register.resources.StartLimitPagination;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
+import uk.gov.register.views.ItemListView;
 import uk.gov.register.views.ItemView;
+import uk.gov.register.views.PaginatedView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Path("/dev/blobs")
 public class BlobResource {
@@ -50,6 +61,21 @@ public class BlobResource {
     public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
         return getBlob(blobHash).map(viewFactory::getItemMediaView)
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + blobHash));
+    }
+
+    @GET
+    @Path("/")
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_CSV,
+    })
+    @Timed
+    public ItemListView listBlobs() throws FieldConversionException {
+        Collection<Item> items = register.getAllItems(EntryType.user);
+
+        // TODO: allow this resource to be paginated
+        // and improve rendering performance
+        return viewFactory.getItemsMediaView(items);
     }
 
     private Optional<Item> getBlob(String blobHash) {

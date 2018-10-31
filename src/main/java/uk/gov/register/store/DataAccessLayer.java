@@ -18,6 +18,7 @@ public interface DataAccessLayer {
     void addItem(Item item);
     Optional<Item> getItem(HashValue hash);
     Collection<Item> getAllItems();
+    Collection<Item> getAllItems(EntryType entryType);
     Iterator<Item> getItemIterator(EntryType entryType);
     Iterator<Item> getItemIterator(int startEntryNumber, int endEntryNumber);
 
