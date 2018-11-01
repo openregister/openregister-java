@@ -75,7 +75,18 @@ public class BlobResource {
 
         // TODO: allow this resource to be paginated
         // and improve rendering performance
-        return viewFactory.getItemsMediaView(items);
+        return viewFactory.getItemsMediaView(items.stream().limit(100).collect(Collectors.toList()));
+    }
+
+    @GET
+    @Path("/")
+    @Produces(ExtraMediaType.TEXT_HTML)
+    @Timed
+    public AttributionView<ItemListView> listBlobsWebView() {
+        Collection<Item> items = register.getAllItems(EntryType.user);
+
+        // TODO: allow this resource to be paginated
+        return viewFactory.getItemListView(items.stream().limit(100).collect(Collectors.toList()));
     }
 
     private Optional<Item> getBlob(String blobHash) {

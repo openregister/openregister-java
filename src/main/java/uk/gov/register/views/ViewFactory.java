@@ -88,6 +88,10 @@ public class ViewFactory {
         return getAttributionView("item.html", getItemMediaView(item));
     }
 
+    public AttributionView<ItemListView> getItemListView(final Collection<Item> items) throws FieldConversionException {
+        return getAttributionView("v2_blobs.html", getItemsMediaView(items));
+    }
+
     public AttributionView<EntryView> getEntryView(final Entry entry) {
         return getAttributionView("entry.html", new EntryView(entry));
     }
