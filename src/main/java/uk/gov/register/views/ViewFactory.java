@@ -96,6 +96,10 @@ public class ViewFactory {
         return getAttributionView("entry.html", new EntryView(entry));
     }
 
+    public AttributionView<uk.gov.register.views.v2.EntryView> getV2EntryView(Entry entry) {
+        return getAttributionView("v2_entry.html", new uk.gov.register.views.v2.EntryView(entry));
+    }
+
     public PaginatedView<EntryListView> getEntriesView(final Collection<Entry> entries, final Pagination pagination) {
         return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries));
     }

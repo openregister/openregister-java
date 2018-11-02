@@ -12,7 +12,7 @@ import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.StartLimitPagination;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.EntryListView;
-import uk.gov.register.views.EntryView;
+import uk.gov.register.views.v2.EntryView;
 import uk.gov.register.views.PaginatedView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -63,18 +63,14 @@ public class EntryResource {
     @Timed
     public AttributionView<EntryView> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
         Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
+        return entry.map(viewFactory::getV2EntryView).orElseThrow(NotFoundException::new);
     }
 
     @GET
     @Path("/entries/{entry-number}")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
-            ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
+            ExtraMediaType.TEXT_CSV
     })
     @Timed
     public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
@@ -87,11 +83,7 @@ public class EntryResource {
     @Path("/entries")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
-            ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
+            ExtraMediaType.TEXT_CSV
     })
     @Timed
     public EntryListView entries(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
