@@ -13,7 +13,12 @@ import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.resources.IndexSizePagination;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.views.*;
+import uk.gov.register.views.AttributionView;
+import uk.gov.register.views.PaginatedView;
+import uk.gov.register.views.RecordView;
+import uk.gov.register.views.RecordsView;
+import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.v2.EntryListView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -26,9 +31,9 @@ import java.util.Optional;
 
 @Path("/dev/")
 public class RecordResource {
-    private final HttpServletResponseAdapter httpServletResponseAdapter;
-    private final RegisterReadOnly register;
-    private final ViewFactory viewFactory;
+    protected final HttpServletResponseAdapter httpServletResponseAdapter;
+    protected final RegisterReadOnly register;
+    protected final ViewFactory viewFactory;
 
     @Inject
     public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
@@ -44,8 +49,6 @@ public class RecordResource {
     public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) throws FieldConversionException {
         return viewFactory.getRecordView(getRecordByKey(key));
     }
-
-
 
     @GET
     @Path("/records/{record-key}")
@@ -76,10 +79,11 @@ public class RecordResource {
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
-        return viewFactory.getRecordEntriesView(
-                key, allEntries,
-                new IndexSizePagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
-        );
+
+        EntryListView entryListView = new EntryListView(allEntries, key);
+        Pagination pagination = new IndexSizePagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size());
+
+        return viewFactory.getPaginatedView("v2-entries.html", entryListView, pagination);
     }
 
     @GET

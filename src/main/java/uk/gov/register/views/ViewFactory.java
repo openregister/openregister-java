@@ -96,10 +96,6 @@ public class ViewFactory {
 
     }
 
-    public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<Entry> entries, final Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries, recordKey));
-    }
-
     public AttributionView<RecordView> getRecordView(final RecordView record) {
         return getAttributionView("record.html", record);
     }
