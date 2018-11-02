@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 
 @Path("/dev/blobs")
 public class BlobResource {
-    private final RegisterReadOnly register;
-    private final ViewFactory viewFactory;
-    private final ItemConverter itemConverter;
+    protected final RegisterReadOnly register;
+    protected final ViewFactory viewFactory;
+    protected final ItemConverter itemConverter;
 
     @Inject
     public BlobResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter) {
@@ -43,7 +43,7 @@ public class BlobResource {
     @Timed
     public AttributionView<ItemView> getBlobWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
         return getBlob(blobHash).map(blob -> viewFactory.getAttributionView("v2-blob.html", buildItemView(blob)))
-                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + blobHash));
+                .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + blobHash));
     }
 
     @GET
@@ -59,7 +59,7 @@ public class BlobResource {
     @Timed
     public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
         return getBlob(blobHash).map(blob -> buildItemView(blob))
-                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + blobHash));
+                .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + blobHash));
     }
 
     @GET
@@ -89,22 +89,22 @@ public class BlobResource {
         return viewFactory.getAttributionView("v2-blobs.html", itemListView);
     }
 
-    private Optional<Item> getBlob(String blobHash) {
+    protected Optional<Item> getBlob(String blobHash) {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, blobHash);
         return register.getItem(hash);
     }
 
-    private Map<String, Field> getFieldsByName() {
+    protected Map<String, Field> getFieldsByName() {
         return register.getFieldsByName();
     }
 
-    private ItemView buildItemView(Item item) {
+    protected ItemView buildItemView(Item item) {
         Map<String, Field> fieldsByName = getFieldsByName();
         Map<String, FieldValue> itemKeyValuePairs = itemConverter.convertItem(item, fieldsByName);
         return new ItemView(item.getSha256hex(), itemKeyValuePairs, fieldsByName.values());
     }
 
-    private ItemListView buildItemListView(Collection<Item> items) {
+    protected ItemListView buildItemListView(Collection<Item> items) {
         return new ItemListView(items, getFieldsByName());
     }
 }
