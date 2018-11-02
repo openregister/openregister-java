@@ -1,21 +1,18 @@
 package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.jersey.params.IntParam;
-import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
+import uk.gov.register.core.Field;
+import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
-import uk.gov.register.providers.params.IntegerParam;
-import uk.gov.register.resources.RequestContext;
-import uk.gov.register.resources.StartLimitPagination;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
 import uk.gov.register.views.ItemListView;
 import uk.gov.register.views.ItemView;
-import uk.gov.register.views.PaginatedView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
@@ -23,7 +20,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,11 +28,13 @@ import java.util.stream.Collectors;
 public class BlobResource {
     private final RegisterReadOnly register;
     private final ViewFactory viewFactory;
+    private final ItemConverter itemConverter;
 
     @Inject
-    public BlobResource(RegisterReadOnly register, ViewFactory viewFactory) {
+    public BlobResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter) {
         this.register = register;
         this.viewFactory = viewFactory;
+        this.itemConverter = itemConverter;
     }
 
     @GET
@@ -43,7 +42,7 @@ public class BlobResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<ItemView> getBlobWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
-        return getBlob(blobHash).map(viewFactory::getItemView)
+        return getBlob(blobHash).map(blob -> viewFactory.getAttributionView("v2-blob.html", buildItemView(blob)))
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + blobHash));
     }
 
@@ -59,7 +58,7 @@ public class BlobResource {
     })
     @Timed
     public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
-        return getBlob(blobHash).map(viewFactory::getItemMediaView)
+        return getBlob(blobHash).map(blob -> buildItemView(blob))
                 .orElseThrow(() -> new NotFoundException("No item found with item hash: " + blobHash));
     }
 
@@ -75,7 +74,7 @@ public class BlobResource {
 
         // TODO: allow this resource to be paginated
         // and improve rendering performance
-        return viewFactory.getItemsMediaView(items.stream().limit(100).collect(Collectors.toList()));
+        return buildItemListView(items.stream().limit(100).collect(Collectors.toList()));
     }
 
     @GET
@@ -84,13 +83,28 @@ public class BlobResource {
     @Timed
     public AttributionView<ItemListView> listBlobsWebView() {
         Collection<Item> items = register.getAllItems(EntryType.user);
+        ItemListView itemListView = buildItemListView(items.stream().limit(100).collect(Collectors.toList()));
 
         // TODO: allow this resource to be paginated
-        return viewFactory.getItemListView(items.stream().limit(100).collect(Collectors.toList()));
+        return viewFactory.getAttributionView("v2-blobs.html", itemListView);
     }
 
     private Optional<Item> getBlob(String blobHash) {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, blobHash);
         return register.getItem(hash);
+    }
+
+    private Map<String, Field> getFieldsByName() {
+        return register.getFieldsByName();
+    }
+
+    private ItemView buildItemView(Item item) {
+        Map<String, Field> fieldsByName = getFieldsByName();
+        Map<String, FieldValue> itemKeyValuePairs = itemConverter.convertItem(item, fieldsByName);
+        return new ItemView(item.getSha256hex(), itemKeyValuePairs, fieldsByName.values());
+    }
+
+    private ItemListView buildItemListView(Collection<Item> items) {
+        return new ItemListView(items, getFieldsByName());
     }
 }

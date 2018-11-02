@@ -1,13 +1,19 @@
 package uk.gov.register.views;
 
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.configuration.*;
-import uk.gov.register.core.*;
+import uk.gov.register.configuration.HomepageContent;
+import uk.gov.register.configuration.PublicBodiesConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Field;
+import uk.gov.register.core.PublicBody;
+import uk.gov.register.core.Record;
+import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.views.representations.CsvRepresentation;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -90,14 +96,6 @@ public class ViewFactory {
 
     }
 
-    public AttributionView<ItemView> getItemView(final Item item) throws FieldConversionException {
-        return getAttributionView("item.html", getItemMediaView(item));
-    }
-
-    public AttributionView<ItemListView> getItemListView(final Collection<Item> items) throws FieldConversionException {
-        return getAttributionView("v2-blobs.html", getItemsMediaView(items));
-    }
-
     public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<Entry> entries, final Pagination pagination) {
         return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries, recordKey));
     }
@@ -111,14 +109,6 @@ public class ViewFactory {
                 recordsView);
     }
 
-    public ItemView getItemMediaView(final Item item) throws FieldConversionException {
-        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
-    }
-
-    public ItemListView getItemsMediaView(final Collection<Item> items) {
-        return new ItemListView(items, register.get().getFieldsByName());
-    }
-
     public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
         return new RecordView(record, register.get().getFieldsByName(), itemConverter);
     }
@@ -129,9 +119,5 @@ public class ViewFactory {
 
     private PublicBody getRegistry() {
         return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
-    }
-
-    private Collection<Field> getFields() {
-        return register.get().getFieldsByName().values();
     }
 }
