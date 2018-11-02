@@ -7,6 +7,7 @@ import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
+import uk.gov.register.views.representations.CsvRepresentation;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -84,24 +85,17 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), register.get(), registerResolver, fieldValueMap);
     }
 
+    public <T> PaginatedView<T> getPaginatedView(final String templateName, final T view, final Pagination pagination) {
+        return new PaginatedView<T>(templateName, requestContext, getRegistry(), register.get(), registerResolver, pagination, view);
+
+    }
+
     public AttributionView<ItemView> getItemView(final Item item) throws FieldConversionException {
         return getAttributionView("item.html", getItemMediaView(item));
     }
 
     public AttributionView<ItemListView> getItemListView(final Collection<Item> items) throws FieldConversionException {
-        return getAttributionView("v2_blobs.html", getItemsMediaView(items));
-    }
-
-    public AttributionView<EntryView> getEntryView(final Entry entry) {
-        return getAttributionView("entry.html", new EntryView(entry));
-    }
-
-    public AttributionView<uk.gov.register.views.v2.EntryView> getV2EntryView(Entry entry) {
-        return getAttributionView("v2_entry.html", new uk.gov.register.views.v2.EntryView(entry));
-    }
-
-    public PaginatedView<EntryListView> getEntriesView(final Collection<Entry> entries, final Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries));
+        return getAttributionView("v2-blobs.html", getItemsMediaView(items));
     }
 
     public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<Entry> entries, final Pagination pagination) {

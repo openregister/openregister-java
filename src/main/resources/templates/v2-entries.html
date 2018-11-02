@@ -33,7 +33,7 @@
           <thead>
             <tr>
               <th scope="col">Entry</th>
-              <th scope="col">item-hash</th>
+              <th scope="col">blob-hash</th>
               <th scope="col">entry-timestamp</th>
               <th scope="col">key</th>
             </tr>
@@ -41,10 +41,10 @@
           <tbody>
             <tr th:each="entry : ${content.entries}">
               <td>
-                <a th:href="${'/entries/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
+                <a th:href="${'/dev/entries/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
               </td>
               <td>
-                <p><a th:href="${'/items/' + entry.itemHash}" th:text="${entry.itemHash}"></a></p>
+                <p><a th:href="${'/dev/blobs/' + entry.blobHash}" th:text="${entry.blobHash}"></a></p>
               </td>
               <td th:text="${entry.timestamp}"></td>
               <td th:text="${entry.key}"></td>

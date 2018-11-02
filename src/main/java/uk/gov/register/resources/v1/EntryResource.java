@@ -56,10 +56,11 @@ public class EntryResource {
         StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
 
         Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
+        EntryListView entryListView = new EntryListView(entries);
 
         setHeaders(startLimitPagination);
 
-        return viewFactory.getEntriesView(entries, startLimitPagination);
+        return viewFactory.getPaginatedView("entries.html", entryListView, startLimitPagination);
     }
 
     @GET
@@ -67,8 +68,8 @@ public class EntryResource {
     @Produces(ExtraMediaType.TEXT_HTML)
     @Timed
     public AttributionView<EntryView> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
+        Optional<Entry> maybeEntry = register.getEntry(entryNumber);
+        return maybeEntry.map(entry -> viewFactory.getAttributionView("entry.html", new EntryView(entry))).orElseThrow(NotFoundException::new);
     }
 
     @GET

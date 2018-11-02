@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head th:include="fragments/head.html::head"></head>
+  <body th:class="${isGovukBranded ? 'gov-uk' : 'openregister-org'}">
+    <header th:replace="fragments/global-header.html::global-header"></header>
+
+    <main id="wrapper" role="main">
+      <th:block th:if="${register.phase == 'beta'}">
+        <div th:replace="fragments/register-intro.html::register-intro"></div>
+      </th:block>
+      <th:block th:unless="${register.phase == 'beta'}">
+        <div th:replace="fragments/phase-banner.html::phase"></div>
+      </th:block>
+
+      <div class="grid-row">
+        <div class="column-two-thirds">
+          <h1 class="heading-large">
+            Entry
+            <span th:text="${content.entryNumber}">Entry Number Header</span>
+          </h1>
+        </div>
+      </div>
+
+      <div th:include="fragments/v2-entry-table.html :: entry-table (entry = ${content})" class="table-wrapper"></div>
+
+    </main>
+
+    <footer th:replace="fragments/footer.html::footer"></footer>
+
+  </body>
+</html>
