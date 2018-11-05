@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 
 import static uk.gov.register.resources.RedirectResource.redirectByPath;
 
-@Path("/dev/proof")
+@Path("/next/proof")
 public class VerifiableLogResource {
     private final RegisterReadOnly register;
 

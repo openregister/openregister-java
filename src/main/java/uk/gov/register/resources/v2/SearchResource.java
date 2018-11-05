@@ -14,7 +14,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@Path("/dev/")
+@Path("/next/")
 public class SearchResource {
 
     private final RegisterId registerPrimaryKey;

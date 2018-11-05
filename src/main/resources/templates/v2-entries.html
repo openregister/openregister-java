@@ -41,10 +41,10 @@
           <tbody>
             <tr th:each="entry : ${content.entries}">
               <td>
-                <a th:href="${'/dev/entries/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
+                <a th:href="${'/next/entries/' + entry.entryNumber}" th:text="${entry.entryNumber}"></a>
               </td>
               <td>
-                <p><a th:href="${'/dev/blobs/' + entry.blobHash}" th:text="${entry.blobHash}"></a></p>
+                <p><a th:href="${'/next/blobs/' + entry.blobHash}" th:text="${entry.blobHash}"></a></p>
               </td>
               <td th:text="${entry.timestamp}"></td>
               <td th:text="${entry.key}"></td>

@@ -20,7 +20,7 @@
 
 
         <th:block th:each="item : ${content.items}">
-            <h2><a th:href="${'/dev/blobs/' + item.itemHash}" th:text="${item.itemHash}"></a></h2>
+            <h2><a th:href="${'/next/blobs/' + item.itemHash}" th:text="${item.itemHash}"></a></h2>
             <div th:include="fragments/item-table.html :: item-table (content = ${item.content})"
                  class="table-wrapper">
             </div>

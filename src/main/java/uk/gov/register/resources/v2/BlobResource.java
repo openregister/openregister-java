@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Path("/dev/blobs")
+@Path("/next/blobs")
 public class BlobResource {
     protected final RegisterReadOnly register;
     protected final ViewFactory viewFactory;

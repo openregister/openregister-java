@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-@Path("/dev/")
+@Path("/next/")
 public class EntryResource {
 
     private final RegisterReadOnly register;

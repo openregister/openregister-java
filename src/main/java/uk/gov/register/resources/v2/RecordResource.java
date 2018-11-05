@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Path("/dev/")
+@Path("/next/")
 public class RecordResource {
     protected final HttpServletResponseAdapter httpServletResponseAdapter;
     protected final RegisterReadOnly register;
