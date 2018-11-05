@@ -2,7 +2,7 @@ package uk.gov.register.views.v2;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.tools.javac.util.List;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
 import uk.gov.register.core.Entry;
@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class EntryListViewTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
@@ -35,7 +35,7 @@ public class EntryListViewTest {
             "c",
             EntryType.user
     );
-    private final EntryListView view = new EntryListView(List.of(entry1, entry2));
+    private final EntryListView view = new EntryListView(ImmutableList.of(entry1, entry2));
 
     @Test
     public void jsonRepresentation() throws JsonProcessingException {
