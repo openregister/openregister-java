@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.configuration.RegisterFieldsConfiguration;
 import uk.gov.register.core.*;
-import uk.gov.register.resources.v2.SearchResource;
+import uk.gov.register.resources.SearchResource;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.NotFoundException;
