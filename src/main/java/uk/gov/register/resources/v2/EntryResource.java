@@ -43,31 +43,6 @@ public class EntryResource {
     }
 
     @GET
-    @Path("/entries")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<EntryListView> entriesHtml(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
-        int totalEntries = register.getTotalEntries(EntryType.user);
-        StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
-
-        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
-        EntryListView entryListView = new EntryListView(entries);
-
-        setHeaders(startLimitPagination);
-
-        return viewFactory.getPaginatedView("v2-entries.html", entryListView, startLimitPagination);
-    }
-
-    @GET
-    @Path("/entries/{entry-number}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<EntryView> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> maybeEntry = register.getEntry(entryNumber);
-        return maybeEntry.map(entry -> viewFactory.getAttributionView("v2-entry.html", new EntryView(entry))).orElseThrow(NotFoundException::new);
-    }
-
-    @GET
     @Path("/entries/{entry-number}")
     @Produces({
             MediaType.APPLICATION_JSON,

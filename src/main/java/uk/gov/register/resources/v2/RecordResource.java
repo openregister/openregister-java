@@ -107,17 +107,6 @@ public class RecordResource {
 
     @GET
     @Path("/records/{key}/{value}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<RecordsView> facetedRecordsHtml(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException, NoSuchFieldException {
-        List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        Pagination pagination
-                = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
-        return viewFactory.getRecordsView(pagination, facetedRecords(key, value));
-    }
-
-    @GET
-    @Path("/records/{key}/{value}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -130,16 +119,6 @@ public class RecordResource {
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         return viewFactory.getRecordsMediaView(records);
-    }
-
-    @GET
-    @Path("/records")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
-        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset());
-        return viewFactory.getRecordsView(pagination, recordsView);
     }
 
     @GET

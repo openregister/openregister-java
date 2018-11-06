@@ -39,15 +39,6 @@ public class BlobResource {
 
     @GET
     @Path("/sha-256:{blob-hash}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<ItemView> getBlobWebViewByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
-        return getBlob(blobHash).map(blob -> viewFactory.getAttributionView("v2-blob.html", buildItemView(blob)))
-                .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + blobHash));
-    }
-
-    @GET
-    @Path("/sha-256:{blob-hash}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -75,18 +66,6 @@ public class BlobResource {
         // TODO: allow this resource to be paginated
         // and improve rendering performance
         return buildItemListView(items.stream().limit(100).collect(Collectors.toList()));
-    }
-
-    @GET
-    @Path("/")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<ItemListView> listBlobsWebView() {
-        Collection<Item> items = register.getAllItems(EntryType.user);
-        ItemListView itemListView = buildItemListView(items.stream().limit(100).collect(Collectors.toList()));
-
-        // TODO: allow this resource to be paginated
-        return viewFactory.getAttributionView("v2-blobs.html", itemListView);
     }
 
     protected Optional<Item> getBlob(String blobHash) {
