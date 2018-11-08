@@ -1,8 +1,15 @@
 package uk.gov.register.views;
 
 import org.jvnet.hk2.annotations.Service;
-import uk.gov.register.configuration.*;
-import uk.gov.register.core.*;
+import uk.gov.register.configuration.HomepageContent;
+import uk.gov.register.configuration.PublicBodiesConfiguration;
+import uk.gov.register.configuration.RegisterDomainConfiguration;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Field;
+import uk.gov.register.core.PublicBody;
+import uk.gov.register.core.Record;
+import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
@@ -84,20 +91,9 @@ public class ViewFactory {
         return new AttributionView<>(templateName, requestContext, getRegistry(), register.get(), registerResolver, fieldValueMap);
     }
 
-    public AttributionView<ItemView> getItemView(final Item item) throws FieldConversionException {
-        return getAttributionView("item.html", getItemMediaView(item));
-    }
+    public <T> PaginatedView<T> getPaginatedView(final String templateName, final T view, final Pagination pagination) {
+        return new PaginatedView<T>(templateName, requestContext, getRegistry(), register.get(), registerResolver, pagination, view);
 
-    public AttributionView<EntryView> getEntryView(final Entry entry) {
-        return getAttributionView("entry.html", new EntryView(entry));
-    }
-
-    public PaginatedView<EntryListView> getEntriesView(final Collection<Entry> entries, final Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries));
-    }
-
-    public PaginatedView<EntryListView> getRecordEntriesView(final String recordKey, final Collection<Entry> entries, final Pagination pagination) {
-        return new PaginatedView<>("entries.html", requestContext, getRegistry(), register.get(), registerResolver, pagination, new EntryListView(entries, recordKey));
     }
 
     public AttributionView<RecordView> getRecordView(final RecordView record) {
@@ -107,10 +103,6 @@ public class ViewFactory {
     public PaginatedView<RecordsView> getRecordsView(final Pagination pagination, final RecordsView recordsView) {
         return new PaginatedView<>("records.html", requestContext, getRegistry(), register.get(), registerResolver, pagination,
                 recordsView);
-    }
-
-    public ItemView getItemMediaView(final Item item) throws FieldConversionException {
-        return new ItemView(item.getSha256hex(), itemConverter.convertItem(item, register.get().getFieldsByName()), getFields());
     }
 
     public RecordView getRecordMediaView(final Record record) throws FieldConversionException {
@@ -123,9 +115,5 @@ public class ViewFactory {
 
     private PublicBody getRegistry() {
         return publicBodiesConfiguration.getPublicBody(register.get().getRegisterMetadata().getRegistry());
-    }
-
-    private Collection<Field> getFields() {
-        return register.get().getFieldsByName().values();
     }
 }

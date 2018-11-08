@@ -21,10 +21,13 @@ public interface ItemQueryDAO {
     @RegisterMapper(ItemMapper.class)
     Optional<Item> getItemBySHA256(@Bind("sha256hex") String sha256Hash, @Define("schema") String schema );
 
-    //Note: This is fine for small data registers like country
     @SqlQuery("select sha256hex, content from \"<schema>\".item order by sha256hex")
     @RegisterMapper(ItemMapper.class)
     Collection<Item> getAllItemsNoPagination( @Define("schema") String schema );
+
+    @SqlQuery("select sha256hex, content from \"<schema>\".item i where exists(select 1 from \"<schema>\".<entry_table> e where i.sha256hex = e.sha256hex) order by sha256hex")
+    @RegisterMapper(ItemMapper.class)
+    Collection<Item> getAllItemsNoPagination( @Define("schema") String schema, @Define("entry_table") String entryTable );
 
     @SqlQuery("select i.sha256hex, i.content from \"<schema>\".item i where exists(select 1 from \"<schema>\".entry e where i.sha256hex = e.sha256hex and e.entry_number > :startEntryNo and e.entry_number \\<= :endEntryNo)")
     @RegisterMapper(ItemMapper.class)

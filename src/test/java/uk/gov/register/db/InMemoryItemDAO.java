@@ -38,6 +38,11 @@ public class InMemoryItemDAO implements ItemDAO, ItemQueryDAO {
     }
 
     @Override
+    public Collection<Item> getAllItemsNoPagination(String schema, String entryTable) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public Iterator<Item> getIterator(String schema, String entryTable) {
         return getItemIteratorFromEntryIterator(entryQueryDao.getIterator(schema, entryTable));
     }

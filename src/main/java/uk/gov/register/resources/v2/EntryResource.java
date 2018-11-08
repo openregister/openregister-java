@@ -11,8 +11,8 @@ import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.StartLimitPagination;
 import uk.gov.register.views.AttributionView;
-import uk.gov.register.views.EntryListView;
-import uk.gov.register.views.EntryView;
+import uk.gov.register.views.v2.EntryListView;
+import uk.gov.register.views.v2.EntryView;
 import uk.gov.register.views.PaginatedView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-@Path("/dev/")
+@Path("/next/")
 public class EntryResource {
 
     private final RegisterReadOnly register;
@@ -43,38 +43,10 @@ public class EntryResource {
     }
 
     @GET
-    @Path("/entries")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<EntryListView> entriesHtml(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {
-        int totalEntries = register.getTotalEntries(EntryType.user);
-        StartLimitPagination startLimitPagination = new StartLimitPagination(optionalStart.map(IntParam::get), optionalLimit.map(IntParam::get), totalEntries);
-
-        Collection<Entry> entries = register.getEntries(startLimitPagination.start, startLimitPagination.limit);
-
-        setHeaders(startLimitPagination);
-
-        return viewFactory.getEntriesView(entries, startLimitPagination);
-    }
-
-    @GET
-    @Path("/entries/{entry-number}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<EntryView> findByEntryNumberHtml(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(viewFactory::getEntryView).orElseThrow(NotFoundException::new);
-    }
-
-    @GET
     @Path("/entries/{entry-number}")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
-            ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
+            ExtraMediaType.TEXT_CSV
     })
     @Timed
     public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
@@ -87,11 +59,7 @@ public class EntryResource {
     @Path("/entries")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
-            ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
+            ExtraMediaType.TEXT_CSV
     })
     @Timed
     public EntryListView entries(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) {

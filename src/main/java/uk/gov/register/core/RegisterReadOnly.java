@@ -13,6 +13,7 @@ import java.util.*;
 public interface RegisterReadOnly {
     Optional<Item> getItem(HashValue hash);
     Collection<Item> getAllItems();
+    Collection<Item> getAllItems(EntryType entryType);
     Iterator<Item> getItemIterator(EntryType entryType);
     Iterator<Item> getItemIterator(int start, int end);
 

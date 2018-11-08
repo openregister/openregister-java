@@ -67,6 +67,11 @@ public class RegisterImpl implements Register {
     }
 
     @Override
+    public Collection<Item> getAllItems(EntryType entryType) {
+        return itemStore.getAllItems(entryType);
+    }
+
+    @Override
     public Iterator<Item> getItemIterator(EntryType entryType) {
         return itemStore.getItemIterator(entryType);
     }

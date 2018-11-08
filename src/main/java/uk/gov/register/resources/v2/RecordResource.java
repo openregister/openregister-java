@@ -13,7 +13,12 @@ import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.resources.IndexSizePagination;
 import uk.gov.register.resources.Pagination;
 import uk.gov.register.resources.RequestContext;
-import uk.gov.register.views.*;
+import uk.gov.register.views.AttributionView;
+import uk.gov.register.views.PaginatedView;
+import uk.gov.register.views.RecordView;
+import uk.gov.register.views.RecordsView;
+import uk.gov.register.views.ViewFactory;
+import uk.gov.register.views.v2.EntryListView;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
@@ -24,11 +29,11 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Path("/dev/")
+@Path("/next/")
 public class RecordResource {
-    private final HttpServletResponseAdapter httpServletResponseAdapter;
-    private final RegisterReadOnly register;
-    private final ViewFactory viewFactory;
+    protected final HttpServletResponseAdapter httpServletResponseAdapter;
+    protected final RegisterReadOnly register;
+    protected final ViewFactory viewFactory;
 
     @Inject
     public RecordResource(RegisterReadOnly register, ViewFactory viewFactory, RequestContext requestContext) {
@@ -44,8 +49,6 @@ public class RecordResource {
     public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) throws FieldConversionException {
         return viewFactory.getRecordView(getRecordByKey(key));
     }
-
-
 
     @GET
     @Path("/records/{record-key}")
@@ -76,10 +79,11 @@ public class RecordResource {
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
-        return viewFactory.getRecordEntriesView(
-                key, allEntries,
-                new IndexSizePagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size())
-        );
+
+        EntryListView entryListView = new EntryListView(allEntries, key);
+        Pagination pagination = new IndexSizePagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size());
+
+        return viewFactory.getPaginatedView("v2-entries.html", entryListView, pagination);
     }
 
     @GET
@@ -103,17 +107,6 @@ public class RecordResource {
 
     @GET
     @Path("/records/{key}/{value}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<RecordsView> facetedRecordsHtml(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException, NoSuchFieldException {
-        List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        Pagination pagination
-                = new IndexSizePagination(Optional.empty(), Optional.empty(), records.size());
-        return viewFactory.getRecordsView(pagination, facetedRecords(key, value));
-    }
-
-    @GET
-    @Path("/records/{key}/{value}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -126,16 +119,6 @@ public class RecordResource {
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
         return viewFactory.getRecordsMediaView(records);
-    }
-
-    @GET
-    @Path("/records")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<RecordsView> recordsHtml(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
-        IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
-        RecordsView recordsView = getRecordsView(pagination.pageSize(), pagination.offset());
-        return viewFactory.getRecordsView(pagination, recordsView);
     }
 
     @GET

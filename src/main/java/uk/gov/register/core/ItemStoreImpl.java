@@ -30,6 +30,11 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
+    public Collection<Item> getAllItems(EntryType entryType) {
+        return dataAccessLayer.getAllItems(entryType);
+    }
+
+    @Override
     public Iterator<Item> getItemIterator(EntryType entryType) {
         return dataAccessLayer.getItemIterator(entryType);
     }

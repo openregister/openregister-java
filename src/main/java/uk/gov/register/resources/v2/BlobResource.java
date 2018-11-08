@@ -1,13 +1,13 @@
-package uk.gov.register.resources.v1;
+package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
+import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
-import uk.gov.register.resources.v2.BlobResource;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
@@ -17,40 +17,28 @@ import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Path("/items")
-public class ItemResource {
+@Path("/next/blobs")
+public class BlobResource {
     protected final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
     protected final ItemConverter itemConverter;
 
     @Inject
-    public ItemResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter) {
+    public BlobResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.itemConverter = itemConverter;
     }
 
     @GET
-    @Path("/sha-256:{item-hash}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<ItemView> getBlobWebViewByHex(@PathParam("item-hash") String itemHash) throws FieldConversionException {
-        return getItem(itemHash).map(blob -> viewFactory.getAttributionView("item.html", buildItemView(blob)))
-                .orElseThrow(() -> new NotFoundException("No item found with item hash: " + itemHash));
-    }
-
-    @GET
-    @Path("/sha-256:{item-hash}")
+    @Path("/sha-256:{blob-hash}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -60,13 +48,27 @@ public class ItemResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public ItemView getItemDataByHex(@PathParam("item-hash") String blobHash) throws FieldConversionException {
-        return getItem(blobHash).map(blob -> buildItemView(blob))
+    public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
+        return getBlob(blobHash).map(blob -> buildItemView(blob))
                 .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + blobHash));
     }
 
-    protected Optional<Item> getItem(String itemHash) {
-        HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
+    @GET
+    @Path("/")
+    @Produces({
+            MediaType.APPLICATION_JSON,
+            ExtraMediaType.TEXT_CSV,
+    })
+    @Timed
+    public ItemListView listBlobs() throws FieldConversionException {
+        Collection<Item> items = register.getAllItems(EntryType.user);
+
+        // TODO: allow this resource to be paginated
+        return buildItemListView(items.stream().limit(100).collect(Collectors.toList()));
+    }
+
+    protected Optional<Item> getBlob(String blobHash) {
+        HashValue hash = new HashValue(HashingAlgorithm.SHA256, blobHash);
         return register.getItem(hash);
     }
 
@@ -78,5 +80,9 @@ public class ItemResource {
         Map<String, Field> fieldsByName = getFieldsByName();
         Map<String, FieldValue> itemKeyValuePairs = itemConverter.convertItem(item, fieldsByName);
         return new ItemView(item.getSha256hex(), itemKeyValuePairs, fieldsByName.values());
+    }
+
+    protected ItemListView buildItemListView(Collection<Item> items) {
+        return new ItemListView(items, getFieldsByName());
     }
 }

@@ -111,6 +111,11 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
+    public Collection<Item> getAllItems(EntryType entryType) {
+        return itemQueryDAO.getAllItemsNoPagination(schema, getEntryTable(entryType));
+    }
+
+    @Override
     public Iterator<Item> getItemIterator(EntryType entryType) {
         return itemQueryDAO.getIterator(schema, getEntryTable(entryType));
     }
