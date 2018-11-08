@@ -3,7 +3,7 @@ package uk.gov.register.resources.v1;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.register.resources.v2.EntryResource;
+import uk.gov.register.resources.v1.EntryResource;
 import uk.gov.register.views.representations.ExtraMediaType;
 
 import javax.ws.rs.Produces;
@@ -17,6 +17,14 @@ import static org.hamcrest.Matchers.hasItems;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EntryResourceTest {
+    @Test
+    public void findByEntryNumberHtmlSupportsHtml() throws Exception {
+        Method findBySerialMethod = EntryResource.class.getDeclaredMethod("findByEntryNumberHtml", int.class);
+        List<String> declaredMediaTypes = asList(findBySerialMethod.getDeclaredAnnotation(Produces.class).value());
+        assertThat(declaredMediaTypes,
+                hasItems(ExtraMediaType.TEXT_HTML));
+    }
+
     @Test
     public void findByEntryNumberSupportsJson() throws Exception {
         Method findBySerialMethod = EntryResource.class.getDeclaredMethod("findByEntryNumber", int.class);
