@@ -169,18 +169,24 @@ task installConformanceTestDeps(type: Exec) {
     commandLine '.venv/bin/pip', 'install', '-r', 'requirements.txt'
 }
 
-task runConformanceTests(type: Exec) {
+task runConformanceTestsV1(type: Exec) {
     dependsOn << assemble
     dependsOn << startAppForConformance
     dependsOn << loadSchoolDataForConformance
     dependsOn << installConformanceTestDeps
-    finalizedBy stopAppForConformance
     mustRunAfter test
-    commandLine '.venv/bin/openregister-conformance', '--no-https', '--register', 'school', 'http://localhost:9090', '--register-domain', 'test.register.gov.uk'
+    commandLine '.venv/bin/openregister-conformance', '--api-version', '1', '--no-https', '--register', 'school', 'http://localhost:9090/v1/', '--register-domain', 'test.register.gov.uk'
+}
+
+task runConformanceTestsV2(type: Exec) {
+    dependsOn << runConformanceTestsV1
+    finalizedBy stopAppForConformance
+    commandLine '.venv/bin/openregister-conformance', '--api-version', '2', '--no-https', '--register', 'school', 'http://localhost:9090/next/', '--register-domain', 'test.register.gov.uk'
 }
 
 check {
-    dependsOn << runConformanceTests
+    dependsOn << runConformanceTestsV1
+    dependsOn << runConformanceTestsV2
     dependsOn << 'dependencyCheckAnalyze'
 }
 
