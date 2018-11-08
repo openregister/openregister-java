@@ -64,7 +64,6 @@ public class BlobResource {
         Collection<Item> items = register.getAllItems(EntryType.user);
 
         // TODO: allow this resource to be paginated
-        // and improve rendering performance
         return buildItemListView(items.stream().limit(100).collect(Collectors.toList()));
     }
 
