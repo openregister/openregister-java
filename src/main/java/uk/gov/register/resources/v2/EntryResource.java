@@ -49,9 +49,9 @@ public class EntryResource {
             ExtraMediaType.TEXT_CSV
     })
     @Timed
-    public Optional<EntryListView> findByEntryNumber(@PathParam("entry-number") int entryNumber) {
-        Optional<Entry> entry = register.getEntry(entryNumber);
-        return entry.map(function -> new EntryListView(Collections.singletonList(function)));
+    public EntryView findByEntryNumber(@PathParam("entry-number") int entryNumber) {
+        Optional<Entry> maybeEntry = register.getEntry(entryNumber);
+        return maybeEntry.map(entry -> new EntryView(entry)).orElseThrow(NotFoundException::new);
     }
 
 

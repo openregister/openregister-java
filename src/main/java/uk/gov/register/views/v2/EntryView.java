@@ -42,7 +42,6 @@ public class EntryView implements CsvRepresentationView<EntryView> {
     }
 
     @JsonProperty("blob-hash")
-    @JsonSerialize(using = ToArrayConverter.class)
     public HashValue getBlobHash() {
         return hashValue;
     }
@@ -50,12 +49,6 @@ public class EntryView implements CsvRepresentationView<EntryView> {
     @JsonProperty("entry-number")
     @JsonSerialize(using = ToStringSerializer.class)
     public Integer getEntryNumber() {
-        return entryNumber;
-    }
-
-    @JsonProperty("index-entry-number")
-    @JsonSerialize(using = ToStringSerializer.class)
-    public Integer getIndexEntryNumber() {
         return entryNumber;
     }
 
@@ -73,16 +66,6 @@ public class EntryView implements CsvRepresentationView<EntryView> {
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
         return csvMapper.schemaFor(EntryView.class);
-    }
-
-    public static CsvSchema csvSchemaWithOmittedFields(List<String> fieldsToRemove) {
-        CsvSchema originalSchema = csvSchema();
-        Iterator<CsvSchema.Column> columns = originalSchema.rebuild().getColumns();
-
-        List<CsvSchema.Column> updatedColumns = Lists.newArrayList(columns);
-        updatedColumns.removeIf(c -> fieldsToRemove.contains(c.getName()));
-
-        return CsvSchema.builder().addColumns(updatedColumns).build();
     }
 
     @Override
