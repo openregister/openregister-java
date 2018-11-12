@@ -3,7 +3,7 @@
     "driverClass": "org.postgresql.Driver",
     "url": "jdbc:postgresql://localhost:5432/openregister_java",
     "user": "postgres",
-    "password": "null",
+    "password": null,
     "initialSize": 1,
     "minSize": 1,
     "maxSize": 4,
