@@ -54,7 +54,6 @@ public class BlobResource {
     }
 
     @GET
-    @Path("/")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_CSV,

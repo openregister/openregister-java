@@ -1,659 +1,897 @@
----
-country:
-  entry-number: "9"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "country"
-  item:
-  - text: "ISO 3166-2 two letter code for a country."
-    field: "country"
-    phase: "alpha"
-    datatype: "string"
-    register: "country"
-    cardinality: "1"
-copyright:
-  entry-number: "8"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "copyright"
-  item:
-  - text: "Copyright for the data in the register."
-    field: "copyright"
-    phase: "alpha"
-    datatype: "text"
-    cardinality: "1"
-food-premises-types:
-  entry-number: "23"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-types"
-  item:
-  - text: "A set of food premises types."
-    field: "food-premises-types"
-    phase: "alpha"
-    datatype: "string"
-    register: "food-premises-type"
-    cardinality: "n"
-citizen-names:
-  entry-number: "5"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "citizen-names"
-  item:
-  - text: "Name for the citzens of a country."
-    field: "citizen-names"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-food-premises-rating-confidence-in-management-score:
-  entry-number: "16"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-rating-confidence-in-management-score"
-  item:
-  - text: "Level of confidence with management. Lower scores are better."
-    field: "food-premises-rating-confidence-in-management-score"
-    phase: "alpha"
-    datatype: "integer"
-    cardinality: "1"
-food-premises-rating-hygiene-score:
-  entry-number: "17"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-rating-hygiene-score"
-  item:
-  - text: "Level of compliance with food hygiene and safety procedures including food\
-      \ handling practices and procedures, and temperature control. Lower scores are\
-      \ better."
-    field: "food-premises-rating-hygiene-score"
-    phase: "alpha"
-    datatype: "integer"
-    cardinality: "1"
-school:
-  entry-number: "53"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "school"
-  item:
-  - text: "A school in the UK."
-    field: "school"
-    phase: "alpha"
-    datatype: "string"
-    register: "school"
-    cardinality: "1"
-premises:
-  entry-number: "45"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "premises"
-  item:
-  - text: "A business premises."
-    field: "premises"
-    phase: "alpha"
-    datatype: "string"
-    register: "premises"
-    cardinality: "1"
-uk:
-  entry-number: "59"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "uk"
-  item:
-  - text: "A constituent unit of the United Kingdom of Great Britain and Northern Ireland\
-      \ or a Crown dependency"
-    field: "uk"
-    phase: "alpha"
-    datatype: "string"
-    register: "uk"
-    cardinality: "1"
-property:
-  entry-number: "46"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "property"
-  item:
-  - text: "A building, institution or house name in an address."
-    field: "property"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-religious-character:
-  entry-number: "52"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "religious-character"
-  item:
-  - text: "Religious character of school as declared by the school."
-    field: "religious-character"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-text:
-  entry-number: "57"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "text"
-  item:
-  - text: "Description of register entry."
-    field: "text"
-    phase: "alpha"
-    datatype: "text"
-    cardinality: "1"
-crest:
-  entry-number: "10"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "crest"
-  item:
-  - text: "Official crest for a government body."
-    field: "crest"
-    phase: "alpha"
-    datatype: "url"
-    cardinality: "1"
-longitude:
-  entry-number: "34"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "longitude"
-  item:
-  - text: "Longitude of a place."
-    field: "longitude"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-area:
-  entry-number: "2"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "area"
-  item:
-  - text: "The administrative area of an address."
-    field: "area"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-food-premises:
-  entry-number: "24"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises"
-  item:
-  - text: "A premises which serves or processes food."
-    field: "food-premises"
-    phase: "alpha"
-    datatype: "string"
-    register: "food-premises"
-    cardinality: "1"
-phase:
-  entry-number: "42"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "phase"
-  item:
-  - text: "Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual)."
-    field: "phase"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-parent-bodies:
-  entry-number: "41"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "parent-bodies"
-  item:
-  - text: "Parent bodies."
-    field: "parent-bodies"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "n"
-town:
-  entry-number: "58"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "town"
-  item:
-  - text: "The town of an address."
-    field: "town"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-locality:
-  entry-number: "32"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "locality"
-  item:
-  - text: "The area within a post town."
-    field: "locality"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-postcode:
-  entry-number: "44"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "postcode"
-  item:
-  - text: "UK Postcodes."
-    field: "postcode"
-    phase: "alpha"
-    datatype: "string"
-    register: "postcode"
-    cardinality: "1"
-official-colour:
-  entry-number: "38"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "official-colour"
-  item:
-  - text: "Official colour for a public body."
-    field: "official-colour"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-food-premises-rating-value:
-  entry-number: "20"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-rating-value"
-  item:
-  - text: "A rating of the food hygiene served at a premises, 0-5 with 5 meaning 'very\
-      \ good'."
-    field: "food-premises-rating-value"
-    phase: "alpha"
-    datatype: "integer"
-    cardinality: "1"
-field:
-  entry-number: "14"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "field"
-  item:
-  - text: "Field name of register entry."
-    field: "field"
-    phase: "alpha"
-    datatype: "string"
-    register: "field"
-    cardinality: "1"
-maximum-age:
-  entry-number: "35"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "maximum-age"
-  item:
-  - text: "Maximum intake age for pupils at a school."
-    field: "maximum-age"
-    phase: "alpha"
-    datatype: "integer"
-    cardinality: "1"
-name:
-  entry-number: "37"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "name"
-  item:
-  - text: "Name of field"
-    field: "name"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-registered-office:
-  entry-number: "50"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "registered-office"
-  item:
-  - text: "Registered address for a company or other legal entity."
-    field: "registered-office"
-    phase: "alpha"
-    datatype: "string"
-    register: "address"
-    cardinality: "1"
-fields:
-  entry-number: "15"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "fields"
-  item:
-  - text: "Set of field names."
-    field: "fields"
-    phase: "alpha"
-    datatype: "string"
-    register: "field"
-    cardinality: "n"
-government-domain:
-  entry-number: "26"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "government-domain"
-  item:
-  - text: "A domain"
-    field: "government-domain"
-    phase: "alpha"
-    datatype: "string"
-    register: "government-domain"
-    cardinality: "1"
-gender:
-  entry-number: "25"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "gender"
-  item:
-  - text: "Gender."
-    field: "gender"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-minimum-age:
-  entry-number: "36"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "minimum-age"
-  item:
-  - text: "Minimum intake age for pupils at a school."
-    field: "minimum-age"
-    phase: "alpha"
-    datatype: "integer"
-    cardinality: "1"
-latitude:
-  entry-number: "30"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "latitude"
-  item:
-  - text: "Latitude of a place."
-    field: "latitude"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-industry:
-  entry-number: "28"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "industry"
-  item:
-  - text: "Standard industrial classification."
-    field: "industry"
-    phase: "alpha"
-    datatype: "string"
-    register: "industry"
-    cardinality: "1"
-start-date:
-  entry-number: "54"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "start-date"
-  item:
-  - text: "Start datetime for the applicability of a register entry."
-    field: "start-date"
-    phase: "alpha"
-    datatype: "datetime"
-    cardinality: "1"
-public-body-type:
-  entry-number: "47"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "public-body-type"
-  item:
-  - text: "Type of government body."
-    field: "public-body-type"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-point:
-  entry-number: "43"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "point"
-  item:
-  - text: "A geographical location"
-    field: "point"
-    phase: "alpha"
-    datatype: "point"
-    cardinality: "1"
-public-body:
-  entry-number: "48"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "public-body"
-  item:
-  - text: "A UK governmental body."
-    field: "public-body"
-    phase: "alpha"
-    datatype: "string"
-    register: "public-body"
-    cardinality: "1"
-food-premises-type:
-  entry-number: "22"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-type"
-  item:
-  - text: "The type of food premises."
-    field: "food-premises-type"
-    phase: "alpha"
-    datatype: "string"
-    register: "food-premises-type"
-    cardinality: "1"
-datatype:
-  entry-number: "11"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "datatype"
-  item:
-  - text: "The data type for constraining a field value."
-    field: "datatype"
-    phase: "alpha"
-    datatype: "string"
-    register: "datatype"
-    cardinality: "1"
-street:
-  entry-number: "55"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "street"
-  item:
-  - text: "The number and street name of an address."
-    field: "street"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-company:
-  entry-number: "7"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "company"
-  item:
-  - text: "A UK registered company."
-    field: "company"
-    phase: "alpha"
-    datatype: "string"
-    register: "company"
-    cardinality: "1"
-food-premises-rating-structural-score:
-  entry-number: "19"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-rating-structural-score"
-  item:
-  - text: "Level of compliance with structural requirements including cleanliness, layout,\
-      \ condition of structure, lighting, ventilation, facilities etc. Lower scores\
-      \ are better."
-    field: "food-premises-rating-structural-score"
-    phase: "alpha"
-    datatype: "integer"
-    cardinality: "1"
-email:
-  entry-number: "12"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "email"
-  item:
-  - text: "An email address for contact."
-    field: "email"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-food-premises-rating-reply:
-  entry-number: "18"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-rating-reply"
-  item:
-  - text: "An explanation by a food-premises to potential customers any actions that\
-      \ have taken to improve hygiene standards after a food hygiene rating has been\
-      \ given or to say if there were particular circumstances at the time of the inspection\
-      \ that might have affected the rating."
-    field: "food-premises-rating-reply"
-    phase: "alpha"
-    datatype: "text"
-    cardinality: "1"
-owner:
-  entry-number: "40"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "owner"
-  item:
-  - text: "An owner of government domain"
-    field: "owner"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-registry:
-  entry-number: "51"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "registry"
-  item:
-  - text: "Body responsible for maintaining one or more registers"
-    field: "registry"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-website:
-  entry-number: "60"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "website"
-  item:
-  - text: "Website for register entry."
-    field: "website"
-    phase: "alpha"
-    datatype: "url"
-    cardinality: "1"
-address:
-  entry-number: "1"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "address"
-  item:
-  - text: "A place in the UK with a postal address."
-    field: "address"
-    phase: "alpha"
-    datatype: "string"
-    register: "address"
-    cardinality: "1"
-business:
-  entry-number: "3"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "business"
-  item:
-  - text: "A Limited Company, School or other legal entity that trades."
-    field: "business"
-    phase: "alpha"
-    datatype: "curie"
-    register: "company"
-    cardinality: "1"
-food-premises-rating:
-  entry-number: "21"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "food-premises-rating"
-  item:
-  - text: "A rating of a food premises for hygeine."
-    field: "food-premises-rating"
-    phase: "alpha"
-    datatype: "string"
-    register: "food-premises-rating"
-    cardinality: "1"
-inspector:
-  entry-number: "29"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "inspector"
-  item:
-  - text: "The organisation conducting an inspection"
-    field: "inspector"
-    phase: "alpha"
-    datatype: "curie"
-    cardinality: "1"
-cardinality:
-  entry-number: "4"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "cardinality"
-  item:
-  - text: "Number of elements of the set (1 or n)."
-    field: "cardinality"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-local-authority:
-  entry-number: "31"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "local-authority"
-  item:
-  - text: "A Local Authority in England, Scotland, Wales or Northern Ireland."
-    field: "local-authority"
-    phase: "alpha"
-    datatype: "string"
-    register: "local-authority"
-    cardinality: "1"
-end-date:
-  entry-number: "13"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "end-date"
-  item:
-  - text: "End datetime for the applicability of a register entry."
-    field: "end-date"
-    phase: "alpha"
-    datatype: "datetime"
-    cardinality: "1"
-official-name:
-  entry-number: "39"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "official-name"
-  item:
-  - text: "Official name of country"
-    field: "official-name"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-company-status:
-  entry-number: "6"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "company-status"
-  item:
-  - text: "The status of a UK company."
-    field: "company-status"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-headteacher:
-  entry-number: "27"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "headteacher"
-  item:
-  - text: "Headteacher of school."
-    field: "headteacher"
-    phase: "alpha"
-    datatype: "string"
-    cardinality: "1"
-location:
-  entry-number: "33"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "location"
-  item:
-  - text: "A geographic location found in government data which may be published under\
-     \ an open government licence"
-    field: "location"
-    phase: "alpha"
-    datatype: "curie"
-    register: "location"
-    cardinality: "1"
-register:
-  entry-number: "49"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "register"
-  item:
-  - text: "A register name."
-    field: "register"
-    phase: "alpha"
-    datatype: "string"
-    register: "register"
-    cardinality: "1"
-territory:
-  entry-number: "56"
-  entry-timestamp: "2016-04-21T10:19:58Z"
-  key: "territory"
-  item:
-  - text: "A territory"
-    field: "territory"
-    phase: "alpha"
-    datatype: "string"
-    register: "territory"
-    cardinality: "1"
-local-authority-eng:
-  index-entry-number: "29"
-  entry-number: "29"
-  entry-timestamp: "2017-01-10T17:16:07Z"
-  key: "local-authority-eng"
-  item:
-  - phase: "alpha"
-    field: "local-authority-eng"
-    datatype: "string"
-    text: "The local authority's ISO 3166-1 alpha3 code. Unique codes have been created\
-      \ for local authorities that don't have an existing ISO code."
-    cardinality: "1"
-    register: "local-authority-eng"
-local-authority-type:
-  index-entry-number: "30"
-  entry-number: "30"
-  entry-timestamp: "2017-01-10T17:16:07Z"
-  key: "local-authority-type"
-  item:
-  - phase: "alpha"
-    field: "local-authority-type"
-    datatype: "string"
-    text: "The type of local government organisation."
-    cardinality: "1"
-    register: "local-authority-type"
+{
+  "country": {
+    "entry-number": "9",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "country",
+    "item": [
+    {
+      "text": "ISO 3166-2 two letter code for a country.",
+      "field": "country",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "country",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "copyright": {
+    "entry-number": "8",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "copyright",
+    "item": [
+    {
+      "text": "Copyright for the data in the register.",
+      "field": "copyright",
+      "phase": "alpha",
+      "datatype": "text",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-types": {
+    "entry-number": "23",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-types",
+    "item": [
+    {
+      "text": "A set of food premises types.",
+      "field": "food-premises-types",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "food-premises-type",
+      "cardinality": "n"
+    }
+    ]
+  },
+  "citizen-names": {
+    "entry-number": "5",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "citizen-names",
+    "item": [
+    {
+      "text": "Name for the citzens of a country.",
+      "field": "citizen-names",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-rating-confidence-in-management-score": {
+    "entry-number": "16",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-rating-confidence-in-management-score",
+    "item": [
+    {
+      "text": "Level of confidence with management. Lower scores are better.",
+      "field": "food-premises-rating-confidence-in-management-score",
+      "phase": "alpha",
+      "datatype": "integer",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-rating-hygiene-score": {
+    "entry-number": "17",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-rating-hygiene-score",
+    "item": [
+    {
+      "text": "Level of compliance with food hygiene and safety procedures including food handling practices and procedures, and temperature control. Lower scores are better.",
+      "field": "food-premises-rating-hygiene-score",
+      "phase": "alpha",
+      "datatype": "integer",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "school": {
+    "entry-number": "53",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "school",
+    "item": [
+    {
+      "text": "A school in the UK.",
+      "field": "school",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "school",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "premises": {
+    "entry-number": "45",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "premises",
+    "item": [
+    {
+      "text": "A business premises.",
+      "field": "premises",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "premises",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "uk": {
+    "entry-number": "59",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "uk",
+    "item": [
+    {
+      "text": "A constituent unit of the United Kingdom of Great Britain and Northern Ireland or a Crown dependency",
+      "field": "uk",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "uk",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "property": {
+    "entry-number": "46",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "property",
+    "item": [
+    {
+      "text": "A building, institution or house name in an address.",
+      "field": "property",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "religious-character": {
+    "entry-number": "52",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "religious-character",
+    "item": [
+    {
+      "text": "Religious character of school as declared by the school.",
+      "field": "religious-character",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "text": {
+    "entry-number": "57",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "text",
+    "item": [
+    {
+      "text": "Description of register entry.",
+      "field": "text",
+      "phase": "alpha",
+      "datatype": "text",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "crest": {
+    "entry-number": "10",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "crest",
+    "item": [
+    {
+      "text": "Official crest for a government body.",
+      "field": "crest",
+      "phase": "alpha",
+      "datatype": "url",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "longitude": {
+    "entry-number": "34",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "longitude",
+    "item": [
+    {
+      "text": "Longitude of a place.",
+      "field": "longitude",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "area": {
+    "entry-number": "2",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "area",
+    "item": [
+    {
+      "text": "The administrative area of an address.",
+      "field": "area",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises": {
+    "entry-number": "24",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises",
+    "item": [
+    {
+      "text": "A premises which serves or processes food.",
+      "field": "food-premises",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "food-premises",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "phase": {
+    "entry-number": "42",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "phase",
+    "item": [
+    {
+      "text": "Phase of a register or service as defined by the [digital service manual](https://www.gov.uk/service-manual).",
+      "field": "phase",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "parent-bodies": {
+    "entry-number": "41",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "parent-bodies",
+    "item": [
+    {
+      "text": "Parent bodies.",
+      "field": "parent-bodies",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "n"
+    }
+    ]
+  },
+  "town": {
+    "entry-number": "58",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "town",
+    "item": [
+    {
+      "text": "The town of an address.",
+      "field": "town",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "locality": {
+    "entry-number": "32",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "locality",
+    "item": [
+    {
+      "text": "The area within a post town.",
+      "field": "locality",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "postcode": {
+    "entry-number": "44",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "postcode",
+    "item": [
+    {
+      "text": "UK Postcodes.",
+      "field": "postcode",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "postcode",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "official-colour": {
+    "entry-number": "38",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "official-colour",
+    "item": [
+    {
+      "text": "Official colour for a public body.",
+      "field": "official-colour",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-rating-value": {
+    "entry-number": "20",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-rating-value",
+    "item": [
+    {
+      "text": "A rating of the food hygiene served at a premises, 0-5 with 5 meaning 'very good'.",
+      "field": "food-premises-rating-value",
+      "phase": "alpha",
+      "datatype": "integer",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "field": {
+    "entry-number": "14",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "field",
+    "item": [
+    {
+      "text": "Field name of register entry.",
+      "field": "field",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "field",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "maximum-age": {
+    "entry-number": "35",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "maximum-age",
+    "item": [
+    {
+      "text": "Maximum intake age for pupils at a school.",
+      "field": "maximum-age",
+      "phase": "alpha",
+      "datatype": "integer",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "name": {
+    "entry-number": "37",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "name",
+    "item": [
+    {
+      "text": "Name of field",
+      "field": "name",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "registered-office": {
+    "entry-number": "50",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "registered-office",
+    "item": [
+    {
+      "text": "Registered address for a company or other legal entity.",
+      "field": "registered-office",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "address",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "fields": {
+    "entry-number": "15",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "fields",
+    "item": [
+    {
+      "text": "Set of field names.",
+      "field": "fields",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "field",
+      "cardinality": "n"
+    }
+    ]
+  },
+  "government-domain": {
+    "entry-number": "26",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "government-domain",
+    "item": [
+    {
+      "text": "A domain",
+      "field": "government-domain",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "government-domain",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "gender": {
+    "entry-number": "25",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "gender",
+    "item": [
+    {
+      "text": "Gender.",
+      "field": "gender",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "minimum-age": {
+    "entry-number": "36",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "minimum-age",
+    "item": [
+    {
+      "text": "Minimum intake age for pupils at a school.",
+      "field": "minimum-age",
+      "phase": "alpha",
+      "datatype": "integer",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "latitude": {
+    "entry-number": "30",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "latitude",
+    "item": [
+    {
+      "text": "Latitude of a place.",
+      "field": "latitude",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "industry": {
+    "entry-number": "28",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "industry",
+    "item": [
+    {
+      "text": "Standard industrial classification.",
+      "field": "industry",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "industry",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "start-date": {
+    "entry-number": "54",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "start-date",
+    "item": [
+    {
+      "text": "Start datetime for the applicability of a register entry.",
+      "field": "start-date",
+      "phase": "alpha",
+      "datatype": "datetime",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "public-body-type": {
+    "entry-number": "47",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "public-body-type",
+    "item": [
+    {
+      "text": "Type of government body.",
+      "field": "public-body-type",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "point": {
+    "entry-number": "43",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "point",
+    "item": [
+    {
+      "text": "A geographical location",
+      "field": "point",
+      "phase": "alpha",
+      "datatype": "point",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "public-body": {
+    "entry-number": "48",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "public-body",
+    "item": [
+    {
+      "text": "A UK governmental body.",
+      "field": "public-body",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "public-body",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-type": {
+    "entry-number": "22",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-type",
+    "item": [
+    {
+      "text": "The type of food premises.",
+      "field": "food-premises-type",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "food-premises-type",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "datatype": {
+    "entry-number": "11",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "datatype",
+    "item": [
+    {
+      "text": "The data type for constraining a field value.",
+      "field": "datatype",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "datatype",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "street": {
+    "entry-number": "55",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "street",
+    "item": [
+    {
+      "text": "The number and street name of an address.",
+      "field": "street",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "company": {
+    "entry-number": "7",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "company",
+    "item": [
+    {
+      "text": "A UK registered company.",
+      "field": "company",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "company",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-rating-structural-score": {
+    "entry-number": "19",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-rating-structural-score",
+    "item": [
+    {
+      "text": "Level of compliance with structural requirements including cleanliness, layout, condition of structure, lighting, ventilation, facilities etc. Lower scores are better.",
+      "field": "food-premises-rating-structural-score",
+      "phase": "alpha",
+      "datatype": "integer",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "email": {
+    "entry-number": "12",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "email",
+    "item": [
+    {
+      "text": "An email address for contact.",
+      "field": "email",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-rating-reply": {
+    "entry-number": "18",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-rating-reply",
+    "item": [
+    {
+      "text": "An explanation by a food-premises to potential customers any actions that have taken to improve hygiene standards after a food hygiene rating has been given or to say if there were particular circumstances at the time of the inspection that might have affected the rating.",
+      "field": "food-premises-rating-reply",
+      "phase": "alpha",
+      "datatype": "text",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "owner": {
+    "entry-number": "40",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "owner",
+    "item": [
+    {
+      "text": "An owner of government domain",
+      "field": "owner",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "registry": {
+    "entry-number": "51",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "registry",
+    "item": [
+    {
+      "text": "Body responsible for maintaining one or more registers",
+      "field": "registry",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "website": {
+    "entry-number": "60",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "website",
+    "item": [
+    {
+      "text": "Website for register entry.",
+      "field": "website",
+      "phase": "alpha",
+      "datatype": "url",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "address": {
+    "entry-number": "1",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "address",
+    "item": [
+    {
+      "text": "A place in the UK with a postal address.",
+      "field": "address",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "address",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "business": {
+    "entry-number": "3",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "business",
+    "item": [
+    {
+      "text": "A Limited Company, School or other legal entity that trades.",
+      "field": "business",
+      "phase": "alpha",
+      "datatype": "curie",
+      "register": "company",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "food-premises-rating": {
+    "entry-number": "21",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-rating",
+    "item": [
+    {
+      "text": "A rating of a food premises for hygeine.",
+      "field": "food-premises-rating",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "food-premises-rating",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "inspector": {
+    "entry-number": "29",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "inspector",
+    "item": [
+    {
+      "text": "The organisation conducting an inspection",
+      "field": "inspector",
+      "phase": "alpha",
+      "datatype": "curie",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "cardinality": {
+    "entry-number": "4",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "cardinality",
+    "item": [
+    {
+      "text": "Number of elements of the set (1 or n).",
+      "field": "cardinality",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "local-authority": {
+    "entry-number": "31",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "local-authority",
+    "item": [
+    {
+      "text": "A Local Authority in England, Scotland, Wales or Northern Ireland.",
+      "field": "local-authority",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "local-authority",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "end-date": {
+    "entry-number": "13",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "end-date",
+    "item": [
+    {
+      "text": "End datetime for the applicability of a register entry.",
+      "field": "end-date",
+      "phase": "alpha",
+      "datatype": "datetime",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "official-name": {
+    "entry-number": "39",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "official-name",
+    "item": [
+    {
+      "text": "Official name of country",
+      "field": "official-name",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "company-status": {
+    "entry-number": "6",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "company-status",
+    "item": [
+    {
+      "text": "The status of a UK company.",
+      "field": "company-status",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "headteacher": {
+    "entry-number": "27",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "headteacher",
+    "item": [
+    {
+      "text": "Headteacher of school.",
+      "field": "headteacher",
+      "phase": "alpha",
+      "datatype": "string",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "location": {
+    "entry-number": "33",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "location",
+    "item": [
+    {
+      "text": "A geographic location found in government data which may be published under an open government licence",
+      "field": "location",
+      "phase": "alpha",
+      "datatype": "curie",
+      "register": "location",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "register": {
+    "entry-number": "49",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "register",
+    "item": [
+    {
+      "text": "A register name.",
+      "field": "register",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "register",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "territory": {
+    "entry-number": "56",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "territory",
+    "item": [
+    {
+      "text": "A territory",
+      "field": "territory",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "territory",
+      "cardinality": "1"
+    }
+    ]
+  },
+  "local-authority-eng": {
+    "index-entry-number": "29",
+    "entry-number": "29",
+    "entry-timestamp": "2017-01-10T17:16:07Z",
+    "key": "local-authority-eng",
+    "item": [
+    {
+      "phase": "alpha",
+      "field": "local-authority-eng",
+      "datatype": "string",
+      "text": "The local authority's ISO 3166-1 alpha3 code. Unique codes have been created for local authorities that don't have an existing ISO code.",
+      "cardinality": "1",
+      "register": "local-authority-eng"
+    }
+    ]
+  },
+  "local-authority-type": {
+    "index-entry-number": "30",
+    "entry-number": "30",
+    "entry-timestamp": "2017-01-10T17:16:07Z",
+    "key": "local-authority-type",
+    "item": [
+    {
+      "phase": "alpha",
+      "field": "local-authority-type",
+      "datatype": "string",
+      "text": "The type of local government organisation.",
+      "cardinality": "1",
+      "register": "local-authority-type"
+    }
+    ]
+  }
+}

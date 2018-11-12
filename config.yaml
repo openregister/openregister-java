@@ -1,61 +1,63 @@
-database:
-  driverClass: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/openregister_java
-  user: postgres
-  password:
-
-  #db connection properties
-  initialSize: 1
-  minSize: 1
-  maxSize: 4
-
-  properties:
-    charSet: UTF-8
-
-registers:
-  register:
-    credentials:
-      user: sasine
-      password: inhibition
-    schema: register
-
-server:
-  requestLog:
-    appenders:
-      - type: access-logstash-console
-
-  registerDefaultExceptionMappers: false
-  adminConnectors:
-    - type: http
-      port: 9092
-
-registerDomain: openregister.local:8080
-
-register: school
-
-enableDownloadResource: true
-
-schema: school
-
-externalConfigDirectory: /tmp
-
-downloadConfigs: true
-
-# can be http: file s3: or classpath: url
-fieldsYamlLocation: classpath://config/fields.yaml
-
-registersYamlLocation: classpath://config/registers.yaml
-
-credentials:
-  user: foo
-  password: bar
-
-# Logging settings.
-logging:
-  level: INFO
-  # Logger-specific levels.
-  loggers:
-    "uk.gov": DEBUG
-    "org.skife.jdbi.v2": TRACE
-  appenders:
-    - type: logstash-console
+{
+  "database": {
+    "driverClass": "org.postgresql.Driver",
+    "url": "jdbc:postgresql://localhost:5432/openregister_java",
+    "user": "postgres",
+    "password": "null",
+    "initialSize": 1,
+    "minSize": 1,
+    "maxSize": 4,
+    "properties": {
+      "charSet": "UTF-8"
+    }
+  },
+  "registers": {
+    "register": {
+      "credentials": {
+        "user": "sasine",
+        "password": "inhibition"
+      },
+      "schema": "register"
+    }
+  },
+  "server": {
+    "requestLog": {
+      "appenders": [
+      {
+        "type": "access-logstash-console"
+      }
+      ]
+    },
+    "registerDefaultExceptionMappers": false,
+    "adminConnectors": [
+    {
+      "type": "http",
+      "port": 9092
+    }
+    ]
+  },
+  "registerDomain": "openregister.local:8080",
+  "register": "school",
+  "enableDownloadResource": true,
+  "schema": "school",
+  "externalConfigDirectory": "/tmp",
+  "downloadConfigs": true,
+  "fieldsYamlLocation": "classpath://config/fields.yaml",
+  "registersYamlLocation": "classpath://config/registers.yaml",
+  "credentials": {
+    "user": "foo",
+    "password": "bar"
+  },
+  "logging": {
+    "level": "INFO",
+    "loggers": {
+      "uk.gov": "DEBUG",
+      "org.skife.jdbi.v2": "TRACE"
+    },
+    "appenders": [
+    {
+      "type": "logstash-console"
+    }
+    ]
+  }
+}
