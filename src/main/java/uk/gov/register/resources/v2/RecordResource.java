@@ -13,10 +13,10 @@ import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.resources.IndexSizePagination;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.service.ItemConverter;
-import uk.gov.register.views.RecordsView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.v2.EntryListView;
+import uk.gov.register.views.v2.RecordListView;
 import uk.gov.register.views.v2.RecordView;
 
 import javax.inject.Inject;
@@ -62,7 +62,7 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) throws FieldConversionException {
         httpServletResponseAdapter.setLinkHeader("version-history", String.format("/records/%s/entries", key));
 
-        return register.getRecord(EntryType.user, key).map(this::getRecordView)
+        return register.getRecord(EntryType.user, key).map(this::buildRecordView)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -82,7 +82,7 @@ public class RecordResource {
         if (allEntries.isEmpty()) {
             throw new NotFoundException();
         }
-        return new EntryListView(allEntries, key);
+        return new EntryListView(allEntries);
     }
 
     @GET
@@ -96,9 +96,9 @@ public class RecordResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
+    public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        return viewFactory.getRecordsMediaView(records);
+        return buildRecordListView(records);
     }
 
     @GET
@@ -112,7 +112,7 @@ public class RecordResource {
             ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
-    public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
+    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
 
         return getRecordsView(pagination.pageSize(), pagination.offset());
@@ -131,12 +131,16 @@ public class RecordResource {
         return pagination;
     }
 
-    private RecordsView getRecordsView(int limit, int offset) throws FieldConversionException {
+    private RecordListView getRecordsView(int limit, int offset) throws FieldConversionException {
         List<Record> records = register.getRecords(EntryType.user, limit, offset);
-        return viewFactory.getRecordsMediaView(records);
+        return buildRecordListView(records);
     }
 
-    private RecordView getRecordView(final Record record) throws FieldConversionException {
+    private RecordListView buildRecordListView(Collection<Record> records) {
+        return new RecordListView(records, register.getFieldsByName());
+    }
+
+    private RecordView buildRecordView(final Record record) throws FieldConversionException {
         Map<String, FieldValue> itemKeyValuePairs = itemConverter.convertItem(record.getItem(), register.getFieldsByName());
         return new RecordView(record, itemKeyValuePairs, register.getFieldsByName().values());
     }

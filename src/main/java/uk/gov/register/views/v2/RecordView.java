@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class RecordView implements CsvRepresentationView<ObjectNode> {
-        private Iterable<Field> fields;
+    private Iterable<Field> fields;
     private Record record;
     private final ItemView itemView;
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
@@ -52,7 +52,7 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
     public JsonNode getContent() {
         final ObjectNode result = jsonObjectMapper.createObjectNode();
         result.putPOJO("blob", itemView);
-        result.put("entry-number", this.getEntry().getEntryNumber().toString());
+        result.put("entry-number", this.getEntry().getEntryNumber());
         result.put("entry-timestamp", this.getEntry().getTimestampAsISOFormat());
         result.put("key", this.getEntry().getKey());
         return result;
@@ -60,7 +60,7 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
 
     protected ObjectNode getFlatRecordJson() {
         ObjectNode result = jsonObjectMapper.convertValue(itemView, ObjectNode.class);
-        result.put("entry-number", this.getEntry().getEntryNumber().toString());
+        result.put("entry-number", this.getEntry().getEntryNumber());
         result.put("entry-timestamp", this.getEntry().getTimestampAsISOFormat());
         result.put("key", this.getEntry().getKey());
         return result;
@@ -68,7 +68,7 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
 
     public CsvSchema csvSchema() {
         CsvSchema.Builder schemaBuilder = new CsvSchema.Builder();
-        schemaBuilder.addColumn("entry-number", CsvSchema.ColumnType.STRING);
+        schemaBuilder.addColumn("entry-number", CsvSchema.ColumnType.NUMBER);
         schemaBuilder.addColumn("entry-timestamp", CsvSchema.ColumnType.STRING);
         schemaBuilder.addColumn("key", CsvSchema.ColumnType.STRING);
 

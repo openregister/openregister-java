@@ -5,21 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.google.common.collect.Lists;
 import uk.gov.register.core.Entry;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
-import uk.gov.register.util.ToArrayConverter;
 import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.time.Instant;
-import java.util.Iterator;
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({"index-entry-number", "entry-number", "entry-timestamp", "key", "blob-hash"})
@@ -47,7 +41,6 @@ public class EntryView implements CsvRepresentationView<EntryView> {
     }
 
     @JsonProperty("entry-number")
-    @JsonSerialize(using = ToStringSerializer.class)
     public Integer getEntryNumber() {
         return entryNumber;
     }

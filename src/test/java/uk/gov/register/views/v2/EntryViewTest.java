@@ -35,7 +35,7 @@ public class EntryViewTest {
         String result = objectMapper.writeValueAsString(view);
 
         assertThat(result, equalTo("{" +
-                "\"entry-number\":\"1\"," +
+                "\"entry-number\":1," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
                 "\"blob-hash\":\"sha-256:ab\"" +
