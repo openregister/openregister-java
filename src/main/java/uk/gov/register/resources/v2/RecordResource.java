@@ -141,7 +141,6 @@ public class RecordResource {
     }
 
     private RecordView buildRecordView(final Record record) throws FieldConversionException {
-        Map<String, FieldValue> itemKeyValuePairs = itemConverter.convertItem(record.getItem(), register.getFieldsByName());
-        return new RecordView(record, itemKeyValuePairs, register.getFieldsByName().values());
+        return new RecordView(record, register.getFieldsByName());
     }
 }

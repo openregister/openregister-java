@@ -37,9 +37,8 @@ public class RecordListView implements CsvRepresentationView<ArrayNode> {
                         record -> record.getEntry().getKey(),
                         record -> new RecordView(
                                 record,
-                                itemConverter.convertItem(record.getItem(), fieldsByName),
-                                fieldsByName.values()
-
+                                fieldsByName,
+                                this.itemConverter
                         )
                 )
         );

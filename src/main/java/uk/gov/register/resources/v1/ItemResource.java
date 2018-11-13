@@ -75,8 +75,6 @@ public class ItemResource {
     }
 
     protected ItemView buildItemView(Item item) {
-        Map<String, Field> fieldsByName = getFieldsByName();
-        Map<String, FieldValue> itemKeyValuePairs = itemConverter.convertItem(item, fieldsByName);
-        return new ItemView(item.getSha256hex(), itemKeyValuePairs, fieldsByName.values());
+        return new ItemView(item, register.getFieldsByName());
     }
 }

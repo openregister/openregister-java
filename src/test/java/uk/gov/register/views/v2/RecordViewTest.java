@@ -51,11 +51,6 @@ public class RecordViewTest {
                 "address", new Field("address", "string", new RegisterId("foo"), Cardinality.ONE, "bla")
         );
 
-        this.fields = ImmutableList.of(
-                new Field("street", "string", new RegisterId("foo"), Cardinality.ONE, "bla"),
-                new Field("address", "string", new RegisterId("foo"), Cardinality.ONE, "bla")
-        );
-
         ItemConverter itemConverter = new ItemConverter();
 
         this.itemValues = itemConverter.convertItem(this.item1, fieldsByName);
@@ -63,7 +58,7 @@ public class RecordViewTest {
 
     @Test
     public void jsonResponse() throws IOException {
-        RecordView view = new RecordView(record1, itemValues, fields);
+        RecordView view = new RecordView(record1, fieldsByName);
         String result = objectMapper.writeValueAsString(view);
         JsonNode jsonNode = objectMapper.readTree(result);
 

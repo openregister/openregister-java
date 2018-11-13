@@ -8,9 +8,9 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Field;
-import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
 import uk.gov.register.exceptions.FieldConversionException;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.CsvRepresentation;
@@ -26,10 +26,14 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
     private final ItemView itemView;
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
 
-    public RecordView(final Record record, final Map<String, FieldValue> fieldValueMap, final Iterable<Field> fields) throws FieldConversionException {
-        this.fields = fields;
+    public RecordView(final Record record, final Map<String, Field> fieldsByName) {
+        this(record, fieldsByName, new ItemConverter());
+    }
+
+    public RecordView(final Record record, final Map<String, Field> fieldsByName, ItemConverter itemConverter) throws FieldConversionException {
+        this.fields = fields = fieldsByName.values();
         this.record = record;
-        this.itemView = new ItemView(record.getItem().getSha256hex(), fieldValueMap, fields);
+        this.itemView = new ItemView(record.getItem(), fieldsByName, itemConverter);
     }
 
     private Record getRecord() {

@@ -57,7 +57,7 @@ public class RecordsView implements CsvRepresentationView {
     }
 
     @SuppressWarnings("unused, used by the template")
-    public List<ItemView> getRecordsSimple() {
+    public List<ItemSimpleView> getRecordsSimple() {
         return recordMap.entrySet()
                 .stream()
                 .map(e -> new ItemSimpleView(e.getKey().getKey(), e.getValue()))
@@ -121,7 +121,7 @@ public class RecordsView implements CsvRepresentationView {
         final Map<Entry, ItemView> map = new LinkedHashMap<>();
 
         records.forEach(record -> {
-            map.put(record.getEntry(), new ItemView(record.getItem().getSha256hex(), itemConverter.convertItem(record.getItem(), fieldsByName), getFields()));
+            map.put(record.getEntry(), new ItemView(record.getItem(), fieldsByName, itemConverter));
         });
         return map;
     }

@@ -31,11 +31,10 @@ public class ItemListView implements CsvRepresentationView {
 
     @JsonValue
     public Map<HashValue, ItemView> getItems() {
-        return this.items.stream().map(item -> new ItemView(
-                item.getSha256hex(),
-                itemConverter.convertItem(item, fieldsByName),
-                fieldsByName.values()
-        )).collect(Collectors.toMap(item -> item.getItemHash(), Function.identity()));
+        return this.items
+                .stream()
+                .map(item -> new ItemView(item, fieldsByName, this.itemConverter))
+                .collect(Collectors.toMap(item -> item.getItemHash(), Function.identity()));
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
