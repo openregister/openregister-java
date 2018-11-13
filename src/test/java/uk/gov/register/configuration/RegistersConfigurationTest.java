@@ -10,17 +10,17 @@ import static org.junit.Assert.fail;
 
 public class RegistersConfigurationTest {
     @Test
-    public void configuration_shouldReturnRegisterData_whenRegisterExists() throws Exception {
-        RegistersConfiguration configuration = new RegistersConfiguration("src/main/resources/config/registers.yaml");
+    public void configuration_shouldReturnRegisterData_whenRegisterExists() {
+        RegistersConfiguration configuration = new RegistersConfiguration("src/main/resources/config/registers.json");
         RegisterMetadata data = configuration.getRegisterMetadata(new RegisterId("register"));
 
         assertThat("register", equalTo(data.getRegisterId().toString()));
     }
 
     @Test
-    public void configuration_shouldThrowException_whenRegisterDoesNotExist() throws Exception {
+    public void configuration_shouldThrowException_whenRegisterDoesNotExist()  {
         try {
-            RegistersConfiguration configuration = new RegistersConfiguration("src/main/resources/config/registers.yaml");
+            RegistersConfiguration configuration = new RegistersConfiguration("src/main/resources/config/registers.json");
             configuration.getRegisterMetadata(new RegisterId("register-that-does-not-exist"));
             fail();
         } catch (RuntimeException e) {

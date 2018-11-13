@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 public class FieldsConfigurationTest {
     @Test
     public void loadConfigurationWithDefaultFieldsResourceFile() {
-        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration("src/main/resources/config/fields.yaml");
+        FieldsConfiguration fieldsConfiguration = new FieldsConfiguration("src/main/resources/config/fields.json");
 
         assertThat(fieldsConfiguration.getField("register").get().fieldName, equalTo("register"));
     }
@@ -19,7 +19,7 @@ public class FieldsConfigurationTest {
     @Test
     public void loadConfigurationWithExternalPathOfFieldsResourceFile() throws URISyntaxException {
         @SuppressWarnings("ConstantConditions")
-        String fileUrl = ResourceHelpers.resourceFilePath("config/fields.yaml");
+        String fileUrl = ResourceHelpers.resourceFilePath("config/fields.json");
 
         FieldsConfiguration fieldsConfiguration = new FieldsConfiguration(fileUrl);
 

@@ -16,7 +16,7 @@ public class PublicBodiesConfiguration {
     public PublicBodiesConfiguration(Optional<String> publicBodiesResourceYamlPath) {
         publicBodies = new ResourceJsonFileReader().readResource(
                 publicBodiesResourceYamlPath,
-                "config/public-bodies.yaml",
+                "config/public-bodies.json",
                 new TypeReference<Map<String, PublicBody>>() {
                 }
         );

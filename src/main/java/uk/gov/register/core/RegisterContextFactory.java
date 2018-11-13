@@ -57,8 +57,8 @@ public class RegisterContextFactory {
     private FlywayFactory getFlywayFactory(RegisterId registerId, Optional<String> custodianName, RegisterConfigConfiguration registerConfigConfiguration) {
         FlywayFactory flywayFactory = new FlywayFactory();
         flywayFactory.setLocations(Arrays.asList("/sql", "uk.gov.migration"));
-        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", registerId.value(), "custodianName", custodianName.orElse(""), "fieldsYamlUrl",registerConfigConfiguration.getFieldsYamlLocation(),
-                "registersYamlUrl", registerConfigConfiguration.getRegistersYamlLocation()));
+        flywayFactory.setPlaceholders(ImmutableMap.of("registerName", registerId.value(), "custodianName", custodianName.orElse(""), "fieldsJsonUrl",registerConfigConfiguration.getFieldsJsonLocation(),
+                "registersJsonUrl", registerConfigConfiguration.getRegistersJsonLocation()));
         flywayFactory.setOutOfOrder(true);
         return flywayFactory;
     }

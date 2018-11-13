@@ -21,8 +21,8 @@ public class ConfigManager {
     private AtomicReference<FieldsConfiguration> fieldsConfiguration = new AtomicReference<>();
 
     public ConfigManager(RegisterConfigConfiguration registerConfigConfiguration) {
-        this.registersConfigFileUrl = registerConfigConfiguration.getRegistersYamlLocation();
-        this.fieldsConfigFileUrl = registerConfigConfiguration.getFieldsYamlLocation();
+        this.registersConfigFileUrl = registerConfigConfiguration.getRegistersJsonLocation();
+        this.fieldsConfigFileUrl = registerConfigConfiguration.getFieldsJsonLocation();
         this.refresh = registerConfigConfiguration.getDownloadConfigs();
 
         String externalConfigDirectory = registerConfigConfiguration.getExternalConfigDirectory();

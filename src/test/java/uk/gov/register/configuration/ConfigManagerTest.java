@@ -62,8 +62,8 @@ public class ConfigManagerTest {
 
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolder.getRoot().getAbsolutePath());
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsJsonLocation()).thenReturn(this.fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(this.registersConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
@@ -79,8 +79,8 @@ public class ConfigManagerTest {
 
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolder.getRoot().getAbsolutePath());
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsJsonLocation()).thenReturn(this.fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(this.registersConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
@@ -96,8 +96,8 @@ public class ConfigManagerTest {
 
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(registersConfigFileUrl);
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsJsonLocation()).thenReturn(fieldsConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
@@ -113,8 +113,8 @@ public class ConfigManagerTest {
 
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(registersConfigFileUrl);
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsJsonLocation()).thenReturn(fieldsConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
@@ -129,8 +129,8 @@ public class ConfigManagerTest {
     public void refreshConfig_shouldThrowNoSuchConfigException_whenSpecifiedRegistersConfigFileUrlIsNotFound() throws NoSuchConfigException, IOException {
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.missingConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsJsonLocation()).thenReturn(this.fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(this.missingConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
@@ -140,8 +140,8 @@ public class ConfigManagerTest {
     public void refreshConfig_shouldThrowNoSuchConfigException_whenSpecifiedFieldsConfigFileUrlIsNotFound() throws NoSuchConfigException, IOException {
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn(missingConfigFileUrl);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsJsonLocation()).thenReturn(missingConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(this.registersConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
@@ -151,8 +151,8 @@ public class ConfigManagerTest {
     public void refreshConfig_shouldThrowIOException_whenSpecifiedRegistersConfigUrlIsMalformed() throws IOException, NoSuchConfigException {
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn("zzz://config-that-does-not-exist.json");
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.fieldsConfigFileUrl);
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn("zzz://config-that-does-not-exist.json");
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(this.fieldsConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();
@@ -162,8 +162,8 @@ public class ConfigManagerTest {
     public void refreshConfig_shouldThrowIOException_whenSpecifiedFieldsConfigUrlIsMalformed() throws IOException, NoSuchConfigException {
         when(registerConfigConfiguration.getDownloadConfigs()).thenReturn(true);
         when(registerConfigConfiguration.getExternalConfigDirectory()).thenReturn(externalConfigsFolderPath);
-        when(registerConfigConfiguration.getFieldsYamlLocation()).thenReturn("zzz://config-that-does-not-exist.json");
-        when(registerConfigConfiguration.getRegistersYamlLocation()).thenReturn(this.registersConfigFileUrl);
+        when(registerConfigConfiguration.getFieldsJsonLocation()).thenReturn("zzz://config-that-does-not-exist.json");
+        when(registerConfigConfiguration.getRegistersJsonLocation()).thenReturn(this.registersConfigFileUrl);
 
         ConfigManager configManager = new ConfigManager(registerConfigConfiguration);
         configManager.refreshConfig();

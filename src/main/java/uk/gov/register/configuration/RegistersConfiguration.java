@@ -15,9 +15,9 @@ public class RegistersConfiguration {
 
     private final Collection<RegisterMetadata> registers;
 
-    public RegistersConfiguration(String registersResourceYamlPath) {
+    public RegistersConfiguration(String registersResourceJsonPath) {
         Collection<RegisterConfigRecord> configRecords = new ResourceJsonFileReader()
-                .readResourceFromPath(registersResourceYamlPath, new TypeReference<Map<String,RegisterConfigRecord>>(){} );
+                .readResourceFromPath(registersResourceJsonPath, new TypeReference<Map<String,RegisterConfigRecord>>(){} );
         registers = configRecords.stream().map(RegisterConfigRecord::getSingleItem).collect(toList());
     }
 

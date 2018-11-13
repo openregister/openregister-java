@@ -48,7 +48,7 @@ public class HomePageFunctionalTest {
 
     @Test
     public void homepageHasCopyrightInFooterRenderedAsMarkdown() throws Throwable {
-        // assumes that registers.yaml has a `postcode` entry with a copyright field containing markdown links
+        // assumes that registers.json has a `postcode` entry with a copyright field containing markdown links
         // might be good to find a way to specify this in the test
         Response response = register.getRequest(REGISTER_WITH_COPYRIGHT_FIELD, "/");
         Document doc = Jsoup.parse(response.readEntity(String.class));

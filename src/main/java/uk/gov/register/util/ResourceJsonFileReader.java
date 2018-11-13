@@ -1,9 +1,7 @@
 package uk.gov.register.util;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.dropwizard.jackson.Jackson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,7 @@ public class ResourceJsonFileReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceJsonFileReader.class);
 
-    private static final ObjectMapper JSON_OBJECT_MAPPER = Jackson.newObjectMapper(new JsonFactory());
+    private static final ObjectMapper JSON_OBJECT_MAPPER = Jackson.newObjectMapper();
 
     public <N> Collection<N> readResource(Optional<String> resourceJsonPath,
                                           String defaultResourceJsonFilePath,
