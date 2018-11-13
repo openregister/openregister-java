@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
-import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.Record;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
@@ -29,7 +28,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -62,7 +60,7 @@ public class RecordResource {
     public RecordView getRecordByKey(@PathParam("record-key") String key) throws FieldConversionException {
         httpServletResponseAdapter.setLinkHeader("version-history", String.format("/records/%s/entries", key));
 
-        return register.getRecord(EntryType.user, key).map(this::buildRecordView)
+        return register.getRecord(EntryType.user, key).map(record -> new RecordView(record, register.getFieldsByName()))
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -98,7 +96,7 @@ public class RecordResource {
     @Timed
     public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
         List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        return buildRecordListView(records);
+        return new RecordListView(records, register.getFieldsByName());
     }
 
     @GET
@@ -133,14 +131,6 @@ public class RecordResource {
 
     private RecordListView getRecordsView(int limit, int offset) throws FieldConversionException {
         List<Record> records = register.getRecords(EntryType.user, limit, offset);
-        return buildRecordListView(records);
-    }
-
-    private RecordListView buildRecordListView(Collection<Record> records) {
         return new RecordListView(records, register.getFieldsByName());
-    }
-
-    private RecordView buildRecordView(final Record record) throws FieldConversionException {
-        return new RecordView(record, register.getFieldsByName());
     }
 }
