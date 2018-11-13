@@ -33,8 +33,7 @@ public class ItemListView implements CsvRepresentationView {
     public Map<HashValue, ItemView> getItems() {
         return this.items
                 .stream()
-                .map(item -> new ItemView(item, fieldsByName, this.itemConverter))
-                .collect(Collectors.toMap(item -> item.getItemHash(), Function.identity()));
+                .collect(Collectors.toMap(item -> item.getSha256hex(), item -> new ItemView(item, fieldsByName, this.itemConverter)));
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
