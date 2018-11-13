@@ -1,0 +1,46 @@
+{
+  "country": {
+    "entry-number": "9",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "country",
+    "item": [
+    {
+      "field": "country",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "country",
+      "cardinality": "1",
+      "text": "ISO 3166-2 two letter code for a country."
+    }
+    ]
+  },
+  "copyright": {
+    "entry-number": "8",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "copyright",
+    "item": [
+    {
+      "field": "copyright",
+      "phase": "alpha",
+      "datatype": "text",
+      "cardinality": "1",
+      "text": "Copyright for the data in the register."
+    }
+    ]
+  },
+  "food-premises-types": {
+    "entry-number": "23",
+    "entry-timestamp": "2016-04-21T10:19:58Z",
+    "key": "food-premises-types",
+    "item": [
+    {
+      "field": "food-premises-types",
+      "phase": "alpha",
+      "datatype": "string",
+      "register": "food-premises-type",
+      "cardinality": "n",
+      "text": "A set of food premises types."
+    }
+    ]
+  }
+}

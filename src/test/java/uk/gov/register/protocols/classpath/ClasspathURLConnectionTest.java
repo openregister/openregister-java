@@ -20,14 +20,14 @@ public class ClasspathURLConnectionTest {
 
     @Test
     public void shouldGetInputStream() throws Exception {
-        URL url = new URL("classpath://config/external-fields.yaml");
+        URL url = new URL("classpath://config/external-fields.json");
         ClasspathURLConnection connection = new ClasspathURLConnection(url);
         InputStream inputStream = connection.getInputStream();
         Scanner scanner = new Scanner(inputStream);
         String line1 = scanner.nextLine();
-        assertThat(line1, is("---"));
+        assertThat(line1, is("{"));
         String line2 = scanner.nextLine();
-        assertThat(line2, is("country:"));
+        assertThat(line2, is("  \"country\": {"));
 
     }
 
