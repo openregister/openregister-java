@@ -1,0 +1,48 @@
+{
+  "food-premises": {
+    "index-entry-number": "8",
+    "entry-number": "8",
+    "entry-timestamp": "2016-04-21T10:14:21Z",
+    "key": "food-premises",
+    "item": [
+    {
+      "text": "Premises which prepare and serve food",
+      "phase": "alpha",
+      "fields": [
+        "food-premises",
+        "name",
+        "business",
+        "food-premises-types",
+        "local-authority",
+        "premises",
+        "start-date",
+        "end-date"
+      ],
+      "register": "food-premises",
+      "registry": "food-standards-agency"
+    }
+    ]
+  },
+  "country": {
+    "index-entry-number": "3",
+    "entry-number": "3",
+    "entry-timestamp": "2016-04-21T10:14:21Z",
+    "key": "country",
+    "item": [
+    {
+      "text": "British English-language names and descriptive terms for countries",
+      "phase": "alpha",
+      "fields": [
+        "country",
+        "name",
+        "official-name",
+        "citizen-names",
+        "start-date",
+        "end-date"
+      ],
+      "register": "country",
+      "registry": "foreign-commonwealth-office"
+    }
+    ]
+  }
+}

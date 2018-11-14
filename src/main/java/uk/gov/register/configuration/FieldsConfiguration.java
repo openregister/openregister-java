@@ -2,7 +2,7 @@ package uk.gov.register.configuration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import uk.gov.register.core.Field;
-import uk.gov.register.util.ResourceYamlFileReader;
+import uk.gov.register.util.ResourceJsonFileReader;
 
 import java.util.*;
 
@@ -12,8 +12,8 @@ public class FieldsConfiguration {
 
     private final Collection<Field> fields;
 
-    public FieldsConfiguration(String fieldsResourceYamlPath) {
-        Collection<FieldConfigRecord> fieldConfigRecords = new ResourceYamlFileReader().readResourceFromPath(fieldsResourceYamlPath,
+    public FieldsConfiguration(String fieldsResourceJsonPath) {
+        Collection<FieldConfigRecord> fieldConfigRecords = new ResourceJsonFileReader().readResourceFromPath(fieldsResourceJsonPath,
                 new TypeReference<Map<String, FieldConfigRecord>>() {
         });
         fields = fieldConfigRecords.stream().map(FieldConfigRecord::getSingleItem).collect(toList());

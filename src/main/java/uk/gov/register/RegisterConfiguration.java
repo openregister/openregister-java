@@ -91,12 +91,12 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     @JsonProperty
     @NotNull
     @Valid
-    private String fieldsYamlLocation;
+    private String fieldsJsonLocation;
 
     @JsonProperty
     @NotNull
     @Valid
-    private String registersYamlLocation;
+    private String registersJsonLocation;
 
     public RegisterContextFactory getDefaultRegister() {
         return new RegisterContextFactory(enableRegisterDataDelete, enableDownloadResource, schema, custodianName, credentials);
@@ -129,12 +129,12 @@ public class RegisterConfiguration extends Configuration implements RegisterDoma
     public boolean getDownloadConfigs() { return downloadConfigs; }
 
     @Override
-    public String getFieldsYamlLocation() {
-        return fieldsYamlLocation;
+    public String getFieldsJsonLocation() {
+        return fieldsJsonLocation;
     }
 
     @Override
-    public String getRegistersYamlLocation() {
-        return registersYamlLocation;
+    public String getRegistersJsonLocation() {
+        return registersJsonLocation;
     }
 }

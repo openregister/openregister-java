@@ -21,13 +21,13 @@ public class ConfigManager {
     private AtomicReference<FieldsConfiguration> fieldsConfiguration = new AtomicReference<>();
 
     public ConfigManager(RegisterConfigConfiguration registerConfigConfiguration) {
-        this.registersConfigFileUrl = registerConfigConfiguration.getRegistersYamlLocation();
-        this.fieldsConfigFileUrl = registerConfigConfiguration.getFieldsYamlLocation();
+        this.registersConfigFileUrl = registerConfigConfiguration.getRegistersJsonLocation();
+        this.fieldsConfigFileUrl = registerConfigConfiguration.getFieldsJsonLocation();
         this.refresh = registerConfigConfiguration.getDownloadConfigs();
 
         String externalConfigDirectory = registerConfigConfiguration.getExternalConfigDirectory();
-        this.registersConfigFilePath = externalConfigDirectory + "/" + "registers.yaml";
-        this.fieldsConfigFilePath = externalConfigDirectory + "/" + "fields.yaml";
+        this.registersConfigFilePath = externalConfigDirectory + "/" + "registers.json";
+        this.fieldsConfigFilePath = externalConfigDirectory + "/" + "fields.json";
     }
 
     public void refreshConfig() throws NoSuchConfigException, IOException {

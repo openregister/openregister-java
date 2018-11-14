@@ -59,21 +59,21 @@ Next, go to `config.docker.basic.yaml` and update the fields and registers locat
 
 Fields locations per environment:
 
-Variable: `fieldsYamlLocation`
+Variable: `fieldsJsonLocation`
 
 Possible values:
-* beta: `fieldsYamlLocation: https://field.register.gov.uk/records.yaml`
-* alpha: `fieldsYamlLocation: https://field.alpha.openregister.org/records.yaml`
-* discovery: `fieldsYamlLocation: https://field.cloudapps.digital/records.yaml`
+* beta: `fieldsJsonLocation: https://field.register.gov.uk/records.json`
+* alpha: `fieldsJsonLocation: https://field.alpha.openregister.org/records.json`
+* discovery: `fieldsJsonLocation: https://field.cloudapps.digital/records.json`
 
 Registers locations per environment:
 
-Variable: `registersYamlLocation`
+Variable: `registersJsonLocation`
 
 Possible values:
-* beta: `registersYamlLocation: https://register.register.gov.uk/records.yaml`
-* alpha: `registersYamlLocation: https://register.alpha.openregister.org/records.yaml`
-* discovery: `registersYamlLocation: https://register.cloudapps.digital/records.yaml`
+* beta: `registersJsonLocation: https://register.register.gov.uk/records.json`
+* alpha: `registersJsonLocation: https://register.alpha.openregister.org/records.json`
+* discovery: `registersJsonLocation: https://register.cloudapps.digital/records.json`
 
 Now re-run the application using `ENVIRONMENT=myphase REGISTERS=myregister ./run-application.sh`. You should now see the `myregister` register locally at `127.0.0.1:8080`.
 

@@ -8,7 +8,7 @@ public interface RegisterConfigConfiguration {
 
     String getExternalConfigDirectory();
 
-    String getFieldsYamlLocation();
+    String getFieldsJsonLocation();
 
-    String getRegistersYamlLocation();
+    String getRegistersJsonLocation();
 }

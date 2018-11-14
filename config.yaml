@@ -42,9 +42,9 @@ externalConfigDirectory: /tmp
 downloadConfigs: true
 
 # can be http: file s3: or classpath: url
-fieldsYamlLocation: classpath://config/fields.yaml
+fieldsJsonLocation: classpath://config/fields.json
 
-registersYamlLocation: classpath://config/registers.yaml
+registersJsonLocation: classpath://config/registers.json
 
 credentials:
   user: foo
