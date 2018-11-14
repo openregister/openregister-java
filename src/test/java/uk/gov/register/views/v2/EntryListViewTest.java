@@ -43,18 +43,16 @@ public class EntryListViewTest {
 
         assertThat(result, equalTo("[" +
                 "{" +
-                "\"index-entry-number\":\"1\"," +
-                "\"entry-number\":\"1\"," +
+                "\"entry-number\":1," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
-                "\"blob-hash\":[\"sha-256:ab\"]" +
+                "\"blob-hash\":\"sha-256:ab\"" +
                 "}," +
                 "{" +
-                "\"index-entry-number\":\"2\"," +
-                "\"entry-number\":\"2\"," +
+                "\"entry-number\":2," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:01Z\"," +
                 "\"key\":\"c\"," +
-                "\"blob-hash\":[\"sha-256:cd\"]" +
+                "\"blob-hash\":\"sha-256:cd\"" +
                 "}" +
                 "]"));
     }
@@ -74,9 +72,9 @@ public class EntryListViewTest {
         String result = new String(bytes, StandardCharsets.UTF_8);
 
         assertThat(result, equalTo(
-                "index-entry-number,entry-number,entry-timestamp,key,blob-hash\r\n" +
-                        "1,1,2016-08-05T13:24:00Z,b,sha-256:ab\r\n" +
-                        "2,2,2016-08-05T13:24:01Z,c,sha-256:cd\r\n"
+                "entry-number,entry-timestamp,key,blob-hash\r\n" +
+                        "1,2016-08-05T13:24:00Z,b,sha-256:ab\r\n" +
+                        "2,2016-08-05T13:24:01Z,c,sha-256:cd\r\n"
         ));
     }
 }

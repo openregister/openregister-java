@@ -35,11 +35,10 @@ public class EntryViewTest {
         String result = objectMapper.writeValueAsString(view);
 
         assertThat(result, equalTo("{" +
-                "\"index-entry-number\":\"1\"," +
-                "\"entry-number\":\"1\"," +
+                "\"entry-number\":1," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
-                "\"blob-hash\":[\"sha-256:ab\"]" +
+                "\"blob-hash\":\"sha-256:ab\"" +
                 "}"));
     }
 
@@ -58,8 +57,8 @@ public class EntryViewTest {
         String result = new String(bytes, StandardCharsets.UTF_8);
 
         assertThat(result, equalTo(
-                "index-entry-number,entry-number,entry-timestamp,key,blob-hash\r\n" +
-                "1,1,2016-08-05T13:24:00Z,b,sha-256:ab\r\n"
+                "entry-number,entry-timestamp,key,blob-hash\r\n" +
+                "1,2016-08-05T13:24:00Z,b,sha-256:ab\r\n"
         ));
     }
 }

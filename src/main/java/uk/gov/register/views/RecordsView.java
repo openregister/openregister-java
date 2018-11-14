@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
@@ -56,7 +57,7 @@ public class RecordsView implements CsvRepresentationView {
     }
 
     @SuppressWarnings("unused, used by the template")
-    public List<ItemView> getRecordsSimple() {
+    public List<ItemSimpleView> getRecordsSimple() {
         return recordMap.entrySet()
                 .stream()
                 .map(e -> new ItemSimpleView(e.getKey().getKey(), e.getValue()))
@@ -85,7 +86,7 @@ public class RecordsView implements CsvRepresentationView {
     @Override
     public CsvRepresentation<ArrayNode> csvRepresentation() {
         final Iterable<String> fieldNames = Iterables.transform(getFields(), f -> f.fieldName);
-        return new CsvRepresentation<>(Record.csvSchema(fieldNames), getFlatRecordsJson());
+        return new CsvRepresentation<>(RecordsView.csvSchema(fieldNames), getFlatRecordsJson());
     }
 
     protected ArrayNode getFlatRecordsJson() {
@@ -120,7 +121,7 @@ public class RecordsView implements CsvRepresentationView {
         final Map<Entry, ItemView> map = new LinkedHashMap<>();
 
         records.forEach(record -> {
-            map.put(record.getEntry(), new ItemView(record.getItem().getSha256hex(), itemConverter.convertItem(record.getItem(), fieldsByName), getFields()));
+            map.put(record.getEntry(), new ItemView(record.getItem(), fieldsByName, itemConverter));
         });
         return map;
     }
@@ -134,5 +135,15 @@ public class RecordsView implements CsvRepresentationView {
 
     private ObjectNode getItemJson(final ItemView itemView) {
         return jsonObjectMapper.convertValue(itemView, ObjectNode.class);
+    }
+
+    public static CsvSchema csvSchema(Iterable<String> fields) {
+        CsvSchema entrySchema = EntryView.csvSchemaWithOmittedFields(Arrays.asList("item-hash"));
+        CsvSchema.Builder schemaBuilder = entrySchema.rebuild();
+
+        for (Iterator<CsvSchema.Column> iterator = Item.csvSchema(fields).rebuild().getColumns(); iterator.hasNext();) {
+            schemaBuilder.addColumn(iterator.next().getName(), CsvSchema.ColumnType.STRING);
+        }
+        return schemaBuilder.build();
     }
 }

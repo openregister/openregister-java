@@ -77,9 +77,7 @@ public class BlobResource {
     }
 
     protected ItemView buildItemView(Item item) {
-        Map<String, Field> fieldsByName = getFieldsByName();
-        Map<String, FieldValue> itemKeyValuePairs = itemConverter.convertItem(item, fieldsByName);
-        return new ItemView(item.getSha256hex(), itemKeyValuePairs, fieldsByName.values());
+        return new ItemView(item, register.getFieldsByName(), this.itemConverter);
     }
 
     protected ItemListView buildItemListView(Collection<Item> items) {

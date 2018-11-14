@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.register.core.*;
+import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.representations.CsvRepresentation;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -34,6 +35,16 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
 
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
     private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
+
+    public ItemView(Item item, final Map<String, Field> fieldsByName) {
+        this(item, fieldsByName, new ItemConverter());
+    }
+
+    public ItemView(Item item, final Map<String, Field> fieldsByName, final ItemConverter itemConverter) {
+        this.fields = fieldsByName.values();
+        this.fieldValueMap = itemConverter.convertItem(item, fieldsByName);
+        this.sha256hex = item.getSha256hex();
+    }
 
     public ItemView(final HashValue sha256hex, final Map<String, FieldValue> fieldValueMap, final Iterable<Field> fields) {
         this.fields = fields;
