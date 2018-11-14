@@ -44,14 +44,6 @@ public class RecordResource {
 
     @GET
     @Path("/records/{record-key}")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public AttributionView<RecordView> getRecordByKeyHtml(@PathParam("record-key") String key) throws FieldConversionException {
-        return viewFactory.getRecordView(getRecordByKey(key));
-    }
-
-    @GET
-    @Path("/records/{record-key}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -66,24 +58,6 @@ public class RecordResource {
 
         return register.getRecord(EntryType.user, key).map(viewFactory::getRecordMediaView)
                 .orElseThrow(NotFoundException::new);
-    }
-
-
-
-    @GET
-    @Path("/records/{record-key}/entries")
-    @Produces(ExtraMediaType.TEXT_HTML)
-    @Timed
-    public PaginatedView<EntryListView> getAllEntriesOfARecordHtml(@PathParam("record-key") String key) {
-        Collection<Entry> allEntries = register.allEntriesOfRecord(key);
-        if (allEntries.isEmpty()) {
-            throw new NotFoundException();
-        }
-
-        EntryListView entryListView = new EntryListView(allEntries, key);
-        Pagination pagination = new IndexSizePagination(Optional.of(1), Optional.of(allEntries.size()), allEntries.size());
-
-        return viewFactory.getPaginatedView("v2-entries.html", entryListView, pagination);
     }
 
     @GET
