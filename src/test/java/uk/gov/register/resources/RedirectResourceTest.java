@@ -40,6 +40,13 @@ public class RedirectResourceTest  {
     }
 
     @Test
+    public void getV1Redirect() throws Exception {
+        Response response = register.getRequest(TestRegister.register, "/v1", WILDCARD);
+        assertThat(response.getStatus(), equalTo(307));
+        assertThat(response.getLocation().getPath(), equalTo("/"));
+    }
+
+    @Test
     public void getV1ItemRedirect() throws Exception {
         Response response = register.getRequest(TestRegister.register, "/v1/items/sha-256:9432331d3343a7ceaaee46308069d01836460294c672223b236727a790acf786", WILDCARD);
         assertThat(response.getStatus(), equalTo(307));

@@ -28,39 +28,39 @@ public class RedirectResource {
      * add /v1/ to the URL.
      */
     @GET
-    @Path("/v1/{resource:.+}")
+    @Path("/v1{resource:(/.*)?}")
     public Response redirectV1GetRequests(@Context HttpServletRequest request, @PathParam("resource") String resource) {
-        return redirectByPath(request, "/v1/" + resource, "/" + resource, Response.Status.TEMPORARY_REDIRECT);
+        return redirectByPath(request, "/v1" + resource, resource, Response.Status.TEMPORARY_REDIRECT);
     }
 
     @POST
-    @Path("/v1/{resource:.+}")
+    @Path("/v1{resource:(/.*)?}")
     public Response redirectV1PostRequests(@Context HttpServletRequest request, @PathParam("resource") String resource) {
-        return redirectByPath(request, "/v1/" + resource, "/" + resource, Response.Status.TEMPORARY_REDIRECT);
+        return redirectByPath(request, "/v1" + resource, resource, Response.Status.TEMPORARY_REDIRECT);
     }
 
     @DELETE
-    @Path("/v1/{resource:.+}")
+    @Path("/v1{resource:(/.*)?}")
     public Response redirectV1DeleteRequests(@Context HttpServletRequest request, @PathParam("resource") String resource) {
-        return redirectByPath(request, "/v1/" + resource, "/" + resource, Response.Status.TEMPORARY_REDIRECT);
+        return redirectByPath(request, "/v1" + resource, resource, Response.Status.TEMPORARY_REDIRECT);
     }
 
     @PUT
-    @Path("/v1/{resource:.+}")
+    @Path("/v1{resource:(/.*)?}")
     public Response redirectV1PutRequests(@Context HttpServletRequest request, @PathParam("resource") String resource) {
-        return redirectByPath(request, "/v1/" + resource, "/" + resource, Response.Status.TEMPORARY_REDIRECT);
+        return redirectByPath(request, "/v1" + resource, resource, Response.Status.TEMPORARY_REDIRECT);
     }
 
     @HEAD
-    @Path("/v1/{resource:.+}")
+    @Path("/v1{resource:(/.*)?}")
     public Response redirectV1HeadRequests(@Context HttpServletRequest request, @PathParam("resource") String resource) {
-        return redirectByPath(request, "/v1/" + resource, "/" + resource, Response.Status.TEMPORARY_REDIRECT);
+        return redirectByPath(request, "/v1" + resource, resource, Response.Status.TEMPORARY_REDIRECT);
     }
 
     @OPTIONS
-    @Path("/v1/{resource:.+}")
+    @Path("/v1{resource:(/.*)?}")
     public Response redirectV1OptionsRequests(@Context HttpServletRequest request, @PathParam("resource") String resource) {
-        return redirectByPath(request, "/v1/" + resource, "/" + resource, Response.Status.TEMPORARY_REDIRECT);
+        return redirectByPath(request, "/v1" + resource, resource, Response.Status.TEMPORARY_REDIRECT);
     }
 
     @GET
@@ -109,6 +109,9 @@ public class RedirectResource {
     }
 
     public static Response redirectByPath(@Context HttpServletRequest request, String oldPath, String newPath, Response.Status responseStatus) {
+        if (newPath.equals("")) {
+            newPath = "/";
+        }
         String requestUrl = request.getRequestURL().toString();
         String redirectUrl = requestUrl.replaceFirst(oldPath, newPath);
         URI uri = UriBuilder.fromUri(redirectUrl).build();
