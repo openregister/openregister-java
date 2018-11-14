@@ -26,7 +26,7 @@ public class RegisterResource {
 
     @GET
     @Path("/")
-    @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML})
+    @Produces({MediaType.APPLICATION_JSON})
     @Timed
     public RegisterDetailView getRegisterDetail() {
         return viewFactory.registerDetailView(

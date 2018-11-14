@@ -95,23 +95,6 @@ public class RecordListResourceFunctionalTest {
     }
 
     @Test
-    public void deprecatedFormatsCanReturnMultiValuedLinkHeaders() {
-        String expectedAlternate  = addressTarget.getUri().toString() + "/records.json";
-
-        Response response = addressTarget.path("/records.yaml").queryParam("page-index",1).queryParam("page-size",1)
-                .request().get();
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\",<" + expectedAlternate + "?page-index=1&page-size=1>; rel=\"alternate\"; type=\"application/json\""));
-
-        response = addressTarget.path("/records.yaml").queryParam("page-index",2).queryParam("page-size",1)
-                .request().get();
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\",<" + expectedAlternate + "?page-index=2&page-size=1>; rel=\"alternate\"; type=\"application/json\""));
-
-        response = addressTarget.path("/records.yaml").queryParam("page-index",3).queryParam("page-size",1)
-                .request().get();
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\",<" + expectedAlternate + "?page-index=3&page-size=1>; rel=\"alternate\"; type=\"application/json\""));
-    }
-
-    @Test
     public void newRecordsPageHasXhtmlLangAttributes() {
         Response response = register.getRequest(address, "/records", TEXT_HTML);
 

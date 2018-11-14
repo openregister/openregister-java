@@ -59,11 +59,7 @@ public class RecordResource {
     @Path("/records/{record-key}")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
             ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
     public RecordView getRecordByKey(@PathParam("record-key") String key) throws FieldConversionException {
@@ -93,11 +89,7 @@ public class RecordResource {
     @Path("/records/{record-key}/entries")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
             ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
     public EntryListView getAllEntriesOfARecord(@PathParam("record-key") String key) {
@@ -123,11 +115,7 @@ public class RecordResource {
     @Path("/records/{key}/{value}")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
             ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
     public RecordsView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
@@ -149,11 +137,7 @@ public class RecordResource {
     @Path("/records")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
             ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.TEXT_TTL,
-            ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
     public RecordsView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {

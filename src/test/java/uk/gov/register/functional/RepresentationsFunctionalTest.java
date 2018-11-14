@@ -56,9 +56,6 @@ public class RepresentationsFunctionalTest {
         return Arrays.asList(new Object[][]{
                 {"json", "application/json"},
                 {"csv", "text/csv;charset=UTF-8"},
-                {"tsv", "text/tab-separated-values;charset=UTF-8"},
-                {"ttl", "text/turtle;charset=UTF-8"},
-                {"yaml", "text/yaml;charset=UTF-8"}
         });
     }
 

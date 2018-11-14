@@ -28,7 +28,7 @@ public class SearchResource {
 
     @GET
     @Path("/{key}/{value}")
-    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_YAML, ExtraMediaType.TEXT_CSV, ExtraMediaType.TEXT_TSV, ExtraMediaType.TEXT_TTL})
+    @Produces({ExtraMediaType.TEXT_HTML, MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV})
     @Timed
     public Object find(@PathParam("key") String key, @PathParam("value") String value) throws Exception {
         if (!key.equals(registerPrimaryKey.value()) && !register.getRegisterMetadata().getFields().contains(key)) {

@@ -43,11 +43,7 @@ public class BlobResource {
     @Path("/sha-256:{blob-hash}")
     @Produces({
             MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_YAML,
-            ExtraMediaType.TEXT_TTL,
             ExtraMediaType.TEXT_CSV,
-            ExtraMediaType.TEXT_TSV,
-            ExtraMediaType.APPLICATION_SPREADSHEET
     })
     @Timed
     public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
