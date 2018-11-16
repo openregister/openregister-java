@@ -6,7 +6,7 @@ import uk.gov.register.views.ViewFactory;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
 
-@Path("/")
+@Path("/register")
 public class RegisterResource extends uk.gov.register.resources.v2.RegisterResource {
     @Inject
     public RegisterResource(RegisterReadOnly register, ViewFactory viewFactory) {

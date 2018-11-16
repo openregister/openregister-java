@@ -8,6 +8,7 @@ import uk.gov.register.functional.app.RegistersRuleDisableFollowRedirects;
 import uk.gov.register.functional.app.RsfRegisterDefinition;
 import uk.gov.register.functional.app.TestRegister;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static javax.ws.rs.core.MediaType.WILDCARD;
@@ -40,10 +41,31 @@ public class RedirectResourceTest  {
     }
 
     @Test
-    public void getV1Redirect() throws Exception {
-        Response response = register.getRequest(TestRegister.register, "/v1", WILDCARD);
-        assertThat(response.getStatus(), equalTo(307));
+    public void getV1RedirectAcceptHtml() throws Exception {
+        Response response = register.getRequest(TestRegister.register, "/v1", MediaType.TEXT_HTML);
+        assertThat(response.getStatus(), equalTo(301));
         assertThat(response.getLocation().getPath(), equalTo("/"));
+    }
+
+    @Test
+    public void getV1RedirectJsonExtension() throws Exception {
+        Response response = register.getRequest(TestRegister.register, "/v1.json", WILDCARD);
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getLocation().getPath(), equalTo("/register.json"));
+    }
+
+    @Test
+    public void getV1RedirectAcceptJson() throws Exception {
+        Response response = register.getRequest(TestRegister.register, "/v1", MediaType.APPLICATION_JSON);
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getLocation().getPath(), equalTo("/register"));
+    }
+
+    @Test
+    public void getNextRedirectJsonExtension() throws Exception {
+        Response response = register.getRequest(TestRegister.register, "/next.json", WILDCARD);
+        assertThat(response.getStatus(), equalTo(301));
+        assertThat(response.getLocation().getPath(), equalTo("/next/register.json"));
     }
 
     @Test
