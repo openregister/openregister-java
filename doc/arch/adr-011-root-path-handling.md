@@ -33,4 +33,4 @@ format specified.
 
 ## Status
 
-Proposed.
+Accepted.
