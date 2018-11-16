@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS index;
+DROP TABLE IF EXISTS entry_item;
+DROP TABLE IF EXISTS entry_item_system;
