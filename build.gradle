@@ -68,6 +68,14 @@ configurations {
 }
 
 dependencies {
+    compile ("io.dropwizard:dropwizard-lifecycle"){
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    compile "com.google.guava:guava:27.0-jre"
+}
+
+
+dependencies {
     compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3
     compile jacksonCsv, jacksonDatabind, jena, jerseyMedia, markdown, thymeleaf, verifiableLog
     compile jdbi, jersey_client
