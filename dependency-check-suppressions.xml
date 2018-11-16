@@ -99,4 +99,11 @@
         <gav regex="true">^stax:stax-api:.*$</gav>
         <cve>CVE-2017-16224</cve>
     </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: guava-21.0.jar
+   ]]></notes>
+        <gav regex="true">^com\.google\.guava:guava:.*$</gav>
+        <cpe>cpe:/a:google:guava</cpe>
+    </suppress>
 </suppressions>
