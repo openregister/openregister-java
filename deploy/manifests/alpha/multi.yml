@@ -11,6 +11,8 @@ applications:
     - alpha.openregister.org
   hosts:
     - clinical-commissioning-group
+    - further-education-college-region-uk
+    - further-education-college-uk
     - occupation
     - public-body-account
     - public-body-account-classification
