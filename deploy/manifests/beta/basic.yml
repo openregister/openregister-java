@@ -19,6 +19,7 @@ applications:
     - logit-ssl-drain
   env:
     JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://openregister.beta.config/basic/openregister/paas-config.yaml" }'
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.0_+ }'
     AWS_ACCESS_KEY_ID: change-me
     AWS_SECRET_ACCESS_KEY: change-me
     AWS_REGION: eu-west-1
