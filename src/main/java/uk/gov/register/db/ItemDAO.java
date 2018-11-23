@@ -9,7 +9,7 @@ import uk.gov.register.store.postgres.BindItem;
 
 @UseStringTemplate3StatementLocator
 public interface ItemDAO {
-    @SqlBatch("insert into \"<schema>\".item(sha256hex, content) values(:sha256hex, :content) on conflict do nothing")
+    @SqlBatch("insert into \"<schema>\".item(sha256hex, blob_hash, content) values(:sha256hex, :sha256hex, :content) on conflict do nothing")
     @BatchChunkSize(1000)
     void insertInBatch(@BindItem Iterable<Item> items, @Define("schema") String schema );
 }

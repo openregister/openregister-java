@@ -24,9 +24,7 @@ import static uk.gov.register.core.HashingAlgorithm.*;
 @UseStringTemplate3StatementLocator
 public interface TestEntryDAO {
     @SqlUpdate("delete from \"<schema>\".entry;" +
-            "delete from \"<schema>\".entry_item;" +
             "delete from \"<schema>\".entry_system;" +
-            "delete from \"<schema>\".entry_item_system;" +
             "delete from \"<schema>\".current_entry_number;" +
             "insert into \"<schema>\".current_entry_number values(0);")
     void wipeData(@Define("schema") String schema);

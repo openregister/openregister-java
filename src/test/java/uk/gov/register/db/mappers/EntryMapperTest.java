@@ -34,8 +34,8 @@ public class EntryMapperTest {
         Instant expectedInstant = Instant.parse(expected);
 
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
-            h.execute("insert into address.entry(entry_number, timestamp, key, type, sha256hex) values(5, :timestamp, 'K', 'user', 'ghijkl')", expectedInstant.getEpochSecond());
+            h.execute("insert into address.item (sha256hex, blob_hash, content) values ('ghijkl', 'ghijkl2', '{\"address\":\"K\"}')");
+            h.execute("insert into address.entry(entry_number, timestamp, key, type, sha256hex, blob_hash) values(5, :timestamp, 'K', 'user', 'ghijkl', 'ghijkl2')", expectedInstant.getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
@@ -54,8 +54,8 @@ public class EntryMapperTest {
     @Test
     public void map_returnsSingleItemHashForEntry() {
         Collection<Entry> allEntriesNoPagination = dbi.withHandle(h -> {
-            h.execute("insert into address.item (sha256hex, content) values ('ghijkl', '{\"address\":\"K\"}')");
-            h.execute("insert into address.entry(entry_number, timestamp, key, type, sha256hex) values(5, :timestamp, 'K', 'user', 'ghijkl')", Instant.now().getEpochSecond());
+            h.execute("insert into address.item (sha256hex, blob_hash, content) values ('ghijkl', 'ghijkl2', '{\"address\":\"K\"}')");
+            h.execute("insert into address.entry(entry_number, timestamp, key, type, sha256hex, blob_hash) values(5, :timestamp, 'K', 'user', 'ghijkl', 'ghijkl2')", Instant.now().getEpochSecond());
             return h.attach(EntryQueryDAO.class).getAllEntriesNoPagination(schema);
         });
 
