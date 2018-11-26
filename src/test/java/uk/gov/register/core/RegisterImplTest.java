@@ -7,24 +7,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.register.db.RecordSet;
 import uk.gov.register.db.InMemoryEntryDAO;
+import uk.gov.register.db.RecordSet;
 import uk.gov.register.exceptions.AppendEntryException;
-import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.ItemValidationException;
+import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static uk.gov.register.db.InMemoryStubs.inMemoryEntryLog;
-import static uk.gov.register.db.InMemoryStubs.inMemoryItemStore;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterImplTest {
@@ -42,6 +47,8 @@ public class RegisterImplTest {
     private Record registerRecord;
     @Mock
     private EnvironmentValidator environmentValidator;
+    @Mock
+    private ItemStore itemStore;
 
 
     private RegisterImpl register;
@@ -51,7 +58,7 @@ public class RegisterImplTest {
     @Before
     public void setup() throws IOException {
         register = new RegisterImpl(new RegisterId("postcode"),
-                inMemoryEntryLog(entryDAO, entryDAO), inMemoryItemStore(itemValidator, entryDAO),
+                inMemoryEntryLog(entryDAO, entryDAO), itemStore,
                 recordSet, itemValidator, environmentValidator);
 
         when(registerRecord.getItem()).thenReturn(getItem(postcodeRegisterItem));
@@ -78,31 +85,33 @@ public class RegisterImplTest {
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.now(),
                 "key", EntryType.user);
 
+        when(itemStore.getItem(entry.getItemHash())).thenReturn(Optional.empty());
         register.appendEntry(entry);
     }
 
-    @Test(expected = AppendEntryException.class)
-    public void shouldFailForInvalidItem() throws IOException {
-        JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
-        doThrow(new ItemValidationException("error", content)).when(itemValidator).validateItem(any(JsonNode.class), anyMap(), any(RegisterMetadata.class));
+    @Test
+    public void shouldNotFailForValidItem() throws IOException {
+        JsonNode content = mapper.readTree("{\"postcode\":\"sw1a 1aa\"}");
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
-        when(recordSet.getRecord(EntryType.system, "field:postcode")).thenReturn(Optional.of(fieldRecord));
         Item item = new Item(hashValue, content);
         Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
-        register.addItem(item);
+        when(itemStore.getItem(entry.getItemHash())).thenReturn(Optional.of(item));
+
         register.appendEntry(entry);
     }
 
     @Test(expected = AppendEntryException.class)
-    public void shouldFailForMissingField() throws IOException {
-        JsonNode content = mapper.readTree( postcodeRegisterItem );
+    public void shouldFailIfItemValidationFails() throws IOException {
+        JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
         Item item = new Item(hashValue, content);
-        Entry entry = new Entry(1, hashValue, Instant.now(),"register:postcode", EntryType.system);
-        when(recordSet.getRecord(EntryType.system, "field:postcode")).thenReturn(Optional.empty());
+        Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
-        register.addItem(item);
+        when(itemStore.getItem(entry.getItemHash())).thenReturn(Optional.of(item));
+
+        doThrow(new ItemValidationException("", content)).when(itemValidator).validateItem(any(), any(), any());
+
         register.appendEntry(entry);
     }
 
