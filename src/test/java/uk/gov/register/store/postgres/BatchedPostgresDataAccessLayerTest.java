@@ -261,9 +261,9 @@ public class BatchedPostgresDataAccessLayerTest {
         batchedPostgresDataAccessLayer.addItem(item1);
         batchedPostgresDataAccessLayer.addItem(item2);
 
-        assertThat(batchedPostgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
-        assertThat(batchedPostgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
-        assertThat(batchedPostgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
+        assertThat(batchedPostgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(batchedPostgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(batchedPostgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test
@@ -275,9 +275,9 @@ public class BatchedPostgresDataAccessLayerTest {
         batchedPostgresDataAccessLayer.addItem(item2);
         batchedPostgresDataAccessLayer.addItem(item1);
 
-        assertThat(batchedPostgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
-        assertThat(batchedPostgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
-        assertThat(batchedPostgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
+        assertThat(batchedPostgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(batchedPostgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(batchedPostgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test

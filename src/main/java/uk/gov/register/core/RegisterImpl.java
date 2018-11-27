@@ -57,6 +57,11 @@ public class RegisterImpl implements Register {
     }
 
     @Override
+    public Optional<Item> getItemByV1Hash(HashValue hash) {
+        return itemStore.getItemByV1Hash(hash);
+    }
+
+    @Override
     public Optional<Item> getItem(HashValue hash) {
         return itemStore.getItem(hash);
     }
@@ -268,6 +273,6 @@ public class RegisterImpl implements Register {
     }
 
     private Item getReferencedItem(Entry entry) throws NoSuchItemException {
-        return itemStore.getItem(entry.getItemHash()).orElseThrow(() -> new NoSuchItemException(entry.getItemHash()));
+        return itemStore.getItemByV1Hash(entry.getItemHash()).orElseThrow(() -> new NoSuchItemException(entry.getItemHash()));
     }
 }

@@ -262,9 +262,9 @@ public class PostgresDataAccessLayerTest {
         postgresDataAccessLayer.addItem(item1);
         postgresDataAccessLayer.addItem(item2);
 
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test
@@ -274,9 +274,9 @@ public class PostgresDataAccessLayerTest {
 
         postgresDataAccessLayer.addItems(Arrays.asList(item1, item2));
 
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test
@@ -288,9 +288,9 @@ public class PostgresDataAccessLayerTest {
         postgresDataAccessLayer.addItem(item2);
         postgresDataAccessLayer.addItem(item1);
 
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
-        assertThat(postgresDataAccessLayer.getItem(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash1")), is(Optional.of(item1)));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash2")), is(Optional.of(item2)));
+        assertThat(postgresDataAccessLayer.getItemByV1Hash(new HashValue(SHA256, "itemhash3")), is(Optional.empty()));
     }
 
     @Test

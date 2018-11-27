@@ -111,7 +111,7 @@ public class RSFExecutorTest {
     public void execute_failsForOrphanAppendEntry() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
-        when(register.getItem(entry1hashValue)).thenReturn(Optional.empty());
+        when(register.getItemByV1Hash(entry1hashValue)).thenReturn(Optional.empty());
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
                 appendEntry1Command,
@@ -124,12 +124,12 @@ public class RSFExecutorTest {
     public void execute_succeedsWhenAppendEntryReferencesItemNotInRSFButInDB() {
         HashValue entry1hashValue = new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c");
 
-        when(register.getItem(entry1hashValue)).thenReturn(Optional.of(item1));
+        when(register.getItemByV1Hash(entry1hashValue)).thenReturn(Optional.of(item1));
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(appendEntry1Command).iterator());
         sutExecutor.execute(rsf, register);
 
-        verify(register, times(1)).getItem(entry1hashValue);
+        verify(register, times(1)).getItemByV1Hash(entry1hashValue);
     }
 
     @Test (expected = RSFParseException.class)

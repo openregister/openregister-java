@@ -17,15 +17,28 @@ public class Item {
     private static final CanonicalJsonMapper canonicalJsonMapper = new CanonicalJsonMapper();
 
     private final JsonNode content;
-    private final HashValue hashValue;
+    private final HashValue v1HashValue;
+    private final HashValue blobHash;
 
     public Item(JsonNode content) {
-        this(itemHash(content), content);
+        this(itemHash(content), objectHash(content), content);
     }
 
-    public Item(HashValue hashValue, JsonNode content) {
-        this.hashValue = hashValue;
+    public Item(HashValue v1HashValue, HashValue blobHash, JsonNode content) {
+        this.v1HashValue = v1HashValue;
+        this.blobHash = blobHash;
         this.content = content;
+    }
+
+    @Deprecated
+    public Item(HashValue v1HashValue, JsonNode content) {
+        // TODO: This should be removed
+        this(v1HashValue, v1HashValue, content);
+    }
+
+    public static HashValue objectHash(JsonNode content) {
+        // TODO
+        return itemHash(content);
     }
 
     public static HashValue itemHash(JsonNode content) {
@@ -35,7 +48,11 @@ public class Item {
     }
 
     public HashValue getSha256hex() {
-        return hashValue;
+        return v1HashValue;
+    }
+
+    public HashValue getBlobHash() {
+        return blobHash;
     }
 
     public JsonNode getContent() {
@@ -74,14 +91,14 @@ public class Item {
 
         Item item = (Item) o;
 
-        if (hashValue != null ? !hashValue.equals(item.hashValue) : item.hashValue != null) return false;
+        if (v1HashValue != null ? !v1HashValue.equals(item.v1HashValue) : item.v1HashValue != null) return false;
         return content != null ? content.equals(item.content) : item.content == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = hashValue != null ? hashValue.hashCode() : 0;
+        int result = v1HashValue != null ? v1HashValue.hashCode() : 0;
         result = 31 * result + (content != null ? content.hashCode() : 0);
         return result;
     }
@@ -90,7 +107,8 @@ public class Item {
     public String toString() {
         return "Item{" +
                 "content=" + content +
-                ", hashValue=" + hashValue +
+                ", blobHash=" + blobHash +
+                ", v1HashValue=" + v1HashValue +
                 '}';
     }
 }

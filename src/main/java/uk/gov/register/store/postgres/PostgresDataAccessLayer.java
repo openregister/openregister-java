@@ -101,8 +101,13 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Optional<Item> getItem(HashValue hash) {
+    public Optional<Item> getItemByV1Hash(HashValue hash) {
         return itemQueryDAO.getItemBySHA256(hash.getValue(), schema);
+    }
+
+    @Override
+    public Optional<Item> getItem(HashValue hash) {
+        return itemQueryDAO.getItemByBlobHash(hash.getValue(), schema);
     }
 
     @Override

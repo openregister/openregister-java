@@ -16,6 +16,7 @@ public interface DataAccessLayer {
 
     // Items
     void addItem(Item item);
+    Optional<Item> getItemByV1Hash(HashValue hash);
     Optional<Item> getItem(HashValue hash);
     Collection<Item> getAllItems();
     Collection<Item> getAllItems(EntryType entryType);

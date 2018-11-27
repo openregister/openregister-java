@@ -73,6 +73,31 @@ public class RegisterImplTransactionalFunctionalTest {
     }
 
     @Test
+    public void getItemUsingBlobHash() {
+        HashValue v1Hash = new HashValue(HashingAlgorithm.SHA256, "itemhash1");
+        HashValue blobHash = new HashValue(HashingAlgorithm.SHA256, "itemhash2");
+        Item item1 = new Item(v1Hash, blobHash, new ObjectMapper().createObjectNode());
+        RegisterImpl registerImpl = getPostgresRegister(getDataAccessLayer(handle));
+        registerImpl.addItem(item1);
+
+        assertThat(registerImpl.getItem(blobHash), equalTo(Optional.of(item1)));
+        assertThat(registerImpl.getItem(v1Hash), equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void getItemUsingV1Hash() {
+        HashValue v1Hash = new HashValue(HashingAlgorithm.SHA256, "itemhash1");
+        HashValue blobHash = new HashValue(HashingAlgorithm.SHA256, "itemhash2");
+        Item item1 = new Item(v1Hash, blobHash, new ObjectMapper().createObjectNode());
+        RegisterImpl registerImpl = getPostgresRegister(getDataAccessLayer(handle));
+        registerImpl.addItem(item1);
+
+        assertThat(registerImpl.getItemByV1Hash(v1Hash), equalTo(Optional.of(item1)));
+        assertThat(registerImpl.getItemByV1Hash(blobHash), equalTo(Optional.empty()));
+    }
+
+
+    @Test
     public void useTransactionShouldApplyChangesAtomicallyToDatabase() {
 
         Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
@@ -210,14 +235,17 @@ public class RegisterImplTransactionalFunctionalTest {
     }
 
     private BatchedPostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {
-        return new BatchedPostgresDataAccessLayer(
-                new PostgresDataAccessLayer(
-                        handle.attach(EntryDAO.class),
-                        handle.attach(EntryQueryDAO.class),
-                        handle.attach(ItemDAO.class),
-                        handle.attach(ItemQueryDAO.class),
-                        handle.attach(RecordQueryDAO.class),
-                "address"));
+        return new BatchedPostgresDataAccessLayer(getDataAccessLayer(handle));
+    }
+
+    private PostgresDataAccessLayer getDataAccessLayer(Handle handle) {
+        return new PostgresDataAccessLayer(
+                handle.attach(EntryDAO.class),
+                handle.attach(EntryQueryDAO.class),
+                handle.attach(ItemDAO.class),
+                handle.attach(ItemQueryDAO.class),
+                handle.attach(RecordQueryDAO.class),
+                "address");
     }
 
     private DataSourceFactory getDataSourceFactory() {

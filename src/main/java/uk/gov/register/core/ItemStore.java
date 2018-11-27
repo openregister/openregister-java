@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface ItemStore {
     void addItem(Item item);
 
+    Optional<Item> getItemByV1Hash(HashValue hash);
     Optional<Item> getItem(HashValue hash);
     
     Collection<Item> getAllItems();
