@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.gov.register.db.InMemoryEntryDAO;
 import uk.gov.register.db.RecordSet;
 import uk.gov.register.exceptions.AppendEntryException;
 import uk.gov.register.exceptions.ItemValidationException;
@@ -18,7 +17,6 @@ import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,13 +27,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.register.db.InMemoryStubs.inMemoryEntryLog;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterImplTest {
     private static ObjectMapper mapper = new ObjectMapper();
-
-    private final InMemoryEntryDAO entryDAO = new InMemoryEntryDAO(new ArrayList<>());
 
     @Mock
     private RecordSet recordSet;
@@ -49,7 +44,8 @@ public class RegisterImplTest {
     private EnvironmentValidator environmentValidator;
     @Mock
     private ItemStore itemStore;
-
+    @Mock
+    private EntryLog entryLog;
 
     private RegisterImpl register;
 
@@ -58,7 +54,7 @@ public class RegisterImplTest {
     @Before
     public void setup() throws IOException {
         register = new RegisterImpl(new RegisterId("postcode"),
-                inMemoryEntryLog(entryDAO, entryDAO), itemStore,
+                entryLog, itemStore,
                 recordSet, itemValidator, environmentValidator);
 
         when(registerRecord.getItem()).thenReturn(getItem(postcodeRegisterItem));
