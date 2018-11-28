@@ -16,6 +16,7 @@ public @interface BindItem {
         public Binder build(Annotation annotation) {
             return (Binder<BindItem, Item>) (q, bind, arg) -> {
                 q.bind("sha256hex", arg.getSha256hex().getValue());
+                q.bind("blob_hash", arg.getBlobHash().getValue());
                 try {
                     q.bind("content", arg.getContentAsJsonb());
                 } catch (SQLException e) {

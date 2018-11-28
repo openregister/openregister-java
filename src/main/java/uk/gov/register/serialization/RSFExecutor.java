@@ -78,7 +78,7 @@ public class RSFExecutor {
             if (hashRefLine.containsKey(hashValue)) {
                 hashRefLine.put(hashValue, 0);
             } else {
-                Optional<Item> item = register.getItem(hashValue);
+                Optional<Item> item = register.getItemByV1Hash(hashValue);
                 if (!item.isPresent()) {
                     throw new RSFParseException("Orphan append entry (line:" + rsfLine + "): " + command.toString());
                 } else {

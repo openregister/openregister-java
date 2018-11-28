@@ -168,11 +168,20 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public Optional<Item> getItem(HashValue hash) {
+    public Optional<Item> getItemByV1Hash(HashValue hash) {
         if (batchedItems.containsKey(hash)) {
             return Optional.of(batchedItems.get(hash));
         }
         
+        return isEntireRegisterBatched ? Optional.empty() : postgresDataAccessLayer.getItemByV1Hash(hash);
+    }
+
+    @Override
+    public Optional<Item> getItem(HashValue hash) {
+        // TODO: this layer uses old hashes to store stuff in memory, so this lookup
+        // can't be cached. If this is caching is still necessary, migrate this to use
+        // new hashes.
+
         return isEntireRegisterBatched ? Optional.empty() : postgresDataAccessLayer.getItem(hash);
     }
 
@@ -233,8 +242,8 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
                     Entry entry = batchedEntries.get(entryType).get(recordEntryNumbers.get(key));
 
                     // It's possible for an entry to be loaded where the item already exists in the database and is therefore not batched (as per RSF rules).
-                    // Therefore use existing getItem(HashValue hash) logic which goes to the database if necessary.
-                    Item item = getItem(entry.getItemHash()).get();
+                    // Therefore use existing getItemByV1Hash(HashValue hash) logic which goes to the database if necessary.
+                    Item item = getItemByV1Hash(entry.getItemHash()).get();
 
                     return Optional.of(new Record(entry, item));
                 } catch (NullPointerException | NoSuchElementException ex) {
@@ -258,8 +267,8 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
                             Entry entry = batchedEntries.get(entryType).get(entryNumber);
 
                             // It's possible for an entry to be loaded where the item already exists in the database and is therefore not batched (as per RSF rules).
-                            // Therefore use existing getItem(HashValue hash) logic which goes to the database if necessary.
-                            Item item = getItem(entry.getItemHash()).get();
+                            // Therefore use existing getItemByV1Hash(HashValue hash) logic which goes to the database if necessary.
+                            Item item = getItemByV1Hash(entry.getItemHash()).get();
 
                             return new Record(entry, item);
                         } catch (NullPointerException | NoSuchElementException ex) {
@@ -288,8 +297,8 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
                         Entry entry = batchedEntries.get(entryType).get(entryNumber);
 
                         // It's possible for an entry to be loaded where the item already exists in the database and is therefore not batched (as per RSF rules).
-                        // Therefore use existing getItem(HashValue hash) logic which goes to the database if necessary.
-                        Item item = getItem(entry.getItemHash()).get();
+                        // Therefore use existing getItemByV1Hash(HashValue hash) logic which goes to the database if necessary.
+                        Item item = getItemByV1Hash(entry.getItemHash()).get();
 
                         return new Record(entry, item);
                     } catch (NullPointerException | NoSuchElementException ex) {

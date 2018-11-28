@@ -2,16 +2,13 @@ package uk.gov.register.resources.v1;
 
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.Field;
-import uk.gov.register.core.FieldValue;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
-import uk.gov.register.resources.v2.BlobResource;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.AttributionView;
-import uk.gov.register.views.ItemListView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -23,7 +20,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -67,7 +63,7 @@ public class ItemResource {
 
     protected Optional<Item> getItem(String itemHash) {
         HashValue hash = new HashValue(HashingAlgorithm.SHA256, itemHash);
-        return register.getItem(hash);
+        return register.getItemByV1Hash(hash);
     }
 
     protected Map<String, Field> getFieldsByName() {

@@ -20,10 +20,15 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
+    public Optional<Item> getItemByV1Hash(HashValue hash) {
+        return dataAccessLayer.getItemByV1Hash(hash);
+    }
+
+    @Override
     public Optional<Item> getItem(HashValue hash) {
         return dataAccessLayer.getItem(hash);
     }
-    
+
     @Override
     public Collection<Item> getAllItems() {
         return dataAccessLayer.getAllItems();

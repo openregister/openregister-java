@@ -11,7 +11,12 @@ import java.time.Instant;
 import java.util.*;
 
 public interface RegisterReadOnly {
+    // Get using the old item hashes
+    Optional<Item> getItemByV1Hash(HashValue hash);
+
+    // Get using the new blob hashes
     Optional<Item> getItem(HashValue hash);
+
     Collection<Item> getAllItems();
     Collection<Item> getAllItems(EntryType entryType);
     Iterator<Item> getItemIterator(EntryType entryType);

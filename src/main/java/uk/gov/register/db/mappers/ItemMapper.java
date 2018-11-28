@@ -23,7 +23,7 @@ public class ItemMapper implements ResultSetMapper<Item> {
     @Override
     public Item map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         try {
-            return new Item(new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")), objectMapper.readValue(r.getString("content"), JsonNode.class));
+            return new Item(new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")), new HashValue(HashingAlgorithm.SHA256, r.getString("blob_hash")), objectMapper.readValue(r.getString("content"), JsonNode.class));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
