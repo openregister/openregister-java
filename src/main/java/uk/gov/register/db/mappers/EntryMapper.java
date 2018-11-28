@@ -21,6 +21,7 @@ public class EntryMapper implements ResultSetMapper<Entry> {
     public Entry map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         return new Entry(r.getInt("entry_number"),
                 new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")),
+                new HashValue(HashingAlgorithm.SHA256, r.getString("blob_hash")),
                 longTimestampToInstantMapper.map(index, r, ctx),
                 r.getString("key"),
                 EntryType.valueOf(r.getString("type")));

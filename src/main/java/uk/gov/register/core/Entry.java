@@ -8,13 +8,26 @@ import java.time.Instant;
 public class Entry {
     private final int entryNumber;
     private final HashValue v1ItemHash;
+    private final HashValue blobHash;
     private final Instant timestamp;
     private final EntryType entryType;
     private String key;
 
+    public Entry(int entryNumber, HashValue v1ItemHash, HashValue blobHash, Instant timestamp, String key, EntryType entryType) {
+        this.entryNumber = entryNumber;
+        this.blobHash = blobHash;
+        this.v1ItemHash = v1ItemHash;
+        this.timestamp = timestamp;
+        this.key = key;
+        this.entryType = entryType;
+    }
+
+    // TODO: Move all usages to the other constructor
+    @Deprecated
     public Entry(int entryNumber, HashValue v1ItemHash, Instant timestamp, String key, EntryType entryType) {
         this.entryNumber = entryNumber;
         this.v1ItemHash = v1ItemHash;
+        this.blobHash = v1ItemHash;
         this.timestamp = timestamp;
         this.key = key;
         this.entryType = entryType;
@@ -26,6 +39,10 @@ public class Entry {
 
     public HashValue getV1ItemHash() {
         return v1ItemHash;
+    }
+
+    public HashValue getBlobHash() {
+        return blobHash;
     }
 
     public long getTimestampAsLong() {
