@@ -1,4 +1,4 @@
-package uk.gov.register.views;
+package uk.gov.register.views.v2;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +10,8 @@ import uk.gov.register.core.Field;
 import uk.gov.register.core.Item;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.views.CsvRepresentationView;
+import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Collection;
@@ -17,13 +19,13 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ItemListView implements CsvRepresentationView {
+public class BlobListView implements CsvRepresentationView {
     private final Collection<Item> items;
     private final Map<String, Field> fieldsByName;
     private final ItemConverter itemConverter;
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
 
-    public ItemListView(Collection<Item> items, final Map<String, Field> fieldsByName) {
+    public BlobListView(Collection<Item> items, final Map<String, Field> fieldsByName) {
         this.items = items;
         this.fieldsByName = fieldsByName;
         this.itemConverter = new ItemConverter();

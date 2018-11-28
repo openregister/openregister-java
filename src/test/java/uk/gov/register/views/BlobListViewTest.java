@@ -15,6 +15,7 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterId;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.representations.CsvWriter;
+import uk.gov.register.views.v2.BlobListView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,12 +26,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class ItemListViewTest {
+public class BlobListViewTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private JsonNode itemNode1;
     private JsonNode itemNode2;
-    private ItemListView view;
+    private BlobListView view;
 
     @Before
     public void setup() throws IOException {
@@ -45,7 +46,7 @@ public class ItemListViewTest {
                 "address", new Field("address", "string", new RegisterId("foo"), Cardinality.ONE, "bla")
         );
 
-        this.view = new ItemListView(ImmutableList.of(item1, item2), fieldsByName);
+        this.view = new BlobListView(ImmutableList.of(item1, item2), fieldsByName);
     }
 
     @Test
