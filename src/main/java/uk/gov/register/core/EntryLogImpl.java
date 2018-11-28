@@ -33,7 +33,7 @@ public class EntryLogImpl implements EntryLog {
     public void appendEntry(Entry entry) throws IndexingException {
         Optional<Record> record = dataAccessLayer.getRecord(entry.getEntryType(), entry.getKey());
 
-        if (record.isPresent() && record.get().getEntry().getItemHash().equals(entry.getItemHash())) {
+        if (record.isPresent() && record.get().getEntry().getV1ItemHash().equals(entry.getV1ItemHash())) {
             throw new IndexingException(entry, "Cannot contain identical items to previous entry");
         }
 

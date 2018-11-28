@@ -25,7 +25,7 @@ public class EntryView implements CsvRepresentationView<EntryView> {
 
     public EntryView(Entry entry) {
         this.entryNumber = entry.getEntryNumber();
-        this.hashValue = entry.getItemHash();
+        this.hashValue = entry.getV1ItemHash();
         this.timestamp = entry.getTimestamp();
         this.key = entry.getKey();
     }

@@ -273,6 +273,6 @@ public class RegisterImpl implements Register {
     }
 
     private Item getReferencedItem(Entry entry) throws NoSuchItemException {
-        return itemStore.getItemByV1Hash(entry.getItemHash()).orElseThrow(() -> new NoSuchItemException(entry.getItemHash()));
+        return itemStore.getItemByV1Hash(entry.getV1ItemHash()).orElseThrow(() -> new NoSuchItemException(entry.getV1ItemHash()));
     }
 }

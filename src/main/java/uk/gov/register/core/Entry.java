@@ -7,14 +7,14 @@ import java.time.Instant;
 
 public class Entry {
     private final int entryNumber;
-    private final HashValue hashValue;
+    private final HashValue v1ItemHash;
     private final Instant timestamp;
     private final EntryType entryType;
     private String key;
 
-    public Entry(int entryNumber, HashValue hashValue, Instant timestamp, String key, EntryType entryType) {
+    public Entry(int entryNumber, HashValue v1ItemHash, Instant timestamp, String key, EntryType entryType) {
         this.entryNumber = entryNumber;
-        this.hashValue = hashValue;
+        this.v1ItemHash = v1ItemHash;
         this.timestamp = timestamp;
         this.key = key;
         this.entryType = entryType;
@@ -24,8 +24,8 @@ public class Entry {
         return timestamp;
     }
 
-    public HashValue getItemHash() {
-        return hashValue;
+    public HashValue getV1ItemHash() {
+        return v1ItemHash;
     }
 
     public long getTimestampAsLong() {
@@ -63,7 +63,7 @@ public class Entry {
         if (key != null ? !key.equals(entry.key) : entry.key != null) return false;
         if (timestamp != null ? !timestamp.equals(entry.timestamp) : entry.timestamp != null) return false;
         if (entryType != null ? !entryType.equals(entry.entryType) : entry.entryType != null) return false;
-        return hashValue != null ? hashValue.equals(entry.hashValue) : entry.hashValue == null;
+        return v1ItemHash != null ? v1ItemHash.equals(entry.v1ItemHash) : entry.v1ItemHash == null;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Entry {
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         result = 31 * result + (key != null ? key.hashCode() : 0);
         result = 31 * result + (entryType != null ? entryType.hashCode() : 0);
-        result = 31 * result + (hashValue != null ? hashValue.hashCode() : 0);
+        result = 31 * result + (v1ItemHash != null ? v1ItemHash.hashCode() : 0);
 
         return result;
     }
