@@ -16,7 +16,6 @@ import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class BlobListView implements CsvRepresentationView {
@@ -32,10 +31,10 @@ public class BlobListView implements CsvRepresentationView {
     }
 
     @JsonValue
-    public Map<HashValue, ItemView> getItems() {
+    public Map<HashValue, ItemView> getBlobs() {
         return this.items
                 .stream()
-                .collect(Collectors.toMap(item -> item.getSha256hex(), item -> new ItemView(item, fieldsByName, this.itemConverter)));
+                .collect(Collectors.toMap(item -> item.getBlobHash(), item -> new ItemView(item, fieldsByName, this.itemConverter)));
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
@@ -47,9 +46,9 @@ public class BlobListView implements CsvRepresentationView {
         return schemaBuilder.build();
     }
 
-    public ArrayNode flatItemsJson() {
+    public ArrayNode flatBlobsJson() {
         final ArrayNode blobsArray = jsonObjectMapper.createArrayNode();
-        getItems().forEach((key, value) -> {
+        getBlobs().forEach((key, value) -> {
             final ObjectNode valueNode = jsonObjectMapper.convertValue(value, ObjectNode.class);
             blobsArray.add(valueNode.put("blob-hash", jsonObjectMapper.convertValue(key, String.class)));
         });
@@ -58,6 +57,6 @@ public class BlobListView implements CsvRepresentationView {
 
     @Override
     public CsvRepresentation<ArrayNode> csvRepresentation() {
-        return new CsvRepresentation<>(csvSchema(fieldsByName.keySet()), flatItemsJson());
+        return new CsvRepresentation<>(csvSchema(fieldsByName.keySet()), flatBlobsJson());
     }
 }
