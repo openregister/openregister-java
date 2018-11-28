@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-@Path("/next/")
+@Path("/next/entries")
 public class EntryResource {
 
     private final RegisterReadOnly register;
@@ -43,7 +43,7 @@ public class EntryResource {
     }
 
     @GET
-    @Path("/entries/{entry-number}")
+    @Path("/{entry-number}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_CSV
@@ -56,7 +56,7 @@ public class EntryResource {
 
 
     @GET
-    @Path("/entries")
+    @Path("/")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_CSV

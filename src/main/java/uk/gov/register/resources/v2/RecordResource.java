@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Path("/next/")
+@Path("/next/records")
 public class RecordResource {
     protected final HttpServletResponseAdapter httpServletResponseAdapter;
     protected final RegisterReadOnly register;
@@ -47,7 +47,7 @@ public class RecordResource {
     }
 
     @GET
-    @Path("/records/{record-key}")
+    @Path("/{record-key}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -65,7 +65,7 @@ public class RecordResource {
     }
 
     @GET
-    @Path("/records/{record-key}/entries")
+    @Path("/{record-key}/entries")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -84,7 +84,7 @@ public class RecordResource {
     }
 
     @GET
-    @Path("/records/{key}/{value}")
+    @Path("/{key}/{value}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
@@ -100,7 +100,7 @@ public class RecordResource {
     }
 
     @GET
-    @Path("/records")
+    @Path("/")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_YAML,
