@@ -8,6 +8,7 @@ applications:
     - change-me-db
   env:
     JBP_CONFIG_JAVA_MAIN: '{ arguments: "server s3://change-me/change-me.yaml" }'
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
     AWS_ACCESS_KEY_ID: change-me
     AWS_SECRET_ACCESS_KEY: change-me
     AWS_REGION: change-me
