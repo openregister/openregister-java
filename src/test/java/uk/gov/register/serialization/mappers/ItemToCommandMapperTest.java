@@ -24,7 +24,7 @@ public class ItemToCommandMapperTest {
 
     @Test
     public void apply_returnsAddItemCommandForItem() {
-        Item itemToMap = new Item(new HashValue(HashingAlgorithm.SHA256, "item1sha"), jsonFactory.objectNode()
+        Item itemToMap = new Item(jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
 

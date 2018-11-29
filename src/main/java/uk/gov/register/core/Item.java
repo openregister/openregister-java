@@ -31,12 +31,6 @@ public class Item {
         this.content = content;
     }
 
-    @Deprecated
-    public Item(HashValue v1HashValue, JsonNode content) {
-        // TODO: This should be removed
-        this(v1HashValue, v1HashValue, content);
-    }
-
     public static HashValue objectHash(JsonNode content) {
         return JsonToBlobHash.apply(content);
     }

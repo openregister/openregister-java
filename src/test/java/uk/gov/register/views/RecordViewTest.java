@@ -28,8 +28,8 @@ public class RecordViewTest {
 
     @Before
     public void setup() throws IOException {
-        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), Instant.ofEpochSecond(1470403440), "b", EntryType.user);
-        Item item = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), objectMapper.readTree("{\"a\":\"b\"}"));
+        Item item = new Item(objectMapper.readTree("{\"a\":\"b\"}"));
+        Entry entry = new Entry(1, item.getSha256hex(), item.getBlobHash(), Instant.ofEpochSecond(1470403440), "b", EntryType.user);
         Record record = new Record(entry, item);
 
         ItemConverter itemConverter = mock(ItemConverter.class);

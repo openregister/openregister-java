@@ -63,28 +63,28 @@ public class RSFCreatorTest {
         sutCreator.register(new EntryToCommandMapper());
         sutCreator.register(new ItemToCommandMapper());
 
-        systemItem = new Item(new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), jsonFactory.objectNode()
+        systemItem = new Item(jsonFactory.objectNode()
                 .put("system-field-1", "system-field-1-value")
                 .put("system-field-2", "system-field-2-value"));
-        item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "item1sha"), jsonFactory.objectNode()
+        item1 = new Item(jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
                 .put("field-2", "entry1-field-2-value"));
-        item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "item2sha"), jsonFactory.objectNode()
+        item2 = new Item(jsonFactory.objectNode()
                 .put("field-1", "entry2-field-1-value")
                 .put("field-2", "entry2-field-2-value"));
 
-        systemEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "systemitemsha"), Instant.parse("2016-07-24T16:54:00Z"), "system-key", EntryType.system);
-        entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "item1sha"), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
-        entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "item2sha"), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
+        systemEntry = new Entry(1, systemItem.getSha256hex(), systemItem.getBlobHash(), Instant.parse("2016-07-24T16:54:00Z"), "system-key", EntryType.system);
+        entry1 = new Entry(1, item1.getSha256hex(), item1.getBlobHash(), Instant.parse("2016-07-24T16:55:00Z"), "entry1-field-1-value", EntryType.user);
+        entry2 = new Entry(2, item2.getSha256hex(), item2.getBlobHash(), Instant.parse("2016-07-24T16:56:00Z"), "entry2-field-1-value", EntryType.user);
 
         assertEmptyRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList(emptyRegisterHash.encode()));
 
         addSystemItemCommand  = new RegisterCommand("add-item", Collections.singletonList("{\"system-field-1\":\"system-field-1-value\",\"system-field-2\":\"system-field-2-value\"}"));
         addItem1Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
         addItem2Command = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}"));
-        appendSystemEntryCommand = new RegisterCommand("append-entry", Arrays.asList("system", "system-key", "2016-07-24T16:54:00Z", "sha-256:systemitemsha"));
-        appendEntry1Command = new RegisterCommand("append-entry", Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha"));
-        appendEntry2Command = new RegisterCommand("append-entry", Arrays.asList("user", "entry2-field-1-value","2016-07-24T16:56:00Z", "sha-256:item2sha" ));
+        appendSystemEntryCommand = new RegisterCommand("append-entry", Arrays.asList("system", "system-key", "2016-07-24T16:54:00Z", systemItem.getSha256hex().encode()));
+        appendEntry1Command = new RegisterCommand("append-entry", Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", item1.getSha256hex().encode()));
+        appendEntry2Command = new RegisterCommand("append-entry", Arrays.asList("user", "entry2-field-1-value","2016-07-24T16:56:00Z", item2.getSha256hex().encode()));
     }
 
     @Test
