@@ -21,8 +21,8 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
         try {
             List<String> parts = command.getCommandArguments();
             HashValue itemHash = HashValue.decode(SHA256, parts.get(RSFFormatter.RSF_HASH_POSITION));
-            Item item = register.getItemByV1Hash(itemHash).get();
-            HashValue blobHash = item.getBlobHash();
+            HashValue blobHash = register.getItemByV1Hash(itemHash).map(Item::getBlobHash)
+                    .orElse(itemHash); // TODO: this should raise an error, not generate wrong hashes
             EntryType entryType = EntryType.valueOf(parts.get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
             int newEntryNo = register.getTotalEntries(entryType) + 1;
             Entry entry = new Entry(newEntryNo, itemHash, blobHash, Instant.parse(parts.get(RSFFormatter.RSF_TIMESTAMP_POSITION)), parts.get(RSFFormatter.RSF_KEY_POSITION), entryType);

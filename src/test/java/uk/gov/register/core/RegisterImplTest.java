@@ -88,9 +88,10 @@ public class RegisterImplTest {
     @Test
     public void shouldNotFailForValidItem() throws IOException {
         JsonNode content = mapper.readTree("{\"postcode\":\"sw1a 1aa\"}");
-        HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
-        Item item = new Item(hashValue, content);
-        Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
+        HashValue v1HashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
+        HashValue blobHashValue = new HashValue(HashingAlgorithm.SHA256, "abc-blob-hash");
+        Item item = new Item(v1HashValue, blobHashValue, content);
+        Entry entry = new Entry(1, v1HashValue, blobHashValue, Instant.now(),"key", EntryType.user);
 
         when(itemStore.getItemByV1Hash(entry.getV1ItemHash())).thenReturn(Optional.of(item));
 
@@ -100,9 +101,10 @@ public class RegisterImplTest {
     @Test(expected = AppendEntryException.class)
     public void shouldFailIfItemValidationFails() throws IOException {
         JsonNode content = mapper.readTree("{\"foo\":\"bar\"}");
-        HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
-        Item item = new Item(hashValue, content);
-        Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
+        HashValue v1HashValue = new HashValue(HashingAlgorithm.SHA256, "abc");
+        HashValue blobHashValue = new HashValue(HashingAlgorithm.SHA256, "abc-blob-hash");
+        Item item = new Item(v1HashValue, blobHashValue, content);
+        Entry entry = new Entry(1, v1HashValue, blobHashValue, Instant.now(),"key", EntryType.user);
 
         when(itemStore.getItemByV1Hash(entry.getV1ItemHash())).thenReturn(Optional.of(item));
 

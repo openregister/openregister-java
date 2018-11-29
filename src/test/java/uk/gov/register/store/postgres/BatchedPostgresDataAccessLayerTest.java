@@ -255,8 +255,8 @@ public class BatchedPostgresDataAccessLayerTest {
 
     @Test
     public void canAddAndGetItem() throws IOException {
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
         batchedPostgresDataAccessLayer.addItem(item1);
         batchedPostgresDataAccessLayer.addItem(item2);
@@ -268,8 +268,8 @@ public class BatchedPostgresDataAccessLayerTest {
 
     @Test
     public void doesNotDuplicateItems() throws IOException {
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
         batchedPostgresDataAccessLayer.addItem(item1);
         batchedPostgresDataAccessLayer.addItem(item2);
@@ -288,8 +288,8 @@ public class BatchedPostgresDataAccessLayerTest {
 
         assertThat(batchedPostgresDataAccessLayer.getAllItems().size(), is(0));
 
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
         batchedPostgresDataAccessLayer.addItem(item1);
         batchedPostgresDataAccessLayer.addItem(item2);
@@ -305,19 +305,19 @@ public class BatchedPostgresDataAccessLayerTest {
         Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
         Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
         Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
 
         Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), timestamp, "key5", EntryType.system);
         Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), timestamp, "key6", EntryType.system);
         Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), timestamp, "key7", EntryType.system);
         Entry systemEntry4 = new Entry(4, new HashValue(SHA256, "itemhash8"), timestamp, "key8", EntryType.system);
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
-        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), objectMapper.readTree("{\"field\":\"value7\"}"));
-        Item item8 = new Item(new HashValue(SHA256, "itemhash8"), objectMapper.readTree("{\"field\":\"value8\"}"));
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value6\"}"));
+        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), new HashValue(SHA256, "itemhash7-blob-hash"), objectMapper.readTree("{\"field\":\"value7\"}"));
+        Item item8 = new Item(new HashValue(SHA256, "itemhash8"), new HashValue(SHA256, "itemhash8-blob-hash"), objectMapper.readTree("{\"field\":\"value8\"}"));
 
         batchedPostgresDataAccessLayer.appendEntry(userEntry1);
         batchedPostgresDataAccessLayer.appendEntry(userEntry2);
@@ -354,16 +354,16 @@ public class BatchedPostgresDataAccessLayerTest {
         Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
         Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
         Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
 
         Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash4"), timestamp, "key5", EntryType.system);
         Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash5"), timestamp, "key6", EntryType.system);
         Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash6"), timestamp, "key5", EntryType.system);
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value6\"}"));
 
         batchedPostgresDataAccessLayer.appendEntry(userEntry1);
         batchedPostgresDataAccessLayer.appendEntry(userEntry2);
@@ -414,17 +414,17 @@ public class BatchedPostgresDataAccessLayerTest {
         Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
         Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
         Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key3", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
 
         Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), timestamp, "key5", EntryType.system);
         Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), timestamp, "key6", EntryType.system);
         Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), timestamp, "key5", EntryType.system);
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value3\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value4\"}"));
-        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), new HashValue(SHA256, "itemhash7-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
 
         batchedPostgresDataAccessLayer.appendEntry(userEntry1);
         batchedPostgresDataAccessLayer.appendEntry(userEntry2);
@@ -580,16 +580,16 @@ public class BatchedPostgresDataAccessLayerTest {
         Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
         Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
         Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
 
         Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash4"), timestamp, "key5", EntryType.system);
         Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash5"), timestamp, "key6", EntryType.system);
         Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash6"), timestamp, "key5", EntryType.system);
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value6\"}"));
 
         batchedPostgresDataAccessLayer.appendEntry(userEntry1); // entry goes to memory
         batchedPostgresDataAccessLayer.appendEntry(userEntry2); // entry goes to memory
@@ -631,16 +631,16 @@ public class BatchedPostgresDataAccessLayerTest {
         Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
         Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
         Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
 
         Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash4"), timestamp, "key5", EntryType.system);
         Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash5"), timestamp, "key6", EntryType.system);
         Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash6"), timestamp, "key5", EntryType.system);
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value6\"}"));
 
         postgresDataAccessLayer.appendEntry(userEntry1); // entry goes to database
         postgresDataAccessLayer.appendEntry(userEntry2); // entry goes to database

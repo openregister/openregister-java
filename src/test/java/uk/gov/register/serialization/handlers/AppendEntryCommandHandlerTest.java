@@ -57,7 +57,7 @@ public class AppendEntryCommandHandlerTest {
         sutHandler.execute(appendEntryCommand, register);
 
 
-        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
+        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
     }
 

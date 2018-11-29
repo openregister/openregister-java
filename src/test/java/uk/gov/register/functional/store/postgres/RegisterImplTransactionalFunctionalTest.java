@@ -96,7 +96,6 @@ public class RegisterImplTransactionalFunctionalTest {
         assertThat(registerImpl.getItemByV1Hash(blobHash), equalTo(Optional.empty()));
     }
 
-
     @Test
     public void useTransactionShouldApplyChangesAtomicallyToDatabase() {
 
