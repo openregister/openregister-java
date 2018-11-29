@@ -19,6 +19,7 @@ public @interface BindEntry {
                 q.bind("key", arg.getKey());
                 q.bind("entryType", arg.getEntryType());
                 q.bind("itemHash", arg.getV1ItemHash().getValue());
+                q.bind("blobHash", arg.getBlobHash().getValue());
             };
         }
     }

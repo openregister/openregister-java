@@ -26,13 +26,12 @@ public class RecordMapper implements ResultSetMapper<Record> {
     @Override
     public Record map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         String itemHash = r.getString("sha256hex");
+        String blobHash = r.getString("blob_hash");
         String itemContent = r.getString("content");
-
-        // TODO: add new blob hash column to result set
 
         Item item = null;
         try {
-            item = new Item(new HashValue(HashingAlgorithm.SHA256, itemHash), new HashValue(HashingAlgorithm.SHA256, itemHash), objectMapper.readValue(itemContent, JsonNode.class));
+            item = new Item(new HashValue(HashingAlgorithm.SHA256, itemHash), new HashValue(HashingAlgorithm.SHA256, blobHash), objectMapper.readValue(itemContent, JsonNode.class));
         } catch (IOException e) {
             e.printStackTrace();
         }
