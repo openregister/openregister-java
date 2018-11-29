@@ -6,6 +6,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.postgresql.util.PGobject;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.util.JsonToBlobHash;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -37,8 +38,7 @@ public class Item {
     }
 
     public static HashValue objectHash(JsonNode content) {
-        // TODO
-        return itemHash(content);
+        return JsonToBlobHash.apply(content);
     }
 
     public static HashValue itemHash(JsonNode content) {
