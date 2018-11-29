@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class EntryToCommandMapper extends RegisterCommandMapper<Entry, RegisterCommand> {
     @Override
     public RegisterCommand apply(Entry entry) {
-        return new RegisterCommand("append-entry", Arrays.asList(entry.getEntryType().name(), entry.getKey(), entry.getTimestampAsISOFormat(), entry.getItemHash().encode()));
+        return new RegisterCommand("append-entry", Arrays.asList(entry.getEntryType().name(), entry.getKey(), entry.getTimestampAsISOFormat(), entry.getV1ItemHash().encode()));
     }
 }
 

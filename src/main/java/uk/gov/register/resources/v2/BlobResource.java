@@ -9,7 +9,7 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.ItemListView;
+import uk.gov.register.views.v2.BlobListView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
@@ -62,11 +62,11 @@ public class BlobResource {
             ExtraMediaType.TEXT_CSV,
     })
     @Timed
-    public ItemListView listBlobs() throws FieldConversionException {
+    public BlobListView listBlobs() throws FieldConversionException {
         Collection<Item> items = register.getAllItems(EntryType.user);
 
         // TODO: allow this resource to be paginated
-        return buildItemListView(items.stream().limit(100).collect(Collectors.toList()));
+        return buildBlobListView(items.stream().limit(100).collect(Collectors.toList()));
     }
 
     protected Optional<Item> getBlob(String blobHash) {
@@ -82,7 +82,7 @@ public class BlobResource {
         return new ItemView(item, register.getFieldsByName(), this.itemConverter);
     }
 
-    protected ItemListView buildItemListView(Collection<Item> items) {
-        return new ItemListView(items, getFieldsByName());
+    protected BlobListView buildBlobListView(Collection<Item> items) {
+        return new BlobListView(items, getFieldsByName());
     }
 }

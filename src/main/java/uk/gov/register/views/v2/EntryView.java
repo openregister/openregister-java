@@ -19,13 +19,13 @@ import java.time.Instant;
 @JsonPropertyOrder({"index-entry-number", "entry-number", "entry-timestamp", "key", "blob-hash"})
 public class EntryView implements CsvRepresentationView<EntryView> {
     private final int entryNumber;
-    private final HashValue hashValue;
+    private final HashValue blobHash;
     private final Instant timestamp;
     private String key;
 
     public EntryView(Entry entry) {
         this.entryNumber = entry.getEntryNumber();
-        this.hashValue = entry.getItemHash();
+        this.blobHash = entry.getBlobHash();
         this.timestamp = entry.getTimestamp();
         this.key = entry.getKey();
     }
@@ -37,7 +37,7 @@ public class EntryView implements CsvRepresentationView<EntryView> {
 
     @JsonProperty("blob-hash")
     public HashValue getBlobHash() {
-        return hashValue;
+        return blobHash;
     }
 
     @JsonProperty("entry-number")

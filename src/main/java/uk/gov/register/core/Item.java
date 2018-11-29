@@ -91,16 +91,14 @@ public class Item {
 
         Item item = (Item) o;
 
-        if (v1HashValue != null ? !v1HashValue.equals(item.v1HashValue) : item.v1HashValue != null) return false;
+        if (blobHash != null ? !blobHash.equals(item.blobHash) : item.blobHash != null) return false;
         return content != null ? content.equals(item.content) : item.content == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = v1HashValue != null ? v1HashValue.hashCode() : 0;
-        result = 31 * result + (content != null ? content.hashCode() : 0);
-        return result;
+        return blobHash != null ? blobHash.hashCode() : 0;
     }
 
     @Override

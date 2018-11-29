@@ -81,7 +81,7 @@ public class RegisterImplTest {
         Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.now(),
                 "key", EntryType.user);
 
-        when(itemStore.getItemByV1Hash(entry.getItemHash())).thenReturn(Optional.empty());
+        when(itemStore.getItemByV1Hash(entry.getV1ItemHash())).thenReturn(Optional.empty());
         register.appendEntry(entry);
     }
 
@@ -92,7 +92,7 @@ public class RegisterImplTest {
         Item item = new Item(hashValue, content);
         Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
-        when(itemStore.getItemByV1Hash(entry.getItemHash())).thenReturn(Optional.of(item));
+        when(itemStore.getItemByV1Hash(entry.getV1ItemHash())).thenReturn(Optional.of(item));
 
         register.appendEntry(entry);
     }
@@ -104,7 +104,7 @@ public class RegisterImplTest {
         Item item = new Item(hashValue, content);
         Entry entry = new Entry(1, hashValue, Instant.now(),"key", EntryType.user);
 
-        when(itemStore.getItemByV1Hash(entry.getItemHash())).thenReturn(Optional.of(item));
+        when(itemStore.getItemByV1Hash(entry.getV1ItemHash())).thenReturn(Optional.of(item));
 
         doThrow(new ItemValidationException("", content)).when(itemValidator).validateItem(any(), any(), any());
 

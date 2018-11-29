@@ -1,4 +1,4 @@
-package uk.gov.register.views;
+package uk.gov.register.views.v2;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,30 +10,31 @@ import uk.gov.register.core.Field;
 import uk.gov.register.core.Item;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.views.CsvRepresentationView;
+import uk.gov.register.views.ItemView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ItemListView implements CsvRepresentationView {
+public class BlobListView implements CsvRepresentationView {
     private final Collection<Item> items;
     private final Map<String, Field> fieldsByName;
     private final ItemConverter itemConverter;
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
 
-    public ItemListView(Collection<Item> items, final Map<String, Field> fieldsByName) {
+    public BlobListView(Collection<Item> items, final Map<String, Field> fieldsByName) {
         this.items = items;
         this.fieldsByName = fieldsByName;
         this.itemConverter = new ItemConverter();
     }
 
     @JsonValue
-    public Map<HashValue, ItemView> getItems() {
+    public Map<HashValue, ItemView> getBlobs() {
         return this.items
                 .stream()
-                .collect(Collectors.toMap(item -> item.getSha256hex(), item -> new ItemView(item, fieldsByName, this.itemConverter)));
+                .collect(Collectors.toMap(item -> item.getBlobHash(), item -> new ItemView(item, fieldsByName, this.itemConverter)));
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
@@ -45,9 +46,9 @@ public class ItemListView implements CsvRepresentationView {
         return schemaBuilder.build();
     }
 
-    public ArrayNode flatItemsJson() {
+    public ArrayNode flatBlobsJson() {
         final ArrayNode blobsArray = jsonObjectMapper.createArrayNode();
-        getItems().forEach((key, value) -> {
+        getBlobs().forEach((key, value) -> {
             final ObjectNode valueNode = jsonObjectMapper.convertValue(value, ObjectNode.class);
             blobsArray.add(valueNode.put("blob-hash", jsonObjectMapper.convertValue(key, String.class)));
         });
@@ -56,6 +57,6 @@ public class ItemListView implements CsvRepresentationView {
 
     @Override
     public CsvRepresentation<ArrayNode> csvRepresentation() {
-        return new CsvRepresentation<>(csvSchema(fieldsByName.keySet()), flatItemsJson());
+        return new CsvRepresentation<>(csvSchema(fieldsByName.keySet()), flatBlobsJson());
     }
 }

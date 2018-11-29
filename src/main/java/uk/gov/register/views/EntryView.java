@@ -5,7 +5,6 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.util.ISODateFormatter;
 import uk.gov.register.util.ToArrayConverter;
-import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.time.Instant;
@@ -29,7 +28,7 @@ public class EntryView implements CsvRepresentationView<EntryView> {
 
     public EntryView(Entry entry) {
         this.entryNumber = entry.getEntryNumber();
-        this.hashValue = entry.getItemHash();
+        this.hashValue = entry.getV1ItemHash();
         this.timestamp = entry.getTimestamp();
         this.key = entry.getKey();
     }
