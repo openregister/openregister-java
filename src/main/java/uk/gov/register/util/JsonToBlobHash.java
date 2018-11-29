@@ -21,10 +21,11 @@ import java.util.stream.StreamSupport;
 public class JsonToBlobHash {
 
     public static HashValue apply (JsonNode jsonNode){
-        Map<String, ObjectHashable> data = new HashMap<>();
         Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
         Stream<Map.Entry<String, JsonNode>> stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(fields, Spliterator.ORDERED), false);
-        String result = stream.map(node -> {
+
+        Map<String, ObjectHashable> data = new HashMap<>();
+        stream.forEach(node -> {
             String key = node.getKey();
             Boolean valueIsArray = node.getValue().isArray();
 
@@ -33,14 +34,16 @@ public class JsonToBlobHash {
                 node.getValue().elements().forEachRemaining(value -> values.add(new StringValue(value.asText())));
                 SetValue setValue = new SetValue(values);
                 data.put(key, setValue);
-                return ObjectHash.toHexDigest(data);
             } else {
                 String value = node.getValue().asText();
-                data.put(key, new StringValue(value));
-                return ObjectHash.toHexDigest(data);
+                if(!value.equals("")) {
+                    data.put(key, new StringValue(value));
+                }
             }
         }
-        ).collect(Collectors.joining(""));
+        );
+
+        String result = ObjectHash.toHexDigest(data);
         return new HashValue(HashingAlgorithm.SHA256, result);
     }
 
