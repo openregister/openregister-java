@@ -8,7 +8,6 @@ import uk.gov.objecthash.StringValue;
 import uk.gov.register.core.HashingAlgorithm;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -30,11 +29,18 @@ public class JsonToBlobHash {
             Boolean valueIsArray = node.getValue().isArray();
 
             if(valueIsArray) {
-                Set<ObjectHashable> values = new HashSet<>();
-                node.getValue().elements().forEachRemaining(value -> values.add(new StringValue(value.asText())));
-                SetValue setValue = new SetValue(values);
-                data.put(key, setValue);
-            } else {
+                Stream<JsonNode> valueStream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(node.getValue().elements(), Spliterator.ORDERED), false);
+                Set<ObjectHashable> values = valueStream
+                        .filter(JsonNode::isTextual)
+                        .filter(v -> !v.asText().equals(""))
+                        .map(v -> new StringValue(v.asText()))
+                        .collect(Collectors.toSet());
+
+                if(!values.isEmpty()) {
+                    data.put(key, new SetValue(values));
+                }
+
+            } else if (node.getValue().isTextual()) {
                 String value = node.getValue().asText();
                 if(!value.equals("")) {
                     data.put(key, new StringValue(value));
@@ -46,7 +52,5 @@ public class JsonToBlobHash {
         String result = ObjectHash.toHexDigest(data);
         return new HashValue(HashingAlgorithm.SHA256, result);
     }
-
-
-    }
+}
 

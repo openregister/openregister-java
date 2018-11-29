@@ -46,4 +46,47 @@ public class JsonToBlobHashTest {
         assertEquals("4852254a3c685b90d480353ba128e238aee77dc45d085af0993b6aa2a5d2ae23", JsonToBlobHash.apply(jsonNode).getValue());
     }
 
+    @Test
+    public void hashesJsonNodeWithEmptySetValue() throws IOException {
+        JsonNode jsonNode = new ObjectMapper().readTree("{\n" +
+                "\t\"foo\": \"bar\",\n" +
+                "\t\"baz\": \"quo\",\n" +
+                "\t\"fieldWithMissingValue\": []" +
+                "}");
+
+        assertEquals("4852254a3c685b90d480353ba128e238aee77dc45d085af0993b6aa2a5d2ae23", JsonToBlobHash.apply(jsonNode).getValue());
+    }
+
+    @Test
+    public void hashesJsonNodeWithNullValue() throws IOException {
+        JsonNode jsonNode = new ObjectMapper().readTree("{\n" +
+                "\t\"foo\": \"bar\",\n" +
+                "\t\"baz\": \"quo\",\n" +
+                "\t\"fieldWithMissingValue\": null" +
+                "}");
+
+        assertEquals("4852254a3c685b90d480353ba128e238aee77dc45d085af0993b6aa2a5d2ae23", JsonToBlobHash.apply(jsonNode).getValue());
+    }
+
+    @Test
+    public void hashesJsonNodeWithNullValueInSet() throws IOException {
+        JsonNode jsonNode = new ObjectMapper().readTree("{\n" +
+                "\t\"foo\": \"bar\",\n" +
+                "\t\"baz\": \"quo\",\n" +
+                "\t\"fieldWithMissingValue\": [null]" +
+                "}");
+
+        assertEquals("4852254a3c685b90d480353ba128e238aee77dc45d085af0993b6aa2a5d2ae23", JsonToBlobHash.apply(jsonNode).getValue());
+    }
+
+    @Test
+    public void hashesJsonNodeWithEmptyStringValueInSet() throws IOException {
+        JsonNode jsonNode = new ObjectMapper().readTree("{\n" +
+                "\t\"foo\": \"bar\",\n" +
+                "\t\"baz\": \"quo\",\n" +
+                "\t\"fieldWithMissingValue\": [\"\"]" +
+                "}");
+
+        assertEquals("4852254a3c685b90d480353ba128e238aee77dc45d085af0993b6aa2a5d2ae23", JsonToBlobHash.apply(jsonNode).getValue());
+    }
 }
