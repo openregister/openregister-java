@@ -22,17 +22,6 @@ public class Entry {
         this.entryType = entryType;
     }
 
-    // TODO: Move all usages to the other constructor
-    @Deprecated
-    public Entry(int entryNumber, HashValue v1ItemHash, Instant timestamp, String key, EntryType entryType) {
-        this.entryNumber = entryNumber;
-        this.v1ItemHash = v1ItemHash;
-        this.blobHash = v1ItemHash;
-        this.timestamp = timestamp;
-        this.key = key;
-        this.entryType = entryType;
-    }
-
     public Instant getTimestamp() {
         return timestamp;
     }

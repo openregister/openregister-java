@@ -78,7 +78,7 @@ public class RegisterImplTest {
 
     @Test(expected = AppendEntryException.class)
     public void shouldFailForUnreferencedItem() {
-        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), Instant.now(),
+        Entry entry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "abc"), new HashValue(HashingAlgorithm.SHA256, "abc-blob-hash"), Instant.now(),
                 "key", EntryType.user);
 
         when(itemStore.getItemByV1Hash(entry.getV1ItemHash())).thenReturn(Optional.empty());
