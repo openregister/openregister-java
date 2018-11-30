@@ -22,12 +22,15 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
             List<String> parts = command.getCommandArguments();
             HashValue itemHash = HashValue.decode(SHA256, parts.get(RSFFormatter.RSF_HASH_POSITION));
             HashValue blobHash = register.getItemByV1Hash(itemHash).map(Item::getBlobHash)
-                    .orElse(itemHash); // TODO: this should raise an error, not generate wrong hashes
+                    .orElseThrow(() -> new RSFParseException("Item not found for hash " + itemHash.getValue()));
             EntryType entryType = EntryType.valueOf(parts.get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
             int newEntryNo = register.getTotalEntries(entryType) + 1;
             Entry entry = new Entry(newEntryNo, itemHash, blobHash, Instant.parse(parts.get(RSFFormatter.RSF_TIMESTAMP_POSITION)), parts.get(RSFFormatter.RSF_KEY_POSITION), entryType);
             register.appendEntry(entry);
-        } catch (Exception e) {
+        } catch(RSFParseException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new RSFParseException("Exception when executing command: " + command, e);
         }
     }
