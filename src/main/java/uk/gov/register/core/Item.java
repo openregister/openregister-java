@@ -22,17 +22,13 @@ public class Item {
     private final HashValue blobHash;
 
     public Item(JsonNode content) {
-        this(itemHash(content), objectHash(content), content);
+        this(itemHash(content), JsonToBlobHash.apply(content), content);
     }
 
     public Item(HashValue v1HashValue, HashValue blobHash, JsonNode content) {
         this.v1HashValue = v1HashValue;
         this.blobHash = blobHash;
         this.content = content;
-    }
-
-    public static HashValue objectHash(JsonNode content) {
-        return JsonToBlobHash.apply(content);
     }
 
     public static HashValue itemHash(JsonNode content) {
