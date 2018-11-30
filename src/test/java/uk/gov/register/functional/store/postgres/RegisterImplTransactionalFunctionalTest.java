@@ -17,8 +17,26 @@ import org.skife.jdbi.v2.Handle;
 import uk.gov.register.configuration.ConfigManager;
 import uk.gov.register.configuration.FieldsConfiguration;
 import uk.gov.register.configuration.RegistersConfiguration;
-import uk.gov.register.core.*;
-import uk.gov.register.db.*;
+import uk.gov.register.core.Cardinality;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.EntryLog;
+import uk.gov.register.core.EntryLogImpl;
+import uk.gov.register.core.EntryType;
+import uk.gov.register.core.Field;
+import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.ItemStore;
+import uk.gov.register.core.ItemStoreImpl;
+import uk.gov.register.core.Record;
+import uk.gov.register.core.RegisterContext;
+import uk.gov.register.core.RegisterId;
+import uk.gov.register.core.RegisterImpl;
+import uk.gov.register.core.RegisterMetadata;
+import uk.gov.register.db.EntryDAO;
+import uk.gov.register.db.EntryQueryDAO;
+import uk.gov.register.db.ItemDAO;
+import uk.gov.register.db.ItemQueryDAO;
+import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.db.RecordSet;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
@@ -32,11 +50,16 @@ import uk.gov.register.util.HashValue;
 import uk.gov.verifiablelog.store.memoization.DoNothing;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -96,13 +119,12 @@ public class RegisterImplTransactionalFunctionalTest {
         assertThat(registerImpl.getItemByV1Hash(blobHash), equalTo(Optional.empty()));
     }
 
-
     @Test
     public void useTransactionShouldApplyChangesAtomicallyToDatabase() {
 
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new HashValue(HashingAlgorithm.SHA256, "blobhash1"), new ObjectMapper().createObjectNode());
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new HashValue(HashingAlgorithm.SHA256, "blobhash2"), new ObjectMapper().createObjectNode());
+        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new HashValue(HashingAlgorithm.SHA256, "blobhash3"), new ObjectMapper().createObjectNode());
 
         RegisterContext.useTransaction(dbi, handle -> {
             RegisterImpl registerImpl = getPostgresRegister(getTransactionalDataAccessLayer(handle));
@@ -127,9 +149,9 @@ public class RegisterImplTransactionalFunctionalTest {
 
     @Test
     public void useTransactionShouldRollbackIfExceptionThrown() {
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().createObjectNode());
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().createObjectNode());
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().createObjectNode());
+        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new HashValue(HashingAlgorithm.SHA256, "blobhash1"), new ObjectMapper().createObjectNode());
+        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new HashValue(HashingAlgorithm.SHA256, "blobhash2"), new ObjectMapper().createObjectNode());
+        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new HashValue(HashingAlgorithm.SHA256, "blobhash3"), new ObjectMapper().createObjectNode());
 
         try {
             RegisterContext.useTransaction(dbi, handle -> {
@@ -168,16 +190,16 @@ public class RegisterImplTransactionalFunctionalTest {
         JsonNode addressRegisterJson = MAPPER.readTree("{\"fields\":[\"address\"],\"phase\":\"alpha\",\"register\":\"address\",\"registry\":\"office-for-national-statistics\",\"text\":\"Register of addresses\"}");
         JsonNode addressFieldJson = MAPPER.readTree("{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"address\",\"phase\":\"alpha\",\"register\":\"address\",\"text\":\"A place in the UK with a postal address.\"}");
 
-        Item addressField = new Item(new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), addressFieldJson);
-        Item addressRegister = new Item(new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), addressRegisterJson);
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash1"), new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash2"), new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
-        Item item3 = new Item(new HashValue(HashingAlgorithm.SHA256, "itemhash3"), new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
-        Entry addressFieldEntry = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "cf5700d23d4cd933574fbafb48ba6ace1c3b374b931a6183eeefab6f37106011"), Instant.parse("2017-03-10T00:00:00Z"), "field:address", EntryType.system);
-        Entry addressRegisterEntry = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "5e7a41b4d05ae4dfb910f3376453b21790c1ea439ef580d6dc63f067800cd9f1"), Instant.parse("2017-03-10T00:00:00Z"), "register:address", EntryType.system);
-        Entry entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "itemhash1"), Instant.parse("2017-03-10T00:00:00Z"), "aaa", EntryType.user);
-        Entry entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "itemhash2"), Instant.parse("2017-03-10T00:00:00Z"), "bbb", EntryType.user);
-        Entry entry3 = new Entry(3, new HashValue(HashingAlgorithm.SHA256, "itemhash3"), Instant.parse("2017-03-10T00:00:00Z"), "ccc", EntryType.user);
+        Item addressField = new Item(addressFieldJson);
+        Item addressRegister = new Item(addressRegisterJson);
+        Item item1 = new Item(new ObjectMapper().readTree("{\"address\":\"aaa\"}"));
+        Item item2 = new Item(new ObjectMapper().readTree("{\"address\":\"bbb\"}"));
+        Item item3 = new Item(new ObjectMapper().readTree("{\"address\":\"ccc\"}"));
+        Entry addressFieldEntry = new Entry(1, addressField.getSha256hex(), addressField.getBlobHash(), Instant.parse("2017-03-10T00:00:00Z"), "field:address", EntryType.system);
+        Entry addressRegisterEntry = new Entry(2, addressRegister.getSha256hex(), addressField.getBlobHash(), Instant.parse("2017-03-10T00:00:00Z"), "register:address", EntryType.system);
+        Entry entry1 = new Entry(1, item1.getSha256hex(), item1.getBlobHash(), Instant.parse("2017-03-10T00:00:00Z"), "aaa", EntryType.user);
+        Entry entry2 = new Entry(2, item2.getSha256hex(), item2.getBlobHash(), Instant.parse("2017-03-10T00:00:00Z"), "bbb", EntryType.user);
+        Entry entry3 = new Entry(3, item3.getSha256hex(), item3.getBlobHash(), Instant.parse("2017-03-10T00:00:00Z"), "ccc", EntryType.user);
 
         Record addressRegisterRecord = mock(Record.class);
         when(addressRegisterRecord.getItem()).thenReturn(addressRegister);

@@ -10,10 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.gov.register.core.Cardinality;
 import uk.gov.register.core.Field;
-import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterId;
-import uk.gov.register.util.HashValue;
 import uk.gov.register.views.representations.CsvWriter;
 import uk.gov.register.views.v2.BlobListView;
 
@@ -29,24 +27,30 @@ import static org.junit.Assert.assertTrue;
 public class BlobListViewTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private JsonNode itemNode1;
-    private JsonNode itemNode2;
+    private JsonNode blobNode1;
+    private JsonNode blobNode2;
     private BlobListView view;
+    private Item blob1;
+    private Item blob2;
+    private String blobHash1;
+    private String blobHash2;
 
     @Before
     public void setup() throws IOException {
-        itemNode1 = objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}");
-        Item item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), itemNode1);
+        blobNode1 = objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}");
+        blob1 = new Item(blobNode1);
+        blobHash1 = blob1.getBlobHash().encode();
 
-        itemNode2 = objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}");
-        Item item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), itemNode2);
+        blobNode2 = objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}");
+        blob2 = new Item(blobNode2);
+        blobHash2 = blob2.getBlobHash().encode();
 
         Map<String, Field> fieldsByName = ImmutableMap.of(
                 "street", new Field("street", "string", new RegisterId("foo"), Cardinality.ONE, "bla"),
                 "address", new Field("address", "string", new RegisterId("foo"), Cardinality.ONE, "bla")
         );
 
-        this.view = new BlobListView(ImmutableList.of(item1, item2), fieldsByName);
+        this.view = new BlobListView(ImmutableList.of(blob1, blob2), fieldsByName);
     }
 
     @Test
@@ -55,11 +59,11 @@ public class BlobListViewTest {
 
         JsonNode jsonNode = objectMapper.readTree(result);
 
-        assertTrue(jsonNode.has("sha-256:ab"));
-        assertTrue(jsonNode.has("sha-256:cd"));
+        assertTrue(jsonNode.has(blobHash1));
+        assertTrue(jsonNode.has(blobHash2));
 
-        assertThat(jsonNode.get("sha-256:ab"), equalTo(itemNode1));
-        assertThat(jsonNode.get("sha-256:cd"), equalTo(itemNode2));
+        assertThat(jsonNode.get(blobHash1), equalTo(blobNode1));
+        assertThat(jsonNode.get(blobHash2), equalTo(blobNode2));
     }
 
     @Test
@@ -78,8 +82,8 @@ public class BlobListViewTest {
 
         assertThat(result, equalTo(
                 "blob-hash,street,address\r\n" +
-                        "sha-256:cd,bar,456\r\n" +
-                        "sha-256:ab,foo,123\r\n"
+                        "\"" + blobHash2 + "\",bar,456\r\n" +
+                        "\"" + blobHash1 + "\",foo,123\r\n"
 
         ));
     }

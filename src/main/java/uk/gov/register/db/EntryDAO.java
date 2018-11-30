@@ -11,7 +11,7 @@ import uk.gov.register.store.postgres.BindEntry;
 
 @UseStringTemplate3StatementLocator
 public interface EntryDAO {
-    @SqlBatch("insert into \"<schema>\".<entry_table>(entry_number, timestamp, key, type, sha256hex, blob_hash) values(:entry_number, :timestampAsLong, :key, :entryType::\"<schema>\".ENTRY_TYPE, :itemHash, :itemHash)")
+    @SqlBatch("insert into \"<schema>\".<entry_table>(entry_number, timestamp, key, type, sha256hex, blob_hash) values(:entry_number, :timestampAsLong, :key, :entryType::\"<schema>\".ENTRY_TYPE, :itemHash, :blobHash)")
     @BatchChunkSize(1000)
     void insertInBatch(@BindEntry Iterable<Entry> entries, @Define("schema") String schema, @Define("entry_table") String entryTable);
 

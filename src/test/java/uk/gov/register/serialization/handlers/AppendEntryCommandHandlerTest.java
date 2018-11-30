@@ -1,7 +1,9 @@
 package uk.gov.register.serialization.handlers;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -9,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
+import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.serialization.RegisterCommand;
@@ -17,6 +20,7 @@ import uk.gov.register.util.HashValue;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,6 +28,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,6 +44,9 @@ public class AppendEntryCommandHandlerTest {
     private RegisterCommand appendEntryCommand;
     private Instant july24 = Instant.parse("2016-07-24T16:55:00Z");
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     @Before
     public void setUp() throws Exception {
         sutHandler = new AppendEntryCommandHandler();
@@ -52,23 +60,31 @@ public class AppendEntryCommandHandlerTest {
 
     @Test
     public void execute_appendsEntryToRegister() {
+        Item item = mock(Item.class);
+        when(item.getBlobHash()).thenReturn(new HashValue(SHA256, "blob-sha"));
+        when(register.getItemByV1Hash(new HashValue(SHA256, "item-sha"))).thenReturn(Optional.of(item));
         when(register.getTotalEntries(EntryType.user)).thenReturn(2);
-
         sutHandler.execute(appendEntryCommand, register);
-
-
-        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
+        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), new HashValue(SHA256, "blob-sha"), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
+    }
+
+    @Test
+    public void execute_appendsEntryToRegisterWithoutItemThrowsException() {
+        expectedException.expect(RSFParseException.class);
+        expectedException.expectMessage("Item not found for hash item-sha");
+        sutHandler.execute(appendEntryCommand, register);
     }
 
     @Test (expected = RSFParseException.class)
     public void execute_catchesExceptionsAndReturnsFailRSFResult() {
-        doAnswer(new Answer<Void>() {
-            public Void answer(InvocationOnMock invocation) throws IOException {
-                throw new IOException("Forced exception");
-            }
-        }).when(register).appendEntry(any(Entry.class));
 
+        Item item = mock(Item.class);
+        when(item.getBlobHash()).thenReturn(new HashValue(SHA256, "blob-sha"));
+        when(register.getItemByV1Hash(new HashValue(SHA256, "item-sha"))).thenReturn(Optional.of(item));
+        doAnswer((Answer<Void>) invocation -> {
+            throw new IOException("Forced exception");
+        }).when(register).appendEntry(any(Entry.class));
         assertExceptionThrown(appendEntryCommand, "Exception when executing command: RegisterCommand");
     }
 

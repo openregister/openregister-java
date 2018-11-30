@@ -76,16 +76,16 @@ public class RecordQueryFunctionalTest {
         itemDAO = handle.attach(ItemDAO.class);
 
         entries = Arrays.asList(
-                new Entry(1, new HashValue(SHA256, "item1"), timestamp, "key1", EntryType.user),
-                new Entry(2, new HashValue(SHA256, "item2"), timestamp, "key2", EntryType.user),
-                new Entry(3, new HashValue(SHA256, "item3"), timestamp, "key1", EntryType.user),
-                new Entry(4, new HashValue(SHA256, "item4"), timestamp, "key3", EntryType.user));
+                new Entry(1, new HashValue(SHA256, "item1"), new HashValue(SHA256, "item1-blob-hash"), timestamp, "key1", EntryType.user),
+                new Entry(2, new HashValue(SHA256, "item2"), new HashValue(SHA256, "item2-blob-hash"), timestamp, "key2", EntryType.user),
+                new Entry(3, new HashValue(SHA256, "item3"), new HashValue(SHA256, "item3-blob-hash"), timestamp, "key1", EntryType.user),
+                new Entry(4, new HashValue(SHA256, "item4"), new HashValue(SHA256, "item4-blob-hash"), timestamp, "key3", EntryType.user));
 
         items = Arrays.asList(
-                new Item(new HashValue(SHA256, "item1"), objectMapper.readTree("{\"field1\":\"value1\",\"field2\":\"valueA\"}")),
-                new Item(new HashValue(SHA256, "item2"), objectMapper.readTree("{\"field1\":\"value2\",\"field2\":\"valueB\"}")),
-                new Item(new HashValue(SHA256, "item3"), objectMapper.readTree("{\"field1\":\"value3\",\"field2\":\"valueC\"}")),
-                new Item(new HashValue(SHA256, "item4"), objectMapper.readTree("{\"field1\":\"value4\",\"field2\":\"valueC\"}")));
+                new Item(new HashValue(SHA256, "item1"), new HashValue(SHA256, "item1-blob-hash"), objectMapper.readTree("{\"field1\":\"value1\",\"field2\":\"valueA\"}")),
+                new Item(new HashValue(SHA256, "item2"), new HashValue(SHA256, "item2-blob-hash"), objectMapper.readTree("{\"field1\":\"value2\",\"field2\":\"valueB\"}")),
+                new Item(new HashValue(SHA256, "item3"), new HashValue(SHA256, "item3-blob-hash"), objectMapper.readTree("{\"field1\":\"value3\",\"field2\":\"valueC\"}")),
+                new Item(new HashValue(SHA256, "item4"), new HashValue(SHA256, "item4-blob-hash"), objectMapper.readTree("{\"field1\":\"value4\",\"field2\":\"valueC\"}")));
     }
 
     @After

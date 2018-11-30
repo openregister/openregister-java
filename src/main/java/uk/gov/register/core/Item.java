@@ -6,6 +6,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.postgresql.util.PGobject;
 import uk.gov.register.util.CanonicalJsonMapper;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.util.JsonToBlobHash;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -21,24 +22,13 @@ public class Item {
     private final HashValue blobHash;
 
     public Item(JsonNode content) {
-        this(itemHash(content), objectHash(content), content);
+        this(itemHash(content), JsonToBlobHash.apply(content), content);
     }
 
     public Item(HashValue v1HashValue, HashValue blobHash, JsonNode content) {
         this.v1HashValue = v1HashValue;
         this.blobHash = blobHash;
         this.content = content;
-    }
-
-    @Deprecated
-    public Item(HashValue v1HashValue, JsonNode content) {
-        // TODO: This should be removed
-        this(v1HashValue, v1HashValue, content);
-    }
-
-    public static HashValue objectHash(JsonNode content) {
-        // TODO
-        return itemHash(content);
     }
 
     public static HashValue itemHash(JsonNode content) {

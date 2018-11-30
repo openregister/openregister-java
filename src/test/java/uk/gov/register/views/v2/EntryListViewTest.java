@@ -24,6 +24,7 @@ public class EntryListViewTest {
     private final Entry entry1 = new Entry(
             1,
             new HashValue(HashingAlgorithm.SHA256,"ab"),
+            new HashValue(HashingAlgorithm.SHA256,"ab-blob-hash"),
             Instant.ofEpochSecond(1470403440),
             "b",
             EntryType.user
@@ -31,6 +32,7 @@ public class EntryListViewTest {
     private final Entry entry2 = new Entry(
             2,
             new HashValue(HashingAlgorithm.SHA256,"cd"),
+            new HashValue(HashingAlgorithm.SHA256,"cd-blob-hash"),
             Instant.ofEpochSecond(1470403441),
             "c",
             EntryType.user
@@ -46,13 +48,13 @@ public class EntryListViewTest {
                 "\"entry-number\":1," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
-                "\"blob-hash\":\"sha-256:ab\"" +
+                "\"blob-hash\":\"sha-256:ab-blob-hash\"" +
                 "}," +
                 "{" +
                 "\"entry-number\":2," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:01Z\"," +
                 "\"key\":\"c\"," +
-                "\"blob-hash\":\"sha-256:cd\"" +
+                "\"blob-hash\":\"sha-256:cd-blob-hash\"" +
                 "}" +
                 "]"));
     }
@@ -73,8 +75,8 @@ public class EntryListViewTest {
 
         assertThat(result, equalTo(
                 "entry-number,entry-timestamp,key,blob-hash\r\n" +
-                        "1,2016-08-05T13:24:00Z,b,sha-256:ab\r\n" +
-                        "2,2016-08-05T13:24:01Z,c,sha-256:cd\r\n"
+                        "1,2016-08-05T13:24:00Z,b,sha-256:ab-blob-hash\r\n" +
+                        "2,2016-08-05T13:24:01Z,c,sha-256:cd-blob-hash\r\n"
         ));
     }
 }

@@ -46,14 +46,14 @@ public class RecordListViewTest {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         Instant t2 = Instant.parse("2016-03-28T09:49:26Z");
 
-        this.entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
-        this.entry2 = new Entry(2, new HashValue(HashingAlgorithm.SHA256, "cd"), t2, "456", EntryType.user);
-
         itemNode1 = objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}");
         itemNode2 = objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}");
 
-        this.item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), itemNode1);
-        this.item2 = new Item(new HashValue(HashingAlgorithm.SHA256, "cd"), itemNode2);
+        this.item1 = new Item(itemNode1);
+        this.item2 = new Item(itemNode2);
+
+        this.entry1 = new Entry(1, item1.getSha256hex(), item1.getBlobHash(), t1, "123", EntryType.user);
+        this.entry2 = new Entry(2, item2.getSha256hex(), item2.getBlobHash(), t2, "456", EntryType.user);
 
         this.record1 = new Record(entry1, item1);
         this.record2 = new Record(entry2, item2);

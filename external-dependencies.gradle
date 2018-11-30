@@ -7,6 +7,7 @@ ext {
     jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.11.1'
 
     verifiableLog = 'verifiable-log:verifiable-log:0.2.77'
+    objectHash = 'objecthash-java:objecthash-java:0.1.63'
 
     dropwizard = [
             "io.dropwizard:dropwizard-core:${dropwizard_version}",

@@ -21,6 +21,8 @@ import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.util.CanonicalJsonMapper;
+import uk.gov.register.util.HashValue;
+import uk.gov.register.util.JsonToBlobHash;
 
 import javax.ws.rs.core.Response;
 import java.time.Instant;
@@ -74,7 +76,7 @@ public class DataUploadFunctionalTest {
         assertThat(storedItem.hashValue, equalTo(Item.itemHash(inputItem)));
 
         Entry entry = testEntryDAO.getAllEntries(schema).get(0);
-        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
+        assertThat(entry, equalTo(new Entry(1, storedItem.hashValue, JsonToBlobHash.apply(storedItem.contents), entry.getTimestamp(), "ft_openregister_test", EntryType.user)));
 
         Record record = testRecordDAO.getRecord("ft_openregister_test", schema, "entry").get();
         assertThat(record.getEntry().getEntryNumber(), equalTo(1));
@@ -111,8 +113,8 @@ public class DataUploadFunctionalTest {
         Instant timestamp = entries.get(0).getTimestamp();
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new Entry(2, Item.itemHash(canonicalItem2), timestamp, "register2", EntryType.user)
+                        new Entry(1, Item.itemHash(canonicalItem1), JsonToBlobHash.apply(canonicalItem1), timestamp, "register1", EntryType.user),
+                        new Entry(2, Item.itemHash(canonicalItem2), JsonToBlobHash.apply(canonicalItem2), timestamp, "register2", EntryType.user)
                 )
         );
 
@@ -150,8 +152,8 @@ public class DataUploadFunctionalTest {
 
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
-                        new Entry(2, Item.itemHash(canonicalItem), entries.get(1).getTimestamp(), "register2", EntryType.user)
+                        new Entry(1, Item.itemHash(canonicalItem), JsonToBlobHash.apply(canonicalItem), entries.get(0).getTimestamp(), "register1", EntryType.user),
+                        new Entry(2, Item.itemHash(canonicalItem), JsonToBlobHash.apply(canonicalItem), entries.get(1).getTimestamp(), "register2", EntryType.user)
                 )
         );
 
@@ -187,10 +189,12 @@ public class DataUploadFunctionalTest {
 
         List<Entry> entries = testEntryDAO.getAllEntries(schema);
         Instant timestamp = entries.get(0).getTimestamp();
+        HashValue item1BlobHash = JsonToBlobHash.apply(canonicalItem1);
+        HashValue item1V1ItemHash = Item.itemHash(canonicalItem1);
         assertThat(entries,
                 contains(
-                        new Entry(1, Item.itemHash(canonicalItem1), timestamp, "register1", EntryType.user),
-                        new Entry(2, Item.itemHash(canonicalItem1), timestamp, "register2", EntryType.user)
+                        new Entry(1, item1V1ItemHash, item1BlobHash, timestamp, "register1", EntryType.user),
+                        new Entry(2, item1V1ItemHash, item1BlobHash, timestamp, "register2", EntryType.user)
                 )
         );
 

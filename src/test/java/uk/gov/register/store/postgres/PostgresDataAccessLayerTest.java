@@ -68,8 +68,8 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canAppendAndGetEntry() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
 
         postgresDataAccessLayer.appendEntry(entry1);
         postgresDataAccessLayer.appendEntry(entry2);
@@ -81,8 +81,8 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canAppendEntriesInBatch() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
 
         postgresDataAccessLayer.appendEntries(Arrays.asList(entry1, entry2));
         assertThat(postgresDataAccessLayer.getEntry(1), is(Optional.of(entry1)));
@@ -93,8 +93,8 @@ public class PostgresDataAccessLayerTest {
     @Test(expected = IllegalArgumentException.class)
     public void appendUserEntriesThatSkipEntryNumberThrowsException() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry entry2 = new Entry(3, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(3, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
 
         postgresDataAccessLayer.appendEntry(entry1);
         postgresDataAccessLayer.appendEntry(entry2);
@@ -103,8 +103,8 @@ public class PostgresDataAccessLayerTest {
     @Test(expected = IllegalArgumentException.class)
     public void appendUserEntriesWithDuplicateEntryNumberThrowsException() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry entry2 = new Entry(1, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(1, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
 
         postgresDataAccessLayer.appendEntry(entry1);
         postgresDataAccessLayer.appendEntry(entry2);
@@ -113,8 +113,8 @@ public class PostgresDataAccessLayerTest {
     @Test(expected = IllegalArgumentException.class)
     public void appendSystemEntriesThatSkipEntryNumberThrowsException() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
-        Entry entry2 = new Entry(3, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.system);
+        Entry entry2 = new Entry(3, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.system);
 
         postgresDataAccessLayer.appendEntry(entry1);
         postgresDataAccessLayer.appendEntry(entry2);
@@ -123,8 +123,8 @@ public class PostgresDataAccessLayerTest {
     @Test(expected = IllegalArgumentException.class)
     public void appendSystemEntriesWithDuplicateEntryNumberThrowsException() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
-        Entry entry2 = new Entry(1, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.system);
+        Entry entry2 = new Entry(1, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.system);
 
         postgresDataAccessLayer.appendEntry(entry1);
         postgresDataAccessLayer.appendEntry(entry2);
@@ -133,10 +133,10 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canGetMultipleEntries() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
-        Entry entry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
-        Entry entry4 = new Entry(4, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
+        Entry entry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key3", EntryType.user);
+        Entry entry4 = new Entry(4, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key3", EntryType.user);
 
         postgresDataAccessLayer.appendEntry(entry1);
         postgresDataAccessLayer.appendEntry(entry2);
@@ -154,14 +154,14 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canGetEntryIterator() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
-        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
-        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.user);
-        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
-        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
-        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.system);
-        Entry systemEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.system);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key3", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "blobhash4"), timestamp, "key4", EntryType.user);
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key3", EntryType.system);
+        Entry systemEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "blobhash4"), timestamp, "key4", EntryType.system);
 
         postgresDataAccessLayer.appendEntry(userEntry1);
         postgresDataAccessLayer.appendEntry(userEntry2);
@@ -190,10 +190,10 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canGetEntriesByKey() {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
-        Entry entry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
-        Entry entry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key3", EntryType.user);
+        Entry entry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry entry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
+        Entry entry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key3", EntryType.user);
+        Entry entry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "blobhash4"), timestamp, "key3", EntryType.user);
 
         postgresDataAccessLayer.appendEntry(entry1);
         postgresDataAccessLayer.appendEntry(entry2);
@@ -214,10 +214,10 @@ public class PostgresDataAccessLayerTest {
         assertThat(postgresDataAccessLayer.getTotalEntries(EntryType.system), is(0));
 
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
-        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
-        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.user);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key3", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "blobhash4"), timestamp, "key4", EntryType.user);
 
         postgresDataAccessLayer.appendEntry(userEntry1);
         postgresDataAccessLayer.appendEntry(userEntry2);
@@ -226,8 +226,8 @@ public class PostgresDataAccessLayerTest {
 
         assertThat(postgresDataAccessLayer.getTotalEntries(EntryType.user), is(4));
 
-        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.system);
-        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.system);
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.system);
 
         postgresDataAccessLayer.appendEntry(systemEntry1);
         postgresDataAccessLayer.appendEntry(systemEntry2);
@@ -243,9 +243,9 @@ public class PostgresDataAccessLayerTest {
         Instant timestamp2 = timestamp1.plus(Duration.ofDays(1));
         Instant timestamp3 = timestamp2.plus(Duration.ofDays(1));
 
-        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp1, "key1", EntryType.user);
-        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp2, "key2", EntryType.user);
-        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp3, "key1", EntryType.system);
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp1, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp2, "key2", EntryType.user);
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp3, "key1", EntryType.system);
 
         postgresDataAccessLayer.appendEntry(userEntry1);
         postgresDataAccessLayer.appendEntry(userEntry2);
@@ -256,8 +256,8 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void canAddAndGetItem() throws IOException {
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
         postgresDataAccessLayer.addItem(item1);
         postgresDataAccessLayer.addItem(item2);
@@ -269,8 +269,8 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void canAddItemsInBatch() throws IOException {
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
         postgresDataAccessLayer.addItems(Arrays.asList(item1, item2));
 
@@ -281,8 +281,8 @@ public class PostgresDataAccessLayerTest {
 
     @Test
     public void doesNotDuplicateItems() throws IOException {
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
         postgresDataAccessLayer.addItem(item1);
         postgresDataAccessLayer.addItem(item2);
@@ -297,8 +297,8 @@ public class PostgresDataAccessLayerTest {
     public void canGetMultipleItems() throws IOException {
         assertThat(postgresDataAccessLayer.getAllItems().size(), is(0));
 
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"foo\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"bar\"}"));
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"foo\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"bar\"}"));
 
         postgresDataAccessLayer.addItem(item1);
         postgresDataAccessLayer.addItem(item2);
@@ -310,23 +310,23 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canGetItemIterator() throws IOException {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
-        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key3", EntryType.user);
-        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key4", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key3", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "blobhash4"), timestamp, "key4", EntryType.user);
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
 
-        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), timestamp, "key5", EntryType.system);
-        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), timestamp, "key6", EntryType.system);
-        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), timestamp, "key7", EntryType.system);
-        Entry systemEntry4 = new Entry(4, new HashValue(SHA256, "itemhash8"), timestamp, "key8", EntryType.system);
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
-        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), objectMapper.readTree("{\"field\":\"value7\"}"));
-        Item item8 = new Item(new HashValue(SHA256, "itemhash8"), objectMapper.readTree("{\"field\":\"value8\"}"));
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "blobhash5"), timestamp, "key5", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "blobhash6") , timestamp, "key6", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), new HashValue(SHA256, "blobhash7"), timestamp, "key7", EntryType.system);
+        Entry systemEntry4 = new Entry(4, new HashValue(SHA256, "itemhash8"), new HashValue(SHA256, "blobhash8"), timestamp, "key8", EntryType.system);
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value6\"}"));
+        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), new HashValue(SHA256, "itemhash7-blob-hash"), objectMapper.readTree("{\"field\":\"value7\"}"));
+        Item item8 = new Item(new HashValue(SHA256, "itemhash8"), new HashValue(SHA256, "itemhash8-blob-hash"), objectMapper.readTree("{\"field\":\"value8\"}"));
 
         postgresDataAccessLayer.appendEntry(userEntry1);
         postgresDataAccessLayer.appendEntry(userEntry2);
@@ -360,19 +360,19 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canGetRecordsAndTotalRecords() throws IOException {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
-        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key2", EntryType.user);
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
 
-        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash4"), timestamp, "key5", EntryType.system);
-        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash5"), timestamp, "key6", EntryType.system);
-        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash6"), timestamp, "key5", EntryType.system);
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value4\"}"));
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value5\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value6\"}"));
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "blobhash4"), timestamp, "key5", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "blobhash5"), timestamp, "key6", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "blobhash6"), timestamp, "key5", EntryType.system);
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value5\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value6\"}"));
 
         postgresDataAccessLayer.appendEntry(userEntry1);
         postgresDataAccessLayer.appendEntry(userEntry2);
@@ -419,21 +419,21 @@ public class PostgresDataAccessLayerTest {
     @Test
     public void canGetRecordsByKeyValue() throws IOException {
         Instant timestamp = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), timestamp, "key1", EntryType.user);
-        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), timestamp, "key2", EntryType.user);
-        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), timestamp, "key2", EntryType.user);
-        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), timestamp, "key3", EntryType.user);
-        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), objectMapper.readTree("{\"field\":\"value1\"}"));
-        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), objectMapper.readTree("{\"field\":\"value2\"}"));
-        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Entry userEntry1 = new Entry(1, new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "blobhash1"), timestamp, "key1", EntryType.user);
+        Entry userEntry2 = new Entry(2, new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "blobhash2"), timestamp, "key2", EntryType.user);
+        Entry userEntry3 = new Entry(3, new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "blobhash3"), timestamp, "key2", EntryType.user);
+        Entry userEntry4 = new Entry(4, new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "blobhash4"), timestamp, "key3", EntryType.user);
+        Item item1 = new Item(new HashValue(SHA256, "itemhash1"), new HashValue(SHA256, "itemhash1-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item2 = new Item(new HashValue(SHA256, "itemhash2"), new HashValue(SHA256, "itemhash2-blob-hash"), objectMapper.readTree("{\"field\":\"value1\"}"));
+        Item item3 = new Item(new HashValue(SHA256, "itemhash3"), new HashValue(SHA256, "itemhash3-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
+        Item item4 = new Item(new HashValue(SHA256, "itemhash4"), new HashValue(SHA256, "itemhash4-blob-hash"), objectMapper.readTree("{\"field\":\"value2\"}"));
 
-        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), timestamp, "key5", EntryType.system);
-        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), timestamp, "key6", EntryType.system);
-        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), timestamp, "key5", EntryType.system);
-        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), objectMapper.readTree("{\"field\":\"value3\"}"));
-        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), objectMapper.readTree("{\"field\":\"value4\"}"));
-        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Entry systemEntry1 = new Entry(1, new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "blobhash5"), timestamp, "key5", EntryType.system);
+        Entry systemEntry2 = new Entry(2, new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "blobhash6") , timestamp, "key6", EntryType.system);
+        Entry systemEntry3 = new Entry(3, new HashValue(SHA256, "itemhash7"), new HashValue(SHA256, "blobhash7"), timestamp, "key5", EntryType.system);
+        Item item5 = new Item(new HashValue(SHA256, "itemhash5"), new HashValue(SHA256, "itemhash5-blob-hash"), objectMapper.readTree("{\"field\":\"value3\"}"));
+        Item item6 = new Item(new HashValue(SHA256, "itemhash6"), new HashValue(SHA256, "itemhash6-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
+        Item item7 = new Item(new HashValue(SHA256, "itemhash7"), new HashValue(SHA256, "itemhash7-blob-hash"), objectMapper.readTree("{\"field\":\"value4\"}"));
 
         postgresDataAccessLayer.appendEntry(userEntry1);
         postgresDataAccessLayer.appendEntry(userEntry2);

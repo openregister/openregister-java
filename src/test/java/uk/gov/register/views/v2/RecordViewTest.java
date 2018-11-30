@@ -42,8 +42,8 @@ public class RecordViewTest {
         Instant t1 = Instant.parse("2016-03-29T08:59:25Z");
         itemNode1 = objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}");
 
-        this.entry1 = new Entry(1, new HashValue(HashingAlgorithm.SHA256, "ab"), t1, "123", EntryType.user);
-        this.item1 = new Item(new HashValue(HashingAlgorithm.SHA256, "ab"), itemNode1);
+        this.item1 = new Item(itemNode1);
+        this.entry1 = new Entry(1, item1.getSha256hex(), item1.getBlobHash(), t1, "123", EntryType.user);
         this.record1 = new Record(entry1, item1);
 
         this.fieldsByName = ImmutableMap.of(
