@@ -22,6 +22,7 @@ import uk.gov.register.auth.BasicAuthFilter;
 import uk.gov.register.auth.RegisterAuthDynamicFeature;
 import uk.gov.register.configuration.*;
 import uk.gov.register.core.*;
+import uk.gov.register.commands.HashDataMigrationCommand;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.filters.StripTrailingSlashRedirectFilter;
@@ -84,6 +85,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         bootstrap.addBundle(new AssetsBundle("/assets"));
         bootstrap.addBundle(new CorsBundle());
         bootstrap.addBundle(new LogstashBundle());
+        bootstrap.addCommand(new HashDataMigrationCommand(this));
 
         System.setProperty("java.protocol.handler.pkgs", "uk.gov.register.protocols");
     }
