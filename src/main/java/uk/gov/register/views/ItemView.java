@@ -1,24 +1,15 @@
 package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.dropwizard.jackson.Jackson;
-import net.logstash.logback.encoder.org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.core.*;
+import uk.gov.register.core.Field;
+import uk.gov.register.core.FieldValue;
+import uk.gov.register.core.Item;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.representations.CsvRepresentation;
-import uk.gov.register.views.representations.ExtraMediaType;
-import uk.gov.register.views.representations.turtle.ItemTurtleWriter;
 
-import javax.inject.Provider;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,9 +23,6 @@ public class ItemView implements CsvRepresentationView<Map<String, FieldValue>> 
     private final Iterable<Field> fields;
     private final Map<String, FieldValue> fieldValueMap;
     private final HashValue sha256hex;
-
-    private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
-    private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
     public ItemView(Item item, final Map<String, Field> fieldsByName) {
         this(item, fieldsByName, new ItemConverter());

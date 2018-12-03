@@ -33,9 +33,6 @@ ext {
     apacheCommonsCollections = 'org.apache.commons:commons-collections4:4.1'
     apacheCommonsLang3 = 'org.apache.commons:commons-lang3:3.6'
 
-    apachePoi = 'org.apache.poi:poi:3.17'
-    apachePoiOoxml = 'org.apache.poi:poi-ooxml:3.17'
-
     // force AWS's dependency on dataformat-cbor to match our jackson_version
     awsS3 = ['com.amazonaws:aws-java-sdk-s3:1.11.77', "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jackson_version}"]
     
@@ -49,8 +46,6 @@ ext {
     jersey_client = "org.glassfish.jersey.core:jersey-client:${jersey_version}"
 
     jacksonCsv = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:${jackson_version}"
-
-    jena = "org.apache.jena:jena-core:3.1.0"
 
     jerseyMedia = "org.glassfish.jersey.media:jersey-media-multipart:${jersey_version}"
 

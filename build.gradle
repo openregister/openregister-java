@@ -68,21 +68,17 @@ configurations {
 }
 
 dependencies {
-    compile ("io.dropwizard:dropwizard-lifecycle"){
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-    compile "com.google.guava:guava:27.0-jre"
-}
-
-
-dependencies {
-    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, apachePoi, apachePoiOoxml, awsS3, jaxb, javaxActivation
-    compile jacksonCsv, jacksonDatabind, jena, jerseyMedia, markdown, thymeleaf, verifiableLog, objectHash
+    compile dropwizard, stringTemplate, apacheCommonsCodec, apacheCommonsCollections, apacheCommonsLang3, awsS3, jaxb, javaxActivation
+    compile jacksonCsv, jacksonDatabind, jerseyMedia, markdown, thymeleaf, verifiableLog, objectHash
     compile jdbi, jersey_client
     compile dropwizardLogstash
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }
+    compile ("io.dropwizard:dropwizard-lifecycle"){
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    compile "com.google.guava:guava:27.0-jre"
     compile jetty
 
     testCompile junit, mockito, dropwizardTest, wiremock

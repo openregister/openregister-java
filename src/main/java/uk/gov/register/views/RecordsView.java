@@ -6,27 +6,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jackson.Jackson;
-import net.logstash.logback.encoder.org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.register.core.*;
+import uk.gov.register.core.Entry;
+import uk.gov.register.core.Field;
+import uk.gov.register.core.Item;
+import uk.gov.register.core.Record;
 import uk.gov.register.exceptions.FieldConversionException;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.representations.CsvRepresentation;
-import uk.gov.register.views.representations.ExtraMediaType;
-import uk.gov.register.views.representations.turtle.RecordsTurtleWriter;
 
-import javax.inject.Provider;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RecordsView implements CsvRepresentationView {
@@ -42,7 +43,6 @@ public class RecordsView implements CsvRepresentationView {
     private final Map<Entry, ItemView> recordMap;
 
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
-    private final ObjectMapper yamlObjectMapper = Jackson.newObjectMapper(new YAMLFactory());
 
     public RecordsView(final List<Record> records, final Map<String, Field> fieldsByName, final ItemConverter itemConverter,
                        final boolean resolveAllItemLinks, final boolean displayEntryKeyColumn) throws FieldConversionException {

@@ -40,13 +40,12 @@ public class SearchResourceTest {
     }
 
     @Test
-    public void findSupportsTurtleHtmlAndJson() throws Exception {
+    public void findSupportsJson() throws Exception {
         Method searchMethod = SearchResource.class.getDeclaredMethod("find", String.class, String.class);
         List<String> declaredMediaTypes = asList(searchMethod.getDeclaredAnnotation(Produces.class).value());
         assertThat(declaredMediaTypes,
                 hasItems(ExtraMediaType.TEXT_HTML,
-                        MediaType.APPLICATION_JSON,
-                        ExtraMediaType.TEXT_TTL));
+                        MediaType.APPLICATION_JSON));
     }
 
     @Test(expected = NotFoundException.class)
