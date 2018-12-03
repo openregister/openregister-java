@@ -3,9 +3,6 @@ A java implementation of a register
 
 [![Build Status](https://travis-ci.org/openregister/openregister-java.svg?branch=master)](https://travis-ci.org/openregister/openregister-java)
 
-## Upcoming data format changes
-GOV.UK Registers will stop supporting data formats other than JSON and CSV from 1 December 2018.  [Read more about format changes](https://www.registers.service.gov.uk/data-format-changes)
-
 ## Running locally
 
 You can spin up a local copy of `openregister-java` using Docker with the following:
