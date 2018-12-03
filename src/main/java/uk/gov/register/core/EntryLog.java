@@ -27,10 +27,10 @@ public interface EntryLog {
 
     Optional<Instant> getLastUpdatedTime();
 
-    RegisterProof getRegisterProof();
-    RegisterProof getRegisterProof(int totalEntries);
+    RegisterProof getV1RegisterProof();
+    RegisterProof getV1RegisterProof(int totalEntries);
 
-    EntryProof getEntryProof(int entryNumber, int totalEntries);
+    EntryProof getV1EntryProof(int entryNumber, int totalEntries);
 
-    ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
+    ConsistencyProof getV1ConsistencyProof(int totalEntries1, int totalEntries2);
 }

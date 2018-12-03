@@ -10,7 +10,6 @@ import org.mockito.stubbing.Answer;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
-import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.RegisterProof;
@@ -48,17 +47,17 @@ public class AssertRootHashCommandHandlerTest {
     @Test
     public void execute_obtainsAndAssertsRegisterProof() {
         RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"), 123);
-        when(register.getRegisterProof()).thenReturn(registerProof);
+        when(register.getV1RegisterProof()).thenReturn(registerProof);
 
         sutHandler.execute(assertRootHashCommand, register);
 
-        verify(register, times(1)).getRegisterProof();
+        verify(register, times(1)).getV1RegisterProof();
     }
 
     @Test (expected = RSFParseException.class)
     public void execute_failsIfRootHashesDontMatch() {
         RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "different-hash"), 456);
-        when(register.getRegisterProof()).thenReturn(registerProof);
+        when(register.getV1RegisterProof()).thenReturn(registerProof);
 
         assertExceptionThrown(assertRootHashCommand, "Exception when executing command: RegisterCommand");
     }
@@ -69,7 +68,7 @@ public class AssertRootHashCommandHandlerTest {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).getRegisterProof();
+        }).when(register).getV1RegisterProof();
 
         assertExceptionThrown(assertRootHashCommand, "Exception when executing command: RegisterCommand");
     }

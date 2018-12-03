@@ -2,6 +2,7 @@ package uk.gov.register.db;
 
 import org.glassfish.hk2.api.Factory;
 import uk.gov.register.core.AllTheRegisters;
+import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.core.RegisterId;
@@ -17,6 +18,20 @@ public abstract class Factories {
         @Override
         public void dispose(T instance) {
             // do nothing
+        }
+    }
+
+    public static class EntryLogFactory extends SimpleFactory<EntryLog> {
+        private final RegisterContext registerContext;
+
+        @Inject
+        public EntryLogFactory(RegisterContext registerContext) {
+            this.registerContext = registerContext;
+        }
+
+        @Override
+        public EntryLog provide() {
+            return registerContext.buildEntryLog();
         }
     }
 

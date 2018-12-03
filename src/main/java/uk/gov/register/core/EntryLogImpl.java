@@ -1,7 +1,7 @@
 package uk.gov.register.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import uk.gov.register.db.EntryMerkleLeafStore;
+import uk.gov.register.db.V1EntryMerkleLeafStore;
 import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
@@ -76,21 +76,21 @@ public class EntryLogImpl implements EntryLog {
     }
 
     @Override
-    public RegisterProof getRegisterProof() {
+    public RegisterProof getV1RegisterProof() {
         String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getCurrentRootHash()));
 
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), getTotalEntries(EntryType.user));
     }
 
     @Override
-    public RegisterProof getRegisterProof(int totalEntries) {
+    public RegisterProof getV1RegisterProof(int totalEntries) {
         String rootHash = withVerifiableLog(verifiableLog -> bytesToString(verifiableLog.getSpecificRootHash(totalEntries)));
 
         return new RegisterProof(new HashValue(HashingAlgorithm.SHA256, rootHash), totalEntries);
     }
 
     @Override
-    public EntryProof getEntryProof(int entryNumber, int totalEntries) {
+    public EntryProof getV1EntryProof(int entryNumber, int totalEntries) {
         List<HashValue> auditProof = withVerifiableLog(verifiableLog ->
                 verifiableLog.auditProof(entryNumber - 1, totalEntries)
                         .stream()
@@ -101,7 +101,7 @@ public class EntryLogImpl implements EntryLog {
     }
 
     @Override
-    public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
+    public ConsistencyProof getV1ConsistencyProof(int totalEntries1, int totalEntries2) {
         List<HashValue> consistencyProof = withVerifiableLog(verifiableLog ->
             verifiableLog.consistencyProof(totalEntries1, totalEntries2)
                     .stream()
@@ -117,7 +117,7 @@ public class EntryLogImpl implements EntryLog {
 
     private <R> R withVerifiableLog(Function<VerifiableLog, R> callback) {
         return dataAccessLayer.withEntryIterator(entryIterator -> {
-            VerifiableLog verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new EntryMerkleLeafStore(entryIterator), memoizationStore);
+            VerifiableLog verifiableLog = new VerifiableLog(DigestUtils.getSha256Digest(), new V1EntryMerkleLeafStore(entryIterator), memoizationStore);
             return callback.apply(verifiableLog);
         });
     }

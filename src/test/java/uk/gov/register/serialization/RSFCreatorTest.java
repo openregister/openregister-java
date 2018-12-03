@@ -95,14 +95,14 @@ public class RSFCreatorTest {
         when(register.getEntryIterator(EntryType.user)).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 46464);
-        when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
+        when(register.getV1RegisterProof()).thenReturn(expectedRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
         verify(register, times(1)).getItemIterator(EntryType.user);
         verify(register, times(1)).getEntryIterator(EntryType.user);
-        verify(register, times(1)).getRegisterProof();
+        verify(register, times(1)).getV1RegisterProof();
 
         assertThat(actualCommands.size(), equalTo(8));
         assertThat(actualCommands, contains(
@@ -124,8 +124,8 @@ public class RSFCreatorTest {
 
         when(register.getItemIterator(1, 2)).thenReturn(Collections.singletonList(item1).iterator());
         when(register.getEntryIterator(1, 2)).thenReturn(Collections.singletonList(entry1).iterator());
-        when(register.getRegisterProof(1)).thenReturn(oneEntryRegisterProof);
-        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
+        when(register.getV1RegisterProof(1)).thenReturn(oneEntryRegisterProof);
+        when(register.getV1RegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, 1, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
@@ -153,7 +153,7 @@ public class RSFCreatorTest {
         when(register.getEntryIterator(EntryType.system)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator(0, 2)).thenReturn(Arrays.asList(entry1, entry2).iterator());
 
-        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
+        when(register.getV1RegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, 0, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
@@ -179,7 +179,7 @@ public class RSFCreatorTest {
         when(register.getItemIterator(EntryType.system)).thenReturn(Arrays.asList(systemItem).iterator());
 
         RegisterProof expectedRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "1231234"), 28828);
-        when(register.getRegisterProof()).thenReturn(expectedRegisterProof);
+        when(register.getV1RegisterProof()).thenReturn(expectedRegisterProof);
 
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("Mapper not registered for class: uk.gov.register.util.HashValue");
@@ -193,7 +193,7 @@ public class RSFCreatorTest {
     public void createRegisterSerialisationFormat_whenParametersEqual_returnsOnlyRootHash() {
         RegisterProof twoEntriesRegisterProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash"), 2);
 
-        when(register.getRegisterProof(2)).thenReturn(twoEntriesRegisterProof);
+        when(register.getV1RegisterProof(2)).thenReturn(twoEntriesRegisterProof);
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, 2, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
@@ -211,7 +211,7 @@ public class RSFCreatorTest {
         when(register.getEntryIterator(EntryType.system)).thenReturn(Arrays.asList(systemEntry).iterator());
         when(register.getEntryIterator(0, 0)).thenReturn(Collections.emptyIterator());
 
-        when(register.getRegisterProof(0)).thenReturn(new RegisterProof(emptyRegisterHash, 0));
+        when(register.getV1RegisterProof(0)).thenReturn(new RegisterProof(emptyRegisterHash, 0));
 
         RegisterSerialisationFormat actualRSF = sutCreator.create(register, 0, 0);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());

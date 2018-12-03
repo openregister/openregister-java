@@ -15,7 +15,7 @@ public class AssertRootHashCommandHandler extends RegisterCommandHandler {
     protected void executeCommand(RegisterCommand command, Register register) {
         try {
             HashValue expectedHash = HashValue.decode(HashingAlgorithm.SHA256, command.getCommandArguments().get(RSFFormatter.RSF_ASSERT_ROOT_HASH_ARGUMENT_POSITION));
-            HashValue actualHash = register.getRegisterProof().getRootHash();
+            HashValue actualHash = register.getV1RegisterProof().getRootHash();
             if (!actualHash.equals(expectedHash)) {
                 throw new AssertRootHashException(expectedHash, actualHash);
             }

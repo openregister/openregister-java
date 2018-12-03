@@ -27,7 +27,7 @@ public class RSFCreator {
                 register.getItemIterator(EntryType.user),
                 register.getEntryIterator(EntryType.system),
                 register.getEntryIterator(EntryType.user),
-                Iterators.singletonIterator(register.getRegisterProof().getRootHash()));
+                Iterators.singletonIterator(register.getV1RegisterProof().getRootHash()));
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);
@@ -37,11 +37,11 @@ public class RSFCreator {
         Iterator<?> iterators;
 
         if (totalEntries1 > 0 && totalEntries1 == totalEntries2) {
-            iterators = Iterators.singletonIterator(register.getRegisterProof(totalEntries1).getRootHash());
+            iterators = Iterators.singletonIterator(register.getV1RegisterProof(totalEntries1).getRootHash());
         } else {
 
-            HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getRegisterProof(totalEntries1).getRootHash();
-            HashValue nextRootHash = register.getRegisterProof(totalEntries2).getRootHash();
+            HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getV1RegisterProof(totalEntries1).getRootHash();
+            HashValue nextRootHash = register.getV1RegisterProof(totalEntries2).getRootHash();
             Iterator<Item> metadataItemIterator = totalEntries1 == 0 ? register.getItemIterator(EntryType.system) : Collections.emptyIterator();
             Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getEntryIterator(EntryType.system) : Collections.emptyIterator();
 

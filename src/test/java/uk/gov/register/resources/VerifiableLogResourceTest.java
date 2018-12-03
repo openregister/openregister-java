@@ -2,6 +2,7 @@ package uk.gov.register.resources;
 
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
+import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.RegisterReadOnly;
@@ -26,13 +27,13 @@ public class VerifiableLogResourceTest {
     @Test
     public void shouldUseServiceToGetRegisterProof() {
         RegisterProof expectedProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, sampleHash1), 12345);
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getRegisterProof()).thenReturn(expectedProof);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getV1RegisterProof()).thenReturn(expectedProof);
 
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
         RegisterProof actualProof = vlResource.registerProof();
 
-        verify(registerMock, times(1)).getRegisterProof();
+        verify(entryLogMock, times(1)).getV1RegisterProof();
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
         assertThat(actualProof.getRootHash(), equalTo(expectedProof.getRootHash()));
     }
@@ -46,14 +47,14 @@ public class VerifiableLogResourceTest {
         List<HashValue> expectedAuditPath = Arrays.asList(expectedHash1, expectedHash2);
 
         EntryProof expectedProof = new EntryProof("3", expectedAuditPath);
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        when(registerMock.getEntryProof(entryNumber, totalEntries)).thenReturn(expectedProof);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        when(entryLogMock.getV1EntryProof(entryNumber, totalEntries)).thenReturn(expectedProof);
 
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
         EntryProof actualProof = vlResource.entryProof(entryNumber, totalEntries);
 
-        verify(registerMock, times(1)).getEntryProof(entryNumber, totalEntries);
+        verify(entryLogMock, times(1)).getV1EntryProof(entryNumber, totalEntries);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
         assertThat(actualProof.getEntryNumber(), equalTo(expectedProof.getEntryNumber()));
         assertThat(actualProof.getAuditPath(), IsIterableContainingInOrder.contains(expectedHash1, expectedHash2));
@@ -68,14 +69,14 @@ public class VerifiableLogResourceTest {
         List<HashValue> expectedConsistencyNodes = Arrays.asList(expectedHash1, expectedHash2);
 
         ConsistencyProof expectedProof = new ConsistencyProof(expectedConsistencyNodes);
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        when(registerMock.getConsistencyProof(totalEntries1, totalEntries2)).thenReturn(expectedProof);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        when(entryLogMock.getV1ConsistencyProof(totalEntries1, totalEntries2)).thenReturn(expectedProof);
 
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
         ConsistencyProof actualProof = vlResource.consistencyProof(totalEntries1, totalEntries2);
 
-        verify(registerMock, times(1)).getConsistencyProof(totalEntries1, totalEntries2);
+        verify(entryLogMock, times(1)).getV1ConsistencyProof(totalEntries1, totalEntries2);
         assertThat(actualProof.getProofIdentifier(), equalTo(expectedProof.getProofIdentifier()));
 
         assertThat(actualProof.getConsistencyNodes(), IsIterableContainingInOrder.contains(expectedHash1, expectedHash2));
@@ -83,54 +84,54 @@ public class VerifiableLogResourceTest {
 
     @Test(expected = BadRequestException.class)
     public void entryProofShouldThrowBadRequestExceptionIfEntryNumberTooSmall() {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
 
         vlResource.entryProof(0, 5);
     }
 
     @Test(expected = BadRequestException.class)
     public void entryProofShouldThrowBadRequestExceptionIfEntryNumberGreaterThanTotalEntries() {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
 
         vlResource.entryProof(5, 3);
     }
 
     @Test(expected = BadRequestException.class)
     public void entryProofShouldThrowBadRequestExceptionIfTotalEntriesGreaterThanSizeOfRegister() {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
 
         vlResource.entryProof(5, 10);
     }
 
     @Test(expected = BadRequestException.class)
     public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries1TooSmall() {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
 
         vlResource.consistencyProof(0, 5);
     }
 
     @Test(expected = BadRequestException.class)
     public void consistencyProofshouldThrowBadRequestExceptionIfTotalEntries2SmallerThanTotalEntries1() {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
 
         vlResource.consistencyProof(5, 3);
     }
 
     @Test(expected = BadRequestException.class)
     public void consistencyProofShouldThrowBadRequestExceptionIfTotalEntries2GreaterThanSizeOfRegister() {
-        RegisterReadOnly registerMock = mock(RegisterReadOnly.class);
-        when(registerMock.getTotalEntries(EntryType.user)).thenReturn(8);
-        VerifiableLogResource vlResource = new VerifiableLogResource(registerMock);
+        EntryLog entryLogMock = mock(EntryLog.class);
+        when(entryLogMock.getTotalEntries(EntryType.user)).thenReturn(8);
+        VerifiableLogResource vlResource = new VerifiableLogResource(entryLogMock);
 
         vlResource.consistencyProof(5, 10);
     }

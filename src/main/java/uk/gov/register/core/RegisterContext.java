@@ -73,6 +73,12 @@ public class RegisterContext implements
         return flyway.migrate();
     }
 
+    public EntryLog buildEntryLog() {
+        DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
+
+        return new EntryLogImpl(dataAccessLayer, memoizationStore.get());
+    }
+
     public Register buildOnDemandRegister() {
         DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
 

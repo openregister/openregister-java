@@ -187,23 +187,23 @@ public class RegisterImpl implements Register {
     //region Verifiable Log
 
     @Override
-    public RegisterProof getRegisterProof() {
-        return entryLog.getRegisterProof();
+    public RegisterProof getV1RegisterProof() {
+        return entryLog.getV1RegisterProof();
     }
 
     @Override
-    public RegisterProof getRegisterProof(int totalEntries) {
-        return entryLog.getRegisterProof(totalEntries);
+    public RegisterProof getV1RegisterProof(int totalEntries) {
+        return entryLog.getV1RegisterProof(totalEntries);
     }
 
     @Override
-    public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        return entryLog.getEntryProof(entryNumber, totalEntries);
+    public EntryProof getV1EntryProof(int entryNumber, int totalEntries) {
+        return entryLog.getV1EntryProof(entryNumber, totalEntries);
     }
 
     @Override
-    public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        return entryLog.getConsistencyProof(totalEntries1, totalEntries2);
+    public ConsistencyProof getV1ConsistencyProof(int totalEntries1, int totalEntries2) {
+        return entryLog.getV1ConsistencyProof(totalEntries1, totalEntries2);
     }
 
     //endregion

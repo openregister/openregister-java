@@ -1,42 +1,41 @@
 package uk.gov.register.db;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import uk.gov.objecthash.IntegerValue;
+import uk.gov.objecthash.ListValue;
+import uk.gov.objecthash.ObjectHashable;
+import uk.gov.objecthash.RawValue;
+import uk.gov.objecthash.StringValue;
+import uk.gov.objecthash.TimestampValue;
 import uk.gov.register.core.Entry;
-import uk.gov.register.views.EntryView;
 import uk.gov.verifiablelog.store.MerkleLeafStore;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 public class EntryMerkleLeafStore implements MerkleLeafStore {
     private final EntryIterator entryIterator;
 
-
     public EntryMerkleLeafStore(EntryIterator entryIterator) {
         this.entryIterator = entryIterator;
     }
-
     @Override
     public byte[] getLeafValue(int i) {
         return bytesFromEntry(entryIterator.findByEntryNumber(i + 1));
     }
 
+    private byte[] bytesFromEntry(Entry entry) {
+        List<ObjectHashable> entryHashes = Arrays.asList(
+                new IntegerValue(entry.getEntryNumber()),
+                new StringValue(entry.getKey()),
+                new TimestampValue(entry.getTimestamp()),
+                new RawValue(entry.getBlobHash().getValue().getBytes(StandardCharsets.UTF_8))
+        );
+        return new ListValue(entryHashes).digest();
+    }
+
     @Override
     public int totalLeaves() {
         return entryIterator.getTotalEntries();
-    }
-
-    private byte[] bytesFromEntry(Entry entry) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-            mapper.getFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
-            EntryView entryView = new EntryView(entry);
-            String value = mapper.writeValueAsString(entryView);
-            return value.getBytes();
-        } catch (JsonProcessingException e) {
-            // FIXME swallow for now and return null byte
-            return new byte[]{0x00};
-        }
     }
 }
