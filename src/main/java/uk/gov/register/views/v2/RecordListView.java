@@ -1,8 +1,10 @@
 package uk.gov.register.views.v2;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Field;
@@ -31,18 +33,13 @@ public class RecordListView implements CsvRepresentationView<ArrayNode> {
     }
 
     @JsonValue
-    public Map<String, RecordView> getRecords() {
-        return this.records.stream().collect(
-                Collectors.toMap(
-                        record -> record.getEntry().getKey(),
-                        record -> new RecordView(
-                                record,
-                                fieldsByName,
-                                this.itemConverter
-                        )
-                )
-        );
-    }
+    public List<JsonNode> getRecords() {
+        return this.records.stream().map(r -> {
+            ObjectNode result = jsonObjectMapper.convertValue(r.getItem().getContent(), ObjectNode.class);
+            result.put("_id", r.getEntry().getKey());
+            return result;
+        }).collect(Collectors.toList());
+    };
 
     public CsvSchema csvSchema() {
         CsvSchema.Builder schemaBuilder = new CsvSchema.Builder();
@@ -57,7 +54,7 @@ public class RecordListView implements CsvRepresentationView<ArrayNode> {
 
     protected ArrayNode getFlatRecordJson() {
         ArrayNode arrayNode = jsonObjectMapper.createArrayNode();
-        getRecords().values().stream().forEach(view -> arrayNode.add(view.getFlatRecordJson()));
+        getRecords().stream().forEach(arrayNode::add);
         return arrayNode;
     }
 
