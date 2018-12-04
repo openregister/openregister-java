@@ -65,9 +65,7 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
 
     public CsvSchema csvSchema() {
         CsvSchema.Builder schemaBuilder = new CsvSchema.Builder();
-        schemaBuilder.addColumn("entry-number", CsvSchema.ColumnType.NUMBER);
-        schemaBuilder.addColumn("entry-timestamp", CsvSchema.ColumnType.STRING);
-        schemaBuilder.addColumn("key", CsvSchema.ColumnType.STRING);
+        schemaBuilder.addColumn("_id", CsvSchema.ColumnType.STRING);
 
         for (String value : getFieldNames()) {
             schemaBuilder.addColumn(value, CsvSchema.ColumnType.STRING);
