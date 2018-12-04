@@ -1,4 +1,4 @@
-package uk.gov.register.db;
+package uk.gov.register.proofs;
 
 import uk.gov.objecthash.IntegerValue;
 import uk.gov.objecthash.ListValue;

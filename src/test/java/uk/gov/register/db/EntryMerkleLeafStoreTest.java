@@ -4,6 +4,8 @@ import org.junit.Test;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
+import uk.gov.register.proofs.EntryIterator;
+import uk.gov.register.proofs.EntryMerkleLeafStore;
 import uk.gov.register.util.HashValue;
 
 import java.time.OffsetDateTime;

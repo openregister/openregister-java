@@ -5,7 +5,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryDAO;
-import uk.gov.register.db.EntryIterator;
+import uk.gov.register.proofs.EntryIterator;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;

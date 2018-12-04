@@ -1,7 +1,7 @@
 package uk.gov.register.core;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import uk.gov.register.db.V1EntryMerkleLeafStore;
+import uk.gov.register.proofs.V1EntryMerkleLeafStore;
 import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;

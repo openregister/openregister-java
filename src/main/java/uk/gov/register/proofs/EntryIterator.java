@@ -1,7 +1,8 @@
-package uk.gov.register.db;
+package uk.gov.register.proofs;
 
 import org.skife.jdbi.v2.ResultIterator;
 import uk.gov.register.core.Entry;
+import uk.gov.register.db.EntryQueryDAO;
 
 import java.util.function.Function;
 

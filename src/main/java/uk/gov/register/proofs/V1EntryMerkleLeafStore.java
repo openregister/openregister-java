@@ -1,4 +1,4 @@
-package uk.gov.register.db;
+package uk.gov.register.proofs;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
