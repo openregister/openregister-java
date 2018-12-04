@@ -31,7 +31,7 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
     }
 
     public RecordView(final Record record, final Map<String, Field> fieldsByName, ItemConverter itemConverter) throws FieldConversionException {
-        this.fields = fields = fieldsByName.values();
+        this.fields = fieldsByName.values();
         this.record = record;
         this.itemView = new ItemView(record.getItem(), fieldsByName, itemConverter);
     }
@@ -56,17 +56,13 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
     public JsonNode getContent() {
         final ObjectNode result = jsonObjectMapper.createObjectNode();
         result.putPOJO("blob", itemView);
-        result.put("entry-number", this.getEntry().getEntryNumber());
-        result.put("entry-timestamp", this.getEntry().getTimestampAsISOFormat());
-        result.put("key", this.getEntry().getKey());
+        result.put("_id", this.getEntry().getKey());
         return result;
     }
 
     protected ObjectNode getFlatRecordJson() {
         ObjectNode result = jsonObjectMapper.convertValue(itemView, ObjectNode.class);
-        result.put("entry-number", this.getEntry().getEntryNumber());
-        result.put("entry-timestamp", this.getEntry().getTimestampAsISOFormat());
-        result.put("key", this.getEntry().getKey());
+        result.put("_id", this.getEntry().getKey());
         return result;
     }
 
