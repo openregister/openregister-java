@@ -62,19 +62,6 @@ public class RegisterSerialisationFormatServiceTest {
     }
 
     @Test
-    public void process_passesCommandsToExecutorAndReturnsItsResult() {
-        RegisterCommand command1 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"));
-        RegisterCommand command2 = new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}"));
-        RegisterCommand command3 = new RegisterCommand("append-entry", Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha"));
-        RegisterCommand command4 = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"));
-        RegisterSerialisationFormat rsfInput = new RegisterSerialisationFormat(Iterators.forArray(command1, command2, command3, command4));
-
-        sutService.process(rsfInput);
-
-        verify(rsfExecutor, times(1)).execute(eq(rsfInput), any(), any());
-    }
-
-    @Test
     public void writeTo_writesEntireRSFtoStream() {
         when(registerContext.withV1VerifiableLog(any())).thenReturn(
                 Iterators.forArray(
