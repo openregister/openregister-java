@@ -12,7 +12,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
-import uk.gov.register.serialization.*;
+import uk.gov.register.serialization.RSFCreator;
+import uk.gov.register.serialization.RSFExecutor;
+import uk.gov.register.serialization.RSFFormatter;
+import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,12 +27,12 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RegisterSerialisationFormatServiceTest {
@@ -83,30 +87,6 @@ public class RegisterSerialisationFormatServiceTest {
                 "append-entry\tuser\tentry1-field-1-value\t2016-07-24T16:55:00Z\tsha-256:item1sha\n" +
                 "append-entry\tuser\tentry2-field-1-value\t2016-07-24T16:56:00Z\tsha-256:item2sha\n" +
                 "assert-root-hash\tsha-256:K3rfuFF1e\n";
-
-        String actualRSF = outputStream.toString();
-        assertThat(actualRSF, Matchers.equalTo(expectedRSF));
-    }
-
-    @Test
-    public void writeTo_whenCalledWithBoundary_writesPartialRSFtoStream() {
-        when(rsfCreator.create(any(), any(), eq(1), eq(2))).thenReturn(
-                new RegisterSerialisationFormat(Iterators.forArray(
-                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_uno")),
-                        new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
-                        new RegisterCommand("append-entry", Arrays.asList("user", "entry2-field-1-value", "2016-07-24T16:56:00Z", "sha-256:item2sha")),
-                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_dos")))));
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        sutService.writeTo(outputStream, rsfFormatter, 1, 2);
-
-        verify(rsfCreator, times(1)).create(any(), any(), eq(1), eq(2));
-        String expectedRSF =
-                "assert-root-hash\tsha-256:K3rfuFF1e_uno\n" +
-                "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
-                "append-entry\tuser\tentry2-field-1-value\t2016-07-24T16:56:00Z\tsha-256:item2sha\n" +
-                "assert-root-hash\tsha-256:K3rfuFF1e_dos\n";
 
         String actualRSF = outputStream.toString();
         assertThat(actualRSF, Matchers.equalTo(expectedRSF));
