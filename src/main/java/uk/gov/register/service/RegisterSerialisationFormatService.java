@@ -3,6 +3,7 @@ package uk.gov.register.service;
 import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.*;
 
 import javax.inject.Inject;
@@ -26,16 +27,36 @@ public class RegisterSerialisationFormatService {
     }
 
     public void writeTo(OutputStream output, RSFFormatter rsfFormatter) {
-        writeTo(output, rsfFormatter, rsfCreator::create);
+        registerContext.transactionalRegisterOperation(register -> {
+            Iterator<RegisterCommand> commands = registerContext.withV1VerifiableLog(verifiableLog -> {
+                ProofGenerator proofGenerator = new ProofGenerator(verifiableLog);
+                return rsfCreator.create(register, proofGenerator).getCommands();
+            });
+
+            writeCommands(commands, output, rsfFormatter);
+        });
     }
 
-    public void writeTo(OutputStream output, RSFFormatter RSFFormatter, int totalEntries1, int totalEntries2) {
-        writeTo(output, RSFFormatter, register -> rsfCreator.create(register, totalEntries1, totalEntries2));
+    public void writeTo(OutputStream output, RSFFormatter rsfFormatter, int totalEntries1, int totalEntries2) {
+        registerContext.transactionalRegisterOperation(register -> {
+            Iterator<RegisterCommand> commands = registerContext.withV1VerifiableLog(verifiableLog -> {
+                ProofGenerator proofGenerator = new ProofGenerator(verifiableLog);
+                return rsfCreator.create(register, proofGenerator, totalEntries1, totalEntries2).getCommands();
+            });
+
+            writeCommands(commands, output, rsfFormatter);
+        });
     }
 
     public void process(RegisterSerialisationFormat rsf) throws RSFParseException {
         registerContext.transactionalRegisterOperation(register -> {
-            rsfExecutor.execute(rsf, register);
+            registerContext.withV1VerifiableLog(verifiableLog -> {
+                ProofGenerator proofGenerator = new ProofGenerator(verifiableLog);
+                rsfExecutor.execute(rsf, register, proofGenerator);
+
+                return null;
+            });
+
         });
     }
 
@@ -47,24 +68,20 @@ public class RegisterSerialisationFormatService {
         return new RegisterSerialisationFormat(commandsIterator);
     }
 
-    private void writeTo(OutputStream output, RSFFormatter rsfFormatter, Function<Register, RegisterSerialisationFormat> rsfCreatorFunc) {
-        registerContext.transactionalRegisterOperation(register -> {
-            Iterator<RegisterCommand> commands = rsfCreatorFunc.apply(register).getCommands();
+    private void writeCommands(Iterator<RegisterCommand> commands, OutputStream output, RSFFormatter rsfFormatter) {
+        int commandCount = 0;
+        try {
+            while (commands.hasNext()) {
+                output.write(rsfFormatter.format(commands.next()).getBytes());
 
-            int commandCount = 0;
-            try {
-                while (commands.hasNext()) {
-                    output.write(rsfFormatter.format(commands.next()).getBytes());
-
-                    // TODO: is flushing every 10000 commands ok?
-                    if (++commandCount >= 10000) {
-                        output.flush();
-                        commandCount = 0;
-                    }
+                // TODO: is flushing every 10000 commands ok?
+                if (++commandCount >= 10000) {
+                    output.flush();
+                    commandCount = 0;
                 }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
-        });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

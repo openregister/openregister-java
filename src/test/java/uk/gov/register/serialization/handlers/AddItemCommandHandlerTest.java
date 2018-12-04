@@ -12,6 +12,7 @@ import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
@@ -35,6 +36,9 @@ public class AddItemCommandHandlerTest {
     @Mock
     private Register register;
 
+    @Mock
+    private ProofGenerator proofGenerator;
+
     private RegisterCommand addItemCommand;
 
     @Before
@@ -50,7 +54,7 @@ public class AddItemCommandHandlerTest {
 
     @Test
     public void execute_addsItemToRegister() {
-        sutHandler.execute(addItemCommand, register);
+        sutHandler.execute(addItemCommand, register, proofGenerator);
 
         Item expectedItem = new Item(new HashValue(HashingAlgorithm.SHA256, "3b0c026a0197e3f6392940a7157e0846028f55c3d3db6b6e9b3400fea4a9612c"), new HashValue(HashingAlgorithm.SHA256, "bc7242dd795173a3632f3385b8ecd4f5b37a10130925b9c2aadfafbfc73a19c4"), jsonFactory.objectNode()
                 .put("field-1", "entry1-field-1-value")
@@ -84,7 +88,7 @@ public class AddItemCommandHandlerTest {
 
     private void assertExceptionThrown(RegisterCommand command, String exceptionMessage) throws RSFParseException {
         try {
-            sutHandler.execute(command, register);
+            sutHandler.execute(command, register, proofGenerator);
         } catch (RSFParseException exception) {
             assertThat(exception.getMessage(), startsWith(exceptionMessage));
             throw exception;

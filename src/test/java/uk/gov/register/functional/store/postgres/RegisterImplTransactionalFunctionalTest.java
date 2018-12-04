@@ -47,7 +47,6 @@ import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.BatchedPostgresDataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
 import uk.gov.register.util.HashValue;
-import uk.gov.verifiablelog.store.memoization.DoNothing;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -231,7 +230,7 @@ public class RegisterImplTransactionalFunctionalTest {
     }
 
     private RegisterImpl getPostgresRegister(DataAccessLayer dataAccessLayer) {
-        EntryLog entryLog = new EntryLogImpl(dataAccessLayer, new DoNothing());
+        EntryLog entryLog = new EntryLogImpl(dataAccessLayer);
         ItemValidator itemValidator = mock(ItemValidator.class);
         ItemStore itemStore = new ItemStoreImpl(dataAccessLayer);
         RegisterId registerId = new RegisterId("address");

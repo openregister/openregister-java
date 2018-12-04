@@ -6,6 +6,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.util.HashValue;
 
 import java.util.*;
@@ -20,28 +21,28 @@ public class RSFCreator {
         this.registeredMappers = new HashMap<>();
     }
 
-    public RegisterSerialisationFormat create(Register register) {
+    public RegisterSerialisationFormat create(Register register, ProofGenerator proofGenerator) {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(EntryType.system),
                 register.getItemIterator(EntryType.user),
                 register.getEntryIterator(EntryType.system),
                 register.getEntryIterator(EntryType.user),
-                Iterators.singletonIterator(register.getV1RegisterProof().getRootHash()));
+                Iterators.singletonIterator(proofGenerator.getRootHash()));
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
         return new RegisterSerialisationFormat(commands);
     }
 
-    public RegisterSerialisationFormat create(Register register, int totalEntries1, int totalEntries2) {
+    public RegisterSerialisationFormat create(Register register, ProofGenerator proofGenerator, int totalEntries1, int totalEntries2) {
         Iterator<?> iterators;
 
         if (totalEntries1 > 0 && totalEntries1 == totalEntries2) {
-            iterators = Iterators.singletonIterator(register.getV1RegisterProof(totalEntries1).getRootHash());
+            iterators = Iterators.singletonIterator(proofGenerator.getRootHash(totalEntries1));
         } else {
 
-            HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : register.getV1RegisterProof(totalEntries1).getRootHash();
-            HashValue nextRootHash = register.getV1RegisterProof(totalEntries2).getRootHash();
+            HashValue previousRootHash = totalEntries1 == 0 ? EMPTY_ROOT_HASH : proofGenerator.getRootHash(totalEntries1);
+            HashValue nextRootHash = proofGenerator.getRootHash(totalEntries2);
             Iterator<Item> metadataItemIterator = totalEntries1 == 0 ? register.getItemIterator(EntryType.system) : Collections.emptyIterator();
             Iterator<Entry> metadataEntryIterator = totalEntries1 == 0 ? register.getEntryIterator(EntryType.system) : Collections.emptyIterator();
 

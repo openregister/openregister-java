@@ -3,6 +3,8 @@ package uk.gov.register.resources.v2;
 import com.codahale.metrics.annotation.Timed;
 import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.EntryType;
+import uk.gov.register.core.RegisterContext;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -18,10 +20,12 @@ import javax.ws.rs.core.MediaType;
 @Path("/next/proof")
 public class VerifiableLogResource {
     private final EntryLog entryLog;
+    private final RegisterContext registerContext;
 
     @Inject
-    public VerifiableLogResource(EntryLog entryLog) {
-        this.entryLog = entryLog;
+    public VerifiableLogResource(RegisterContext registerContext) {
+        this.registerContext = registerContext;
+        this.entryLog = registerContext.buildEntryLog();
     }
 
     @GET
@@ -29,7 +33,10 @@ public class VerifiableLogResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public RegisterProof registerProof() {
-        return entryLog.getV1RegisterProof();
+        return registerContext.withVerifiableLog(verifiableLog -> {
+            int totalEntries = entryLog.getTotalEntries(EntryType.user);
+            return new ProofGenerator(verifiableLog).getRegisterProof(totalEntries);
+        });
     }
 
     @GET
@@ -38,7 +45,7 @@ public class VerifiableLogResource {
     @Timed
     public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) {
         validateEntryProofParams(entryNumber, totalEntries);
-        return entryLog.getV1EntryProof(entryNumber, totalEntries);
+        return registerContext.withVerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getEntryProof(entryNumber, totalEntries));
     }
 
     @GET
@@ -47,7 +54,7 @@ public class VerifiableLogResource {
     @Timed
     public ConsistencyProof consistencyProof(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
         validateConsistencyProofParams(totalEntries1, totalEntries2);
-        return entryLog.getV1ConsistencyProof(totalEntries1, totalEntries2);
+        return registerContext.withVerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getConsistencyProof(totalEntries1, totalEntries2));
     }
 
     private void validateEntryProofParams(int entryNumber, int totalEntries) {
@@ -65,4 +72,6 @@ public class VerifiableLogResource {
             throw new BadRequestException("Invalid parameters");
         }
     }
+
+
 }

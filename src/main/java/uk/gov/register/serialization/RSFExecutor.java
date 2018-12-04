@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.util.HashValue;
 
 import java.nio.charset.StandardCharsets;
@@ -27,7 +28,7 @@ public class RSFExecutor {
         registeredHandlers.put(registerCommandHandler.getCommandName(), registerCommandHandler);
     }
 
-    public void execute(RegisterSerialisationFormat rsf, Register register) throws RSFParseException {
+    public void execute(RegisterSerialisationFormat rsf, Register register, ProofGenerator proofGenerator) throws RSFParseException {
         // HashValue and RSF file line number
         Map<HashValue, Integer> hashRefLine = new HashMap<>();
         Iterator<RegisterCommand> commands = rsf.getCommands();
@@ -36,7 +37,7 @@ public class RSFExecutor {
             RegisterCommand command = commands.next();
 
             validate(command, register, rsfLine, hashRefLine);
-            execute(command, register);
+            execute(command, register, proofGenerator);
 
             rsfLine++;
         }
@@ -44,10 +45,10 @@ public class RSFExecutor {
         validateOrphanAddItems(hashRefLine);
     }
 
-    private void execute(RegisterCommand command, Register register) throws RSFParseException {
+    private void execute(RegisterCommand command, Register register, ProofGenerator proofGenerator) throws RSFParseException {
         if (registeredHandlers.containsKey(command.getCommandName())) {
             RegisterCommandHandler registerCommandHandler = registeredHandlers.get(command.getCommandName());
-            registerCommandHandler.execute(command, register);
+            registerCommandHandler.execute(command, register, proofGenerator);
         } else {
             throw new RSFParseException("Handler not registered for command: " + command.getCommandName());
         }

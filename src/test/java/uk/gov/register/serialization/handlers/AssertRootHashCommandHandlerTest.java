@@ -5,14 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.RegisterProof;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,7 +22,10 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AssertRootHashCommandHandlerTest {
@@ -30,6 +33,9 @@ public class AssertRootHashCommandHandlerTest {
 
     @Mock
     private Register register;
+
+    @Mock
+    private ProofGenerator proofGenerator;
 
     private RegisterCommand assertRootHashCommand;
 
@@ -46,18 +52,16 @@ public class AssertRootHashCommandHandlerTest {
 
     @Test
     public void execute_obtainsAndAssertsRegisterProof() {
-        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "root-hash"), 123);
-        when(register.getV1RegisterProof()).thenReturn(registerProof);
+        when(proofGenerator.getRootHash()).thenReturn(new HashValue(HashingAlgorithm.SHA256, "root-hash"));
 
-        sutHandler.execute(assertRootHashCommand, register);
+        sutHandler.execute(assertRootHashCommand, register, proofGenerator);
 
-        verify(register, times(1)).getV1RegisterProof();
+        verify(proofGenerator, times(1)).getRootHash();
     }
 
     @Test (expected = RSFParseException.class)
     public void execute_failsIfRootHashesDontMatch() {
-        RegisterProof registerProof = new RegisterProof(new HashValue(HashingAlgorithm.SHA256, "different-hash"), 456);
-        when(register.getV1RegisterProof()).thenReturn(registerProof);
+        when(proofGenerator.getRootHash()).thenReturn(new HashValue(HashingAlgorithm.SHA256, "different-hash"));
 
         assertExceptionThrown(assertRootHashCommand, "Exception when executing command: RegisterCommand");
     }
@@ -68,7 +72,7 @@ public class AssertRootHashCommandHandlerTest {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 throw new IOException("Forced exception");
             }
-        }).when(register).getV1RegisterProof();
+        }).when(proofGenerator).getRootHash();
 
         assertExceptionThrown(assertRootHashCommand, "Exception when executing command: RegisterCommand");
     }
@@ -87,7 +91,7 @@ public class AssertRootHashCommandHandlerTest {
 
     private void assertExceptionThrown(RegisterCommand command, String exceptionMessage) throws RSFParseException {
         try {
-            sutHandler.execute(command, register);
+            sutHandler.execute(command, register, proofGenerator);
         } catch (RSFParseException exception) {
             assertThat(exception.getMessage(), startsWith(exceptionMessage));
             throw exception;

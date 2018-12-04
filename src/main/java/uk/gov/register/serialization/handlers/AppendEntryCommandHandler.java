@@ -5,6 +5,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandHandler;
@@ -17,7 +18,7 @@ import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class AppendEntryCommandHandler extends RegisterCommandHandler {
     @Override
-    protected void executeCommand(RegisterCommand command, Register register) {
+    protected void executeCommand(RegisterCommand command, Register register, ProofGenerator proofGenerator) {
         try {
             List<String> parts = command.getCommandArguments();
             HashValue itemHash = HashValue.decode(SHA256, parts.get(RSFFormatter.RSF_HASH_POSITION));

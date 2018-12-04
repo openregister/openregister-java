@@ -26,6 +26,7 @@ import uk.gov.register.commands.HashDataMigrationCommand;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.filters.StripTrailingSlashRedirectFilter;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.SchemeContext;
 import uk.gov.register.serialization.RSFCreator;
@@ -111,7 +112,8 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
             registerContext.migrate();
             registerContext.validate();
             
-            CompletableFuture.runAsync(() -> registerContext.buildOnDemandRegister().getV1RegisterProof());
+            CompletableFuture.runAsync(() -> registerContext.withV1VerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getRootHash()));
+            CompletableFuture.runAsync(() -> registerContext.withVerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getRootHash()));
         });
 
         RSFExecutor rsfExecutor = new RSFExecutor();

@@ -71,25 +71,24 @@ public class RegisterSerialisationFormatServiceTest {
 
         sutService.process(rsfInput);
 
-        verify(rsfExecutor, times(1)).execute(eq(rsfInput), any());
+        verify(rsfExecutor, times(1)).execute(eq(rsfInput), any(), any());
     }
 
     @Test
     public void writeTo_writesEntireRSFtoStream() {
-        when(rsfCreator.create(any())).thenReturn(
-                new RegisterSerialisationFormat(Iterators.forArray(
+        when(registerContext.withV1VerifiableLog(any())).thenReturn(
+                Iterators.forArray(
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
                         new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}")),
                         new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
                         new RegisterCommand("append-entry", Arrays.asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", "sha-256:item1sha")),
                         new RegisterCommand("append-entry", Arrays.asList("user", "entry2-field-1-value", "2016-07-24T16:56:00Z", "sha-256:item2sha")),
-                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e")))));
+                        new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e"))));
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         sutService.writeTo(outputStream, rsfFormatter);
 
-        verify(rsfCreator, times(1)).create(any());
         String expectedRSF =
                 "assert-root-hash\tsha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
                 "add-item\t{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}\n" +
@@ -104,7 +103,7 @@ public class RegisterSerialisationFormatServiceTest {
 
     @Test
     public void writeTo_whenCalledWithBoundary_writesPartialRSFtoStream() {
-        when(rsfCreator.create(any(), eq(1), eq(2))).thenReturn(
+        when(rsfCreator.create(any(), any(), eq(1), eq(2))).thenReturn(
                 new RegisterSerialisationFormat(Iterators.forArray(
                         new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:K3rfuFF1e_uno")),
                         new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
@@ -115,7 +114,7 @@ public class RegisterSerialisationFormatServiceTest {
 
         sutService.writeTo(outputStream, rsfFormatter, 1, 2);
 
-        verify(rsfCreator, times(1)).create(any(), eq(1), eq(2));
+        verify(rsfCreator, times(1)).create(any(), any(), eq(1), eq(2));
         String expectedRSF =
                 "assert-root-hash\tsha-256:K3rfuFF1e_uno\n" +
                 "add-item\t{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}\n" +
