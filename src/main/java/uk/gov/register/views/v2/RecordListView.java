@@ -9,7 +9,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.Record;
-import uk.gov.register.service.ItemConverter;
 import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
@@ -20,15 +19,11 @@ import java.util.stream.Collectors;
 
 public class RecordListView implements CsvRepresentationView<ArrayNode> {
     private final Collection<Record> records;
-    private final ItemConverter itemConverter;
-    private final Map<String, Field> fieldsByName;
     private final List<String> fieldNames;
     private final ObjectMapper jsonObjectMapper = Jackson.newObjectMapper();
 
     public RecordListView(Collection<Record> records, final Map<String, Field> fieldsByName) {
         this.records = records;
-        this.itemConverter = new ItemConverter();
-        this.fieldsByName = fieldsByName;
         this.fieldNames = fieldsByName.values().stream().map(field -> field.fieldName).collect(Collectors.toList());
     }
 
