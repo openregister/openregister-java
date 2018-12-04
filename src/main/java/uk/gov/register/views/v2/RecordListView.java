@@ -35,9 +35,9 @@ public class RecordListView implements CsvRepresentationView<ArrayNode> {
     @JsonValue
     public List<JsonNode> getRecords() {
         return this.records.stream().map(r -> {
-            ObjectNode result = jsonObjectMapper.convertValue(r.getItem().getContent(), ObjectNode.class);
-            result.put("_id", r.getEntry().getKey());
-            return result;
+            ObjectNode record = (ObjectNode)(r.getItem().getContent());
+            record.put("_id", r.getEntry().getKey());
+            return record;
         }).collect(Collectors.toList());
     };
 
