@@ -38,7 +38,7 @@ public class VerifiableLogResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Timed
     public RegisterProof registerProof() {
-        return registerContext.withVerifiableLog(verifiableLog -> {
+        return registerContext.withV1VerifiableLog(verifiableLog -> {
             int totalEntries = entryLog.getTotalEntries(EntryType.user);
             return new ProofGenerator(verifiableLog).getRegisterProof(totalEntries);
         });
@@ -59,7 +59,7 @@ public class VerifiableLogResource {
     @Timed
     public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) {
         validateEntryProofParams(entryNumber, totalEntries);
-        return registerContext.withVerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getEntryProof(entryNumber, totalEntries));
+        return registerContext.withV1VerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getEntryProof(entryNumber, totalEntries));
     }
 
     @GET
@@ -68,7 +68,7 @@ public class VerifiableLogResource {
     @Timed
     public ConsistencyProof consistencyProof(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
         validateConsistencyProofParams(totalEntries1, totalEntries2);
-        return registerContext.withVerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getConsistencyProof(totalEntries1, totalEntries2));
+        return registerContext.withV1VerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getConsistencyProof(totalEntries1, totalEntries2));
     }
 
     private void validateEntryProofParams(int entryNumber, int totalEntries) {

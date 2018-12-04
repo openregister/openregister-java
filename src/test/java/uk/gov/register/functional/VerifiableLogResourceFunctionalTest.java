@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
+import uk.gov.register.views.RegisterProof;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -13,6 +14,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static uk.gov.register.functional.app.RsfRegisterDefinition.ADDRESS_FIELDS;
 import static uk.gov.register.functional.app.RsfRegisterDefinition.ADDRESS_REGISTER;
 import static uk.gov.register.functional.app.RsfRegisterDefinition.POSTCODE_REGISTER;
@@ -128,5 +133,37 @@ public class VerifiableLogResourceFunctionalTest {
                 .readEntity(Map.class).get("merkle-audit-path");
 
         assertThat(addressAuditPath, everyItem(not(isIn(postcodeAuditPath))));
+    }
+
+
+    @Test
+    public void registerProofDiffersFromV1() {
+        String v1Proof = register.getRequest(address, "/proof/register/merkle:sha-256").readEntity(Map.class).get("root-hash").toString();
+        String nextProof = register.getRequest(address, "/next/proof/register").readEntity(Map.class).get("root-hash").toString();
+
+        assertTrue(nextProof.length() > 0);
+        assertNotEquals(v1Proof, nextProof);
+    }
+
+    @Test
+    public void entryProofDiffersFromV1() {
+        Map v1Proof = register.getRequest(address, "/proof/entries/1/2/merkle:sha-256").readEntity(Map.class);
+        Map nextProof = register.getRequest(address, "/next/proof/entry/1/2").readEntity(Map.class);
+        List v1AuditPath = (List)(v1Proof.get("merkle-audit-path"));
+        List nextAuditPath = (List)(nextProof.get("merkle-audit-path"));
+
+        assertFalse(nextAuditPath.isEmpty());
+        assertNotEquals(v1AuditPath, nextAuditPath);
+    }
+
+    @Test
+    public void consistencyProofDiffersFromV1() {
+        Map v1Proof = register.getRequest(address, "/proof/consistency/2/5/merkle:sha-256").readEntity(Map.class);
+        Map nextProof = register.getRequest(address, "/next/proof/consistency/2/5").readEntity(Map.class);
+        List v1ConsistencyNodes = (List)(v1Proof.get("merkle-consistency-nodes"));
+        List nextConsistencyNodes = (List)(nextProof.get("merkle-consistency-nodes"));
+
+        assertFalse(nextConsistencyNodes.isEmpty());
+        assertNotEquals(v1ConsistencyNodes, nextConsistencyNodes);
     }
 }

@@ -1,4 +1,4 @@
-package uk.gov.register.resources;
+package uk.gov.register.resources.v1;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +16,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VerifiableLogResourceTest {
-    private final String sampleHash1 = "6b85b168f7c5f0587fc22ff4ba6937e61b33f6e89b70eed53d78d895d35dc9c3";
-    private final String sampleHash2 = "d3d33f57b033d18ad11e14b28ef6f33487410c98548d1759c772370dfeb6db11";
-
     @Mock
     private RegisterContext registerContext;
 
