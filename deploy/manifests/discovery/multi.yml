@@ -4,8 +4,8 @@ applications:
   memory: 4GB
   instances: 2
   buildpack: java_buildpack
-  health-check-type: http
-  health-check-http-endpoint: /healthcheck
+  health-check-type: port
+  #health-check-http-endpoint: /healthcheck
   path: ../../openregister-java.jar
   services:
     - discovery-db
