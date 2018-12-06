@@ -31,4 +31,3 @@ applications:
     AWS_ACCESS_KEY_ID: change-me
     AWS_SECRET_ACCESS_KEY: change-me
     AWS_REGION: eu-west-1
-  timeout: 180
