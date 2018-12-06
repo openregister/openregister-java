@@ -155,7 +155,6 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
                 bind(ViewFactory.class).to(ViewFactory.class).in(Singleton.class);
                 bind(ItemConverter.class).to(ItemConverter.class).in(Singleton.class);
                 bindFactory(Factories.PostgresRegisterFactory.class).to(Register.class).to(RegisterReadOnly.class);
-                bindFactory(Factories.EntryLogFactory.class).to(EntryLog.class);
                 bind(UriTemplateRegisterResolver.class).to(RegisterResolver.class);
                 bind(configuration);
                 bind(client).to(Client.class);

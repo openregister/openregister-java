@@ -18,7 +18,7 @@ public class AddItemCommandHandler extends RegisterCommandHandler {
     }
 
     @Override
-    protected void executeCommand(RegisterCommand command, Register register, ProofGenerator _proofGenerator) {
+    protected void executeCommand(RegisterCommand command, Register register, ProofGenerator proofGenerator) {
         try {
             String jsonContent = command.getCommandArguments().get(RSFFormatter.RSF_ITEM_ARGUMENT_POSITION);
             Item item = new Item(objectReconstructor.reconstruct(jsonContent));

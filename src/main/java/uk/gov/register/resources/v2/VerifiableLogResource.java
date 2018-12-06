@@ -72,6 +72,4 @@ public class VerifiableLogResource {
             throw new BadRequestException("Invalid parameters");
         }
     }
-
-
 }

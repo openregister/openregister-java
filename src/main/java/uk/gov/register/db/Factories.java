@@ -21,20 +21,6 @@ public abstract class Factories {
         }
     }
 
-    public static class EntryLogFactory extends SimpleFactory<EntryLog> {
-        private final RegisterContext registerContext;
-
-        @Inject
-        public EntryLogFactory(RegisterContext registerContext) {
-            this.registerContext = registerContext;
-        }
-
-        @Override
-        public EntryLog provide() {
-            return registerContext.buildEntryLog();
-        }
-    }
-
     public static class PostgresRegisterFactory extends SimpleFactory<Register> {
         private final RegisterContext registerContext;
 
