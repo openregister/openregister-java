@@ -23,6 +23,8 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.calls;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -105,13 +107,13 @@ public class RSFExecutorTest {
         sutExecutor.execute(rsf, register, proofGenerator);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
-        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertEmptyRootHashCommand, register, proofGenerator);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem1Command, register, proofGenerator);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem2Command, register, proofGenerator);
-        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry1Command, register, proofGenerator);
-        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertMiddleRootHashCommand, register, proofGenerator);
-        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry2Command, register, proofGenerator);
-        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertLastRootHashCommand, register, proofGenerator);
+        inOrder.verify(assertRootHashHandler, calls(1)).execute(eq(assertEmptyRootHashCommand), eq(register), any());
+        inOrder.verify(addItemHandler, calls(1)).execute(eq(addItem1Command), eq(register), any());
+        inOrder.verify(addItemHandler, calls(1)).execute(eq(addItem2Command), eq(register), any());
+        inOrder.verify(appendEntryHandler, calls(1)).execute(eq(appendEntry1Command), eq(register), any());
+        inOrder.verify(assertRootHashHandler, calls(1)).execute(eq(assertMiddleRootHashCommand), eq(register), any());
+        inOrder.verify(appendEntryHandler, calls(1)).execute(eq(appendEntry2Command), eq(register), any());
+        inOrder.verify(assertRootHashHandler, calls(1)).execute(eq(assertLastRootHashCommand), eq(register), any());
     }
 
     @Test (expected = RSFParseException.class)
@@ -207,9 +209,9 @@ public class RSFExecutorTest {
         sutExecutor.execute(rsf, register, proofGenerator);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem1, register, proofGenerator);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem2, register, proofGenerator);
-        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry, register, proofGenerator);
+        inOrder.verify(addItemHandler, calls(1)).execute(eq(addItem1), eq(register), any());
+        inOrder.verify(addItemHandler, calls(1)).execute(eq(addItem2), eq(register), any());
+        inOrder.verify(appendEntryHandler, calls(1)).execute(eq(appendEntry), eq(register), any());
     }
 
     private void assertExceptionThrown(RegisterSerialisationFormat rsf, String exceptionMessage) throws RSFParseException {

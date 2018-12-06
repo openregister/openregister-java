@@ -35,9 +35,10 @@ public class RSFExecutor {
         int rsfLine = 1;
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
+            RegisterCommandContext context = new RegisterCommandContext(rsf, proofGenerator);
 
             validate(command, register, rsfLine, hashRefLine);
-            execute(command, register, proofGenerator);
+            execute(command, register, context);
 
             rsfLine++;
         }
@@ -45,10 +46,10 @@ public class RSFExecutor {
         validateOrphanAddItems(hashRefLine);
     }
 
-    private void execute(RegisterCommand command, Register register, ProofGenerator proofGenerator) throws RSFParseException {
+    private void execute(RegisterCommand command, Register register, RegisterCommandContext context) throws RSFParseException {
         if (registeredHandlers.containsKey(command.getCommandName())) {
             RegisterCommandHandler registerCommandHandler = registeredHandlers.get(command.getCommandName());
-            registerCommandHandler.execute(command, register, proofGenerator);
+            registerCommandHandler.execute(command, register, context);
         } else {
             throw new RSFParseException("Handler not registered for command: " + command.getCommandName());
         }

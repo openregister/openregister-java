@@ -12,6 +12,8 @@ import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RegisterCommand;
+import uk.gov.register.serialization.RegisterCommandContext;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -37,11 +39,17 @@ public class AssertRootHashCommandHandlerTest {
     @Mock
     private ProofGenerator proofGenerator;
 
+    @Mock
+    RegisterSerialisationFormat rsf;
+
+    private RegisterCommandContext context;
+
     private RegisterCommand assertRootHashCommand;
 
     @Before
     public void setUp() throws Exception {
         sutHandler = new AssertRootHashCommandHandler();
+        context = new RegisterCommandContext(rsf, proofGenerator);
         assertRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:root-hash"));
     }
 
@@ -54,7 +62,7 @@ public class AssertRootHashCommandHandlerTest {
     public void execute_obtainsAndAssertsRegisterProof() {
         when(proofGenerator.getRootHash()).thenReturn(new HashValue(HashingAlgorithm.SHA256, "root-hash"));
 
-        sutHandler.execute(assertRootHashCommand, register, proofGenerator);
+        sutHandler.execute(assertRootHashCommand, register, context);
 
         verify(proofGenerator, times(1)).getRootHash();
     }
@@ -91,7 +99,7 @@ public class AssertRootHashCommandHandlerTest {
 
     private void assertExceptionThrown(RegisterCommand command, String exceptionMessage) throws RSFParseException {
         try {
-            sutHandler.execute(command, register, proofGenerator);
+            sutHandler.execute(command, register, context);
         } catch (RSFParseException exception) {
             assertThat(exception.getMessage(), startsWith(exceptionMessage));
             throw exception;
