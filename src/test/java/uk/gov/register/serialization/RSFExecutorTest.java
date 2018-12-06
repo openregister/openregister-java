@@ -23,8 +23,10 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.calls;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RSFExecutorTest {
@@ -90,7 +92,7 @@ public class RSFExecutorTest {
 
     @Test
     public void execute_executesAllCommandsInCorrectOrder() {
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, asList(
                 assertEmptyRootHashCommand,
                 addItem1Command,
                 addItem2Command,
@@ -118,7 +120,7 @@ public class RSFExecutorTest {
 
         when(register.getItemByV1Hash(entry1hashValue)).thenReturn(Optional.empty());
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, asList(
                 appendEntry1Command,
                 addItem1Command).iterator());
 
@@ -131,7 +133,7 @@ public class RSFExecutorTest {
 
         when(register.getItemByV1Hash(entry1hashValue)).thenReturn(Optional.of(item1));
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(appendEntry1Command).iterator());
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, singletonList(appendEntry1Command).iterator());
         sutExecutor.execute(rsf, register, proofGenerator);
 
         verify(register, times(1)).getItemByV1Hash(entry1hashValue);
@@ -139,7 +141,7 @@ public class RSFExecutorTest {
 
     @Test (expected = RSFParseException.class)
     public void execute_failsForOrphanAddItem() {
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, asList(
                 addItem1Command,
                 addItem2Command,
                 appendEntry1Command).iterator());
@@ -149,7 +151,7 @@ public class RSFExecutorTest {
 
     @Test (expected = RSFParseException.class)
     public void execute_failsForItemWhichWasntReferencedInRSF() {
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, asList(
                 addItem1Command,
                 appendEntry1Command,
                 addItem1Command).iterator());
@@ -160,7 +162,7 @@ public class RSFExecutorTest {
 
     @Test (expected = RSFParseException.class)
     public void execute_failsForUnknownCommand() {
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, singletonList(
                 new RegisterCommand("unknown-command", asList("some", "data"))).iterator());
 
         assertExceptionThrown(rsf, "Handler not registered for command: unknown-command");
@@ -168,13 +170,13 @@ public class RSFExecutorTest {
 
     @Test (expected = RSFParseException.class)
     public void execute_executingTheSameInvalidRSFGivesSameResult() {
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, asList(
                 addItem1Command,
                 appendEntry1Command,
                 addItem1Command).iterator());
 
         // it has to be a new iterator because after 1st execution the iterator is going to be empty
-        RegisterSerialisationFormat rsf2 = new RegisterSerialisationFormat(asList(
+        RegisterSerialisationFormat rsf2 = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, asList(
                 addItem1Command,
                 appendEntry1Command,
                 addItem1Command).iterator());
@@ -201,7 +203,7 @@ public class RSFExecutorTest {
         RegisterCommand appendEntry = new RegisterCommand("append-entry",
                 asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", itemHash1 + ";" + itemHash2));
 
-        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(addItem1, addItem2, appendEntry).iterator());
+        RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, asList(addItem1, addItem2, appendEntry).iterator());
         sutExecutor.execute(rsf, register, proofGenerator);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);

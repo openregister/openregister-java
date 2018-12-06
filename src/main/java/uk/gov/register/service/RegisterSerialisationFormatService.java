@@ -1,10 +1,10 @@
 package uk.gov.register.service;
 
-import uk.gov.register.core.Register;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.*;
+import uk.gov.verifiablelog.VerifiableLog;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -30,7 +30,7 @@ public class RegisterSerialisationFormatService {
         registerContext.transactionalRegisterOperation(register -> {
             Iterator<RegisterCommand> commands = registerContext.withV1VerifiableLog(verifiableLog -> {
                 ProofGenerator proofGenerator = new ProofGenerator(verifiableLog);
-                return rsfCreator.create(register, proofGenerator).getCommands();
+                return rsfCreator.createV1(register, proofGenerator).getCommands();
             });
 
             writeCommands(commands, output, rsfFormatter);
@@ -41,7 +41,7 @@ public class RegisterSerialisationFormatService {
         registerContext.transactionalRegisterOperation(register -> {
             Iterator<RegisterCommand> commands = registerContext.withV1VerifiableLog(verifiableLog -> {
                 ProofGenerator proofGenerator = new ProofGenerator(verifiableLog);
-                return rsfCreator.create(register, proofGenerator, totalEntries1, totalEntries2).getCommands();
+                return rsfCreator.createV1(register, proofGenerator, totalEntries1, totalEntries2).getCommands();
             });
 
             writeCommands(commands, output, rsfFormatter);
@@ -49,8 +49,16 @@ public class RegisterSerialisationFormatService {
     }
 
     public void process(RegisterSerialisationFormat rsf) throws RSFParseException {
+        Function<Function<VerifiableLog, Object>, Object> logMethod;
+
+        if(rsf.getVersion() == RegisterSerialisationFormat.Version.V1) {
+            logMethod = registerContext::withV1VerifiableLog;
+        } else {
+            logMethod = registerContext::withVerifiableLog;
+        }
+
         registerContext.transactionalRegisterOperation(register -> {
-            registerContext.withV1VerifiableLog(verifiableLog -> {
+            logMethod.apply(verifiableLog -> {
                 ProofGenerator proofGenerator = new ProofGenerator(verifiableLog);
                 rsfExecutor.execute(rsf, register, proofGenerator);
 
@@ -60,12 +68,20 @@ public class RegisterSerialisationFormatService {
         });
     }
 
-    public RegisterSerialisationFormat readFrom(InputStream commandStream, RSFFormatter rsfFormatter) {
+    public RegisterSerialisationFormat readFromV1(InputStream commandStream, RSFFormatter rsfFormatter) {
         BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
         Iterator<RegisterCommand> commandsIterator = buffer.lines()
                 .map(rsfFormatter::parse)
                 .iterator();
-        return new RegisterSerialisationFormat(commandsIterator);
+        return new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, commandsIterator);
+    }
+
+    public RegisterSerialisationFormat readFromV2(InputStream commandStream, RSFFormatter rsfFormatter) {
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(commandStream));
+        Iterator<RegisterCommand> commandsIterator = buffer.lines()
+                .map(rsfFormatter::parse)
+                .iterator();
+        return new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V2, commandsIterator);
     }
 
     private void writeCommands(Iterator<RegisterCommand> commands, OutputStream output, RSFFormatter rsfFormatter) {

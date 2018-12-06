@@ -104,9 +104,9 @@ public class RegisterSerialisationFormatServiceTest {
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(streamValue.getBytes());
 
-        RegisterSerialisationFormat rsfReadResult = sutService.readFrom(inputStream, rsfFormatter);
+        RegisterSerialisationFormat rsfReadResult = sutService.readFromV1(inputStream, rsfFormatter);
 
-        RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(Iterators.forArray(
+        RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, Iterators.forArray(
                 new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")),
                 new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry1-field-1-value\",\"field-2\":\"entry1-field-2-value\"}")),
                 new RegisterCommand("add-item", Collections.singletonList("{\"field-1\":\"entry2-field-1-value\",\"field-2\":\"entry2-field-2-value\"}")),
@@ -120,9 +120,9 @@ public class RegisterSerialisationFormatServiceTest {
     @Test
     public void readFrom_readsRSFFromStreamEscaped() throws IOException {
         try (InputStream rsfStream = Files.newInputStream(Paths.get("src/test/resources/fixtures/serialized", "valid-register-escaped.tsv"))) {
-            RegisterSerialisationFormat rsfReadResult = sutService.readFrom(rsfStream, rsfFormatter);
+            RegisterSerialisationFormat rsfReadResult = sutService.readFromV1(rsfStream, rsfFormatter);
 
-            RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(Iterators.forArray(
+            RegisterSerialisationFormat expectedRsf = new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, Iterators.forArray(
                     new RegisterCommand("add-item", Collections.singletonList("{\"name\":\"New College\\\\New College School\",\"school\":\"402019\",\"school-authority\":\"681\",\"school-type\":\"30\"}")),
                     new RegisterCommand("append-entry", Arrays.asList("user", "402019", "2016-11-07T16:26:22Z", "sha-256:d6cca062b6a4ff7f60e401aa1ebf4bf5af51c2217916c0115d0a38a42182aec5"))));
 

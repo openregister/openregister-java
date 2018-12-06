@@ -21,7 +21,7 @@ public class RSFCreator {
         this.registeredMappers = new HashMap<>();
     }
 
-    public RegisterSerialisationFormat create(Register register, ProofGenerator proofGenerator) {
+    public RegisterSerialisationFormat createV1(Register register, ProofGenerator proofGenerator) {
         Iterator<?> iterators = Iterators.concat(
                 Iterators.singletonIterator(EMPTY_ROOT_HASH),
                 register.getItemIterator(EntryType.system),
@@ -31,10 +31,10 @@ public class RSFCreator {
                 Iterators.singletonIterator(proofGenerator.getRootHash()));
 
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
+        return new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, commands);
     }
 
-    public RegisterSerialisationFormat create(Register register, ProofGenerator proofGenerator, int totalEntries1, int totalEntries2) {
+    public RegisterSerialisationFormat createV1(Register register, ProofGenerator proofGenerator, int totalEntries1, int totalEntries2) {
         Iterator<?> iterators;
 
         if (totalEntries1 > 0 && totalEntries1 == totalEntries2) {
@@ -55,7 +55,7 @@ public class RSFCreator {
                     Iterators.singletonIterator(nextRootHash));
         }
         Iterator<RegisterCommand> commands = Iterators.transform(iterators, obj -> (RegisterCommand) getMapper(obj.getClass()).apply(obj));
-        return new RegisterSerialisationFormat(commands);
+        return new RegisterSerialisationFormat(RegisterSerialisationFormat.Version.V1, commands);
     }
 
     public void register(RegisterCommandMapper commandMapper) {

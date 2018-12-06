@@ -15,7 +15,6 @@ import uk.gov.register.serialization.mappers.EntryToCommandMapper;
 import uk.gov.register.serialization.mappers.ItemToCommandMapper;
 import uk.gov.register.serialization.mappers.RootHashCommandMapper;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -100,7 +99,7 @@ public class RSFCreatorTest {
 
         when(proofGenerator.getRootHash()).thenReturn(new HashValue(HashingAlgorithm.SHA256, "1231234"));
 
-        RegisterSerialisationFormat actualRSF = sutCreator.create(register, proofGenerator);
+        RegisterSerialisationFormat actualRSF = sutCreator.createV1(register, proofGenerator);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
         assertThat(actualCommands.size(), equalTo(8));
@@ -126,7 +125,7 @@ public class RSFCreatorTest {
         when(proofGenerator.getRootHash(1)).thenReturn(oneEntryRootHash);
         when(proofGenerator.getRootHash(2)).thenReturn(twoEntriesRootHash);
 
-        RegisterSerialisationFormat actualRSF = sutCreator.create(register, proofGenerator, 1, 2);
+        RegisterSerialisationFormat actualRSF = sutCreator.createV1(register, proofGenerator, 1, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
         verify(register, never()).getItemIterator(EntryType.system);
@@ -154,7 +153,7 @@ public class RSFCreatorTest {
 
         when(proofGenerator.getRootHash(2)).thenReturn(rootHash);
 
-        RegisterSerialisationFormat actualRSF = sutCreator.create(register, proofGenerator, 0, 2);
+        RegisterSerialisationFormat actualRSF = sutCreator.createV1(register, proofGenerator, 0, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
         assertThat(actualCommands.size(), equalTo(8));
@@ -183,7 +182,7 @@ public class RSFCreatorTest {
         expectedException.expectMessage("Mapper not registered for class: uk.gov.register.util.HashValue");
 
         RSFCreator creatorWithoutMappers = new RSFCreator();
-        RegisterSerialisationFormat rsf = creatorWithoutMappers.create(register, proofGenerator);
+        RegisterSerialisationFormat rsf = creatorWithoutMappers.createV1(register, proofGenerator);
         IteratorUtils.toList(rsf.getCommands());
     }
 
@@ -192,7 +191,7 @@ public class RSFCreatorTest {
         HashValue rootHash = new HashValue(HashingAlgorithm.SHA256, "twoEntriesInRegisterHash");
         when(proofGenerator.getRootHash(2)).thenReturn(rootHash);
 
-        RegisterSerialisationFormat actualRSF = sutCreator.create(register, proofGenerator, 2, 2);
+        RegisterSerialisationFormat actualRSF = sutCreator.createV1(register, proofGenerator, 2, 2);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
         assertThat(actualCommands.size(), equalTo(1));
@@ -210,7 +209,7 @@ public class RSFCreatorTest {
 
         when(proofGenerator.getRootHash(0)).thenReturn(emptyRegisterHash);
 
-        RegisterSerialisationFormat actualRSF = sutCreator.create(register, proofGenerator, 0, 0);
+        RegisterSerialisationFormat actualRSF = sutCreator.createV1(register, proofGenerator, 0, 0);
         List<RegisterCommand> actualCommands = IteratorUtils.toList(actualRSF.getCommands());
 
         assertThat(actualCommands.size(), equalTo(4));
