@@ -1,5 +1,6 @@
 package uk.gov.register.serialization;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +9,9 @@ import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.util.HashValue;
+import uk.gov.register.util.JsonToBlobHash;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -35,9 +38,9 @@ public class RSFExecutor {
         int rsfLine = 1;
         while (commands.hasNext()) {
             RegisterCommand command = commands.next();
-            RegisterCommandContext context = new RegisterCommandContext(rsf, proofGenerator);
+            RegisterCommandContext context = new RegisterCommandContext(rsf, proofGenerator, rsfLine);
 
-            validate(command, register, rsfLine, hashRefLine);
+            validate(command, register, context, hashRefLine);
             execute(command, register, context);
 
             rsfLine++;
@@ -55,24 +58,22 @@ public class RSFExecutor {
         }
     }
 
-    private void validate(RegisterCommand command, Register register, int rsfLine, Map<HashValue, Integer> hashRefLine) throws RSFParseException {
-        // this ugly method won't be needed when we have symlinks
-        // and won't have to rely on hashes
-
+    private void validate(RegisterCommand command, Register register, RegisterCommandContext context, Map<HashValue, Integer> hashRefLine) throws RSFParseException {
         String commandName = command.getCommandName();
         if (commandName.equals("add-item")) {
-            validateAddItem(command, rsfLine, hashRefLine);
+            validateAddItem(command, context, hashRefLine);
         } else if (commandName.equals("append-entry")) {
-            validateAppendEntry(command, rsfLine, register, hashRefLine);
+            validateAppendEntry(command, context, register, hashRefLine);
         }
     }
 
-    private void validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine) throws RSFParseException {
+    private void validateAppendEntry(RegisterCommand command, RegisterCommandContext context, Register register, Map<HashValue, Integer> hashRefLine) throws RSFParseException {
         String delimitedHashes = command.getCommandArguments().get(RSF_HASH_POSITION);
         if (StringUtils.isEmpty(delimitedHashes)) {
             return;
         }
-        
+
+        // FIXME: it should no longer be necessary to split here
         List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
                 .map(s -> HashValue.decode(SHA256, s)).collect(toList());
 
@@ -80,19 +81,36 @@ public class RSFExecutor {
             if (hashRefLine.containsKey(hashValue)) {
                 hashRefLine.put(hashValue, 0);
             } else {
-                Optional<Item> item = register.getItemByV1Hash(hashValue);
-                if (!item.isPresent()) {
-                    throw new RSFParseException("Orphan append entry (line:" + rsfLine + "): " + command.toString());
+                Optional<Item> item;
+                if(context.getVersion() == RegisterSerialisationFormat.Version.V1) {
+                    item = register.getItemByV1Hash(hashValue);
                 } else {
+                    item = register.getItem(hashValue);
+                }
+
+                if (item.isPresent()) {
                     hashRefLine.put(hashValue, 0);
+                } else {
+                    throw new RSFParseException("Orphan append entry (line:" + context.getRsfLineNo() + "): " + command.toString());
                 }
             }
         }
     }
 
-    private void validateAddItem(RegisterCommand command, int rsfLine, Map<HashValue, Integer> hashRefLine) {
-        String hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
-        hashRefLine.put(new HashValue(SHA256, hash), rsfLine);
+    private void validateAddItem(RegisterCommand command, RegisterCommandContext context, Map<HashValue, Integer> hashRefLine) {
+        String hash;
+
+        if(context.getVersion() == RegisterSerialisationFormat.Version.V1) {
+            hash = DigestUtils.sha256Hex(command.getCommandArguments().get(0).getBytes(StandardCharsets.UTF_8));
+        } else {
+            try {
+                hash = JsonToBlobHash.apply(new ObjectMapper().readTree(command.getCommandArguments().get(0))).getValue();
+            } catch (IOException e) {
+                throw new RSFParseException("Blob is not valid JSON: (line:" + context.getRsfLineNo() + "): " + command.toString());
+            }
+        }
+
+        hashRefLine.put(new HashValue(SHA256, hash), context.getRsfLineNo());
     }
 
     private void validateOrphanAddItems(Map<HashValue, Integer> hashRefLine) throws RSFParseException {

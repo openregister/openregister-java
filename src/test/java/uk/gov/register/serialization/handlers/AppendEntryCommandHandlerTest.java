@@ -17,6 +17,7 @@ import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandContext;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.util.HashValue;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ public class AppendEntryCommandHandlerTest {
     private RegisterCommandContext context;
 
     private RegisterCommand appendEntryCommand;
+
     private Instant july24 = Instant.parse("2016-07-24T16:55:00Z");
 
     @Rule
@@ -64,7 +66,9 @@ public class AppendEntryCommandHandlerTest {
     }
 
     @Test
-    public void execute_appendsEntryToRegister() {
+    public void execute_appendsEntryToRegisterV1() {
+        when(context.getVersion()).thenReturn(RegisterSerialisationFormat.Version.V1);
+
         Item item = mock(Item.class);
         when(item.getBlobHash()).thenReturn(new HashValue(SHA256, "blob-sha"));
         when(register.getItemByV1Hash(new HashValue(SHA256, "item-sha"))).thenReturn(Optional.of(item));
@@ -75,14 +79,38 @@ public class AppendEntryCommandHandlerTest {
     }
 
     @Test
+    public void execute_appendsEntryToRegister() {
+
+        when(context.getVersion()).thenReturn(RegisterSerialisationFormat.Version.V2);
+
+        Item item = mock(Item.class);
+        when(item.getSha256hex()).thenReturn(new HashValue(SHA256, "item-sha-old"));
+        when(register.getItem(new HashValue(SHA256, "item-sha"))).thenReturn(Optional.of(item));
+        when(register.getTotalEntries(EntryType.user)).thenReturn(2);
+        sutHandler.execute(appendEntryCommand, register, context);
+        Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha-old"), new HashValue(SHA256, "item-sha"), july24, "entry1-field-1-value", EntryType.user);
+        verify(register, times(1)).appendEntry(expectedEntry);
+    }
+
+    @Test
+    public void execute_appendsEntryToRegisterWithoutItemThrowsExceptionV1() {
+        when(context.getVersion()).thenReturn(RegisterSerialisationFormat.Version.V1);
+        expectedException.expect(RSFParseException.class);
+        expectedException.expectMessage("Item not found for hash item-sha");
+        sutHandler.execute(appendEntryCommand, register, context);
+    }
+
+    @Test
     public void execute_appendsEntryToRegisterWithoutItemThrowsException() {
+        when(context.getVersion()).thenReturn(RegisterSerialisationFormat.Version.V2);
         expectedException.expect(RSFParseException.class);
         expectedException.expectMessage("Item not found for hash item-sha");
         sutHandler.execute(appendEntryCommand, register, context);
     }
 
     @Test (expected = RSFParseException.class)
-    public void execute_catchesExceptionsAndReturnsFailRSFResult() {
+    public void execute_catchesExceptionsAndReturnsFailRSFResultV1() {
+        when(context.getVersion()).thenReturn(RegisterSerialisationFormat.Version.V1);
 
         Item item = mock(Item.class);
         when(item.getBlobHash()).thenReturn(new HashValue(SHA256, "blob-sha"));

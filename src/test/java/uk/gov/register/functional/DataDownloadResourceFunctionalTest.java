@@ -26,8 +26,8 @@ public class DataDownloadResourceFunctionalTest {
 
     @Before
     public void setup() {
-        register.loadRsf(REGISTER_WITH_DOWNLOAD_ENABLED, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
-        register.loadRsf(REGISTER_WITH_DOWNLOAD_DISABLED, RsfRegisterDefinition.REGISTER_REGISTER);
+        register.loadRsfV1(REGISTER_WITH_DOWNLOAD_ENABLED, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsfV1(REGISTER_WITH_DOWNLOAD_DISABLED, RsfRegisterDefinition.REGISTER_REGISTER);
     }
 
     private final String targetUrl;

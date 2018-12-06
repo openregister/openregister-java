@@ -49,7 +49,7 @@ public class AssertRootHashCommandHandlerTest {
     @Before
     public void setUp() throws Exception {
         sutHandler = new AssertRootHashCommandHandler();
-        context = new RegisterCommandContext(rsf, proofGenerator);
+        context = new RegisterCommandContext(rsf, proofGenerator, 1);
         assertRootHashCommand = new RegisterCommand("assert-root-hash", Collections.singletonList("sha-256:root-hash"));
     }
 

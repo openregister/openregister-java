@@ -28,7 +28,7 @@ public class EntryIteratorFunctionalTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.loadRsf(TestRegister.register, RsfRegisterDefinition.REGISTER_REGISTER);
+        register.loadRsfV1(TestRegister.register, RsfRegisterDefinition.REGISTER_REGISTER);
 
         entryQueryDAO = mock(EntryQueryDAO.class);
         when(entryQueryDAO.entriesIteratorFrom(anyInt(), eq(schema))).thenAnswer(invocation ->
@@ -37,7 +37,7 @@ public class EntryIteratorFunctionalTest {
 
     @Test
     public void testCanIterateInOrder() {
-        register.loadRsf(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
+        register.loadRsfV1(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
                 "add-item\t{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}\n" +
                 "append-entry\tuser\tvalue1\t2016-03-01T01:02:03Z\tsha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18\n" +
                 "append-entry\tuser\tvalue2\t2016-03-02T02:03:04Z\tsha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7\n");
@@ -51,7 +51,7 @@ public class EntryIteratorFunctionalTest {
 
     @Test
     public void testCanIterateNotInOrder() {
-        register.loadRsf(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
+        register.loadRsfV1(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
                 "add-item\t{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}\n" +
                 "append-entry\tuser\tvalue1\t2016-03-01T01:02:03Z\tsha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18\n" +
                 "append-entry\tuser\tvalue2\t2016-03-02T02:03:04Z\tsha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7\n");
@@ -66,12 +66,12 @@ public class EntryIteratorFunctionalTest {
     @Test
     public void testCanStillIterateAfterIteratorEndsThenNewEntriesAdded() {
         EntryIterator.withEntryIterator(entryQueryDAO, entryIteratorDAO -> {
-            register.loadRsf(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
+            register.loadRsfV1(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
                     "append-entry\tuser\tvalue1\t2016-03-01T01:02:03Z\tsha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18\n");
 
             assertThat(entryIteratorDAO.findByEntryNumber(1).getEntryNumber(), equalTo(1));
 
-            register.loadRsf(TestRegister.register, "add-item\t{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}\n" +
+            register.loadRsfV1(TestRegister.register, "add-item\t{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}\n" +
                     "append-entry\tuser\tvalue2\t2016-03-02T02:03:04Z\tsha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7\n");
 
             assertThat(entryIteratorDAO.findByEntryNumber(2).getEntryNumber(), equalTo(2));
@@ -82,14 +82,14 @@ public class EntryIteratorFunctionalTest {
     @Test
     public void testCanStillIterateAfterIteratorDoesNotThenNewEntriesAddedd() {
         EntryIterator.withEntryIterator(entryQueryDAO, entryIteratorDAO -> {
-            register.loadRsf(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
+            register.loadRsfV1(TestRegister.register, "add-item\t{\"fields\":[\"field1\"],\"register\":\"value1\",\"text\":\"The Entry 1\"}\n" +
                     "add-item\t{\"fields\":[\"field1\",\"field2\"],\"register\":\"value2\",\"text\":\"The Entry 2\"}\n" +
                     "append-entry\tuser\tvalue1\t2016-03-01T01:02:03Z\tsha-256:877d8bd1ab71dc6e48f64b4ca83c6d7bf645a1eb56b34d50fa8a833e1101eb18\n" +
                     "append-entry\tuser\tvalue2\t2016-03-02T02:03:04Z\tsha-256:63e5a0453b088e39265ca9f20fd03e2b206422e32989649adaca84426b531cd7\n");
 
             assertThat(entryIteratorDAO.findByEntryNumber(1).getEntryNumber(), equalTo(1));
 
-            register.loadRsf(TestRegister.register, "add-item\t{\"fields\":[\"field1\",\"field2\",\"field3\"],\"register\":\"value3\",\"text\":\"The Entry 3\"}\n" +
+            register.loadRsfV1(TestRegister.register, "add-item\t{\"fields\":[\"field1\",\"field2\",\"field3\"],\"register\":\"value3\",\"text\":\"The Entry 3\"}\n" +
                     "append-entry\tuser\tvalue1\t2016-03-01T01:02:03Z\tsha-256:8d5c2ed1e59f8871dff6e2132171008f12f43aa37e70ab158d598bc6b6db848f\n");
 
             assertThat(entryIteratorDAO.findByEntryNumber(2).getEntryNumber(), equalTo(2));

@@ -26,7 +26,7 @@ public class FindEntityTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER +
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER +
             "add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}\n" +
             "append-entry\tuser\t12345\t2017-06-13T09:20:41Z\tsha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9\n" +
             "add-item\t{\"address\":\"6789\",\"street\":\"presley\"}\n" +

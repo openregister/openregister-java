@@ -41,7 +41,7 @@ public class EntryResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER + addressRsf());
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER + addressRsf());
     }
 
     @Test

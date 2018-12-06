@@ -23,7 +23,7 @@ public class RedirectResourceTest  {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.loadRsf(TestRegister.register, RsfRegisterDefinition.REGISTER_REGISTER);
+        register.loadRsfV1(TestRegister.register, RsfRegisterDefinition.REGISTER_REGISTER);
     }
 
     @Test

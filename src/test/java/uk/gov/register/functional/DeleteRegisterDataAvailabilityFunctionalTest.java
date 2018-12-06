@@ -31,7 +31,7 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
     
     @Before
     public void setup() {
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
     }
 
     private final Boolean isAuthenticated;

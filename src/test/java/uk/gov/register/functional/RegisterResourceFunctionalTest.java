@@ -27,7 +27,7 @@ public class RegisterResourceFunctionalTest {
     @Before
     public void setup() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS +  RsfRegisterDefinition.ADDRESS_REGISTER );
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_FIELDS +  RsfRegisterDefinition.ADDRESS_REGISTER );
     }
 
     private final Map<?, ?> expectedAddressRegisterMap = getAddressRegisterMap();
@@ -44,7 +44,7 @@ public class RegisterResourceFunctionalTest {
                 "add-item\t{\"address\":\"145678\"}\n" +
                 "append-entry\tuser\t145678\t2017-05-23T10:12:34Z\tsha-256:921c14161f7c13a18a52e8418c0c69ac7211d40cbaf53c58513dc668d68376d8";
 
-        register.loadRsf(address, payload);
+        register.loadRsfV1(address, payload);
 
         Response registerResourceFromAddressRegisterResponse = register.getRequest(address, "/register.json");
         assertThat(registerResourceFromAddressRegisterResponse.getStatus(), equalTo(200));
@@ -63,7 +63,7 @@ public class RegisterResourceFunctionalTest {
 
     @Test
     public void registerJsonShouldContainCorrectFieldsForRegister() {
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_REGISTER);
         Response registerResourceFromAddressRegisterResponse = register.getRequest(address, "/register.json");
         Map registerResourceMapFromAddressRegister = registerResourceFromAddressRegisterResponse.readEntity(Map.class);
         Map<?, ?> registerRecordMapFromAddressRegister = (Map) registerResourceMapFromAddressRegister.get("register-record");

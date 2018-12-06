@@ -33,7 +33,7 @@ public class EntriesResourceFunctionalTest {
     @Before
     public void setup() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class EntriesResourceFunctionalTest {
                 "append-entry\tuser\t1234\t2018-07-26T15:51:26Z\tsha-256:cb0f5233e9acf1a41f30803dcf902208e7d4918a41a9738091b179ce8c62010c\n" +
                 "append-entry\tuser\t6789\t2018-07-26T15:51:26Z\tsha-256:bd239db51960376826b937a615f0f3397485f00611d35bb7e951e357bf73b934\n";
 
-        register.loadRsf(address, rsf);
+        register.loadRsfV1(address, rsf);
 
         Response response = register.getRequest(address, "/entries.json");
         assertThat(response.getStatus(), equalTo(200));
@@ -109,7 +109,7 @@ public class EntriesResourceFunctionalTest {
                 "append-entry\tuser\tregister1\t2018-07-26T15:48:03Z\tsha-256:8ac926428ee49fb83c02bdd2556e62e84cfd9e636cd35eb1306ac8cb661e4983\n" +
                 "append-entry\tuser\tregister1\t2018-07-26T15:48:03Z\tsha-256:6352a25fe8c9222676b29ba6f5e675b5dfa2b886010a844dd596b0d0cd615849\n";
 
-        register.loadRsf(address, rsf);
+        register.loadRsfV1(address, rsf);
 
         Response response = addressTarget.path("/entries.json").queryParam("start",1).queryParam("limit",2)
                 .request().get();

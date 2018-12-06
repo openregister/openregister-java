@@ -27,7 +27,7 @@ public class ApplicationTest {
     @Before
     public void setup() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
     }
 
     @Test
@@ -100,7 +100,7 @@ public class ApplicationTest {
 
     @Test
     public void returns400BadRequest() {
-        Response response = register.loadRsf(address, "nope");
+        Response response = register.loadRsfV1(address, "nope");
 
         assertThat(response.getStatus(), equalTo(400));
     }

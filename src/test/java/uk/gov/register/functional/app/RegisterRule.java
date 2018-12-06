@@ -67,8 +67,14 @@ public class RegisterRule implements TestRule {
         return target(register.getHostname());
     }
 
-    public Response loadRsf(TestRegister register, String rsf) {
+    public Response loadRsfV1(TestRegister register, String rsf) {
         return authenticatedTarget(register).path("/load-rsf")
+                .request()
+                .post(entity(rsf, APPLICATION_RSF_TYPE));
+    }
+
+    public Response loadRsf(TestRegister register, String rsf) {
+        return authenticatedTarget(register).path("/next/load-rsf")
                 .request()
                 .post(entity(rsf, APPLICATION_RSF_TYPE));
     }

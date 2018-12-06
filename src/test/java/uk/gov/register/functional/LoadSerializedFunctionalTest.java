@@ -149,9 +149,9 @@ public class LoadSerializedFunctionalTest {
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemForExistingRecord() throws IOException {
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
-        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+        register.loadRsfV1(TestRegister.local_authority_eng, metadataRsf);
 
-        Response initialResponse = register.loadRsf(TestRegister.local_authority_eng,
+        Response initialResponse = register.loadRsfV1(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "add-item\t{\"local-authority-eng\":\"London\",\"local-authority-type\":\"UA\"}\n" +
             "add-item\t{\"local-authority-eng\":\"Leics\",\"local-authority-type\":\"CTY\"}\n" +
@@ -161,7 +161,7 @@ public class LoadSerializedFunctionalTest {
 
         assertThat(initialResponse.getStatus(), equalTo(200));
 
-        Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
+        Response duplicateItemResponse = register.loadRsfV1(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
@@ -172,9 +172,9 @@ public class LoadSerializedFunctionalTest {
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemForNewUserRecord() throws IOException {
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
-        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+        register.loadRsfV1(TestRegister.local_authority_eng, metadataRsf);
 
-        Response response = register.loadRsf(TestRegister.local_authority_eng,
+        Response response = register.loadRsfV1(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
             "append-entry\tuser\tNotts\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
@@ -186,9 +186,9 @@ public class LoadSerializedFunctionalTest {
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemForNewMetadataRecord() throws IOException {
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
-        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+        register.loadRsfV1(TestRegister.local_authority_eng, metadataRsf);
 
-        Response response = register.loadRsf(TestRegister.local_authority_eng,
+        Response response = register.loadRsfV1(TestRegister.local_authority_eng,
                 "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
                         "append-entry\tsystem\tregister-name\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125\n" +
                         "append-entry\tsystem\tregister-name\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
@@ -200,15 +200,15 @@ public class LoadSerializedFunctionalTest {
     @Test
     public void shouldReturnBadRequestWhenLoadingDuplicateItemsForExistingRecord() throws IOException {
         String metadataRsf = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/local-authority-eng-metadata.rsf")));
-        register.loadRsf(TestRegister.local_authority_eng, metadataRsf);
+        register.loadRsfV1(TestRegister.local_authority_eng, metadataRsf);
 
-        Response initialResponse = register.loadRsf(TestRegister.local_authority_eng,
+        Response initialResponse = register.loadRsfV1(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
         assertThat(initialResponse.getStatus(), equalTo(200));
 
-        Response duplicateItemResponse = register.loadRsf(TestRegister.local_authority_eng,
+        Response duplicateItemResponse = register.loadRsfV1(TestRegister.local_authority_eng,
             "add-item\t{\"local-authority-eng\":\"Notts\",\"local-authority-type\":\"MD\"}\n" +
             "append-entry\tuser\tEastMidlands\t2016-04-05T13:23:05Z\tsha-256:d57e3435709718d26dcc527676bca19583c4309fc1e4c116b2a6ca528f62c125");
 
@@ -262,7 +262,7 @@ public class LoadSerializedFunctionalTest {
 
 	@Test
 	public void shouldReturnBadRequestWhenRegisterIsMissingFieldsDefinedInEnvironment() throws Exception {
-		Response response = register.loadRsf(TestRegister.postcode,
+		Response response = register.loadRsfV1(TestRegister.postcode,
 				"add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
 						"append-entry\tsystem\tfield:postcode\t2017-06-09T12:59:51Z\tsha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a\n" +
 						"add-item\t{\"fields\":[\"postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
@@ -273,7 +273,7 @@ public class LoadSerializedFunctionalTest {
 
     @Test
     public void shouldReturnBadRequestWhenLocalFieldDoesNotExistInEnvironment() throws Exception {
-        Response response = register.loadRsf(TestRegister.postcode,
+        Response response = register.loadRsfV1(TestRegister.postcode,
             "add-item\t{\"cardinality\":\"1\",\"datatype\":\"string\",\"field\":\"test-postcode\",\"phase\":\"alpha\",\"text\":\"UK Postcodes.\"}\n" +
             "append-entry\tsystem\tfield:test-postcode\t2017-06-09T12:59:51Z\tsha-256:eb0381c0c768767e60b3edf140e6bdf241f5e6f01a98c3751da488c3e6ffb3fe\n" +
             "add-item\t{\"fields\":[\"test-postcode\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
@@ -292,13 +292,13 @@ public class LoadSerializedFunctionalTest {
             "add-item\t{\"fields\":[\"postcode\",\"point\"],\"phase\":\"alpha\",\"register\":\"test\",\"registry\":\"cabinet-office\",\"text\":\"Register of postcodes\"}\n" +
             "append-entry\tsystem\tregister:postcode\t2017-06-06T09:54:11Z\tsha-256:ee2fd6546a8362d98e3cd63d914ca55d93f15801c35fdd108b9294c4f0a1d01e\n";
 
-        Response response = register.loadRsf(TestRegister.postcode, rsf);
+        Response response = register.loadRsfV1(TestRegister.postcode, rsf);
         assertThat(response.getStatus(), equalTo(400));
         assertThat(response.readEntity(String.class), equalTo("{\"success\":false,\"message\":\"Failed to load RSF\",\"details\":\"Exception when executing command: RegisterCommand{commandName='append-entry', arguments=[system, field:postcode, 2017-06-09T12:59:51Z, sha-256:689e7a836844817b102d0049c6d402fc630f1c9f284ee96d9b7ec24bc7e0c36a]}: Failed to append entry with entry-number 1 and key 'field:postcode': Definition of field postcode does not match Field Register\"}"));
     }
 
     private Response send(String payload) {
-        return register.loadRsf(testRegister, RsfRegisterDefinition.REGISTER_REGISTER + payload);
+        return register.loadRsfV1(testRegister, RsfRegisterDefinition.REGISTER_REGISTER + payload);
     }
 
     private JsonNode nodeOf(String jsonString) throws IOException {

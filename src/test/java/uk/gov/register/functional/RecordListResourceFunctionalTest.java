@@ -30,8 +30,8 @@ public class RecordListResourceFunctionalTest {
     @Before
     public void publishTestMessages() {
         register.wipe();
-        register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
-        register.loadRsf(address, 
+        register.loadRsfV1(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsfV1(address,
             "add-item\t{\"address\":\"12345\",\"street\":\"ellis\"}\n" +
             "append-entry\tuser\t12345\t2017-07-28T13:08:48Z\tsha-256:19205fafe65406b9b27fce1b689abc776df4ddcf150c28b29b73b4ea054af6b9\n" +
             "add-item\t{\"address\":\"6789\",\"street\":\"presley\"}\n" +

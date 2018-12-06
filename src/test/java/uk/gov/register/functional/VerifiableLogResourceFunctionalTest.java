@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
-import uk.gov.register.views.RegisterProof;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -33,7 +32,7 @@ public class VerifiableLogResourceFunctionalTest {
     @Before
     public void publishTestMessages() throws Throwable {
         register.wipe();
-        register.loadRsf(address, ADDRESS_FIELDS + ADDRESS_REGISTER +
+        register.loadRsfV1(address, ADDRESS_FIELDS + ADDRESS_REGISTER +
             "add-item\t{\"address\":\"1111\",\"street\":\"elvis\"}\n" +
             "append-entry\tuser\t1111\t2017-06-12T14:05:01Z\tsha-256:c4ede5d49a5d0ea7babbc097b0905acf2bb5146f288c8b33ba3e29762196566f\n" +
             "add-item\t{\"address\":\"2222\",\"street\":\"presley\"}\n" +
@@ -45,7 +44,7 @@ public class VerifiableLogResourceFunctionalTest {
             "add-item\t{\"address\":\"5555\",\"street\":\"elfsley\"}\n" +
             "append-entry\tuser\t5555\t2017-06-12T14:05:01Z\tsha-256:4882ebcc80b9005597f571019efc23e8a36422623cd4811c2213f44d4faf9545");
 
-        register.loadRsf(postcode, POSTCODE_REGISTER +
+        register.loadRsfV1(postcode, POSTCODE_REGISTER +
             "add-item\t{\"postcode\":\"P1\"}\n" +
             "append-entry\tuser\tP1\t2017-06-12T14:06:30Z\tsha-256:50a5de96d4cb6341a2f18c0b34bc401b2c92e3ac46641c0d1014dc82ed498326\n" +
             "add-item\t{\"postcode\":\"P2\"}\n" +

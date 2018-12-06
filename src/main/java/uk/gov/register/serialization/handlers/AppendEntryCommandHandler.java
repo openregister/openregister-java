@@ -10,6 +10,7 @@ import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandContext;
 import uk.gov.register.serialization.RegisterCommandHandler;
+import uk.gov.register.serialization.RegisterSerialisationFormat;
 import uk.gov.register.util.HashValue;
 
 import java.time.Instant;
@@ -22,9 +23,19 @@ public class AppendEntryCommandHandler extends RegisterCommandHandler {
     protected void executeCommand(RegisterCommand command, Register register, RegisterCommandContext context) {
         try {
             List<String> parts = command.getCommandArguments();
-            HashValue itemHash = HashValue.decode(SHA256, parts.get(RSFFormatter.RSF_HASH_POSITION));
-            HashValue blobHash = register.getItemByV1Hash(itemHash).map(Item::getBlobHash)
-                    .orElseThrow(() -> new RSFParseException("Item not found for hash " + itemHash.getValue()));
+            HashValue itemHash;
+            HashValue blobHash;
+
+            if(context.getVersion() == RegisterSerialisationFormat.Version.V1) {
+                itemHash = HashValue.decode(SHA256, parts.get(RSFFormatter.RSF_HASH_POSITION));
+                blobHash = register.getItemByV1Hash(itemHash).map(Item::getBlobHash)
+                        .orElseThrow(() -> new RSFParseException("Item not found for hash " + itemHash.getValue()));
+            } else {
+                blobHash = HashValue.decode(SHA256, parts.get(RSFFormatter.RSF_HASH_POSITION));
+                itemHash = register.getItem(blobHash).map(Item::getSha256hex)
+                        .orElseThrow(() -> new RSFParseException("Blob not found for hash " + blobHash.getValue()));
+            }
+
             EntryType entryType = EntryType.valueOf(parts.get(RSFFormatter.RSF_ENTRY_TYPE_POSITION));
             int newEntryNo = register.getTotalEntries(entryType) + 1;
             Entry entry = new Entry(newEntryNo, itemHash, blobHash, Instant.parse(parts.get(RSFFormatter.RSF_TIMESTAMP_POSITION)), parts.get(RSFFormatter.RSF_KEY_POSITION), entryType);

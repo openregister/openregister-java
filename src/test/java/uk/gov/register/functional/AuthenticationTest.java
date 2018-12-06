@@ -22,8 +22,8 @@ public class AuthenticationTest {
 
     @Before
     public void setup() {
-        register.loadRsf(TestRegister.address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
-        register.loadRsf(TestRegister.postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
+        register.loadRsfV1(TestRegister.address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
+        register.loadRsfV1(TestRegister.postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
     }
     
     @Test
