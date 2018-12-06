@@ -26,11 +26,4 @@ public interface EntryLog {
     int getTotalEntries(EntryType entryType);
 
     Optional<Instant> getLastUpdatedTime();
-
-    RegisterProof getRegisterProof();
-    RegisterProof getRegisterProof(int totalEntries);
-
-    EntryProof getEntryProof(int entryNumber, int totalEntries);
-
-    ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
 }

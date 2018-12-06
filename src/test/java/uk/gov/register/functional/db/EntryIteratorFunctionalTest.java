@@ -3,7 +3,7 @@ package uk.gov.register.functional.db;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import uk.gov.register.db.EntryIterator;
+import uk.gov.register.proofs.EntryIterator;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.RsfRegisterDefinition;

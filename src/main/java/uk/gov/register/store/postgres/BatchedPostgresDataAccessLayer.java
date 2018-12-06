@@ -2,7 +2,7 @@ package uk.gov.register.store.postgres;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import uk.gov.register.core.*;
-import uk.gov.register.db.*;
+import uk.gov.register.proofs.EntryIterator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.util.HashValue;
 

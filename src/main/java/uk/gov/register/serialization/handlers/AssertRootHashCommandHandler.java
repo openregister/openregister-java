@@ -4,6 +4,7 @@ import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.AssertRootHashException;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.serialization.RegisterCommandHandler;
@@ -12,10 +13,10 @@ import uk.gov.register.util.HashValue;
 
 public class AssertRootHashCommandHandler extends RegisterCommandHandler {
     @Override
-    protected void executeCommand(RegisterCommand command, Register register) {
+    protected void executeCommand(RegisterCommand command, Register register, ProofGenerator proofGenerator) {
         try {
             HashValue expectedHash = HashValue.decode(HashingAlgorithm.SHA256, command.getCommandArguments().get(RSFFormatter.RSF_ASSERT_ROOT_HASH_ARGUMENT_POSITION));
-            HashValue actualHash = register.getRegisterProof().getRootHash();
+            HashValue actualHash = proofGenerator.getRootHash();
             if (!actualHash.equals(expectedHash)) {
                 throw new AssertRootHashException(expectedHash, actualHash);
             }

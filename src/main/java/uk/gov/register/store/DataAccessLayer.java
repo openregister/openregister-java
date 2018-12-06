@@ -4,7 +4,7 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Record;
-import uk.gov.register.db.EntryIterator;
+import uk.gov.register.proofs.EntryIterator;
 import uk.gov.register.exceptions.IndexingException;
 import uk.gov.register.util.HashValue;
 

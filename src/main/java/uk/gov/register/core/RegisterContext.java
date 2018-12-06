@@ -1,6 +1,7 @@
 package uk.gov.register.core;
 
 import com.google.common.base.Throwables;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.flywaydb.core.Flyway;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -13,17 +14,21 @@ import uk.gov.register.db.RecordSet;
 import uk.gov.register.exceptions.FieldDefinitionException;
 import uk.gov.register.exceptions.NoSuchConfigException;
 import uk.gov.register.exceptions.RegisterDefinitionException;
+import uk.gov.register.proofs.EntryMerkleLeafStore;
+import uk.gov.register.proofs.V1EntryMerkleLeafStore;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.store.DataAccessLayer;
 import uk.gov.register.store.postgres.BatchedPostgresDataAccessLayer;
 import uk.gov.register.store.postgres.PostgresDataAccessLayer;
+import uk.gov.verifiablelog.VerifiableLog;
 import uk.gov.verifiablelog.store.memoization.InMemoryPowOfTwoNoLeaves;
 import uk.gov.verifiablelog.store.memoization.MemoizationStore;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 
 public class RegisterContext implements
@@ -73,11 +78,17 @@ public class RegisterContext implements
         return flyway.migrate();
     }
 
+    public EntryLog buildEntryLog() {
+        DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
+
+        return new EntryLogImpl(dataAccessLayer);
+    }
+
     public Register buildOnDemandRegister() {
         DataAccessLayer dataAccessLayer = getOnDemandDataAccessLayer();
 
         return new RegisterImpl(registerId,
-                new EntryLogImpl(dataAccessLayer, memoizationStore.get()),
+                new EntryLogImpl(dataAccessLayer),
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordSet(dataAccessLayer),
                 itemValidator,
@@ -86,7 +97,7 @@ public class RegisterContext implements
 
     private Register buildTransactionalRegister(DataAccessLayer dataAccessLayer, TransactionalMemoizationStore memoizationStore) {
         return new RegisterImpl(registerId,
-                new EntryLogImpl(dataAccessLayer, memoizationStore),
+                new EntryLogImpl(dataAccessLayer),
                 new ItemStoreImpl(dataAccessLayer),
                 new RecordSet(dataAccessLayer),
                 itemValidator,
@@ -131,6 +142,26 @@ public class RegisterContext implements
                 dbi.onDemand(ItemQueryDAO.class),
                 dbi.onDemand(RecordQueryDAO.class),
                 schema);
+    }
+
+    public <R> R withV1VerifiableLog(Function<VerifiableLog, R> callback) {
+        return getOnDemandDataAccessLayer().withEntryIterator(entryIterator -> {
+            VerifiableLog verifiableLog = new VerifiableLog(
+                    DigestUtils.getSha256Digest(),
+                    new V1EntryMerkleLeafStore(entryIterator),
+                    memoizationStore.get());
+            return callback.apply(verifiableLog);
+        });
+    }
+
+    public <R> R withVerifiableLog(Function<VerifiableLog, R> callback) {
+        return getOnDemandDataAccessLayer().withEntryIterator(entryIterator -> {
+            VerifiableLog verifiableLog = new VerifiableLog(
+                    DigestUtils.getSha256Digest(),
+                    new EntryMerkleLeafStore(entryIterator),
+                    memoizationStore.get());
+            return callback.apply(verifiableLog);
+        });
     }
 
     private BatchedPostgresDataAccessLayer getTransactionalDataAccessLayer(Handle handle) {

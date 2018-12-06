@@ -1,4 +1,4 @@
-package uk.gov.register.db;
+package uk.gov.register.proofs;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,11 +8,11 @@ import uk.gov.register.core.Entry;
 import uk.gov.register.views.EntryView;
 import uk.gov.verifiablelog.store.MerkleLeafStore;
 
-public class EntryMerkleLeafStore implements MerkleLeafStore {
+public class V1EntryMerkleLeafStore implements MerkleLeafStore {
     private final EntryIterator entryIterator;
 
 
-    public EntryMerkleLeafStore(EntryIterator entryIterator) {
+    public V1EntryMerkleLeafStore(EntryIterator entryIterator) {
         this.entryIterator = entryIterator;
     }
 

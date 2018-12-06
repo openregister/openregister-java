@@ -36,11 +36,6 @@ public interface RegisterReadOnly {
     List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException;
     int getTotalRecords(EntryType entryType);
 
-    RegisterProof getRegisterProof();
-    RegisterProof getRegisterProof(int entryNo);
-    EntryProof getEntryProof(int entryNumber, int totalEntries);
-    ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2);
-
     RegisterId getRegisterId();
     Optional<String> getRegisterName();
     Optional<String> getCustodianName();

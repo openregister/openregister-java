@@ -12,6 +12,7 @@ import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.util.HashValue;
 
 import java.util.Optional;
@@ -43,6 +44,9 @@ public class RSFExecutorTest {
 
     @Mock
     private RegisterCommandHandler addItemHandler;
+
+    @Mock
+    private ProofGenerator proofGenerator;
 
     private Item item1;
 
@@ -95,16 +99,17 @@ public class RSFExecutorTest {
                 appendEntry2Command,
                 assertLastRootHashCommand).iterator());
 
-        sutExecutor.execute(rsf, register);
+
+        sutExecutor.execute(rsf, register, proofGenerator);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
-        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertEmptyRootHashCommand, register);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem1Command, register);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem2Command, register);
-        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry1Command, register);
-        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertMiddleRootHashCommand, register);
-        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry2Command, register);
-        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertLastRootHashCommand, register);
+        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertEmptyRootHashCommand, register, proofGenerator);
+        inOrder.verify(addItemHandler, calls(1)).execute(addItem1Command, register, proofGenerator);
+        inOrder.verify(addItemHandler, calls(1)).execute(addItem2Command, register, proofGenerator);
+        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry1Command, register, proofGenerator);
+        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertMiddleRootHashCommand, register, proofGenerator);
+        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry2Command, register, proofGenerator);
+        inOrder.verify(assertRootHashHandler, calls(1)).execute(assertLastRootHashCommand, register, proofGenerator);
     }
 
     @Test (expected = RSFParseException.class)
@@ -127,7 +132,7 @@ public class RSFExecutorTest {
         when(register.getItemByV1Hash(entry1hashValue)).thenReturn(Optional.of(item1));
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(singletonList(appendEntry1Command).iterator());
-        sutExecutor.execute(rsf, register);
+        sutExecutor.execute(rsf, register, proofGenerator);
 
         verify(register, times(1)).getItemByV1Hash(entry1hashValue);
     }
@@ -175,10 +180,10 @@ public class RSFExecutorTest {
                 addItem1Command).iterator());
 
         try {
-            sutExecutor.execute(rsf, register);
+            sutExecutor.execute(rsf, register, proofGenerator);
         } catch (RSFParseException exception1) {
             try {
-                sutExecutor.execute(rsf2, register);
+                sutExecutor.execute(rsf2, register, proofGenerator);
             } catch (RSFParseException exception2) {
                 assertThat(exception1.getMessage(), equalTo(exception2.getMessage()));
                 throw exception2;
@@ -197,17 +202,17 @@ public class RSFExecutorTest {
                 asList("user", "entry1-field-1-value", "2016-07-24T16:55:00Z", itemHash1 + ";" + itemHash2));
 
         RegisterSerialisationFormat rsf = new RegisterSerialisationFormat(asList(addItem1, addItem2, appendEntry).iterator());
-        sutExecutor.execute(rsf, register);
+        sutExecutor.execute(rsf, register, proofGenerator);
 
         InOrder inOrder = Mockito.inOrder(assertRootHashHandler, addItemHandler, appendEntryHandler);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem1, register);
-        inOrder.verify(addItemHandler, calls(1)).execute(addItem2, register);
-        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry, register);
+        inOrder.verify(addItemHandler, calls(1)).execute(addItem1, register, proofGenerator);
+        inOrder.verify(addItemHandler, calls(1)).execute(addItem2, register, proofGenerator);
+        inOrder.verify(appendEntryHandler, calls(1)).execute(appendEntry, register, proofGenerator);
     }
 
     private void assertExceptionThrown(RegisterSerialisationFormat rsf, String exceptionMessage) throws RSFParseException {
         try {
-            sutExecutor.execute(rsf, register);
+            sutExecutor.execute(rsf, register, proofGenerator);
         } catch (RSFParseException exception) {
             assertThat(exception.getMessage(), startsWith(exceptionMessage));
             throw exception;

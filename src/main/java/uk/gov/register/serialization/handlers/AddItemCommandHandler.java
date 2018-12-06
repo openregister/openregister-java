@@ -3,6 +3,7 @@ package uk.gov.register.serialization.handlers;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RSFFormatter;
 import uk.gov.register.serialization.RegisterResult;
 import uk.gov.register.serialization.RegisterCommand;
@@ -17,7 +18,7 @@ public class AddItemCommandHandler extends RegisterCommandHandler {
     }
 
     @Override
-    protected void executeCommand(RegisterCommand command, Register register) {
+    protected void executeCommand(RegisterCommand command, Register register, ProofGenerator proofGenerator) {
         try {
             String jsonContent = command.getCommandArguments().get(RSFFormatter.RSF_ITEM_ARGUMENT_POSITION);
             Item item = new Item(objectReconstructor.reconstruct(jsonContent));

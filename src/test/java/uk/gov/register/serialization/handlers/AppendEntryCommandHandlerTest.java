@@ -14,6 +14,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.proofs.ProofGenerator;
 import uk.gov.register.serialization.RegisterCommand;
 import uk.gov.register.util.HashValue;
 
@@ -41,6 +42,9 @@ public class AppendEntryCommandHandlerTest {
     @Mock
     private Register register;
 
+    @Mock
+    private ProofGenerator proofGenerator;
+
     private RegisterCommand appendEntryCommand;
     private Instant july24 = Instant.parse("2016-07-24T16:55:00Z");
 
@@ -64,7 +68,7 @@ public class AppendEntryCommandHandlerTest {
         when(item.getBlobHash()).thenReturn(new HashValue(SHA256, "blob-sha"));
         when(register.getItemByV1Hash(new HashValue(SHA256, "item-sha"))).thenReturn(Optional.of(item));
         when(register.getTotalEntries(EntryType.user)).thenReturn(2);
-        sutHandler.execute(appendEntryCommand, register);
+        sutHandler.execute(appendEntryCommand, register, proofGenerator);
         Entry expectedEntry = new Entry(3, new HashValue(SHA256, "item-sha"), new HashValue(SHA256, "blob-sha"), july24, "entry1-field-1-value", EntryType.user);
         verify(register, times(1)).appendEntry(expectedEntry);
     }
@@ -73,7 +77,7 @@ public class AppendEntryCommandHandlerTest {
     public void execute_appendsEntryToRegisterWithoutItemThrowsException() {
         expectedException.expect(RSFParseException.class);
         expectedException.expectMessage("Item not found for hash item-sha");
-        sutHandler.execute(appendEntryCommand, register);
+        sutHandler.execute(appendEntryCommand, register, proofGenerator);
     }
 
     @Test (expected = RSFParseException.class)
@@ -102,7 +106,7 @@ public class AppendEntryCommandHandlerTest {
 
     private void assertExceptionThrown(RegisterCommand command, String exceptionMessage) throws RSFParseException {
         try {
-            sutHandler.execute(command, register);
+            sutHandler.execute(command, register, proofGenerator);
         } catch (RSFParseException exception) {
             assertThat(exception.getMessage(), startsWith(exceptionMessage));
             throw exception;
