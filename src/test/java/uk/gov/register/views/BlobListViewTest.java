@@ -3,6 +3,7 @@ package uk.gov.register.views;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
@@ -22,7 +23,6 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class BlobListViewTest {
 
@@ -59,11 +59,18 @@ public class BlobListViewTest {
 
         JsonNode jsonNode = objectMapper.readTree(result);
 
-        assertTrue(jsonNode.has(blobHash1));
-        assertTrue(jsonNode.has(blobHash2));
+        assertThat(jsonNode.size(), equalTo(2));
+        JsonNode blob1 = jsonNode.get(0);
+        JsonNode blob2 = jsonNode.get(1);
 
-        assertThat(jsonNode.get(blobHash1), equalTo(blobNode1));
-        assertThat(jsonNode.get(blobHash2), equalTo(blobNode2));
+        assertThat(blob1.get("_id").textValue(), equalTo(blobHash1));
+        assertThat(blob2.get("_id").textValue(), equalTo(blobHash2));
+
+        ((ObjectNode) blob1).remove("_id");
+        ((ObjectNode) blob2).remove("_id");
+
+        assertThat(blob1, equalTo(blobNode1));
+        assertThat(blob2, equalTo(blobNode2));
     }
 
     @Test
@@ -81,10 +88,9 @@ public class BlobListViewTest {
         String result = new String(bytes, StandardCharsets.UTF_8);
 
         assertThat(result, equalTo(
-                "blob-hash,street,address\r\n" +
-                        "\"" + blobHash2 + "\",bar,456\r\n" +
-                        "\"" + blobHash1 + "\",foo,123\r\n"
-
+                "_id,street,address\r\n" +
+                        "\"" + blobHash1 + "\",foo,123\r\n" +
+                        "\"" + blobHash2 + "\",bar,456\r\n"
         ));
     }
 }
