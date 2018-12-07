@@ -37,7 +37,8 @@ public class RegisterContext implements
     private RegisterId registerId;
     private ConfigManager configManager;
     private final EnvironmentValidator environmentValidator;
-    private AtomicReference<MemoizationStore> memoizationStore;
+    private AtomicReference<MemoizationStore> memoizationStoreV1;
+    private AtomicReference<MemoizationStore> memoizationStoreV2;
     private DBI dbi;
     private Flyway flyway;
     private final String schema;
@@ -56,7 +57,8 @@ public class RegisterContext implements
         this.dbi = dbi;
         this.flyway = flyway;
         this.schema = schema;
-        this.memoizationStore = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
+        this.memoizationStoreV1 = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
+        this.memoizationStoreV2 = new AtomicReference<>(new InMemoryPowOfTwoNoLeaves());
         this.enableRegisterDataDelete = enableRegisterDataDelete;
         this.enableDownloadResource = enableDownloadResource;
         this.authenticator = authenticator;
@@ -105,7 +107,7 @@ public class RegisterContext implements
     }
 
     public void transactionalRegisterOperation(Consumer<Register> consumer) {
-        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStore.get());
+        TransactionalMemoizationStore transactionalMemoizationStore = new TransactionalMemoizationStore(memoizationStoreV1.get());
         useTransaction(dbi, handle -> {
             BatchedPostgresDataAccessLayer dataAccessLayer = getTransactionalDataAccessLayer(handle);
             Register register = buildTransactionalRegister(dataAccessLayer, transactionalMemoizationStore);
@@ -119,7 +121,8 @@ public class RegisterContext implements
         if (enableRegisterDataDelete) {
             flyway.clean();
             configManager.refreshConfig();
-            memoizationStore.set(new InMemoryPowOfTwoNoLeaves());
+            memoizationStoreV1.set(new InMemoryPowOfTwoNoLeaves());
+            memoizationStoreV2.set(new InMemoryPowOfTwoNoLeaves());
             flyway.migrate();
 
             hasConsistentState = true;
@@ -149,7 +152,7 @@ public class RegisterContext implements
             VerifiableLog verifiableLog = new VerifiableLog(
                     DigestUtils.getSha256Digest(),
                     new V1EntryMerkleLeafStore(entryIterator),
-                    memoizationStore.get());
+                    memoizationStoreV1.get());
             return callback.apply(verifiableLog);
         });
     }
@@ -159,7 +162,7 @@ public class RegisterContext implements
             VerifiableLog verifiableLog = new VerifiableLog(
                     DigestUtils.getSha256Digest(),
                     new EntryMerkleLeafStore(entryIterator),
-                    memoizationStore.get());
+                    memoizationStoreV2.get());
             return callback.apply(verifiableLog);
         });
     }
