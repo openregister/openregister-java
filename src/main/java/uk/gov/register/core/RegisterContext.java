@@ -122,6 +122,7 @@ public class RegisterContext implements
             flyway.clean();
             configManager.refreshConfig();
             memoizationStoreV1.set(new InMemoryPowOfTwoNoLeaves());
+            memoizationStoreV2.set(new InMemoryPowOfTwoNoLeaves());
             flyway.migrate();
 
             hasConsistentState = true;
