@@ -62,9 +62,8 @@ public class RecordViewTest {
         String result = objectMapper.writeValueAsString(view);
         JsonNode jsonNode = objectMapper.readTree(result);
 
-        assertThat(jsonNode.get("entry-number").intValue(), equalTo(1));
-        assertThat(jsonNode.get("entry-timestamp").textValue(), equalTo("2016-03-29T08:59:25Z"));
-        assertThat(jsonNode.get("key").textValue(), equalTo("123"));
-        assertThat(jsonNode.get("blob"), equalTo(this.itemNode1));
+        assertThat(jsonNode.get("_id").textValue(), equalTo("123"));
+        assertThat(jsonNode.get("address").textValue(), equalTo("123"));
+        assertThat(jsonNode.get("street").textValue(), equalTo("foo"));
     }
 }

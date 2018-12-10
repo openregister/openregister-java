@@ -69,26 +69,18 @@ public class RecordListViewTest {
         RecordListView view = new RecordListView(Arrays.asList(this.record1, this.record2), fieldsByName);
         String result = objectMapper.writeValueAsString(view);
         JsonNode jsonNode = objectMapper.readTree(result);
-
-        assertTrue(jsonNode.has("123"));
-        assertTrue(jsonNode.has("456"));
-
-        JsonNode record1Node = jsonNode.get("123");
-        JsonNode record2Node = jsonNode.get("456");
+        assertTrue(jsonNode.isArray());
+        JsonNode record1Node = jsonNode.get(0);
+        JsonNode record2Node = jsonNode.get(1);
         assertHasRecordFields(record1Node);
         assertHasRecordFields(record2Node);
 
-        assertThat(record1Node.get("entry-number").intValue(), equalTo(1));
-        assertThat(record2Node.get("entry-number").intValue(), equalTo(2));
-
-        assertThat(record1Node.get("entry-timestamp").textValue(), equalTo("2016-03-29T08:59:25Z"));
-        assertThat(record2Node.get("entry-timestamp").textValue(), equalTo("2016-03-28T09:49:26Z"));
-
-        assertThat(record1Node.get("key").textValue(), equalTo("123"));
-        assertThat(record2Node.get("key").textValue(), equalTo("456"));
-
-        assertThat(record1Node.get("blob"), equalTo(itemNode1));
-        assertThat(record2Node.get("blob"), equalTo(itemNode2));
+        assertThat(record1Node.get("_id").asInt(), equalTo(123));
+        assertThat(record1Node.get("street").asText(), equalTo("foo"));
+        assertThat(record1Node.get("address").asInt(), equalTo(123));
+        assertThat(record2Node.get("_id").asInt(), equalTo(456));
+        assertThat(record2Node.get("street").asText(), equalTo("bar"));
+        assertThat(record2Node.get("address").asInt(), equalTo(456));
     }
 
     @Test
@@ -108,15 +100,13 @@ public class RecordListViewTest {
         String result = new String(bytes, StandardCharsets.UTF_8);
 
         assertThat(result, equalTo(
-                "entry-number,entry-timestamp,key,street,address\r\n" +
-                        "1,2016-03-29T08:59:25Z,123,foo,123\r\n" +
-                        "2,2016-03-28T09:49:26Z,456,bar,456\r\n"
+                "_id,street,address\r\n123,foo,123\r\n456,bar,456\r\n"
         ));
     }
 
     private void assertHasRecordFields(JsonNode node) {
         Set<String> fields = new HashSet<>();
         node.fieldNames().forEachRemaining(fields::add);
-        assertThat(fields, equalTo(new HashSet<>(Arrays.asList("entry-number", "key", "entry-timestamp", "blob"))));
+        assertThat(fields, equalTo(new HashSet<>(Arrays.asList("address", "street", "_id"))));
     }
 }

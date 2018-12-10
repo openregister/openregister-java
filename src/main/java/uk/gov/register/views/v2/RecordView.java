@@ -54,27 +54,18 @@ public class RecordView implements CsvRepresentationView<ObjectNode> {
 
     @JsonValue
     public JsonNode getContent() {
-        final ObjectNode result = jsonObjectMapper.createObjectNode();
-        result.putPOJO("blob", itemView);
-        result.put("entry-number", this.getEntry().getEntryNumber());
-        result.put("entry-timestamp", this.getEntry().getTimestampAsISOFormat());
-        result.put("key", this.getEntry().getKey());
-        return result;
+        return getFlatRecordJson();
     }
 
     protected ObjectNode getFlatRecordJson() {
         ObjectNode result = jsonObjectMapper.convertValue(itemView, ObjectNode.class);
-        result.put("entry-number", this.getEntry().getEntryNumber());
-        result.put("entry-timestamp", this.getEntry().getTimestampAsISOFormat());
-        result.put("key", this.getEntry().getKey());
+        result.put("_id", this.getEntry().getKey());
         return result;
     }
 
     public CsvSchema csvSchema() {
         CsvSchema.Builder schemaBuilder = new CsvSchema.Builder();
-        schemaBuilder.addColumn("entry-number", CsvSchema.ColumnType.NUMBER);
-        schemaBuilder.addColumn("entry-timestamp", CsvSchema.ColumnType.STRING);
-        schemaBuilder.addColumn("key", CsvSchema.ColumnType.STRING);
+        schemaBuilder.addColumn("_id", CsvSchema.ColumnType.STRING);
 
         for (String value : getFieldNames()) {
             schemaBuilder.addColumn(value, CsvSchema.ColumnType.STRING);
