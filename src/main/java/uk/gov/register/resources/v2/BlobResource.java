@@ -13,6 +13,7 @@ import uk.gov.register.views.v2.BlobListView;
 import uk.gov.register.views.ItemView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
+import uk.gov.register.views.v2.BlobView;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -46,8 +47,8 @@ public class BlobResource {
             ExtraMediaType.TEXT_CSV,
     })
     @Timed
-    public ItemView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
-        return getBlob(blobHash).map(blob -> buildItemView(blob))
+    public BlobView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
+        return getBlob(blobHash).map(blob -> buildBlobView(blob))
                 .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + blobHash));
     }
 
@@ -74,8 +75,8 @@ public class BlobResource {
         return register.getFieldsByName();
     }
 
-    protected ItemView buildItemView(Item item) {
-        return new ItemView(item, register.getFieldsByName(), this.itemConverter);
+    protected BlobView buildBlobView(Item item) {
+        return new BlobView(item, register.getFieldsByName(), this.itemConverter);
     }
 
     protected BlobListView buildBlobListView(Collection<Item> items) {

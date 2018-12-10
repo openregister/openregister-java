@@ -1,4 +1,4 @@
-package uk.gov.register.views;
+package uk.gov.register.views.v2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

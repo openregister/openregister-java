@@ -33,12 +33,7 @@ public class BlobListView implements CsvRepresentationView {
     }
 
     public static CsvSchema csvSchema(Iterable<String> fields) {
-        CsvSchema.Builder schemaBuilder = new CsvSchema.Builder();
-        schemaBuilder.addColumn("_id", CsvSchema.ColumnType.STRING);
-        for (String value : fields) {
-            schemaBuilder.addColumn(value, CsvSchema.ColumnType.STRING);
-        }
-        return schemaBuilder.build();
+        return BlobView.csvSchema(fields);
     }
 
     @Override
