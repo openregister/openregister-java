@@ -12,11 +12,12 @@ import uk.gov.register.util.HashValue;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
-public class ItemMapper implements ResultSetMapper<Item> {
+public class ItemMapperWithOrder implements ResultSetMapper<Item> {
     private final ObjectMapper objectMapper;
 
-    public ItemMapper() {
+    public ItemMapperWithOrder() {
         objectMapper = Jackson.newObjectMapper();
     }
 
@@ -26,7 +27,8 @@ public class ItemMapper implements ResultSetMapper<Item> {
             return new Item(
                     new HashValue(HashingAlgorithm.SHA256, r.getString("sha256hex")),
                     new HashValue(HashingAlgorithm.SHA256, r.getString("blob_hash")),
-                    objectMapper.readValue(r.getString("content"), JsonNode.class)
+                    objectMapper.readValue(r.getString("content"), JsonNode.class),
+                    Optional.of(r.getInt("item_order"))
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -87,7 +87,7 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
             default: throw new RuntimeException("Entry type not recognised");
         }
     }
-
+    
     @Override
     public Optional<Instant> getLastUpdatedTime() {
         return entryQueryDAO.getLastUpdatedTime(schema);
@@ -118,6 +118,11 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
     @Override
     public Collection<Item> getAllItems(EntryType entryType) {
         return itemQueryDAO.getAllItemsNoPagination(schema, getEntryTable(entryType));
+    }
+
+    @Override
+    public Collection<Item> getUserItemsPaginated(int start, int limit) {
+        return itemQueryDAO.getUserItems(start, limit, schema);
     }
 
     @Override

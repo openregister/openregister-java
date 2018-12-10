@@ -40,6 +40,11 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
+    public Collection<Item> getUserItemsPaginated(int start, int limit) {
+        return dataAccessLayer.getUserItemsPaginated(start, limit);
+    }
+
+    @Override
     public Iterator<Item> getItemIterator(EntryType entryType) {
         return dataAccessLayer.getItemIterator(entryType);
     }

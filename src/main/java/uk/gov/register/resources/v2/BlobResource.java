@@ -1,12 +1,17 @@
 package uk.gov.register.resources.v2;
 
 import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.jersey.params.IntParam;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.Field;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.core.Item;
 import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.exceptions.FieldConversionException;
+import uk.gov.register.providers.params.IntegerParam;
+import uk.gov.register.resources.HttpServletResponseAdapter;
+import uk.gov.register.resources.RequestContext;
+import uk.gov.register.resources.StartLimitPagination;
 import uk.gov.register.service.ItemConverter;
 import uk.gov.register.util.HashValue;
 import uk.gov.register.views.v2.BlobListView;
@@ -21,6 +26,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 import java.util.Map;
@@ -32,12 +38,16 @@ public class BlobResource {
     protected final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
     protected final ItemConverter itemConverter;
+    private final RequestContext requestContext;
+    private final HttpServletResponseAdapter httpServletResponseAdapter;
 
     @Inject
-    public BlobResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter) {
+    public BlobResource(RegisterReadOnly register, ViewFactory viewFactory, ItemConverter itemConverter, RequestContext requestContext) {
         this.register = register;
         this.viewFactory = viewFactory;
         this.itemConverter = itemConverter;
+        this.requestContext = requestContext;
+        this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.getHttpServletResponse());
     }
 
     @GET
@@ -59,11 +69,21 @@ public class BlobResource {
             ExtraMediaType.TEXT_CSV,
     })
     @Timed
-    public BlobListView listBlobs() throws FieldConversionException {
-        Collection<Item> items = register.getAllItems(EntryType.user);
+    public BlobListView listBlobs(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) throws FieldConversionException {
+        int start = optionalStart.map(IntParam::get).orElse(1);
+        int limit =  optionalLimit.map(IntParam::get).orElse(100);
 
-        // TODO: allow this resource to be paginated
-        return buildBlobListView(items.stream().limit(100).collect(Collectors.toList()));
+        Collection<Item> items = register.getUserItemsPaginated(start, limit + 1);
+
+        boolean hasNext = (items.size() == limit + 1);
+
+        if(hasNext) {
+            Item finalBlob = items.stream().skip(limit).findFirst().get();
+            int nextStart = finalBlob.getItemOrder().get();
+            setNextHeader(nextStart, limit);
+        }
+
+        return buildBlobListView(items.stream().limit(limit).collect(Collectors.toList()));
     }
 
     protected Optional<Item> getBlob(String blobHash) {
@@ -81,5 +101,10 @@ public class BlobResource {
 
     protected BlobListView buildBlobListView(Collection<Item> items) {
         return new BlobListView(items, getFieldsByName());
+    }
+
+    private void setNextHeader(int nextStart, int limit) {
+        String nextUrl = String.format("?start=%s&limit=%s", nextStart, limit);
+        httpServletResponseAdapter.setLinkHeader("next", nextUrl);
     }
 }
