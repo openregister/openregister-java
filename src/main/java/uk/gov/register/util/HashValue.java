@@ -7,21 +7,20 @@ import uk.gov.register.exceptions.HashDecodeException;
 
 public class HashValue {
     private final String value;
-    private final String hashingAlgorithm;
+    private final HashingAlgorithm hashingAlgorithm;
 
     public HashValue(HashingAlgorithm hashingAlgorithm, String value) {
-        this.hashingAlgorithm = hashingAlgorithm.toString();
-        this.value = value;
-    }
-
-    public HashValue(String hashingAlgorithm, String value) {
         this.hashingAlgorithm = hashingAlgorithm;
         this.value = value;
     }
 
     @JsonValue
     public String encode() {
-        return hashingAlgorithm + ":" + value;
+        return hashingAlgorithm.toString() + value;
+    }
+
+    public String multihash() {
+        return this.hashingAlgorithm.multihashPrefix() + value;
     }
 
     @JsonIgnore
@@ -34,7 +33,7 @@ public class HashValue {
             throw new HashDecodeException(String.format("Hash \"%s\" has not been encoded with hashing algorithm \"%s\"", encodedHash, hashingAlgorithm));
         }
 
-        String[] parts = encodedHash.split(hashingAlgorithm + ":");
+        String[] parts = encodedHash.split(hashingAlgorithm.toString());
 
         if (parts.length != 2) {
             throw new HashDecodeException(String.format("Cannot decode hash %s", encodedHash));
@@ -52,13 +51,13 @@ public class HashValue {
 
         if (value != null ? !value.equals(hashValue.value) : hashValue.value != null) return false;
 
-        return hashingAlgorithm != null ? hashingAlgorithm.equals(hashValue.hashingAlgorithm) : hashValue.hashingAlgorithm == null;
+        return hashingAlgorithm != null ? hashingAlgorithm.toString().equals(hashValue.hashingAlgorithm.toString()) : hashValue.hashingAlgorithm == null;
     }
 
     @Override
     public int hashCode() {
         int result = value != null ? value.hashCode() : 0;
-        result = 31 * result + (hashingAlgorithm != null ? hashingAlgorithm.hashCode() : 0);
+        result = 31 * result + (hashingAlgorithm != null ? hashingAlgorithm.toString().hashCode() : 0);
         return result;
     }
 

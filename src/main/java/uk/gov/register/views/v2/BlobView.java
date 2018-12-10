@@ -23,7 +23,7 @@ public class BlobView implements CsvRepresentationView<Map<String, FieldValue>> 
     public BlobView(Item item, final Map<String, Field> fieldsByName, final ItemConverter itemConverter) {
         this.fields = fieldsByName.values();
         this.fieldValueMap = new LinkedHashMap<>(itemConverter.convertItem(item, fieldsByName));
-        this.fieldValueMap.put("_id", new StringValue(item.getBlobHash().encode()));
+        this.fieldValueMap.put("_id", new StringValue(item.getBlobHash().multihash()));
     }
 
     @JsonValue

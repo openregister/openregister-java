@@ -39,7 +39,7 @@ public class EntryViewTest {
                 "\"entry-number\":1," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
-                "\"blob-hash\":\"sha-256:cd\"" +
+                "\"blob-hash\":\"1220cd\"" +
                 "}"));
     }
 
@@ -59,7 +59,7 @@ public class EntryViewTest {
 
         assertThat(result, equalTo(
                 "entry-number,entry-timestamp,key,blob-hash\r\n" +
-                "1,2016-08-05T13:24:00Z,b,sha-256:cd\r\n"
+                "1,2016-08-05T13:24:00Z,b,1220cd\r\n"
         ));
     }
 }

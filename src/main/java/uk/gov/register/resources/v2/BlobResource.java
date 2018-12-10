@@ -52,7 +52,7 @@ public class BlobResource {
     }
 
     @GET
-    @Path("/sha-256:{blob-hash}")
+    @Path("/1220{blob-hash}")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_CSV,

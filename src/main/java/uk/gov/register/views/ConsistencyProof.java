@@ -2,6 +2,7 @@ package uk.gov.register.views;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.apache.commons.lang3.StringUtils;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.util.HashValue;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @JsonPropertyOrder({"proof-identifier", "merkle-consistency-nodes"})
 public class ConsistencyProof {
 
-    private static final String proofIdentifier = "merkle:" + HashingAlgorithm.SHA256.toString();
+    private static final String proofIdentifier = "merkle:" + StringUtils.chop(HashingAlgorithm.SHA256.toString());
     private final List<HashValue> consistencyNodes;
 
     public ConsistencyProof(List<HashValue> consistencyNodes) {

@@ -15,7 +15,7 @@ public class HashValueTest {
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "hash");
         String encodedHash = hashValue.encode();
 
-        assertThat(encodedHash, equalTo(HashingAlgorithm.SHA256.toString() + ":hash"));
+        assertThat(encodedHash, equalTo(HashingAlgorithm.SHA256.toString() + "hash"));
     }
 
     @Test
