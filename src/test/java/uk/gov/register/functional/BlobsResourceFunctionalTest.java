@@ -108,6 +108,6 @@ public class BlobsResourceFunctionalTest {
     }
 
     private String extractStartParam(String linkHeader) {
-        return linkHeader.replaceAll("<\\?start=(\\d+)&limit=2>; rel=\"next\"", "$1");
+        return linkHeader.replaceAll("<\\?start=([a-f0-9]+)&limit=2>; rel=\"next\"", "$1");
     }
 }

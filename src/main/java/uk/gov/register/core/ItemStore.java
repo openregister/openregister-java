@@ -16,7 +16,7 @@ public interface ItemStore {
 
     Collection<Item> getAllItems(EntryType entryType);
 
-    Collection<Item> getUserItemsPaginated(int start, int limit);
+    Collection<Item> getUserItemsPaginated(Optional<HashValue> start, int limit);
 
     Iterator<Item> getItemIterator(EntryType entryType);
 

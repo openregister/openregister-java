@@ -38,7 +38,6 @@ public class BlobResource {
     protected final RegisterReadOnly register;
     protected final ViewFactory viewFactory;
     protected final ItemConverter itemConverter;
-    private final RequestContext requestContext;
     private final HttpServletResponseAdapter httpServletResponseAdapter;
 
     @Inject
@@ -46,7 +45,6 @@ public class BlobResource {
         this.register = register;
         this.viewFactory = viewFactory;
         this.itemConverter = itemConverter;
-        this.requestContext = requestContext;
         this.httpServletResponseAdapter = new HttpServletResponseAdapter(requestContext.getHttpServletResponse());
     }
 
@@ -69,8 +67,8 @@ public class BlobResource {
             ExtraMediaType.TEXT_CSV,
     })
     @Timed
-    public BlobListView listBlobs(@QueryParam("start") Optional<IntegerParam> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) throws FieldConversionException {
-        int start = optionalStart.map(IntParam::get).orElse(1);
+    public BlobListView listBlobs(@QueryParam("start") Optional<String> optionalStart, @QueryParam("limit") Optional<IntegerParam> optionalLimit) throws FieldConversionException {
+        Optional<HashValue> start = optionalStart.map(value -> new HashValue(HashingAlgorithm.SHA256, value));
         int limit =  optionalLimit.map(IntParam::get).orElse(100);
 
         Collection<Item> items = register.getUserItemsPaginated(start, limit + 1);
@@ -79,7 +77,7 @@ public class BlobResource {
 
         if(hasNext) {
             Item finalBlob = items.stream().skip(limit).findFirst().get();
-            int nextStart = finalBlob.getItemOrder().get();
+            String nextStart = finalBlob.getBlobHash().getValue();
             setNextHeader(nextStart, limit);
         }
 
@@ -103,7 +101,7 @@ public class BlobResource {
         return new BlobListView(items, getFieldsByName());
     }
 
-    private void setNextHeader(int nextStart, int limit) {
+    private void setNextHeader(String nextStart, int limit) {
         String nextUrl = String.format("?start=%s&limit=%s", nextStart, limit);
         httpServletResponseAdapter.setLinkHeader("next", nextUrl);
     }

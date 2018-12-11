@@ -40,7 +40,7 @@ public class ItemStoreImpl implements ItemStore {
     }
 
     @Override
-    public Collection<Item> getUserItemsPaginated(int start, int limit) {
+    public Collection<Item> getUserItemsPaginated(Optional<HashValue> start, int limit) {
         return dataAccessLayer.getUserItemsPaginated(start, limit);
     }
 

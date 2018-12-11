@@ -87,7 +87,7 @@ public class RegisterImpl implements Register {
     }
 
     @Override
-    public Collection<Item> getUserItemsPaginated(int start, int limit) {
+    public Collection<Item> getUserItemsPaginated(Optional<HashValue> start, int limit) {
         return itemStore.getUserItemsPaginated(start, limit);
     }
 

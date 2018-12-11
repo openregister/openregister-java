@@ -21,7 +21,7 @@ public interface RegisterReadOnly {
     Collection<Item> getAllItems(EntryType entryType);
     Iterator<Item> getItemIterator(EntryType entryType);
     Iterator<Item> getItemIterator(int start, int end);
-    Collection<Item> getUserItemsPaginated(int start, int limit);
+    Collection<Item> getUserItemsPaginated(Optional<HashValue> start, int limit);
 
     Optional<Entry> getEntry(int entryNumber);
     Collection<Entry> getEntries(int start, int limit);
