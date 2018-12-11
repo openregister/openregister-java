@@ -28,7 +28,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,11 +74,12 @@ public class BlobResource {
         int limit =  optionalLimit.map(IntParam::get).orElse(100);
 
         Collection<Item> items = register.getUserItemsPaginated(start, limit + 1);
+        List<Item> itemsList = new ArrayList<>(items);
 
         boolean hasNext = (items.size() == limit + 1);
 
         if(hasNext) {
-            Item finalBlob = items.stream().skip(limit).findFirst().get();
+            Item finalBlob = itemsList.get(limit);
             String nextStart = finalBlob.getBlobHash().getValue();
             setNextHeader(nextStart, limit);
         }
