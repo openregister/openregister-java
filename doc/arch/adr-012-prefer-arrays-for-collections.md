@@ -21,7 +21,8 @@ We currently have an undocumented, incomplete version of this endpoint at `/next
 [RFC 25](https://github.com/openregister/registers-rfcs/blob/master/content/snapshot-resource/index.md) established this
 pattern for records specifically.
 
-We intend to make the blobs resource consistent with this decision, although the specification doesn't reflect this yet.
+[RFC 27](https://github.com/openregister/registers-rfcs/blob/master/content/blob-collection-resource/index.md) extends
+this to the blobs resource.
 
 We will still follow the decision in ADR 8 to order blobs by their order of arrival to the database.
 
