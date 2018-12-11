@@ -20,7 +20,6 @@ public class Item {
     private final JsonNode content;
     private final HashValue v1HashValue;
     private final HashValue blobHash;
-    private final Optional<Integer> itemOrder;
 
     public Item(JsonNode content) {
         this(itemHash(content), JsonToBlobHash.apply(content), content);
@@ -30,14 +29,6 @@ public class Item {
         this.v1HashValue = v1HashValue;
         this.blobHash = blobHash;
         this.content = content;
-        this.itemOrder = Optional.empty();
-    }
-
-    public Item(HashValue v1HashValue, HashValue blobHash, JsonNode content, Optional<Integer> itemOrder) {
-        this.v1HashValue = v1HashValue;
-        this.blobHash = blobHash;
-        this.content = content;
-        this.itemOrder = itemOrder;
     }
 
     public static HashValue itemHash(JsonNode content) {
@@ -56,13 +47,6 @@ public class Item {
 
     public JsonNode getContent() {
         return content;
-    }
-
-    /*
-     * Value may not be available. Used for pagination.
-     */
-    public Optional<Integer> getItemOrder() {
-        return this.itemOrder;
     }
 
     @SuppressWarnings("unused, used by DAO")

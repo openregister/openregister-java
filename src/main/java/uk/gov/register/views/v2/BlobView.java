@@ -11,6 +11,7 @@ import uk.gov.register.views.CsvRepresentationView;
 import uk.gov.register.views.representations.CsvRepresentation;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -21,7 +22,7 @@ public class BlobView implements CsvRepresentationView<Map<String, FieldValue>> 
 
     public BlobView(Item item, final Map<String, Field> fieldsByName, final ItemConverter itemConverter) {
         this.fields = fieldsByName.values();
-        this.fieldValueMap = new HashMap(itemConverter.convertItem(item, fieldsByName));
+        this.fieldValueMap = new LinkedHashMap<>(itemConverter.convertItem(item, fieldsByName));
         this.fieldValueMap.put("_id", new StringValue(item.getBlobHash().encode()));
     }
 

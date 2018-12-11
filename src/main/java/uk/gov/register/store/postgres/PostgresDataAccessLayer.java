@@ -87,7 +87,7 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
             default: throw new RuntimeException("Entry type not recognised");
         }
     }
-    
+
     @Override
     public Optional<Instant> getLastUpdatedTime() {
         return entryQueryDAO.getLastUpdatedTime(schema);

@@ -56,7 +56,7 @@ public class BlobResource {
     })
     @Timed
     public BlobView getBlobDataByHex(@PathParam("blob-hash") String blobHash) throws FieldConversionException {
-        return getBlob(blobHash).map(blob -> buildBlobView(blob))
+        return getBlob(blobHash).map(this::buildBlobView)
                 .orElseThrow(() -> new NotFoundException("No blob found with blob hash: " + blobHash));
     }
 
@@ -93,11 +93,11 @@ public class BlobResource {
         return register.getFieldsByName();
     }
 
-    protected BlobView buildBlobView(Item item) {
+    private BlobView buildBlobView(Item item) {
         return new BlobView(item, register.getFieldsByName(), this.itemConverter);
     }
 
-    protected BlobListView buildBlobListView(Collection<Item> items) {
+    private BlobListView buildBlobListView(Collection<Item> items) {
         return new BlobListView(items, getFieldsByName());
     }
 
