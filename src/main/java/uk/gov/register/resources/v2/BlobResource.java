@@ -21,6 +21,7 @@ import uk.gov.register.views.representations.ExtraMediaType;
 import uk.gov.register.views.v2.BlobView;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -73,6 +74,9 @@ public class BlobResource {
         Optional<HashValue> start = optionalStart.map(value -> new HashValue(HashingAlgorithm.SHA256, value));
         int limit =  optionalLimit.map(IntParam::get).orElse(100);
 
+        validateLimit(limit);
+        start.ifPresent(this::validateStart);
+
         Collection<Item> items = register.getUserItemsPaginated(start, limit + 1);
         List<Item> itemsList = new ArrayList<>(items);
 
@@ -107,5 +111,22 @@ public class BlobResource {
     private void setNextHeader(String nextStart, int limit) {
         String nextUrl = String.format("?start=%s&limit=%s", nextStart, limit);
         httpServletResponseAdapter.setLinkHeader("next", nextUrl);
+    }
+
+    private void validateLimit(int limit) {
+        if (limit > 5000) {
+            throw new BadRequestException("limit too big, maximum page size is 5000.");
+        }
+
+        if (limit <= 0) {
+            throw new BadRequestException("limit must be greater than 0.");
+        }
+    }
+
+    private void validateStart(HashValue start) {
+        // This should only happen if a user is not using the link header for pagination
+        if (!register.getItem(start).isPresent()) {
+            throw new BadRequestException("start value is invalid");
+        }
     }
 }

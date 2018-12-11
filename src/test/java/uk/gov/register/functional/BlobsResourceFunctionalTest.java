@@ -103,6 +103,31 @@ public class BlobsResourceFunctionalTest {
         assertTrue(hasNextPage(response));
     }
 
+    @Test
+    public void cannotSetLimitBelowZero() {
+        Response response = addressTarget.path("/next/blobs.json")
+                .queryParam("limit", -1)
+                .request().get();
+        assertEquals(400, response.getStatus());
+    }
+
+    @Test
+    public void cannotSetLimitAbove5000() {
+        Response response = addressTarget.path("/next/blobs.json")
+                .queryParam("limit", 5001)
+                .request().get();
+        assertEquals(400, response.getStatus());
+    }
+
+    @Test
+    public void cannotSetInvalidStartValue() {
+        Response response = addressTarget.path("/next/blobs.json")
+                .queryParam("limit", 10)
+                .queryParam("start", "abcdef")
+                .request().get();
+        assertEquals(400, response.getStatus());
+    }
+
     private boolean hasNextPage(Response response) {
         return response.getStringHeaders().containsKey("Link");
     }
