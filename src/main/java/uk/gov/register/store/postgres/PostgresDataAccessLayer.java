@@ -121,6 +121,15 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
+    public Collection<Item> getUserItemsPaginated(Optional<HashValue> start, int limit) {
+        if(start.isPresent()) {
+            return itemQueryDAO.getUserItemsAfter(start.get().getValue(), limit, schema);
+        } else {
+            return itemQueryDAO.getUserItems(limit, schema);
+        }
+    }
+
+    @Override
     public Iterator<Item> getItemIterator(EntryType entryType) {
         return itemQueryDAO.getIterator(schema, getEntryTable(entryType));
     }

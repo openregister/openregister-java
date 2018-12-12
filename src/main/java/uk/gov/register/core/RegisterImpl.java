@@ -86,6 +86,11 @@ public class RegisterImpl implements Register {
         return itemStore.getUserItemIterator(start, end);
     }
 
+    @Override
+    public Collection<Item> getUserItemsPaginated(Optional<HashValue> start, int limit) {
+        return itemStore.getUserItemsPaginated(start, limit);
+    }
+
     //endregion
 
     //region Entries
