@@ -223,7 +223,6 @@ task createDeployableBundle(type: Zip) {
     baseName('openregister-java')
     from('deploy/')
     include('*')
-    include('scripts/**/*.sh')
     include('manifests/**/*.yml')
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
