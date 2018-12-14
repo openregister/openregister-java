@@ -1,6 +1,6 @@
 csvvalidator==1.2
 jsonschema==2.5.1
--e git+https://github.com/openregister/conformance-test.git@9240886b4f6004ccc716d788bb7ad2627f08e7e1#egg=openregister_conformance-master
+-e git+https://github.com/openregister/conformance-test.git@5bd9c8f59d6adb742c5ad988388725bd19572616#egg=openregister_conformance-master
 py==1.7.0
 pytest==3.10.0
 PyYAML==3.11
