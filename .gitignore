@@ -26,3 +26,4 @@ deployable_bundle
 .cache
 
 .sass-cache
+node_modules

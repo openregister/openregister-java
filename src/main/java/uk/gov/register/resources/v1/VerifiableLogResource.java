@@ -5,6 +5,7 @@ import uk.gov.register.core.EntryLog;
 import uk.gov.register.core.EntryType;
 import uk.gov.register.core.RegisterContext;
 import uk.gov.register.proofs.ProofGenerator;
+import uk.gov.register.util.HashValue;
 import uk.gov.register.views.ConsistencyProof;
 import uk.gov.register.views.EntryProof;
 import uk.gov.register.views.RegisterProof;
@@ -19,6 +20,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import java.util.List;
 
 import static uk.gov.register.resources.RedirectResource.redirectByPath;
 
@@ -59,7 +62,9 @@ public class VerifiableLogResource {
     @Timed
     public EntryProof entryProof(@PathParam("entry-number") int entryNumber, @PathParam("total-entries") int totalEntries) {
         validateEntryProofParams(entryNumber, totalEntries);
-        return registerContext.withV1VerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getEntryProof(entryNumber, totalEntries));
+
+        List<HashValue> auditPath = registerContext.withV1VerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getLeafAuditPath(entryNumber, totalEntries));
+        return new EntryProof(Integer.toString(entryNumber), auditPath);
     }
 
     @GET
@@ -68,7 +73,8 @@ public class VerifiableLogResource {
     @Timed
     public ConsistencyProof consistencyProof(@PathParam("total-entries-1") int totalEntries1, @PathParam("total-entries-2") int totalEntries2) {
         validateConsistencyProofParams(totalEntries1, totalEntries2);
-        return registerContext.withV1VerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getConsistencyProof(totalEntries1, totalEntries2));
+        List<HashValue> auditPath = registerContext.withV1VerifiableLog(verifiableLog -> new ProofGenerator(verifiableLog).getAuditPath(totalEntries1, totalEntries2));
+        return new ConsistencyProof(auditPath);
     }
 
     private void validateEntryProofParams(int entryNumber, int totalEntries) {

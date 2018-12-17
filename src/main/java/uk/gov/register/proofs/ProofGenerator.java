@@ -30,22 +30,18 @@ public class ProofGenerator {
         return new HashValue(HashingAlgorithm.SHA256, bytesToString(verifiableLog.getCurrentRootHash()));
     }
 
-    public EntryProof getEntryProof(int entryNumber, int totalEntries) {
-        List<HashValue> auditProof = verifiableLog.auditProof(entryNumber - 1, totalEntries)
+    public List<HashValue> getLeafAuditPath(int entryNumber, int totalEntries) {
+        return verifiableLog.auditProof(entryNumber - 1, totalEntries)
                         .stream()
                         .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
                         .collect(Collectors.toList());
-
-        return new EntryProof(Integer.toString(entryNumber), auditProof);
     }
 
-    public ConsistencyProof getConsistencyProof(int totalEntries1, int totalEntries2) {
-        List<HashValue> consistencyProof = verifiableLog.consistencyProof(totalEntries1, totalEntries2)
+    public List<HashValue> getAuditPath(int totalEntries1, int totalEntries2) {
+         return verifiableLog.consistencyProof(totalEntries1, totalEntries2)
                         .stream()
                         .map(hashBytes -> new HashValue(HashingAlgorithm.SHA256, bytesToString(hashBytes)))
                         .collect(Collectors.toList());
-
-        return new ConsistencyProof(consistencyProof);
     }
 
     private String bytesToString(byte[] bytes) {
