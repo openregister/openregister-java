@@ -7,6 +7,7 @@ import uk.gov.register.core.Item;
 import uk.gov.register.core.Register;
 import uk.gov.register.exceptions.RSFParseException;
 import uk.gov.register.proofs.ProofGenerator;
+import uk.gov.register.service.EntryValidator;
 import uk.gov.register.util.HashValue;
 
 import java.nio.charset.StandardCharsets;
@@ -16,7 +17,7 @@ import static java.util.stream.Collectors.toList;
 import static uk.gov.register.core.HashingAlgorithm.SHA256;
 
 public class RSFExecutor {
-    public static final int RSF_HASH_POSITION = 3;
+    private static final int APPEND_ENTRY_HASH_POSITION = 3;
 
     private Map<String, RegisterCommandHandler> registeredHandlers;
 
@@ -67,11 +68,13 @@ public class RSFExecutor {
     }
 
     private void validateAppendEntry(RegisterCommand command, int rsfLine, Register register, Map<HashValue, Integer> hashRefLine) throws RSFParseException {
-        String delimitedHashes = command.getCommandArguments().get(RSF_HASH_POSITION);
+        List<String> commandArguments = command.getCommandArguments();
+
+        String delimitedHashes = commandArguments.get(APPEND_ENTRY_HASH_POSITION);
         if (StringUtils.isEmpty(delimitedHashes)) {
             return;
         }
-        
+
         List<HashValue> hashes = Splitter.on(";").splitToList(delimitedHashes).stream()
                 .map(s -> HashValue.decode(SHA256, s)).collect(toList());
 
