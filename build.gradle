@@ -1,10 +1,3 @@
-apply plugin: 'idea'
-apply plugin: 'java'
-apply from: 'external-dependencies.gradle'
-apply from: 'idea-config.gradle'
-
-group 'openregister'
-
 buildscript {
     repositories {
         jcenter()
@@ -13,29 +6,31 @@ buildscript {
     dependencies {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.13.0"
         classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
-        classpath "com.github.robfletcher:compass-gradle-plugin:2.0.6"
         classpath 'org.owasp:dependency-check-gradle:3.1.2'
     }
 }
 
+plugins {
+    id "com.moowork.node" version "1.2.0"
+}
+
+node {
+    version = '10.14.2'
+    download = true
+}
+
+apply plugin: 'idea'
+apply plugin: 'java'
+apply from: 'external-dependencies.gradle'
+apply from: 'idea-config.gradle'
+
+group 'openregister'
+
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: "com.github.robfletcher.compass"
 apply plugin: 'org.owasp.dependencycheck'
 
 def assetsDir = new File(projectDir, "src/main/resources/assets")
-
-compass {
-    importPath = files(
-            new File(assetsDir, "govuk_frontend_toolkit/stylesheets"),
-            new File(assetsDir, "govuk_template/source/assets/stylesheets")
-    )
-    sassDir = new File(assetsDir, "sass")
-    cssDir = file("build/resources/main/assets/css")
-    outputStyle = "expanded"
-    force = true
-    sourcemap = true
-}
 
 dependencyCheck {
     failBuildOnCVSS = 0
@@ -43,8 +38,8 @@ dependencyCheck {
     suppressionFile = 'dependency-check-suppressions.xml'
 }
 
-// because we build into src/main/resources, we need compassCompile to run before processResources
-processResources.dependsOn 'compassCompile'
+// because we build into src/main/resources, we need compileSass to run before processResources
+processResources.dependsOn 'compileSass'
 
 
 task wrapper(type: Wrapper) {
@@ -103,6 +98,11 @@ assemble {
         new File("deploy/openregister-java.jar").bytes = shadowJar.archivePath.bytes
         createDeployableBundle.execute()
     }
+}
+
+task compileSass(type: NpmTask) {
+    dependsOn << npmInstall
+    args = ['run', 'sass:compile']
 }
 
 task startAppForConformance << {
