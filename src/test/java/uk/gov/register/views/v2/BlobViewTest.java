@@ -35,7 +35,7 @@ public class BlobViewTest {
     public void setup() throws IOException {
         blobNode = objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}");
         blob = new Item(blobNode);
-        blobHash = blob.getBlobHash().encode();
+        blobHash = blob.getBlobHash().multihash();
 
 
         Map<String, Field> fieldsByName = ImmutableMap.of(

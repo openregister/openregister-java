@@ -39,11 +39,11 @@ public class BlobListViewTest {
     public void setup() throws IOException {
         blobNode1 = objectMapper.readTree("{\"address\":\"123\",\"street\":\"foo\"}");
         blob1 = new Item(blobNode1);
-        blobHash1 = blob1.getBlobHash().encode();
+        blobHash1 = blob1.getBlobHash().multihash();
 
         blobNode2 = objectMapper.readTree("{\"address\":\"456\",\"street\":\"bar\"}");
         blob2 = new Item(blobNode2);
-        blobHash2 = blob2.getBlobHash().encode();
+        blobHash2 = blob2.getBlobHash().multihash();
 
         Map<String, Field> fieldsByName = ImmutableMap.of(
                 "street", new Field("street", "string", new RegisterId("foo"), Cardinality.ONE, "bla"),

@@ -36,8 +36,8 @@ public class EntryView implements CsvRepresentationView<EntryView> {
     }
 
     @JsonProperty("blob-hash")
-    public HashValue getBlobHash() {
-        return blobHash;
+    public String getBlobHash() {
+        return blobHash.multihash();
     }
 
     @JsonProperty("entry-number")

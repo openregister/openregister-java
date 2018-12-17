@@ -15,7 +15,7 @@ public class HashValueTest {
         HashValue hashValue = new HashValue(HashingAlgorithm.SHA256, "hash");
         String encodedHash = hashValue.encode();
 
-        assertThat(encodedHash, equalTo(HashingAlgorithm.SHA256.toString() + ":hash"));
+        assertThat(encodedHash, equalTo(HashingAlgorithm.SHA256.toString() + "hash"));
     }
 
     @Test
@@ -67,27 +67,11 @@ public class HashValueTest {
     }
 
     @Test
-    public void equal_shouldReturnFalseWhenHashingAlgorithmNotEqual() {
-        HashValue hash1 = new HashValue(HashingAlgorithm.SHA256, "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
-        HashValue hash2 = new HashValue("md5", "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
-
-        assertThat(hash1.equals(hash2), is(false));
-    }
-
-    @Test
     public void hashCode_shouldBeEqual_whenBothAreEqual() {
         HashValue hash1 = new HashValue(HashingAlgorithm.SHA256, "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
         HashValue hash2 = new HashValue(HashingAlgorithm.SHA256, "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
 
         assertThat(hash1.hashCode(), equalTo(hash2.hashCode()));
-    }
-
-    @Test
-    public void hashCode_shouldNotBeEqual_whenHashingAlgorithmNotEqual() {
-        HashValue hash1 = new HashValue("sha-256", "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
-        HashValue hash2 = new HashValue("md5", "cc8a7c42275c84b94c6e282ae88b3dbcc06319156fc4539a2f39af053bf30592");
-
-        assertThat(hash1.hashCode(), not(hash2.hashCode()));
     }
 
     @Test

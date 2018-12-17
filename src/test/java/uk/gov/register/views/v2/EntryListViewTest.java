@@ -48,13 +48,13 @@ public class EntryListViewTest {
                 "\"entry-number\":1," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:00Z\"," +
                 "\"key\":\"b\"," +
-                "\"blob-hash\":\"sha-256:ab-blob-hash\"" +
+                "\"blob-hash\":\"1220ab-blob-hash\"" +
                 "}," +
                 "{" +
                 "\"entry-number\":2," +
                 "\"entry-timestamp\":\"2016-08-05T13:24:01Z\"," +
                 "\"key\":\"c\"," +
-                "\"blob-hash\":\"sha-256:cd-blob-hash\"" +
+                "\"blob-hash\":\"1220cd-blob-hash\"" +
                 "}" +
                 "]"));
     }
@@ -75,8 +75,8 @@ public class EntryListViewTest {
 
         assertThat(result, equalTo(
                 "entry-number,entry-timestamp,key,blob-hash\r\n" +
-                        "1,2016-08-05T13:24:00Z,b,sha-256:ab-blob-hash\r\n" +
-                        "2,2016-08-05T13:24:01Z,c,sha-256:cd-blob-hash\r\n"
+                        "1,2016-08-05T13:24:00Z,b,1220ab-blob-hash\r\n" +
+                        "2,2016-08-05T13:24:01Z,c,1220cd-blob-hash\r\n"
         ));
     }
 }

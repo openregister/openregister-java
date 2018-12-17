@@ -10,18 +10,20 @@ import uk.gov.register.providers.params.IntegerParam;
 import uk.gov.register.resources.HttpServletResponseAdapter;
 import uk.gov.register.resources.RequestContext;
 import uk.gov.register.resources.StartLimitPagination;
-import uk.gov.register.views.AttributionView;
-import uk.gov.register.views.v2.EntryListView;
-import uk.gov.register.views.v2.EntryView;
-import uk.gov.register.views.PaginatedView;
 import uk.gov.register.views.ViewFactory;
 import uk.gov.register.views.representations.ExtraMediaType;
+import uk.gov.register.views.v2.EntryListView;
+import uk.gov.register.views.v2.EntryView;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 @Path("/next/entries")
