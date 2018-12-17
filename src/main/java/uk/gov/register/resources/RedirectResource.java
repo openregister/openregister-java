@@ -126,6 +126,7 @@ public class RedirectResource {
     {
         return redirectByPath(request, "/record/", "/records/");
     }
+
     @GET
     @Path("/record/{record-key}/entries")
     public Response getRecordEntriesRedirect(
@@ -133,6 +134,12 @@ public class RedirectResource {
     )
     {
         return redirectByPath(request, "/record/", "/records/");
+    }
+
+    @GET
+    @Path("{extension: .+\\.(tsv|ttl|xlsx|yaml)$}")
+    public Response getRemovedFormat() {
+        return status(Response.Status.GONE).build();
     }
 
     public static Response redirectByPath(@Context HttpServletRequest request, String oldPath, String newPath, Response.Status responseStatus) {
