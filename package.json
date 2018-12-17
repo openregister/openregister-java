@@ -1,0 +1,15 @@
+{
+  "name": "openregister-api-explorer",
+  "version": "1.0.0",
+  "description": "API explorer for GOV.UK Registers.",
+  "author": "https://github.com/orgs/alphagov/teams/gov-uk-registers",
+  "license": "MIT",
+  "homepage": "https://github.com/openregister/openregister-java",
+  "private": true,
+  "devDependencies": {
+    "node-sass": "^4.11.0"
+  },
+  "scripts": {
+    "sass:compile": "node-sass --source-map true --include-path src/main/resources/assets/govuk_frontend_toolkit/stylesheets --include-path src/main/resources/assets/govuk_template/source/assets/stylesheets src/main/resources/assets/sass/ -o build/resources/main/assets/css/"
+  }
+}
