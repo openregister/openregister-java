@@ -94,10 +94,10 @@ public class RecordResource {
             ExtraMediaType.TEXT_CSV,
     })
     @Timed
-    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
+    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize, @QueryParam("name") Optional<String> attributeName, @QueryParam("value") Optional<String> attributeValue) throws FieldConversionException {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
 
-        return getRecordsView(pagination.pageSize(), pagination.offset());
+        return getRecordsView(pagination.pageSize(), pagination.offset(), attributeName, attributeValue);
     }
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
@@ -113,8 +113,16 @@ public class RecordResource {
         return pagination;
     }
 
-    private RecordListView getRecordsView(int limit, int offset) throws FieldConversionException {
-        List<Record> records = register.getRecords(EntryType.user, limit, offset);
+    private RecordListView getRecordsView(int limit, int offset, Optional<String> attributeName, Optional<String> attributeValue) throws FieldConversionException {
+        List<Record> records;
+
+        if(attributeName.isPresent() && attributeValue.isPresent()) {
+
+            records = register.max100RecordsFacetedByKeyValue(attributeName.get(), attributeValue.get());
+        }
+        else {
+             records = register.getRecords(EntryType.user, limit, offset);
+        }
         return new RecordListView(records, register.getFieldsByName());
     }
 }
