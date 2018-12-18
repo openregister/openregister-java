@@ -139,7 +139,7 @@ public class VerifiableLogResourceFunctionalTest {
     @Test
     public void registerProofDiffersFromV1() {
         String v1Proof = register.getRequest(address, "/proof/register/merkle:sha-256").readEntity(Map.class).get("root-hash").toString();
-        String nextProof = register.getRequest(address, "/next/proof/register").readEntity(Map.class).get("root-hash").toString();
+        String nextProof = register.getRequest(address, "/next/proofs/register").readEntity(Map.class).get("root-hash").toString();
 
         assertTrue(nextProof.length() > 0);
         assertNotEquals(v1Proof, nextProof);
@@ -148,9 +148,9 @@ public class VerifiableLogResourceFunctionalTest {
     @Test
     public void entryProofDiffersFromV1() {
         Map v1Proof = register.getRequest(address, "/proof/entries/1/2/merkle:sha-256").readEntity(Map.class);
-        Map nextProof = register.getRequest(address, "/next/proof/entry/1/2").readEntity(Map.class);
+        Map nextProof = register.getRequest(address, "/next/proofs/entry/1/2").readEntity(Map.class);
         List v1AuditPath = (List)(v1Proof.get("merkle-audit-path"));
-        List nextAuditPath = (List)(nextProof.get("merkle-audit-path"));
+        List nextAuditPath = (List)(nextProof.get("audit-path"));
 
         assertFalse(nextAuditPath.isEmpty());
         assertNotEquals(v1AuditPath, nextAuditPath);
@@ -159,9 +159,9 @@ public class VerifiableLogResourceFunctionalTest {
     @Test
     public void consistencyProofDiffersFromV1() {
         Map v1Proof = register.getRequest(address, "/proof/consistency/2/5/merkle:sha-256").readEntity(Map.class);
-        Map nextProof = register.getRequest(address, "/next/proof/consistency/2/5").readEntity(Map.class);
+        Map nextProof = register.getRequest(address, "/next/proofs/consistency/2/5").readEntity(Map.class);
         List v1ConsistencyNodes = (List)(v1Proof.get("merkle-consistency-nodes"));
-        List nextConsistencyNodes = (List)(nextProof.get("merkle-consistency-nodes"));
+        List nextConsistencyNodes = (List)(nextProof.get("audit-path"));
 
         assertFalse(nextConsistencyNodes.isEmpty());
         assertNotEquals(v1ConsistencyNodes, nextConsistencyNodes);
