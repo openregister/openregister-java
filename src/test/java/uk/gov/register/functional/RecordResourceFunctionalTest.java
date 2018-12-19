@@ -1,6 +1,7 @@
 package uk.gov.register.functional;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.dropwizard.jackson.Jackson;
 import org.json.JSONException;
@@ -85,6 +86,18 @@ public class RecordResourceFunctionalTest {
         assertThat(facetedRecord.get("index-entry-number").textValue(), equalTo("2"));
         assertTrue(facetedRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
         assertThat(facetedRecord.get("item").size(), equalTo(1));
+    }
+    @Test
+    public void getV2FacetedRecords() throws IOException {
+
+        Response response = register.target(address).path("/next/records").queryParam("name", "street").queryParam("value", "presley").request().get();
+
+        assertThat(response.getStatus(), equalTo(200));
+
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+        assertThat(res.size(), equalTo(1));
+        JsonNode facetedRecord = res.get(0);
+        assertThat(facetedRecord.get("_id").textValue(), equalTo("6789"));
     }
 
     @Test

@@ -74,7 +74,7 @@ public class RecordResource {
         }
         return new EntryListView(allEntries);
     }
-    
+
     @GET
     @Path("/")
     @Produces({
