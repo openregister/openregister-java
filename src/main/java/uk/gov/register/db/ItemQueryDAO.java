@@ -51,4 +51,7 @@ public interface ItemQueryDAO {
     @RegisterMapper(ItemMapper.class)
     @FetchSize(10000)
     Iterator<Item> getIterator(@Define("schema") String schema, @Define("entry_table") String entryTable);
+
+    @SqlQuery("select count(*) from \"<schema>\".item where blob_hash in (select blob_hash from \"<schema>\".entry)")
+    int getTotalItems(@Define("schema") String schema);
 }

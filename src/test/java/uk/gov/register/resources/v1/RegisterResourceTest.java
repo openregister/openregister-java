@@ -1,7 +1,6 @@
 package uk.gov.register.resources.v1;
 
 import org.junit.Test;
-import uk.gov.register.resources.v2.RegisterResource;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;

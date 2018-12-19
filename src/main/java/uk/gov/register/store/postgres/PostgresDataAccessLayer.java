@@ -139,6 +139,11 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
         return itemQueryDAO.getIterator(startEntryNumber, endEntryNumber, schema);
     }
 
+    @Override
+    public int getTotalItems() {
+        return itemQueryDAO.getTotalItems(schema);
+    }
+
     // Records
 
     @Override

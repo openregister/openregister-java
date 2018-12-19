@@ -23,6 +23,7 @@ public interface DataAccessLayer {
     Collection<Item> getAllItems(EntryType entryType);
     Iterator<Item> getItemIterator(EntryType entryType);
     Iterator<Item> getItemIterator(int startEntryNumber, int endEntryNumber);
+    int getTotalItems();
 
     // Entries
     void appendEntry(Entry entry) throws IndexingException;

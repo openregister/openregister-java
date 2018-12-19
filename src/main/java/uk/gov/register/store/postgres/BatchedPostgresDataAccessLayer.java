@@ -235,6 +235,16 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
         return postgresDataAccessLayer.getItemIterator(startEntryNumber, endEntryNumber);
     }
 
+    @Override
+    public int getTotalItems() {
+        if(isEntireRegisterBatched) {
+            return batchedItems.size();
+        }
+
+        writeBatchesToDatabase();
+        return postgresDataAccessLayer.getTotalItems();
+    }
+
     // Records
 
     @Override
