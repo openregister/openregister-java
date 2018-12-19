@@ -74,19 +74,7 @@ public class RecordResource {
         }
         return new EntryListView(allEntries);
     }
-
-    @GET
-    @Path("/{key}/{value}")
-    @Produces({
-            MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_CSV,
-    })
-    @Timed
-    public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
-        List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        return new RecordListView(records, register.getFieldsByName());
-    }
-
+    
     @GET
     @Path("/")
     @Produces({
