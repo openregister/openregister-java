@@ -40,6 +40,6 @@ public interface DataAccessLayer {
     // Records
     Optional<Record> getRecord(EntryType entryType, String key);
     List<Record> getRecords(EntryType entryType, int limit, int offset);
-    List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value);
+    List<Record> findRecordsByKeyValue(EntryType entryType, String key, String value, Integer limit, Integer offset);
     int getTotalRecords(EntryType entryType);
 }

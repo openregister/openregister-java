@@ -143,15 +143,15 @@ public class RecordQueryFunctionalTest {
     public void shouldGetRecordFacets() {
         insertEntriesAndItems(entryTable);
 
-        List<Record> records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueA", schema, entryTable));
+        List<Record> records = new ArrayList<>(recordQueryDAO.findRecordsByKeyValue("field2", "valueA", schema, entryTable, 100, 0));
         assertThat(records.size(), is(0));
 
-        records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueB", schema, entryTable));
+        records = new ArrayList<>(recordQueryDAO.findRecordsByKeyValue("field2", "valueB", schema, entryTable, 100, 0));
         assertThat(records.size(), is(1));
         assertThat(records.get(0).getEntry(), is(entries.get(1)));
         assertThat(records.get(0).getItem(), is(items.get(1)));
 
-        records = new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue("field2", "valueC", schema, entryTable));
+        records = new ArrayList<>(recordQueryDAO.findRecordsByKeyValue("field2", "valueC", schema, entryTable, 100, 0));
         assertThat(records.size(), is(2));
         assertThat(records.get(0).getEntry(), is(entries.get(3)));
         assertThat(records.get(0).getItem(), is(items.get(3)));

@@ -37,12 +37,12 @@ public abstract class RecordQueryDAO {
     public abstract int getTotalRecords(@Define("schema") String schema, @Define("entry_table") String entryTable);
 
     @SqlQuery("select * from (select distinct on (e.key) e.*, i.content from \"<schema>\".<entry_table> e, \"<schema>\".item i " +
-            "where e.sha256hex = i.sha256hex order by e.key, e.entry_number desc) as records where content @> :contentPGobject order by entry_number desc limit 100")
+            "where e.sha256hex = i.sha256hex order by e.key, e.entry_number desc) as records where content @> :contentPGobject order by entry_number desc limit :limit offset :offset")
     @RegisterMapper(RecordMapper.class)
-    public abstract Collection<Record> __findMax100RecordsByKeyValue(@Bind("contentPGobject") PGobject content, @Bind("key") String key, @Define("schema") String schema, @Define("entry_table") String entryTable);
+    public abstract Collection<Record> __findRecordsByKeyValue(@Bind("contentPGobject") PGobject content, @Bind("key") String key, @Define("schema") String schema, @Define("entry_table") String entryTable, @Bind("limit") Integer limit, @Bind("offset") Integer offset);
 
-    public Collection<Record> findMax100RecordsByKeyValue(String key, String value, String schema, String entryTable) {
-        return __findMax100RecordsByKeyValue(writePGObject(key, value), key, schema, entryTable);
+    public Collection<Record> findRecordsByKeyValue(String key, String value, String schema, String entryTable, Integer limit, Integer offset) {
+        return __findRecordsByKeyValue(writePGObject(key, value), key, schema, entryTable, limit, offset);
     }
 
     private PGobject writePGObject(String key, String value) {

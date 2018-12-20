@@ -3,9 +3,6 @@ package uk.gov.register.core;
 import uk.gov.register.exceptions.NoSuchFieldException;
 import uk.gov.register.exceptions.NoSuchRegisterException;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.ConsistencyProof;
-import uk.gov.register.views.EntryProof;
-import uk.gov.register.views.RegisterProof;
 
 import java.time.Instant;
 import java.util.*;
@@ -34,7 +31,7 @@ public interface RegisterReadOnly {
 
     Optional<Record> getRecord(EntryType entryType, String key);
     List<Record> getRecords(EntryType entryType, int limit, int offset);
-    List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException;
+    List<Record> getRecordsFacetedByKeyValue(String key, String value, Integer limit, Integer offset) throws NoSuchFieldException;
     int getTotalRecords(EntryType entryType);
 
     RegisterId getRegisterId();

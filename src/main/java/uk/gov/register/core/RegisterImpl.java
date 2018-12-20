@@ -15,9 +15,6 @@ import uk.gov.register.exceptions.NoSuchRegisterException;
 import uk.gov.register.service.EnvironmentValidator;
 import uk.gov.register.service.ItemValidator;
 import uk.gov.register.util.HashValue;
-import uk.gov.register.views.ConsistencyProof;
-import uk.gov.register.views.EntryProof;
-import uk.gov.register.views.RegisterProof;
 
 import java.io.UncheckedIOException;
 import java.time.Instant;
@@ -164,12 +161,12 @@ public class RegisterImpl implements Register {
     //region Records
 
     @Override
-    public List<Record> max100RecordsFacetedByKeyValue(String key, String value) throws NoSuchFieldException {
+    public List<Record> getRecordsFacetedByKeyValue(String key, String value, Integer limit, Integer offset) throws NoSuchFieldException {
         if (!getRegisterMetadata().getFields().contains(key)) {
             throw new NoSuchFieldException(registerId, key);
         }
 
-        return recordSet.findMax100RecordsByKeyValue(key, value);
+        return recordSet.findRecordsByKeyValue(key, value, limit, offset);
     }
 
     @Override

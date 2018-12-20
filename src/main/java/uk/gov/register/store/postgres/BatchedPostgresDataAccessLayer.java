@@ -292,7 +292,7 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value) {
+    public List<Record> findRecordsByKeyValue(EntryType entryType, String key, String value, Integer limit, Integer offset) {
         if (isEntireRegisterBatched && batchedRecords.containsKey(entryType)) {
             Map<String, Integer> recordEntryNumbers = batchedRecords.get(entryType);
 
@@ -321,7 +321,7 @@ public class BatchedPostgresDataAccessLayer implements DataAccessLayer {
         }
 
         writeBatchesToDatabase();
-        return postgresDataAccessLayer.findMax100RecordsByKeyValue(entryType, key, value);
+        return postgresDataAccessLayer.findRecordsByKeyValue(entryType, key, value, 100, 0);
     }
 
     @Override

@@ -157,8 +157,8 @@ public class PostgresDataAccessLayer implements DataAccessLayer {
     }
 
     @Override
-    public List<Record> findMax100RecordsByKeyValue(EntryType entryType, String key, String value) {
-        return new ArrayList<>(recordQueryDAO.findMax100RecordsByKeyValue(key, value, schema, getEntryTable(entryType)));
+    public List<Record> findRecordsByKeyValue(EntryType entryType, String key, String value, Integer limit, Integer offset) {
+        return new ArrayList<>(recordQueryDAO.findRecordsByKeyValue(key, value, schema, getEntryTable(entryType), limit, offset));
     }
 
     public void addItems(Collection<Item> items) {

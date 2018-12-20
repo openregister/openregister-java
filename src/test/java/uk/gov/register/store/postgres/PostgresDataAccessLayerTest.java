@@ -457,16 +457,16 @@ public class PostgresDataAccessLayerTest {
         Record systemRecord1 = new Record(systemEntry2, item6);
         Record systemRecord2 = new Record(systemEntry3, item7);
 
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value1").size(), is(1));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value1"), contains(userRecord1));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value2").size(), is(2));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value2"), contains(userRecord3, userRecord2));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "field", "value3").size(), is(0));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, "invalid-field", "value").size(), is(0));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.user, "field", "value1", 100, 0).size(), is(1));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.user, "field", "value1", 100, 0), contains(userRecord1));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.user, "field", "value2", 100, 0).size(), is(2));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.user, "field", "value2", 100, 0), contains(userRecord3, userRecord2));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.user, "field", "value3", 100, 0).size(), is(0));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.user, "invalid-field", "value", 100, 0).size(), is(0));
 
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "field", "value3").size(), is(0));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "field", "value4").size(), is(2));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "field", "value4"), contains(systemRecord2, systemRecord1));
-        assertThat(postgresDataAccessLayer.findMax100RecordsByKeyValue(EntryType.system, "invalid-field", "value").size(), is(0));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.system, "field", "value3", 100, 0).size(), is(0));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.system, "field", "value4", 100, 0).size(), is(2));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.system, "field", "value4", 100, 0), contains(systemRecord2, systemRecord1));
+        assertThat(postgresDataAccessLayer.findRecordsByKeyValue(EntryType.system, "invalid-field", "value", 100, 0).size(), is(0));
     }
 }

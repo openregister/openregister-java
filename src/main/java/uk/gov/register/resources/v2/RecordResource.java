@@ -106,7 +106,7 @@ public class RecordResource {
 
         if(attributeName.isPresent() && attributeValue.isPresent()) {
 
-            records = register.max100RecordsFacetedByKeyValue(attributeName.get(), attributeValue.get());
+            records = register.getRecordsFacetedByKeyValue(attributeName.get(), attributeValue.get(), limit, offset);
         }
         else {
              records = register.getRecords(EntryType.user, limit, offset);

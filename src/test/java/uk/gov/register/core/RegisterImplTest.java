@@ -67,13 +67,13 @@ public class RegisterImplTest {
 
     @Test(expected = NoSuchFieldException.class)
     public void findMax100RecordsByKeyValueShouldFailWhenKeyDoesNotExist() {
-        register.max100RecordsFacetedByKeyValue("citizen-name", "British");
+        register.getRecordsFacetedByKeyValue("citizen-name", "British", 100, 0);
     }
 
     @Test
     public void findMax100RecordsByKeyValueShouldReturnValueWhenKeyExists() {
-        register.max100RecordsFacetedByKeyValue("postcode", "AB1 2CD");
-        verify(recordSet, times(1)).findMax100RecordsByKeyValue("postcode", "AB1 2CD");
+        register.getRecordsFacetedByKeyValue("postcode", "AB1 2CD", 100, 0);
+        verify(recordSet, times(1)).findRecordsByKeyValue("postcode", "AB1 2CD", 100, 0);
     }
 
     @Test(expected = AppendEntryException.class)
