@@ -86,6 +86,26 @@ public class RecordResourceFunctionalTest {
         assertTrue(facetedRecord.get("entry-timestamp").textValue().matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"));
         assertThat(facetedRecord.get("item").size(), equalTo(1));
     }
+    @Test
+    public void getV2FacetedRecords() throws IOException {
+
+        Response response = register.target(address).path("/next/records").queryParam("name", "street").queryParam("value", "presley").request().get();
+
+        assertThat(response.getStatus(), equalTo(200));
+
+        JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class);
+        assertThat(res.size(), equalTo(1));
+        JsonNode facetedRecord = res.get(0);
+        assertThat(facetedRecord.get("_id").textValue(), equalTo("6789"));
+    }
+
+    @Test
+    public void getV2FacetedRecords_throwsExceptionWhenMissingParameter() {
+        Response response = register.target(address).path("/next/records.json").queryParam("name", "street").request().get();
+        assertThat(response.getStatus(), equalTo(400));
+        Response response2 = register.target(address).path("/next/records.json").queryParam("value", "street").request().get();
+        assertThat(response2.getStatus(), equalTo(400));
+    }
 
     @Test
     public void recordResource_return404ResponseWhenRecordNotExist() {

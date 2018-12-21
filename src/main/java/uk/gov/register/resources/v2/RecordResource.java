@@ -19,6 +19,7 @@ import uk.gov.register.views.v2.RecordListView;
 import uk.gov.register.views.v2.RecordView;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -76,28 +77,16 @@ public class RecordResource {
     }
 
     @GET
-    @Path("/{key}/{value}")
-    @Produces({
-            MediaType.APPLICATION_JSON,
-            ExtraMediaType.TEXT_CSV,
-    })
-    @Timed
-    public RecordListView facetedRecords(@PathParam("key") String key, @PathParam("value") String value) throws FieldConversionException {
-        List<Record> records = register.max100RecordsFacetedByKeyValue(key, value);
-        return new RecordListView(records, register.getFieldsByName());
-    }
-
-    @GET
     @Path("/")
     @Produces({
             MediaType.APPLICATION_JSON,
             ExtraMediaType.TEXT_CSV,
     })
     @Timed
-    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) throws FieldConversionException {
+    public RecordListView records(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize, @QueryParam("name") Optional<String> attributeName, @QueryParam("value") Optional<String> attributeValue) throws FieldConversionException {
         IndexSizePagination pagination = setUpPagination(pageIndex, pageSize);
 
-        return getRecordsView(pagination.pageSize(), pagination.offset());
+        return getRecordsView(pagination.pageSize(), pagination.offset(), attributeName, attributeValue);
     }
 
     private IndexSizePagination setUpPagination(@QueryParam(IndexSizePagination.INDEX_PARAM) Optional<IntegerParam> pageIndex, @QueryParam(IndexSizePagination.SIZE_PARAM) Optional<IntegerParam> pageSize) {
@@ -113,8 +102,21 @@ public class RecordResource {
         return pagination;
     }
 
-    private RecordListView getRecordsView(int limit, int offset) throws FieldConversionException {
-        List<Record> records = register.getRecords(EntryType.user, limit, offset);
+    private RecordListView getRecordsView(int limit, int offset, Optional<String> attributeName, Optional<String> attributeValue) throws FieldConversionException {
+        if(attributeName.isPresent() && !attributeValue.isPresent()) {
+            throw new BadRequestException("'value' parameter is required when 'name' parameter is specified");
+        }
+        if(!attributeName.isPresent() && attributeValue.isPresent()) {
+            throw new BadRequestException("'name' parameter is required when 'value' parameter is specified");
+        }
+
+        List<Record> records;
+        if(attributeName.isPresent() && attributeValue.isPresent()) {
+            records = register.max100RecordsFacetedByKeyValue(attributeName.get(), attributeValue.get());
+        }
+        else {
+             records = register.getRecords(EntryType.user, limit, offset);
+        }
         return new RecordListView(records, register.getFieldsByName());
     }
 }
