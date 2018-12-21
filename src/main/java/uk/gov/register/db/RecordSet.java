@@ -28,8 +28,8 @@ public class RecordSet {
         return dataAccessLayer.getTotalRecords(entryType);
     }
 
-    public List<Record> findRecordsByKeyValue(String key, String value, Integer limit, Integer offset) {
-        return dataAccessLayer.findRecordsByKeyValue(EntryType.user, key, value, limit, offset);
+    public List<Record> findMax100RecordsByKeyValue(String key, String value) {
+        return dataAccessLayer.findMax100RecordsByKeyValue(EntryType.user, key, value);
     }
 
     public Collection<Entry> findAllEntriesOfRecordBy(String key) {
