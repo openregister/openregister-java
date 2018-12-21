@@ -4,6 +4,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.exceptions.ItemNotCanonicalException;
 import uk.gov.register.exceptions.RSFParseException;
+import uk.gov.register.service.EntryValidator;
 import uk.gov.register.util.CanonicalJsonValidator;
 
 import java.time.Instant;
@@ -95,14 +96,27 @@ public class RSFFormatter {
             if (arguments.size() != APPEND_ENTRY_ARGUMENT_COUNT) {
                 throw new RSFParseException("Append entry line must have " + APPEND_ENTRY_ARGUMENT_COUNT + " arguments, was: " + argsToString(arguments));
             }
+
+            EntryType type;
+            String key;
             try {
-                EntryType.valueOf(arguments.get(RSF_ENTRY_TYPE_POSITION));
+                type = EntryType.valueOf(arguments.get(RSF_ENTRY_TYPE_POSITION));
+                key = arguments.get(RSF_KEY_POSITION);
                 Instant.parse(arguments.get(RSF_TIMESTAMP_POSITION));
             } catch (DateTimeParseException e) {
                 throw new RSFParseException("Date is not in the correct format", e);
             } catch (IllegalArgumentException iae) {
                 throw new RSFParseException("Type must be 'user' or 'system'", iae);
             }
+
+            if(type != EntryType.system) {
+                try {
+                    EntryValidator.validateKey(key);
+                } catch (RuntimeException e) {
+                    throw new RSFParseException("Invalid key for append entry", e);
+                }
+            }
+
             validateHash(arguments.get(RSF_HASH_POSITION), "Append entry hash value was not hashed using " + SHA_256);
         };
     }

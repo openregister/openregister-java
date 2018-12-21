@@ -229,7 +229,7 @@ public class DataUploadFunctionalTest {
     @Test
     public void validation_FailsToLoadEntryWhenBlankKeyField() {
         String rsf = "add-item\t{\"register\":\"  \"}\n" +
-                "append-entry\tuser\t  \t2018-07-26T13:58:25Z\tsha-256:adeec959e9f6a1481f1bd77d541f19c8e430b668c174e96bfe8ad5a224e3e6ee";
+                "append-entry\tuser\tabc\t2018-07-26T13:58:25Z\tsha-256:adeec959e9f6a1481f1bd77d541f19c8e430b668c174e96bfe8ad5a224e3e6ee";
 
         Response response = register.loadRsf(TestRegister.register, rsf);
         assertThat(response.getStatus(), equalTo(400));
@@ -238,6 +238,20 @@ public class DataUploadFunctionalTest {
 
         assertThat(result.getMessage(), equalTo("Failed to load RSF"));
         assertThat(result.getDetails(), containsString("Primary key field 'register' must have a valid value"));
+    }
+
+    @Test
+    public void validation_FailsToLoadEntryWhenBlankKey() {
+        String rsf = "add-item\t{\"register\":\"abc\"}\n" +
+                "append-entry\tuser\t \t2018-07-26T13:58:25Z\tsha-256:50c35e58d91de803ff327187eaceb5519d214d1dacea21a38af0249b89076ba3";
+
+        Response response = register.loadRsf(TestRegister.register, rsf);
+        assertThat(response.getStatus(), equalTo(400));
+
+        RegisterResult result = response.readEntity(RegisterResult.class);
+
+        assertThat(result.getMessage(), equalTo("Failed to load RSF"));
+        assertThat(result.getDetails(), containsString("Key is not valid:  "));
     }
 
     @Test
