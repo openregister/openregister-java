@@ -91,6 +91,11 @@ public class RegisterImpl implements Register {
         return itemStore.getUserItemsPaginated(start, limit);
     }
 
+    @Override
+    public int getTotalItems() {
+        return itemStore.getTotalItems();
+    }
+
     //endregion
 
     //region Entries

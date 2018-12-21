@@ -21,4 +21,6 @@ public interface ItemStore {
     Iterator<Item> getItemIterator(EntryType entryType);
 
     Iterator<Item> getUserItemIterator(int start, int end);
+
+    int getTotalItems();
 }

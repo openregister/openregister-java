@@ -53,4 +53,9 @@ public class ItemStoreImpl implements ItemStore {
     public Iterator<Item> getUserItemIterator(int startEntryNumber, int endEntryNumber) {
         return dataAccessLayer.getItemIterator(startEntryNumber, endEntryNumber);
     }
+
+    @Override
+    public int getTotalItems() {
+        return dataAccessLayer.getTotalItems();
+    }
 }
