@@ -11,6 +11,7 @@ import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.RsfRegisterDefinition;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -98,6 +99,14 @@ public class RecordResourceFunctionalTest {
         assertThat(res.size(), equalTo(1));
         JsonNode facetedRecord = res.get(0);
         assertThat(facetedRecord.get("_id").textValue(), equalTo("6789"));
+    }
+
+    @Test
+    public void getV2FacetedRecords_throwsExceptionWhenMissingParameter() {
+        Response response = register.target(address).path("/next/records.json").queryParam("name", "street").request().get();
+        assertThat(response.getStatus(), equalTo(400));
+        Response response2 = register.target(address).path("/next/records.json").queryParam("value", "street").request().get();
+        assertThat(response2.getStatus(), equalTo(400));
     }
 
     @Test

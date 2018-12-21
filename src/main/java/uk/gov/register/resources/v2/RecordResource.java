@@ -19,6 +19,7 @@ import uk.gov.register.views.v2.RecordListView;
 import uk.gov.register.views.v2.RecordView;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -102,10 +103,15 @@ public class RecordResource {
     }
 
     private RecordListView getRecordsView(int limit, int offset, Optional<String> attributeName, Optional<String> attributeValue) throws FieldConversionException {
+        if(attributeName.isPresent() && !attributeValue.isPresent()) {
+            throw new BadRequestException("'value' parameter is required when 'name' parameter is specified");
+        }
+        if(!attributeName.isPresent() && attributeValue.isPresent()) {
+            throw new BadRequestException("'name' parameter is required when 'value' parameter is specified");
+        }
+
         List<Record> records;
-
         if(attributeName.isPresent() && attributeValue.isPresent()) {
-
             records = register.max100RecordsFacetedByKeyValue(attributeName.get(), attributeValue.get());
         }
         else {
