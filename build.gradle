@@ -30,11 +30,8 @@ apply plugin: 'com.github.ben-manes.versions'
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: 'org.owasp.dependencycheck'
 
-def assetsDir = new File(projectDir, "src/main/resources/assets")
-
 dependencyCheck {
     failBuildOnCVSS = 0
-    skipConfigurations = ['jrubyExec']
     suppressionFile = 'dependency-check-suppressions.xml'
 }
 
@@ -219,7 +216,6 @@ clean.doFirst {
 }
 
 task createDeployableBundle(type: Zip) {
-    Map env = System.getenv()
     baseName('openregister-java')
     from('deploy/')
     include('*')
