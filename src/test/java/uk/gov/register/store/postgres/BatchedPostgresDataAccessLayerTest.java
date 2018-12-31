@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.dropwizard.jdbi.OptionalContainerFactory;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
@@ -47,9 +49,13 @@ public class BatchedPostgresDataAccessLayerTest {
     private Handle handle;
 
 
+    @BeforeClass
+    public static void wipe(){
+        register.wipe();
+    }
+
     @Before
     public void setup() {
-        register.wipe();
         TestRegister register = TestRegister.address;
         dbi = new DBI(register.getDatabaseConnectionString("BatchedPostgresDataAccessLayerTest"));
         dbi.registerContainerFactory(new OptionalContainerFactory());

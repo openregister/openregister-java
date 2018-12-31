@@ -1,7 +1,7 @@
 package uk.gov.register.db.mappers;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,13 +33,13 @@ public class EntryMapperTest {
     @Rule
     public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(address);
 
-    @Before
-    public void wipe() {
+    @BeforeClass
+    public static void wipe() {
         registerRule.wipe();
     }
 
-    @After
-    public void tearDown(){
+    @AfterClass
+    public static void tearDown(){
         registerRule.wipe();
     }
 
