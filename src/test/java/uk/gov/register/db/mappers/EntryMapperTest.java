@@ -1,5 +1,7 @@
 package uk.gov.register.db.mappers;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,6 +11,7 @@ import uk.gov.register.core.EntryType;
 import uk.gov.register.core.HashingAlgorithm;
 import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.functional.app.MigrateDatabaseRule;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
 
@@ -25,8 +28,20 @@ public class EntryMapperTest {
 
     @ClassRule
     public static MigrateDatabaseRule migrateDatabaseRule = new MigrateDatabaseRule(address);
+    public static RegisterRule registerRule = new RegisterRule();
+
     @Rule
     public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(address);
+
+    @Before
+    public void wipe() {
+        registerRule.wipe();
+    }
+
+    @After
+    public void tearDown(){
+        registerRule.wipe();
+    }
 
     @Test
     public void map_returnsEntry() {
