@@ -1,5 +1,7 @@
 package uk.gov.register.functional;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.register.functional.app.RegisterRule;
@@ -20,6 +22,16 @@ public class DeleteRegisterDataFunctionalTest {
     public static final TestRegister REGISTER_WHICH_ALLOWS_DELETING = postcode;
     @ClassRule
     public static final RegisterRule register = new RegisterRule();
+
+    @BeforeClass
+    public static void wipe(){
+        register.wipe();
+    }
+
+    @AfterClass
+    public static void tearDown(){
+        register.wipe();
+    }
 
     @Test
     public void deleteRegisterData_deletesAllDataFromDb() throws Exception {
