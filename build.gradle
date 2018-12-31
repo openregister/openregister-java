@@ -38,11 +38,6 @@ dependencyCheck {
 // because we build into src/main/resources, we need compileSass to run before processResources
 processResources.dependsOn 'compileSass'
 
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.6'
-}
-
 repositories {
     mavenCentral()
     maven {
@@ -102,8 +97,10 @@ task compileSass(type: NpmTask) {
     args = ['run', 'sass:compile']
 }
 
-task startAppForConformance << {
-    startApp()
+task startAppForConformance {
+    doLast {
+        startApp()
+    }
 }
 
 void startApp() {
@@ -141,8 +138,10 @@ void waitForApplicationToStart() {
     }
 }
 
-task stopAppForConformance << {
-    stopApp()
+task stopAppForConformance {
+    doLast {
+        stopApp()
+    }
 }
 
 void stopApp() {
@@ -201,6 +200,7 @@ test {
         exceptionFormat "full"
 
         afterSuite { desc, result ->
+            logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
             if (!desc.parent) { // will match the outermost suite
                 def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
                 def startItem = '|  ', endItem = '  |'
