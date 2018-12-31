@@ -68,6 +68,7 @@ public class RecordQueryFunctionalTest {
 
     @Before
     public void setup() throws IOException {
+        register.wipe();
         MDC.put("register", schema);
         dbi = new DBI(address.getDatabaseConnectionString("PGRegisterTxnFT"));
         dbi.registerContainerFactory(new OptionalContainerFactory());

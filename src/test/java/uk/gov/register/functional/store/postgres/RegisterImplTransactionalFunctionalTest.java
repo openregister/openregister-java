@@ -38,6 +38,7 @@ import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
 import uk.gov.register.db.RecordSet;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.functional.db.TestEntryDAO;
 import uk.gov.register.functional.db.TestItemCommandDAO;
@@ -69,6 +70,7 @@ public class RegisterImplTransactionalFunctionalTest {
     private static ObjectMapper MAPPER = new ObjectMapper();
 
     @Rule
+    public RegisterRule register = new RegisterRule();
     public TestRule wipe = new WipeDatabaseRule(address);
     private DBI dbi;
     private Handle handle;
@@ -80,6 +82,7 @@ public class RegisterImplTransactionalFunctionalTest {
 
     @Before
     public void setUp() throws Exception {
+        register.wipe();
         final DBIFactory factory = new DBIFactory();
         Environment env = new Environment("test-env", Jackson.newObjectMapper(), null, new MetricRegistry(), null);
         dbi = factory.build(env, getDataSourceFactory(), "database");

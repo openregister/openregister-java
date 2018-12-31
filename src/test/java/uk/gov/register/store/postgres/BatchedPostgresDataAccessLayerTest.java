@@ -18,6 +18,7 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
@@ -41,11 +42,14 @@ public class BatchedPostgresDataAccessLayerTest {
 
     @Rule
     public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(TestRegister.address);
+    public static RegisterRule register = new RegisterRule();
     private DBI dbi;
     private Handle handle;
 
+
     @Before
     public void setup() {
+        register.wipe();
         TestRegister register = TestRegister.address;
         dbi = new DBI(register.getDatabaseConnectionString("BatchedPostgresDataAccessLayerTest"));
         dbi.registerContainerFactory(new OptionalContainerFactory());
@@ -64,6 +68,7 @@ public class BatchedPostgresDataAccessLayerTest {
     @After
     public void tearDown() {
         dbi.close(handle);
+        register.wipe();
     }
 
     @Test
