@@ -31,6 +31,7 @@ public class DeleteRegisterDataAvailabilityFunctionalTest {
     
     @Before
     public void setup() {
+        register.wipe();
         register.loadRsf(address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
     }
 

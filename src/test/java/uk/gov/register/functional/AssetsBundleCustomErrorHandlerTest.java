@@ -3,6 +3,7 @@ package uk.gov.register.functional;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -29,5 +30,10 @@ public class AssetsBundleCustomErrorHandlerTest {
         Document doc = Jsoup.parse(response.readEntity(String.class));
         Elements notFoundHeader = doc.select(".heading-large");
         Assert.assertThat(notFoundHeader.first().text(), equalTo("Page not found"));
+    }
+
+    @After
+    public void wipe() {
+        register.wipe();
     }
 }
