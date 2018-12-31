@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jdbi.OptionalContainerFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -18,6 +18,7 @@ import uk.gov.register.core.Record;
 import uk.gov.register.db.EntryDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
 
@@ -40,7 +41,7 @@ import static uk.gov.register.functional.app.TestRegister.address;
 @RunWith(Parameterized.class)
 public class RecordQueryFunctionalTest {
     private DBI dbi;
-    private  Handle handle;
+    private Handle handle;
     private final String schema = address.getSchema();
 
     private RecordQueryDAO recordQueryDAO;
@@ -61,8 +62,9 @@ public class RecordQueryFunctionalTest {
         return Arrays.asList("entry", "entry_system");
     }
 
-    @Rule
-    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(address);
+    @ClassRule
+    public static WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(address);
+    public static RegisterRule register = new RegisterRule();
 
     @Before
     public void setup() throws IOException {
@@ -91,6 +93,7 @@ public class RecordQueryFunctionalTest {
     @After
     public void tearDown() {
         dbi.close(handle);
+        register.wipe();
     }
 
     @Test
