@@ -3,6 +3,7 @@ package uk.gov.register.functional;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.jackson.Jackson;
 import org.hamcrest.core.IsCollectionContaining;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -46,10 +47,11 @@ public class DataUploadFunctionalTest {
     private static RecordQueryDAO testRecordDAO;
     private static TestEntryDAO testEntryDAO;
     private static TestItemCommandDAO testItemDAO;
+    private static Handle handle;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Handle handle = register.handleFor(TestRegister.register);
+        handle = register.handleFor(TestRegister.register);
         testRecordDAO = handle.attach(RecordQueryDAO.class);
         testEntryDAO = handle.attach(TestEntryDAO.class);
         testItemDAO = handle.attach(TestItemCommandDAO.class);
@@ -60,6 +62,12 @@ public class DataUploadFunctionalTest {
     public void setUp() throws Exception {
         register.wipe();
         register.loadRsf(TestRegister.register, RsfRegisterDefinition.REGISTER_REGISTER);
+    }
+
+    @AfterClass
+    public static void tearDown(){
+        handle.close();
+        register.wipe();
     }
 
     @Test
