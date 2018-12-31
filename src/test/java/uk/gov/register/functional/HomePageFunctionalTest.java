@@ -26,6 +26,7 @@ public class HomePageFunctionalTest {
 
     @Before
     public void setup() {
+        register.wipe();
         register.loadRsf(postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
     }
 
