@@ -10,7 +10,7 @@ addons:
   postgresql: '9.5'
   apt:
     packages:
-      - python3-venv
+      - python3.6-venv
 cache:
   directories:
   - $HOME/.gradle/caches
