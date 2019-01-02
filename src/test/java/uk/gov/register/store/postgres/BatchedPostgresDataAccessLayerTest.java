@@ -43,7 +43,7 @@ public class BatchedPostgresDataAccessLayerTest {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Rule
-    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(TestRegister.address);
+    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule();
     public static RegisterRule register = new RegisterRule();
     private DBI dbi;
     private Handle handle;
