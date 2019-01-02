@@ -10,11 +10,6 @@ services:
   - postgresql
 addons:
   postgresql: '9.5'
-  apt:
-    packages:
-      - python3
-      - python3-pip
-      - python3.6-venv
 cache:
   directories:
   - $HOME/.gradle/caches
@@ -24,6 +19,7 @@ before_script:
 - psql --version
 - psql -c 'create database ft_openregister_java_multi;' -U postgres
 - psql -c 'create database conformance_openregister_java;' -U postgres
+- pip3 install virtualenv
 script:
 - travis_wait ./gradlew check
 after_failure:
