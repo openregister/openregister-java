@@ -6,8 +6,6 @@ jdk:
 services: 
   - postgresql
 addons:
-  packages:
-    - python3-venv
   postgresql: '9.5'
 cache:
   directories:
