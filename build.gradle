@@ -88,7 +88,6 @@ assemble {
     dependsOn << shadowJar
     doLast {
         new File("deploy/openregister-java.jar").bytes = shadowJar.archivePath.bytes
-        createDeployableBundle.execute()
     }
 }
 
@@ -221,6 +220,8 @@ task createDeployableBundle(type: Zip) {
     include('manifests/**/*.yml')
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
+
+assemble.finalizedBy createDeployableBundle
 
 task(run, type: JavaExec, dependsOn: ['classes']) {
     main = 'uk.gov.register.RegisterApplication'
