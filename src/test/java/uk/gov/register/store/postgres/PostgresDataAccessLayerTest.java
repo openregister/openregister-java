@@ -41,10 +41,10 @@ public class PostgresDataAccessLayerTest {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Rule
-    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(TestRegister.address);
+    public RegisterRule register = new RegisterRule();
+//    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(TestRegister.address);
     private DBI dbi;
     private Handle handle;
-    public static RegisterRule register = new RegisterRule();
 
     @Before
     public void setup() {
