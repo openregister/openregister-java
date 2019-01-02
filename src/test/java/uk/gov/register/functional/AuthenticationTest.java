@@ -1,6 +1,5 @@
 package uk.gov.register.functional;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -26,11 +25,6 @@ public class AuthenticationTest {
         register.wipe();
         register.loadRsf(TestRegister.address, RsfRegisterDefinition.ADDRESS_FIELDS + RsfRegisterDefinition.ADDRESS_REGISTER);
         register.loadRsf(TestRegister.postcode, RsfRegisterDefinition.POSTCODE_REGISTER);
-    }
-
-    @AfterClass
-    public static void wipe(){
-        register.wipe();
     }
     
     @Test

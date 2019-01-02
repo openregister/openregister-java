@@ -49,11 +49,6 @@ public class LoadSerializedFunctionalTest {
         register.wipe();
     }
 
-    @AfterClass
-    public static void wipe() {
-        register.wipe();
-    }
-
     @Test
     public void checkMessageIsConsumedAndStoredInDatabase() throws Exception {
         String input = new String(Files.readAllBytes(Paths.get("src/test/resources/fixtures/serialized", "register-register-rsf.tsv")));
