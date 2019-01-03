@@ -261,30 +261,25 @@
     }
     ]
   },
-  "school": {
+  "country": {
     "index-entry-number": "18",
     "entry-number": "18",
     "entry-timestamp": "2016-04-21T10:14:21Z",
     "key": "school",
     "item": [
     {
-      "text": "Primary, secondary and special needs schools in England and Wales",
-      "phase": "alpha",
+      "text": "British English names of all countries currently recognised by the UK government",
+      "phase": "beta",
       "fields": [
-        "school",
+        "country",
         "name",
+        "official-name",
+        "citizen-names",
         "start-date",
-        "end-date",
-        "gender",
-        "religious-character",
-        "minimum-age",
-        "maximum-age",
-        "headteacher",
-        "website",
-        "address"
+        "end-date"
       ],
-      "register": "school",
-      "registry": "department-for-education"
+      "register": "country",
+      "registry": "foreign-commonwealth-office"
     }
     ]
   },

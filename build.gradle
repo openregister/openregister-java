@@ -160,7 +160,7 @@ task(loadSchoolDataForConformance, type: Exec) {
         }
     }
     mustRunAfter startAppForConformance
-    commandLine 'curl', '-u', 'foo:bar', '-s', '-H', 'Content-type: application/uk-gov-rsf', '--data-binary', '@school-data.rsf',
+    commandLine 'curl', '-u', 'foo:bar', '-s', '-H', 'Content-type: application/uk-gov-rsf', '--data-binary', '@country-data.rsf',
             'http://localhost:9090/load-rsf'
 }
 
@@ -179,13 +179,13 @@ task runConformanceTestsV1(type: Exec) {
     dependsOn << loadSchoolDataForConformance
     dependsOn << installConformanceTestDeps
     mustRunAfter test
-    commandLine '.venv/bin/openregister-conformance', '--api-version', '1', '--no-https', '--register', 'school', 'http://localhost:9090/v1/', '--register-domain', 'test.register.gov.uk'
+    commandLine '.venv/bin/openregister-conformance', '--api-version', '1', '--no-https', '--register', 'country', 'http://localhost:9090/v1/', '--register-domain', 'test.register.gov.uk'
 }
 
 task runConformanceTestsV2(type: Exec) {
     dependsOn << runConformanceTestsV1
     finalizedBy stopAppForConformance
-    commandLine '.venv/bin/openregister-conformance', '--api-version', '2', '--no-https', '--register', 'school', 'http://localhost:9090/next/', '--register-domain', 'test.register.gov.uk'
+    commandLine '.venv/bin/openregister-conformance', '--api-version', '2', '--no-https', '--register', 'country', 'http://localhost:9090/next/', '--register-domain', 'test.register.gov.uk'
 }
 
 check {

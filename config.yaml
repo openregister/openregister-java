@@ -31,11 +31,11 @@ server:
 
 registerDomain: openregister.local:8080
 
-register: school
+register: country
 
 enableDownloadResource: true
 
-schema: school
+schema: country
 
 externalConfigDirectory: /tmp
 

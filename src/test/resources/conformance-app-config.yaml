@@ -19,8 +19,8 @@ server:
     - type: http
       port: 9091
 
-register: school
-schema: school
+register: country
+schema: country
 registerDomain: test.register.gov.uk
 
 credentials:
