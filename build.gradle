@@ -31,6 +31,11 @@ apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: 'org.owasp.dependencycheck'
 
 dependencyCheck {
+    analyzers {
+        nodeEnabled=false
+        nodeAuditEnabled=false
+        bundleAuditEnabled=false
+    }
     failBuildOnCVSS = 0
     suppressionFile = 'dependency-check-suppressions.xml'
 }
