@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.dropwizard.jdbi.OptionalContainerFactory;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
@@ -18,6 +21,7 @@ import uk.gov.register.db.EntryQueryDAO;
 import uk.gov.register.db.ItemDAO;
 import uk.gov.register.db.ItemQueryDAO;
 import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.functional.app.RegisterRule;
 import uk.gov.register.functional.app.TestRegister;
 import uk.gov.register.functional.app.WipeDatabaseRule;
 import uk.gov.register.util.HashValue;
@@ -39,10 +43,16 @@ public class BatchedPostgresDataAccessLayerTest {
     private PostgresDataAccessLayer postgresDataAccessLayer;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Rule
-    public WipeDatabaseRule wipeDatabaseRule = new WipeDatabaseRule(TestRegister.address);
+    @ClassRule
+    public static RegisterRule register = new RegisterRule();
     private DBI dbi;
     private Handle handle;
+
+
+    @BeforeClass
+    public static void wipe() {
+        register.wipe();
+    }
 
     @Before
     public void setup() {
@@ -64,6 +74,7 @@ public class BatchedPostgresDataAccessLayerTest {
     @After
     public void tearDown() {
         dbi.close(handle);
+        register.wipe();
     }
 
     @Test
