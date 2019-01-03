@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.13.0"
         classpath "com.github.jengelman.gradle.plugins:shadow:4.0.3"
-        classpath 'org.owasp:dependency-check-gradle:3.1.2'
+        classpath 'org.owasp:dependency-check-gradle:4.0.2'
     }
 }
 
@@ -31,6 +31,11 @@ apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: 'org.owasp.dependencycheck'
 
 dependencyCheck {
+    analyzers {
+        nodeEnabled=false
+        nodeAuditEnabled=false
+        bundleAuditEnabled=false
+    }
     failBuildOnCVSS = 0
     suppressionFile = 'dependency-check-suppressions.xml'
 }
@@ -88,7 +93,6 @@ assemble {
     dependsOn << shadowJar
     doLast {
         new File("deploy/openregister-java.jar").bytes = shadowJar.archivePath.bytes
-        createDeployableBundle.execute()
     }
 }
 
@@ -221,6 +225,8 @@ task createDeployableBundle(type: Zip) {
     include('manifests/**/*.yml')
     destinationDir file('deployable_bundle') // directory that you want your archive to be placed in
 }
+
+assemble.finalizedBy createDeployableBundle
 
 task(run, type: JavaExec, dependsOn: ['classes']) {
     main = 'uk.gov.register.RegisterApplication'

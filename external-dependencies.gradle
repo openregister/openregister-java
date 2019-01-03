@@ -3,6 +3,8 @@ ext {
     dropwizard_metrics_version = '3.1.0'
     jersey_version = '2.25.1'
     jackson_version = '2.8.11'
+    jetty_version = '9.4.14.v20181114'
+    
 
     jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.11.1'
 
@@ -56,16 +58,16 @@ ext {
     dropwizardLogstash = "uk.gov.ida:dropwizard-logstash:1.1.2-build_46"
 
     jetty = [
-            "org.eclipse.jetty:jetty-continuation:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-http:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-io:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-security:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-server:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-servlet:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-servlets:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-util:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-webapp:9.4.6.v20170531",
-            "org.eclipse.jetty:jetty-xml:9.4.6.v20170531"
+            "org.eclipse.jetty:jetty-continuation:${jetty_version}",
+            "org.eclipse.jetty:jetty-http:${jetty_version}",
+            "org.eclipse.jetty:jetty-io:${jetty_version}",
+            "org.eclipse.jetty:jetty-security:${jetty_version}",
+            "org.eclipse.jetty:jetty-server:${jetty_version}",
+            "org.eclipse.jetty:jetty-servlet:${jetty_version}",
+            "org.eclipse.jetty:jetty-servlets:${jetty_version}",
+            "org.eclipse.jetty:jetty-util:${jetty_version}",
+            "org.eclipse.jetty:jetty-webapp:${jetty_version}",
+            "org.eclipse.jetty:jetty-xml:${jetty_version}"
     ]
 
     // test dependencies
