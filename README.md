@@ -70,7 +70,7 @@ should respond with:
 
 To load data into the register:
 
- `cat school-data.rsf | curl 127.0.0.1:8080/load-rsf -u foo:bar --data-binary @- -H "Host: school" -H "Content-Type: application/uk-gov-rsf"`
+ `cat country-data.rsf | curl 127.0.0.1:8080/load-rsf -u foo:bar --data-binary @- -H "Host: country" -H "Content-Type: application/uk-gov-rsf"`
 
 ### Working on the frontend
 
