@@ -23,28 +23,6 @@
     }
     ]
   },
-  "country": {
-    "index-entry-number": "3",
-    "entry-number": "3",
-    "entry-timestamp": "2016-04-21T10:14:21Z",
-    "key": "country",
-    "item": [
-    {
-      "text": "British English-language names and descriptive terms for countries",
-      "phase": "alpha",
-      "fields": [
-        "country",
-        "name",
-        "official-name",
-        "citizen-names",
-        "start-date",
-        "end-date"
-      ],
-      "register": "country",
-      "registry": "foreign-commonwealth-office"
-    }
-    ]
-  },
   "registry": {
     "index-entry-number": "17",
     "entry-number": "17",
@@ -265,7 +243,7 @@
     "index-entry-number": "18",
     "entry-number": "18",
     "entry-timestamp": "2016-04-21T10:14:21Z",
-    "key": "school",
+    "key": "country",
     "item": [
     {
       "text": "British English names of all countries currently recognised by the UK government",
