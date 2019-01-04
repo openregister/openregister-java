@@ -65,7 +65,7 @@ public class RedirectResourceTest  {
     public void getNextRedirectJsonExtension() {
         Response response = register.getRequest(TestRegister.register, "/next.json", WILDCARD);
         assertThat(response.getStatus(), equalTo(301));
-        assertThat(response.getLocation().getPath(), equalTo("/next/register.json"));
+        assertThat(response.getLocation().getPath(), equalTo("/next/context.json"));
     }
 
     @Test

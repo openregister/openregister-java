@@ -16,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
 
 import java.net.URI;
@@ -31,15 +30,15 @@ public class RedirectResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV})
     @Path("/v1")
-    public Response redirectV1GetToRecords(@Context HttpServletRequest request) {
+    public Response redirectV1RootToRegisterResource(@Context HttpServletRequest request) {
         return redirectByPath(request, "/v1", "/register");
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV})
     @Path("/next")
-    public Response redirectV2GetToRecords(@Context HttpServletRequest request) {
-        return redirectByPath(request, "/next", "/next/register");
+    public Response redirectV2RootToContextResource(@Context HttpServletRequest request) {
+        return redirectByPath(request, "/next", "/next/context");
     }
 
     /*
