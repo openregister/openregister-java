@@ -31,8 +31,7 @@ public class ThymeleafContext extends AbstractContext implements IWebContext {
         try {
             initVariableFromViewProperties(thymeleafView);
         } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-            throwIfUnchecked(e);
-            throw new RuntimeException(e.getCause());
+            throw new RuntimeException(e);
         }
     }
 
