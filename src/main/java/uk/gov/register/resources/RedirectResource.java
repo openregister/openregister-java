@@ -39,7 +39,7 @@ public class RedirectResource {
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV})
     @Path("/next")
     public Response redirectV2GetToRecords(@Context HttpServletRequest request) {
-        return redirectByPath(request, "/next", "/next/register");
+        return redirectByPath(request, "/next", "/next/context");
     }
 
     /*
