@@ -15,6 +15,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import static com.google.common.base.Throwables.throwIfUnchecked;
+
 public class ThymeleafContext extends AbstractContext implements IWebContext {
     private final HttpServletRequest request;
     private final HttpServletResponse response;
@@ -29,7 +31,8 @@ public class ThymeleafContext extends AbstractContext implements IWebContext {
         try {
             initVariableFromViewProperties(thymeleafView);
         } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-            Throwables.propagate(e);
+            throwIfUnchecked(e);
+            throw new RuntimeException(e.getCause());
         }
     }
 

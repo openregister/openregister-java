@@ -2,7 +2,6 @@ package uk.gov.register.db;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import org.postgresql.util.PGobject;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -17,6 +16,8 @@ import uk.gov.register.db.mappers.RecordMapper;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
+
+import static com.google.common.base.Throwables.throwIfUnchecked;
 
 @UseStringTemplate3StatementLocator
 public abstract class RecordQueryDAO {
@@ -52,7 +53,8 @@ public abstract class RecordQueryDAO {
             json.setValue(objectMapper.writeValueAsString(ImmutableMap.of(key, value)));
             return json;
         } catch (SQLException | JsonProcessingException e) {
-            throw Throwables.propagate(e);
+            throwIfUnchecked(e);
+            throw new RuntimeException(e.getCause());
         }
     }
 }
