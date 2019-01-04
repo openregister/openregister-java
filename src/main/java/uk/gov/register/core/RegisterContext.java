@@ -1,5 +1,6 @@
 package uk.gov.register.core;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.flywaydb.core.Flyway;
 import org.skife.jdbi.v2.DBI;
@@ -7,14 +8,8 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 import uk.gov.register.auth.RegisterAuthenticator;
-import uk.gov.register.configuration.ConfigManager;
-import uk.gov.register.configuration.DeleteRegisterDataConfiguration;
-import uk.gov.register.configuration.ResourceConfiguration;
-import uk.gov.register.db.EntryDAO;
-import uk.gov.register.db.EntryQueryDAO;
-import uk.gov.register.db.ItemDAO;
-import uk.gov.register.db.ItemQueryDAO;
-import uk.gov.register.db.RecordQueryDAO;
+import uk.gov.register.configuration.*;
+import uk.gov.register.db.*;
 import uk.gov.register.db.RecordSet;
 import uk.gov.register.exceptions.FieldDefinitionException;
 import uk.gov.register.exceptions.NoSuchConfigException;
@@ -34,8 +29,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static com.google.common.base.Throwables.throwIfUnchecked;
 
 
 public class RegisterContext implements
@@ -140,8 +133,7 @@ public class RegisterContext implements
         try {
             dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callback.accept(handle));
         } catch (CallbackFailedException e) {
-            throwIfUnchecked(e);
-            throw new RuntimeException(e.getCause());
+            throw Throwables.propagate(e.getCause());
         }
     }
 
