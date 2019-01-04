@@ -30,6 +30,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.google.common.base.Throwables.throwIfUnchecked;
+
 
 public class RegisterContext implements
         DeleteRegisterDataConfiguration,
@@ -133,7 +135,8 @@ public class RegisterContext implements
         try {
             dbi.useTransaction(TransactionIsolationLevel.SERIALIZABLE, (handle, status) -> callback.accept(handle));
         } catch (CallbackFailedException e) {
-            throw Throwables.propagate(e.getCause());
+            throwIfUnchecked(e.getCause());
+            throw new RuntimeException(e.getCause());
         }
     }
 

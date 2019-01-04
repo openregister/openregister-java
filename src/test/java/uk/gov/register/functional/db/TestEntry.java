@@ -2,11 +2,12 @@ package uk.gov.register.functional.db;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Throwables;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
 import java.time.Instant;
+
+import static com.google.common.base.Throwables.throwIfUnchecked;
 
 public class TestEntry {
     private static final ObjectMapper objectMapper = new ObjectMapper() {{
@@ -28,7 +29,8 @@ public class TestEntry {
             this.sha256hex = DigestUtils.sha256Hex(this.itemJson);
             this.key = key;
         } catch (IOException e) {
-            throw Throwables.propagate(e);
+            throwIfUnchecked(e);
+            throw new RuntimeException(e.getCause());
         }
     }
 

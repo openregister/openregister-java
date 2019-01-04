@@ -1,6 +1,5 @@
 package uk.gov.register.thymeleaf;
 
-import com.google.common.base.Throwables;
 import io.dropwizard.views.View;
 import org.thymeleaf.context.AbstractContext;
 import org.thymeleaf.context.IWebContext;
@@ -29,7 +28,7 @@ public class ThymeleafContext extends AbstractContext implements IWebContext {
         try {
             initVariableFromViewProperties(thymeleafView);
         } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 

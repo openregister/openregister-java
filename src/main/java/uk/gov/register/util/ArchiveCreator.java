@@ -2,7 +2,6 @@ package uk.gov.register.util;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import io.dropwizard.jackson.Jackson;
 import uk.gov.register.core.Entry;
 import uk.gov.register.core.Item;
@@ -16,6 +15,8 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import static com.google.common.base.Throwables.throwIfUnchecked;
 
 public class ArchiveCreator {
 
@@ -53,7 +54,8 @@ public class ArchiveCreator {
                 objectMapper.writeValue(zipOutputStream, value);
                 zipOutputStream.closeEntry();
             } catch (IOException e) {
-                Throwables.propagate(e);
+                throwIfUnchecked(e);
+                throw new RuntimeException(e.getCause());
             }
         }
 

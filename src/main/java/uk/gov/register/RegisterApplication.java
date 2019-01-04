@@ -1,7 +1,6 @@
 package uk.gov.register;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
@@ -20,8 +19,19 @@ import org.glassfish.jersey.CommonProperties;
 import uk.gov.ida.dropwizard.logstash.LogstashBundle;
 import uk.gov.register.auth.BasicAuthFilter;
 import uk.gov.register.auth.RegisterAuthDynamicFeature;
-import uk.gov.register.configuration.*;
-import uk.gov.register.core.*;
+import uk.gov.register.configuration.ConfigManager;
+import uk.gov.register.configuration.DatabaseManager;
+import uk.gov.register.configuration.DeleteRegisterDataConfiguration;
+import uk.gov.register.configuration.PublicBodiesConfiguration;
+import uk.gov.register.configuration.RegisterFieldsConfiguration;
+import uk.gov.register.configuration.ResourceConfiguration;
+import uk.gov.register.core.AllTheRegisters;
+import uk.gov.register.core.Register;
+import uk.gov.register.core.RegisterContext;
+import uk.gov.register.core.RegisterId;
+import uk.gov.register.core.RegisterReadOnly;
+import uk.gov.register.core.RegisterResolver;
+import uk.gov.register.core.UriTemplateRegisterResolver;
 import uk.gov.register.db.Factories;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.filters.StripTrailingSlashRedirectFilter;
@@ -52,12 +62,15 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static com.google.common.base.Throwables.throwIfUnchecked;
+
 public class RegisterApplication extends Application<RegisterConfiguration> {
     public static void main(String[] args) {
         try {
             new RegisterApplication().run(args);
         } catch (Exception e) {
-            Throwables.propagate(e);
+            throwIfUnchecked(e);
+            throw new RuntimeException(e.getCause());
         }
     }
 
