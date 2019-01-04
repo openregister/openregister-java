@@ -31,14 +31,14 @@ public class RedirectResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV})
     @Path("/v1")
-    public Response redirectV1GetToRecords(@Context HttpServletRequest request) {
+    public Response redirectV1RootToRegisterResource(@Context HttpServletRequest request) {
         return redirectByPath(request, "/v1", "/register");
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON, ExtraMediaType.TEXT_CSV})
     @Path("/next")
-    public Response redirectV2GetToRecords(@Context HttpServletRequest request) {
+    public Response redirectV2RootToContextResource(@Context HttpServletRequest request) {
         return redirectByPath(request, "/next", "/next/context");
     }
 
