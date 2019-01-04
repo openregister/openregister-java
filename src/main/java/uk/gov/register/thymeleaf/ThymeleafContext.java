@@ -1,6 +1,5 @@
 package uk.gov.register.thymeleaf;
 
-import com.google.common.base.Throwables;
 import io.dropwizard.views.View;
 import org.thymeleaf.context.AbstractContext;
 import org.thymeleaf.context.IWebContext;
@@ -14,8 +13,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import static com.google.common.base.Throwables.throwIfUnchecked;
 
 public class ThymeleafContext extends AbstractContext implements IWebContext {
     private final HttpServletRequest request;
