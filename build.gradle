@@ -152,7 +152,7 @@ void stopApp() {
     runningApp?.destroy()?.waitFor()
 }
 
-task(loadSchoolDataForConformance, type: Exec) {
+task(loadCountryDataForConformance, type: Exec) {
     doFirst {
         exec {
             executable "$projectDir/drop_schema.sh"
@@ -176,7 +176,7 @@ task installConformanceTestDeps(type: Exec) {
 task runConformanceTestsV1(type: Exec) {
     dependsOn << assemble
     dependsOn << startAppForConformance
-    dependsOn << loadSchoolDataForConformance
+    dependsOn << loadCountryDataForConformance
     dependsOn << installConformanceTestDeps
     mustRunAfter test
     commandLine '.venv/bin/openregister-conformance', '--api-version', '1', '--no-https', '--register', 'country', 'http://localhost:9090/v1/', '--register-domain', 'test.register.gov.uk'
