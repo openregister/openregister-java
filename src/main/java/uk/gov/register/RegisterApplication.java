@@ -85,7 +85,7 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
 
     @Override
     public void initialize(Bootstrap<RegisterConfiguration> bootstrap) {
-        bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new ThymeleafViewRenderer("HTML", "/templates/", ".html", false))));
+        bootstrap.addBundle(new ViewBundle<>(ImmutableList.of(new ThymeleafViewRenderer("HTML5", "/templates/", ".html", false))));
 
         if (isRunningOnCloudFoundry()) {
             bootstrap.setConfigurationSourceProvider(new UrlConfigurationSourceProvider());
