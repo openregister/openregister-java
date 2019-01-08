@@ -39,7 +39,7 @@ public class AssetsBundleCustomErrorHandler extends ErrorHandler {
             templateResolver = new ClassLoaderTemplateResolver();
             templateResolver.setPrefix("/templates/");
         }
-        templateResolver.setTemplateMode("HTML");
+        templateResolver.setTemplateMode("HTML5");
         templateResolver.setCacheable(false);
         templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         engine = new TemplateEngine();
