@@ -6,7 +6,7 @@ ext {
     jetty_version = '9.4.14.v20181114'
     
 
-    jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.11.1'
+    jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
     verifiableLog = 'verifiable-log:verifiable-log:0.2.77'
     objectHash = 'objecthash-java:objecthash-java:0.1.63'
