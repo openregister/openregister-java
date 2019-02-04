@@ -67,7 +67,6 @@ dependencies {
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }
-    compile "com.google.guava:guava:27.0-jre"
     compile jetty
 
     testCompile junit, mockito, dropwizardTest, wiremock
