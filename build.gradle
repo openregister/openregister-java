@@ -67,10 +67,6 @@ dependencies {
     compile(postgresClient) {
         exclude group: 'org.slf4j'
     }
-    compile ("io.dropwizard:dropwizard-lifecycle"){
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-    compile "com.google.guava:guava:27.0-jre"
     compile jetty
 
     testCompile junit, mockito, dropwizardTest, wiremock

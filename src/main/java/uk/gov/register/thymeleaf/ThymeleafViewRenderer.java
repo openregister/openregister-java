@@ -68,7 +68,7 @@ public class ThymeleafViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public String getSuffix() {
-        return suffix;
+    public String getConfigurationKey() {
+        return "freemarker";
     }
 }
