@@ -69,6 +69,6 @@ public class ThymeleafViewRenderer implements ViewRenderer {
 
     @Override
     public String getConfigurationKey() {
-        return "mustache";
+        return "freemarker";
     }
 }
