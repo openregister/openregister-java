@@ -3,7 +3,7 @@ ext {
     dropwizard_metrics_version = '4.0.5'
     jersey_version = '2.25.1'
     jackson_version = '2.9.8'
-    jetty_version = '9.4.14.v20181114'
+    jetty_version = '9.4.15.v20190215'
     
 
     jacksonDatabind = "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
