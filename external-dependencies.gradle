@@ -74,5 +74,5 @@ ext {
     jsoup = 'org.jsoup:jsoup:1.9.2'
     jsonAssert = 'org.skyscreamer:jsonassert:1.5.0'
     mockito = 'org.mockito:mockito-core:2.7.8'
-    wiremock = 'com.github.tomakehurst:wiremock:2.1.12'
+    wiremock = 'com.github.tomakehurst:wiremock:2.21.0'
 }
