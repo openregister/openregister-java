@@ -6,7 +6,6 @@ buildscript {
     dependencies {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.13.0"
         classpath "com.github.jengelman.gradle.plugins:shadow:5.0.0"
-        classpath 'org.owasp:dependency-check-gradle:4.0.2'
     }
 }
 
@@ -28,17 +27,6 @@ group 'openregister'
 
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: 'org.owasp.dependencycheck'
-
-dependencyCheck {
-    analyzers {
-        nodeEnabled=false
-        nodeAuditEnabled=false
-        bundleAuditEnabled=false
-    }
-    failBuildOnCVSS = 0
-    suppressionFile = 'dependency-check-suppressions.xml'
-}
 
 // because we build into src/main/resources, we need compileSass to run before processResources
 processResources.dependsOn 'compileSass'
@@ -187,7 +175,6 @@ task runConformanceTestsV2(type: Exec) {
 check {
     dependsOn << runConformanceTestsV1
     dependsOn << runConformanceTestsV2
-    dependsOn << 'dependencyCheckAnalyze'
 }
 
 test {
