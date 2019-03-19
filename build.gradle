@@ -4,7 +4,7 @@ buildscript {
         maven { url "https://dl.bintray.com/robfletcher/gradle-plugins" }
     }
     dependencies {
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.13.0"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.21.0"
         classpath "com.github.jengelman.gradle.plugins:shadow:5.0.0"
     }
 }
