@@ -1,6 +1,7 @@
 ---
 applications:
 - name: discovery-multi
+  stack: cflinuxfs3
   memory: 4GB
   instances: 2
   buildpack: java_buildpack
