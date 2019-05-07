@@ -39,7 +39,7 @@ ext {
     javaxActivation = 'javax.activation:activation:1.1.1'
 
     jaxb = ['javax.xml.bind:jaxb-api:2.3.0',
-            'com.sun.xml.bind:jaxb-core:2.3.0',
+            'com.sun.xml.bind:jaxb-core:2.3.0.1',
             'com.sun.xml.bind:jaxb-impl:2.3.2']
 
     jdbi = 'org.jdbi:jdbi:2.78'
