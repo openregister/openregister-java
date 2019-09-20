@@ -6,4 +6,11 @@ ga('create', 'UA-86101042-1', 'auto');
 ga('set', 'anonymizeIp', true);
 ga('set', 'displayFeaturesTask', null);
 ga('set', 'transport', 'beacon');
+
+ga('create', 'UA-145652997-1', 'auto', 'govuk_shared', {'allowLinker': true});
+ga('govuk_shared.require', 'linker');
+ga('govuk_shared.linker.set', 'anonymizeIp', true);
+ga('govuk_shared.linker:autoLink', ['registers.service.gov.uk', 'www.gov.uk']);
+
 ga('send', 'pageview');
+ga('govuk_shared.send', 'pageview')
