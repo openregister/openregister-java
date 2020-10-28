@@ -21,7 +21,7 @@ ext {
             "io.dropwizard:dropwizard-logging:${dropwizard_version}",
             "io.dropwizard:dropwizard-views:${dropwizard_version}",
             "io.dropwizard.metrics:metrics-core:${dropwizard_metrics_version}",
-            "io.dropwizard.modules:dropwizard-flyway:1.0.0-1",
+            "io.dropwizard.modules:dropwizard-flyway:2.0.14-2",
             "io.dropwizard.modules:dropwizard-java8-jdbi:0.9.0-1"
     ]
 
