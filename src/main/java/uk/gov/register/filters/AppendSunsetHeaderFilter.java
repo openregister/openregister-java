@@ -14,7 +14,7 @@ public class AppendSunsetHeaderFilter implements javax.servlet.Filter
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse httpServletResponse = ((HttpServletResponse) response);
-        httpServletResponse.addHeader("Sunset", "15 March 2021 23:59:59 GMT");
+        httpServletResponse.addHeader("Sunset", "14 March 2021 23:59:59 GMT");
         httpServletResponse.addHeader("Link", "<https://www.registers.service.gov.uk/>; rel=\"deprecation\"; type=\"text/html\"");
 
         chain.doFilter(request, response);
