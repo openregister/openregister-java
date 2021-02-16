@@ -10,7 +10,7 @@ phases:
       - wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | apt-key add -
       - echo 'deb http://packages.cloudfoundry.org/debian stable main' > /etc/apt/sources.list.d/cloudfoundry-cli.list
       - apt-get update -y
-      - apt-get install -y cf-cli
+      - apt-get install -y cf7-cli
   pre_build:
     commands:
       - CF_USER="$(aws ssm get-parameters --name paas-deploy-user --query 'Parameters[0].Value' --output text)"
