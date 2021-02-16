@@ -25,7 +25,7 @@ phases:
     commands:
       - 'sed -i "s/    AWS_ACCESS_KEY_ID: change-me/    AWS_ACCESS_KEY_ID: ${AWS_KEY}/" manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml'
       - 'sed -i "s/    AWS_SECRET_ACCESS_KEY: change-me/    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}/" manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml'
-      - '[ "$ENVIRONMENT" = "discovery" ] && [ "$REGISTER_GROUP" = "multi" ] && cf push discovery-multi -f "manifests/discovery/multi.yml" || cf push "${ENVIRONMENT}-${REGISTER_GROUP}" -f "manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml"'
+      - '[ "$ENVIRONMENT" = "discovery" ] && [ "$REGISTER_GROUP" = "multi" ] && cf push --strategy rolling discovery-multi -f "manifests/discovery/multi.yml" || cf push --strategy rolling "${ENVIRONMENT}-${REGISTER_GROUP}" -f "manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml"'
   post_build:
     commands:
       - cf logout
