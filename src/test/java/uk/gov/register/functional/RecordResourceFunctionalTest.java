@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -36,7 +37,7 @@ public class RecordResourceFunctionalTest {
 
         assertThat(response.getStatus(), equalTo(200));
 
-        assertThat(response.getHeaderString("Link"), equalTo("</records/6789/entries>; rel=\"version-history\""));
+        assertThat(response.getHeaderString("Link"), containsString("</records/6789/entries>; rel=\"version-history\""));
 
         JsonNode res = Jackson.newObjectMapper().readValue(response.readEntity(String.class), JsonNode.class).get("6789");
         assertThat(res.get("entry-number").textValue(), equalTo("2"));

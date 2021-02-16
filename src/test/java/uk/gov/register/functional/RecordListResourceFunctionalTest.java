@@ -83,15 +83,15 @@ public class RecordListResourceFunctionalTest {
     public void newRecords_hasLinkHeaderForNextAndPreviousPage() {
         Response response = addressTarget.path("/records.json").queryParam("page-index",1).queryParam("page-size",1)
                 .request().get();
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"next\""));
+        assertThat(response.getHeaderString("Link"), equalTo("<https://www.registers.service.gov.uk/>; rel=\"deprecation\"; type=\"text/html\",<?page-index=2&page-size=1>; rel=\"next\""));
 
         response = addressTarget.path("/records.json").queryParam("page-index",2).queryParam("page-size",1)
                 .request().get();
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\""));
+        assertThat(response.getHeaderString("Link"), equalTo("<https://www.registers.service.gov.uk/>; rel=\"deprecation\"; type=\"text/html\",<?page-index=3&page-size=1>; rel=\"next\",<?page-index=1&page-size=1>; rel=\"previous\""));
 
         response = addressTarget.path("/records.json").queryParam("page-index",3).queryParam("page-size",1)
                 .request().get();
-        assertThat(response.getHeaderString("Link"), equalTo("<?page-index=2&page-size=1>; rel=\"previous\""));
+        assertThat(response.getHeaderString("Link"), equalTo("<https://www.registers.service.gov.uk/>; rel=\"deprecation\"; type=\"text/html\",<?page-index=2&page-size=1>; rel=\"previous\""));
     }
 
     @Test

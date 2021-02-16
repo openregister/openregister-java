@@ -33,6 +33,7 @@ import uk.gov.register.core.RegisterReadOnly;
 import uk.gov.register.core.RegisterResolver;
 import uk.gov.register.core.UriTemplateRegisterResolver;
 import uk.gov.register.db.Factories;
+import uk.gov.register.filters.AppendSunsetHeaderFilter;
 import uk.gov.register.filters.CorsBundle;
 import uk.gov.register.filters.StripTrailingSlashRedirectFilter;
 import uk.gov.register.proofs.ProofGenerator;
@@ -140,6 +141,11 @@ public class RegisterApplication extends Application<RegisterConfiguration> {
         environment.servlets()
                 .addFilter("StripTrailingSlashRedirectFilter", new StripTrailingSlashRedirectFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+
+        environment.servlets()
+                .addFilter("AppendSunsetHeaderFilter", new AppendSunsetHeaderFilter())
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+
 
         jersey.register(new AbstractBinder() {
             @Override

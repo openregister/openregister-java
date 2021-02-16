@@ -10,6 +10,9 @@ import uk.gov.register.functional.app.RsfRegisterDefinition;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -129,10 +132,16 @@ public class BlobsResourceFunctionalTest {
     }
 
     private boolean hasNextPage(Response response) {
-        return response.getStringHeaders().containsKey("Link");
+        return response.getStringHeaders().containsKey("Link") && response.getHeaderString("Link").contains("next");
     }
 
     private String extractStartParam(String linkHeader) {
-        return linkHeader.replaceAll("<\\?start=([a-f0-9]+)&limit=2>; rel=\"next\"", "$1");
+        String regex = "<\\?start=([a-f0-9]+)&limit=2>; rel=\"next\"";
+        Pattern p = Pattern.compile(regex);
+        Matcher matcher = p.matcher(linkHeader);
+        if (matcher.find()) {
+           return matcher.group(1);
+        }
+        return null;
     }
 }
