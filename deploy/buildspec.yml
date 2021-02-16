@@ -11,13 +11,6 @@ phases:
       - echo 'deb http://packages.cloudfoundry.org/debian stable main' > /etc/apt/sources.list.d/cloudfoundry-cli.list
       - apt-get update -y
       - apt-get install -y cf-cli
-      - CF_AUTOPILOT_VERSION="0.0.3"
-      - CF_AUTOPILOT_CHECKSUM="c3b5a38ba7a9817e12d6ab4c98418d707c49c1d3eb68e5a79e701531bd8fa1cd"
-      - CF_AUTOPILOT_TEMPFILE="/tmp/autopilot.linux64"
-      - wget -q -O "${CF_AUTOPILOT_TEMPFILE}" "https://github.com/contraband/autopilot/releases/download/${CF_AUTOPILOT_VERSION}/autopilot-linux"
-      - echo "${CF_AUTOPILOT_CHECKSUM}  ${CF_AUTOPILOT_TEMPFILE}" | sha256sum -c -
-      - chmod +x "${CF_AUTOPILOT_TEMPFILE}"
-      - cf install-plugin -f "${CF_AUTOPILOT_TEMPFILE}"
   pre_build:
     commands:
       - CF_USER="$(aws ssm get-parameters --name paas-deploy-user --query 'Parameters[0].Value' --output text)"
@@ -31,7 +24,7 @@ phases:
     commands:
       - 'sed -i "s/    AWS_ACCESS_KEY_ID: change-me/    AWS_ACCESS_KEY_ID: ${AWS_KEY}/" manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml'
       - 'sed -i "s/    AWS_SECRET_ACCESS_KEY: change-me/    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}/" manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml'
-      - '[ "$ENVIRONMENT" = "discovery" ] && [ "$REGISTER_GROUP" = "multi" ] && cf push discovery-multi -f "manifests/discovery/multi.yml" || cf zero-downtime-push "${ENVIRONMENT}-${REGISTER_GROUP}" -f "manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml"'
+      - '[ "$ENVIRONMENT" = "discovery" ] && [ "$REGISTER_GROUP" = "multi" ] && cf push discovery-multi -f "manifests/discovery/multi.yml" || cf push "${ENVIRONMENT}-${REGISTER_GROUP}" -f "manifests/${ENVIRONMENT}/${REGISTER_GROUP}.yml"'
   post_build:
     commands:
       - cf logout
