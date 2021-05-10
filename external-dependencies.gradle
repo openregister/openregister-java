@@ -30,7 +30,7 @@ ext {
     postgresClient = 'org.postgresql:postgresql:42.1.4'
 
     apacheCommonsCodec = 'commons-codec:commons-codec:1.12'
-    apacheCommonsCollections = 'org.apache.commons:commons-collections4:4.3'
+    apacheCommonsCollections = 'org.apache.commons:commons-collections4:4.4'
     apacheCommonsLang3 = 'org.apache.commons:commons-lang3:3.9'
 
     // force AWS's dependency on dataformat-cbor to match our jackson_version
